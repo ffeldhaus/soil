@@ -1,0 +1,43 @@
+html {
+    background: url('assets/images/bauernhof.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+body {
+    margin: 0;
+}
+
+.fill-remaining-space {
+    /* This fills the remaining space, by using flexbox. */
+    flex: 1 1 auto;
+}
+
+/* The following are hacks and should be replaced by proper Angular Material Theme Overwrites */
+
+.mat-toolbar {
+    background-color: rgba(50, 50, 100, 0.7) !important;
+}
+
+.mat-drawer.mat-sidenav {
+    background-color: rgba(50, 50, 100, 0.7) !important;
+}
+
+.mat-drawer-backdrop.mat-drawer-shown {
+    background-color: transparent !important;
+}
+
+.mat-sidenav-container {
+    background: none !important;
+}
+
+.mat-sidenav-content {
+    margin: 10px 10px !important;
+}
+
+.mat-nav-list .mat-list-item {
+    color: white !important;
+}
+
+.mat-card {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+}
