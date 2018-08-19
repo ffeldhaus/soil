@@ -17,6 +17,18 @@ gem 'bootsnap'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '>= 4.0.x'
 gem 'foreman'
+
+# Fast JSON API
+gem 'fast_jsonapi'
+# Fast JSON Serializer
+gem 'oj'
+
+# JSON Web Token
+gem 'jwt'
+
+# To use ActiveModel has_secure_password
+gem 'bcrypt'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production

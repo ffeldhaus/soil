@@ -3,22 +3,32 @@ import {Router} from '@angular/router';
 
 import templateString from './login.component.html'
 
+import { AuthenticationService } from '../../shared/services/authentication.service'
+
 @Component({
   template: templateString,
 })
 export class LoginComponent {
-  constructor(private router : Router) {
+  constructor(
+      private router: Router,
+      private authenticationService: AuthenticationService
+  ) {
   }
 
-  username : string;
-  password : string;
   gameId: number;
+  username: string;
+  password: string;
 
-  login() : void {
-    if(this.username === 'test' && this.password === 'test'){
-      this.router.navigate(["game"]);
-    }else {
-      alert("Invalid credentials");
-    }
+  login(): void {
+    this.authenticationService.login(this.gameId, this.username, this.password)
+        .subscribe(
+            data => {
+              console.log("data")
+              this.router.navigate(['/game']);
+            },
+            error => {
+              console.log("error")
+              alert(error);
+            });
   }
 }

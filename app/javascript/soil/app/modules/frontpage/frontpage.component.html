@@ -4,19 +4,21 @@
             <button mat-icon-button (click)="sidenav.toggle()" fxShow="true" fxHide.gt-sm>
                 <mat-icon>menu</mat-icon>
             </button>
-            <span>Soil</span>
+            <span>
+                <a routerLink="" mat-button>Soil</a>
+            </span>
             <div fxShow="true" fxHide.lt-md="true">
                 <!-- The following menu items will be hidden on both SM and XS screen sizes -->
-                <a href="frontpage/overview" mat-button>
+                <a routerLink="overview" routerLinkActive="active" mat-button>
                     Übersicht
                 </a>
-                <a href="frontpage/background" mat-button>
+                <a routerLink="background" routerLinkActive="active" mat-button>
                     Hintergrundinformationen
                 </a>
-                <a href="frontpage/login" mat-button>
+                <a routerLink="login" routerLinkActive="active" mat-button>
                     Login
                 </a>
-                <a href="frontpage/register" mat-button>
+                <a routerLink="register" routerLinkActive="active" mat-button>
                     Register
                 </a>
             </div>
@@ -25,19 +27,19 @@
     <mat-sidenav-container fxFlex="1 1 auto">
         <mat-sidenav #sidenav [mode]="'over'">
             <mat-nav-list fxShow fxHide.xs>
-                <a href="frontpage/overview" mat-list-item>
+                <a routerLink="overview" routerLinkActive="active" mat-list-item>
                     <mat-icon>home</mat-icon>
                     Übersicht
                 </a>
-                <a href="frontpage/background" mat-list-item>
+                <a routerLink="background" routerLinkActive="active" mat-list-item>
                     <mat-icon>details</mat-icon>
                     Hintergrundinformationen
                 </a>
-                <a href="frontpage/login" mat-list-item>
+                <a routerLink="login" routerLinkActive="active" mat-list-item>
                     <mat-icon>account_box</mat-icon>
                     Login
                 </a>
-                <a href="frontpage/register" mat-list-item>
+                <a routerLink="register" routerLinkActive="active" mat-list-item>
                     <mat-icon>person_add</mat-icon>
                     Register
                 </a>
@@ -47,16 +49,16 @@
                 </a>
             </mat-nav-list>
             <mat-nav-list fxHide fxShow.xs>
-                <a href="frontpage/overview" mat-list-item>
+                <a routerLink="overview" routerLinkActive="active" mat-list-item>
                     <mat-icon>home</mat-icon>
                 </a>
-                <a href="frontpage/background" mat-list-item>
+                <a routerLink="background" routerLinkActive="active" mat-list-item>
                     <mat-icon>details</mat-icon>
                 </a>
-                <a href="frontpage/login" mat-list-item>
+                <a routerLink="login" routerLinkActive="active" mat-list-item>
                     <mat-icon>account_box</mat-icon>
                 </a>
-                <a href="frontpage/register" mat-list-item>
+                <a routerLink="register" routerLinkActive="active" mat-list-item>
                     <mat-icon>person_add</mat-icon>
                 </a>
                 <a (click)="sidenav.toggle()" mat-list-item>

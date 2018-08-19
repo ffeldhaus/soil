@@ -12,7 +12,7 @@ import {
   MatInputModule,
 } from '@angular/material';
 
-import {FlexLayoutModule} from '@angular/flex-layout';
+import {SharedModule} from "../shared/shared.module";
 
 import {FrontpageComponent} from './frontpage.component';
 
@@ -21,10 +21,10 @@ import {BackgroundComponent} from './components/background.component';
 import {LoginComponent} from './components/login.component';
 import {RegisterComponent} from './components/register.component';
 
-import {ImpressumComponent} from '../../shared/components/impressum.component';
-import {PrivacyComponent} from '../../shared/components/privacy.component';
+import {ImpressumComponent} from '../shared/components/impressum.component';
+import {PrivacyComponent} from '../shared/components/privacy.component';
 
-import {FooterComponent} from "../../shared/components/footer.component";
+import {FooterComponent} from "../shared/components/footer.component";
 
 import {FrontpageRouting} from './frontpage.routing';
 
@@ -40,6 +40,7 @@ import {FrontpageRouting} from './frontpage.routing';
     FooterComponent
   ],
   imports: [
+    SharedModule,
     FrontpageRouting,
     FormsModule,
     MatToolbarModule,
@@ -49,10 +50,7 @@ import {FrontpageRouting} from './frontpage.routing';
     MatListModule,
     MatCardModule,
     MatFormFieldModule,
-    MatInputModule,
-    FlexLayoutModule
-  ],
-  providers: [],
+    MatInputModule,]
 })
 export class FrontpageModule {
 }

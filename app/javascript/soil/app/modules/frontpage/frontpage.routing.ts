@@ -6,8 +6,8 @@ import {BackgroundComponent} from './components/background.component';
 import {LoginComponent} from './components/login.component';
 import {RegisterComponent} from './components/register.component';
 
-import {ImpressumComponent} from '../../shared/components/impressum.component';
-import {PrivacyComponent} from '../../shared/components/privacy.component';
+import {ImpressumComponent} from '../shared/components/impressum.component';
+import {PrivacyComponent} from '../shared/components/privacy.component';
 
 
 const frontpageRoutes: Routes = [

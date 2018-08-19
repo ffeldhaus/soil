@@ -1,15 +1,8 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router'
 
-import {
-  MatCardModule,
-  MatToolbarModule,
-  MatButtonModule,
-} from '@angular/material';
-
-import {FlexLayoutModule} from '@angular/flex-layout';
+import {SharedModule} from "./modules/shared/shared.module";
 
 import {AppComponent} from './app.component';
 import {AppRouting} from './app.routing';
@@ -19,16 +12,11 @@ import {AppRouting} from './app.routing';
     AppComponent
   ],
   imports: [
-    RouterModule,
+    SharedModule,
     BrowserModule,
+    AppRouting,
     BrowserAnimationsModule,
-    MatCardModule,
-    MatToolbarModule,
-    MatButtonModule,
-    FlexLayoutModule,
-    AppRouting
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
