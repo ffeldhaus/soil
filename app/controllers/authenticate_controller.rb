@@ -12,25 +12,26 @@ class AuthenticateController < ApplicationController
 
     if player && player.authenticate(password)
       user = player
-    end
-
-    supervisor = Supervisor.find_by_name(name)
-    if supervisor && supervisor.authenticate(password)
-      user = supervisor
-    end
-
-    admin = Admin.find_by_name(name)
-    if admin && admin.authenticate(password)
-      user = admin
+    else
+      supervisor = Supervisor.find_by_name(name)
+      if supervisor && supervisor.authenticate(password)
+        user = supervisor
+      else
+        admin = Admin.find_by_name(name)
+        if admin && admin.authenticate(password)
+          user = admin
+        end
+      end
     end
 
     expiration = Rails.configuration.jwt_default_expiration_hours.hours.from_now
 
-    access_token = JsonWebToken.encode({user_id: user.id, role: user.class.name}, expiration) if user
+    access_token = JsonWebToken.encode({id: user.id, role: user.class.name}, expiration) if user
 
     if access_token
       render json: {
           access_token: access_token,
+          id: user.id,
           role: user.class.name.downcase,
           expiration: expiration,
           message: 'Login Successful'

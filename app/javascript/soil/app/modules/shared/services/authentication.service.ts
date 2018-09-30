@@ -7,13 +7,13 @@ import { map } from 'rxjs/operators';
 export class AuthenticationService {
   constructor(private http: HttpClient) { }
 
-  login(game_id: number, name: string, password: string) {
-    return this.http.post<any>('/auth/login', { game_id: game_id, name: name, password: password })
+  login(gameId: number, name: string, password: string) {
+    return this.http.post<any>('/auth/login', { game_id: gameId, name: name, password: password })
         .pipe(map(result => {
           // login successful if there is an authentication token in the data element of the response
           if (result && result.access_token) {
             // store user details and token in local storage to keep user logged in between page refreshes
-            localStorage.setItem('currentUser', JSON.stringify({ game_id: game_id, name: name, role: result.role, token: result.access_token, expiration: result.expiration}));
+            localStorage.setItem('currentUser', JSON.stringify({ id: result.id, gameId: gameId, name: name, role: result.role, token: result.access_token, expiration: result.expiration}));
           }
 
           return result;

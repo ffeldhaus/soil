@@ -1,17 +1,6 @@
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 
-import {
-  MatToolbarModule,
-  MatButtonModule,
-  MatSidenavModule,
-  MatIconModule,
-  MatListModule,
-  MatCardModule,
-  MatFormFieldModule,
-  MatInputModule,
-} from '@angular/material';
-
 import {SharedModule} from "../shared/shared.module";
 
 import {FrontpageComponent} from './frontpage.component';
@@ -42,15 +31,8 @@ import {FrontpageRouting} from './frontpage.routing';
   imports: [
     SharedModule,
     FrontpageRouting,
-    FormsModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatListModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,]
+    FormsModule
+  ]
 })
 export class FrontpageModule {
 }

@@ -1,5 +1,8 @@
 class GameSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :id, :name, :weather, :vermin
+  set_key_transform :camel_lower
+
+  attributes :id, :name
+
   has_many :players
 end

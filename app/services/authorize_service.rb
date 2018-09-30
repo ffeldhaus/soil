@@ -1,6 +1,7 @@
 class AuthorizeService
   def initialize(headers = {})
     @headers = headers
+    @errors = ()
   end
 
   def authorize
@@ -10,18 +11,19 @@ class AuthorizeService
   private
 
   attr_reader :headers
+  attr_accessor :errors
 
   def user
-    if decoded_auth_token
+    if decoded_auth_token[:id]
       case decoded_auth_token[:role]
       when "Player"
-        @user ||= Player.find(decoded_auth_token[:user_id])
+        @user ||= Player.find(decoded_auth_token[:id])
       when "Supervisor"
-        @user ||= Supervisor.find(decoded_auth_token[:user_id])
+        @user ||= Supervisor.find(decoded_auth_token[:id])
       when "Admin"
-        @user ||= Admin.find(decoded_auth_token[:user_id])
+        @user ||= Admin.find(decoded_auth_token[:id])
       end
-      @user || errors.add(:token, 'Invalid token') && nil
+      # @user || errors.add(:token, 'Invalid token') && nil
     end
   end
 
@@ -33,7 +35,7 @@ class AuthorizeService
     if headers['Authorization'].present?
       return headers['Authorization'].split(' ').last
     else
-      errors.add(:token, 'Missing token')
+      # errors.add(:token, 'Missing token')
     end
     nil
   end

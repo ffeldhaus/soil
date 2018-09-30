@@ -1,0 +1,68 @@
+.parcel {
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    color: white;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 1px solid black;
+    padding: 0 0 12% 0;
+    float: left;
+    width: 12.5%;
+    height: 0;
+    font-size: 1em;
+    text-align: center;
+}
+
+.parcel-selection {
+    width: 20%;
+    padding-bottom: 19%;
+}
+
+.ui-selecting {
+    border: 1px solid red;
+}
+
+.ui-selected {
+    border: 1px solid orange;
+}
+
+.brachland {
+    background-image: url('../../../assets/images/brachland.jpg') !important;
+}
+
+.ackerbohne {
+    background-image: url('../../../assets/images/ackerbohne.jpg') !important;
+}
+
+.gerste {
+    background-image: url('../../../assets/images/gerste.jpg') !important;
+}
+
+.hafer {
+    background-image: url('../../../assets/images/hafer.jpg') !important;
+}
+
+.kartoffel {
+    background-image: url('../../../assets/images/kartoffel.jpg') !important;
+}
+
+.mais {
+    background-image: url('../../../assets/images/mais.jpg') !important;
+}
+
+.roggen {
+    background-image: url('../../../assets/images/roggen.jpg') !important;
+}
+
+.tiere {
+    background-image: url('../../../assets/images/tiere.jpg') !important;
+}
+
+.weizen {
+    background-image: url('../../../assets/images/weizen.jpg') !important;
+}
+
+.zuckerrübe {
+    background-image: url('../../../assets/images/zuckerruebe.jpg') !important;
+}

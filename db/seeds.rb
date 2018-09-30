@@ -13,6 +13,8 @@ supervisor.save!
 
 game = supervisor.games.create(:name => 'Test')
 
+game.save!
+
 game.players.create(:name => 'Gruppe 1', :password => 'M3LLlePr', :password_confirmation => 'M3LLlePr')
 game.players.create(:name => 'Gruppe 2', :password => 'gCN6oriI', :password_confirmation => 'gCN6oriI')
 game.players.create(:name => 'Gruppe 3', :password => 'E2Ia9mEA', :password_confirmation => 'E2Ia9mEA')

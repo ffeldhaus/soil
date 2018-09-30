@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import templateString from './login.component.html'
 
@@ -11,6 +12,7 @@ import { AuthenticationService } from '../../shared/services/authentication.serv
 export class LoginComponent {
   constructor(
       private router: Router,
+      private route: ActivatedRoute,
       private authenticationService: AuthenticationService
   ) {
   }
@@ -19,15 +21,20 @@ export class LoginComponent {
   username: string;
   password: string;
 
+  ngOnInit() {
+    // reset login status
+    this.authenticationService.logout();
+
+    this.gameId = Number(this.route.snapshot.queryParamMap.get('gameId'));
+  }
+
   login(): void {
     this.authenticationService.login(this.gameId, this.username, this.password)
         .subscribe(
             data => {
-              console.log("data")
-              this.router.navigate(['/game']);
+              this.router.navigate(['/']);
             },
             error => {
-              console.log("error")
               alert(error);
             });
   }

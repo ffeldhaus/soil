@@ -4,6 +4,9 @@ import {NgModule} from '@angular/core';
 
 import {SharedModule} from "./modules/shared/shared.module";
 
+import {GameAuthGuard} from "./guards/game-auth.guard";
+import {AppAuthGuard} from "./guards/app-auth.guard";
+
 import {AppComponent} from './app.component';
 import {AppRouting} from './app.routing';
 
@@ -17,7 +20,13 @@ import {AppRouting} from './app.routing';
     AppRouting,
     BrowserAnimationsModule,
   ],
-  bootstrap: [AppComponent]
+  providers: [
+    GameAuthGuard,
+    AppAuthGuard
+  ],
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule {
 }

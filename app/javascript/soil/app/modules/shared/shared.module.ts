@@ -12,15 +12,21 @@ import {
 } from '@angular/common/http';
 
 import {
-  MatCardModule,
   MatToolbarModule,
   MatButtonModule,
+  MatSidenavModule,
+  MatIconModule,
+  MatListModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatTabsModule,
+  MatDialogModule
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {AuthenticationService} from "./services/authentication.service";
-import {AuthGuard} from './guards/auth.guard';
 import {AuthInterceptor} from './interceptors/auth.interceptor';
 import {ErrorInterceptor} from './interceptors/error.interceptor';
 
@@ -33,7 +39,6 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
   ],
   declarations: [],
   providers: [
-    AuthGuard,
     AuthenticationService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
@@ -43,9 +48,16 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     RouterModule,
     HttpClientModule,
     HttpClientXsrfModule,
-    MatCardModule,
     MatToolbarModule,
     MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTabsModule,
+    MatDialogModule,
     FlexLayoutModule
   ],
 })

@@ -5,8 +5,12 @@ Rails.application.routes.draw do
   # Authenticate players, supervisors and admins
   post 'auth/login', to: 'authenticate#login'
 
-  resources :games, only: [:index]
+  resources :game
+  resources :player
+  resources :round
+  resources :field
+  resources :parcel
 
-  # redirect all unmateched GET requests to root
+  # redirect all unmatched GET requests to root
   get '*path', to: redirect('/')
 end

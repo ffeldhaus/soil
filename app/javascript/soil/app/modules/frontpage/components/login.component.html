@@ -2,21 +2,24 @@
     <mat-card>
         <mat-card-title>Anmelden</mat-card-title>
         <mat-card-content>
-            <div fxLayout="column" fxLayoutAlign="start start">
-                <mat-form-field>
-                    <input matInput required placeholder="Spiel ID" [(ngModel)]="gameId" name="gameId" type="number"
-                           length="10" hintLabel="Spiel ID wird durch Spielleiter bereitgestellt">
-                </mat-form-field>
-                <mat-form-field>
-                    <input matInput required placeholder="Benutzername" [(ngModel)]="username" name="username">
-                </mat-form-field>
-                <mat-form-field>
-                    <input matInput required placeholder="Passwort" [(ngModel)]="password" name="password"
-                           [type]="hide ? 'password' : 'text'">
-                    <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
-                </mat-form-field>
-                <button mat-raised-button (click)="login()">Anmelden</button>
-            </div>
+            <form>
+                <div fxLayout="column" fxLayoutAlign="start start">
+
+                    <mat-form-field>
+                        <input matInput required placeholder="Spiel ID" [(ngModel)]="gameId" name="gameId" type="number"
+                               length="10" hintLabel="Spiel ID wird durch Spielleiter bereitgestellt">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput required placeholder="Benutzername" [(ngModel)]="username" name="username">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput required placeholder="Passwort" [(ngModel)]="password" name="password"
+                               [type]="show ? 'text' : 'password'">
+                        <mat-icon matSuffix (click)="show = !show">{{show ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </mat-form-field>
+                    <button mat-raised-button (click)="login()">Anmelden</button>
+                </div>
+            </form>
         </mat-card-content>
     </mat-card>
 </div>
