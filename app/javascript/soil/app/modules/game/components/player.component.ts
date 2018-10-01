@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {MatTabChangeEvent} from '@angular/material';
 
 import templateString from './player.component.html';
 
@@ -19,11 +20,21 @@ export class PlayerComponent implements OnInit {
 
   player;
   rounds;
+  selectedRound: Round;
+
+  roundChanged(tabChangeEvent: MatTabChangeEvent) {
+    this.selectedRound = this.rounds[tabChangeEvent.index];
+  }
 
   ngOnInit() {
     // game is already loaded via resolver
     this.player = new Player(this.route.snapshot.data.player.data.attributes);
-    this.rounds = this.route.snapshot.data.player.included.map(round => new Round(round.attributes));
-    this.router.navigate(['round', this.rounds[0].id], {relativeTo: this.route})
+    this.rounds = this.route.snapshot.data.player.included.map(data => {
+      let round = new Round(data.attributes);
+      round.fieldId = data.relationships.field.data.id;
+      return round;
+    });
+    this.selectedRound = this.rounds[0];
+    this.router.navigate(['round', this.selectedRound.id], {relativeTo: this.route})
   }
 }

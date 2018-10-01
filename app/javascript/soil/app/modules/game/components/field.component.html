@@ -1,15 +1,30 @@
 <div id="container" #container class="ui-container">
-    <div class="parcel {{parcel.plantation | lowercase}} ui-selectable" *ngFor="let parcel of parcels" [attr.parcel-index]=parcel.id>
+    <div class="parcel {{parcel.plantation | lowercase}} ui-selectable" *ngFor="let parcel of parcels"
+         [attr.parcel-index]=parcel.id>
         {{parcel.plantation}}
     </div>
 </div>
-<div class="soil" *ngIf="show=='soil'">
-    <ol class="ui-selectable">
-        <li (click)="showParcelInformation(parcel)" style="background-size: 0; background-color: hsl({{1.5*parcel.soil-20}},100%,40%);" *ngFor="let parcel of rounds[selectedRound - 1].field.parcels"
-            class="ui-state-default">
+<div id="overlay">
+    <div *ngIf="overlay=='soil'">
+        <div class="parcel" *ngFor="let parcel of parcels" [ngStyle]="{'background-color': 'hsla(' + (1.5 * parcel.soil - 20)  + ',100%,40%,0.6)'}">
             {{parcel.soil}}%
-        </li>
-    </ol>
+        </div>
+    </div>
+    <div *ngIf="overlay=='nutrition'">
+        <div class="parcel" *ngFor="let parcel of parcels" [ngStyle]="{'background-color': 'hsla(' + (1.5 * parcel.nutrition - 20)  + ',100%,40%,0.6)'}">
+            {{parcel.nutrition}}%
+        </div>
+    </div>
+    <div *ngIf="overlay=='cropsequence'">
+        <div class="parcel {{parcel.cropsequence | lowercase }}" *ngFor="let parcel of parcels">
+            {{parcel.cropsequence}}
+        </div>
+    </div>
+    <div *ngIf="overlay=='harvest'">
+        <div class="parcel {{parcel.harvest | lowercase }}" *ngFor="let parcel of parcels">
+            {{parcel.harvest}}
+        </div>
+    </div>
 </div>
 <!--
 <div class="nutrition" *ngIf="show=='nutrition'">

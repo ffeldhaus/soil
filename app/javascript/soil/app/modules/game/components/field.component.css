@@ -6,12 +6,21 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     border: 1px solid black;
-    padding: 0 0 12% 0;
+    padding: 1% 0 11% 0;
     float: left;
     width: 12.5%;
     height: 0;
     font-size: 1em;
     text-align: center;
+}
+
+#overlay {
+    position: absolute;
+    z-index: 10;
+}
+
+#overlay .parcel {
+    padding: 5% 0 7% 0;
 }
 
 .parcel-selection {
@@ -65,4 +74,24 @@
 
 .zuckerrübe {
     background-image: url('../../../assets/images/zuckerruebe.jpg') !important;
+}
+
+.sehr_hoch, .gut {
+    background-image: url('../../../assets/images/sehr_hoch.jpg') !important;
+}
+
+.hoch {
+    background-image: url('../../../assets/images/hoch.jpg') !important;
+}
+
+.maessig, .ok {
+    background-image: url('../../../assets/images/maessig.jpg') !important;
+}
+
+.niedrig {
+    background-image: url('../../../assets/images/niedrig.jpg') !important;
+}
+
+.sehr_niedrig, .schlecht {
+    background-image: url('../../../assets/images/sehr_niedrig.jpg') !important;
 }

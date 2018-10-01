@@ -29,7 +29,7 @@ const gameRoutes: Routes = [
               {
                 path: 'field/:id',
                 component: FieldComponent,
-                resolve: { field: FieldResolver}
+                resolve: { field: FieldResolver},
               }
             ]
           }

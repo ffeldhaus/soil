@@ -32,6 +32,7 @@ export class FieldComponent implements OnInit, AfterViewInit {
   parcels;
   selectable;
   overlay;
+  plantations: String[] = ["Brachland", "Ackerbohne","Gerste","Hafer","Kartoffel","Mais","Roggen","Tiere","Weizen","Zuckerrübe"];
 
   @Input() fieldId: string;
 
@@ -46,12 +47,14 @@ export class FieldComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed with result', result);
-      let filteredParcels = this.parcels.filter(parcel => selectedParcelIds.includes(parcel.id.toString()));
-      console.log('Filtered parcels', filteredParcels);
-      filteredParcels.map(parcel => {
-        parcel.plantation = result;
-        this.parcelService.updateParcel(parcel).subscribe(result => console.log(result));
-      });
+      if (this.plantations.includes(result)) {
+        let filteredParcels = this.parcels.filter(parcel => selectedParcelIds.includes(parcel.id.toString()));
+        console.log('Filtered parcels', filteredParcels);
+        filteredParcels.map(parcel => {
+          parcel.plantation = result;
+          this.parcelService.updateParcel(parcel).subscribe(result => console.log(result));
+        });
+      }
     });
   }
 
