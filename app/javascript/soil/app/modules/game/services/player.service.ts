@@ -9,6 +9,6 @@ export class PlayerService {
   constructor(private http: HttpClient) { }
 
   getPlayer(id: string) {
-    return this.http.get<Response>(`/player/${id}`);
+    return this.http.get<Response>(`/api/v1/player/${id}`);
   }
 }

@@ -9,6 +9,6 @@ export class FieldService {
   constructor(private http: HttpClient) { }
 
   getField(id: string) {
-    return this.http.get<Response>(`/field/${id}`);
+    return this.http.get<Response>(`/api/v1/field/${id}`);
   }
 }

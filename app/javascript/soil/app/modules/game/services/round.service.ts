@@ -9,6 +9,6 @@ export class RoundService {
   constructor(private http: HttpClient) { }
 
   getRound(id: string) {
-    return this.http.get<Response>(`/round/${id}`);
+    return this.http.get<Response>(`/api/v1/round/${id}`);
   }
 }

@@ -31,6 +31,7 @@ export class FieldComponent implements OnInit, AfterViewInit {
   field;
   parcels;
   selectable;
+  overlay;
 
   @Input() fieldId: string;
 
@@ -56,6 +57,9 @@ export class FieldComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     // load field data for selected round
+    this.route.queryParams.subscribe(queryParams => {
+      this.overlay = queryParams['overlay'];
+    });
     this.field = new Field(this.route.snapshot.data.field.data.attributes);
     this.parcels = this.route.snapshot.data.field.included.map(
         parcel => new Parcel(parcel.attributes)

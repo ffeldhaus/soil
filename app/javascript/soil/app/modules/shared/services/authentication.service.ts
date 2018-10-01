@@ -8,7 +8,7 @@ export class AuthenticationService {
   constructor(private http: HttpClient) { }
 
   login(gameId: number, name: string, password: string) {
-    return this.http.post<any>('/auth/login', { game_id: gameId, name: name, password: password })
+    return this.http.post<any>('/api/v1/auth/login', { game_id: gameId, name: name, password: password })
         .pipe(map(result => {
           // login successful if there is an authentication token in the data element of the response
           if (result && result.access_token) {

@@ -12,10 +12,10 @@ export class ParcelService {
   }
 
   getParcel(id: number) {
-    return this.http.get<Response>(`/parcel/${id}`);
+    return this.http.get<Response>(`/api/v1/parcel/${id}`);
   }
 
   updateParcel(parcel: Parcel) {
-    return this.http.put<Response>(`/parcel/${parcel.id}`, {"plantation":parcel.plantation});
+    return this.http.put<Response>(`/api/v1/parcel/${parcel.id}`, {"plantation":parcel.plantation});
   }
 }

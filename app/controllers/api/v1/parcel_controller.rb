@@ -1,4 +1,4 @@
-class ParcelController < ApplicationController
+class Api::V1::ParcelController < ApplicationController
   wrap_parameters format: [:json]
 
   # PUT /parcel/X.json

@@ -1,4 +1,4 @@
-class GameController < ApplicationController
+class Api::V1::GameController < ApplicationController
   # GET /game/X.json
   def show
     @game = Game.find_by_id(params[:id])

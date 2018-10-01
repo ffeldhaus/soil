@@ -1,4 +1,4 @@
-class RoundController < ApplicationController
+class Api::V1::RoundController < ApplicationController
   # GET /round/X.json
   def show
     @round = Round.find_by_id(params[:id])

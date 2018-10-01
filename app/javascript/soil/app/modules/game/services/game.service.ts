@@ -9,6 +9,6 @@ export class GameService {
   constructor(private http: HttpClient) { }
 
   getGame(id: string) {
-    return this.http.get<Response>(`/game/${id}`);
+    return this.http.get<Response>(`/api/v1/game/${id}`);
   }
 }
