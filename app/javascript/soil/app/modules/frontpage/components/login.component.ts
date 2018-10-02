@@ -35,7 +35,7 @@ export class LoginComponent {
               this.router.navigate(['/']);
             },
             error => {
-              alert(error);
+              alert("Authentication failed");
             });
   }
 }
