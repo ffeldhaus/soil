@@ -1,4 +1,6 @@
-class ResultSerializer < ActiveModel::Serializer
+class ResultSerializer
+  include FastJsonapi::ObjectSerializer
+
   attributes :id, :machines, :organic,:weather, :vermin, :profit, :capital
   has_one :expense
   has_one :income

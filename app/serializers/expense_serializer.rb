@@ -1,4 +1,6 @@
-class ExpenseSerializer < ActiveModel::Serializer
+class ExpenseSerializer
+  include FastJsonapi::ObjectSerializer
+
   attributes :id, :sum
 
   has_one :seed

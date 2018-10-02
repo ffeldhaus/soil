@@ -1,3 +1,5 @@
-class RoundTrackerSerializer < ActiveModel::Serializer
+class RoundTrackerSerializer
+  include FastJsonapi::ObjectSerializer
+
   attributes :id, :current_round
 end
