@@ -1,31 +1,32 @@
+#container, #overlay {
+    height: 100vh;
+}
+
 .parcel {
     background-size: 100% auto;
     background-repeat: no-repeat;
     color: white;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+    text-shadow: -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
     border: 1px solid black;
-    padding: 1% 0 11% 0;
-    float: left;
-    width: 12.5%;
-    height: 0;
+    width: 20vh;
+    height: 20vh;
     font-size: 1em;
     text-align: center;
 }
 
+.parcel-selection {
+    padding-bottom: 17%;
+}
+
 #overlay {
     position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
     z-index: 10;
-}
-
-#overlay .parcel {
-    padding: 5% 0 7% 0;
-}
-
-.parcel-selection {
-    width: 20%;
-    padding-bottom: 19%;
 }
 
 .ui-selecting {
@@ -77,21 +78,25 @@
 }
 
 .sehr_hoch, .gut {
-    background-image: url('../../../assets/images/sehr_hoch.jpg') !important;
+    background-color: rgba(0, 219, 1, 0.6) !important;
 }
 
 .hoch {
-    background-image: url('../../../assets/images/hoch.jpg') !important;
+    background-color: rgba(183, 220, 54, 0.6) !important;
 }
 
 .maessig, .ok {
-    background-image: url('../../../assets/images/maessig.jpg') !important;
+    background-color: rgba(255, 213, 53, 0.6) !important;
 }
 
 .niedrig {
-    background-image: url('../../../assets/images/niedrig.jpg') !important;
+    background-color: rgba(255, 107, 0, 0.6) !important;
 }
 
 .sehr_niedrig, .schlecht {
-    background-image: url('../../../assets/images/sehr_niedrig.jpg') !important;
+    background-color: rgba(188, 26, 5, 0.6) !important;
+}
+
+.keine, .keiner {
+    background-color: rgba(156, 156, 156, 0.6) !important;
 }

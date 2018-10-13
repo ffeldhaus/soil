@@ -1,6 +1,7 @@
 export class Game {
   id: string;
   name: string;
+  currentRound: number;
   gameId: number;
   accessToken: string;
   expires: Date;

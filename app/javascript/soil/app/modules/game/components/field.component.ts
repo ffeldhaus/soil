@@ -1,5 +1,5 @@
 import {Component, Input, ViewChild, ElementRef, OnInit, AfterViewInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {MatDialog} from '@angular/material';
 
 import Selectable from 'selectable.js';
@@ -24,17 +24,38 @@ export class FieldComponent implements OnInit, AfterViewInit {
       private parcelService: ParcelService,
       public dialog: MatDialog
   ) {
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.ngOnInit();
+      }
+    });
   }
 
   @ViewChild('container') container: ElementRef;
 
+  navigationSubscription;
   field;
   parcels;
   selectable;
   overlay;
-  plantations: String[] = ["Brachland", "Ackerbohne","Gerste","Hafer","Kartoffel","Mais","Roggen","Tiere","Weizen","Zuckerrübe"];
+  plantations: String[] = ["Brachland", "Ackerbohne", "Gerste", "Hafer", "Kartoffel", "Mais", "Roggen", "Tiere", "Weizen", "Zuckerrübe"];
 
   @Input() fieldId: string;
+
+  ngOnInit() {
+    console.log("Initializing field");
+    // load field data for selected round
+    this.route.queryParams.subscribe(queryParams => {
+      this.overlay = queryParams['overlay'];
+    });
+    this.field = new Field(this.route.snapshot.data.field.data.attributes);
+    this.parcels = this.route.snapshot.data.field.included.map(
+        parcel => new Parcel(parcel.attributes)
+    ).sort(
+        (a, b) => a.number - b.number
+    );
+  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(PlantationDialogComponent, {
@@ -42,7 +63,7 @@ export class FieldComponent implements OnInit, AfterViewInit {
       maxWidth: 1024
     });
 
-    let selectedParcelIds = this.selectable.getSelectedItems().map(item => item.node.attributes[1].value);
+    let selectedParcelIds = this.selectable.getSelectedNodes().map(node => node.getAttribute('parcel-index'));
     console.log("Selected parcel IDs: ", selectedParcelIds);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -52,23 +73,14 @@ export class FieldComponent implements OnInit, AfterViewInit {
         console.log('Filtered parcels', filteredParcels);
         filteredParcels.map(parcel => {
           parcel.plantation = result;
-          this.parcelService.updateParcel(parcel).subscribe(result => console.log(result));
+          this.parcelService.updateParcel(parcel).subscribe(response => {
+                console.log(response);
+                parcel = response.data.attributes;
+              },
+              error => console.log(error));
         });
       }
     });
-  }
-
-  ngOnInit() {
-    // load field data for selected round
-    this.route.queryParams.subscribe(queryParams => {
-      this.overlay = queryParams['overlay'];
-    });
-    this.field = new Field(this.route.snapshot.data.field.data.attributes);
-    this.parcels = this.route.snapshot.data.field.included.map(
-        parcel => new Parcel(parcel.attributes)
-    ).sort(
-        (a,b) => a.number-b.number
-    );
   }
 
   selectPlantation() {

@@ -3,6 +3,11 @@ class CreateRounds < ActiveRecord::Migration[5.2]
     create_table :rounds do |t|
       t.integer :number
       t.boolean :submitted
+      t.integer :machines
+      t.boolean :organic
+      t.boolean :pesticide
+      t.boolean :fertilize
+      t.boolean :organisms
       t.references :player, index: true
       t.references :game, index: true
 

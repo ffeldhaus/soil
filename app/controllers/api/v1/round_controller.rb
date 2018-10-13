@@ -1,7 +1,34 @@
 class Api::V1::RoundController < ApplicationController
+  def index
+    current_user.game.start_new_round
+    @rounds = current_user.rounds
+    render json: RoundSerializer.new(@rounds).serialized_json
+  end
+
   # GET /round/X.json
   def show
-    @round = Round.find_by_id(params[:id])
-    render json: RoundSerializer.new(@round).serialized_json
+    @round = current_user.rounds.find_by_id(params[:id])
+    if @round
+      render json: RoundSerializer.new(@round).serialized_json
+    else
+      render json: {error: "Access to round with ID #{params[:id]} not allowed"}, status: :forbidden
+    end
   end
+
+  def update
+    @round = current_user.rounds.find_by_id(params[:id])
+    if @round
+      @round.update!(parameters)
+      render json: RoundSerializer.new(@round).serialized_json
+    else
+      render json: {error: "Access to round with ID #{params[:id]} not allowed"}, status: :forbidden
+    end
+  end
+
+  private
+
+  def parameters
+    params.permit(:fertilize, :pesticide, :organisms, :organic, :machines, :submitted)
+  end
+
 end

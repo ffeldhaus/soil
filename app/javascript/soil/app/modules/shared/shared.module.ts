@@ -1,5 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 import {
   RouterModule
@@ -21,7 +22,9 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatTabsModule,
-  MatDialogModule
+  MatDialogModule,
+  MatCheckboxModule,
+  MatSelectModule
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -44,6 +47,8 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
   ],
   exports: [
+    FormsModule,
+    ReactiveFormsModule,
     CommonModule,
     RouterModule,
     HttpClientModule,
@@ -58,6 +63,8 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     MatInputModule,
     MatTabsModule,
     MatDialogModule,
+    MatCheckboxModule,
+    MatSelectModule,
     FlexLayoutModule
   ],
 })

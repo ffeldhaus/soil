@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       post 'auth/login', to: 'authenticate#login'
       resources :game, only: :show
       resources :player, only: :show
-      resources :round, only: :show
+      resources :round, only: [:index, :show, :update]
       resources :field, only: :show
       resources :parcel, only: [:show, :update]
     end

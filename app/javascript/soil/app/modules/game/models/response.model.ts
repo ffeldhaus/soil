@@ -1,7 +1,5 @@
 export class Response {
-  responseTime: string;
   status: string;
-  apiVersion: string;
   deprecated: string;
   data: any;
 

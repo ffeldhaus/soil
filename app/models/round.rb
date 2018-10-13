@@ -2,10 +2,9 @@ class Round < ApplicationRecord
   belongs_to :player
   belongs_to :game
   has_one :field, :autosave => true, :dependent => :destroy
-  has_one :decision, :autosave => true, :dependent => :destroy
   has_one :result, :autosave => true, :dependent => :destroy
 
-  accepts_nested_attributes_for :field, :decision
+  accepts_nested_attributes_for :field
 
   MACHINE_AGING = 5
 
@@ -125,11 +124,17 @@ class Round < ApplicationRecord
   HARVEST_WHEAT = {false => 15, true => 17}
   HARVEST_BEET = {false => 2, true => 2.5}
 
-  after_initialize do
+  after_initialize :set_defaults, :if => :new_record?
+
+  def set_defaults
     self.number ||= 1
     self.submitted = false if self.submitted.nil?
+    self.machines ||= '0'
+    self.organic ||= false
+    self.pesticide ||= false
+    self.fertilize ||= false
+    self.organisms ||= false
     self.save!
-    self.create_decision machines: '0', organic: false, pesticide: false, fertilize: false, organisms: false unless self.decision
     self.create_result machines: MACHINES, organic: 'false', weather: 'Normal', vermin: 'Keine' unless self.result
     self.create_field unless self.field
   end
@@ -142,8 +147,6 @@ class Round < ApplicationRecord
     current_round = rounds.find_by number: self.number - 1
     if rounds.length > 2
       previous_round = rounds.find_by number: self.number - 2
-    else
-      previous_round = Round.new(:number => 0)
     end
 
     ## overview
@@ -155,13 +158,13 @@ class Round < ApplicationRecord
       animals_per_parcel = 0
     end
     ### machines
-    if current_round.decision.machines.to_i > 0
-      self.result.machines = current_round.result.machines + current_round.decision.machines
+    if current_round.machines.to_i > 0
+      self.result.machines = current_round.result.machines + current_round.machines
     else
       self.result.machines = current_round.result.machines - MACHINE_AGING
     end
     ### organic
-    if current_round.decision.organic? and not current_round.decision.fertilize? and not current_round.decision.pesticide?
+    if current_round.organic? and not current_round.fertilize? and not current_round.pesticide?
       self.result.organic = true
     end
     ### weather
@@ -172,7 +175,9 @@ class Round < ApplicationRecord
     ### parcel evaluation
     self.field.parcels.each do |new_parcel|
       current_parcel = current_round.field.parcels.find_by number: new_parcel.number
-      previous_parcel = previous_round.field.parcels.find_by number: new_parcel.number
+      if (rounds.length > 2)
+        previous_parcel = previous_round.field.parcels.find_by number: new_parcel.number
+      end
 
       # copy values from parcel of current round to parcel of new round
       new_parcel.plantation = current_parcel.plantation
@@ -180,7 +185,11 @@ class Round < ApplicationRecord
       new_parcel.nutrition = current_parcel.nutrition
 
       # identify cropsequence
-      new_parcel.cropsequence = CROPSEQUENCE[current_parcel.plantation][previous_parcel.plantation]
+      if (rounds.length > 2)
+        new_parcel.cropsequence = CROPSEQUENCE[current_parcel.plantation][previous_parcel.plantation]
+      else
+        new_parcel.cropsequence = CROPSEQUENCE[current_parcel.plantation]["Brachland"]
+      end
 
       # calculate soil
       soil_factor = 0
@@ -202,15 +211,20 @@ class Round < ApplicationRecord
           soil_factor -= SOIL_PLANTATION
         end
         # Dünger
-        soil_factor -= SOIL_FERTILIZE if current_round.decision.fertilize
+        soil_factor -= SOIL_FERTILIZE if current_round.fertilize
         soil_factor -= ([animals_per_parcel, 1].max - 1) * SOIL_ANIMALS if animals_per_parcel > 0
         # Pflanzenschutz
-        soil_factor -= SOIL_PESTICIDE if current_round.decision.pesticide
+        soil_factor -= SOIL_PESTICIDE if current_round.pesticide
         # Maschineneinsatz
         soil_factor -= (0.01 * (self.result.machines - MACHINES)) * (0.01 * 2 * current_parcel.soil - 0.5) * SOIL_MACHINE
         # Monokultur
         round_counter = 0
-        monoculture = (current_parcel.plantation == previous_parcel.plantation)
+        if (rounds.length > 2)
+          monoculture = (current_parcel.plantation == previous_parcel.plantation)
+        else
+          monoculture = false
+        end
+
         while monoculture
           round_counter += 1
           if rounds.count > round_counter + 2
@@ -233,7 +247,7 @@ class Round < ApplicationRecord
         new_parcel.nutrition = NUTRITION if current_parcel.nutrition > NUTRITION
       else
         nutrition_factor = 0
-        nutrition_factor += NUTRITION_FERTILIZE if current_round.decision.fertilize
+        nutrition_factor += NUTRITION_FERTILIZE if current_round.fertilize
         nutrition_factor += animals_per_parcel * NUTRITION_ANIMALS
         nutrition_factor += NUTRITION_FIELDBEAN if current_parcel.plantation == 'Ackerbohne'
         # scale with previous soil (good soil helps nutrition uptake) and previous nutrition (good nutrition blocks nutrition uptake)
@@ -254,9 +268,9 @@ class Round < ApplicationRecord
         harvest *= HARVEST_WEATHER[current_parcel.plantation][self.result.weather] unless self.result.weather == 'Normal'
         # Schädlinge
         if HARVEST_VERMIN[current_parcel.plantation][self.result.vermin]
-          if current_round.decision.pesticide
+          if current_round.pesticide
             harvest *= HARVEST_VERMIN_PESTICIDE
-          elsif current_round.decision.organisms
+          elsif current_round.organisms
             harvest *= HARVEST_VERMIN_ORGANISM
           else
             harvest *= HARVEST_VERMIN_WITHOUT
@@ -273,7 +287,12 @@ class Round < ApplicationRecord
         #end
         # Vorfrucht / Effizienz
         round_counter = 0
-        efficiency = (current_parcel.plantation == previous_parcel.plantation)
+        if (rounds.length > 2)
+          efficiency = (current_parcel.plantation == previous_parcel.plantation)
+        else
+          efficiency = false
+        end
+
         while efficiency
           round_counter += 1
           if rounds.count > round_counter + 2
@@ -315,31 +334,35 @@ class Round < ApplicationRecord
     # expenses
     ## seeds
     ### fieldbean
-    self.result.expense.seed.fieldbean = current_round.field.parcels.where(plantation: 'Ackerbohne').count * SEED_FIELDBEAN[current_round.decision.organic]
+    self.result.expense.seed.fieldbean = current_round.field.parcels.where(plantation: 'Ackerbohne').count * SEED_FIELDBEAN[current_round.organic]
     ### barley
-    self.result.expense.seed.barley = current_round.field.parcels.where(plantation: 'Gerste').count * SEED_BARLEY[current_round.decision.organic]
+    self.result.expense.seed.barley = current_round.field.parcels.where(plantation: 'Gerste').count * SEED_BARLEY[current_round.organic]
     ### oat
-    self.result.expense.seed.oat = current_round.field.parcels.where(plantation: 'Hafer').count * SEED_OAT[current_round.decision.organic]
+    self.result.expense.seed.oat = current_round.field.parcels.where(plantation: 'Hafer').count * SEED_OAT[current_round.organic]
     ### potatoe
-    self.result.expense.seed.potatoe = current_round.field.parcels.where(plantation: 'Kartoffel').count * SEED_POTATOE[current_round.decision.organic]
+    self.result.expense.seed.potatoe = current_round.field.parcels.where(plantation: 'Kartoffel').count * SEED_POTATOE[current_round.organic]
     ### corn
-    self.result.expense.seed.corn = current_round.field.parcels.where(plantation: 'Mais').count * SEED_CORN[current_round.decision.organic]
+    self.result.expense.seed.corn = current_round.field.parcels.where(plantation: 'Mais').count * SEED_CORN[current_round.organic]
     ### rye
-    self.result.expense.seed.rye = current_round.field.parcels.where(plantation: 'Roggen').count * SEED_RYE[current_round.decision.organic]
+    self.result.expense.seed.rye = current_round.field.parcels.where(plantation: 'Roggen').count * SEED_RYE[current_round.organic]
     ### wheat
-    self.result.expense.seed.wheat = current_round.field.parcels.where(plantation: 'Weizen').count * SEED_WHEAT[current_round.decision.organic]
+    self.result.expense.seed.wheat = current_round.field.parcels.where(plantation: 'Weizen').count * SEED_WHEAT[current_round.organic]
     ### beet
-    self.result.expense.seed.beet = current_round.field.parcels.where(plantation: 'Zuckerruebe').count * SEED_BEET[current_round.decision.organic]
+    self.result.expense.seed.beet = current_round.field.parcels.where(plantation: 'Zuckerruebe').count * SEED_BEET[current_round.organic]
     ### seed sum
     self.result.expense.seed.sum = self.result.expense.seed.fieldbean + self.result.expense.seed.barley + self.result.expense.seed.oat + self.result.expense.seed.potatoe + self.result.expense.seed.corn + self.result.expense.seed.rye + self.result.expense.seed.wheat + self.result.expense.seed.beet
     ## save seeds
     self.result.expense.seed.save
     ## investments
     ### animals
-    existing_animals = previous_round.field.parcels.select { |parcel| parcel.plantation=='Tiere' }.count
+    if (rounds.length > 2)
+      existing_animals = previous_round.field.parcels.select { |parcel| parcel.plantation=='Tiere' }.count
+    else
+      existing_animals = 0
+    end
     self.result.expense.investment.animals = [animals-existing_animals, 0].max * INVESTMENT_ANIMALS
     ### machines
-    self.result.expense.investment.machines = 0.1 * current_round.decision.machines * INVESTMENT_MACHINES
+    self.result.expense.investment.machines = 0.1 * current_round.machines * INVESTMENT_MACHINES
     ### sum
     self.result.expense.investment.sum = self.result.expense.investment.animals +
         self.result.expense.investment.machines
@@ -347,17 +370,17 @@ class Round < ApplicationRecord
     self.result.expense.investment.save
     ## running costs
     ### organic control
-    self.result.expense.running_cost.organic_control = RUNNINGCOSTS_ORGANIC_CONTROL if current_round.decision.organic
+    self.result.expense.running_cost.organic_control = RUNNINGCOSTS_ORGANIC_CONTROL if current_round.organic
     ### fertilize
-    self.result.expense.running_cost.fertilize = 40 * RUNNINGCOSTS_FERTILIZE if current_round.decision.fertilize
+    self.result.expense.running_cost.fertilize = 40 * RUNNINGCOSTS_FERTILIZE if current_round.fertilize
     ### pesticide
-    self.result.expense.running_cost.pesticide = 40 * RUNNINGCOSTS_PESTICIDE if current_round.decision.pesticide
+    self.result.expense.running_cost.pesticide = 40 * RUNNINGCOSTS_PESTICIDE if current_round.pesticide
     ### organisms
-    self.result.expense.running_cost.organisms = 40 * RUNNINGCOSTS_ORGANISMS if current_round.decision.organisms
+    self.result.expense.running_cost.organisms = 40 * RUNNINGCOSTS_ORGANISMS if current_round.organisms
     ### animals
     self.result.expense.running_cost.animals = animals * RUNNINGCOSTS_ANIMALS
     ### basic cost
-    self.result.expense.running_cost.base = 40 * RUNNINGCOSTS_BASE[current_round.decision.organic] * (0.01 * self.result.machines)**0.4
+    self.result.expense.running_cost.base = 40 * RUNNINGCOSTS_BASE[current_round.organic] * (0.01 * self.result.machines)**0.4
     ### sum
     self.result.expense.running_cost.sum = self.result.expense.running_cost.organic_control +
         self.result.expense.running_cost.fertilize +

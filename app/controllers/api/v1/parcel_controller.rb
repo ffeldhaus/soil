@@ -9,12 +9,15 @@ class Api::V1::ParcelController < ApplicationController
   def update
     logger.info params
     @parcel = Parcel.find_by_id(params[:id])
-
-    if @allowed_plantations.include?(params[:plantation])
-      @parcel.update!(plantation: params[:plantation])
-      render json: ParcelSerializer.new(@parcel).serialized_json
+    if @parcel.field.round.submitted
+      render json: {error: "Round already submitted, cannot change parcel"}, status: :bad_request
     else
-      render json: { error: "Plantation #{params[:plantation]} not allowed" }, status: :bad_request
+      if @allowed_plantations.include?(params[:plantation])
+        @parcel.update!(plantation: params[:plantation])
+        render json: ParcelSerializer.new(@parcel).serialized_json
+      else
+        render json: {error: "Plantation #{params[:plantation]} not allowed"}, status: :bad_request
+      end
     end
   end
 end
