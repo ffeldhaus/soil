@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild, ElementRef, OnInit, AfterViewInit} from '@angular/core';
+import {Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewChecked} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {MatDialog} from '@angular/material';
 
@@ -17,7 +17,7 @@ import {Parcel} from "../models/parcel.model";
 @Component({
   template: templateString
 })
-export class FieldComponent implements OnInit, AfterViewInit {
+export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(
       private router: Router,
       private route: ActivatedRoute,
@@ -55,6 +55,15 @@ export class FieldComponent implements OnInit, AfterViewInit {
     ).sort(
         (a, b) => a.number - b.number
     );
+    // TODO: need a better way to handle this instead of checking for an existing object in ngOnInit
+    if (this.selectable) {
+      this.selectable.destroy();
+    }
+    this.selectable = new Selectable();
+    if (!this.field.submitted) {
+      console.log("initializing selectable");
+      this.selectable.on("selectable.end", () => this.selectPlantation());
+    }
   }
 
   openDialog(): void {
@@ -80,6 +89,7 @@ export class FieldComponent implements OnInit, AfterViewInit {
               error => console.log(error));
         });
       }
+      this.selectable.clear();
     });
   }
 
@@ -88,10 +98,15 @@ export class FieldComponent implements OnInit, AfterViewInit {
     this.openDialog();
   }
 
-  ngAfterViewInit() {
-    this.selectable = new Selectable({
-      appendTo: this.container.nativeElement
-    });
-    this.selectable.on("selectable.end", () => this.selectPlantation());
+  ngAfterViewChecked() {
+    //TODO: Check if there is a better hook to identify that container has changed
+    if (this.selectable) {
+      this.selectable.setContainer(this.container.nativeElement);
+    }
+  }
+
+  ngOnDestroy() {
+    this.selectable.destroy();
+    this.navigationSubscription.unsubscribe();
   }
 }

@@ -1,54 +1,30 @@
-<div fxLayout="column wrap" fxLayoutAlign="center center" id="container" #container class="ui-container">
-    <div fxFlex="20" class="parcel {{parcel.plantation | lowercase}} ui-selectable" *ngFor="let parcel of parcels"
-         [attr.parcel-index]=parcel.id>
-        {{parcel.plantation}}
-    </div>
-</div>
-<div *ngIf="overlay" id="overlay">
-    <div style="height: 100vh;" fxLayout="column wrap" fxLayoutAlign="center center" *ngIf="overlay=='soil'">
-        <div fxFlex="20" class="parcel" *ngFor="let parcel of parcels" [ngStyle]="{'background-color': 'hsla(' + (1.5 * parcel.soil - 20)  + ',100%,40%,0.6)'}">
-            {{parcel.soil}}%
+<div style="position: relative">
+    <div fxLayout="row wrap" fxLayoutAlign="center center" id="container" #container class="ui-container">
+        <div fxFlex="12.5" class="parcel {{parcel.plantation | lowercase}} ui-selectable" *ngFor="let parcel of parcels"
+             [attr.parcel-index]=parcel.id>
+            <div class="parcel-content">{{parcel.plantation}}</div>
         </div>
     </div>
-    <div style="height: 100vh;" fxLayout="column wrap" fxLayoutAlign="center center" *ngIf="overlay=='nutrition'">
-        <div fxFlex="20" class="parcel" *ngFor="let parcel of parcels" [ngStyle]="{'background-color': 'hsla(' + (1.5 * parcel.nutrition - 20)  + ',100%,40%,0.6)'}">
-            {{parcel.nutrition}}%
+    <div fxLayout="row wrap" fxLayoutAlign="center center" *ngIf="overlay=='soil'" class="overlay">
+        <div fxFlex="12.5" class="parcel" *ngFor="let parcel of parcels"
+             [ngStyle]="{'background-color': 'hsla(' + (1.5 * parcel.soil - 20)  + ',100%,40%,0.6)'}">
+            <div class="parcel-content">{{parcel.soil}}%</div>
         </div>
     </div>
-    <div style="height: 100vh;" fxLayout="column wrap" fxLayoutAlign="center center" *ngIf="overlay=='cropsequence'">
-        <div fxFlex="20" class="parcel {{parcel.cropsequence | lowercase }}" *ngFor="let parcel of parcels">
-            {{parcel.cropsequence}}
+    <div fxLayout="row wrap" fxLayoutAlign="center center" *ngIf="overlay=='nutrition'" class="overlay">
+        <div fxFlex="12.5" class="parcel" *ngFor="let parcel of parcels"
+             [ngStyle]="{'background-color': 'hsla(' + (1.5 * parcel.nutrition - 20)  + ',100%,40%,0.6)'}">
+            <div class="parcel-content">{{parcel.nutrition}}%</div>
         </div>
     </div>
-    <div style="height: 100vh;" fxLayout="column wrap" fxLayoutAlign="center center" *ngIf="overlay=='harvest'">
-        <div fxFlex="20" class="parcel {{parcel.harvest | lowercase }}" *ngFor="let parcel of parcels">
-            {{parcel.harvest}}
+    <div fxLayout="row wrap" fxLayoutAlign="center center" *ngIf="overlay=='cropsequence'" class="overlay">
+        <div fxFlex="12.5" class="parcel {{parcel.cropsequence | lowercase }}" *ngFor="let parcel of parcels">
+            <div class="parcel-content">{{parcel.cropsequence}}</div>
+        </div>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="center center" *ngIf="overlay=='harvest'" class="overlay">
+        <div fxFlex="12.5" class="parcel {{parcel.harvest | lowercase }}" *ngFor="let parcel of parcels">
+            <div class="parcel-content">{{parcel.harvest}}</br><div>({{parcel.harvestYield}} dT)</div></div>
         </div>
     </div>
 </div>
-<!--
-<div class="nutrition" *ngIf="show=='nutrition'">
-    <ol class="ui-selectable">
-        <li (click)="showParcelInformation(parcel)" style="background-size: 0; background-color: hsl({{1.5*parcel.nutrition-20}},100%,40%);" *ngFor="let parcel of rounds[selectedRound - 1].field.parcels"
-            class="ui-state-default">
-            {{parcel.nutrition}}%
-        </li>
-    </ol>
-</div>
-<div class="cropsequence" *ngIf="show=='cropsequence'">
-    <ol class="ui-selectable">
-        <li (click)="showParcelInformation(parcel)" *ngFor="let parcel of rounds[selectedRound - 1].field.parcels"
-            class="{{parcel.cropsequence | lowercase}} ui-state-default">
-            {{parcel.cropsequence}}
-        </li>
-    </ol>
-</div>
-<div class="harvest" *ngIf="show=='harvest'">
-    <ol class="ui-selectable">
-        <li (click)="showParcelInformation(parcel)" *ngFor="let parcel of rounds[selectedRound - 1].field.parcels"
-            class="{{parcel.harvest | lowercase}} ui-state-default">
-            {{parcel.harvest.split('_').join(' ');}}</br><div style="line-height: 0em;">({{parcel.harvest_yield}} dT)</div>
-        </li>
-    </ol>
-</div>
--->

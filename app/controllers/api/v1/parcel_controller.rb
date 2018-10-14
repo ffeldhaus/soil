@@ -1,6 +1,8 @@
 class Api::V1::ParcelController < ApplicationController
   wrap_parameters format: [:json]
 
+  # TODO: Implement authentication check
+
   def initialize
     @allowed_plantations = %w(Brachland Ackerbohne Gerste Hafer Kartoffel Mais Roggen Tiere Weizen Zuckerrübe)
   end

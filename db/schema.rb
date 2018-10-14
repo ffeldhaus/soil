@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
 
   create_table "fields", force: :cascade do |t|
     t.integer "round_id"
+    t.boolean "submitted"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["round_id"], name: "index_fields_on_round_id"

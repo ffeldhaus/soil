@@ -1,7 +1,3 @@
-#container, #overlay {
-    height: 100vh;
-}
-
 .parcel {
     background-size: 100% auto;
     background-repeat: no-repeat;
@@ -11,22 +7,33 @@
     -1px 1px 0 #000,
     1px 1px 0 #000;
     border: 1px solid black;
-    width: 20vh;
-    height: 20vh;
-    font-size: 1em;
     text-align: center;
+    position: relative;
 }
 
-.parcel-selection {
-    padding-bottom: 17%;
+.parcel:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+    float: left;
 }
 
-#overlay {
+.parcel-content {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+.overlay {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     z-index: 10;
+}
+
+.overlay .parcel-content {
+    padding-top: 40%;
 }
 
 .ui-selecting {

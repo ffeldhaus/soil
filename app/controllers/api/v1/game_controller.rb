@@ -1,4 +1,7 @@
 class Api::V1::GameController < ApplicationController
+
+  # TODO: Implement authentication check
+
   # GET /game/X.json
   def show
     @game = Game.find_by_id(params[:id])

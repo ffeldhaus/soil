@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 import templateString from './round.component.html';
 
@@ -15,13 +15,7 @@ export class RoundComponent implements OnInit {
   constructor(
       private router: Router,
       private route: ActivatedRoute
-  ) {
-    this.navigationSubscription = this.router.events.subscribe((e: any) => {
-      // If it is a NavigationEnd event re-initalise the component
-      if (e instanceof NavigationEnd) {
-        this.ngOnInit();
-      }
-  })};
+  ) {}
 
   round;
   field;

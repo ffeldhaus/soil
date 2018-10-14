@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Sorte für Anbau auswählen</h1>
 <div fxLayout="row wrap" fxLayoutAlign="center center" mat-dialog-content>
-    <button fxFlex="20" class="parcel parcel-selection {{plantation | lowercase}}" *ngFor="let plantation of plantations" [mat-dialog-close]="plantation">
+    <button fxFlex="20" class="parcel {{plantation | lowercase}}" *ngFor="let plantation of plantations" [mat-dialog-close]="plantation">
         {{plantation}}
     </button>
 </div>
