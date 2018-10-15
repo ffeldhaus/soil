@@ -45,16 +45,30 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     console.log("Initializing field");
+    // TODO: Improve all of this!
     // load field data for selected round
     this.route.queryParams.subscribe(queryParams => {
       this.overlay = queryParams['overlay'];
     });
-    this.field = new Field(this.route.snapshot.data.field.data.attributes);
-    this.parcels = this.route.snapshot.data.field.included.map(
-        parcel => new Parcel(parcel.attributes)
-    ).sort(
-        (a, b) => a.number - b.number
-    );
+    if (this.field) {
+      if (this.field.id != this.route.snapshot.data.field.data.attributes.id) {
+        this.field = new Field(this.route.snapshot.data.field.data.attributes);
+        this.parcels = this.route.snapshot.data.field.included.map(
+            parcel => new Parcel(parcel.attributes)
+        ).sort(
+            (a, b) => a.number - b.number
+        );
+      }
+    }
+    else {
+      this.field = new Field(this.route.snapshot.data.field.data.attributes);
+      this.parcels = this.route.snapshot.data.field.included.map(
+          parcel => new Parcel(parcel.attributes)
+      ).sort(
+          (a, b) => a.number - b.number
+      );
+    }
+
     // TODO: need a better way to handle this instead of checking for an existing object in ngOnInit
     if (this.selectable) {
       this.selectable.destroy();
