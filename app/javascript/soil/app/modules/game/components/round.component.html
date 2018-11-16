@@ -1,1 +1,7 @@
+<nav mat-tab-nav-bar>
+    <a mat-tab-link *ngFor="let round of rounds"
+       [routerLink]="['..',round.id,'field',round.fieldId]"
+       (click)="this.selectedRound = round"
+       [active]="this.selectedRound == round">Runde {{round.number}}</a>
+</nav>
 <router-outlet></router-outlet>

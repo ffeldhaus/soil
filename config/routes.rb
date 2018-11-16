@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resources :game, only: :show
       resources :player, only: :show
       resources :round, only: [:index, :show, :update]
+      resources :result, only: [:index, :show]
       resources :field, only: :show
       resources :parcel, only: [:show, :update]
     end

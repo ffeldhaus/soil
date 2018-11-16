@@ -4,6 +4,7 @@ export class Game {
   currentRound: number;
   gameId: number;
   accessToken: string;
+  numberOfRounds: number;
   expires: Date;
 
   constructor(fields:Partial<Account>) {

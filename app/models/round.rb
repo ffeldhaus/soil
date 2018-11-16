@@ -99,7 +99,7 @@ class Round < ApplicationRecord
   SEED_FIELDBEAN = {false => -120, true => -144}
   SEED_BARLEY = {false => -68, true => -85}
   SEED_OAT = {false => -60, true => -75}
-  SEED_POTATOE = {false => -110, true => -133}
+  SEED_POTATO = {false => -110, true => -133}
   SEED_CORN = {false => -70, true => -84}
   SEED_RYE = {false => -76, true => -95}
   SEED_WHEAT = {false => -72, true => -90}
@@ -118,7 +118,7 @@ class Round < ApplicationRecord
   HARVEST_FIELDBEAN = {false => 18, true => 21}
   HARVEST_BARLEY = {false => 13, true => 14.5}
   HARVEST_OAT = {false => 12, true => 14}
-  HARVEST_POTATOE = {false => 4, true => 5}
+  HARVEST_POTATO = {false => 4, true => 5}
   HARVEST_CORN = {false => 15, true => 17}
   HARVEST_RYE = {false => 13, true => 14.5}
   HARVEST_WHEAT = {false => 15, true => 17}
@@ -134,8 +134,13 @@ class Round < ApplicationRecord
     self.pesticide ||= false
     self.fertilize ||= false
     self.organisms ||= false
+    if self.number == 1
+      self.confirmed = true
+    else
+      self.confirmed = false
+    end
     self.save!
-    self.create_result machines: MACHINES, organic: 'false', weather: 'Normal', vermin: 'Keine' unless self.result
+    self.create_result player: self.player.name, machines: MACHINES, organic: 'false', weather: 'Normal', vermin: 'Keine' unless self.result
     self.create_field unless self.field
   end
 
@@ -339,8 +344,8 @@ class Round < ApplicationRecord
     self.result.expense.seed.barley = current_round.field.parcels.where(plantation: 'Gerste').count * SEED_BARLEY[current_round.organic]
     ### oat
     self.result.expense.seed.oat = current_round.field.parcels.where(plantation: 'Hafer').count * SEED_OAT[current_round.organic]
-    ### potatoe
-    self.result.expense.seed.potatoe = current_round.field.parcels.where(plantation: 'Kartoffel').count * SEED_POTATOE[current_round.organic]
+    ### potato
+    self.result.expense.seed.potato = current_round.field.parcels.where(plantation: 'Kartoffel').count * SEED_POTATO[current_round.organic]
     ### corn
     self.result.expense.seed.corn = current_round.field.parcels.where(plantation: 'Mais').count * SEED_CORN[current_round.organic]
     ### rye
@@ -350,7 +355,7 @@ class Round < ApplicationRecord
     ### beet
     self.result.expense.seed.beet = current_round.field.parcels.where(plantation: 'Zuckerruebe').count * SEED_BEET[current_round.organic]
     ### seed sum
-    self.result.expense.seed.sum = self.result.expense.seed.fieldbean + self.result.expense.seed.barley + self.result.expense.seed.oat + self.result.expense.seed.potatoe + self.result.expense.seed.corn + self.result.expense.seed.rye + self.result.expense.seed.wheat + self.result.expense.seed.beet
+    self.result.expense.seed.sum = self.result.expense.seed.fieldbean + self.result.expense.seed.barley + self.result.expense.seed.oat + self.result.expense.seed.potato + self.result.expense.seed.corn + self.result.expense.seed.rye + self.result.expense.seed.wheat + self.result.expense.seed.beet
     ## save seeds
     self.result.expense.seed.save
     ## investments
@@ -404,8 +409,8 @@ class Round < ApplicationRecord
     self.result.income.harvest.barley = self.field.parcels.where(plantation: 'Gerste').collect { |parcel| parcel.harvest_yield }.inject(:+).to_i * HARVEST_BARLEY[self.result.organic]
     ### oat
     self.result.income.harvest.oat = self.field.parcels.where(plantation: 'Hafer').collect { |parcel| parcel.harvest_yield }.inject(:+).to_i * HARVEST_OAT[self.result.organic]
-    ### potatoe
-    self.result.income.harvest.potatoe = self.field.parcels.where(plantation: 'Kartoffel').collect { |parcel| parcel.harvest_yield }.inject(:+).to_i * HARVEST_POTATOE[self.result.organic]
+    ### potato
+    self.result.income.harvest.potato = self.field.parcels.where(plantation: 'Kartoffel').collect { |parcel| parcel.harvest_yield }.inject(:+).to_i * HARVEST_POTATO[self.result.organic]
     ### corn
     self.result.income.harvest.corn = self.field.parcels.where(plantation: 'Mais').collect { |parcel| parcel.harvest_yield }.inject(:+).to_i * HARVEST_CORN[self.result.organic]
     ### rye
@@ -418,7 +423,7 @@ class Round < ApplicationRecord
     self.result.income.harvest.sum = self.result.income.harvest.fieldbean +
         self.result.income.harvest.barley +
         self.result.income.harvest.oat +
-        self.result.income.harvest.potatoe +
+        self.result.income.harvest.potato +
         self.result.income.harvest.corn +
         self.result.income.harvest.rye +
         self.result.income.harvest.wheat +

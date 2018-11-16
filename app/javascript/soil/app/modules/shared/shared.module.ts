@@ -24,10 +24,13 @@ import {
   MatTabsModule,
   MatDialogModule,
   MatCheckboxModule,
-  MatSelectModule
+  MatSelectModule,
+  MatExpansionModule
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
+
+import { CheckmarkPipe } from './pipes/checkmark.pipe';
 
 import {AuthenticationService} from "./services/authentication.service";
 import {AuthInterceptor} from './interceptors/auth.interceptor';
@@ -40,7 +43,9 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     HttpClientModule,
     HttpClientXsrfModule
   ],
-  declarations: [],
+  declarations: [
+    CheckmarkPipe
+  ],
   providers: [
     AuthenticationService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
@@ -65,7 +70,9 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     MatDialogModule,
     MatCheckboxModule,
     MatSelectModule,
-    FlexLayoutModule
+    MatExpansionModule,
+    FlexLayoutModule,
+    CheckmarkPipe
   ],
 })
 export class SharedModule {

@@ -22,7 +22,7 @@ export class AppAuthGuard implements CanActivate {
         return true
       }
     }
-    this.router.navigate(['/frontpage/login']);
+    this.router.navigate(['/frontpage/overview']);
     return false
   }
 }

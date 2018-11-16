@@ -3,7 +3,7 @@ import {MatDialog, MatTabChangeEvent} from '@angular/material';
 import {ActivatedRoute, Router} from "@angular/router";
 
 import {timer} from 'rxjs';
-import {takeWhile, concatMap, map, filter, take, flatMap} from "rxjs/operators";
+import {concatMap, filter, take, flatMap, map} from "rxjs/operators";
 
 import templateString from './player.component.html';
 
@@ -15,6 +15,16 @@ import {User} from "../models/user.model";
 import {Response} from "../models/response.model";
 import {AuthenticationService} from "../../shared/services/authentication.service";
 import {RoundService} from "../services/round.service";
+import {NewRoundDialogComponent} from "./new-round-dialog.component";
+import {EndGameDialogComponent} from "./end-game-dialog.component";
+import {ResultService} from "../services/result.service";
+import {Result} from "../models/result.model";
+import {Income} from "../models/income.model";
+import {Harvest} from "../models/harvest.model";
+import {Expense} from "../models/expense.model";
+import {Seed} from "../models/seed.model";
+import {Investment} from "../models/investment.model";
+import {RunningCost} from "../models/running-cost.model";
 
 @Component({
   template: templateString
@@ -25,6 +35,7 @@ export class PlayerComponent implements OnInit {
       private route: ActivatedRoute,
       private authenticationService: AuthenticationService,
       private roundService: RoundService,
+      private resultService: ResultService,
       public dialog: MatDialog
   ) {
   }
@@ -32,6 +43,7 @@ export class PlayerComponent implements OnInit {
   currentUser: User;
   player;
   rounds;
+  result;
   selectedRound: Round;
   timer;
   submitted;
@@ -43,16 +55,54 @@ export class PlayerComponent implements OnInit {
 
     // game is already loaded via resolver
     this.player = new Player(this.route.snapshot.data.player.data.attributes);
-    this.rounds = this.route.snapshot.data.player.included.map(data => {
-      let round = new Round(data.attributes);
-      round.fieldId = data.relationships.field.data.id;
-      round.resultId = data.relationships.result.data.id;
-      return round;
-    });
+    console.log(this.route.snapshot.data.player);
+    this.rounds = this.route.snapshot.data.player.included.filter(included => included.type === "round").map(
+        data => {
+          let round = new Round(data.attributes);
+          round.fieldId = data.relationships.field.data.id;
+          round.resultId = data.relationships.result.data.id;
+          return round;
+        });
+
     if (this.rounds.every(round => round.submitted)) {
       this.submitted = true;
       this.waitForNewRound();
     }
+
+    // TODO: improve retrieving result
+    this.result = this.resultService.getResult(this.rounds[this.rounds.length - 1].resultId).subscribe(
+        response => {
+          let result = new Result(response.data.attributes);
+          let income = response.included.find(included => included.type === "income" && included.id === response.data.relationships.income.data.id);
+          result.income = new Income(income.attributes);
+          let harvest = response.included.find(included => included.type === "harvest" && included.id === income.relationships.harvest.data.id);
+          result.income.harvest = new Harvest(harvest.attributes);
+          let expense = response.included.find(included => included.type === "expense" && included.id === response.data.relationships.expense.data.id);
+          result.expense = new Expense(expense.attributes);
+          let seed = response.included.find(included => included.type === "seed" && included.id === expense.relationships.seed.data.id);
+          result.expense.seed = new Seed(seed.attributes);
+          let investment = response.included.find(included => included.type === "investment" && included.id === expense.relationships.investment.data.id);
+          result.expense.investment = new Investment(investment.attributes);
+          let running_cost = response.included.find(included => included.type === "running_cost" && included.id === expense.relationships.running_cost.data.id);
+          result.expense.running_cost = new RunningCost(running_cost.attributes);
+          let round = response.included.find(included => included.type === "round" && included.id === response.data.relationships.round.data.id);
+          result.round = new Round(round.attributes);
+          console.log("result");
+          console.log(result);
+
+          round = this.rounds[this.rounds.length - 1];
+
+          if (!round.confirmed) {
+            if (round.last) {
+              this.endGame(result)
+            }
+            else {
+              this.startNewRound(result)
+            }
+          }
+          this.router.navigate(['round', round.id], {relativeTo: this.route});
+        });
+
     this.selectedRound = this.rounds[this.rounds.length - 1];
     this.router.navigate(['round', this.selectedRound.id], {relativeTo: this.route})
   }
@@ -98,6 +148,69 @@ export class PlayerComponent implements OnInit {
       console.log("finished polling with result", round);
       this.rounds.push(round);
       this.selectedRound = round;
+      this.resultService.getResult(round.resultId).subscribe(
+          response => {
+            console.log("inside result");
+            let result = new Result(response.data.attributes);
+            let income = response.included.find(included => included.type === "income" && included.id === response.data.relationships.income.data.id);
+            result.income = new Income(income.attributes);
+            let harvest = response.included.find(included => included.type === "harvest" && included.id === income.relationships.harvest.data.id);
+            result.income.harvest = new Harvest(harvest.attributes);
+            let expense = response.included.find(included => included.type === "expense" && included.id === response.data.relationships.expense.data.id);
+            result.expense = new Expense(expense.attributes);
+            let seed = response.included.find(included => included.type === "seed" && included.id === expense.relationships.seed.data.id);
+            result.expense.seed = new Seed(seed.attributes);
+            let investment = response.included.find(included => included.type === "investment" && included.id === expense.relationships.investment.data.id);
+            result.expense.investment = new Investment(investment.attributes);
+            let running_cost = response.included.find(included => included.type === "running_cost" && included.id === expense.relationships.running_cost.data.id);
+            result.expense.running_cost = new RunningCost(running_cost.attributes);
+            let round = response.included.find(included => included.type === "round" && included.id === response.data.relationships.round.data.id);
+            result.round = new Round(round.attributes);
+
+            if (round.last) {
+              this.endGame(result)
+            }
+            else {
+              this.startNewRound(result)
+            }
+            this.router.navigate(['round', round.id], {relativeTo: this.route});
+          });
+    });
+  }
+
+  startNewRound(result: Result) {
+    const dialogRef = this.dialog.open(NewRoundDialogComponent, {
+      width: '80%',
+      maxWidth: 1024,
+      data: {result: result}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed with result', result);
+      let round = this.rounds[this.rounds.length - 1];
+      round.confirmed = true;
+      this.roundService.updateRound(round).subscribe(
+          response => {
+            console.log(response);
+          })
+    });
+  }
+
+  endGame(result: Result) {
+    const dialogRef = this.dialog.open(EndGameDialogComponent, {
+      width: '80%',
+      maxWidth: 1024,
+      data: {result: result}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed with result', result);
+      let round = this.rounds[this.rounds.length - 1];
+      round.confirmed = true;
+      this.roundService.updateRound(round).subscribe(
+          response => {
+            console.log(response);
+          })
     });
   }
 

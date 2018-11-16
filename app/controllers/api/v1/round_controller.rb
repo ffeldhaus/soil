@@ -1,5 +1,6 @@
 class Api::V1::RoundController < ApplicationController
   def index
+    # check if new round needs to be started
     current_user.game.start_new_round
     @rounds = current_user.rounds
     render json: RoundSerializer.new(@rounds).serialized_json
@@ -31,7 +32,7 @@ class Api::V1::RoundController < ApplicationController
   private
 
   def parameters
-    params.permit(:fertilize, :pesticide, :organisms, :organic, :machines, :submitted)
+    params.permit(:fertilize, :pesticide, :organisms, :organic, :machines, :submitted, :confirmed)
   end
 
 end

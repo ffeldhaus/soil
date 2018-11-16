@@ -2,7 +2,7 @@ class RoundSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
 
-  attributes :id, :number, :submitted, :machines, :organic, :pesticide, :fertilize, :organisms
+  attributes :id, :number, :submitted, :machines, :organic, :pesticide, :fertilize, :organisms, :confirmed
 
   has_one :field
   has_one :result

@@ -10,6 +10,8 @@ export class Round {
   organisms: boolean;
   fieldId: number;
   resultId: number;
+  confirmed: boolean;
+  last: boolean;
 
   constructor(fields:Partial<Round>) {
     Object.assign(this, fields);

@@ -29,11 +29,11 @@
                    [queryParams]="{overlay:'harvest'}" routerLinkActive="active" mat-button>
                     Ernteertrag
                 </a>
-                <a [routerLink]="['round',selectedRound.id,'finance',selectedRound.financeId]" routerLinkActive="active"
+                <a [routerLink]="['results']" routerLinkActive="active"
                    mat-button>
                     Finanzen
                 </a>
-                <button mat-button [disabled]="selectedRound.submitted" (click)="endRound()">
+                <button mat-button [disabled]="selectedRound.submitted || selectedRound.last" (click)="endRound()">
                     Runde abschicken
                 </button>
                 <button mat-button (click)="logout()">
@@ -65,30 +65,24 @@
                    [queryParams]="{overlay:'harvest'}" routerLinkActive="active" mat-list-item>
                     Ernteertrag
                 </a>
-                <a [routerLink]="['round',selectedRound.id,'finance',selectedRound.financeId]" routerLinkActive="active"
+                <a [routerLink]="['results']" routerLinkActive="active"
                    mat-list-item>
                     Finanzen
                 </a>
-                <a mat-list-item (click)="endRound()">
+                <button mat-list-item [disabled]="selectedRound.submitted || selectedRound.last" (click)="endRound()">
                     Runde abschicken
-                </a>
-                <a mat-list-item (click)="logout()">
+                </button>
+                <button mat-list-item (click)="logout()">
                     Logout
-                </a>
-                <a (click)="sidenav.toggle()" mat-list-item>
+                </button>
+                <button (click)="sidenav.toggle()" mat-list-item>
                     <mat-icon>close</mat-icon>
                     Close
-                </a>
+                </button>
             </mat-nav-list>
         </mat-sidenav>
         <mat-sidenav-content fxLayout="row" fxLayoutAlign="center start">
             <div fxFlex="0 1 130vh" fxLayout="column" fxLayoutAlign="center stretch">
-                <nav mat-tab-nav-bar>
-                    <a mat-tab-link *ngFor="let round of rounds"
-                       [routerLink]="['round',round.id,'field',round.fieldId]"
-                       (click)="this.selectedRound = round"
-                       [active]="this.selectedRound == round">Runde {{round.number}}</a>
-                </nav>
                 <router-outlet></router-outlet>
             </div>
         </mat-sidenav-content>

@@ -12,13 +12,16 @@ import {Field} from "../models/field.model";
 export class RoundComponent implements OnInit {
 
   navigationSubscription;
+
   constructor(
       private router: Router,
       private route: ActivatedRoute
-  ) {}
+  ) {
+  }
 
   round;
   field;
+  rounds;
 
   ngOnInit() {
     console.log("Initializing round");
@@ -28,5 +31,12 @@ export class RoundComponent implements OnInit {
     if (!this.router.url.includes('field')) {
       this.router.navigate(['field', this.field.id], {relativeTo: this.route})
     }
+    this.rounds = this.route.parent.snapshot.data.player.included.filter(included => included.type === "round").map(
+        data => {
+          let round = new Round(data.attributes);
+          round.fieldId = data.relationships.field.data.id;
+          round.resultId = data.relationships.result.data.id;
+          return round;
+        });
   }
 }

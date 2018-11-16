@@ -5,7 +5,7 @@ class CreateHarvests < ActiveRecord::Migration[5.2]
       t.integer :fieldbean
       t.integer :barley
       t.integer :oat
-      t.integer :potatoe
+      t.integer :potato
       t.integer :corn
       t.integer :rye
       t.integer :wheat

@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
 
   create_table "games", force: :cascade do |t|
     t.integer "current_round"
+    t.integer "number_of_rounds"
     t.string "name"
     t.string "weather"
     t.string "vermin"
@@ -55,7 +56,7 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "fieldbean"
     t.integer "barley"
     t.integer "oat"
-    t.integer "potatoe"
+    t.integer "potato"
     t.integer "corn"
     t.integer "rye"
     t.integer "wheat"
@@ -116,6 +117,7 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.string "vermin"
     t.integer "profit"
     t.integer "capital"
+    t.string "player"
     t.integer "round_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -125,6 +127,8 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
   create_table "rounds", force: :cascade do |t|
     t.integer "number"
     t.boolean "submitted"
+    t.boolean "confirmed"
+    t.boolean "last"
     t.integer "machines"
     t.boolean "organic"
     t.boolean "pesticide"
@@ -157,7 +161,7 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "fieldbean"
     t.integer "barley"
     t.integer "oat"
-    t.integer "potatoe"
+    t.integer "potato"
     t.integer "corn"
     t.integer "rye"
     t.integer "wheat"

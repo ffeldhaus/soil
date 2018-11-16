@@ -84,6 +84,10 @@
     background-image: url('../../../assets/images/zuckerruebe.jpg') !important;
 }
 
+.zuckerruebe {
+    background-image: url('../../../assets/images/zuckerruebe.jpg') !important;
+}
+
 .sehr_hoch, .gut {
     background-color: rgba(0, 219, 1, 0.6) !important;
 }
