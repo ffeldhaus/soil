@@ -7,6 +7,7 @@ class CreateResults < ActiveRecord::Migration[5.2]
       t.string  :vermin
       t.integer :profit
       t.integer :capital
+      t.string :player
       t.references :round, index: true
 
       t.timestamps
