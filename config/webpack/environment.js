@@ -21,7 +21,8 @@ environment.loaders.append('html', {
 environment.loaders.get('sass').use.splice(-1, 0, {
     loader: 'resolve-url-loader',
     options: {
-        attempts: 1
+        attempts: 1,
+        includePaths: ['./node_modules']
     }
 });
 
