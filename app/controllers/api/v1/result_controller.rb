@@ -2,7 +2,7 @@ class Api::V1::ResultController < ApplicationController
   # GET /result
   def index
     @game = current_user.game
-    @finished_rounds = @game.rounds.where("number < ?", @game.current_round)
+    @finished_rounds = @game.rounds.where("number <= ?", @game.current_round)
     @results = @finished_rounds.map { |round| round.result }
     options = {}
     options[:include] = [:round, :expense, :income, :'expense.seed', :'expense.investment', :'expense.running_cost', :'income.harvest']

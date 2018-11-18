@@ -6,6 +6,7 @@ html {
 body {
     margin: 0;
     height: 100vh;
+    overscroll-behavior-y: none;
 }
 
 .fill-remaining-space {
@@ -57,4 +58,25 @@ body {
     background-color: white;
     border: 1px solid black;
     margin: 1px;
+}
+
+.mat-tab-label-active {
+    opacity: 1;
+}
+
+.result table {
+    width: 98%;
+}
+
+.result td {
+    width: 100px;
+    text-align: right;
+}
+
+.mat-expansion-panel-body {
+    padding: 0;
+}
+
+.mat-expansion-panel-header {
+    padding-right: 0;
 }

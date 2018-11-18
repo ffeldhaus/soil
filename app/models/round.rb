@@ -138,6 +138,7 @@ class Round < ApplicationRecord
       self.confirmed = true
     else
       self.confirmed = false
+      self.last = false
     end
     self.save!
     self.create_result player: self.player.name, machines: MACHINES, organic: 'false', weather: 'Normal', vermin: 'Keine' unless self.result

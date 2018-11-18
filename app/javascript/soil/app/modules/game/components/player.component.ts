@@ -47,8 +47,10 @@ export class PlayerComponent implements OnInit {
   selectedRound: Round;
   timer;
   submitted;
+  display;
 
   ngOnInit() {
+    this.display = 'field';
     this.timer = timer(0, 10000);
 
     this.currentUser = new User(JSON.parse(localStorage.getItem('currentUser')));

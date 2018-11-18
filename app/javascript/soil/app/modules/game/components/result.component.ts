@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 
 import templateString from './result.component.html';
 import {Result} from "../models/result.model";
@@ -16,12 +16,19 @@ import {Round} from "../models/round.model";
 })
 export class ResultComponent implements OnInit {
 
-  navigationSubscription;
   constructor(
       private router: Router,
       private route: ActivatedRoute
-  ) {}
+  ) {
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.ngOnInit();
+      }
+    });
+  }
 
+  navigationSubscription;
   results;
   lastRoundWithResults;
   roundsWithResults;
@@ -47,14 +54,8 @@ export class ResultComponent implements OnInit {
       result.round = new Round(round.attributes);
       return result;
     });
-    this.roundsWithResults = this.route.parent.snapshot.data.player.included.filter(included => included.type === "round" && included.attributes.submitted).map(
-        data => {
-          let round = new Round(data.attributes);
-          round.fieldId = data.relationships.field.data.id;
-          round.resultId = data.relationships.result.data.id;
-          return round;
-        });
-    this.selectedRound = this.roundsWithResults[this.roundsWithResults.length - 1];
+
+    this.selectedRound = this.route.parent.snapshot.data.round.attributes;
   }
 
   resultsOfSelectedRound() {

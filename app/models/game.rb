@@ -23,6 +23,7 @@ class Game < ApplicationRecord
         next_round = player.rounds.create(number: player.rounds.length + 1, game_id: self.id)
         if self.current_round == self.number_of_rounds
             next_round.last = true
+            next_round.save!
         end
         next_round.calculate_attributes
       end
