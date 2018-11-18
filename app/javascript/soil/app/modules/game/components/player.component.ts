@@ -139,8 +139,8 @@ export class PlayerComponent implements OnInit {
         concatMap(_ => this.roundService.getRounds()),
         flatMap((response: Response) => response.data.map(data => {
           let round = new Round(data.attributes);
-          round.fieldId = data.relationships.field.data.id;
-          round.resultId = data.relationships.result.data.id;
+          round.fieldId = Number(data.relationships.field.data.id);
+          round.resultId = Number(data.relationships.result.data.id);
           return round;
         })),
         filter((round: Round) => !round.submitted),
@@ -152,7 +152,7 @@ export class PlayerComponent implements OnInit {
       this.selectedRound = round;
       this.resultService.getResult(round.resultId).subscribe(
           response => {
-            console.log("inside result");
+            console.log("inside result of round");
             let result = new Result(response.data.attributes);
             let income = response.included.find(included => included.type === "income" && included.id === response.data.relationships.income.data.id);
             result.income = new Income(income.attributes);
@@ -169,13 +169,15 @@ export class PlayerComponent implements OnInit {
             let round = response.included.find(included => included.type === "round" && included.id === response.data.relationships.round.data.id);
             result.round = new Round(round.attributes);
 
-            if (round.last) {
+            console.log("round",result.round)
+
+            if (result.round.last) {
               this.endGame(result)
             }
             else {
               this.startNewRound(result)
             }
-            this.router.navigate(['round', round.id], {relativeTo: this.route});
+            this.router.navigate(['round', this.rounds[this.rounds.length-1].id, 'field', this.rounds[this.rounds.length-1].fieldId], {relativeTo: this.route});
           });
     });
   }

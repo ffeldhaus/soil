@@ -17,6 +17,7 @@ import {ResultComponent} from "./components/result.component"
 import {PlantationDialogComponent} from "./components/plantation-dialog.component";
 import {EndRoundDialogComponent} from "./components/end-round-dialog.component";
 import {NewRoundDialogComponent} from "./components/new-round-dialog.component";
+import {EndGameDialogComponent} from "./components/end-game-dialog.component";
 
 import {GameComponent} from './game.component';
 import {GameRouting} from './game.routing';
@@ -34,7 +35,8 @@ import {ResultResolver} from "./services/result-resolver.service";
     ResultComponent,
     PlantationDialogComponent,
     EndRoundDialogComponent,
-    NewRoundDialogComponent
+    NewRoundDialogComponent,
+    EndGameDialogComponent
   ],
   imports: [
     SharedModule,
@@ -57,7 +59,8 @@ import {ResultResolver} from "./services/result-resolver.service";
     FieldComponent,
     PlantationDialogComponent,
     EndRoundDialogComponent,
-    NewRoundDialogComponent
+    NewRoundDialogComponent,
+    EndGameDialogComponent
   ],
 })
 export class GameModule {
