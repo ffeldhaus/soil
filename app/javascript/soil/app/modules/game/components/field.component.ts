@@ -51,7 +51,8 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.route.queryParams.subscribe(queryParams => {
       this.overlay = queryParams['overlay'];
     });
-    this.route.params.subscribe(params =>
+    this.route.params.subscribe(params => {
+      if (!this.field || this.field.id != params['id']) {
         this.fieldService.getField(params['id']).subscribe(
             response => {
               this.field = new Field(response.data.attributes);
@@ -61,21 +62,17 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
                   (a, b) => a.number - b.number
               );
 
-              if (this.selectable) {
-                this.selectable.destroy();
-              }
-              this.selectable = new Selectable();
-              if (!this.field.submitted) {
+              if (!this.field.submitted && !this.route.parent.snapshot.data.round.attributes.last) {
+                if (this.selectable) {
+                  this.selectable.destroy();
+                }
+                this.selectable = new Selectable();
                 this.selectable.on("selectable.end", () => this.selectPlantation());
               }
             }
         )
-    );
-
-
-
-    // TODO: need a better way to handle this instead of checking for an existing object in ngOnInit
-
+      }
+    })
   }
 
   openDialog(): void {
@@ -113,7 +110,9 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy() {
-    this.selectable.destroy();
+    if (this.selectable) {
+      this.selectable.destroy();
+    }
     this.navigationSubscription.unsubscribe();
   }
 }
