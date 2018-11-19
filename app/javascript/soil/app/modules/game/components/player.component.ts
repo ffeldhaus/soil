@@ -57,7 +57,6 @@ export class PlayerComponent implements OnInit {
 
     // game is already loaded via resolver
     this.player = new Player(this.route.snapshot.data.player.data.attributes);
-    console.log(this.route.snapshot.data.player);
     this.rounds = this.route.snapshot.data.player.included.filter(included => included.type === "round").map(
         data => {
           let round = new Round(data.attributes);
@@ -89,8 +88,6 @@ export class PlayerComponent implements OnInit {
           result.expense.running_cost = new RunningCost(running_cost.attributes);
           let round = response.included.find(included => included.type === "round" && included.id === response.data.relationships.round.data.id);
           result.round = new Round(round.attributes);
-          console.log("result");
-          console.log(result);
 
           round = this.rounds[this.rounds.length - 1];
 
@@ -116,13 +113,12 @@ export class PlayerComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(round => {
-        console.log('The dialog was closed with result', round);
         if (round instanceof Round) {
           round.submitted = true;
           this.roundService.updateRound(round).subscribe(
               response => {
-                console.log(response);
                 this.rounds[this.rounds.length - 1] = response.data.attributes;
+                this.rounds[this.rounds.length - 1].fieldId = response.data.relationships.field.data.id;
                 this.waitForNewRound()
               },
               error => alert("Submitting decisions failed")
@@ -133,7 +129,6 @@ export class PlayerComponent implements OnInit {
   }
 
   waitForNewRound() {
-    console.log("inside wait for new round");
     this.timer.pipe(
 //        takeWhile(this.rounds.every(round => round.submitted)),
         concatMap(_ => this.roundService.getRounds()),
@@ -147,12 +142,10 @@ export class PlayerComponent implements OnInit {
         take(1)
     ).subscribe(round => {
       this.submitted = false;
-      console.log("finished polling with result", round);
       this.rounds.push(round);
       this.selectedRound = round;
       this.resultService.getResult(round.resultId).subscribe(
           response => {
-            console.log("inside result of round");
             let result = new Result(response.data.attributes);
             let income = response.included.find(included => included.type === "income" && included.id === response.data.relationships.income.data.id);
             result.income = new Income(income.attributes);
@@ -168,8 +161,6 @@ export class PlayerComponent implements OnInit {
             result.expense.running_cost = new RunningCost(running_cost.attributes);
             let round = response.included.find(included => included.type === "round" && included.id === response.data.relationships.round.data.id);
             result.round = new Round(round.attributes);
-
-            console.log("round",result.round)
 
             if (result.round.last) {
               this.endGame(result)
@@ -190,13 +181,9 @@ export class PlayerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed with result', result);
       let round = this.rounds[this.rounds.length - 1];
       round.confirmed = true;
-      this.roundService.updateRound(round).subscribe(
-          response => {
-            console.log(response);
-          })
+      this.roundService.updateRound(round).subscribe();
     });
   }
 
@@ -208,13 +195,9 @@ export class PlayerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed with result', result);
       let round = this.rounds[this.rounds.length - 1];
       round.confirmed = true;
-      this.roundService.updateRound(round).subscribe(
-          response => {
-            console.log(response);
-          })
+      this.roundService.updateRound(round).subscribe();
     });
   }
 

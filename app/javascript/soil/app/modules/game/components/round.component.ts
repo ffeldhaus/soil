@@ -24,7 +24,6 @@ export class RoundComponent implements OnInit {
   rounds;
 
   ngOnInit() {
-    console.log("Initializing round");
     // game is already loaded via resolver
     this.round = new Round(this.route.snapshot.data.round.attributes);
     this.field = new Field(this.route.snapshot.data.round.relationships.field.data);

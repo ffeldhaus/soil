@@ -35,7 +35,6 @@ export class ResultComponent implements OnInit {
   selectedRound;
 
   ngOnInit() {
-    console.log("Initializing result");
     this.results = this.route.snapshot.data.results.data.map(data => {
       let result = new Result(data.attributes);
       let income = this.route.snapshot.data.results.included.find(included => included.type === "income" && included.id === data.relationships.income.data.id);

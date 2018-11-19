@@ -13,6 +13,7 @@ import {PlantationDialogComponent} from "./plantation-dialog.component";
 
 import {Field} from "../models/field.model";
 import {Parcel} from "../models/parcel.model";
+import {FieldService} from "../services/field.service";
 
 @Component({
   template: templateString
@@ -21,6 +22,7 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(
       private router: Router,
       private route: ActivatedRoute,
+      private fieldService: FieldService,
       private parcelService: ParcelService,
       public dialog: MatDialog
   ) {
@@ -44,40 +46,36 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() fieldId: string;
 
   ngOnInit() {
-    console.log("Initializing field");
     // TODO: Improve all of this!
     // load field data for selected round
     this.route.queryParams.subscribe(queryParams => {
       this.overlay = queryParams['overlay'];
     });
-    if (this.field) {
-      if (this.field.id != this.route.snapshot.data.field.data.attributes.id) {
-        this.field = new Field(this.route.snapshot.data.field.data.attributes);
-        this.parcels = this.route.snapshot.data.field.included.map(
-            parcel => new Parcel(parcel.attributes)
-        ).sort(
-            (a, b) => a.number - b.number
-        );
-      }
-    }
-    else {
-      this.field = new Field(this.route.snapshot.data.field.data.attributes);
-      this.parcels = this.route.snapshot.data.field.included.map(
-          parcel => new Parcel(parcel.attributes)
-      ).sort(
-          (a, b) => a.number - b.number
-      );
-    }
+    this.route.params.subscribe(params =>
+        this.fieldService.getField(params['id']).subscribe(
+            response => {
+              this.field = new Field(response.data.attributes);
+              this.parcels = response.included.map(
+                  parcel => new Parcel(parcel.attributes)
+              ).sort(
+                  (a, b) => a.number - b.number
+              );
+
+              if (this.selectable) {
+                this.selectable.destroy();
+              }
+              this.selectable = new Selectable();
+              if (!this.field.submitted) {
+                this.selectable.on("selectable.end", () => this.selectPlantation());
+              }
+            }
+        )
+    );
+
+
 
     // TODO: need a better way to handle this instead of checking for an existing object in ngOnInit
-    if (this.selectable) {
-      this.selectable.destroy();
-    }
-    this.selectable = new Selectable();
-    if (!this.field.submitted) {
-      console.log("initializing selectable");
-      this.selectable.on("selectable.end", () => this.selectPlantation());
-    }
+
   }
 
   openDialog(): void {
@@ -87,17 +85,13 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     let selectedParcelIds = this.selectable.getSelectedNodes().map(node => node.getAttribute('parcel-index'));
-    console.log("Selected parcel IDs: ", selectedParcelIds);
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed with result', result);
       if (this.plantations.includes(result)) {
         let filteredParcels = this.parcels.filter(parcel => selectedParcelIds.includes(parcel.id.toString()));
-        console.log('Filtered parcels', filteredParcels);
         filteredParcels.map(parcel => {
           parcel.plantation = result;
           this.parcelService.updateParcel(parcel).subscribe(response => {
-                console.log(response);
                 parcel = response.data.attributes;
               },
               error => console.log(error));
@@ -108,7 +102,6 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   selectPlantation() {
-    console.log(this.selectable.getSelectedItems());
     this.openDialog();
   }
 
