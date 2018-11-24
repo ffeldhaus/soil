@@ -4,6 +4,7 @@
             <mat-expansion-panel-header>
                 <table>
                     <tr>
+                        <th></th>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.player}}</td>
                     </tr>
                 </table>
@@ -14,27 +15,27 @@
                 <table>
                     <tr>
                         <th>Konventioneller Dünger</th>
-                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.round.fertilize | checkmark}}
+                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.fertilize | checkmark}}
                         </td>
                     </tr>
                     <tr>
                         <th>Pestizide</th>
-                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.round.pesticide | checkmark}}
+                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.pesticide | checkmark}}
                         </td>
                     </tr>
                     <tr>
                         <th>Nützlinge</th>
-                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.round.organisms | checkmark}}
+                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.organisms | checkmark}}
                         </td>
                     </tr>
                     <tr>
                         <th>Einsatz von Maschinen</th>
-                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.round.machines}}
+                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.machines}}
                         </td>
                     </tr>
                     <tr>
                         <th>Bio Siegel</th>
-                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.round.organic | checkmark}}
+                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.organic | checkmark}}
                         </td>
                     </tr>
                 </table>

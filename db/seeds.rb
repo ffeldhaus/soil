@@ -27,5 +27,6 @@ game.save!
 
 # example with 1 player
 game.players.create(:name => 'Gruppe 1', :password => 'Soil1234', :password_confirmation => 'Soil1234')
+game.players.create(:name => 'Gruppe 2', :password => 'Soil1234', :password_confirmation => 'Soil1234')
 
 game.save!

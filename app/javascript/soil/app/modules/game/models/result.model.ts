@@ -8,6 +8,7 @@ export class Result {
   income: Income;
   expense: Expense;
   round: Round;
+  previous_round: Round;
   player: string;
   profit: number;
   capital: number;

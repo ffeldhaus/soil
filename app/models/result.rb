@@ -1,5 +1,6 @@
 class Result < ApplicationRecord
   belongs_to :round
+  belongs_to :previous_round, class_name: 'Round'
   has_one :expense
   has_one :income
 

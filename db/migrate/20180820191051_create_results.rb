@@ -9,6 +9,7 @@ class CreateResults < ActiveRecord::Migration[5.2]
       t.integer :capital
       t.string :player
       t.references :round, index: true
+      t.references :previous_round, index: true
 
       t.timestamps
     end

@@ -51,6 +51,13 @@ export class ResultComponent implements OnInit {
       result.expense.running_cost = new RunningCost(running_cost.attributes);
       let round = this.route.snapshot.data.results.included.find(included => included.type === "round" && included.id === data.relationships.round.data.id);
       result.round = new Round(round.attributes);
+      if (result.round.number == 1) {
+        result.previous_round = new Round({});
+      }
+      else {
+        let previous_round = this.route.snapshot.data.results.included.find(included => included.type === "round" && included.id === data.relationships.previous_round.data.id);
+        result.previous_round = new Round(previous_round.attributes);
+      }
       return result;
     });
 
@@ -58,6 +65,8 @@ export class ResultComponent implements OnInit {
   }
 
   resultsOfSelectedRound() {
-    return this.results.filter(result => result.round.number === this.selectedRound.number);
+    return this.results.filter(result => result.round.number === this.selectedRound.number).sort(
+        (a, b) => a.player < b.player ? -1 : 1
+    );
   }
 }

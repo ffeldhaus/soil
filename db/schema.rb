@@ -19,23 +19,23 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.string "name"
     t.string "password_digest"
     t.string "salt"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "expenses", force: :cascade do |t|
     t.integer "sum"
-    t.integer "result_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "result_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["result_id"], name: "index_expenses_on_result_id"
   end
 
   create_table "fields", force: :cascade do |t|
-    t.integer "round_id"
     t.boolean "submitted"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "round_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["round_id"], name: "index_fields_on_round_id"
   end
 
@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.string "name"
     t.string "weather"
     t.string "vermin"
-    t.integer "supervisor_id"
+    t.bigint "supervisor_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["supervisor_id"], name: "index_games_on_supervisor_id"
@@ -61,17 +61,17 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "rye"
     t.integer "wheat"
     t.integer "beet"
-    t.integer "income_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "income_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["income_id"], name: "index_harvests_on_income_id"
   end
 
   create_table "incomes", force: :cascade do |t|
     t.integer "sum"
-    t.integer "result_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "result_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["result_id"], name: "index_incomes_on_result_id"
   end
 
@@ -79,9 +79,9 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "sum"
     t.integer "animals"
     t.integer "machines"
-    t.integer "expense_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "expense_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["expense_id"], name: "index_investments_on_expense_id"
   end
 
@@ -93,10 +93,9 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "harvest_yield"
     t.string "harvest"
     t.string "plantation"
-    t.integer "field_id"
-    t.integer "round_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "field_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["field_id"], name: "index_parcels_on_field_id"
   end
 
@@ -104,9 +103,9 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.string "name"
     t.string "password_digest"
     t.string "salt"
-    t.integer "game_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "game_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_players_on_game_id"
   end
 
@@ -118,9 +117,11 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "profit"
     t.integer "capital"
     t.string "player"
-    t.integer "round_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "round_id"
+    t.bigint "previous_round_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["previous_round_id"], name: "index_results_on_previous_round_id"
     t.index ["round_id"], name: "index_results_on_round_id"
   end
 
@@ -134,10 +135,10 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.boolean "pesticide"
     t.boolean "fertilize"
     t.boolean "organisms"
-    t.integer "player_id"
-    t.integer "game_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "player_id"
+    t.bigint "game_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_rounds_on_game_id"
     t.index ["player_id"], name: "index_rounds_on_player_id"
   end
@@ -150,9 +151,9 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "organisms"
     t.integer "animals"
     t.integer "base"
-    t.integer "expense_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "expense_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["expense_id"], name: "index_running_costs_on_expense_id"
   end
 
@@ -166,9 +167,9 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.integer "rye"
     t.integer "wheat"
     t.integer "beet"
-    t.integer "expense_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "expense_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["expense_id"], name: "index_seeds_on_expense_id"
   end
 
@@ -179,9 +180,9 @@ ActiveRecord::Schema.define(version: 2018_08_20_191157) do
     t.string "email"
     t.string "password_digest"
     t.string "salt"
-    t.integer "admin_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "admin_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_supervisors_on_admin_id"
   end
 
