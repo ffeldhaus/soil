@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 
 import templateString from './result.component.html';
+import './result.component.css';
+
 import {Result} from "../models/result.model";
 import {Income} from "../models/income.model";
 import {Expense} from "../models/expense.model";

@@ -80,3 +80,7 @@ body {
 .mat-expansion-panel-header {
     padding-right: 0;
 }
+
+.mat-button {
+    line-height: 24px;
+}

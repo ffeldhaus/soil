@@ -1,14 +1,21 @@
 .parcel {
     background-size: 100% auto;
     background-repeat: no-repeat;
-    color: white;
-    text-shadow: -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-    border: 1px solid black;
-    text-align: center;
     position: relative;
+}
+
+svg {
+    display: block;
+}
+
+svg text {
+    fill: white;
+    paint-order: stroke;
+    stroke: black;
+    stroke-width: 1px;
+    text-anchor: middle;
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    dominant-baseline: central;
 }
 
 .parcel:before {
@@ -18,11 +25,6 @@
     float: left;
 }
 
-.parcel-content {
-    position: absolute;
-    text-align: center;
-    width: 100%;
-}
 
 .overlay {
     position: absolute;
@@ -32,9 +34,6 @@
     z-index: 10;
 }
 
-.overlay .parcel-content {
-    padding-top: 40%;
-}
 
 .ui-selecting {
     border: 1px solid red;

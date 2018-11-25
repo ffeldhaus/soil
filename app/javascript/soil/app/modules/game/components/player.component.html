@@ -5,7 +5,7 @@
                 <mat-icon>menu</mat-icon>
             </button>
             <span>
-                <a href="../" mat-button>Soil</a>
+                <a [routerLink]="['round',selectedRound.id,'field',selectedRound.fieldId]" mat-button>Soil - {{player.name}}</a>
             </span>
             <div fxShow="true" fxHide.lt-md="true">
                 <!-- The following menu items will be hidden on both SM and XS screen sizes -->
