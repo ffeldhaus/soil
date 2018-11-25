@@ -41,7 +41,7 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   parcels;
   selectable;
   overlay;
-  plantations: String[] = ["Brachland", "Ackerbohne", "Gerste", "Hafer", "Kartoffel", "Mais", "Roggen", "Tiere", "Weizen", "Zuckerrübe"];
+  plantations: String[] = ["Brachland", "Ackerbohne", "Gerste", "Hafer", "Kartoffel", "Mais", "Roggen", "Tiere", "Weizen", "Zuckerruebe"];
 
   @Input() fieldId: string;
 

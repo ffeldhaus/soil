@@ -4,7 +4,7 @@ class Api::V1::ParcelController < ApplicationController
   # TODO: Implement authentication check
 
   def initialize
-    @allowed_plantations = %w(Brachland Ackerbohne Gerste Hafer Kartoffel Mais Roggen Tiere Weizen Zuckerrübe)
+    @allowed_plantations = %w(Brachland Ackerbohne Gerste Hafer Kartoffel Mais Roggen Tiere Weizen Zuckerruebe)
   end
 
   # PUT /parcel/X.json

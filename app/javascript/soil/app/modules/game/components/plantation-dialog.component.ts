@@ -13,5 +13,5 @@ export class PlantationDialogComponent {
       public dialogRef: MatDialogRef<PlantationDialogComponent>) {
   }
 
-  plantations: String[] = ["Brachland", "Ackerbohne","Gerste","Hafer","Kartoffel","Mais","Roggen","Tiere","Weizen","Zuckerrübe"];
+  plantations: String[] = ["Brachland", "Ackerbohne","Gerste","Hafer","Kartoffel","Mais","Roggen","Tiere","Weizen","Zuckerruebe"];
 }
