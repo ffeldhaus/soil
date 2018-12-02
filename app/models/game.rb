@@ -9,10 +9,12 @@ class Game < ApplicationRecord
   validates :name, :presence => true, :uniqueness => true, :length => {:in => 4..64}
 
   after_initialize do
-    self.weather ||= %w|Normal| + %w|Normal Normal Dürre Kälte Überschwemmung Dürre Kälte Überschwemmung Dürre Kälte Überschwemmung|.shuffle
-    self.vermin ||= %w|Keine| + %w|Keine Blattlaus Fritfliege Kartoffelkäfer Maiszünsler Drahtwurm Blattlaus Fritfliege Kartoffelkäfer Maiszünsler Drahtwurm|.shuffle
     self.current_round ||= 1
-    self.number_of_rounds ||= 12
+    self.number_of_rounds ||= 11
+    # ensure that game always start with normal weather and that it includes all weather conditions a similar number of times
+    self.weather ||= %w|Normal| + (self.number_of_rounds.to_f / 5).ceil.times.map { %w|Normal Normal Dürre Überschwemmung Kälte|.shuffle }.flatten.first(self.number_of_rounds - 1)
+    # ensure that game always start with no vermin and that it includes all vermins a similar number of times
+    self.vermin ||= %w|Keine| + (self.number_of_rounds.to_f / 6).ceil.times.map {  %w|Keine Blattlaus Fritfliege Kartoffelkäfer Maiszünsler Drahtwurm|.shuffle }.flatten.first(self.number_of_rounds - 1)
   end
 
   def start_new_round

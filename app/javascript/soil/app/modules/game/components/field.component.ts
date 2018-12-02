@@ -62,7 +62,10 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
                   (a, b) => a.number - b.number
               );
 
+              console.log('inside new field');
+
               if (!this.field.submitted && !this.route.parent.snapshot.data.round.attributes.last) {
+                console.log('modifying selectable');
                 if (this.selectable) {
                   this.selectable.destroy();
                 }
@@ -99,12 +102,14 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   selectPlantation() {
-    this.openDialog();
+    if (this.field && !this.field.submitted && !this.route.parent.snapshot.data.round.attributes.last) {
+      this.openDialog();
+    }
   }
 
   ngAfterViewChecked() {
     //TODO: Check if there is a better hook to identify that container has changed
-    if (this.selectable) {
+    if (this.field && !this.field.submitted && !this.route.parent.snapshot.data.round.attributes.last && this.selectable) {
       this.selectable.setContainer(this.container.nativeElement);
     }
   }

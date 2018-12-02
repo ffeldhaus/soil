@@ -57,8 +57,9 @@ class Round < ApplicationRecord
                        'Roggen' => HARVEST_NUTRITION_LOW,
                        'Weizen' => HARVEST_NUTRITION_STRONG,
                        'Zuckerruebe' => HARVEST_NUTRITION_STRONG}
-  HARVEST_WEATHER_STRONG = 0.85
-  HARVEST_WEATHER_MODERATE = 0.95
+  HARVEST_WEATHER_ORGANIC = 1.05
+  HARVEST_WEATHER_STRONG = 0.8
+  HARVEST_WEATHER_MODERATE = 0.9
   HARVEST_WEATHER = {'Ackerbohne' => {'Kälte' => HARVEST_WEATHER_MODERATE, 'Dürre' => HARVEST_WEATHER_STRONG, 'Überschwemmung' => HARVEST_WEATHER_STRONG},
                      'Gerste' => {'Kälte' => HARVEST_WEATHER_STRONG, 'Dürre' => HARVEST_WEATHER_STRONG, 'Überschwemmung' => HARVEST_WEATHER_STRONG},
                      'Hafer' => {'Kälte' => HARVEST_WEATHER_STRONG, 'Dürre' => HARVEST_WEATHER_MODERATE, 'Überschwemmung' => HARVEST_WEATHER_STRONG},
@@ -276,8 +277,12 @@ class Round < ApplicationRecord
         harvest *= (new_parcel.nutrition.to_f/NUTRITION) ** HARVEST_NUTRITION[current_parcel.plantation]
         # Bodenqualität
         harvest *= (new_parcel.soil.to_f/SOIL) ** HARVEST_SOIL[current_parcel.plantation]
-        # Wetter
-        harvest *= HARVEST_WEATHER[current_parcel.plantation][self.result.weather] unless self.result.weather == 'Normal'
+        # Wetter - if organic then reduce impact
+        if current_round.organic
+          harvest *= HARVEST_WEATHER[current_parcel.plantation][self.result.weather] * HARVEST_WEATHER_ORGANIC unless self.result.weather == 'Normal'
+        else
+          harvest *= HARVEST_WEATHER[current_parcel.plantation][self.result.weather] unless self.result.weather == 'Normal'
+        end
         # Schädlinge
         if HARVEST_VERMIN[current_parcel.plantation][self.result.vermin]
           if current_round.pesticide

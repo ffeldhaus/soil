@@ -3,7 +3,7 @@
         <div fxFlex="12.5" class="parcel {{parcel.plantation | lowercase}} ui-selectable" *ngFor="let parcel of parcels"
              [attr.parcel-index]=parcel.id>
             <svg viewBox="0 0 90 20">
-                <text x="45" y="10">{{parcel.plantation}}</text>
+                <text x="45" y="10">{{parcel.plantation.replace('Zuckerruebe','Zuckerrübe')}}</text>
             </svg>
         </div>
     </div>

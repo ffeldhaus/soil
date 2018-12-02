@@ -120,14 +120,14 @@
                        [routerLink]="['round',round.id,'field',round.fieldId]"
                        queryParamsHandling="merge"
                        (click)="this.selectedRound = round"
-                       [active]="this.selectedRound == round">Runde {{round.number}}</a>
+                       [active]="this.selectedRound == round">{{round.name}}</a>
                 </nav>
                 <nav *ngIf="display == 'results'" mat-tab-nav-bar>
                     <a mat-tab-link *ngFor="let round of rounds"
                        [routerLink]="['round',round.id,'results']"
                        queryParamsHandling="merge"
                        (click)="this.selectedRound = round"
-                       [active]="this.selectedRound == round">Runde {{round.number}}</a>
+                       [active]="this.selectedRound == round">{{round.name}}</a>
                 </nav>
                 <router-outlet></router-outlet>
             </div>

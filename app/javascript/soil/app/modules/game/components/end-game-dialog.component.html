@@ -3,7 +3,7 @@
     <mat-list>
         <mat-list-item>Wetter: {{result.weather}}</mat-list-item>
         <mat-list-item>Schädlinge: {{result.vermin}}</mat-list-item>
-        <mat-list-item>Gewinn: {{result.profit | currency}}</mat-list-item>
+        <mat-list-item>Gewinn: {{result.profit | currency : 'EUR'}}</mat-list-item>
         <mat-list-item *ngIf="result.organic">Das Biosiegel wurde erworben!</mat-list-item>
     </mat-list>
 </div>

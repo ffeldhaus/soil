@@ -62,6 +62,12 @@ export class PlayerComponent implements OnInit {
           let round = new Round(data.attributes);
           round.fieldId = data.relationships.field.data.id;
           round.resultId = data.relationships.result.data.id;
+          if (round.last) {
+            round.name = 'Spielende'
+          }
+          else {
+            round.name = 'Runde ' + round.number
+          }
           return round;
         });
 
@@ -119,6 +125,12 @@ export class PlayerComponent implements OnInit {
               response => {
                 this.rounds[this.rounds.length - 1] = response.data.attributes;
                 this.rounds[this.rounds.length - 1].fieldId = response.data.relationships.field.data.id;
+                if (this.rounds[this.rounds.length - 1].last) {
+                  this.rounds[this.rounds.length - 1].name = 'Spielende'
+                }
+                else {
+                  this.rounds[this.rounds.length - 1].name = 'Runde ' + this.rounds[this.rounds.length - 1].number
+                }
                 this.waitForNewRound()
               },
               error => alert("Submitting decisions failed")
@@ -136,6 +148,12 @@ export class PlayerComponent implements OnInit {
           let round = new Round(data.attributes);
           round.fieldId = Number(data.relationships.field.data.id);
           round.resultId = Number(data.relationships.result.data.id);
+          if (round.last) {
+            round.name = 'Spielende'
+          }
+          else {
+            round.name = 'Runde ' + round.number
+          }
           return round;
         })),
         filter((round: Round) => !round.submitted),

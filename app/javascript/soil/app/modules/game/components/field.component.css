@@ -2,6 +2,7 @@
     background-size: 100% auto;
     background-repeat: no-repeat;
     position: relative;
+    border: 1px solid black;
 }
 
 svg {
