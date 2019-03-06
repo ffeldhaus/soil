@@ -10,9 +10,6 @@ import {BackgroundComponent} from './components/background.component';
 import {LoginComponent} from './components/login.component';
 import {RegisterComponent} from './components/register.component';
 
-import {ImpressumComponent} from '../shared/components/impressum.component';
-import {PrivacyComponent} from '../shared/components/privacy.component';
-
 import {FooterComponent} from "../shared/components/footer.component";
 
 import {FrontpageRouting} from './frontpage.routing';
@@ -24,8 +21,6 @@ import {FrontpageRouting} from './frontpage.routing';
     BackgroundComponent,
     LoginComponent,
     RegisterComponent,
-    ImpressumComponent,
-    PrivacyComponent,
     FooterComponent
   ],
   imports: [

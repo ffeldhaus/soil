@@ -1,15 +1,68 @@
-<div fxLayout="column wrap" fxLayoutAlign="center center" fxLayoutGap="10px">
+<div fxLayout="column" fxLayoutAlign="center center">
     <mat-card>
-        <mat-card-title>Registrieren</mat-card-title>
+        <mat-card-title>Als Spielleiter registrieren</mat-card-title>
         <mat-card-content>
-            Um als Spielleiter registriert zu werden, senden Sie bitte eine E-Mail an <a
-                href="mailto:registrieren@soil.app">registrieren@soil.app</a>
-            mit Angaben zu
-            <ul>
-                <li>Name</li>
-                <li>Bildungseinrichtung</li>
-                <li>Nachweis (z.B. Link auf Webseite der Schule oder Universität), dass Sie eine Lehrperson sind</li>
-            </ul>
+            <p>
+            Um sich als Spielleiter zu registrieren, füllen Sie bitte die folgenden Felder aus. Das Planspiel wird
+            nur Lehrpersonen und Gruppenleitern bereitgestellt. Es ist deshalb erforderlich, dass Sie die Einrichtung,
+            für die Sie tätig sind, angeben. Bitte verwenden Sie, wenn möglich, auch eine E-Mail-Adresse Ihrer Einrichtung.
+            </p>
+            <form [formGroup]="registerForm">
+                <div fxLayout="column" fxLayoutAlign="start center">
+                    <mat-form-field>
+                        <input matInput required placeholder="Vorname" formControlName="firstName" maxlength="128">
+                        <mat-error *ngIf="registerForm.hasError('maxlength', 'firstName')">
+                            First name may not contain more than 128 characters.
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput required placeholder="Nachname" formControlName="lastName" maxlength="128">
+                        <mat-error *ngIf="registerForm.hasError('maxlength', 'lastName')">
+                            Last name may not contain more than 128 characters.
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput required placeholder="Einrichtung" formControlName="institution" minlength="3" maxlength="128">
+                        <mat-error *ngIf="registerForm.hasError('minlength', 'institution')">
+                            Institution must contain at least 3 characters. Please do not use acronyms.
+                        </mat-error>
+                        <mat-error *ngIf="registerForm.hasError('maxlength', 'institution')">
+                            Institution may not contain more than 128 characters.
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput required placeholder="E-Mail" type="email" formControlName="email" maxlength="128">
+                        <mat-error *ngIf="registerForm.hasError('email', 'email')">
+                            Please provide a valid E-Mail address.
+                        </mat-error>
+                        <mat-error *ngIf="registerForm.hasError('maxlength', 'email')">
+                            E-Mail may not contain more than 128 characters.
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput required placeholder="Passwort" formControlName="password" minlength="8" maxlength="128" type="password" formControlName="password">
+                        <mat-error *ngIf="registerForm.hasError('required', 'password')">
+                            Please enter your new password.
+                        </mat-error>
+                        <mat-error *ngIf="registerForm.hasError('minlength', 'password')">
+                            Password needs to contain at least 8 characters.
+                        </mat-error>
+                        <mat-error *ngIf="registerForm.hasError('maxlength', 'password')">
+                            Password may not contain more than 128 characters.
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Passwort Confirmation" maxlength="128" type="password" formControlName="confirmPassword" [errorStateMatcher]="matcher">
+                        <mat-error *ngIf="registerForm.hasError('notSame')">
+                            Passwords do not match
+                        </mat-error>
+                    </mat-form-field>
+                    <button mat-raised-button [disabled]="registerForm.invalid" (click)="register()">Als Spielleiter registrieren</button>
+                </div>
+            </form>
+            <p>
+                <a routerLink="../login" routerLinkActive="active">Als Spielleiter einloggen?</a>
+            </p>
         </mat-card-content>
     </mat-card>
 </div>

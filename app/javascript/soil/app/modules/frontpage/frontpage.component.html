@@ -5,7 +5,7 @@
                 <mat-icon>menu</mat-icon>
             </button>
             <span>
-                <a routerLink="" mat-button>Soil</a>
+                <a routerLink="" mat-button>SOIL</a>
             </span>
             <div fxShow="true" fxHide.lt-md="true">
                 <!-- The following menu items will be hidden on both SM and XS screen sizes -->
@@ -15,54 +15,32 @@
                 <a routerLink="background" routerLinkActive="active" mat-button>
                     Hintergrundinformationen
                 </a>
-                <a routerLink="login" routerLinkActive="active" mat-button>
-                    Login
-                </a>
                 <a routerLink="register" routerLinkActive="active" mat-button>
-                    Register
+                    Als Spielleiter registrieren
+                </a>
+                <a routerLink="login" routerLinkActive="active" mat-button>
+                    Spielleiter Login
                 </a>
             </div>
         </mat-toolbar-row>
     </mat-toolbar>
     <mat-sidenav-container fxFlex="1 1 auto">
         <mat-sidenav #sidenav [mode]="'over'">
-            <mat-nav-list fxShow fxHide.xs>
+            <mat-nav-list>
                 <a routerLink="overview" routerLinkActive="active" mat-list-item>
-                    <mat-icon>home</mat-icon>
                     Übersicht
                 </a>
                 <a routerLink="background" routerLinkActive="active" mat-list-item>
-                    <mat-icon>details</mat-icon>
                     Hintergrundinformationen
                 </a>
-                <a routerLink="login" routerLinkActive="active" mat-list-item>
-                    <mat-icon>account_box</mat-icon>
-                    Login
-                </a>
                 <a routerLink="register" routerLinkActive="active" mat-list-item>
-                    <mat-icon>person_add</mat-icon>
-                    Register
+                    Als Spielleiter registrieren
+                </a>
+                <a routerLink="login" routerLinkActive="active" mat-list-item>
+                    Spielleiter Login
                 </a>
                 <a (click)="sidenav.toggle()" mat-list-item>
-                    <mat-icon>close</mat-icon>
                     Close
-                </a>
-            </mat-nav-list>
-            <mat-nav-list fxHide fxShow.xs>
-                <a routerLink="overview" routerLinkActive="active" mat-list-item>
-                    <mat-icon>home</mat-icon>
-                </a>
-                <a routerLink="background" routerLinkActive="active" mat-list-item>
-                    <mat-icon>details</mat-icon>
-                </a>
-                <a routerLink="login" routerLinkActive="active" mat-list-item>
-                    <mat-icon>account_box</mat-icon>
-                </a>
-                <a routerLink="register" routerLinkActive="active" mat-list-item>
-                    <mat-icon>person_add</mat-icon>
-                </a>
-                <a (click)="sidenav.toggle()" mat-list-item>
-                    <mat-icon>close</mat-icon>
                 </a>
             </mat-nav-list>
         </mat-sidenav>

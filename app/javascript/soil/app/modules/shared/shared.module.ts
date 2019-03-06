@@ -7,12 +7,6 @@ import {
 } from '@angular/router';
 
 import {
-  HttpClientModule,
-  HttpClientXsrfModule,
-  HTTP_INTERCEPTORS
-} from '@angular/common/http';
-
-import {
   MatToolbarModule,
   MatButtonModule,
   MatSidenavModule,
@@ -25,39 +19,41 @@ import {
   MatDialogModule,
   MatCheckboxModule,
   MatSelectModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatSliderModule
 } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
 
-import { CheckmarkPipe } from './pipes/checkmark.pipe';
+import {CheckmarkPipe} from './pipes/checkmark.pipe';
 
-import {AuthenticationService} from "./services/authentication.service";
-import {AuthInterceptor} from './interceptors/auth.interceptor';
-import {ErrorInterceptor} from './interceptors/error.interceptor';
+import {GameResolver} from "./services/game-resolver.service";
+import {GameService} from "./services/game.service";
 
+import {ImpressumComponent} from './components/impressum.component';
+import {PrivacyComponent} from './components/privacy.component';
+import {AdminService} from "./services/admin.service";
 
 @NgModule({
   imports: [
     CommonModule,
-    HttpClientModule,
-    HttpClientXsrfModule
+    MatCardModule,
   ],
   declarations: [
-    CheckmarkPipe
+    CheckmarkPipe,
+    ImpressumComponent,
+    PrivacyComponent
   ],
   providers: [
-    AuthenticationService,
-    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
+    GameResolver,
+    GameService,
+    AdminService,
   ],
   exports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
     RouterModule,
-    HttpClientModule,
-    HttpClientXsrfModule,
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,
@@ -71,6 +67,7 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     MatCheckboxModule,
     MatSelectModule,
     MatExpansionModule,
+    MatSliderModule,
     FlexLayoutModule,
     CheckmarkPipe
   ],

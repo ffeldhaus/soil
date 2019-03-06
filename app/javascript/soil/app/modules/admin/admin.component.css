@@ -1,0 +1,7 @@
+#admin mat-card {
+    width: 20em;
+}
+
+#admin mat-form-field {
+    display: block !important;
+}

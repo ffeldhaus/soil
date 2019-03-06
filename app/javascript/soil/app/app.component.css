@@ -17,11 +17,11 @@ body {
 /* The following are hacks and should be replaced by proper Angular Material Theme Overwrites */
 
 .mat-toolbar {
-    background-color: rgba(50, 50, 100, 0.7) !important;
+    background-color: rgba(50, 50, 100, 0.8) !important;
 }
 
 .mat-drawer.mat-sidenav {
-    background-color: rgba(50, 50, 100, 0.7) !important;
+    background-color: rgba(50, 50, 100, 0.8) !important;
 }
 
 .mat-drawer-backdrop.mat-drawer-shown {
@@ -83,4 +83,12 @@ body {
 
 .mat-button {
     line-height: 24px;
+}
+
+.mat-button.active, .mat-list-item.active {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.mat-form-field-infix {
+    width: 30em !important;
 }

@@ -148,7 +148,7 @@ class Round < ApplicationRecord
     else
       previous_round = rounds.find_by number: self.number - 1
     end
-    self.create_result player: self.player.name, previous_round: previous_round, machines: MACHINES, organic: 'false', weather: 'Normal', vermin: 'Keine' unless self.result
+    self.create_result player: self.player.email, previous_round: previous_round, machines: MACHINES, organic: 'false', weather: 'Normal', vermin: 'Keine' unless self.result
     self.create_field unless self.field
   end
 

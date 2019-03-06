@@ -33,7 +33,7 @@ default: &default
 
 development:
   <<: *default
-  compile: true
+  compile: false
 
   # Verifies that versions and hashed value of the package contents in the project's package.json
   check_yarn_integrity: true
@@ -44,7 +44,7 @@ development:
     host: localhost
     port: 3035
     public: localhost:3035
-    hmr: false
+    hmr: true
     # Inline should be set to true if using HMR
     inline: true
     overlay: true

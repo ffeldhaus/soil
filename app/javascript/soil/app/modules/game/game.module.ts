@@ -2,8 +2,6 @@ import {NgModule} from '@angular/core';
 
 import {SharedModule} from "../shared/shared.module";
 
-import {GameResolver} from "./services/game-resolver.service";
-import {GameService} from "./services/game.service";
 import {PlayerService} from "./services/player.service";
 import {RoundService} from "./services/round.service";
 import {FieldService} from "./services/field.service";
@@ -43,8 +41,6 @@ import {ResultResolver} from "./services/result-resolver.service";
     GameRouting
   ],
   providers: [
-    GameResolver,
-    GameService,
     PlayerService,
     PlayerResolver,
     RoundService,

@@ -10,9 +10,9 @@ import {
 
 import templateString from './game.component.html'
 
-import {User} from './models/user.model'
-import {Player} from './models/player.model'
-import {Game} from "./models/game.model";
+import {User} from '../shared/models/user.model'
+import {Player} from '../shared/models/player.model'
+import {Game} from "../shared/models/game.model";
 import {Round} from "./models/round.model";
 
 @Component({

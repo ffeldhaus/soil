@@ -1,18 +1,19 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 
-import { Response } from '../models/response.model';
+import {Response} from '../../shared/models/response.model';
 
 @Injectable()
 export class ResultService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
-  getResults  () {
+  getResults() {
     return this.http.get<Response>(`/api/v1/result/`);
   }
 
-  getResult (id: string) {
+  getResult(id: string) {
     return this.http.get<Response>(`/api/v1/result/${id}`)
   }
 }

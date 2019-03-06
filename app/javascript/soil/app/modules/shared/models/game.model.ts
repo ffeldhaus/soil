@@ -1,3 +1,5 @@
+import {Player} from "./player.model";
+
 export class Game {
   id: string;
   name: string;
@@ -5,9 +7,11 @@ export class Game {
   gameId: number;
   accessToken: string;
   numberOfRounds: number;
+  numberOfPlayers: number;
   expires: Date;
+  players: Player[];
 
-  constructor(fields:Partial<Account>) {
+  constructor(fields:Partial<Game>) {
     Object.assign(this, fields);
   }
 }

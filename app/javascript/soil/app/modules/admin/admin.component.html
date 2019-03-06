@@ -1,0 +1,101 @@
+<div fxLayout="column" fxLayoutAlign="start stretch" id="admin">
+    <mat-toolbar color="primary">
+        <mat-toolbar-row>
+            <button mat-icon-button (click)="sidenav.toggle()" fxShow="true" fxHide.gt-sm>
+                <mat-icon>menu</mat-icon>
+            </button>
+            <span>
+                <a [routerLink]="" mat-button>Soil Administration - {{currentUser.name}}</a>
+            </span>
+            <div fxShow="true" fxHide.lt-md="true">
+                <!-- The following menu items will be hidden on both SM and XS screen sizes -->
+                <a [routerLink]=""
+                   routerLinkActive="active"
+                   mat-button>
+                    Spiele
+                </a>
+                <button mat-button (click)="logout()">
+                    Logout
+                </button>
+            </div>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <mat-sidenav-container fxFlex="1 1 auto">
+        <mat-sidenav #sidenav [mode]="'over'">
+            <mat-nav-list fxShow>
+                <a [routerLink]=""
+                   routerLinkActive="active"
+                   mat-list-item>
+                    Spiele
+                </a>
+                <button mat-list-item (click)="logout()">
+                    Logout
+                </button>
+                <button (click)="sidenav.toggle()" mat-list-item>
+                    <mat-icon>close</mat-icon>
+                    Close
+                </button>
+            </mat-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
+            <mat-card>
+                <mat-card-title>
+                    Neues Spiel
+                </mat-card-title>
+                <mat-card-content>
+                    <form [formGroup]="createForm">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Name des Spiels</mat-label>
+                            <input matInput required minlength="4" formControlName="name">
+                            <mat-error *ngIf="createForm.hasError('minlength', 'name')">
+                                Name must contain at least 4 characters.
+                            </mat-error>
+                            <mat-error *ngIf="createForm.hasError('maxlength', 'name')">
+                                Name may not contain more than 128 characters.
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Anzahl der Gruppen</mat-label>
+                            <mat-select formControlName="numberOfPlayers">
+                                <mat-option *ngFor="let number of [1,2,3,4,5,6,7,8]" [value]="number">
+                                    {{number}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <p>
+                            <button mat-stroked-button [disabled]="createForm.invalid" (click)="createGame()">
+                                Spiel erstellen
+                            </button>
+                        </p>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+            <mat-card>
+                <mat-card-title>
+                    Spiele
+                </mat-card-title>
+                <mat-card-content>
+                    <mat-accordion [multi]="true">
+                        <mat-expansion-panel *ngFor="let game of games">
+                            <mat-expansion-panel-header>
+                                <b>{{game.name}}</b>
+                            </mat-expansion-panel-header>
+                            <p>
+                                Anzahl der Gruppen: {{game.players.length}}
+                            </p>
+                            <p>
+                                Aktuelle Runde: {{game.currentRound}} von {{game.numberOfRounds}}
+                            </p>
+                            <p>
+                                <button mat-stroked-button (click)="deleteGame(game.id)">
+                                    Spiel löschen
+                                </button>
+                            </p>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </mat-card-content>
+            </mat-card>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+    <footer fxFlex="0 1 auto"></footer>
+</div>

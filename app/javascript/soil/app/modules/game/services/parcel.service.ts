@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 
-import {Response} from '../models/response.model';
+import {Response} from '../../shared/models/response.model';
 
 import {Parcel} from '../models/parcel.model';
 
@@ -16,6 +16,6 @@ export class ParcelService {
   }
 
   updateParcel(parcel: Parcel) {
-    return this.http.put<Response>(`/api/v1/parcel/${parcel.id}`, {"plantation":parcel.plantation});
+    return this.http.put<Response>(`/api/v1/parcel/${parcel.id}`, {"plantation": parcel.plantation});
   }
 }

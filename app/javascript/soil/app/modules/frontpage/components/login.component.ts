@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
+
+import {AngularTokenService} from "angular-token";
 
 import templateString from './login.component.html'
-
-import { AuthenticationService } from '../../shared/services/authentication.service'
 
 @Component({
   template: templateString,
@@ -13,29 +13,32 @@ export class LoginComponent {
   constructor(
       private router: Router,
       private route: ActivatedRoute,
-      private authenticationService: AuthenticationService
+      private tokenService: AngularTokenService,
   ) {
   }
 
-  gameId: number;
-  username: string;
+  email: string;
   password: string;
 
   ngOnInit() {
     // reset login status
-    this.authenticationService.logout();
+    this.email = this.route.snapshot.queryParamMap.get('uid');
 
-    this.gameId = Number(this.route.snapshot.queryParamMap.get('gameId'));
+    //this.gameId = Number(this.route.snapshot.queryParamMap.get('gameId'));
   }
 
   login(): void {
-    this.authenticationService.login(this.gameId, this.username, this.password)
-        .subscribe(
-            data => {
-              this.router.navigate(['/']);
-            },
-            error => {
-              alert("Authentication failed");
-            });
+    this.tokenService.signIn({
+          userType: 'ADMIN',
+          login: this.email,
+          password: this.password
+        }
+    ).subscribe(
+        res => {
+          console.log(res);
+          this.router.navigate(['/admin']);
+        },
+        error => console.log(error)
+    );
   }
 }

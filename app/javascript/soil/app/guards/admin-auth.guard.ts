@@ -4,7 +4,7 @@ import {Router, CanActivate} from '@angular/router';
 import {AngularTokenService} from "angular-token";
 
 @Injectable()
-export class AppAuthGuard implements CanActivate {
+export class AdminAuthGuard implements CanActivate {
 
   constructor(private authTokenService: AngularTokenService,
               private router: Router) {
@@ -16,7 +16,7 @@ export class AppAuthGuard implements CanActivate {
 
     if (this.authTokenService.userSignedIn()) {
       if (!this.authTokenService.currentUserData) {
-        console.log("user data empty");
+        console.log("data empty");
         this.authTokenService.validateToken().subscribe(
             result => console.log('Token validation result', result),
             error => console.log('Token validation error', error)
@@ -25,14 +25,7 @@ export class AppAuthGuard implements CanActivate {
 
       if (this.authTokenService.currentUserData) {
         console.log('User data', this.authTokenService.currentUserData);
-        if (this.authTokenService.currentUserType === "PLAYER") {
-          this.router.navigate(['/game', this.authTokenService.currentUserData['gameId']]);
-          return true
-        } else if (this.authTokenService.currentUserType === "ADMIN") {
-          this.router.navigate(['/admin', this.authTokenService.currentUserData['id']]);
-          return true
-        } else if (this.authTokenService.currentUserType === "SUPERUSER") {
-          this.router.navigate(['/superuser', this.authTokenService.currentUserData['id']]);
+        if (this.authTokenService.currentUserType === "ADMIN") {
           return true
         }
       }

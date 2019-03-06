@@ -18,10 +18,10 @@ class AuthorizeService
       case decoded_auth_token[:role]
       when "Player"
         @user ||= Player.find(decoded_auth_token[:id])
-      when "Supervisor"
-        @user ||= Supervisor.find(decoded_auth_token[:id])
       when "Admin"
         @user ||= Admin.find(decoded_auth_token[:id])
+      when "Supervisor"
+        @user ||= Supervisor.find(decoded_auth_token[:id])
       end
       # @user || errors.add(:token, 'Invalid token') && nil
     end

@@ -1,19 +1,20 @@
 import {Component, OnInit} from '@angular/core';
-import {MatDialog, MatTabChangeEvent} from '@angular/material';
+import {MatDialog} from '@angular/material';
 import {ActivatedRoute, Router} from "@angular/router";
 
 import {timer} from 'rxjs';
-import {concatMap, filter, take, flatMap, map} from "rxjs/operators";
+import {concatMap, filter, take, flatMap} from "rxjs/operators";
+
+import {AngularTokenService} from 'angular-token';
 
 import templateString from './player.component.html';
 
 import {EndRoundDialogComponent} from "./end-round-dialog.component";
 
-import {Player} from "../models/player.model";
+import {Player} from "../../shared/models/player.model";
 import {Round} from "../models/round.model";
-import {User} from "../models/user.model";
-import {Response} from "../models/response.model";
-import {AuthenticationService} from "../../shared/services/authentication.service";
+import {User} from "../../shared/models/user.model";
+import {Response} from "../../shared/models/response.model";
 import {RoundService} from "../services/round.service";
 import {NewRoundDialogComponent} from "./new-round-dialog.component";
 import {EndGameDialogComponent} from "./end-game-dialog.component";
@@ -33,7 +34,7 @@ export class PlayerComponent implements OnInit {
   constructor(
       private router: Router,
       private route: ActivatedRoute,
-      private authenticationService: AuthenticationService,
+      private tokenService: AngularTokenService,
       private roundService: RoundService,
       private resultService: ResultService,
       public dialog: MatDialog
@@ -220,7 +221,7 @@ export class PlayerComponent implements OnInit {
   }
 
   logout(): void {
-    this.authenticationService.logout();
+    this.tokenService.signOut();
     this.router.navigate(['/frontpage/login?gameId=' + this.currentUser.gameId])
   }
 }

@@ -18,13 +18,13 @@ gem 'bootsnap'
 gem 'webpacker', '>= 4.0.x'
 gem 'foreman'
 
+# authentication framework
+gem 'devise_token_auth'
+
 # Fast JSON API
 gem 'fast_jsonapi'
 # Fast JSON Serializer
 gem 'oj'
-
-# JSON Web Token
-gem 'jwt'
 
 # To use ActiveModel has_secure_password
 gem 'bcrypt'

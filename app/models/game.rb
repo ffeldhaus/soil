@@ -1,12 +1,12 @@
 class Game < ApplicationRecord
   has_many :players, autosave: true, dependent: :destroy
   has_many :rounds, through: :players
-  belongs_to :supervisor
+  belongs_to :admin
   serialize :weather
   serialize :vermin
   accepts_nested_attributes_for :players
 
-  validates :name, :presence => true, :uniqueness => true, :length => {:in => 4..64}
+  validates :name, :presence => true, :length => {:in => 4..128}
 
   after_initialize do
     self.current_round ||= 1

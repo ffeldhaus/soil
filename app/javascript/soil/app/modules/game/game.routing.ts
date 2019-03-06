@@ -6,7 +6,7 @@ import {RoundComponent} from './components/round.component';
 import {FieldComponent} from './components/field.component';
 import {ResultComponent} from "./components/result.component";
 
-import {GameResolver} from "./services/game-resolver.service";
+import {GameResolver} from "../shared/services/game-resolver.service";
 import {PlayerResolver} from "./services/player-resolver.service";
 import {RoundResolver} from "./services/round-resolver.service";
 import {FieldResolver} from "./services/field-resolver.service";

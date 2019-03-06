@@ -6,7 +6,7 @@ class CreateGames < ActiveRecord::Migration[5.2]
       t.string :name
       t.string :weather
       t.string :vermin
-      t.references :supervisor, index: true
+      t.references :admin, index: true
 
       t.timestamps
     end
