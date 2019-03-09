@@ -60,12 +60,16 @@ export class AdminComponent implements OnInit {
   createGame() {
     this.gameService.newGame({name: this.createForm.controls.name.value, numberOfPlayers: this.createForm.controls.numberOfPlayers.value}).subscribe(
         response => {
-          this.games.push(
-            new Game(response.data.attributes)
-        )
+          alert("Spiel erfolgreich erstellt");
+          let game = new Game(response.data.attributes);
+          game.players = response.data.relationships.players.data.map(playerRelationship => {
+                let player = response.included.find(included => included.type === "player" && included.id === playerRelationship.id);
+                return new Player(player.attributes);
+              });
+          this.games.push(game);
         },
         error => {
-          alert("Creating game failed");
+          alert("Spiel Erstellung fehlgeschlagen");
         }
     )
   }
@@ -73,16 +77,20 @@ export class AdminComponent implements OnInit {
   deleteGame(gameId) {
     this.gameService.deleteGame(gameId).subscribe(
         response => {
-          alert("Game successfully deleted")
+          alert("Spiel erfolgreich gelöscht");
+          this.games = this.games.filter(game => game.id !== gameId);
         },
         error => {
-          alert("Deleting game failed");
+          alert("Löschen des Spiels fehlgeschlagen");
         }
     )
   }
 
   logout(): void {
-    this.tokenService.signOut();
+    this.tokenService.signOut().subscribe(
+        res => console.log('Successfully logged out'),
+        error => console.log('Log out failed')
+    );
     this.router.navigate(['/frontpage/login']);
   }
 }

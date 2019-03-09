@@ -1,4 +1,13 @@
-import {Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewChecked} from '@angular/core';
+import {
+  Component,
+  Input,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  AfterViewChecked,
+  ɵCssSelectorList
+} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {MatDialog} from '@angular/material';
 
@@ -70,7 +79,8 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
                   this.selectable.destroy();
                 }
                 this.selectable = new Selectable();
-                this.selectable.on("selectable.end", () => this.selectPlantation());
+                this.selectable.on("end", () => this.selectPlantation());
+                console.log('Selectable',this.selectable);
               }
             }
         )
@@ -79,12 +89,14 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   openDialog(): void {
+    console.log('Inside open dialog');
     const dialogRef = this.dialog.open(PlantationDialogComponent, {
       width: '80%',
       maxWidth: 1024
     });
 
     let selectedParcelIds = this.selectable.getSelectedNodes().map(node => node.getAttribute('parcel-index'));
+    console.log('Selected parcels', selectedParcelIds);
 
     dialogRef.afterClosed().subscribe(result => {
       if (this.plantations.includes(result)) {
@@ -102,6 +114,7 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   selectPlantation() {
+    console.log('Inside select plantation');
     if (this.field && !this.field.submitted && !this.route.parent.snapshot.data.round.attributes.last) {
       this.openDialog();
     }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Hallo <%= @admin.firstname %> <%= @admin.lastname %>!</h1>
+    <p>Vielen Dank für das erstellen des Spiels <%= @game.name %>.</p>
+    <p>Hier sind die Zugangsdaten für die verschiedenen Gruppen</p>
+    <% @players.each do |player| %>
+      <p>Gruppe <%= player[:number] %><br>
+        Login: <a href="https://soil.app/frontpage/login?gameId=<%= @game.id %>&player=<%= player[:number]%>">https://soil.app/frontpage/login?gameId=<%= @game.id %>&player=<%= player[:number] %></a><br>
+        Passwort: <%= player[:password] %>
+      </p>
+    <% end %>
+  </body>
+</html>

@@ -1,22 +1,38 @@
-import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, ActivatedRoute} from '@angular/router';
+import {AngularTokenService} from "angular-token";
 
 @Injectable()
 export class GameAuthGuard implements CanActivate {
 
-  constructor(private router: Router) { }
+  constructor(
+      private authTokenService: AngularTokenService,
+      private router: Router) {
+  }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser) {
-      if (currentUser.role === "player") {
-        // logged in as player so return true
-        return true;
+    console.log('User logged in?', this.authTokenService.userSignedIn());
+    console.log('User type', this.authTokenService.currentUserType);
+
+    if (this.authTokenService.userSignedIn()) {
+      if (!this.authTokenService.currentUserData) {
+        console.log("data empty");
+        this.authTokenService.validateToken().subscribe(
+            result => console.log('Token validation result', result),
+            error => console.log('Token validation error', error)
+        )
+      }
+
+      if (this.authTokenService.currentUserData) {
+        console.log('User data', this.authTokenService.currentUserData);
+        if (this.authTokenService.currentUserType === "PLAYER") {
+          return true
+        }
       }
     }
 
-    // not logged in so redirect to login page with the return url
-    this.router.navigate(['/frontpage/login']);
-    return false;
+    console.log('User not logged in, navigating to ', '/frontpage/overview');
+    this.router.navigate(['/frontpage/overview']);
+    return false
   }
 }

@@ -4,7 +4,7 @@
         <mat-card-content>
             <form>
                 <div fxLayout="column" fxLayoutAlign="start start">
-                    <mat-form-field>
+                    <mat-form-field *ngIf="!playerId && !gameId">
                         <input matInput required placeholder="E-Mail" [(ngModel)]="email" name="email">
                     </mat-form-field>
                     <mat-form-field>
@@ -15,7 +15,7 @@
                     <button mat-raised-button (click)="login()">Anmelden</button>
                 </div>
             </form>
-            <p>
+            <p *ngIf="!playerId && !gameId">
                 <a routerLink="../register" routerLinkActive="active">Als Spielleiter registrieren?</a>
             </p>
         </mat-card-content>

@@ -1,6 +1,5 @@
 class Api::V1::FieldController < ApplicationController
-
-  # TODO: Implement authentication check
+  before_action :authenticate_player!
 
   # GET /field/X.json
   def show

@@ -14,6 +14,7 @@ import {User} from '../shared/models/user.model'
 import {Player} from '../shared/models/player.model'
 import {Game} from "../shared/models/game.model";
 import {Round} from "./models/round.model";
+import {AngularTokenService} from "angular-token";
 
 @Component({
   template: templateString,
@@ -22,6 +23,7 @@ export class GameComponent implements OnInit {
   constructor(
       private router: Router,
       private route: ActivatedRoute,
+      private tokenService: AngularTokenService,
   ) {
   }
 
@@ -31,11 +33,9 @@ export class GameComponent implements OnInit {
   rounds: Round[] = [];
 
   ngOnInit() {
-    this.currentUser = new User(JSON.parse(localStorage.getItem('currentUser')));
-
     // game is already loaded via resolver
     this.game = new Game(this.route.snapshot.data.game.attributes);
 
-    this.router.navigate(['player', this.currentUser.id], {relativeTo: this.route})
+    this.router.navigate(['player', this.tokenService.currentUserData.id], {relativeTo: this.route})
   }
 }

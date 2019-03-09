@@ -37,11 +37,10 @@ export class PlayerComponent implements OnInit {
       private tokenService: AngularTokenService,
       private roundService: RoundService,
       private resultService: ResultService,
-      public dialog: MatDialog
+      public dialog: MatDialog,
   ) {
   }
 
-  currentUser: User;
   player;
   rounds;
   result;
@@ -53,8 +52,6 @@ export class PlayerComponent implements OnInit {
   ngOnInit() {
     this.display = 'field';
     this.timer = timer(0, 10000);
-
-    this.currentUser = new User(JSON.parse(localStorage.getItem('currentUser')));
 
     // game is already loaded via resolver
     this.player = new Player(this.route.snapshot.data.player.data.attributes);
@@ -221,7 +218,10 @@ export class PlayerComponent implements OnInit {
   }
 
   logout(): void {
-    this.tokenService.signOut();
-    this.router.navigate(['/frontpage/login?gameId=' + this.currentUser.gameId])
+    this.tokenService.signOut().subscribe(
+        res => console.log('Successfully logged out'),
+        error => console.log('Log out failed')
+    );
+    this.router.navigate(['/frontpage/overview']);
   }
 }
