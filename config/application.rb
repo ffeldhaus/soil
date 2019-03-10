@@ -19,6 +19,9 @@ Bundler.require(*Rails.groups)
 
 module Soil
   class Application < Rails::Application
+    # set default language to german
+    config.i18n.default_locale = :de
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
