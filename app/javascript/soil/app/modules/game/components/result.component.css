@@ -1,3 +1,11 @@
 table tr {
     text-align: right;
 }
+
+.result mat-expansion-panel-header  {
+    padding: 0;
+}
+
+.result .mat-expansion-panel-body {
+    padding: 0;
+}

@@ -4,38 +4,43 @@
             <mat-expansion-panel-header>
                 <table>
                     <tr>
-                        <th></th>
-                        <td *ngFor="let result of resultsOfSelectedRound()">{{result.player}}</td>
+                        <td></td>
+                        <td *ngFor="let result of resultsOfSelectedRound(); let i = index">Gruppe {{i + 1}}</td>
                     </tr>
                 </table>
             </mat-expansion-panel-header>
             <mat-expansion-panel [expanded]="true" hideToggle="true">
                 <mat-expansion-panel-header>
-                    Getroffene Entscheidungen aus der vorherigen Runde
+                    <table>
+                        <tr>
+                            <td><b>Getroffene Entscheidungen aus der vorherigen Runde</b></td>
+                            <td *ngFor="let result of resultsOfSelectedRound()"></td>
+                        </tr>
+                    </table>
                 </mat-expansion-panel-header>
                 <table>
                     <tr>
-                        <th>Konventioneller Dünger</th>
+                        <td>Konventioneller Dünger</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.fertilize | checkmark}}
                         </td>
                     </tr>
                     <tr>
-                        <th>Pestizide</th>
+                        <td>Pestizide</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.pesticide | checkmark}}
                         </td>
                     </tr>
                     <tr>
-                        <th>Nützlinge</th>
+                        <td>Nützlinge</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.organisms | checkmark}}
                         </td>
                     </tr>
                     <tr>
-                        <th>Einsatz von Maschinen</th>
+                        <td>Einsatz von Maschinen</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.machines}}
                         </td>
                     </tr>
                     <tr>
-                        <th>Bio Siegel</th>
+                        <td>Bio Siegel</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.previous_round.organic | checkmark}}
                         </td>
                     </tr>
@@ -43,20 +48,25 @@
             </mat-expansion-panel>
             <mat-expansion-panel [expanded]="true" hideToggle="true">
                 <mat-expansion-panel-header>
-                    Übersicht
+                    <table>
+                        <tr>
+                            <td><b>Übersicht</b></td>
+                            <td *ngFor="let result of resultsOfSelectedRound()"></td>
+                        </tr>
+                    </table>
                 </mat-expansion-panel-header>
                 <table>
                     <tr>
-                        <th>Einsatz von Maschinen</th>
+                        <td>Einsatz von Maschinen</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.machines}}</td>
                     </tr>
                     <tr>
-                        <th>Bio-Siegel</th>
+                        <td>Bio-Siegel</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.organic | checkmark}}
                         </td>
                     </tr>
                     <tr>
-                        <th>Wetter</th>
+                        <td>Wetter</td>
                         <td *ngFor="let result of resultsOfSelectedRound()">{{result.weather}}</td>
                     </tr>
                     <tr>
@@ -69,7 +79,7 @@
                 <mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Ausgaben</th>
+                            <td><b>Ausgaben</b></td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.sum | currency : 'EUR' }}</td>
                         </tr>
                     </table>
@@ -78,7 +88,7 @@
                     <mat-expansion-panel-header>
                         <table>
                             <tr>
-                                <th>Saatgut</th>
+                                <td><b>Saatgut</b></td>
                                 <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.sum | currency : 'EUR'
                                     }}
                                 </td>
@@ -87,48 +97,48 @@
                     </mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Ackerbohnen</th>
+                            <td>Ackerbohnen</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.fieldbean |
                                 currency : 'EUR'
                                 }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Gerste</th>
+                            <td>Gerste</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.barley | currency : 'EUR'
                                 }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Hafer</th>
+                            <td>Hafer</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.oat | currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Kartoffeln</th>
+                            <td>Kartoffeln</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.potatoe | currency : 'EUR'
                                 }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Mais</th>
+                            <td>Mais</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.corn | currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Roggen</th>
+                            <td>Roggen</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.rye | currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Weizen</th>
+                            <td>Weizen</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.wheat | currency : 'EUR'
                                 }}
                             </td>
 
                         </tr>
                         <tr>
-                            <th>Zuckerrueben</th>
+                            <td>Zuckerrueben</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.seed.beet | currency : 'EUR' }}
                             </td>
                         </tr>
@@ -138,7 +148,7 @@
                     <mat-expansion-panel-header>
                         <table>
                             <tr>
-                                <th>Investitionen</th>
+                                <td><b>Investitionen</b></td>
                                 <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.investment.sum |
                                     currency : 'EUR' }}
                                 </td>
@@ -147,13 +157,13 @@
                     </mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Tiere</th>
+                            <td>Tiere</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.investment.animals |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Einsatz von Maschinen</th>
+                            <td>Einsatz von Maschinen</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.investment.machines |
                                 currency : 'EUR' }}
                             </td>
@@ -164,7 +174,7 @@
                     <mat-expansion-panel-header>
                         <table>
                             <tr>
-                                <th>Laufende Kosten</th>
+                                <td><b>Laufende Kosten</b></td>
                                 <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.running_cost.sum |
                                     currency : 'EUR' }}
                                 </td>
@@ -173,41 +183,41 @@
                     </mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Kontrollen Bio-Siegel</th>
+                            <td>Kontrollen Bio-Siegel</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">
                                 {{result.expense.running_cost.organic_control
                                 | currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Konventioneller Dünger</th>
+                            <td>Konventioneller Dünger</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.running_cost.fertilize
                                 |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Pestizide</th>
+                            <td>Pestizide</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.running_cost.pesticide
                                 |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Nützlinge</th>
+                            <td>Nützlinge</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.running_cost.organisms
                                 |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Tiere</th>
+                            <td>Tiere</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.running_cost.animals |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Grundkosten</th>
+                            <td>Grundkosten</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.expense.running_cost.base |
                                 currency : 'EUR' }}
                             </td>
@@ -219,7 +229,7 @@
                 <mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Einnahmen</th>
+                            <td><b>Einnahmen</b></td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.sum | currency : 'EUR' }}</td>
                         </tr>
                     </table>
@@ -228,7 +238,7 @@
                     <mat-expansion-panel-header>
                         <table>
                             <tr>
-                                <th>Ernteerträge</th>
+                                <td><b>Ernteerträge</b></td>
                                 <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.sum |
                                     currency : 'EUR'
                                     }}
@@ -238,49 +248,49 @@
                     </mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Ackerbohnen</th>
+                            <td>Ackerbohnen</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.fieldbean |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Gerste</th>
+                            <td>Gerste</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.barley |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Hafer</th>
+                            <td>Hafer</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.oat | currency : 'EUR'
                                 }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Kartoffeln</th>
+                            <td>Kartoffeln</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.potatoe |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Mais</th>
+                            <td>Mais</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.corn | currency : 'EUR'
                                 }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Roggen</th>
+                            <td>Roggen</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.rye | currency : 'EUR'
                                 }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Weizen</th>
+                            <td>Weizen</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.wheat |
                                 currency : 'EUR' }}
                             </td>
                         </tr>
                         <tr>
-                            <th>Zuckerrueben</th>
+                            <td>Zuckerrueben</td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.income.harvest.beet | currency : 'EUR'
                                 }}
                             </td>
@@ -292,7 +302,7 @@
                 <mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Gewinn</th>
+                            <td><b>Gewinn</b></td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.profit | currency : 'EUR' }}
                             </td>
                         </tr>
@@ -303,7 +313,7 @@
                 <mat-expansion-panel-header>
                     <table>
                         <tr>
-                            <th>Kapital</th>
+                            <td><b>Kapital</b></td>
                             <td *ngFor="let result of resultsOfSelectedRound()">{{result.capital | currency : 'EUR' }}
                             </td>
                         </tr>
