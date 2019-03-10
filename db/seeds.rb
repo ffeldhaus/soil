@@ -5,12 +5,3 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-
-admin = Admin.create(:firstname => 'first', :lastname => 'last', :institution => 'institution', :password => 'password123', :email => 'admin@example.com')
-admin.save!
-
-game = admin.games.create(:name => 'game0')
-player = game.players.create(:email => 'player0@game0.soil.app',:password => 'password')
-player.save!
-
-game.save!
