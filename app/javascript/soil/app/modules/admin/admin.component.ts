@@ -8,10 +8,10 @@ import {Router} from "@angular/router";
 import {FormControl, FormGroupDirective, NgForm, Validators, FormGroup, FormBuilder} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 
-import templateString from './admin.component.html'
-import './admin.component.css'
+import templateString from './admin.component.html';
+import './admin.component.css';
 
-import {User} from '../shared/models/user.model'
+import {User} from '../shared/models/user.model';
 
 import {AngularTokenService} from 'angular-token';
 

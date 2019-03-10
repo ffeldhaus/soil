@@ -36,6 +36,12 @@
       {
         "loose": true
       }
-    ]
+    ],
+    ["module-resolver", {
+      "root": ["./app/javascript/soil/app"],
+      "alias": {
+        "assets": "./assets"
+      }
+    }]
   ]
 }
