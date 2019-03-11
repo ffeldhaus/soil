@@ -4,8 +4,8 @@
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   </head>
   <body>
-    <h1>Hallo <%= @admin.firstname %> <%= @admin.lastname %>!</h1>
     <p>Vielen Dank für das erstellen des Spiels <%= @game.name %>.</p>
+    <p>Bitte denken Sie daran, den Gruppen den Sortenpass zur verfügung zu stellen. Dieser kann unter <a href="https://soil-app.s3.amazonaws.com/sortenpass.pdf">https://soil-app.s3.amazonaws.com/sortenpass.pdf</a> oder im Admin Bereich heruntergeladen werden.</p>
     <p>Hier sind die Zugangsdaten für die verschiedenen Gruppen</p>
     <% @players.each do |player| %>
       <p>Gruppe <%= player[:number] %><br>

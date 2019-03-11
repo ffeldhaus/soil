@@ -22,7 +22,7 @@ class Api::V1::GameController < ApplicationController
 
   # POST /game
   def create
-    @admin = current_admin
+    @admin = Admin.find_by_id(current_admin.id)
     @game = current_admin.games.create(:name => params[:name])
     @game.save!
     @players = []

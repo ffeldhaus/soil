@@ -24,5 +24,5 @@ environment.loaders.get('sass').use.splice(-1, 0, {
     }
 });
 
-environment.loaders.prepend('typescript', typescript)
+environment.loaders.prepend('typescript', typescript);
 module.exports = environment;
