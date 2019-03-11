@@ -47,7 +47,10 @@ export class LoginComponent {
             console.log(res);
             this.router.navigate(['/admin']);
           },
-          error => console.log(error)
+          error => {
+            alert('Login fehlgeschlagen');
+            console.log(error)
+          }
       );
     }
     if (this.gameId && this.player) {
@@ -61,7 +64,10 @@ export class LoginComponent {
             console.log(res);
             this.router.navigate(['/game',this.gameId,'/player',res.data.id]);
           },
-          error => console.log(error)
+          error => {
+            alert('Login fehlgeschlagen');
+            console.log(error)
+          }
       );
     }
   }

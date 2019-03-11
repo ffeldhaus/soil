@@ -5,6 +5,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import {AngularTokenService} from 'angular-token';
 
 import templateString from './register.component.html';
+import {Router} from "@angular/router";
 
 export class RegisterErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -21,7 +22,8 @@ export class RegisterErrorStateMatcher implements ErrorStateMatcher {
 export class RegisterComponent {
   constructor(
       private formBuilder: FormBuilder,
-      private tokenService: AngularTokenService
+      private tokenService: AngularTokenService,
+      private router: Router,
   ) {
     this.registerForm = this.formBuilder.group({
       firstName: ['', [Validators.required, Validators.maxLength(128)]],
@@ -50,8 +52,16 @@ export class RegisterComponent {
           passwordConfirmation: this.registerForm.controls.confirmPassword.value
         }
     ).subscribe(
-        res => console.log(res),
-        error => console.log(error)
+        res => {
+          console.log(res);
+          alert('Registrierung erfolgreich. Sie werden per E-Mail aufgefordert, Ihre Registrierung zu bestätigen.');
+          this.router.navigate(['/frontpage/overview']);
+        },
+        error => {
+          console.log(error);
+          // TODO: add more specific error handling
+          alert('Registrierung fehlgeschlagen.')
+        }
     )
   }
 

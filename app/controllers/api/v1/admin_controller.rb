@@ -13,6 +13,6 @@ class Api::V1::AdminController < ApplicationController
   private
 
   def admin_params
-    params.require(:admin).permit(:firstName, :lastName, :email, :password, :password_confirmation, :institution, :confirm_success_url)
+    params.permit(:firstName, :lastName, :email, :password, :password_confirmation, :institution, :confirm_success_url)
   end
 end
