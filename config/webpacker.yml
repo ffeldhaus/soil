@@ -33,6 +33,7 @@ default: &default
   extensions:
     - .tsx
     - .ts
+    - .mjs
     - .js
     - .sass
     - .scss

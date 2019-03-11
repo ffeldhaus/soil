@@ -3,21 +3,24 @@ import { GameAuthGuard } from './guards/game-auth.guard';
 import { AppAuthGuard } from './guards/app-auth.guard';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
 import { AppComponent } from './app.component';
+import {AdminModule} from "./modules/admin/admin.module";
+import {GameModule} from "./modules/game/game.module";
+import {FrontpageModule} from "./modules/frontpage/frontpage.module";
 
 const appRoutes: Routes = [
   {
     path: 'game/:id',
-    loadChildren: './modules/game/game.module#GameModule',
+    loadChildren: () => GameModule,
     canActivate: [GameAuthGuard]
   },
   {
     path: 'admin/:id',
-    loadChildren: './modules/admin/admin.module#AdminModule',
+    loadChildren: () => AdminModule,
     canActivate: [AdminAuthGuard],
   },
   {
     path: 'frontpage',
-    loadChildren: './modules/frontpage/frontpage.module#FrontpageModule'
+    loadChildren: () => FrontpageModule,
   },
   {
     path: '**',

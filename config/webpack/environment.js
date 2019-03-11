@@ -1,9 +1,8 @@
 const { environment } = require('@rails/webpacker');
 const typescript =  require('./loaders/typescript');
 
-environment.loaders.append('typescript', typescript);
 
-environment.loaders.append('html', {
+environment.loaders.prepend('html', {
   test: /\.html$/,
   use: [{
     loader: 'html-loader',
@@ -25,6 +24,5 @@ environment.loaders.get('sass').use.splice(-1, 0, {
     }
 });
 
-
-
+environment.loaders.prepend('typescript', typescript)
 module.exports = environment;

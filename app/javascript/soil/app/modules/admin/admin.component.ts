@@ -11,6 +11,8 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import templateString from './admin.component.html';
 import './admin.component.css';
 
+import '../../assets/files/sortenpass.pdf';
+
 import {User} from '../shared/models/user.model';
 
 import {AngularTokenService} from 'angular-token';
