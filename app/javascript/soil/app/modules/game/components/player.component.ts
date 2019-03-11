@@ -103,11 +103,11 @@ export class PlayerComponent implements OnInit {
               this.startNewRound(result)
             }
           }
-          this.router.navigate(['round', round.id], {relativeTo: this.route});
+          this.router.navigate(['round', round.id, 'field', round.fieldId], {relativeTo: this.route});
         });
 
     this.selectedRound = this.rounds[this.rounds.length - 1];
-    this.router.navigate(['round', this.selectedRound.id], {relativeTo: this.route})
+    this.router.navigate(['round', this.selectedRound.id, 'field', this.selectedRound.fieldId], {relativeTo: this.route})
   }
 
   endRound() {
