@@ -1,3 +1,4 @@
+# File: backend/app/schemas/player.py
 from typing import Optional, List, Any
 from uuid import UUID # For potential game_id if it's a UUID
 
@@ -17,6 +18,8 @@ class PlayerBase(UserBase):
     game_id: Optional[str] = Field(None, description="ID of the game the player belongs to (Firestore document ID or custom ID)")
     # Player number within the game, e.g., Player 1, Player 2
     player_number: Optional[int] = Field(None, ge=1, description="Player's number within the game")
+    is_ai: bool = Field(default=False, description="Is this player controlled by AI?")
+
 
     model_config = ConfigDict(use_enum_values=True)
 
@@ -37,10 +40,10 @@ class PlayerCreate(UserCreate, PlayerBase): # Multiple inheritance
     # or provided by an admin.
     email: EmailStr = Field(..., description="Player's email address (must be unique for Firebase Auth, could be system-generated)")
     password: str = Field(..., min_length=6, description="Player's password (can be simpler if system-generated, e.g., 6 characters)") # Shorter min_length for player
-    
     username: Optional[str] = Field(None, max_length=50, description="Player's display name (optional, can default to Player X)")
     game_id: str = Field(..., description="ID of the game the player is being added to")
     player_number: Optional[int] = Field(None, ge=1, description="Player's number within the game (can be assigned by the system)")
+    is_ai: bool = Field(default=False, description="Set to True if this player is AI controlled")
 
 
 # --- Properties to receive via API on update (by player themselves or admin) ---
@@ -54,7 +57,6 @@ class PlayerUpdate(BaseModel):
     # email: Optional[EmailStr] = None # Usually, players don't change their primary email/login
     password: Optional[str] = Field(None, min_length=6, description="New password (if changing)")
     is_active: Optional[bool] = Field(None, description="Whether the player account is active (admin action)")
-    
     # player_number and game_id are typically not updatable by the player.
     model_config = ConfigDict(extra='forbid')
 
@@ -67,8 +69,8 @@ class PlayerInDB(UserInDBBase, PlayerBase): # Multiple inheritance
     """
     # Game ID is crucial here
     game_id: str = Field(..., description="ID of the game the player belongs to")
+    is_ai: bool = Field(default=False, description="True if this player is AI controlled")
     # player_number could also be stored if it's a fixed identifier within the game context
-    
     # Example of game-specific progress or state, if stored directly on player doc:
     # current_round_id: Optional[str] = None
     # total_score: int = 0
@@ -86,9 +88,10 @@ class PlayerPublic(UserPublic, PlayerBase): # Multiple inheritance
     username: Optional[str] = Field(None, max_length=50, description="Player's display name or username in the game")
     game_id: Optional[str] = Field(None, description="ID of the game the player belongs to")
     player_number: Optional[int] = Field(None, ge=1, description="Player's number within the game")
+    is_ai: bool = Field(default=False, description="Indicates if the player is AI controlled")
+
 
     # Current game-related info might be useful
     # current_game_info: Optional[GameSimple] = None
     # current_round_info: Optional[RoundSummary] = None
-    
     model_config = ConfigDict(from_attributes=True)

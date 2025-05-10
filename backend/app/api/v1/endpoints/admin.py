@@ -1,24 +1,32 @@
+# File: backend/app/api/v1/endpoints/admin.py
+from uuid import uuid4 
+from datetime import datetime 
+from typing import List, Any, Dict 
+import random 
+
 from fastapi import APIRouter, Depends, HTTPException, status, Body
-from typing import List, Any
+from pydantic import BaseModel 
 
 from app.api import deps
 from app.schemas.token import TokenData
 from app.schemas.game import GameCreate, GamePublic, GameInDB, GameSimple
-from app.schemas.player import PlayerCreate, PlayerPublic # For returning player info
+from app.schemas.player import PlayerCreate, PlayerPublic, UserType 
+from app.schemas.round import RoundCreate, RoundDecisionBase 
 from app.crud.crud_game import crud_game
 from app.crud.crud_player import crud_player
-from app.crud.crud_round import crud_round # For initializing round 0 or 1
-from app.crud.crud_parcel import crud_parcel # We'll need a CRUD for initial parcels or a way to init them
-from app.game_logic import game_rules # For initial parcel states
-from app.db.firebase_setup import get_firestore_client, get_firebase_auth
+from app.crud.crud_round import crud_round 
+from app.crud.crud_result import crud_result 
+from app.game_logic import game_rules
+from app.game_logic.ai_player import AIStrategyType 
+from app.db.firebase_setup import get_firestore_client 
 from firebase_admin import auth as firebase_auth_admin, exceptions as firebase_exceptions
 from app.core.config import settings
-
+from app.services.game_state_service import get_game_state_service, GameStateService 
+from app.services.email_service import get_email_service, EmailService 
 
 router = APIRouter()
 
 # --- Helper for initializing parcels ---
-# This might eventually live in a crud_field_state.py or game_setup_service.py
 def get_initial_parcels_for_field(num_parcels: int = 40) -> List[Dict[str, Any]]:
     """Generates a list of initial parcel data."""
     parcels = []
@@ -27,7 +35,7 @@ def get_initial_parcels_for_field(num_parcels: int = 40) -> List[Dict[str, Any]]
             "parcel_number": i,
             "soil_quality": game_rules.INITIAL_PARCEL_SOIL_QUALITY,
             "nutrient_level": game_rules.INITIAL_PARCEL_NUTRIENT_LEVEL,
-            "current_plantation": game_rules.INITIAL_PARCEL_PLANTATION, # PlantationType.FALLOW.value
+            "current_plantation": game_rules.INITIAL_PARCEL_PLANTATION,
             "previous_plantation": None,
             "pre_previous_plantation": None,
             "crop_sequence_effect": game_rules.CropSequenceEffect.NONE.value,
@@ -40,283 +48,352 @@ def get_initial_parcels_for_field(num_parcels: int = 40) -> List[Dict[str, Any]]
 @router.post("/games", response_model=GamePublic, status_code=status.HTTP_201_CREATED)
 async def create_game_by_admin(
     *,
-    db: Any = Depends(deps.get_firestore_db_client_dependency), # Firestore client
+    db: Any = Depends(deps.get_firestore_db_client_dependency), 
     game_in: GameCreate,
-    current_admin: TokenData = Depends(deps.get_current_admin_user)
+    current_admin: TokenData = Depends(deps.get_current_admin_user),
+    email_service: EmailService = Depends(get_email_service) 
 ) -> Any:
     """
-    Admin endpoint to create a new game.
-    This will:
-    1. Create the Game document in Firestore.
-    2. Create player accounts in Firebase Authentication.
-    3. Create Player documents in Firestore.
-    4. Add player UIDs to the Game document.
-    5. Initialize Round 1 (or 0) and initial FieldState for each player.
+    Admin endpoint to create a new game, including human and AI players.
+    Sends an email to the admin with human player credentials upon successful creation.
     """
     admin_uid = current_admin.sub
-    if not admin_uid:
+    if not admin_uid: 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin authentication failed.")
 
-    # 1. Create the Game document
+    admin_doc = await crud_admin.get(db, doc_id=admin_uid) 
+    admin_name_for_email = "Admin"
+    if admin_doc and admin_doc.first_name: 
+        admin_name_for_email = admin_doc.first_name
+    elif current_admin.email: 
+        admin_name_for_email = current_admin.email.split('@')[0]
+
+
     try:
         created_game_dict = await crud_game.create_with_admin(db, obj_in=game_in, admin_id=admin_uid)
-        # created_game_dict now includes the auto-generated game 'id' and sequences
         game_id = created_game_dict["id"]
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to create game document: {str(e)}")
 
-    created_players_public_info: List[PlayerPublic] = []
+    created_players_public_info_for_response: List[PlayerPublic] = []
+    player_credentials_for_email: List[Dict[str, Any]] = [] 
+
     player_uids_for_game: List[str] = []
+    ai_player_strategies_map: Dict[str, str] = {} 
 
-    # Determine number of AI players if any (not fully implemented yet)
-    # num_ai_players = game_in.ai_player_count or 0
-    # num_human_players = game_in.requested_player_slots
-    # total_players_to_create = num_human_players + num_ai_players
-    # if total_players_to_create > game_in.max_players:
-    #     # This should be caught by GameCreate validator ideally, or here as a fallback
-    #     await crud_game.remove(db, doc_id=game_id) # Rollback game creation
-    #     raise HTTPException(status_code=400, detail="Total players (human + AI) exceeds max_players for game.")
+    initial_parcels_state = get_initial_parcels_for_field(num_parcels=game_rules.DEFAULT_NUMBER_OF_PARCELS_PER_PLAYER)
+    
+    human_player_count = game_in.requested_player_slots
+    ai_player_count = game_in.ai_player_count if game_in.ai_player_count is not None else 0
+    
+    available_ai_strategies = [
+        AIStrategyType.BALANCED, AIStrategyType.PROFIT_MAXIMIZER, 
+        AIStrategyType.ECO_CONSCIOUS, AIStrategyType.RANDOM_EXPLORER
+    ]
 
-    # For now, just creating based on requested_player_slots
-    total_players_to_create = game_in.requested_player_slots
-
-
-    # 2. Create Player accounts and documents
-    initial_parcels_state = get_initial_parcels_for_field(num_parcels=40) # Assuming 40 parcels per player
-
-    for i in range(1, total_players_to_create + 1):
-        player_number = i
-        # TODO: Make player email and password generation more robust / configurable
-        player_email = f"player{player_number}.game{game_id[:8]}@{settings.EMAILS_FROM_EMAIL.split('@')[-1] if settings.EMAILS_FROM_EMAIL else 'soil.game'}"
-        # Generate a simple, temporary password. Players might be prompted to change it.
-        temp_password = f"pass{uuid4().hex[:6]}" # Example: pass<random6chars>
-        player_username = f"Player {player_number}" # Default username
+    current_player_number = 0
+    # Create Human Players
+    for i in range(human_player_count):
+        current_player_number += 1
+        player_is_ai = False
+        player_username = f"Player {current_player_number}"
+        player_email_domain = settings.EMAILS_FROM_EMAIL.split('@')[-1] if settings.EMAILS_FROM_EMAIL and '@' in settings.EMAILS_FROM_EMAIL else 'soil.game'
+        player_email = f"player{current_player_number}.game{game_id[:6]}@{player_email_domain}"
+        temp_password = f"s0il_{uuid4().hex[:6]}"
 
         try:
-            # 2a. Create player in Firebase Authentication
             firebase_player_user = firebase_auth_admin.create_user(
-                email=player_email,
-                password=temp_password,
-                display_name=player_username,
-                email_verified=True # Or False if they need to verify/change password
+                email=player_email, password=temp_password, display_name=player_username, email_verified=True
             )
             player_uid = firebase_player_user.uid
             player_uids_for_game.append(player_uid)
+            await firebase_auth_admin.set_custom_user_claims(player_uid, {'role': 'player', 'game_id': game_id, 'is_ai': player_is_ai})
 
-            # 2b. Set custom claims for the player
-            firebase_auth_admin.set_custom_user_claims(player_uid, {'role': 'player', 'game_id': game_id})
-            
-            # 2c. Create Player document in Firestore
             player_schema_in = PlayerCreate(
-                email=player_email,
-                password=temp_password, # Not stored in Firestore
-                username=player_username,
-                game_id=game_id,
-                player_number=player_number,
-                user_type='player' # Will be overridden by PlayerCreate default but good to be explicit
+                email=player_email, password=temp_password, username=player_username,
+                game_id=game_id, player_number=current_player_number, 
+                user_type=UserType.PLAYER, is_ai=player_is_ai
             )
             created_player_data = await crud_player.create_with_uid(db, uid=player_uid, obj_in=player_schema_in)
             
-            # Store player info to return (excluding password)
-            # Add the temporary password to the info returned to the admin for distribution
-            player_public_data = PlayerPublic(**created_player_data, temp_password=temp_password).model_dump()
-            player_public_data["temp_password"] = temp_password # Ensure it's there for admin
-            created_players_public_info.append(PlayerPublic(**player_public_data))
+            player_public_dict_for_response = created_player_data.copy() 
+            player_public_dict_for_response["temp_password"] = temp_password 
+            created_players_public_info_for_response.append(PlayerPublic.model_validate(player_public_dict_for_response))
+            
+            player_credentials_for_email.append({
+                "player_number": current_player_number, "username": player_username, 
+                "email": player_email, "temp_password": temp_password
+            })
 
+            initial_round_create_obj = RoundCreate(game_id=game_id, player_id=player_uid, round_number=1)
+            await crud_round.create_player_round(db, obj_in=initial_round_create_obj, initial_parcels=initial_parcels_state)
 
-            # 2d. Initialize Round 1 (or 0) and FieldState for this player
-            # Game starts at current_round_number = 0 (setup) or 1 (first playable round)
-            # Let's assume round 1 is the first playable round.
-            # Initializing round 0 could be for a pre-game lobby/setup state.
-            # For now, let's directly create structures for round 1.
-            initial_round_data = {
-                "game_id": game_id,
-                "player_id": player_uid,
-                "round_number": 1, # First playable round
-                "is_submitted": False,
-                "decisions": {} # Empty/default decisions
-            }
-            # The RoundCreate schema expects decisions to be RoundDecisionBase
-            round_create_obj = PlayerCreate(**initial_round_data)
-            await crud_round.create_player_round(
-                db,
-                obj_in=round_create_obj,
-                initial_parcels=initial_parcels_state
+        except Exception as e: 
+            print(f"ERROR creating human player {current_player_number} for game {game_id}: {e}")
+            await crud_game.remove(db, doc_id=game_id) 
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error for human player {current_player_number}: {str(e)}")
+
+    # Create AI Players
+    for i in range(ai_player_count):
+        current_player_number += 1
+        player_is_ai = True
+        ai_strategy = available_ai_strategies[i % len(available_ai_strategies)]
+        player_username = f"AI Player {i+1} ({ai_strategy.capitalize()})" # Use .value if AIStrategyType is enum
+        
+        player_email_domain = settings.EMAILS_FROM_EMAIL.split('@')[-1] if settings.EMAILS_FROM_EMAIL and '@' in settings.EMAILS_FROM_EMAIL else 'soil.ai.game'
+        player_email = f"ai.player{i+1}.game{game_id[:6]}@{player_email_domain}"
+        ai_password = f"ai_pass_{uuid4().hex[:10]}" 
+
+        try:
+            firebase_player_user = firebase_auth_admin.create_user(
+                email=player_email, password=ai_password, display_name=player_username, email_verified=True
             )
+            player_uid = firebase_player_user.uid
+            player_uids_for_game.append(player_uid)
+            ai_player_strategies_map[player_uid] = ai_strategy # Store string name or .value
+            await firebase_auth_admin.set_custom_user_claims(player_uid, {'role': UserType.PLAYER.value, 'game_id': game_id, 'is_ai': player_is_ai, 'ai_strategy': ai_strategy}) # Use .value for enum
 
-        except firebase_exceptions.FirebaseError as fb_error:
-            # TODO: Implement rollback logic - if a player creation fails,
-            # delete previously created players for this game and the game document itself.
-            # This is complex and requires careful error handling.
-            print(f"Firebase error creating player {player_number} for game {game_id}: {fb_error}")
-            # Attempt to delete the game document if player creation fails critically
-            await crud_game.remove(db, doc_id=game_id)
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating player {player_number} in Firebase: {str(fb_error)}")
+            player_schema_in = PlayerCreate(
+                email=player_email, password=ai_password, username=player_username,
+                game_id=game_id, player_number=current_player_number, 
+                user_type=UserType.PLAYER, is_ai=player_is_ai
+            )
+            created_player_data = await crud_player.create_with_uid(db, uid=player_uid, obj_in=player_schema_in)
+            
+            created_players_public_info_for_response.append(PlayerPublic.model_validate(created_player_data))
+
+            initial_round_create_obj = RoundCreate(game_id=game_id, player_id=player_uid, round_number=1)
+            await crud_round.create_player_round(db, obj_in=initial_round_create_obj, initial_parcels=initial_parcels_state)
+            
         except Exception as e:
-            print(f"Error setting up player {player_number} for game {game_id}: {e}")
-            await crud_game.remove(db, doc_id=game_id) # Rollback
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error setting up player {player_number}: {str(e)}")
+            print(f"ERROR creating AI player {i+1} for game {game_id}: {e}")
+            await crud_game.remove(db, doc_id=game_id) 
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error for AI player {i+1}: {str(e)}")
 
-    # 3. Update Game document with player UIDs (if not done incrementally)
-    # Using ArrayUnion per player is better for atomicity if players are added one by one.
-    # If all UIDs are collected first, a single update can set the player_uids list.
-    # Here, we've added them one by one conceptually to Firebase claims and Firestore player docs.
-    # Now, update the game document's player_uids list.
     try:
-        # This replaces the existing list. If adding incrementally, use ArrayUnion.
-        await db.collection(crud_game.collection_name).document(game_id).update({"player_uids": player_uids_for_game})
+        game_update_payload = {
+            "player_uids": player_uids_for_game,
+            "ai_player_strategies": ai_player_strategies_map,
+            "updated_at": datetime.now(datetime.UTC)
+        }
+        await db.collection(crud_game.collection_name).document(game_id).update(game_update_payload)
     except Exception as e:
-        # TODO: Rollback player creations if this fails
-        raise HTTPException(status_code=500, detail=f"Failed to link players to game: {str(e)}")
+        await crud_game.remove(db, doc_id=game_id) 
+        raise HTTPException(status_code=500, detail=f"Failed to link players/AI strategies to game: {str(e)}")
 
-    # Construct the GamePublic response
-    # Fetch the full game again to get all updated fields
     final_game_doc = await crud_game.get(db, doc_id=game_id)
     if not final_game_doc:
-        raise HTTPException(status_code=500, detail="Failed to retrieve created game for response.")
+        raise HTTPException(status_code=500, detail="Failed to retrieve created game for final response.")
 
-    # Manually add player details to the GamePublic response
-    # This is because GamePublic has `players: Optional[List[PlayerPublic]]`
-    # We've collected `created_players_public_info`
-    # The `GameInDB` model fetched by `crud_game.get` won't have these hydrated by default.
-    response_game = GamePublic(
-        **final_game_doc.model_dump(),
-        players=created_players_public_info # Inject the created player info
-    )
-    return response_game
+    if player_credentials_for_email and current_admin.email:
+        email_sent = await email_service.send_new_game_credentials_email(
+            admin_email=current_admin.email,
+            admin_name=admin_name_for_email,
+            game_name=final_game_doc.name,
+            game_id=game_id,
+            players_credentials=player_credentials_for_email
+        )
+        if not email_sent:
+            print(f"WARNING: Failed to send new game credentials email to admin {current_admin.email} for game {game_id}.")
+
+    response_game_dict = final_game_doc.model_dump()
+    response_game_dict["players"] = [p.model_dump(exclude_none=True) for p in created_players_public_info_for_response]
+    return GamePublic.model_validate(response_game_dict)
 
 
 @router.get("/games", response_model=List[GameSimple])
 async def get_admin_games(
     db: Any = Depends(deps.get_firestore_db_client_dependency),
     current_admin: TokenData = Depends(deps.get_current_admin_user),
-    skip: int = 0,
     limit: int = 20
 ) -> List[GameSimple]:
-    """
-    Retrieve games created by the currently authenticated admin.
-    """
     admin_uid = current_admin.sub
-    games_in_db = await crud_game.get_games_by_admin_id(db, admin_id=admin_uid, limit=limit) # Skip not directly supported by this simple query
-    
-    # Convert GameInDB to GameSimple for the list response
+    games_in_db = await crud_game.get_games_by_admin_id(db, admin_id=admin_uid, limit=limit)
     return [GameSimple.model_validate(game.model_dump()) for game in games_in_db]
 
 
-@router.get("/games/{game_id}", response_model=GamePublic) # Or GameDetailsPublic for more info
+@router.get("/games/{game_id}", response_model=GamePublic)
 async def get_admin_game_details(
     game_id: str,
     db: Any = Depends(deps.get_firestore_db_client_dependency),
     current_admin: TokenData = Depends(deps.get_current_admin_user)
 ) -> Any:
-    """
-    Retrieve details for a specific game owned by the admin.
-    Includes player information.
-    """
     admin_uid = current_admin.sub
     game = await crud_game.get(db, doc_id=game_id)
     if not game or game.admin_id != admin_uid:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found or not owned by this admin.")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not found or not owned by this admin.")
 
-    # Fetch player details for this game
     players_in_game: List[PlayerPublic] = []
     if game.player_uids:
         for player_uid in game.player_uids:
             player_doc = await crud_player.get(db, doc_id=player_uid)
             if player_doc:
-                # Note: PlayerPublic doesn't have temp_password by default.
-                # If admin needs to see temp passwords again, this would require special handling or storage.
                 players_in_game.append(PlayerPublic.model_validate(player_doc.model_dump()))
     
-    # The GamePublic schema expects a 'players' field.
-    # We need to ensure the game object returned by crud_game.get() is combined with player data.
     game_dict = game.model_dump()
     game_dict["players"] = [p.model_dump() for p in players_in_game]
-    
     return GamePublic.model_validate(game_dict)
 
 
-@router.post("/games/{game_id}/start-next-round", response_model=GamePublic)
-async def start_next_game_round_by_admin(
+@router.post("/games/{game_id}/advance-to-next-round", response_model=GamePublic)
+async def advance_game_to_next_round_by_admin(
     game_id: str,
     db: Any = Depends(deps.get_firestore_db_client_dependency),
+    game_state_service: GameStateService = Depends(get_game_state_service),
     current_admin: TokenData = Depends(deps.get_current_admin_user)
 ) -> Any:
-    """
-    Admin action to advance the game to the next round or start it (from 0 to 1).
-    - Updates the game's current_round_number.
-    - For new rounds (not round 0 to 1, which is handled at game creation),
-      it initializes new RoundInDB and FieldState documents for each player.
-    """
     admin_uid = current_admin.sub
-    game_doc = await crud_game.get(db, doc_id=game_id)
+    game = await crud_game.get(db, doc_id=game_id)
 
-    if not game_doc or game_doc.admin_id != admin_uid:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found or not owned by this admin.")
+    if not game or game.admin_id != admin_uid:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not found or not owned by this admin.")
 
-    if game_doc.game_status == "finished" or game_doc.current_round_number >= game_doc.number_of_rounds:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Game is already finished or all rounds played.")
-
-    next_round_number = game_doc.current_round_number + 1
+    if game.game_status == "finished":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Game is already finished and cannot be advanced.")
     
-    # Update game document
-    updated_game_data = {"current_round_number": next_round_number, "updated_at": datetime.now(datetime.UTC)}
-    if game_doc.game_status == "pending" and next_round_number == 1:
-        updated_game_data["game_status"] = "active"
-    
-    updated_game_dict = await crud_game.update(db, doc_id=game_id, obj_in=updated_game_data)
-    if not updated_game_dict:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update game to next round.")
+    updated_game_doc: Optional[GameInDB] = None
 
-    # If this isn't the very first round being started (round 0->1 was handled at game creation)
-    # We need to create new round/field_state documents for players for this `next_round_number`
-    if next_round_number > 1: # Round 1 was initialized at game creation. This is for round 2 onwards.
-        for player_uid in game_doc.player_uids:
-            # Fetch previous round's field state to carry over parcel data
-            previous_round_field_state_dict = await crud_round.get_player_field_state(
-                db, game_id=game_id, player_id=player_uid, round_number=(next_round_number - 1)
+    if game.game_status == "pending" and game.current_round_number == 0:
+        updated_game_data = {"current_round_number": 1, "game_status": "active", "updated_at": datetime.now(datetime.UTC)}
+        updated_game_dict_from_db = await crud_game.update(db, doc_id=game_id, obj_in=updated_game_data)
+        if not updated_game_dict_from_db:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to start game to round 1.")
+        updated_game_doc = GameInDB(**updated_game_dict_from_db)
+        print(f"INFO: Game {game_id} successfully started by admin {admin_uid}, now at round 1.")
+    
+    elif game.game_status == "active":
+        print(f"INFO: Admin {admin_uid} triggered advance for game {game_id}, round {game.current_round_number}. Delegating to GameStateService.")
+        
+        updated_game_doc = await game_state_service.process_round_end_and_advance(game_id=game_id)
+        
+        if not updated_game_doc:
+            current_game_state_after_attempt = await crud_game.get(db, doc_id=game_id) 
+            detail_message = f"Failed to process round {game.current_round_number} or advance the game."
+            
+            if current_game_state_after_attempt and current_game_state_after_attempt.current_round_number == game.current_round_number:
+                 if not await game_state_service.are_all_players_submitted_for_current_round(game_id): 
+                     detail_message = f"Round {game.current_round_number} cannot be advanced. Not all human players have submitted their decisions."
+            
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail=detail_message + " Check service logs for more details."
             )
-            if not previous_round_field_state_dict or "parcels" not in previous_round_field_state_dict:
-                # Handle error: previous state missing, cannot initialize next round's field
-                # This might require a more robust way to get initial parcels if it's the first "real" round after setup
-                print(f"Warning: Previous field state not found for player {player_uid}, round {next_round_number -1}. Using default parcels.")
-                initial_parcels_for_new_round = get_initial_parcels_for_field()
-            else:
-                initial_parcels_for_new_round = previous_round_field_state_dict["parcels"]
+        print(f"INFO: Game {game_id} successfully processed by admin {admin_uid}. New state: Round {updated_game_doc.current_round_number}, Status {updated_game_doc.game_status}")
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Game is in an unhandled state ({game.game_status}) for advancing rounds."
+        )
 
-
-            new_round_create_obj = RoundCreate(
-                game_id=game_id,
-                player_id=player_uid,
-                round_number=next_round_number,
-                is_submitted=False,
-                decisions=RoundDecisionBase() # Default decisions
-            )
-            try:
-                await crud_round.create_player_round(
-                    db,
-                    obj_in=new_round_create_obj,
-                    initial_parcels=initial_parcels_for_new_round
-                )
-            except Exception as e:
-                # TODO: More robust error handling/rollback if setting up a round for one player fails
-                print(f"Failed to initialize round {next_round_number} for player {player_uid}: {e}")
-                # Potentially mark game as errored or attempt retry
-    
-    # Fetch full game details again to reflect changes for the response
-    final_game_doc_after_round_start = await crud_game.get(db, doc_id=game_id)
-    # Populate players if needed for GamePublic (similar to get_admin_game_details)
     players_info = []
-    if final_game_doc_after_round_start and final_game_doc_after_round_start.player_uids:
-        for p_uid in final_game_doc_after_round_start.player_uids:
+    if updated_game_doc and updated_game_doc.player_uids:
+        for p_uid in updated_game_doc.player_uids:
             player = await crud_player.get(db, doc_id=p_uid)
             if player: players_info.append(PlayerPublic.model_validate(player.model_dump()))
     
-    response_data = final_game_doc_after_round_start.model_dump()
-    response_data["players"] = [p.model_dump() for p in players_info]
+    response_data_dict = updated_game_doc.model_dump()
+    response_data_dict["players"] = [p.model_dump() for p in players_info]
+    
+    return GamePublic.model_validate(response_data_dict)
 
-    return GamePublic.model_validate(response_data)
+
+@router.delete("/games/{game_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_game_by_admin(
+    game_id: str,
+    db: Any = Depends(deps.get_firestore_db_client_dependency),
+    current_admin: TokenData = Depends(deps.get_current_admin_user)
+) -> None:
+    admin_uid = current_admin.sub
+    game = await crud_game.get(db, doc_id=game_id)
+    if not game or game.admin_id != admin_uid:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Game not found or not owned by this admin.")
+    
+    print(f"INFO: Admin {admin_uid} attempting to delete game {game_id}. Initiating cleanup.")
+
+    player_uids_to_delete = list(game.player_uids) # Make a copy
+
+    # 1. Delete Firebase Authentication users
+    if player_uids_to_delete:
+        try:
+            # Firebase Admin SDK's delete_users can take a list of UIDs
+            # It's more efficient than deleting one by one.
+            delete_users_result = firebase_auth_admin.delete_users(player_uids_to_delete)
+            print(f"INFO: Attempted to delete {len(player_uids_to_delete)} Firebase Auth users for game {game_id}.")
+            print(f"  Successfully deleted: {delete_users_result.success_count}")
+            if delete_users_result.failure_count > 0:
+                 print(f"  WARNING: Failed to delete {delete_users_result.failure_count} Firebase Auth users:")
+                 for error_info in delete_users_result.errors:
+                     # The error_info structure might be different; check Firebase docs
+                     # It's typically an `auth.DeleteUserError` or similar.
+                     print(f"    Error for UID (index {error_info.index}): {error_info.reason}") # Adapt based on actual error structure
+        except firebase_exceptions.FirebaseError as fe:
+            print(f"ERROR: A Firebase error occurred during bulk user deletion for game {game_id}: {fe}")
+        except Exception as e: # Catch other potential errors
+            print(f"ERROR: An unexpected error occurred during Firebase Auth user deletion for game {game_id}: {e}")
 
 
-# TODO: Endpoint for admin to delete a game (soft delete or hard delete)
-# TODO: Endpoint for admin to view game results / player progress
+    # 2. Delete Firestore documents
+    # Firestore does not cascade deletes. Subcollections must be deleted manually.
+    # This requires iterating through documents or using a helper if available (e.g., gcloud firestore delete --recursive)
+    # For client library, batch delete is preferred.
+
+    batch_limit = 490 # Firestore batch limit is 500 operations, keep some margin
+    
+    # a. Delete player documents from top-level 'players' collection
+    if player_uids_to_delete:
+        print(f"INFO: Deleting {len(player_uids_to_delete)} player documents from Firestore for game {game_id}...")
+        for i in range(0, len(player_uids_to_delete), batch_limit):
+            batch = db.batch()
+            player_uid_chunk = player_uids_to_delete[i:i + batch_limit]
+            for player_uid in player_uid_chunk:
+                player_ref = db.collection(crud_player.collection_name).document(player_uid)
+                batch.delete(player_ref)
+            try:
+                await batch.commit()
+                print(f"  Deleted batch of {len(player_uid_chunk)} player documents.")
+            except Exception as e:
+                print(f"  ERROR: Failed to delete a batch of player documents: {e}")
+                # Continue to delete other data, but log this failure.
+
+    # b. Delete documents from game-specific subcollections
+    # (player_rounds, player_field_states, player_results)
+    # This is complex as it requires iterating through all documents in each subcollection.
+    # Firestore helper for recursive delete is usually via gcloud CLI or specific libraries not used here directly.
+    # Simplified: delete the parent game document. Subcollections become orphaned but inaccessible via game.
+    # For a true deep delete, a more complex iteration or a Cloud Function is often used.
+    
+    # Example for one subcollection (player_rounds). Repeat for others.
+    # This is illustrative and can be very slow for large subcollections.
+    async def delete_subcollection_docs(collection_path_template: str):
+        collection_path = collection_path_template.format(game_id=game_id)
+        print(f"INFO: Attempting to delete documents in subcollection path: {collection_path}")
+        try:
+            while True:
+                docs_snapshot = await db.collection(collection_path).limit(batch_limit).get()
+                if not docs_snapshot: # No more documents
+                    break
+                batch = db.batch()
+                for doc in docs_snapshot:
+                    batch.delete(doc.reference)
+                await batch.commit()
+                print(f"  Deleted batch of {len(docs_snapshot)} documents from {collection_path}.")
+                if len(docs_snapshot) < batch_limit: # Last batch
+                    break
+        except Exception as e:
+            print(f"  ERROR deleting documents from {collection_path}: {e}")
+
+    await delete_subcollection_docs(crud_round.ROUND_COLLECTION_NAME_TEMPLATE)
+    await delete_subcollection_docs(crud_round.FIELD_STATE_COLLECTION_NAME_TEMPLATE)
+    await delete_subcollection_docs(crud_result.RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=game_id)) # Ensure template is correct
+
+    # c. Finally, delete the main game document
+    print(f"INFO: Deleting main game document {game_id}...")
+    deleted_game_doc = await crud_game.remove(db, doc_id=game_id)
+    if not deleted_game_doc: # crud_game.remove returns bool
+        print(f"ERROR: Failed to delete main game document {game_id}.")
+        # At this point, subordinate data might have been deleted.
+        # This might warrant raising an error if the game doc itself fails.
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to delete main game document {game_id}, but associated data might have been removed.")
+    
+    print(f"INFO: Game {game_id} and associated data deletion process completed by admin {admin_uid}.")
+    return None # FastAPI returns 204 No Content

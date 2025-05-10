@@ -1,5 +1,8 @@
 # File: backend/.gitignore
 
+# IDX
+.idx/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -23,7 +26,7 @@ coverage.xml
 
 # Poetry
 .venv/
-poetry.lock # Often committed, but can be ignored if all devs regenerate from pyproject.toml
+# poetry.lock # Typically committed to ensure consistent dependencies across environments
 
 # IDEs and editors
 .idea/
@@ -34,9 +37,9 @@ poetry.lock # Often committed, but can be ignored if all devs regenerate from py
 *.sublime-workspace
 
 # Environment files
-.env
-.env.*
-!/.env.example # Keep the example file
+.env       # Ignore the actual .env file with secrets
+.env.*     # Ignore other .env variations like .env.local, .env.production
+!/.env.example # IMPORTANT: Do NOT ignore .env.example
 
 # macOS
 .DS_Store
@@ -45,9 +48,9 @@ poetry.lock # Often committed, but can be ignored if all devs regenerate from py
 # Ensure these are never committed if they contain sensitive information!
 # It's best practice to reference them via GOOGLE_APPLICATION_CREDENTIALS in .env
 # serviceAccountKey.json
-# *.json # Be careful with broad patterns like this
+# *.json # Be careful with broad patterns like this for credentials, ensure they are named specifically if ignored.
 
-# Terraform (if any backend-specific terraform state were to be kept here, though it's better in the root terraform dir)
+# Terraform (if any backend-specific terraform state were to be kept here)
 # .terraform/
 # *.tfstate
 # *.tfstate.backup

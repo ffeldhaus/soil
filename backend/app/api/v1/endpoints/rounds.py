@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Body, Path
+# File: backend/app/api/v1/endpoints/rounds.py
 from typing import List, Any, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, status, Body, Path
+from pydantic import BaseModel # Added for PlayerRoundSubmission
 
 from app.api import deps
 from app.schemas.token import TokenData
-from app.schemas.round import RoundPublic, RoundUpdate, RoundDecisionBase
-from app.schemas.parcel import ParcelPublic, ParcelUpdate, ParcelInDB # For parcel updates
+from app.schemas.round import RoundPublic, RoundUpdate, RoundDecisionBase, RoundWithFieldPublic # Updated import
+from app.schemas.parcel import ParcelPublic, ParcelUpdate, PlantationType, FieldPublic # Added FieldPublic
 from app.schemas.game import GameInDB # To check game status
 from app.crud.crud_round import crud_round
 from app.crud.crud_game import crud_game
@@ -21,7 +24,7 @@ router = APIRouter()
 
 @router.get(
     "/games/{game_id}/current-round",
-    response_model=RoundPublic, # Or a custom schema combining RoundPublic and FieldPublic
+    response_model=RoundWithFieldPublic, # Changed to new combined schema
     summary="Get Current Round Details for Player"
 )
 async def get_player_current_round_details(
@@ -50,10 +53,10 @@ async def get_player_current_round_details(
     if current_round_number == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Game has not started its first round yet.")
     
-    player_round_data = await crud_round.get_player_round(
+    player_round_data_db = await crud_round.get_player_round(
         db, game_id=game_id, player_id=player_uid, round_number=current_round_number
     )
-    if not player_round_data:
+    if not player_round_data_db:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Round {current_round_number} data not found for player.")
 
     # Fetch the field state (parcels) for this player's current round
@@ -61,33 +64,23 @@ async def get_player_current_round_details(
         db, game_id=game_id, player_id=player_uid, round_number=current_round_number
     )
     
-    parcels_public: List[ParcelPublic] = []
+    parcels_public_list: List[ParcelPublic] = []
     if player_field_state_dict and "parcels" in player_field_state_dict:
         for parcel_data in player_field_state_dict["parcels"]:
-            parcels_public.append(ParcelPublic.model_validate(parcel_data))
-
-    # We need to combine RoundPublic data with parcel data for the response.
-    # Create a new response schema or add `parcels: List[ParcelPublic]` to RoundPublic.
-    # For now, let's assume RoundPublic can be extended or we return a custom dict.
+            parcels_public_list.append(ParcelPublic.model_validate(parcel_data))
     
-    # If RoundPublic schema is extended to include parcels:
-    # player_round_data_dict = player_round_data.model_dump()
-    # player_round_data_dict["parcels"] = [p.model_dump() for p in parcels_public]
-    # return RoundPublicWithParcels(**player_round_data_dict) # Assuming RoundPublicWithParcels schema
+    field_public_data = FieldPublic(parcels=parcels_public_list)
 
-    # For simplicity, returning a dictionary structure the frontend can consume.
-    # The `RoundPublic` model itself doesn't have a `parcels` field yet.
-    # This highlights the need for a combined response model or adapting RoundPublic.
-    return {
-        "round_info": player_round_data.model_dump(),
-        "field_state": {
-            "parcels": [p.model_dump() for p in parcels_public]
-        }
-    }
+    # Combine round data and field data into the RoundWithFieldPublic schema
+    # RoundInDB (player_round_data_db) is compatible with RoundPublic parts of RoundWithFieldPublic
+    combined_data = player_round_data_db.model_dump() # Start with round data
+    combined_data["field_state"] = field_public_data.model_dump() # Add field state
+
+    return RoundWithFieldPublic.model_validate(combined_data)
 
 
 # This schema would combine round decisions and parcel plantation choices
-class PlayerRoundSubmission(BaseModel):
+class PlayerRoundSubmission(BaseModel): # Moved from original location as it's only used here
     round_decisions: RoundDecisionBase = Field(..., description="General decisions for the round")
     parcel_plantation_choices: Dict[int, PlantationType] = Field( # Key: parcel_number, Value: PlantationType
         ..., 
@@ -145,7 +138,8 @@ async def submit_player_round_decisions(
     updated_parcels_data = []
     existing_parcels_map = {p["parcel_number"]: p for p in current_field_state_dict["parcels"]}
 
-    for parcel_num, new_plantation in submission_data.parcel_plantation_choices.items():
+    for parcel_num_str, new_plantation in submission_data.parcel_plantation_choices.items():
+        parcel_num = int(parcel_num_str) # Keys in Dict from JSON body will be strings
         if parcel_num in existing_parcels_map:
             # Update the plantation for this parcel
             existing_parcels_map[parcel_num]["current_plantation"] = new_plantation.value # Store enum value
@@ -153,7 +147,6 @@ async def submit_player_round_decisions(
             # Handle error: player trying to update a non-existent parcel number for their field
             print(f"Warning: Player {player_uid} submitted plantation for non-existent parcel_number {parcel_num}")
             # Decide whether to ignore or raise error
-    
     # The updated_parcels_data should be the full list of all parcels for that player's field
     updated_parcels_data = list(existing_parcels_map.values())
 
@@ -175,8 +168,6 @@ async def submit_player_round_decisions(
 
     if not updated_round:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to submit round decisions.")
-    
     # The game server will later check if all players have submitted this round
     # and then trigger calculations and advance to the next round.
-    
     return updated_round # Or a simpler success message

@@ -7,9 +7,8 @@
   # Use https://search.nixos.org/packages to find packages
   packages = [
     # pkgs.go
-    pkgs.python312
-    pkgs.python312Packages.uv
-    pkgs.python312Packages.pip
+    pkgs.python313
+    pkgs.poetry
     pkgs.nodejs_23 # For Angular development
     pkgs.terraform
     # pkgs.nodePackages.nodemon

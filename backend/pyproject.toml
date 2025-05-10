@@ -1,10 +1,12 @@
+# File: backend/pyproject.toml
 [tool.poetry]
 name = "soil-game-backend"
 version = "0.1.0"
 description = "Backend for the Soil educational game, rewritten in Python."
 authors = ["Your Name <you@example.com>"]
 license = "MIT"
-readme = "README.md" # Will be created later in the main project root
+readme = "README.md" 
+package-mode = false # <--- ADDED THIS LINE: Disables packaging features for this project
 
 [tool.poetry.dependencies]
 python = "^3.13"
@@ -81,7 +83,7 @@ check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = [
-    "firebase_admin.*", # Firebase Admin SDK might not have perfect stubs
+    "firebase_admin.*", 
     "passlib.*",
     "jose.*"
 ]
