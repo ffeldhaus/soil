@@ -1,0 +1,48 @@
+<div class="page-container login-container">
+    <mat-card class="login-card">
+      <mat-card-header>
+        <mat-card-title *ngIf="!isPlayerLoginMode()">Login</mat-card-title>
+        <mat-card-title *ngIf="isPlayerLoginMode()">Player Login (Game: {{ gameIdQueryParam }})</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width" *ngIf="!isPlayerLoginMode()">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" required
+                   placeholder="Enter your email">
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              Email is required.
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              Please enter a valid email address.
+            </mat-error>
+          </mat-form-field>
+  
+          <div *ngIf="isPlayerLoginMode()" class="player-login-info">
+              <p>Logging in as Player #{{ playerNumberQueryParam }} for Game ID: {{ gameIdQueryParam }}</p>
+          </div>
+  
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="showPassword() ? 'text' : 'password'" required
+                   placeholder="Enter your password">
+            <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="showPassword()">
+              <mat-icon>{{showPassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              Password is required.
+            </mat-error>
+          </mat-form-field>
+  
+          <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Logging in...' : (isPlayerLoginMode() ? 'Login to Game' : 'Login') }}
+          </button>
+        </form>
+  
+        <div class="additional-links" *ngIf="!isPlayerLoginMode()">
+          <a routerLink="../register">Register as Administrator</a>
+          <!-- <a routerLink="/auth/forgot-password">Forgot Password?</a> -->
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>

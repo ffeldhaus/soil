@@ -1,0 +1,46 @@
+.page-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .info-card {
+    max-width: 800px;
+    width: 100%;
+  }
+  
+  mat-card-title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+  
+  mat-card-content section {
+    margin-bottom: 24px;
+  
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+    }
+  
+    p, ul {
+      line-height: 1.6;
+      font-size: 0.95rem;
+      color: #333;
+    }
+  
+    ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+  
+    li {
+      margin-bottom: 8px;
+    }
+  
+    a {
+      word-break: break-all; // For long URLs
+    }
+  }

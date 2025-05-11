@@ -1,47 +1,85 @@
 /* You can add global styles to this file, and also import other style files */
 
-// Standard Angular Material theme (prebuilt) is imported in angular.json
-// If you want to define a custom theme, you would do it here.
-// Example for custom theme (remove prebuilt theme from angular.json if using this):
-// @use '@angular/material' as mat;
-// @include mat.core();
-// $soil-primary: mat.define-palette(mat.$indigo-palette);
+// Import Angular Material theming functions
+@use '@angular/material' as mat;
+
+// Include the core styles for Angular Material. We need this here for general Material styles.
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For V15+ default themes are available, but custom is often preferred.
+// $soil-primary: mat.define-palette(mat.$indigo-palette, 500, 100, 700);
 // $soil-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 // $soil-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems (color, typography, density) and all the palettes.
 // $soil-theme: mat.define-light-theme((
 //   color: (
 //     primary: $soil-primary,
 //     accent: $soil-accent,
 //     warn: $soil-warn,
-//   )
+//   ),
+//   typography: mat.define-typography-config(),
+//   density: 0,
 // ));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
 // @include mat.all-component-themes($soil-theme);
+
+// For now, we are using a prebuilt theme specified in angular.json
+// "@angular/material/prebuilt-themes/indigo-pink.css",
+// If you define a custom theme here, remove the prebuilt theme from angular.json.
 
 
 html, body {
     height: 100%;
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
-    background-color: #f5f5f5; // A light grey background as a default
+    background-color: #fafafa; // A slightly off-white default background
   }
   
-  // Global reset for box-sizing
   *, *::before, *::after {
     box-sizing: border-box;
   }
   
-  // Basic link styling
   a {
-    color: #3f51b5; // Material Indigo
+    color: mat.get-color-from-palette(mat.$indigo-palette, 500); // Using Material palette color
     text-decoration: none;
     &:hover {
       text-decoration: underline;
     }
   }
   
-  // Basic container to center content, if needed globally
   .container {
-    max-width: 1200px;
+    max-width: 1280px; // Common max width for content
     margin: 0 auto;
-    padding: 20px;
+    padding: 16px; // Standard Material padding
   }
+
+// SnackBar custom styles
+.snackbar-success {
+  --mdc-snackbar-container-color: #4CAF50; // Green for Material Design Components (MDC) based snackbar
+  --mdc-snackbar-supporting-text-color: white;
+  .mat-mdc-button { // For action button
+    --mdc-text-button-label-text-color: white;
+  }
+}
+
+.snackbar-error {
+  --mdc-snackbar-container-color: #f44336; // Red
+  --mdc-snackbar-supporting-text-color: white;
+  .mat-mdc-button {
+    --mdc-text-button-label-text-color: white;
+  }
+}
+
+.snackbar-info {
+  --mdc-snackbar-container-color: #2196F3; // Blue
+  --mdc-snackbar-supporting-text-color: white;
+  .mat-mdc-button {
+    --mdc-text-button-label-text-color: white;
+  }
+}

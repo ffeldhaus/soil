@@ -1,0 +1,70 @@
+.sidenav-container {
+    height: 100vh; // Ensure full viewport height
+  }
+  
+  .sidenav {
+    width: 230px; // Standard sidenav width
+    background-color: #f5f5f5; // Light background for sidenav
+  
+    .mat-toolbar {
+      background: inherit; // Match sidenav background or choose a different one
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  }
+  
+  .mat-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000; // Ensure toolbar stays on top
+  }
+  
+  .toolbar-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  .toolbar-links a, .toolbar-links button {
+    margin-left: 16px;
+  }
+  
+  .user-email {
+    font-size: 0.8rem;
+    margin-left: 8px;
+    opacity: 0.7;
+  }
+  
+  .content-wrapper {
+    padding: 24px; // Add some padding around the router outlet content
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 64px - 56px); // Adjust based on toolbar and footer height
+  }
+  
+  // Active link styling for both mat-nav-list and mat-toolbar buttons
+  a.active-link, button.active-link {
+    font-weight: bold;
+    // For mat-list-item specifically, Material might add its own active styles
+    &.mat-mdc-list-item {
+      background-color: rgba(0, 0, 0, 0.08); // Example active background
+    }
+    // For mat-button in toolbar
+    &.mat-mdc-button {
+      // text-decoration: underline; // Or some other indication
+      // background-color: rgba(255,255,255,0.1); // Subtle active state for toolbar
+      border-bottom: 2px solid currentColor; // Example underline style
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 599px) { // Handset breakpoint
+    .content-wrapper {
+      padding: 16px;
+      min-height: calc(100vh - 56px - 56px); // Toolbar height is 56px on handset
+    }
+  }

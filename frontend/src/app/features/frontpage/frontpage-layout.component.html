@@ -1,0 +1,55 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport
+        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isHandset$ | async) ? 'over' : 'side'"
+        [opened]="(isHandset$ | async) === false">
+      <mat-toolbar>Menu</mat-toolbar>
+      <mat-nav-list>
+        <a mat-list-item *ngFor="let item of navItems" [routerLink]="item.link" routerLinkActive="active-link" (click)="drawer.close()">{{ item.label }}</a>
+        
+        <ng-container *ngIf="!(authService.isAuthenticated())">
+          <a mat-list-item routerLink="register" routerLinkActive="active-link" (click)="drawer.close()">Register (Admin)</a>
+          <a mat-list-item routerLink="login" routerLinkActive="active-link" (click)="drawer.close()">Login</a>
+        </ng-container>
+        
+        <ng-container *ngIf="authService.isAuthenticated()">
+          <a mat-list-item *ngIf="authService.isAdmin()" routerLink="/admin" (click)="drawer.close()">Admin Dashboard</a>
+          <a mat-list-item *ngIf="authService.isPlayer() && authService.currentUser()?.gameId" [routerLink]="['/game', authService.currentUser()?.gameId]" (click)="drawer.close()">My Game</a>
+          <a mat-list-item (click)="onLogout(); drawer.close()">Logout ({{ authService.currentUser()?.email }})</a>
+        </ng-container>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-toolbar color="primary">
+        <button
+          type="button"
+          aria-label="Toggle sidenav"
+          mat-icon-button
+          (click)="drawer.toggle()"
+          *ngIf="isHandset$ | async">
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+        <a routerLink="/frontpage/overview" class="toolbar-title">Soil Game</a>
+        <span class="spacer"></span>
+        <div class="toolbar-links" *ngIf="!(isHandset$ | async)">
+          <a mat-button *ngFor="let item of navItems" [routerLink]="item.link" routerLinkActive="active-link">{{ item.label }}</a>
+          
+          <ng-container *ngIf="!(authService.isAuthenticated())">
+            <a mat-button routerLink="register" routerLinkActive="active-link">Register (Admin)</a>
+            <a mat-button routerLink="login" routerLinkActive="active-link">Login</a>
+          </ng-container>
+  
+          <ng-container *ngIf="authService.isAuthenticated()">
+              <a mat-button *ngIf="authService.isAdmin()" routerLink="/admin">Admin Dashboard</a>
+              <a mat-button *ngIf="authService.isPlayer() && authService.currentUser()?.gameId" [routerLink]="['/game', authService.currentUser()?.gameId]">My Game</a>
+              <button mat-button (click)="onLogout()">Logout</button>
+              <span class="user-email" *ngIf="authService.currentUser()?.email">({{ authService.currentUser()?.email }})</span>
+          </ng-container>
+        </div>
+      </mat-toolbar>
+      <main class="content-wrapper">
+        <router-outlet></router-outlet>
+      </main>
+      <app-footer></app-footer>
+    </mat-sidenav-content>
+  </mat-sidenav-container>

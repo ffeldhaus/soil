@@ -1,0 +1,57 @@
+.page-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .info-card {
+    max-width: 800px;
+    width: 100%;
+  }
+  
+  mat-card-title {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  
+  mat-card-subtitle {
+    margin-bottom: 16px;
+  }
+  
+  mat-card-content p {
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  
+  mat-card-content h3 {
+      margin-top: 24px;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      font-weight: 500;
+  }
+  
+  .image-container {
+    margin: 24px 0;
+    text-align: center;
+  
+    .overview-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  
+    em {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: rgba(0,0,0,0.6);
+    }
+  }
+  
+  mat-card-actions {
+      padding: 8px 16px 16px; // Adjust padding
+      button, a {
+          margin-left: 8px;
+      }
+  }

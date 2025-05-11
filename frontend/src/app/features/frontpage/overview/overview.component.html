@@ -1,0 +1,43 @@
+<div class="page-container">
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>Welcome to the Soil Game!</mat-card-title>
+        <mat-card-subtitle>An Interactive Learning Experience</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Soil is an interactive simulation game focused on agriculture. As a player, you'll make
+          critical ecological and economic decisions, experiencing their direct impacts on your virtual farm.
+        </p>
+        <p>
+          This game aims to teach the principles of sustainable farming, resource management, and the
+          interplay between agricultural practices and environmental health.
+        </p>
+        <h3>How to Play</h3>
+        <p>
+          To participate in a game session, you will typically receive login credentials (a game ID, player number, and password)
+          from your game administrator or teacher. Use these to <a routerLink="../login">log in</a>.
+        </p>
+        <p>
+          If you are a teacher or group leader interested in hosting a game, you'll need to
+          <a routerLink="../register">register as an Administrator</a>. Once registered, you can create
+          and manage your own game sessions for your students or participants.
+        </p>
+  
+        <div class="image-container">
+          <!-- Placeholder for game image - original used spielfeld.jpg -->
+          <img src="assets/images/bauernhof.jpg" alt="Soil Game Field Overview" class="overview-image">
+          <em>A glimpse of the farming landscape you'll manage.</em>
+        </div>
+  
+        <p>
+          Explore the <a routerLink="../background">background information</a> to learn more about the
+          educational context and goals of the Soil game.
+        </p>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <a mat-stroked-button routerLink="../login">Player Login</a>
+        <a mat-flat-button color="primary" routerLink="../register">Admin Registration</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>

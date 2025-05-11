@@ -1,0 +1,27 @@
+.page-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .info-card {
+    max-width: 800px;
+    width: 100%;
+  }
+  
+  mat-card-title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+  
+  mat-card-content p {
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  
+  mat-card-content h3 {
+      margin-top: 24px;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      font-weight: 500;
+  }

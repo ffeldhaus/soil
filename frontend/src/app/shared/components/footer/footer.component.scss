@@ -1,0 +1,55 @@
+.app-footer {
+    padding: 0 16px;
+    min-height: 56px; // Adjust as needed
+    font-size: 0.9rem;
+    
+    .footer-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: center; // Center content by default
+    }
+  
+    a.mat-mdc-button {
+      color: inherit; // Inherit color from toolbar
+      text-transform: none; // Keep text as is
+      font-weight: normal;
+      opacity: 0.8;
+  
+      &:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+    }
+  
+    .active-footer-link {
+      font-weight: bold;
+      opacity: 1;
+    }
+  
+    .footer-spacer {
+      margin: 0 12px;
+      opacity: 0.5;
+      &::before {
+        content: "|";
+      }
+    }
+  
+    span:last-child { // Copyright text
+      opacity: 0.7;
+    }
+  
+    @media (max-width: 599px) {
+      .footer-content {
+        flex-direction: column; // Stack items on small screens
+        padding: 8px 0;
+        text-align: center;
+      }
+      .footer-spacer {
+        display: none; // Hide spacers on small screens
+      }
+      a.mat-mdc-button, span {
+        margin: 4px 0;
+      }
+    }
+  }
