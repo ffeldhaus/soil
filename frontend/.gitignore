@@ -96,6 +96,7 @@ e2e/*.map
 e2e/*.metadata.json
 # BrowserSync local config
 bs-config.json
+.angular/
 
 # IDX
 .idx/

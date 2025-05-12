@@ -1,0 +1,65 @@
+// File: frontend/src/app/features/admin/game-create/game-create.component.scss
+.create-game-container {
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .create-game-card {
+    width: 100%;
+    max-width: 700px;
+  }
+  
+  mat-card-header {
+    position: relative;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    display: flex; // Added for alignment
+    align-items: center; // Added for alignment
+  }
+  
+  .back-button {
+    // Removed absolute positioning for simpler flow
+    margin-right: 16px; // Space between back button and title
+  }
+  
+  mat-card-title {
+    // text-align: center; // No longer needed if not using absolute positioning for back button
+    flex-grow: 1; 
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap; // Allow wrapping on smaller screens
+    gap: 16px;
+    margin-bottom: 8px;
+  
+    .form-field-half {
+      flex: 1 1 calc(50% - 8px); // Allow fields to take half width, minus gap
+      min-width: 250px; // Prevent fields from becoming too narrow
+    }
+  }
+  
+  mat-form-field {
+    margin-bottom: 12px;
+  }
+  
+  .actions-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  
+  .form-error {
+    color: var(--mat-form-field-error-text-color, #f44336); // Use Material error color
+    font-size: 0.75em;
+    margin-top: -8px; // Adjust to align under the form fields
+    margin-bottom: 12px;
+    padding-left: 2px; // Slight indent
+  }

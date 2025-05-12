@@ -70,6 +70,8 @@ class PlayerInDB(UserInDBBase, PlayerBase): # Multiple inheritance
     # Game ID is crucial here
     game_id: str = Field(..., description="ID of the game the player belongs to")
     is_ai: bool = Field(default=False, description="True if this player is AI controlled")
+    temp_password_hash: Optional[str] = Field(None, description="Hash of the temporary password, to be cleared after first real login/pw change") # MODIFIED
+
     # player_number could also be stored if it's a fixed identifier within the game context
     # Example of game-specific progress or state, if stored directly on player doc:
     # current_round_id: Optional[str] = None

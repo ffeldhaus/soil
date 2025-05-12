@@ -1,3 +1,4 @@
+# File: backend/app/crud/crud_player.py
 from typing import Any, Dict, List, Optional, Union
 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
@@ -7,6 +8,7 @@ from google.cloud.firestore_v1.base_query import AsyncବQuery
 
 from app.crud.base import CRUDBase
 from app.schemas.player import PlayerCreate, PlayerUpdate, PlayerInDB
+from app.core.security import get_password_hash # MODIFIED: Import password hashing utility
 
 # Collection name in Firestore for players
 PLAYER_COLLECTION = "players"
@@ -30,15 +32,26 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
     ) -> Dict[str, Any]:
         """
         Create a new player document in Firestore with a specific UID.
-        The password from PlayerCreate is for Firebase Auth and is not stored here.
+        The password from PlayerCreate is for Firebase Auth.
+        A hash of this password (if it's a temp password) is stored in Firestore.
         """
-        player_data = obj_in.model_dump(exclude_unset=True, exclude={"password"})
-        player_data["user_type"] = obj_in.user_type.value # Store enum value
+        # MODIFIED START
+        player_data_dict = obj_in.model_dump(exclude_unset=True)
+        plain_password_for_hash = player_data_dict.pop("password", None) # Remove plain password from Firestore data
+
+        player_data_for_firestore = {
+            key: value for key, value in player_data_dict.items() if key != "password"
+        }
+        player_data_for_firestore["user_type"] = obj_in.user_type.value # Store enum value
+
+        if plain_password_for_hash: # Store hash of the initial/temp password
+            player_data_for_firestore["temp_password_hash"] = get_password_hash(plain_password_for_hash)
+        # MODIFIED END
         
         # Ensure game_id is stored, it's mandatory in PlayerCreate
         # player_data["game_id"] = str(obj_in.game_id) # Already string from schema
 
-        return await super().create_with_uid(db, uid=uid, obj_in=player_data)
+        return await super().create_with_uid(db, uid=uid, obj_in=player_data_for_firestore) # MODIFIED: Pass processed data
 
     async def update(
         self, db: Union[AsyncFirestoreClient, BaseClient], *, doc_id: str, obj_in: Union[PlayerUpdate, Dict[str, Any]]
@@ -46,6 +59,7 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
         """
         Update a player document in Firestore.
         Password updates are handled via Firebase Auth, not directly here.
+        If a temp_password_hash is updated to None (e.g., after first real login), it's handled here.
         """
         update_data: Dict[str, Any]
         if isinstance(obj_in, PlayerUpdate):
@@ -102,6 +116,18 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
                     data["uid"] = data["id"]
                 return self.model_schema(**data)
         return None
+
+    async def clear_temp_password_hash(self, db: Union[AsyncFirestoreClient, BaseClient], *, player_uid: str) -> bool:
+        """
+        Clears the temp_password_hash for a player, typically after first successful login
+        or when they set a permanent password.
+        """
+        try:
+            await super().update(db, doc_id=player_uid, obj_in={"temp_password_hash": None})
+            return True
+        except Exception as e:
+            print(f"Error clearing temp_password_hash for player {player_uid}: {e}")
+            return False
 
 
 # Instantiate the CRUDPlayer class

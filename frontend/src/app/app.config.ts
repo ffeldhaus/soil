@@ -38,19 +38,14 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(), // For SSR hydration
     provideAnimationsAsync(), // For Angular Material animations
 
-    // Firebase providers
-    importProvidersFrom(
-      provideFirebaseApp(() => initializeApp(environment.firebase))
-    ),
-    importProvidersFrom(
-      provideAuth(() => getAuth())
-    ),
-    importProvidersFrom(
-      provideFirestore(() => getFirestore())
-    ),
+    // Firebase providers - Should be listed directly
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
 
     // Import MaterialModule to make MatSnackBar available for NotificationService
     // and other Material components that might be used in AppComponent or globally.
+    // Using importProvidersFrom is correct here as MaterialModule is an NgModule
     importProvidersFrom(MaterialModule),
   ]
 };

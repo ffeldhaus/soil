@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common'; // Import CommonModule
 import { AuthService } from '../../core/services/auth.service'; // For showing login/logout status
 import { FooterComponent } from '../../shared/components/footer/footer.component'; // Import FooterComponent
 
@@ -16,15 +16,16 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
   selector: 'app-frontpage-layout',
   standalone: true,
   imports: [
+    CommonModule, // Add CommonModule here
     RouterModule,
-    NgIf,
-    AsyncPipe,
+    // NgIf, // No longer needed individually if CommonModule is imported
+    // AsyncPipe, // No longer needed individually if CommonModule is imported
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
     MatSidenavModule,
     MatListModule,
-    FooterComponent // Add FooterComponent here
+    FooterComponent
   ],
   templateUrl: './frontpage-layout.component.html',
   styleUrls: ['./frontpage-layout.component.scss']

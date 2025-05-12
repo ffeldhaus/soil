@@ -1,0 +1,88 @@
+// File: frontend/src/app/features/admin/admin-layout/admin-layout.component.scss
+.sidenav-container {
+    height: 100vh;
+  }
+  
+  .sidenav {
+    width: 250px;
+    background-color: #f8f9fa;
+  
+    .mat-toolbar {
+      background: inherit;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      font-weight: 500;
+    }
+  }
+  
+  .mat-toolbar { // Main top toolbar
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .toolbar-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  .toolbar-links {
+    display: flex;
+    align-items: center;
+  
+    a, button {
+      margin-left: 12px;
+      text-transform: none; // Keep button text case as is
+    }
+    .toolbar-icon {
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  }
+  
+  .user-email {
+    font-size: 0.85rem;
+    margin-left: 10px;
+    opacity: 0.8;
+  }
+  
+  .content-wrapper {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 64px - 56px); // Toolbar (64px) - Footer (56px)
+    box-sizing: border-box; // Ensure padding doesn't add to min-height calculation
+  }
+  
+  // Active link styling
+  a.active-link {
+    font-weight: bold;
+  
+    &.mat-mdc-list-item { // Sidenav list item
+      background-color: rgba(var(--mat-primary-main-color-rgb, 63, 81, 181), 0.1); // Use primary color with opacity
+      color: rgb(var(--mat-primary-main-color-rgb, 63, 81, 181)); // Use primary color for text
+      .mat-icon {
+          color: rgb(var(--mat-primary-main-color-rgb, 63, 81, 181));
+      }
+    }
+  
+    &.mat-mdc-button { // Toolbar button
+      background-color: rgba(255,255,255,0.12); // Subtle active state for toolbar buttons
+    }
+  }
+  
+  .mat-mdc-list-item .mat-icon { // Ensure sidenav icons have correct margin
+    margin-right: 16px;
+  }
+  
+  @media (max-width: 599px) { // Handset breakpoint
+    .content-wrapper {
+      padding: 16px;
+      min-height: calc(100vh - 56px - 56px); // Toolbar handset (56px) - Footer (56px)
+    }
+  }

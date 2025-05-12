@@ -1,7 +1,7 @@
 # File: backend/app/api/v1/endpoints/admin.py
 from uuid import uuid4 
 from datetime import datetime 
-from typing import List, Any, Dict 
+from typing import List, Any, Dict, Optional # MODIFIED: Added Optional
 import random 
 
 from fastapi import APIRouter, Depends, HTTPException, status, Body
@@ -61,7 +61,7 @@ async def create_game_by_admin(
     if not admin_uid: 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin authentication failed.")
 
-    admin_doc = await crud_admin.get(db, doc_id=admin_uid) 
+    admin_doc = await crud_admin.get(db, doc_id=admin_uid) # type: ignore
     admin_name_for_email = "Admin"
     if admin_doc and admin_doc.first_name: 
         admin_name_for_email = admin_doc.first_name
@@ -107,17 +107,26 @@ async def create_game_by_admin(
             )
             player_uid = firebase_player_user.uid
             player_uids_for_game.append(player_uid)
-            await firebase_auth_admin.set_custom_user_claims(player_uid, {'role': 'player', 'game_id': game_id, 'is_ai': player_is_ai})
+            # MODIFIED: Add player_number to claims
+            human_claims = {
+                'role': UserType.PLAYER.value, 
+                'game_id': game_id, 
+                'is_ai': player_is_ai,
+                'player_number': current_player_number
+            }
+            await firebase_auth_admin.set_custom_user_claims(player_uid, human_claims)
+            # MODIFIED END
 
             player_schema_in = PlayerCreate(
                 email=player_email, password=temp_password, username=player_username,
                 game_id=game_id, player_number=current_player_number, 
                 user_type=UserType.PLAYER, is_ai=player_is_ai
             )
-            created_player_data = await crud_player.create_with_uid(db, uid=player_uid, obj_in=player_schema_in)
+            # crud_player.create_with_uid now handles password hashing internally
+            created_player_data_dict = await crud_player.create_with_uid(db, uid=player_uid, obj_in=player_schema_in)
             
-            player_public_dict_for_response = created_player_data.copy() 
-            player_public_dict_for_response["temp_password"] = temp_password 
+            player_public_dict_for_response = created_player_data_dict.copy()
+            player_public_dict_for_response["temp_password"] = temp_password # Add for email, not for DB
             created_players_public_info_for_response.append(PlayerPublic.model_validate(player_public_dict_for_response))
             
             player_credentials_for_email.append({
@@ -130,7 +139,7 @@ async def create_game_by_admin(
 
         except Exception as e: 
             print(f"ERROR creating human player {current_player_number} for game {game_id}: {e}")
-            await crud_game.remove(db, doc_id=game_id) 
+            await crud_game.remove(db, doc_id=game_id) # type: ignore 
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error for human player {current_player_number}: {str(e)}")
 
     # Create AI Players
@@ -138,7 +147,7 @@ async def create_game_by_admin(
         current_player_number += 1
         player_is_ai = True
         ai_strategy = available_ai_strategies[i % len(available_ai_strategies)]
-        player_username = f"AI Player {i+1} ({ai_strategy.capitalize()})" # Use .value if AIStrategyType is enum
+        player_username = f"AI Player {i+1} ({ai_strategy.capitalize()})" 
         
         player_email_domain = settings.EMAILS_FROM_EMAIL.split('@')[-1] if settings.EMAILS_FROM_EMAIL and '@' in settings.EMAILS_FROM_EMAIL else 'soil.ai.game'
         player_email = f"ai.player{i+1}.game{game_id[:6]}@{player_email_domain}"
@@ -150,24 +159,34 @@ async def create_game_by_admin(
             )
             player_uid = firebase_player_user.uid
             player_uids_for_game.append(player_uid)
-            ai_player_strategies_map[player_uid] = ai_strategy # Store string name or .value
-            await firebase_auth_admin.set_custom_user_claims(player_uid, {'role': UserType.PLAYER.value, 'game_id': game_id, 'is_ai': player_is_ai, 'ai_strategy': ai_strategy}) # Use .value for enum
+            ai_player_strategies_map[player_uid] = ai_strategy 
+            # MODIFIED: Add player_number to claims
+            ai_claims = {
+                'role': UserType.PLAYER.value, 
+                'game_id': game_id, 
+                'is_ai': player_is_ai, 
+                'ai_strategy': ai_strategy,
+                'player_number': current_player_number
+            }
+            await firebase_auth_admin.set_custom_user_claims(player_uid, ai_claims)
+            # MODIFIED END
 
             player_schema_in = PlayerCreate(
                 email=player_email, password=ai_password, username=player_username,
                 game_id=game_id, player_number=current_player_number, 
                 user_type=UserType.PLAYER, is_ai=player_is_ai
             )
-            created_player_data = await crud_player.create_with_uid(db, uid=player_uid, obj_in=player_schema_in)
+            # crud_player.create_with_uid handles password hashing (though less critical for AI)
+            created_player_data_dict = await crud_player.create_with_uid(db, uid=player_uid, obj_in=player_schema_in)
             
-            created_players_public_info_for_response.append(PlayerPublic.model_validate(created_player_data))
+            created_players_public_info_for_response.append(PlayerPublic.model_validate(created_player_data_dict))
 
             initial_round_create_obj = RoundCreate(game_id=game_id, player_id=player_uid, round_number=1)
             await crud_round.create_player_round(db, obj_in=initial_round_create_obj, initial_parcels=initial_parcels_state)
             
         except Exception as e:
             print(f"ERROR creating AI player {i+1} for game {game_id}: {e}")
-            await crud_game.remove(db, doc_id=game_id) 
+            await crud_game.remove(db, doc_id=game_id) # type: ignore
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error for AI player {i+1}: {str(e)}")
 
     try:
@@ -178,7 +197,7 @@ async def create_game_by_admin(
         }
         await db.collection(crud_game.collection_name).document(game_id).update(game_update_payload)
     except Exception as e:
-        await crud_game.remove(db, doc_id=game_id) 
+        await crud_game.remove(db, doc_id=game_id) # type: ignore
         raise HTTPException(status_code=500, detail=f"Failed to link players/AI strategies to game: {str(e)}")
 
     final_game_doc = await crud_game.get(db, doc_id=game_id)
@@ -251,7 +270,7 @@ async def advance_game_to_next_round_by_admin(
     if game.game_status == "finished":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Game is already finished and cannot be advanced.")
     
-    updated_game_doc: Optional[GameInDB] = None
+    updated_game_doc: Optional[GameInDB] = None # MODIFIED
 
     if game.game_status == "pending" and game.current_round_number == 0:
         updated_game_data = {"current_round_number": 1, "game_status": "active", "updated_at": datetime.now(datetime.UTC)}
@@ -286,12 +305,12 @@ async def advance_game_to_next_round_by_admin(
         )
 
     players_info = []
-    if updated_game_doc and updated_game_doc.player_uids:
+    if updated_game_doc and updated_game_doc.player_uids: # MODIFIED: Check if updated_game_doc is not None
         for p_uid in updated_game_doc.player_uids:
             player = await crud_player.get(db, doc_id=p_uid)
             if player: players_info.append(PlayerPublic.model_validate(player.model_dump()))
     
-    response_data_dict = updated_game_doc.model_dump()
+    response_data_dict = updated_game_doc.model_dump() if updated_game_doc else {} # MODIFIED
     response_data_dict["players"] = [p.model_dump() for p in players_info]
     
     return GamePublic.model_validate(response_data_dict)
@@ -315,85 +334,61 @@ async def delete_game_by_admin(
     # 1. Delete Firebase Authentication users
     if player_uids_to_delete:
         try:
-            # Firebase Admin SDK's delete_users can take a list of UIDs
-            # It's more efficient than deleting one by one.
             delete_users_result = firebase_auth_admin.delete_users(player_uids_to_delete)
             print(f"INFO: Attempted to delete {len(player_uids_to_delete)} Firebase Auth users for game {game_id}.")
             print(f"  Successfully deleted: {delete_users_result.success_count}")
             if delete_users_result.failure_count > 0:
                  print(f"  WARNING: Failed to delete {delete_users_result.failure_count} Firebase Auth users:")
                  for error_info in delete_users_result.errors:
-                     # The error_info structure might be different; check Firebase docs
-                     # It's typically an `auth.DeleteUserError` or similar.
-                     print(f"    Error for UID (index {error_info.index}): {error_info.reason}") # Adapt based on actual error structure
+                     print(f"    Error for UID (index {error_info.index}): {error_info.reason}") 
         except firebase_exceptions.FirebaseError as fe:
             print(f"ERROR: A Firebase error occurred during bulk user deletion for game {game_id}: {fe}")
-        except Exception as e: # Catch other potential errors
+        except Exception as e: 
             print(f"ERROR: An unexpected error occurred during Firebase Auth user deletion for game {game_id}: {e}")
 
-
-    # 2. Delete Firestore documents
-    # Firestore does not cascade deletes. Subcollections must be deleted manually.
-    # This requires iterating through documents or using a helper if available (e.g., gcloud firestore delete --recursive)
-    # For client library, batch delete is preferred.
-
-    batch_limit = 490 # Firestore batch limit is 500 operations, keep some margin
+    batch_limit = 490 
     
-    # a. Delete player documents from top-level 'players' collection
     if player_uids_to_delete:
         print(f"INFO: Deleting {len(player_uids_to_delete)} player documents from Firestore for game {game_id}...")
         for i in range(0, len(player_uids_to_delete), batch_limit):
-            batch = db.batch()
+            batch = db.batch() # type: ignore
             player_uid_chunk = player_uids_to_delete[i:i + batch_limit]
             for player_uid in player_uid_chunk:
-                player_ref = db.collection(crud_player.collection_name).document(player_uid)
+                player_ref = db.collection(crud_player.collection_name).document(player_uid) # type: ignore
                 batch.delete(player_ref)
             try:
                 await batch.commit()
                 print(f"  Deleted batch of {len(player_uid_chunk)} player documents.")
             except Exception as e:
                 print(f"  ERROR: Failed to delete a batch of player documents: {e}")
-                # Continue to delete other data, but log this failure.
-
-    # b. Delete documents from game-specific subcollections
-    # (player_rounds, player_field_states, player_results)
-    # This is complex as it requires iterating through all documents in each subcollection.
-    # Firestore helper for recursive delete is usually via gcloud CLI or specific libraries not used here directly.
-    # Simplified: delete the parent game document. Subcollections become orphaned but inaccessible via game.
-    # For a true deep delete, a more complex iteration or a Cloud Function is often used.
     
-    # Example for one subcollection (player_rounds). Repeat for others.
-    # This is illustrative and can be very slow for large subcollections.
     async def delete_subcollection_docs(collection_path_template: str):
         collection_path = collection_path_template.format(game_id=game_id)
         print(f"INFO: Attempting to delete documents in subcollection path: {collection_path}")
         try:
             while True:
-                docs_snapshot = await db.collection(collection_path).limit(batch_limit).get()
-                if not docs_snapshot: # No more documents
+                docs_snapshot = await db.collection(collection_path).limit(batch_limit).get() # type: ignore
+                if not docs_snapshot: 
                     break
-                batch = db.batch()
+                batch = db.batch() # type: ignore
                 for doc in docs_snapshot:
                     batch.delete(doc.reference)
                 await batch.commit()
                 print(f"  Deleted batch of {len(docs_snapshot)} documents from {collection_path}.")
-                if len(docs_snapshot) < batch_limit: # Last batch
+                if len(docs_snapshot) < batch_limit: 
                     break
         except Exception as e:
             print(f"  ERROR deleting documents from {collection_path}: {e}")
 
     await delete_subcollection_docs(crud_round.ROUND_COLLECTION_NAME_TEMPLATE)
     await delete_subcollection_docs(crud_round.FIELD_STATE_COLLECTION_NAME_TEMPLATE)
-    await delete_subcollection_docs(crud_result.RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=game_id)) # Ensure template is correct
+    await delete_subcollection_docs(crud_result.RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=game_id))
 
-    # c. Finally, delete the main game document
     print(f"INFO: Deleting main game document {game_id}...")
-    deleted_game_doc = await crud_game.remove(db, doc_id=game_id)
-    if not deleted_game_doc: # crud_game.remove returns bool
+    deleted_game_doc_success = await crud_game.remove(db, doc_id=game_id) # crud_game.remove returns bool
+    if not deleted_game_doc_success:
         print(f"ERROR: Failed to delete main game document {game_id}.")
-        # At this point, subordinate data might have been deleted.
-        # This might warrant raising an error if the game doc itself fails.
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to delete main game document {game_id}, but associated data might have been removed.")
     
     print(f"INFO: Game {game_id} and associated data deletion process completed by admin {admin_uid}.")
-    return None # FastAPI returns 204 No Content
+    return None

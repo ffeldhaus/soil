@@ -1,10 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
-// Import Angular Material theming functions
-@use '@angular/material' as mat;
+// Import Angular Material theming functions - Temporarily commented out
+// @use '@angular/material' as mat;
 
-// Include the core styles for Angular Material. We need this here for general Material styles.
-@include mat.core();
+// Include the core styles for Angular Material. We need this here for general Material styles. - Temporarily commented out
+// @include mat.core();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For V15+ default themes are available, but custom is often preferred.
@@ -46,7 +46,8 @@ html, body {
   }
   
   a {
-    color: mat.get-color-from-palette(mat.$indigo-palette, 500); // Using Material palette color
+    // color: mat.get-color-from-palette(mat.$indigo-palette, 500); // Using Material palette color - Temporarily commented out
+    color: #3f51b5; // Standard Indigo color as a fallback
     text-decoration: none;
     &:hover {
       text-decoration: underline;
