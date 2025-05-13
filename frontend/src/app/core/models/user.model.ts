@@ -15,6 +15,7 @@ export enum UserRole {
     gameId?: string; // Specific to Player
     playerNumber?: number; // Specific to Player
     isAi?: boolean; // Specific to Player
+    impersonatorUid?: string; // UID of the admin if this user is being impersonated
     // Add other common or type-specific fields as needed
   }
   

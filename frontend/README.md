@@ -70,8 +70,10 @@ frontend/
     ```
 
 3.  **Environment Configuration:**
-    *   The frontend will need to know the backend API URL. This is typically configured in `src/environments/environment.ts` and `src/environments/environment.prod.ts`.
-    *   Firebase client configuration will also be needed (usually in `environment.ts`). This includes API key, auth domain, project ID, etc., obtained from your Firebase project settings.
+    *   Copy `src/environments/environment.ts.template` to `src/environments/environment.ts`.
+    *   Fill in your Firebase client configuration details in `src/environments/environment.ts`. These include API key, auth domain, project ID, etc., obtained from your Firebase project settings.
+    *   The backend API URL defaults to `http://localhost:8000/api/v1` for local development.
+    *   For production, configure `src/environments/environment.prod.ts` similarly, pointing to your production Firebase project and backend URL.
 
 ## Running Locally
 
@@ -83,7 +85,36 @@ frontend/
     # or
     # yarn start
     ```
-    This will compile the application and serve it locally, usually at `http://localhost:4200/`. The app will automatically reload if you change any ofrce files.
+    This will compile the application and serve it locally, usually at `http://localhost:4200/`. The app will automatically reload if you change any source files.
+
+## Local Development Testing (Using Predefined Defaults)
+
+To streamline local testing, the development environment (`ng serve`) includes predefined default values:
+
+1.  **Admin Login:**
+    *   When you navigate to the login page, the form will be pre-filled with:
+        *   **Email:** `admin@local.dev`
+        *   **Password:** `password`
+    *   You can use these credentials to log in directly as the admin.
+
+2.  **Game Creation:**
+    *   After logging in as the admin, navigate to the "Create Game" page.
+    *   The form will be pre-filled with settings for a simple test game:
+        *   **Name:** `Dev Test Game`
+        *   **Human Players:** 1
+        *   **AI Players:** 1
+        *   (Other defaults like rounds, max players may also be set).
+    *   You can adjust these or use them as is.
+
+3.  **Human Player Credentials:**
+    *   **Important:** The *password* for the human player is **not** predefined in the frontend.
+    *   After you submit the "Create Game" form using the pre-filled defaults, the **backend** will generate the human player(s) and their unique passwords.
+    *   These player credentials (including the password) will typically be sent to the **admin's email address** (`admin@local.dev` in this case). You will need to check this email (or the backend logs/database if email sending isn't fully set up) to get the player's login details (Game ID, Player Number, Password).
+
+4.  **Console Logs:**
+    *   The predefined default values are also logged to the browser's developer console when the application starts with `ng serve` for easy reference.
+
+**Note:** These defaults are **only active** when using `ng serve` (development mode) and are **not included** in production builds (`ng build --configuration production`).
 
 ## Building for Production
 
@@ -133,3 +164,4 @@ The frontend will support English (en) and German (de). Angular's built-in I18N 
 *   Develop components for authentication (login, registration - admin only for now).
 *   Develop components for admin game management.
 *   Develop components for the player game interface.
+

@@ -87,13 +87,17 @@ def decode_access_token(token: str) -> Optional[TokenData]:
         role: Optional[str] = payload.get("role")
         email: Optional[str] = payload.get("email")
         game_id: Optional[str] = payload.get("game_id") # Specific to player tokens
+        original_sub: Optional[str] = payload.get("original_sub") # For impersonation
+        is_impersonating: Optional[bool] = payload.get("is_impersonating", False) # For impersonation
 
         return TokenData(
             sub=token_sub,
             exp=token_exp,
             role=role,
             email=email,
-            game_id=game_id
+            game_id=game_id,
+            original_sub=original_sub,
+            is_impersonating=is_impersonating
         )
     except JWTError as e:
         # This will catch expired tokens, invalid signatures, etc.
@@ -118,13 +122,15 @@ if __name__ == "__main__":
     # --- Token Creation Example ---
     user_data = {"sub": "user123", "role": "player", "game_id": "gameABC", "custom_info": "hello"}
     token = create_access_token(data=user_data)
-    print(f"\nGenerated Token: {token}")
+    print(f"
+Generated Token: {token}")
 
     # --- Token Decoding Example ---
     try:
         decoded_payload = decode_access_token(token)
         if decoded_payload:
-            print(f"\nDecoded Payload (sub): {decoded_payload.sub}")
+            print(f"
+Decoded Payload (sub): {decoded_payload.sub}")
             print(f"Decoded Payload (role): {decoded_payload.role}")
             print(f"Decoded Payload (game_id): {decoded_payload.game_id}")
             print(f"Decoded Payload (exp): {datetime.fromtimestamp(decoded_payload.exp, timezone.utc)}")
@@ -134,7 +140,8 @@ if __name__ == "__main__":
 
     # --- Expired Token Example ---
     # expired_token = create_access_token(data={"sub": "test_expiry"}, expires_delta_minutes=-5)
-    # print(f"\nGenerated Expired Token: {expired_token}")
+    # print(f"
+Generated Expired Token: {expired_token}")
     # try:
     #     decode_access_token(expired_token)
     # except JWTError as e:

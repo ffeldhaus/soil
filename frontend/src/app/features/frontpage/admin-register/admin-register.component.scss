@@ -1,3 +1,6 @@
+@use 'sass:map';
+@use '../../../../_theme-colors' as custom-theme-vars; // Import the generated theme colors
+
 .register-container {
     display: flex;
     justify-content: center;
@@ -9,16 +12,19 @@
   .register-card {
     width: 100%;
     max-width: 500px; // Slightly wider for more form fields
+    // Background and text color should be inherited from .mat-card global styles
   }
   
   mat-card-title {
     text-align: center;
     margin-bottom: 16px;
+    // Color should be inherited
   }
   
   .info-text {
       font-size: 0.9rem;
-      color: rgba(0,0,0,0.6);
+      // Use a lighter neutral color from the theme for info text
+      color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 70);
       margin-bottom: 24px;
       line-height: 1.5;
   }
@@ -44,10 +50,12 @@
     a {
       display: block;
       margin-top: 8px;
-      color: #555;
+      // Use a color from the theme's secondary palette
+      color: map.get(map.get(custom-theme-vars.$primary-palette, secondary), 70);
   
       &:hover {
-        color: var(--mat-primary-500-contrast-color);
+        // Lighter on hover from the secondary palette
+        color: map.get(map.get(custom-theme-vars.$primary-palette, secondary), 80);
       }
     }
   }

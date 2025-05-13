@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { playerGuard } from './core/guards/player.guard';
+// ImpressumComponent is no longer routed here directly
 
 export const routes: Routes = [
   {
@@ -23,10 +24,12 @@ export const routes: Routes = [
     loadChildren: () => import('./features/game/game.routes').then(m => m.GAME_ROUTES),
     canActivate: [authGuard, playerGuard],
   },
-  // Example of a simple NotFoundComponent route
-  // { path: 'not-found', component: NotFoundComponent }, // Create this component
+  // {
+  //   path: 'impressum', // REMOVED - Will be a child of frontpage
+  //   component: ImpressumComponent
+  // },
   {
     path: '**',
-    redirectTo: 'frontpage/overview' // Or '/not-found'
+    redirectTo: 'frontpage/overview' 
   }
 ];

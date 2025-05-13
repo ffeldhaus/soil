@@ -1,46 +1,70 @@
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs'; // Using 'of' for placeholder
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators'; // Import map operator
 import { environment } from '../../../environments/environment';
-import { GameAdminListItem, GameDetailsView, GameCreateAdminPayload } from '../models/game.model';
+import { GameAdminListItem, GameDetailsView, GameCreateAdminPayload } from '../models/game.model'; // GameDetailsView already includes PlayerPublic[]
+import { PlayerPublic } from '../models/player.model'; // Corrected: Import PlayerPublic from player.model
+import { IAdminGameService } from './admin-game.service.interface';
+import { MockAdminGameService } from './admin-game.service.mock';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AdminGameService {
+export class AdminGameService implements IAdminGameService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/admin/games`; // Adjust API URL as needed
+  private apiUrl = `${environment.apiUrl}/admin/games`;
+  private mockService: MockAdminGameService | null = null;
 
-  // Placeholder implementation - replace with actual HTTP calls
+  constructor() {
+    if (environment.useMocks) {
+      this.mockService = new MockAdminGameService();
+      console.log('AdminGameService: Using MOCK data via MockAdminGameService');
+    }
+  }
+
   getAdminGames(): Observable<GameAdminListItem[]> {
-    console.warn('AdminGameService.getAdminGames called - using placeholder data');
-    // Replace with: return this.http.get<GameAdminListItem[]>(this.apiUrl);
-    return of([
-      {id: 'game1', name: 'Test Game 1', game_status: 'pending', current_round_number: 0, max_players: 5},
-      {id: 'game2', name: 'Test Game 2', game_status: 'in_progress', current_round_number: 3, max_players: 4}
-    ]);
+    if (this.mockService) {
+      return this.mockService.getAdminGames();
+    }
+    return this.http.get<GameAdminListItem[]>(this.apiUrl);
+  }
+
+  // Added method to fetch full game details including players
+  getGameDetails(gameId: string): Observable<GameDetailsView> {
+    if (this.mockService) {
+      return this.mockService.getGameDetails(gameId);
+    }
+    return this.http.get<GameDetailsView>(`${this.apiUrl}/${gameId}`).pipe(
+      map(game => {
+        // Ensure players array is initialized if backend might not send it
+        if (!game.players) {
+          game.players = [];
+        }
+        return game;
+      })
+    );
   }
 
   createGame(payload: GameCreateAdminPayload): Observable<GameDetailsView> {
-     console.warn('AdminGameService.createGame called - using placeholder data');
-     // Replace with: return this.http.post<GameDetailsView>(this.apiUrl, payload);
-     return of({
-        id: 'newGame123', name: payload.name, game_status: 'pending', current_round_number: 0, max_players: payload.number_of_players, created_at: new Date().toISOString(), updated_at: new Date().toISOString()
-     });
+    if (this.mockService) {
+      return this.mockService.createGame(payload);
+    }
+    return this.http.post<GameDetailsView>(this.apiUrl, payload);
   }
 
   advanceGameRound(gameId: string): Observable<GameDetailsView> {
-     console.warn(`AdminGameService.advanceGameRound(${gameId}) called - using placeholder data`);
-     // Replace with: return this.http.post<GameDetailsView>(`${this.apiUrl}/${gameId}/advance`, {});
-     return of({ id: gameId, name: 'Test Game', game_status: 'in_progress', current_round_number: 1, max_players: 5, created_at: '', updated_at: '' });
+    if (this.mockService) {
+      return this.mockService.advanceGameRound(gameId);
+    }
+    return this.http.post<GameDetailsView>(`${this.apiUrl}/${gameId}/advance-to-next-round`, {}); // Corrected endpoint path
   }
 
   deleteGame(gameId: string): Observable<void> {
-     console.warn(`AdminGameService.deleteGame(${gameId}) called - using placeholder data`);
-     // Replace with: return this.http.delete<void>(`${this.apiUrl}/${gameId}`);
-     return of(undefined);
+    if (this.mockService) {
+      return this.mockService.deleteGame(gameId);
+    }
+    return this.http.delete<void>(`${this.apiUrl}/${gameId}`);
   }
-
-  // Add other admin game methods as needed
 }

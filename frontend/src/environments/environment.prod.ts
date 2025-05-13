@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  useMocks: false, // Disable mocks for production
   // API URL for the backend - This should point to your deployed backend URL
   apiUrl: 'https://your-deployed-backend-url.com/api/v1', // Example: https://soil-backend-asdf123.a.run.app/api/v1
   playerEmailDomain: 'soil.app', // For player email generation during login on production
@@ -14,5 +15,6 @@ export const environment = {
     messagingSenderId: 'YOUR_PRODUCTION_FIREBASE_MESSAGING_SENDER_ID',
     appId: 'YOUR_PRODUCTION_FIREBASE_APP_ID',
     // measurementId: 'YOUR_PRODUCTION_FIREBASE_MEASUREMENT_ID'
-  }
+  },
+  devDefaults: null // Ensure defaults are null or absent in production
 };

@@ -1,3 +1,6 @@
+@use 'sass:map';
+@use '../../../../_theme-colors' as custom-theme-vars;
+
 // File: frontend/src/app/features/admin/admin-dashboard/admin-dashboard.component.scss
 .dashboard-container {
     padding: 24px;
@@ -9,7 +12,8 @@
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 16px;
-    border-bottom: 1px solid rgba(0,0,0,0.12);
+    // Use a light neutral color from the theme for the border
+    border-bottom: 1px solid map.get(map.get(custom-theme-vars.$primary-palette, neutral), 30); 
   }
   
   .loading-spinner, .no-games-message {
@@ -18,7 +22,8 @@
     align-items: center;
     justify-content: center;
     padding: 40px;
-    color: rgba(0,0,0,0.54);
+    // Use a lighter neutral color from the theme for text
+    color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 70);
     p {
       margin-top: 16px;
       font-style: italic;
@@ -37,6 +42,8 @@
   
   table.mat-mdc-table {
     width: 100%;
+    // The .mat-mdc-table and its cells should inherit theme colors for background/text
+    // from global styles.scss if not overridden here.
   }
   
   .mat-mdc-header-cell, .mat-mdc-cell {
@@ -56,21 +63,22 @@
     }
   }
   
+  // Status chips: Background colors are semantic and should be kept.
+  // Text colors are chosen for contrast with these specific backgrounds.
   .status-chip {
     padding: 5px 10px;
     border-radius: 16px;
     font-size: 0.85em;
     font-weight: 500;
-    color: white;
-    text-transform: capitalize; // Ensure titlecase pipe is used in template too
+    color: white; // Default, overridden by specific statuses
+    text-transform: capitalize; 
   
-    &.status-pending { background-color: #FFC107; color: black; } // Amber
-    &.status-active { background-color: #4CAF50; } // Green
-    &.status-finished { background-color: #607D8B; } // Blue Grey
-    &.status-archived { background-color: #9E9E9E; } // Grey (if you add archived status)
-    // Default/unknown status
+    &.status-pending { background-color: #FFC107; color: black; } 
+    &.status-active { background-color: #4CAF50; color: white; } 
+    &.status-finished { background-color: #607D8B; color: white; } 
+    &.status-archived { background-color: #9E9E9E; color: white; } 
     &:not(.status-pending):not(.status-active):not(.status-finished):not(.status-archived) {
-      background-color: #B0BEC5; // Light Blue Grey
+      background-color: #B0BEC5; 
       color: black;
     }
   }

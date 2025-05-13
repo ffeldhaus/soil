@@ -1,12 +1,16 @@
+@use 'sass:map';
+@use '../../../../_theme-colors' as custom-theme-vars;
+
 .page-container {
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 20px; // Keep padding for spacing from screen edges
   }
   
   .info-card {
-    max-width: 800px;
-    width: 100%;
+    // max-width: 800px; // Removed to allow global .mat-card style (1024px) to take effect
+    width: 100%; // Card will take width within its container up to global max-width
+                 // margin: auto; will be handled by global .mat-card style
   }
   
   mat-card-title {
@@ -30,6 +34,7 @@
       font-weight: 500;
   }
   
+  // Image container is removed from HTML, styles can be kept or removed later if no longer used
   .image-container {
     margin: 24px 0;
     text-align: center;
@@ -38,19 +43,19 @@
       max-width: 100%;
       height: auto;
       border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
     }
   
     em {
       display: block;
       margin-top: 8px;
       font-size: 0.9rem;
-      color: rgba(0,0,0,0.6);
+      color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 70); 
     }
   }
   
   mat-card-actions {
-      padding: 8px 16px 16px; // Adjust padding
+      padding: 8px 16px 16px; 
       button, a {
           margin-left: 8px;
       }

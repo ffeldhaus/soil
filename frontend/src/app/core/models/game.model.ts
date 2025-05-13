@@ -1,21 +1,40 @@
-// Placeholder for Game Models
+// File: frontend/src/app/core/models/game.model.ts
+import { PlayerPublic } from './player.model'; // Correct: Imports from player.model
+
+// Payload for creating a game by an Admin (maps to backend GameCreate)
+export interface GameCreateAdminPayload {
+  name: string;
+  number_of_rounds: number;
+  max_players: number;
+  requested_player_slots: number;
+  ai_player_count?: number;
+}
+
+// For listing games in Admin dashboard (maps to backend GameSimple)
 export interface GameAdminListItem {
   id: string;
   name: string;
-  game_status: 'pending' | 'in_progress' | 'finished' | 'archived';
   current_round_number: number;
+  game_status: string;
+  admin_id: string;
   max_players: number;
-  // Add other relevant fields for the list item
+  // player_count can be derived if players array or player_uids are sent
 }
 
-export interface GameDetailsView extends GameAdminListItem {
-  // Add detailed view specific fields
-  created_at: string; // Example
-  updated_at: string; // Example
-}
-
-export interface GameCreateAdminPayload {
+// For detailed game view for Admin or Player (maps to backend GamePublic)
+export interface GameDetailsView {
+  id: string;
   name: string;
-  number_of_players: number;
-  // Add other fields needed for game creation
+  number_of_rounds: number;
+  max_players: number;
+  current_round_number: number;
+  game_status: string;
+  admin_id: string;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+  weather_sequence: string[];
+  vermin_sequence: string[];
+  player_uids: string[];
+  ai_player_strategies?: Record<string, string>; // UID -> strategy_name
+  players: PlayerPublic[]; // List of player details
 }

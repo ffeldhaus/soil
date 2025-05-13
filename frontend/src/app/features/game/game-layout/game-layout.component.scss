@@ -1,0 +1,44 @@
+// File: frontend/src/app/features/game/game-layout/game-layout.component.scss
+// Extends global styles from styles.scss
+
+// Container specific styles
+.game-layout-container {
+  // This class will be on the root div in game-layout.component.html
+  // The background image is now applied by adding 'app-layout-container--with-bg' class
+  // and setting a style attribute for the specific image path in the HTML.
+}
+
+// Toolbar specific styles (if any, beyond .app-toolbar and .app-toolbar--transparent)
+.game-toolbar {
+  // Specific overrides for game toolbar if needed
+  .toolbar-title {
+    font-size: 1.2rem; // Game-specific title size
+  }
+}
+
+// Content wrapper specific styles
+.content-wrapper {
+  // Game-specific padding or adjustments for readability over its background
+  // Example: components inside router-outlet might get a semi-transparent background
+  // ::ng-deep > *:not(app-some-full-transparent-component) {
+  //   background-color: rgba(255,255,255,0.9);
+  //   border-radius: 8px;
+  //   padding: 15px;
+  //   margin-bottom: 16px; // Add some space between content cards
+  // }
+}
+
+// Footer specific styles
+.game-footer {
+  // Game-specific footer styling if needed beyond .app-footer-wrapper--transparent-dark-bg
+}
+
+// Responsive adjustments for game layout if different from global
+@media (max-width: 599px) {
+  .content-wrapper {
+    // padding: 12px; // Global .app-content-wrapper already handles this
+  }
+  .game-toolbar .toolbar-title {
+    font-size: 1rem; // Global .app-toolbar already handles this
+  }
+}

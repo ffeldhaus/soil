@@ -23,6 +23,8 @@ class TokenData(BaseModel):
     role: Optional[str] = Field(None, description="User role (e.g., admin, player)")
     email: Optional[str] = Field(None, description="User's email")
     game_id: Optional[str] = Field(None, description="Game ID, relevant for players")
+    original_sub: Optional[str] = Field(None, description="Original subject/admin ID if impersonating")
+    is_impersonating: Optional[bool] = Field(False, description="True if this token is for an impersonation session")
     # Add any other custom data you want to store in the token payload
 
 class FirebaseIdToken(BaseModel):

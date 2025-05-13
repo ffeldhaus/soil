@@ -5,26 +5,29 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu'; // Import MatMenuModule
+import { MatDividerModule } from '@angular/material/divider'; // Often needed with menus
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { CommonModule } from '@angular/common'; // Import CommonModule
-import { AuthService } from '../../core/services/auth.service'; // For showing login/logout status
-import { FooterComponent } from '../../shared/components/footer/footer.component'; // Import FooterComponent
+import { CommonModule, NgIf, AsyncPipe, NgFor } from '@angular/common'; // Ensure NgIf, AsyncPipe, NgFor are covered
+import { IAuthService } from '../../core/services/auth.service.interface'; // Import interface
+import { AUTH_SERVICE_TOKEN } from '../../core/services/injection-tokens'; // Import token
+import { FooterComponent } from '../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-frontpage-layout',
   standalone: true,
   imports: [
-    CommonModule, // Add CommonModule here
+    CommonModule, // Or NgIf, AsyncPipe, NgFor individually if preferred
     RouterModule,
-    // NgIf, // No longer needed individually if CommonModule is imported
-    // AsyncPipe, // No longer needed individually if CommonModule is imported
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MatSidenavModule,
-    MatListModule,
+    MatSidenavModule, // Keep if any sidenav-related logic/styles are being kept for other purposes
+    MatListModule,    // Keep if used by mat-nav-list inside the new mat-menu or elsewhere
+    MatMenuModule,    // Add MatMenuModule here
+    MatDividerModule, // Add MatDividerModule
     FooterComponent
   ],
   templateUrl: './frontpage-layout.component.html',
@@ -32,7 +35,7 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 })
 export class FrontpageLayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);
-  public authService = inject(AuthService);
+  public authService: IAuthService = inject(AUTH_SERVICE_TOKEN); 
   private router = inject(Router);
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -44,14 +47,11 @@ export class FrontpageLayoutComponent {
   navItems = [
     { label: 'Overview', link: 'overview' },
     { label: 'Background', link: 'background' },
-    // Conditional items will be handled in the template based on auth state
   ];
 
   async onLogout() {
     try {
       await this.authService.logout();
-      // Navigation is handled by authService or can be forced here if needed
-      // this.router.navigate(['/frontpage/login']);
     } catch (error) {
       console.error('Logout failed in layout component', error);
     }

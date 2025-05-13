@@ -1,2 +1,17 @@
+<!-- Impersonation Banner -->
+<div *ngIf="isImpersonating()" class="impersonation-banner mat-elevation-z4">
+  <mat-toolbar color="warn">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <span class="impersonation-text">
+      Impersonating: <strong>{{ currentUser()?.displayName || currentUser()?.email }}</strong> (Player {{ currentUser()?.playerNumber }})
+      <span *ngIf="currentUser()?.impersonatorUid"> (Admin: {{ currentUser()?.impersonatorUid?.substring(0,8) }}...)</span>
+    </span>
+    <span class="impersonation-spacer"></span>
+    <button mat-stroked-button (click)="stopImpersonation()" class="stop-impersonation-button">
+      <mat-icon>stop_circle</mat-icon> Return to Admin View
+    </button>
+  </mat-toolbar>
+</div>
+
 <!-- The router-outlet directive is where Angular will render the component for the current route -->
 <router-outlet></router-outlet>

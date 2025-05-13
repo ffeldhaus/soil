@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Body
 from pydantic import BaseModel 
 
 from app.api import deps
-from app.schemas.token import TokenData
+from app.schemas.token import TokenData, Token # MODIFIED: Added Token for response
 from app.schemas.game import GameCreate, GamePublic, GameInDB, GameSimple
 from app.schemas.player import PlayerCreate, PlayerPublic, UserType 
 from app.schemas.round import RoundCreate, RoundDecisionBase 
@@ -23,6 +23,7 @@ from firebase_admin import auth as firebase_auth_admin, exceptions as firebase_e
 from app.core.config import settings
 from app.services.game_state_service import get_game_state_service, GameStateService 
 from app.services.email_service import get_email_service, EmailService 
+from app.core import security # MODIFIED: Added security for token creation
 
 router = APIRouter()
 
@@ -314,6 +315,78 @@ async def advance_game_to_next_round_by_admin(
     response_data_dict["players"] = [p.model_dump() for p in players_info]
     
     return GamePublic.model_validate(response_data_dict)
+
+@router.post("/games/{game_id}/impersonate/{player_id}", response_model=Token)
+async def impersonate_player(
+    game_id: str,
+    player_id: str, # This is the UID of the player to impersonate
+    db: Any = Depends(deps.get_firestore_db_client_dependency),
+    current_admin: TokenData = Depends(deps.get_current_admin_user),
+) -> Token:
+    """
+    Admin endpoint to impersonate a player in a specific game.
+    Returns an access token that allows the admin to act as the specified player.
+    """
+    admin_uid = current_admin.sub
+    if not admin_uid:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin authentication failed.")
+
+    # 1. Fetch the game
+    game = await crud_game.get(db, doc_id=game_id)
+    if not game:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found.")
+    
+    # 2. Verify admin owns the game (optional, but good practice)
+    if game.admin_id != admin_uid:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin does not own this game.")
+
+    # 3. Fetch the player to impersonate
+    player_to_impersonate = await crud_player.get(db, doc_id=player_id)
+    if not player_to_impersonate:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player to impersonate not found.")
+
+    # 4. Ensure the player belongs to the game
+    if player_to_impersonate.game_id != game_id or player_id not in game.player_uids:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Player is not part of the specified game.")
+
+    # 5. Generate impersonation token
+    # Ensure the player's email is available for the token data
+    player_email = player_to_impersonate.email
+    if not player_email: # Should always have an email
+        firebase_user = await firebase_auth_admin.get_user(player_id)
+        player_email = firebase_user.email
+        
+    if not player_email: # Still no email, this is unexpected
+         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not retrieve player email for impersonation token.")
+
+
+    token_data = {
+        "sub": player_id,  # Subject is the player being impersonated
+        "role": UserType.PLAYER.value, # Role is player
+        "game_id": game_id,
+        "email": player_email, # Player's email
+        "original_sub": admin_uid,  # Store the admin's original UID
+        "is_impersonating": True # Explicit flag for impersonation
+    }
+    
+    # Use default token expiry from settings
+    access_token_expires_minutes = settings.ACCESS_TOKEN_EXPIRE_MINUTES 
+    
+    impersonation_token_str = security.create_access_token(
+        data=token_data, expires_delta_minutes=access_token_expires_minutes
+    )
+
+    return Token(
+        access_token=impersonation_token_str, 
+        token_type="bearer",
+        user_info= { # Basic info about the impersonated user
+            "uid": player_id,
+            "email": player_email,
+            "role": UserType.PLAYER.value,
+            "game_id": game_id,
+            "impersonator_uid": admin_uid
+        }
+    )
 
 
 @router.delete("/games/{game_id}", status_code=status.HTTP_204_NO_CONTENT)

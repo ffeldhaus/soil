@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  useMocks: true, // Enable mocks for local development
   // API URL for the backend
   apiUrl: 'http://localhost:8000/api/v1', // Default for local backend
   playerEmailDomain: 'soil.game.local', // For player email generation during login
@@ -17,6 +18,18 @@ export const environment = {
     messagingSenderId: 'YOUR_FIREBASE_MESSAGING_SENDER_ID',
     appId: 'YOUR_FIREBASE_APP_ID',
     // measurementId: 'YOUR_FIREBASE_MEASUREMENT_ID' // Optional, for Google Analytics
+  },
+  // Add development defaults
+  devDefaults: {
+    adminEmail: 'admin@local.dev',
+    adminPassword: 'password',
+    game: {
+      name: 'Dev Test Game',
+      maxPlayers: 2, // Must be >= human + AI
+      humanPlayers: 1,
+      aiPlayers: 1,
+      rounds: 10 // Example default rounds
+    }
   }
 };
 

@@ -8,40 +8,36 @@
         </button>
       </mat-card-header>
       <mat-card-content>
-        <div *ngIf="isLoading()" class="loading-spinner">
+        <div *ngIf="isLoading() && !selectedGameDetails()" class="loading-spinner">
           <mat-spinner diameter="50"></mat-spinner>
           <p>Loading games...</p>
         </div>
   
-        <div *ngIf="!isLoading() && adminGames().length === 0" class="no-games-message">
+        <div *ngIf="!isLoading() && adminGames().length === 0 && !selectedGameDetails()" class="no-games-message">
           <mat-icon fontIcon="info_outline"></mat-icon>
           <p>You haven't created any games yet.</p>
           <button mat-stroked-button color="primary" (click)="navigateToCreateGame()">Create your first game</button>
         </div>
   
-        <div *ngIf="!isLoading() && adminGames().length > 0" class="games-table-container">
+        <!-- Game List Table -->
+        <div *ngIf="!selectedGameDetails() && adminGames().length > 0 && !isLoading()" class="games-table-container">
           <table mat-table [dataSource]="adminGames()" class="mat-elevation-z2">
-  
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef> Name </th>
               <td mat-cell *matCellDef="let game"> {{game.name}} </td>
             </ng-container>
-  
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef> Status </th>
               <td mat-cell *matCellDef="let game"> <span class="status-chip status-{{game.game_status}}">{{game.game_status | titlecase}}</span> </td>
             </ng-container>
-  
             <ng-container matColumnDef="currentRound">
               <th mat-header-cell *matHeaderCellDef> Round </th>
               <td mat-cell *matCellDef="let game"> {{game.current_round_number}} </td>
             </ng-container>
-  
             <ng-container matColumnDef="maxPlayers">
               <th mat-header-cell *matHeaderCellDef> Max Players </th>
               <td mat-cell *matCellDef="let game"> {{game.max_players}} </td>
             </ng-container>
-            
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef class="actions-header"> Actions </th>
               <td mat-cell *matCellDef="let game" class="actions-cell">
@@ -51,7 +47,7 @@
                 <button mat-icon-button color="accent" 
                         (click)="advanceRound(game.id, game.name)" 
                         [matTooltip]="(game.game_status === 'pending' && game.current_round_number === 0) ? 'Start Game' : 'Process & Advance Round'"
-                        [disabled]="game.game_status === 'finished'"> 
+                        [disabled]="game.game_status === 'finished'">
                   <mat-icon>{{ (game.game_status === 'pending' && game.current_round_number === 0) ? 'play_circle_filled' : 'play_arrow' }}</mat-icon>
                 </button>
                 <button mat-icon-button color="warn" (click)="confirmDeleteGame(game.id, game.name)" matTooltip="Delete Game">
@@ -59,11 +55,66 @@
                 </button>
               </td>
             </ng-container>
-  
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>
         </div>
+
+        <!-- Selected Game Details View -->
+        <div *ngIf="selectedGameDetails() as game" class="game-details-view">
+          <button mat-stroked-button (click)="closeGameDetails()" class="back-button">
+            <mat-icon>arrow_back</mat-icon> Back to Games List
+          </button>
+          <mat-card class="details-card">
+            <mat-card-header>
+              <mat-card-title>{{ game.name }}</mat-card-title>
+              <mat-card-subtitle>Status: <span class="status-chip status-{{game.game_status}}">{{ game.game_status | titlecase }}</span> | Round: {{ game.current_round_number }} / {{ game.number_of_rounds }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div *ngIf="isLoadingDetails()" class="loading-spinner">
+                    <mat-spinner diameter="50"></mat-spinner>
+                    <p>Loading details...</p>
+                </div>
+
+                <div *ngIf="!isLoadingDetails()">
+                    <p><strong>Players ({{ game.players.length || 0 }} / {{ game.max_players }}):</strong></p> <!-- Corrected game.players?.length to game.players.length -->
+                    <div *ngIf="game.players && game.players.length > 0; else noPlayers">
+                        <mat-list role="list">
+                            <mat-list-item *ngFor="let player of game.players" role="listitem">
+                                <mat-icon matListItemIcon [ngClass]="{'ai-player-icon': player.is_ai}">{{ player.is_ai ? 'smart_toy' : 'person' }}</mat-icon>
+                                <div matListItemTitle>{{ player.username || player.email }} (P{{player.player_number}})</div>
+                                <div matListItemLine>UID: {{ player.uid }}</div>
+                                <button mat-icon-button color="primary" 
+                                        *ngIf="!player.is_ai" 
+                                        (click)="impersonate(game.id, player)" 
+                                        matTooltip="Impersonate {{ player.username || player.email }}">
+                                    <mat-icon>how_to_reg</mat-icon>
+                                </button>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                        </mat-list>
+                    </div>
+                    <ng-template #noPlayers>
+                        <p>No players have joined this game yet.</p>
+                    </ng-template>
+
+                    <div class="game-actions-details">
+                        <button mat-flat-button color="accent" 
+                                (click)="advanceRound(game.id, game.name)" 
+                                [matTooltip]="(game.game_status === 'pending' && game.current_round_number === 0) ? 'Start Game' : 'Process & Advance Round'"
+                                [disabled]="game.game_status === 'finished'">
+                            <mat-icon>{{ (game.game_status === 'pending' && game.current_round_number === 0) ? 'play_circle_filled' : 'play_arrow' }}</mat-icon>
+                            {{ (game.game_status === 'pending' && game.current_round_number === 0) ? 'Start Game' : 'Process & Advance Round' }}
+                        </button>
+                        <button mat-stroked-button color="warn" (click)="confirmDeleteGame(game.id, game.name)" matTooltip="Delete Game">
+                            <mat-icon>delete_forever</mat-icon> Delete Game
+                        </button>
+                    </div>
+                </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
       </mat-card-content>
     </mat-card>
   </div>

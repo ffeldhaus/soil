@@ -7,11 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatMenuModule } from '@angular/material/menu'; // Import MatMenuModule
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { AsyncPipe, NgIf, NgFor } from '@angular/common';
-import { AuthService } from '../../../core/services/auth.service';
+import { IAuthService } from '../../../core/services/auth.service.interface';
+import { AUTH_SERVICE_TOKEN } from '../../../core/services/injection-tokens';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 
 @Component({
@@ -21,6 +23,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
     RouterModule, NgIf, AsyncPipe, NgFor,
     MatToolbarModule, MatButtonModule, MatIconModule,
     MatSidenavModule, MatListModule, MatDividerModule,
+    MatMenuModule, // Add MatMenuModule here
     FooterComponent
   ],
   templateUrl: './admin-layout.component.html',
@@ -28,7 +31,8 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 })
 export class AdminLayoutComponent {
   private breakpointObserver = inject(BreakpointObserver);
-  public authService = inject(AuthService);
+  // Explicitly type the injected service
+  public authService: IAuthService = inject(AUTH_SERVICE_TOKEN);
   private router = inject(Router);
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -40,9 +44,6 @@ export class AdminLayoutComponent {
   adminNavItems = [
     { label: 'Dashboard', link: '/admin/dashboard', icon: 'dashboard' },
     { label: 'Create Game', link: '/admin/games/new', icon: 'add_circle_outline' },
-    // Future items like:
-    // { label: 'User Management', link: '/admin/users', icon: 'people' },
-    // { label: 'Settings', link: '/admin/settings', icon: 'settings' },
   ];
 
   async onLogout() {

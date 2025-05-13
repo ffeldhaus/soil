@@ -9,9 +9,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NgIf } from '@angular/common';
 
-import { AuthService } from '../../../core/services/auth.service';
+import { IAuthService } from '../../../core/services/auth.service.interface';
+import { AUTH_SERVICE_TOKEN } from '../../../core/services/injection-tokens';
 import { NotificationService } from '../../../core/services/notification.service';
-import { environment } from '../../../../environments/environment'; // For playerEmailDomain fallback (if keeping)
+import { environment } from '../../../../environments/environment';
+import { User } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +35,8 @@ export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private authService = inject(AuthService);
+  // Explicitly type the injected service
+  private authService: IAuthService = inject(AUTH_SERVICE_TOKEN);
   private notificationService = inject(NotificationService);
 
   loginForm!: FormGroup;
@@ -57,13 +60,22 @@ export class LoginComponent implements OnInit {
       this.loginForm = this.fb.group({
         password: ['', [Validators.required]]
       });
-      // Pre-fill if needed or handle display logic in template
     } else {
       this.isPlayerLoginMode.set(false);
-      const prefillEmail = this.route.snapshot.queryParamMap.get('uid') || this.route.snapshot.queryParamMap.get('email') || '';
+      let defaultEmail = '';
+      let defaultPassword = '';
+
+      if (!environment.production && environment.devDefaults) {
+        defaultEmail = environment.devDefaults.adminEmail || '';
+        defaultPassword = environment.devDefaults.adminPassword || '';
+        console.log('LoginComponent: Using dev defaults for admin login');
+      } else {
+         defaultEmail = this.route.snapshot.queryParamMap.get('uid') || this.route.snapshot.queryParamMap.get('email') || '';
+      }
+
       this.loginForm = this.fb.group({
-        email: [prefillEmail, [Validators.required, Validators.email]],
-        password: ['', [Validators.required]]
+        email: [defaultEmail, [Validators.required, Validators.email]],
+        password: [defaultPassword, [Validators.required]]
       });
     }
   }
@@ -72,7 +84,7 @@ export class LoginComponent implements OnInit {
     this.showPassword.set(!this.showPassword());
   }
 
-  async onSubmit(): Promise<void> { // Changed to async for potential await if needed elsewhere
+  onSubmit(): void { 
     if (this.loginForm.invalid) {
       this.notificationService.showError('Please fill in all required fields correctly.');
       this.loginForm.markAllAsTouched();
@@ -81,19 +93,18 @@ export class LoginComponent implements OnInit {
     this.isSubmitting.set(true);
 
     if (this.isPlayerLoginMode() && this.gameIdQueryParam && this.playerNumberQueryParam) {
-      // Player Login using backend custom token flow
       const password = this.loginForm.value.password;
       this.authService.playerLoginWithCredentials(this.gameIdQueryParam, this.playerNumberQueryParam, password).subscribe({
-        next: (user) => {
+        next: (user: User | null) => {
           if (user) {
             this.notificationService.showSuccess('Player login successful!');
-            // The AuthService's onAuthStateChanged and processFirebaseUser should handle gameId and role from claims
             this.router.navigate(['/game', user.gameId || this.gameIdQueryParam]);
           } else {
-            this.notificationService.showError('Player login failed. Please check your credentials.');
+             this.notificationService.showError('Player login failed. Please check your credentials.');
+             this.isSubmitting.set(false);
           }
         },
-        error: (err) => {
+        error: (err: Error) => {
           console.error('Player login error:', err);
           this.notificationService.showError(err.message || 'Player login failed. Invalid credentials or game/player details.');
           this.isSubmitting.set(false);
@@ -101,24 +112,21 @@ export class LoginComponent implements OnInit {
         complete: () => this.isSubmitting.set(false)
       });
     } else {
-      // Admin Login (or general email/password login)
       const { email, password } = this.loginForm.value;
       this.authService.adminLogin(email, password).subscribe({
-        next: (user) => {
+        next: (user: User | null) => {
           if (user) {
             this.notificationService.showSuccess('Login successful!');
-            // Navigate based on role (AuthService's currentUser will be updated)
             if (user.role === 'admin') {
               this.router.navigate(['/admin']);
             } else if (user.role === 'player' && user.gameId) {
               this.router.navigate(['/game', user.gameId]);
             } else {
-              this.router.navigate(['/frontpage/overview']); // Fallback
+              this.router.navigate(['/frontpage/overview']);
             }
           }
-          // No 'else' needed here, error will be caught in 'error' block
         },
-        error: (err) => {
+        error: (err: Error) => {
           console.error('Login error:', err);
           this.notificationService.showError(err.message || 'Login failed. Invalid email or password.');
           this.isSubmitting.set(false);

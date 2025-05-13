@@ -1,0 +1,171 @@
+@use 'sass:map';
+// Attempt to use the theme.
+// You'll need to ensure `../../../../_theme-colors` is correctly configured in your project's includePaths or relative to this file,
+// and that it exports $primary-palette and $accent-palette if you intend to use them directly.
+@use '../../../../_theme-colors' as custom-theme-vars; // Removed 'with (...)' block
+
+// Helper function to safely get theme colors
+@function safe-map-get($map, $keys...) {
+  @if not $map { @return null; }
+  @if type-of($map) != 'map' { @return null; } // Ensure $map is actually a map
+  @each $key in $keys {
+    @if not map.has-key($map, $key) {
+      @return null; // Or a default color like #ccc
+    }
+    $map: map.get($map, $key);
+  }
+  @return $map;
+}
+
+// Define fallback colors
+$fallback-neutral-90: white;
+$fallback-neutral-70: #b0b0b0;
+$fallback-neutral-10: #333333;
+$fallback-accent-default: #2196F3; // Material Blue as a fallback accent
+
+
+.field-overlay {
+  color: white; 
+}
+
+.soil-very-high, .nutrient-very-high, .harvest-very-high, .sequence-gut {
+  background-color: rgba(76, 175, 80, 0.7);
+  color: $fallback-neutral-90; // Was: safe-map-get(custom-theme-vars.$primary-palette, neutral, 90) or $fallback-neutral-90;
+}
+.soil-high, .nutrient-high, .harvest-high {
+  background-color: rgba(139, 195, 74, 0.7);
+  color: $fallback-neutral-90; // Was: safe-map-get(custom-theme-vars.$primary-palette, neutral, 90) or $fallback-neutral-90;
+}
+
+.soil-moderate, .nutrient-moderate, .harvest-maessig, .sequence-ok {
+  background-color: rgba(255, 235, 59, 0.7); 
+  color: $fallback-neutral-10 !important; // Was: safe-map-get(custom-theme-vars.$primary-palette, neutral, 10) or $fallback-neutral-10 !important;
+}
+
+.soil-low, .nutrient-low, .harvest-niedrig {
+  background-color: rgba(255, 152, 0, 0.7);
+  color: $fallback-neutral-90; // Was: safe-map-get(custom-theme-vars.$primary-palette, neutral, 90) or $fallback-neutral-90;
+}
+
+.soil-very-low, .nutrient-very-low, .harvest-sehr-niedrig, .sequence-schlecht {
+  background-color: rgba(244, 67, 54, 0.7);
+  color: $fallback-neutral-90; // Was: safe-map-get(custom-theme-vars.$primary-palette, neutral, 90) or $fallback-neutral-90;
+}
+
+.harvest-keiner, .sequence-keine {
+  background-color: rgba(100, 100, 100, 0.6);
+  color: $fallback-neutral-90; // Was: safe-map-get(custom-theme-vars.$primary-palette, neutral, 90) or $fallback-neutral-90;
+}
+
+.loading-container, .no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  min-height: 200px;
+  color: $fallback-neutral-70; // Was: safe-map-get(custom-theme-vars.$primary-palette, neutral, 70) or $fallback-neutral-70;
+  p {
+    margin-top: 16px;
+  }
+}
+
+.parcel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+  gap: 8px; 
+  padding: 8px; 
+}
+
+.parcel-cell {
+  position: relative; 
+  width: 100%;
+  padding-top: 75%; 
+  background-repeat: no-repeat;
+  background-size: cover; 
+  background-position: center;
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  overflow: hidden; 
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &.selected { // This is driven by Angular [class.selected]
+    border-color: $fallback-accent-default; // Was: safe-map-get(custom-theme-vars.$accent-palette, default) or $fallback-accent-default; 
+    box-shadow: 0 0 10px $fallback-accent-default; // Was: (safe-map-get(custom-theme-vars.$accent-palette, default) or $fallback-accent-default); 
+  }
+  
+  // selectable.js specific class for selection, if needed for styling
+  &.ui-selected { 
+    // Example: if you want selectable.js selection to look different or override its default
+    // border: 2px solid blue; 
+  }
+}
+
+.parcel-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px; 
+  background-color: rgba(0, 0, 0, 0.4); 
+  opacity: 0; 
+  transition: opacity 0.3s ease;
+
+  .parcel-cell:hover & {
+    opacity: 1; 
+  }
+
+  &.plantation-name { 
+    background-color: rgba(0, 0, 0, 0.5); 
+    opacity: 1; 
+  }
+}
+
+.overlay-content {
+  font-size: 0.8rem; 
+  font-weight: 500;
+
+  .parcel-number {
+    display: block;
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+}
+
+// Styles for round navigation and field actions
+.field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  flex-wrap: wrap;
+}
+
+.round-navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-grow: 1;
+  justify-content: center;
+  h2 {
+    margin: 0;
+    font-size: 1.4em;
+  }
+}
+
+.field-actions {
+  display: flex;
+  gap: 8px;
+}

@@ -9,9 +9,8 @@
     # pkgs.go
     pkgs.python313
     pkgs.poetry
-    pkgs.nodejs_23 # For Angular development
+    pkgs.nodejs_23
     pkgs.terraform
-    # pkgs.nodePackages.nodemon
   ];
 
   # Sets environment variables in the workspace
