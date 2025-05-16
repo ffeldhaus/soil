@@ -6,6 +6,11 @@
 
     <!-- Desktop Menu -->
     <div class="toolbar-links" *ngIf="!(isHandset$ | async)">
+      <mat-form-field subscriptSizing="dynamic" appearance="outline" class="language-selector">
+        <mat-select (selectionChange)="onLanguageChange($event.value)" [value]="currentLang">
+          <mat-option *ngFor="let lang of languages" [value]="lang.code">{{ lang.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
       <a mat-button *ngFor="let item of navItems" [routerLink]="item.link" routerLinkActive="active-link">{{ item.label }}</a>
       <ng-container *ngIf="!(authService.isAuthenticated())">
         <a mat-button routerLink="register" routerLinkActive="active-link">Register (Admin)</a>
@@ -43,7 +48,4 @@
   <main class="app-content-wrapper content-wrapper">
     <router-outlet></router-outlet>
   </main>
-  <div class="app-footer-wrapper app-footer-wrapper--transparent-dark-bg frontpage-footer">
-    <app-footer></app-footer>
-  </div>
 </div>

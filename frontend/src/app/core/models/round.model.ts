@@ -1,44 +1,72 @@
-// File: frontend/src/app/shared/models/round.model.ts
-// Ensure this file exists and is correctly defined based on backend schema
-// (from previous steps, this should be okay)
-import { FieldPublic } from './parcel.model'; // Ensure this import is correct
+// File: frontend/src/app/core/models/round.model.ts
+import { FieldPublic } from './parcel.model';
+import { PlantationType } from './parcel.model';
+import { HarvestIncome, TotalExpensesBreakdown } from './financials.model'; // Import financial models
+
+export interface Dict<K extends string | number, V> {
+    [key: string]: V;
+}
 
 export interface RoundDecisionBase {
   fertilize: boolean;
   pesticide: boolean;
-  biological_control: boolean;
+  biological_control: boolean; 
   attempt_organic_certification: boolean;
   machine_investment_level: number;
 }
 
+export interface PlayerRoundSubmission {
+  roundDecisions: RoundDecisionBase;
+  parcelPlantationChoices: Dict<number, PlantationType>;
+}
+
 export interface RoundBase {
-  game_id: string;
-  player_id: string;
-  round_number: number;
-  decisions?: RoundDecisionBase | null; // Optional for initial state
-  is_submitted: boolean;
-  submitted_at?: string | Date | null; // ISO string or Date
+  gameId: string;
+  playerId: string;
+  roundNumber: number;
+  decisions?: RoundDecisionBase | null;
+  isSubmitted: boolean;
+  submittedAt?: string | Date | null;
 }
 
 export interface RoundCreate extends RoundBase {
-  decisions: RoundDecisionBase; // Decisions are mandatory for creation payload (even if defaults)
+  decisions: RoundDecisionBase;
 }
 
-export interface RoundUpdate { // Specific for updating decisions
+export interface RoundUpdate { 
   decisions: RoundDecisionBase;
-  is_submitted: boolean;
+  isSubmitted: boolean;
 }
 
 export interface RoundInDB extends RoundBase {
-  id: string; // Firestore document ID
-  created_at: string | Date; // ISO string or Date
-  updated_at: string | Date; // ISO string or Date
-  // Potentially add field_state_id or result_id if linked this way
+  id: string; 
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  result_id?: string | null; 
+  parcelDecisionState?: Dict<number, PlantationType>;
+
+  // Optional Result fields that might be embedded if a result exists for this round
+  // These would come from the backend's ResultPublic schema
+  profitOrLoss?: number;
+  closingCapital?: number;
+  startingCapital?: number; // Capital at the start of this round (after previous round's results)
+  achievedOrganicCertification?: boolean;
+  weatherEvent?: string; // Weather for THIS round, potentially part of result record
+  verminEvent?: string;  // Vermin for THIS round, potentially part of result record
+  playerMachineEfficiency?: number; // Machine efficiency at end of this round / start of next
+  incomeDetails?: HarvestIncome;
+  expenseDetails?: TotalExpensesBreakdown;
+  explanations?: Record<string, string>; // Key-value explanations from game logic
+  calculatedAt?: string | Date; // When the results were calculated
 }
 
 export interface RoundPublic extends RoundInDB {}
 
-// New Schema for component that needs both Round data and Field data
 export interface RoundWithFieldPublic extends RoundPublic {
   field_state: FieldPublic;
+  // The 'roundData' field previously here for weather/vermin specific to the active round (before results)
+  // might be less necessary if these details are consistently part of RoundInDB/RoundPublic when available (e.g., from results).
+  // Or, it can still be used for pre-result round-specific events if backend provides them separately.
+  // For simplicity now, relying on fields being directly on RoundInDB/RoundPublic when they are known (usually post-result).
+  // The `weatherEvent`, `verminEvent` etc. now on RoundInDB will serve this if populated by backend.
 }

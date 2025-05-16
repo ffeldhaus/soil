@@ -1,20 +1,19 @@
 # File: backend/app/schemas/result.py
 from typing import Optional, Any, Dict
 from uuid import UUID, uuid4
-from datetime import datetime, timezone # MODIFIED: Import timezone
+from datetime import datetime, timezone
 
 from pydantic import BaseModel, Field, ConfigDict
+from pydantic.alias_generators import to_camel # Import to_camel
 
-from .financials import TotalIncome, TotalExpenses 
+# TotalIncome and TotalExpenses (which should be detailed breakdowns)
+# will need their own camelCase output config in financials.py
+from .financials import HarvestIncome, TotalExpensesBreakdown 
 
 class ResultBase(BaseModel):
-    """
-    Base properties for the results of a player's round.
-    """
     game_id: str = Field(..., description="ID of the game")
     player_id: str = Field(..., description="UID of the player")
     round_number: int = Field(..., ge=1, description="The round number these results pertain to")
-
     profit_or_loss: float = Field(0.0, description="Net profit or loss for this round (Income - Expenses)")
     closing_capital: float = Field(0.0, description="Total capital at the end of this round")
     starting_capital: float = Field(0.0, description="Total capital at the start of this round (after previous round's results)")
@@ -26,39 +25,35 @@ class ResultBase(BaseModel):
         ge=0.0, 
         description="Player's overall machine efficiency at the end of this round / start of next (e.g. 100.0)"
     )
-    income_details: TotalIncome = Field(default_factory=TotalIncome)
-    expense_details: TotalExpenses = Field(default_factory=TotalExpenses)
+    # Updated to use more specific financial breakdown models
+    income_details: HarvestIncome = Field(default_factory=HarvestIncome)
+    expense_details: TotalExpensesBreakdown = Field(default_factory=TotalExpensesBreakdown)
     explanations: Optional[Dict[str, str]] = Field(
         default_factory=dict,
-        description="Key-value pairs of outcomes and their explanations (e.g., 'harvest_low': 'Drought reduced potato yield.')"
+        description="Key-value pairs of outcomes and their explanations"
+    )
+    model_config = ConfigDict(
+        populate_by_name=True,
+        alias_generator=to_camel,
+        use_enum_values=True # If any enums get added here
     )
 
-
 class ResultCreate(ResultBase):
-    """
-    Schema for creating a new result document.
-    """
+    # Inherits config from ResultBase
     pass
-
 
 class ResultInDBBase(ResultBase):
-    """
-    Base properties for a Result as stored in the database.
-    """
     id: str = Field(..., description="Unique ID for the result document") 
-    calculated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) # MODIFIED
-    model_config = ConfigDict(from_attributes=True)
-
+    calculated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        alias_generator=to_camel,
+        use_enum_values=True
+    )
 
 class ResultInDB(ResultInDBBase):
-    """
-    Represents a Result object as stored in the database.
-    """
-    pass
-
+    pass # Inherits config
 
 class ResultPublic(ResultInDBBase):
-    """
-    Properties of a Result to return to the client.
-    """
-    pass
+    pass # Inherits config

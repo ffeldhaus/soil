@@ -1,5 +1,5 @@
 # File: backend/app/api/v1/endpoints/auth.py
-from typing import Any, Optional, Dict # MODIFIED: Added Dict
+from typing import Any, Optional, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status, Body, Query
 from fastapi.security import OAuth2PasswordRequestForm 
@@ -17,12 +17,21 @@ from app.crud.crud_player import crud_player
 from app.db.firebase_setup import get_firestore_client
 from app.services.email_service import get_email_service, EmailService 
 
+# Import Pydantic utils for model config
+from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
+
 router = APIRouter()
 
-class PlayerCredentialsLogin(BaseModel): # MODIFIED: New schema for player credential login
+class PlayerCredentialsLogin(BaseModel):
     game_id: str
     player_number: int
     password: str
+
+    model_config = ConfigDict(
+        populate_by_name=True, # Allow population by alias
+        alias_generator=to_camel # Converts camelCase keys from JSON to snake_case attributes
+    )
 
 @router.post("/register/admin", response_model=AdminPublic, status_code=status.HTTP_201_CREATED)
 async def register_admin(
@@ -31,10 +40,6 @@ async def register_admin(
     admin_in: AdminCreate,
     email_service: EmailService = Depends(get_email_service) 
 ) -> Any:
-    """
-    Register a new Admin user in Firebase Authentication and Firestore.
-    Sends a confirmation email (handled by Firebase or custom).
-    """
     try:
         existing_admin_firestore = await crud_admin.get_by_email(db, email=admin_in.email)
         if existing_admin_firestore:
@@ -57,7 +62,8 @@ async def register_admin(
             db, uid=admin_uid, obj_in=admin_in
         )
         
-        return AdminPublic.model_validate(admin_firestore_data)
+        # AdminPublic is already configured for camelCase output in its own schema file
+        return admin_firestore_data # Pydantic will handle serialization based on AdminPublic config
 
     except firebase_exceptions.EmailAlreadyExistsError:
         raise HTTPException(
@@ -84,11 +90,6 @@ async def login_with_firebase_id_token(
     db: Any = Depends(deps.get_firestore_db_client_dependency), 
     token_in: FirebaseIdToken = Body(...)
 ) -> Any:
-    """
-    Authenticates a user via a Firebase ID token.
-    Verifies the token, extracts custom claims (role, game_id),
-    and issues a custom JWT access token for this application's backend.
-    """
     try:
         decoded_firebase_token = firebase_auth_admin.verify_id_token(token_in.id_token, check_revoked=True)
     except firebase_exceptions.RevokedIdTokenError:
@@ -106,7 +107,7 @@ async def login_with_firebase_id_token(
     role = decoded_firebase_token.get("role")
     game_id_from_token = decoded_firebase_token.get("game_id") 
     is_ai_from_token = decoded_firebase_token.get("is_ai", False) 
-    player_number_from_token = decoded_firebase_token.get("player_number") # MODIFIED: Get player_number
+    player_number_from_token = decoded_firebase_token.get("player_number")
 
     if not uid or not role:
         raise HTTPException(
@@ -119,50 +120,49 @@ async def login_with_firebase_id_token(
         "role": role,
         "email": email,
     }
-    user_public_info: Dict[str, Any] = {"uid": uid, "email": email, "role": role, "is_ai": is_ai_from_token}
-
+    # Construct user_info with camelCase keys
+    user_public_info: Dict[str, Any] = {"uid": uid, "email": email, "role": role, "isAi": is_ai_from_token}
 
     if role == UserType.PLAYER.value:
         if not game_id_from_token:
              raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Player token missing game_id claim.")
         token_payload_data["game_id"] = game_id_from_token
-        user_public_info["game_id"] = game_id_from_token
-        if player_number_from_token: # MODIFIED
-             token_payload_data["player_number"] = player_number_from_token # MODIFIED
-             user_public_info["player_number"] = player_number_from_token # MODIFIED
+        user_public_info["gameId"] = game_id_from_token # camelCase
+        if player_number_from_token:
+             token_payload_data["player_number"] = player_number_from_token
+             user_public_info["playerNumber"] = player_number_from_token # camelCase
 
         player_doc = await crud_player.get(db, doc_id=uid)
         if player_doc:
             user_public_info["username"] = player_doc.username
-            # player_number already added from claims if available
-            if not user_public_info.get("player_number") and player_doc.player_number:
-                 user_public_info["player_number"] = player_doc.player_number
-
+            # Ensure playerNumber is consistently sourced or overridden
+            if "playerNumber" not in user_public_info and player_doc.player_number:
+                 user_public_info["playerNumber"] = player_doc.player_number # camelCase
+            if "isAi" not in user_public_info: # is_ai from player_doc might be more authoritative if not in token
+                 user_public_info["isAi"] = player_doc.is_ai
 
     elif role == UserType.ADMIN.value:
         admin_doc = await crud_admin.get(db, doc_id=uid) # type: ignore
-        if admin_doc:
-            user_public_info["first_name"] = admin_doc.first_name
-            user_public_info["last_name"] = admin_doc.last_name
+        if admin_doc: # AdminPublic schema will handle camelCasing these if model_dump(by_alias=True) is used
+            user_public_info["firstName"] = admin_doc.first_name
+            user_public_info["lastName"] = admin_doc.last_name
             user_public_info["institution"] = admin_doc.institution
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unknown user role.")
 
     access_token = security.create_access_token(data=token_payload_data)
-    return Token(access_token=access_token, user_info=user_public_info)
+    # Token model itself should be configured for camelCase if its field names require it (access_token, token_type)
+    # user_info is a Dict, so its keys are as constructed above.
+    return Token(access_token=access_token, token_type="bearer", user_info=user_public_info)
 
 
-# MODIFIED START: New endpoint for player login with credentials
 @router.post("/login/player-credentials", response_model=Dict[str, str])
 async def login_player_with_credentials(
     *,
     db: Any = Depends(deps.get_firestore_db_client_dependency),
     login_data: PlayerCredentialsLogin = Body(...)
 ) -> Dict[str, str]:
-    """
-    Authenticates a player using game_id, player_number, and password.
-    If successful, returns a Firebase Custom Token.
-    """
+    # login_data will have game_id and player_number due to alias generator
     player_doc = await crud_player.get_player_in_game_by_number(
         db, game_id=login_data.game_id, player_number=login_data.player_number
     )
@@ -174,8 +174,6 @@ async def login_player_with_credentials(
         )
 
     if not player_doc.temp_password_hash:
-        # This could mean the temp password was already used/cleared,
-        # or was never set (e.g., AI player or error during creation).
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Temporary password not available or already used. Please contact admin if this is unexpected.",
@@ -187,31 +185,25 @@ async def login_player_with_credentials(
             detail="Invalid password for player.",
         )
 
-    # Credentials are valid, mint a Firebase Custom Token
     try:
         developer_claims = {
             "role": UserType.PLAYER.value,
-            "game_id": player_doc.game_id,
+            "game_id": player_doc.game_id, # Use snake_case for Firebase claims if that's the convention there
             "player_number": player_doc.player_number,
             "is_ai": player_doc.is_ai
         }
-        custom_token = firebase_auth_admin.create_custom_token(player_doc.uid, developer_claims=developer_claims)
+        custom_token_str = firebase_auth_admin.create_custom_token(player_doc.uid, developer_claims=developer_claims)
         
-        # Optionally, clear the temp_password_hash after first successful use
-        # await crud_player.clear_temp_password_hash(db, player_uid=player_doc.uid)
-        # print(f"INFO: Temporary password hash cleared for player {player_doc.uid} in game {login_data.game_id}")
-        # For now, let's not clear it automatically. This might be a feature for later (e.g., prompt user to set new password).
+        # Consider clearing temp_password_hash here for enhanced security
+        # await crud_player.update(db, doc_id=player_doc.uid, obj_in={"temp_password_hash": None})
 
-
-        return {"customToken": custom_token}
+        return {"customToken": custom_token_str} # camelCase key for JSON response
     except firebase_exceptions.FirebaseError as fe:
         print(f"Firebase error minting custom token for player {player_doc.uid}: {fe}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not generate login token.")
     except Exception as e:
         print(f"Unexpected error minting custom token for player {player_doc.uid}: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Login token generation failed.")
-# MODIFIED END
-
 
 @router.post("/request-password-reset", status_code=status.HTTP_202_ACCEPTED)
 async def request_password_reset(
@@ -219,10 +211,6 @@ async def request_password_reset(
     email_service: EmailService = Depends(get_email_service),
     db: Any = Depends(deps.get_firestore_db_client_dependency) 
 ):
-    """
-    Initiates a password reset process for the given email.
-    Sends an email with a password reset link generated by Firebase.
-    """
     try:
         firebase_user = firebase_auth_admin.get_user_by_email(email) # type: ignore
         if not firebase_user: 
@@ -231,7 +219,8 @@ async def request_password_reset(
         username_for_email = firebase_user.display_name or email.split('@')[0] # type: ignore
         
         frontend_password_reset_path = "/auth/reset-password" 
-        frontend_base_url = settings.BACKEND_CORS_ORIGINS.split(',')[0].strip() 
+        # Ensure BACKEND_CORS_ORIGINS is correctly parsed and the first one is a valid URL for this.
+        frontend_base_url = settings.CORS_ORIGINS_LIST[0] if settings.CORS_ORIGINS_LIST else "http://localhost:4200" 
         
         action_code_settings = firebase_auth_admin.ActionCodeSettings(
             url=f"{frontend_base_url}{frontend_password_reset_path}",

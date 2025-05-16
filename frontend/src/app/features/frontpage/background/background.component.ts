@@ -6,6 +6,5 @@ import { MatCardModule } from '@angular/material/card';
   standalone: true,
   imports: [MatCardModule],
   templateUrl: './background.component.html',
-  styleUrls: ['./background.component.scss']
 })
 export class BackgroundComponent {}

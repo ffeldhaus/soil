@@ -13,13 +13,13 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { AdminGameService } from '../../../core/services/admin-game.service'; 
-import { GameAdminListItem, GameDetailsView } from '../../../core/models/game.model'; 
+import { GameAdminListItem, GamePublic } from '../../../core/models/game.model'; // Changed GameDetailsView to GamePublic
 import { PlayerPublic } from '../../../core/models/player.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { IAuthService } from '../../../core/services/auth.service.interface';
 import { AUTH_SERVICE_TOKEN } from '../../../core/services/injection-tokens';
-import { AuthService } from '../../../core/services/auth.service'; // Real AuthService for instanceof
-import { MockAuthService } from '../../../core/services/auth.service.mock'; // Mock AuthService for instanceof
+import { AuthService } from '../../../core/services/auth.service';
+import { MockAuthService } from '../../../core/services/auth.service.mock';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -42,18 +42,18 @@ export class AdminDashboardComponent implements OnInit {
   isLoading = signal(true);
   isLoadingDetails = signal(false); 
   adminGames = signal<GameAdminListItem[]>([]);
-  selectedGameDetails = signal<GameDetailsView | null>(null); 
+  selectedGameDetails = signal<GamePublic | null>(null); // Changed to GamePublic
 
   displayedColumns: string[] = ['name', 'status', 'currentRound', 'maxPlayers', 'actions'];
 
   ngOnInit(): void {
     this.loadAdminGames();
-    console.log('[AdminDashboard] AuthService instance:', this.authService);
-    if (this.authService instanceof MockAuthService) {
-      console.log('[AdminDashboard] Detected MockAuthService instance.');
-    } else if (this.authService instanceof AuthService) {
-      console.log('[AdminDashboard] Detected REAL AuthService instance.');
-    }
+    // console.log('[AdminDashboard] AuthService instance:', this.authService);
+    // if (this.authService instanceof MockAuthService) {
+    //   console.log('[AdminDashboard] Detected MockAuthService instance.');
+    // } else if (this.authService instanceof AuthService) {
+    //   console.log('[AdminDashboard] Detected REAL AuthService instance.');
+    // }
   }
 
   loadAdminGames(): void {
@@ -79,7 +79,7 @@ export class AdminDashboardComponent implements OnInit {
     this.isLoadingDetails.set(true);
     this.selectedGameDetails.set(null); 
     this.adminGameService.getGameDetails(gameId).subscribe({
-      next: (details: GameDetailsView) => {
+      next: (details: GamePublic) => { // Changed to GamePublic
         this.selectedGameDetails.set(details);
         this.isLoadingDetails.set(false);
       },
@@ -96,33 +96,13 @@ export class AdminDashboardComponent implements OnInit {
 
   async impersonate(gameId: string, player: PlayerPublic): Promise<void> {
     const playerName = player.username || player.email || 'this player';
-    console.log(`[AdminDashboard] Attempting to impersonate ${playerName} (UID: ${player.uid}) in game ${gameId}.`);
-    console.log('[AdminDashboard] Current authService instance before impersonation call:', this.authService);
-    if (this.authService instanceof MockAuthService) {
-      console.log('[AdminDashboard] Using MockAuthService for impersonation.');
-    } else if (this.authService instanceof AuthService) {
-      console.log('[AdminDashboard] Using REAL AuthService for impersonation.');
-    }
-    const tokenSnapshot = this.authService.getStoredBackendTokenSnapshot();
-    const currentUserSnapshot = this.authService.currentUser();
-    console.log('[AdminDashboard] Backend token snapshot before impersonation:', tokenSnapshot);
-    console.log('[AdminDashboard] Current user snapshot before impersonation:', currentUserSnapshot);
-    console.log('[AdminDashboard] IsAuthenticated snapshot:', this.authService.isAuthenticated());
-    console.log('[AdminDashboard] IsAdmin snapshot:', this.authService.isAdmin());
-    console.log('[AdminDashboard] IsImpersonating snapshot:', this.authService.isImpersonating());
-
     if (confirm(`Are you sure you want to impersonate ${playerName} in game ${this.selectedGameDetails()?.name}?`)) {
       try {
-        console.log('[AdminDashboard] Calling authService.impersonatePlayer...');
         await this.authService.impersonatePlayer(gameId, player.uid);
         this.notificationService.showSuccess(`Now impersonating ${playerName}.`);
-        console.log('[AdminDashboard] Impersonation call succeeded (from component perspective).');
       } catch (error: any) {
-        console.error('[AdminDashboard] Impersonation attempt caught error:', error);
         this.notificationService.showError("Impersonation failed: " + (error.message || 'Unknown error'));
       }
-    } else {
-      console.log('[AdminDashboard] Impersonation cancelled by user.');
     }
   }
 
@@ -130,7 +110,8 @@ export class AdminDashboardComponent implements OnInit {
     const game = this.adminGames().find(g => g.id === gameId) || this.selectedGameDetails();
     if (!game) return;
 
-    const actionText = game.game_status === 'pending' && game.current_round_number === 0 ? 'Start Game' : 'Advance Round';
+    // Use camelCase property for gameStatus from GameAdminListItem or GamePublic
+    const actionText = game.gameStatus === 'pending' && game.currentRoundNumber === 0 ? 'Start Game' : 'Advance Round';
 
     if (!confirm(`Are you sure you want to ${actionText.toLowerCase()} for "${gameName}"?`)) {
       return;
@@ -138,8 +119,9 @@ export class AdminDashboardComponent implements OnInit {
 
     this.isLoading.set(true); 
     this.adminGameService.advanceGameRound(gameId).subscribe({
-      next: (updatedGame: GameDetailsView) => { 
-        this.notificationService.showSuccess(`Game '${gameName}' state updated. New round: ${updatedGame.current_round_number}. Status: ${updatedGame.game_status}`);
+      next: (updatedGame: GamePublic) => { // Changed to GamePublic
+        // Use camelCase properties from updatedGame
+        this.notificationService.showSuccess(`Game '${gameName}' state updated. New round: ${updatedGame.currentRoundNumber}. Status: ${updatedGame.gameStatus}`);
         this.loadAdminGames(); 
         if (this.selectedGameDetails() && this.selectedGameDetails()?.id === gameId) {
           this.viewGameDetails(gameId); 

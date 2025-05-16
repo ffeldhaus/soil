@@ -1,40 +1,52 @@
 // File: frontend/src/app/core/models/game.model.ts
 import { PlayerPublic } from './player.model'; // Correct: Imports from player.model
 
+// Game status enum, mirroring backend if available, or defined for frontend use
+export enum GameStatus {
+  PENDING = "pending", // Game created but not started (e.g., round 0)
+  ACTIVE = "active",   // Game is ongoing
+  FINISHED = "finished", // Game has completed all rounds
+  ARCHIVED = "archived" // Game is finished and archived (optional status)
+}
+
 // Payload for creating a game by an Admin (maps to backend GameCreate)
 export interface GameCreateAdminPayload {
   name: string;
-  number_of_rounds: number;
-  max_players: number;
-  requested_player_slots: number;
-  ai_player_count?: number;
+  numberOfRounds: number;
+  maxPlayers: number;
+  requestedPlayerSlots: number;
+  aiPlayerCount?: number;
 }
 
-// For listing games in Admin dashboard (maps to backend GameSimple)
+// For listing games in Admin dashboard (maps to backend GameSimple or a custom admin list view)
 export interface GameAdminListItem {
   id: string;
   name: string;
-  current_round_number: number;
-  game_status: string;
-  admin_id: string;
-  max_players: number;
-  // player_count can be derived if players array or player_uids are sent
+  currentRoundNumber: number;
+  gameStatus: GameStatus | string; // Use enum if possible, or string if backend sends raw string
+  adminId: string;
+  maxPlayers: number;
+  playerCount?: number; // Often derived or sent by backend
+  createdAt: string | Date; // ISO date string or Date object
 }
 
 // For detailed game view for Admin or Player (maps to backend GamePublic)
-export interface GameDetailsView {
+// This is what the frontend usually works with when displaying game details.
+export interface GamePublic {
   id: string;
   name: string;
-  number_of_rounds: number;
-  max_players: number;
-  current_round_number: number;
-  game_status: string;
-  admin_id: string;
-  created_at: string; // ISO date string
-  updated_at: string; // ISO date string
-  weather_sequence: string[];
-  vermin_sequence: string[];
-  player_uids: string[];
-  ai_player_strategies?: Record<string, string>; // UID -> strategy_name
-  players: PlayerPublic[]; // List of player details
+  numberOfRounds: number;
+  maxPlayers: number;
+  currentRoundNumber: number;
+  gameStatus: GameStatus | string; // Use enum if possible
+  adminId: string;
+  createdAt: string | Date; // ISO date string or Date object
+  updatedAt: string | Date; // ISO date string or Date object
+  weatherSequence?: string[]; // Optional as it might not always be sent
+  verminSequence?: string[];  // Optional
+  playerUids: string[];
+  aiPlayerStrategies?: Record<string, string>; // UID -> strategy_name
+  players?: PlayerPublic[]; // List of player details, optional as it might be a separate fetch or included
+  currentRoundStartAt?: string | Date | null; // When the current round officially began
+  lastRoundProcessedAt?: string | Date | null; // When the last round's results were finalized
 }

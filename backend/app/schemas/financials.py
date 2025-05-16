@@ -1,11 +1,11 @@
-# Renamed from result_components.py or similar for better organization
+# File: backend/app/schemas/financials.py
 from typing import Optional, Dict
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+from pydantic.alias_generators import to_camel # Import to_camel
 
 # --- Expense Breakdowns ---
 
 class SeedCosts(BaseModel):
-    """Costs associated with seeds for different plantation types."""
     field_bean: float = Field(0.0, description="Cost for Ackerbohne seeds")
     barley: float = Field(0.0, description="Cost for Gerste seeds")
     oat: float = Field(0.0, description="Cost for Hafer seeds")
@@ -15,36 +15,35 @@ class SeedCosts(BaseModel):
     wheat: float = Field(0.0, description="Cost for Weizen seeds")
     sugar_beet: float = Field(0.0, description="Cost for Zuckerrübe seeds")
     total: float = Field(0.0, description="Total cost for all seeds")
+    model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)
 
 class InvestmentCosts(BaseModel):
-    """Costs associated with investments."""
-    animals: float = Field(0.0, description="Cost for purchasing/maintaining animals")
-    machines: float = Field(0.0, description="Cost related to machinery investment/upgrades")
-    # Add other investment categories if any
+    animals: float = Field(0.0, description="Cost for purchasing/establishing animal parcels")
+    machines: float = Field(0.0, description="Cost related to machinery investment")
     total: float = Field(0.0, description="Total cost for all investments")
+    model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)
 
 class RunningCosts(BaseModel):
-    """Ongoing operational costs for the round."""
     organic_certification_control: float = Field(0.0, description="Cost for organic certification controls")
     fertilizer: float = Field(0.0, description="Cost for conventional fertilizer")
     pesticide: float = Field(0.0, description="Cost for pesticides")
     biological_control: float = Field(0.0, description="Cost for beneficial organisms")
     animal_feed_vet: float = Field(0.0, description="Cost for animal feed, veterinary services, etc.")
-    base_operational_costs: float = Field(0.0, description="Base operational costs (e.g., land tax, general maintenance)")
-    # Add other running cost categories
+    base_operational_costs: float = Field(0.0, description="Base operational costs")
     total: float = Field(0.0, description="Total for all running costs")
+    model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)
 
-class TotalExpenses(BaseModel):
-    """Aggregated expenses for the round."""
-    seeds: SeedCosts = Field(default_factory=SeedCosts)
-    investments: InvestmentCosts = Field(default_factory=InvestmentCosts)
+class TotalExpensesBreakdown(BaseModel): # Renamed from TotalExpenses for clarity
+    """Aggregated and broken-down expenses for the round."""
+    seed_costs: SeedCosts = Field(default_factory=SeedCosts)
+    investment_costs: InvestmentCosts = Field(default_factory=InvestmentCosts)
     running_costs: RunningCosts = Field(default_factory=RunningCosts)
-    total: float = Field(0.0, description="Grand total of all expenses")
+    grand_total: float = Field(0.0, description="Grand total of all expenses") # Renamed from total to grand_total
+    model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)
 
 # --- Income Breakdowns ---
 
 class HarvestIncome(BaseModel):
-    """Income generated from harvesting different plantation types."""
     field_bean: float = Field(0.0, description="Income from Ackerbohne harvest")
     barley: float = Field(0.0, description="Income from Gerste harvest")
     oat: float = Field(0.0, description="Income from Hafer harvest")
@@ -53,13 +52,15 @@ class HarvestIncome(BaseModel):
     rye: float = Field(0.0, description="Income from Roggen harvest")
     wheat: float = Field(0.0, description="Income from Weizen harvest")
     sugar_beet: float = Field(0.0, description="Income from Zuckerrübe harvest")
-    # Income from animal products if applicable
-    animal_products: float = Field(0.0, description="Income from animal products (milk, meat, etc.)")
+    animal_products: float = Field(0.0, description="Income from animal products")
     total: float = Field(0.0, description="Total income from all harvests/products")
+    model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)
 
-class TotalIncome(BaseModel):
-    """Aggregated income for the round."""
-    harvests: HarvestIncome = Field(default_factory=HarvestIncome)
-    # Other income sources (e.g., subsidies - though not in original)
-    # subsidies: float = Field(0.0)
-    total: float = Field(0.0, description="Grand total of all income")
+# The TotalIncome model previously defined might be redundant if ResultBase directly uses HarvestIncome
+# for income_details, which is the current setup in result.py and frontend model alignment.
+# If there were other income sources like subsidies, TotalIncome would aggregate them.
+# class TotalIncome(BaseModel):
+#     harvest_income: HarvestIncome = Field(default_factory=HarvestIncome)
+#     # subsidies: float = Field(0.0)
+#     grand_total: float = Field(0.0, description="Grand total of all income")
+#     model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)

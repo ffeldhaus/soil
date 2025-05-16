@@ -14,7 +14,6 @@ import { map, shareReplay } from 'rxjs/operators';
 import { AsyncPipe, NgIf, NgFor } from '@angular/common';
 import { IAuthService } from '../../../core/services/auth.service.interface';
 import { AUTH_SERVICE_TOKEN } from '../../../core/services/injection-tokens';
-import { FooterComponent } from '../../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-admin-layout',
@@ -24,7 +23,6 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
     MatToolbarModule, MatButtonModule, MatIconModule,
     MatSidenavModule, MatListModule, MatDividerModule,
     MatMenuModule, // Add MatMenuModule here
-    FooterComponent
   ],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss']

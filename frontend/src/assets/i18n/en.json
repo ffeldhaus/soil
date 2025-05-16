@@ -1,0 +1,22 @@
+{
+  "overview": {
+    "title": "Welcome to SOIL: The Sustainable Farming Simulator",
+    "description": "Navigate the challenges and rewards of modern agriculture in this interactive simulation game.",
+    "paragraph1": "SOIL is an immersive simulation game where you step into the shoes of a farmer making crucial ecological and economic decisions. Experience the direct consequences of your choices on your virtual farm's health and productivity.",
+    "paragraph2": "Discover the principles of sustainable farming, master resource management, and understand the delicate balance between agricultural practices and environmental well-being. SOIL is designed to educate and engage players on the complexities of food production and its impact on our planet.",
+    "howToPlayTitle": "How to Join a Game",
+    "playerInstructions": "If you're here to play, you'll usually get a Game ID, Player Number, and Password from your game administrator or teacher. Use these details to",
+    "adminInstructionsPart1": "Interested in running a game session for your students or group? You'll need to",
+    "adminInstructionsPart2": ". Once registered as an administrator, you can easily create and manage multiple game sessions.",
+    "backgroundInfoPart1": "Want to delve deeper into the educational context and goals behind SOIL? Explore the",
+    "backgroundInfoPart2": "section.",
+    "loginButton": "Login",
+    "registerButton": "Register as an Administrator",
+    "backgroundInfoLink": "background information"
+  },
+  "footer": {
+    "legalNotice": "Impressum / Legal Notice",
+    "privacyPolicy": "Privacy Policy",
+    "language": "Language"
+  }
+}

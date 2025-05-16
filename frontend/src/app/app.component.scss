@@ -34,6 +34,16 @@
       // Instead of !important, try to use higher specificity or Material theming variables if possible
     }
   }
+
+.toolbar-spacer {
+  flex-grow: 1;
+}
+
+.language-selector {
+  font-size: 2em; // Smaller language selector
+  margin-left: 20px; // Add some space to the left
+  width: 150px; // Adjust width as needed
+}
   
   // If the banner is sticky and pushes content down, this might not be needed.
   // If the banner is fixed and overlays content, then the router-outlet might need padding.

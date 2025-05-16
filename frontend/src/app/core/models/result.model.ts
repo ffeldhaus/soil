@@ -1,28 +1,28 @@
-// File: frontend/src/app/shared/models/result.model.ts
-// Ensure this file exists and is correctly defined based on backend schema
-import { TotalIncome, TotalExpenses } from './financials.model';
+// File: frontend/src/app/core/models/result.model.ts
+import { HarvestIncome, TotalExpensesBreakdown } from './financials.model';
+import { Dict } from './round.model'; // For explanations type
 
 export interface ResultBase {
-  game_id: string;
-  player_id: string;
-  round_number: number;
-  profit_or_loss: number;
-  closing_capital: number;
-  starting_capital: number;
-  achieved_organic_certification: boolean;
-  weather_event?: string | null;
-  vermin_event?: string | null;
-  player_machine_efficiency?: number | null;
-  income_details: TotalIncome;
-  expense_details: TotalExpenses;
-  explanations?: Record<string, string> | null;
+  gameId: string;
+  playerId: string;
+  roundNumber: number;
+  profitOrLoss: number;
+  closingCapital: number;
+  startingCapital: number;
+  achievedOrganicCertification: boolean;
+  weatherEvent?: string | null;
+  verminEvent?: string | null;
+  playerMachineEfficiency?: number | null;
+  incomeDetails: HarvestIncome; // Updated from TotalIncome
+  expenseDetails: TotalExpensesBreakdown; // Updated from TotalExpenses
+  explanations?: Dict<string, string> | null; // Using Dict for consistency
 }
 
 export interface ResultCreate extends ResultBase {}
 
 export interface ResultInDB extends ResultBase {
   id: string; // Firestore document ID
-  calculated_at: string | Date;
+  calculatedAt: string | Date; // camelCase
 }
 
 export interface ResultPublic extends ResultInDB {}

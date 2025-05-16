@@ -38,6 +38,7 @@ html, body {
     font-family: 'Noto Sans', sans-serif; // Ensure Noto Sans is the base font
     background-color: map.get(map.get(my-custom-theme.$primary-palette, neutral), 10); 
     color: map.get(map.get(my-custom-theme.$primary-palette, neutral), 90); 
+    overscroll-behavior-y: none;
   }
   
   *, *::before, *::after {
@@ -61,12 +62,10 @@ html, body {
     color: inherit; 
   }
 
-.mat-card {
-  max-width: 1024px !important;      // Added !important
-  margin-left: auto !important;     // Added !important
-  margin-right: auto !important;    // Added !important
-  background-color: map.get(map.get(my-custom-theme.$primary-palette, neutral), 20) !important; 
-  color: map.get(map.get(my-custom-theme.$primary-palette, neutral), 90) !important;
+mat-card {
+  max-width: 1024px; // General max-width for layout
+  margin-left: auto;  // Centering
+  margin-right: auto; // Centering
 }
 
 // SnackBar custom styles
@@ -226,7 +225,7 @@ html, body {
   .app-toolbar .toolbar-title {
     font-size: 1.1rem; 
   }
-  .mat-card {
-    max-width: 100% !important; // Added !important
+  mat-card { // Ensures this overrides the desktop max-width
+    max-width: 100% !important;
   }
 }

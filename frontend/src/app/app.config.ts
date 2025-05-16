@@ -1,11 +1,15 @@
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection, inject, PLATFORM_ID } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection, inject, PLATFORM_ID, APP_INITIALIZER, TransferState } from '@angular/core'; // Added TransferState from @angular/core
 import { provideRouter, withComponentInputBinding, withViewTransitions, withInMemoryScrolling } from '@angular/router';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideClientHydration } from '@angular/platform-browser';
+import { provideHttpClient, withFetch, withInterceptors, HttpClientModule } from '@angular/common/http';
+import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser'; 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { HttpClient } from '@angular/common/http';
+
+// ngx-translate
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
 
@@ -30,30 +34,33 @@ import { IAuthService } from './core/services/auth.service.interface';
 import { PlayerGameService } from './core/services/player-game.service';
 import { MockPlayerGameService } from './core/services/player-game.service.mock';
 import { IPlayerGameService } from './core/services/player-game.service.interface';
-import { ApiService } from './core/services/api.service'; 
 // Import Injection Tokens
 import { AUTH_SERVICE_TOKEN, PLAYER_GAME_SERVICE_TOKEN } from './core/services/injection-tokens';
+
+// I18n Initializer
+import { initializeTranslations } from './core/i18n.initializer';
 
 // Factory function for AuthService
 export function authServiceFactory(): IAuthService {
   if (environment.useMocks) {
-    console.log('app.config: Providing MockAuthService');
-    return new MockAuthService(); 
+    return new MockAuthService();
   } else {
-    console.log('app.config: Providing AuthService');
-    return new AuthService(); 
+    return new AuthService();
   }
 }
 
 // Factory function for PlayerGameService
 export function playerGameServiceFactory(): IPlayerGameService {
   if (environment.useMocks) {
-    console.log('app.config: Providing MockPlayerGameService');
     return new MockPlayerGameService();
   } else {
-    console.log('app.config: Providing PlayerGameService');
     return new PlayerGameService();
   }
+}
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/i18n/', '.json');
 }
 
 export const appConfig: ApplicationConfig = {
@@ -68,22 +75,43 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([authInterceptor, errorInterceptor])
     ),
-    provideClientHydration(),
+    provideClientHydration(
+      withHttpTransferCacheOptions({
+        includePostRequests: true,
+      })
+    ),
     provideAnimationsAsync(),
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
 
-    importProvidersFrom(MaterialModule),
-
-    // Provide services using factory and TOKEN
+    importProvidersFrom(
+      MaterialModule,
+      HttpClientModule,
+      TranslateModule.forRoot({
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient]
+        },
+        defaultLanguage: 'en'
+      })
+    ),
     {
-      provide: AUTH_SERVICE_TOKEN, // Use Token
+      provide: APP_INITIALIZER,
+      useFactory: initializeTranslations,
+      multi: true,
+      // TransferState is injected into initializeTranslations factory
+      // It's from @angular/core. PLATFORM_ID and TranslateService are also direct deps.
+      deps: [PLATFORM_ID, TranslateService, TransferState]
+    },
+    {
+      provide: AUTH_SERVICE_TOKEN,
       useFactory: authServiceFactory,
     },
     {
-      provide: PLAYER_GAME_SERVICE_TOKEN, // Use Token
+      provide: PLAYER_GAME_SERVICE_TOKEN,
       useFactory: playerGameServiceFactory,
     },
   ]

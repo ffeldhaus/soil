@@ -1,0 +1,85 @@
+<!-- File: frontend/src/app/features/game/components/result/result.component.html -->
+<div class="result-container" *ngIf="roundData; else noData">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Round {{ roundData.roundNumber }} Results</mat-card-title>
+      <mat-card-subtitle *ngIf="roundData.playerId">Player: {{ roundData.playerId }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="results-grid">
+        <!-- Financial Summary -->
+        <section class="financial-summary">
+          <h3>Financial Overview</h3>
+          <p><strong>Profit/Loss for Round:</strong> {{ profit | number:'1.2-2' }} €</p>
+          <p><strong>Closing Capital:</strong> {{ capital | number:'1.2-2' }} €</p>
+          <p *ngIf="roundData.achievedOrganicCertification !== undefined">
+            <strong>Organic Certification:</strong> 
+            <span [ngClass]="roundData.achievedOrganicCertification ? 'text-success' : 'text-danger'">
+              {{ roundData.achievedOrganicCertification ? 'Achieved/Maintained' : 'Not Achieved/Lost' }}
+            </span>
+          </p>
+        </section>
+
+        <!-- Income Details -->
+        <section class="income-details" *ngIf="income">
+          <h4>Income Details (Total: {{ income.total | number:'1.2-2' }} €)</h4>
+          <ul *ngIf="income.fieldBean"><li>Ackerbohne: {{ income.fieldBean | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.barley"><li>Gerste: {{ income.barley | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.oat"><li>Hafer: {{ income.oat | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.potato"><li>Kartoffel: {{ income.potato | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.corn"><li>Mais: {{ income.corn | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.rye"><li>Roggen: {{ income.rye | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.wheat"><li>Weizen: {{ income.wheat | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.sugarBeet"><li>Zuckerrübe: {{ income.sugarBeet | number:'1.2-2' }} €</li></ul>
+          <ul *ngIf="income.animalProducts"><li>Tierprodukte: {{ income.animalProducts | number:'1.2-2' }} €</li></ul>
+        </section>
+
+        <!-- Expense Details -->
+        <section class="expense-details" *ngIf="expenses">
+          <h4>Expense Details (Total: {{ expenses.grandTotal | number:'1.2-2' }} €)</h4>
+          <div *ngIf="expenses.seedCosts as costs"><strong>Seeds ({{costs.total | number:'1.2-2'}} €):</strong> 
+            <!-- Could list individual seed costs if needed -->
+          </div>
+          <div *ngIf="expenses.investmentCosts as costs"><strong>Investments ({{costs.total | number:'1.2-2'}} €):</strong>
+            <span *ngIf="costs.animals"> Animals: {{costs.animals | number:'1.2-2'}} €</span>
+            <span *ngIf="costs.machines"> Machines: {{costs.machines | number:'1.2-2'}} €</span>
+          </div>
+          <div *ngIf="expenses.runningCosts as costs"><strong>Running Costs ({{costs.total | number:'1.2-2'}} €):</strong> 
+            <span *ngIf="costs.fertilizer"> Fertilizer: {{costs.fertilizer | number:'1.2-2'}} €;</span>
+            <span *ngIf="costs.pesticide"> Pesticide: {{costs.pesticide | number:'1.2-2'}} €;</span>
+            <span *ngIf="costs.biologicalControl"> Bio-Control: {{costs.biologicalControl | number:'1.2-2'}} €;</span>
+            <span *ngIf="costs.animalFeedVet"> Animal Care: {{costs.animalFeedVet | number:'1.2-2'}} €;</span>
+            <span *ngIf="costs.organicCertificationControl"> Organic Cert.: {{costs.organicCertificationControl | number:'1.2-2'}} €;</span>
+            <span *ngIf="costs.baseOperationalCosts"> Operational: {{costs.baseOperationalCosts | number:'1.2-2'}} €</span>
+          </div>
+        </section>
+
+        <!-- Game Events -->
+        <section class="game-events">
+            <h3>Key Events & Factors</h3>
+            <p *ngIf="roundData.weatherEvent"><strong>Weather:</strong> {{ roundData.weatherEvent }}</p>
+            <p *ngIf="roundData.verminEvent"><strong>Vermin:</strong> {{ roundData.verminEvent }}</p>
+            <p *ngIf="roundData.playerMachineEfficiency !== undefined">
+              <strong>Machine Efficiency (End of Round):</strong> {{ roundData.playerMachineEfficiency | number:'1.1-1' }}%
+            </p>
+        </section>
+
+        <!-- Explanations / Log -->
+        <section class="explanations-log" *ngIf="explanationsList.length > 0">
+          <h4>Noteworthy Events & Explanations:</h4>
+          <ul>
+            <li *ngFor="let item of explanationsList">{{ item.value }} <!-- Or {{item.key}}: {{item.value}} --></li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Optionally, display field state summary or link to field view for this round -->
+      <!-- <button mat-stroked-button (click)="viewFieldState()">View Field State for this Round</button> -->
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #noData>
+  <p>No result data available for this round.</p>
+</ng-template>

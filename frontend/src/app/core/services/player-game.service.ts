@@ -2,69 +2,63 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
-import { ApiService } from './api.service'; // Corrected relative path
+import { ApiService } from './api.service';
 import {
   Parcel, PlantationType, FieldState, CropSequenceEffect, HarvestOutcome
-} from '../models/parcel.model'; // Corrected path
-import { GameDetailsView } from '../models/game.model'; // Corrected path
-import { RoundWithFieldPublic, RoundDecisionBase } from '../models/round.model'; // Corrected path
-import { ResultPublic } from '../models/result.model'; // Corrected path
-import { IPlayerGameService } from './player-game.service.interface'; // Import the interface
+} from '../models/parcel.model';
+import { GamePublic } from '../models/game.model'; // Changed from GameDetailsView
+import { RoundWithFieldPublic, PlayerRoundSubmission, RoundPublic } from '../models/round.model'; // Used PlayerRoundSubmission, RoundPublic
+import { ResultPublic } from '../models/result.model';
+import { IPlayerGameService } from './player-game.service.interface';
+import { MockPlayerGameService } from './player-game.service.mock'; // For mock mode
+import { environment } from '../../../environments/environment'; // For mock mode check
 
-@Injectable() // Removed providedIn: 'root'
-export class PlayerGameService implements IPlayerGameService { // Implement the interface
+@Injectable({
+  providedIn: 'root' // Standard to provide in root
+})
+export class PlayerGameService implements IPlayerGameService {
   private apiService = inject(ApiService);
+  private mockService: MockPlayerGameService | null = null; // For mock mode
 
-  // NOTE: Internal mock generation is no longer used when useMocks=false
-  // but can be kept for reference or potential internal use.
-  private createMockParcels(count: number = 40): Parcel[] {
-    const parcels: Parcel[] = [];
-    const plantationTypes = Object.values(PlantationType);
-    for (let i = 1; i <= count; i++) {
-      parcels.push({
-        id: `parcel_${i}`,
-        parcel_number: i,
-        soil_quality: 70 + Math.floor(Math.random() * 20),
-        nutrient_level: 60 + Math.floor(Math.random() * 30),
-        current_plantation: plantationTypes[i % plantationTypes.length],
-        previous_plantation: plantationTypes[(i + 1) % plantationTypes.length],
-        pre_previous_plantation: plantationTypes[(i + 2) % plantationTypes.length],
-        crop_sequence_effect: CropSequenceEffect.OK,
-        last_harvest_yield_dt: Math.floor(Math.random() * 100),
-        last_harvest_outcome_category: HarvestOutcome.MODERATE,
-      });
+  constructor() {
+    if (environment.useMocks) {
+      this.mockService = new MockPlayerGameService();
+      console.log('PlayerGameService: Using MOCK data via MockPlayerGameService');
     }
-    return parcels;
   }
 
-  // Real implementation (uses ApiService)
   getCurrentRoundWithField(gameId: string): Observable<RoundWithFieldPublic> {
-    // Use the actual apiService call now
-    return this.apiService.get<RoundWithFieldPublic>(`/games/${gameId}/current-round`);
+    if (this.mockService) return this.mockService.getCurrentRoundWithField(gameId);
+    return this.apiService.get<RoundWithFieldPublic>(`/games/${gameId}/rounds/my-current-round`);
   }
 
-  // Real implementation
-  getGameDetails(gameId: string): Observable<GameDetailsView> {
-    // Use the actual apiService call now
-    return this.apiService.get<GameDetailsView>(`/games/${gameId}`); // Player-specific endpoint might differ, adjust if needed
+  getGameDetails(gameId: string): Observable<GamePublic> { 
+    if (this.mockService) return this.mockService.getGameDetails(gameId);
+    return this.apiService.get<GamePublic>(`/games/${gameId}`); 
   }
 
-  // Real implementation
   submitPlayerDecisions(
     gameId: string,
-    payload: {
-      round_decisions: RoundDecisionBase;
-      parcel_plantation_choices: Record<number, PlantationType>;
+    roundNumber: number, 
+    payload: PlayerRoundSubmission 
+  ): Observable<RoundPublic> { 
+    if (this.mockService) {
+        return this.mockService.submitPlayerDecisions(gameId, roundNumber, payload);
     }
-  ): Observable<RoundWithFieldPublic> {
-    // Use the actual apiService call now
-    return this.apiService.put<RoundWithFieldPublic>(`/games/${gameId}/current-round/submit`, payload);
+    return this.apiService.put<RoundPublic>(`/games/${gameId}/rounds/${roundNumber}/my-decisions`, payload);
   }
 
-  // Real implementation
-  getPlayerResults(gameId: string): Observable<ResultPublic[]> {
-     // Use the actual apiService call now
-    return this.apiService.get<ResultPublic[]>(`/games/${gameId}/my-results`);
+  getPlayerResults(gameId: string, playerId: string): Observable<ResultPublic[]> {
+    if (this.mockService) {
+        return this.mockService.getPlayerResults(gameId, playerId);
+    }
+    // Backend should scope to the authenticated player if "my-results" is used.
+    // If an admin needs to fetch for a specific player, a different endpoint or query param might be used.
+    // For a player fetching their own, playerId in the path might be redundant if backend uses token.
+    // However, if the API *requires* playerId even for self-fetch, it should be included.
+    // Assuming `/games/${gameId}/players/${playerId}/results` or similar if playerId is mandatory in URL.
+    // For now, using a more generic "my-results" which implies token-based auth.
+    // If your API specifically needs /games/{gameId}/results/by-player/{playerId} then adjust.
+    return this.apiService.get<ResultPublic[]>(`/games/${gameId}/results/my-results`); // Or `/games/${gameId}/players/${playerId}/results`
   }
-
 }

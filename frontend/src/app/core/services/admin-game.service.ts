@@ -2,10 +2,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators'; // Import map operator
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { GameAdminListItem, GameDetailsView, GameCreateAdminPayload } from '../models/game.model'; // GameDetailsView already includes PlayerPublic[]
-import { PlayerPublic } from '../models/player.model'; // Corrected: Import PlayerPublic from player.model
+import { GameAdminListItem, GamePublic, GameCreateAdminPayload } from '../models/game.model';
+import { PlayerPublic } from '../models/player.model'; 
 import { IAdminGameService } from './admin-game.service.interface';
 import { MockAdminGameService } from './admin-game.service.mock';
 
@@ -14,7 +14,9 @@ import { MockAdminGameService } from './admin-game.service.mock';
 })
 export class AdminGameService implements IAdminGameService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/admin/games`;
+  // Corrected to use environment.apiUrl which is defined
+  private resolvedApiUrl = `${environment.apiUrl}/admin/games`; 
+
   private mockService: MockAdminGameService | null = null;
 
   constructor() {
@@ -28,17 +30,15 @@ export class AdminGameService implements IAdminGameService {
     if (this.mockService) {
       return this.mockService.getAdminGames();
     }
-    return this.http.get<GameAdminListItem[]>(this.apiUrl);
+    return this.http.get<GameAdminListItem[]>(this.resolvedApiUrl);
   }
 
-  // Added method to fetch full game details including players
-  getGameDetails(gameId: string): Observable<GameDetailsView> {
+  getGameDetails(gameId: string): Observable<GamePublic> { 
     if (this.mockService) {
       return this.mockService.getGameDetails(gameId);
     }
-    return this.http.get<GameDetailsView>(`${this.apiUrl}/${gameId}`).pipe(
+    return this.http.get<GamePublic>(`${this.resolvedApiUrl}/${gameId}`).pipe(
       map(game => {
-        // Ensure players array is initialized if backend might not send it
         if (!game.players) {
           game.players = [];
         }
@@ -47,24 +47,24 @@ export class AdminGameService implements IAdminGameService {
     );
   }
 
-  createGame(payload: GameCreateAdminPayload): Observable<GameDetailsView> {
+  createGame(payload: GameCreateAdminPayload): Observable<GamePublic> { 
     if (this.mockService) {
       return this.mockService.createGame(payload);
     }
-    return this.http.post<GameDetailsView>(this.apiUrl, payload);
+    return this.http.post<GamePublic>(this.resolvedApiUrl, payload);
   }
 
-  advanceGameRound(gameId: string): Observable<GameDetailsView> {
+  advanceGameRound(gameId: string): Observable<GamePublic> { 
     if (this.mockService) {
       return this.mockService.advanceGameRound(gameId);
     }
-    return this.http.post<GameDetailsView>(`${this.apiUrl}/${gameId}/advance-to-next-round`, {}); // Corrected endpoint path
+    return this.http.post<GamePublic>(`${this.resolvedApiUrl}/${gameId}/advance-to-next-round`, {});
   }
 
   deleteGame(gameId: string): Observable<void> {
     if (this.mockService) {
       return this.mockService.deleteGame(gameId);
     }
-    return this.http.delete<void>(`${this.apiUrl}/${gameId}`);
+    return this.http.delete<void>(`${this.resolvedApiUrl}/${gameId}`);
   }
 }

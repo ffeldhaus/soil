@@ -4,8 +4,8 @@ import { OverviewComponent } from './overview/overview.component';
 import { BackgroundComponent } from './background/background.component';
 import { LoginComponent } from './login/login.component';
 import { AdminRegisterComponent } from './admin-register/admin-register.component';
-import { ImpressumComponent } from '../../shared/components/impressum/impressum.component'; // Assuming shared
-import { PrivacyComponent } from '../../shared/components/privacy/privacy.component'; // Assuming shared
+import { ImprintComponent } from './imprint/imprint.component'; // Assuming shared
+import { PrivacyComponent } from './privacy/privacy.component'; // Assuming shared
 
 export const FRONTPAGE_ROUTES: Routes = [
   {
@@ -17,7 +17,7 @@ export const FRONTPAGE_ROUTES: Routes = [
       { path: 'background', component: BackgroundComponent, title: 'Soil Game - Background' },
       { path: 'login', component: LoginComponent, title: 'Soil Game - Login' },
       { path: 'register', component: AdminRegisterComponent, title: 'Soil Game - Admin Registration' },
-      { path: 'impressum', component: ImpressumComponent, title: 'Soil Game - Impressum' },
+      { path: 'imprint', component: ImprintComponent, title: 'Soil Game - Impressum' },
       { path: 'privacy', component: PrivacyComponent, title: 'Soil Game - Privacy Policy' },
     ]
   }

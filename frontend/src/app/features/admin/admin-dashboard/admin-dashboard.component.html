@@ -24,19 +24,19 @@
           <table mat-table [dataSource]="adminGames()" class="mat-elevation-z2">
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef> Name </th>
-              <td mat-cell *matCellDef="let game"> {{game.name}} </td>
+              <td mat-cell *matCellDef="let game"> {{game.name}} </td> <!-- Assuming name is already correct -->
             </ng-container>
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef> Status </th>
-              <td mat-cell *matCellDef="let game"> <span class="status-chip status-{{game.game_status}}">{{game.game_status | titlecase}}</span> </td>
+              <td mat-cell *matCellDef="let game"> <span class="status-chip status-{{game.gameStatus}}">{{game.gameStatus | titlecase}}</span> </td>
             </ng-container>
             <ng-container matColumnDef="currentRound">
               <th mat-header-cell *matHeaderCellDef> Round </th>
-              <td mat-cell *matCellDef="let game"> {{game.current_round_number}} </td>
+              <td mat-cell *matCellDef="let game"> {{game.currentRoundNumber}} </td>
             </ng-container>
             <ng-container matColumnDef="maxPlayers">
               <th mat-header-cell *matHeaderCellDef> Max Players </th>
-              <td mat-cell *matCellDef="let game"> {{game.max_players}} </td>
+              <td mat-cell *matCellDef="let game"> {{game.maxPlayers}} </td>
             </ng-container>
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef class="actions-header"> Actions </th>
@@ -46,9 +46,9 @@
                 </button>
                 <button mat-icon-button color="accent" 
                         (click)="advanceRound(game.id, game.name)" 
-                        [matTooltip]="(game.game_status === 'pending' && game.current_round_number === 0) ? 'Start Game' : 'Process & Advance Round'"
-                        [disabled]="game.game_status === 'finished'">
-                  <mat-icon>{{ (game.game_status === 'pending' && game.current_round_number === 0) ? 'play_circle_filled' : 'play_arrow' }}</mat-icon>
+                        [matTooltip]="(game.gameStatus === 'pending' && game.currentRoundNumber === 0) ? 'Start Game' : 'Process & Advance Round'"
+                        [disabled]="game.gameStatus === 'finished'">
+                  <mat-icon>{{ (game.gameStatus === 'pending' && game.currentRoundNumber === 0) ? 'play_circle_filled' : 'play_arrow' }}</mat-icon>
                 </button>
                 <button mat-icon-button color="warn" (click)="confirmDeleteGame(game.id, game.name)" matTooltip="Delete Game">
                   <mat-icon>delete_forever</mat-icon>
@@ -68,7 +68,7 @@
           <mat-card class="details-card">
             <mat-card-header>
               <mat-card-title>{{ game.name }}</mat-card-title>
-              <mat-card-subtitle>Status: <span class="status-chip status-{{game.game_status}}">{{ game.game_status | titlecase }}</span> | Round: {{ game.current_round_number }} / {{ game.number_of_rounds }}</mat-card-subtitle>
+              <mat-card-subtitle>Status: <span class="status-chip status-{{game.gameStatus}}">{{ game.gameStatus | titlecase }}</span> | Round: {{ game.currentRoundNumber }} / {{ game.numberOfRounds }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
                 <div *ngIf="isLoadingDetails()" class="loading-spinner">
@@ -77,15 +77,16 @@
                 </div>
 
                 <div *ngIf="!isLoadingDetails()">
-                    <p><strong>Players ({{ game.players.length || 0 }} / {{ game.max_players }}):</strong></p> <!-- Corrected game.players?.length to game.players.length -->
+                    <!-- Corrected game.players?.length to game.players?.length -->
+                    <p><strong>Players ({{ game.players?.length || 0 }} / {{ game.maxPlayers }}):</strong></p> 
                     <div *ngIf="game.players && game.players.length > 0; else noPlayers">
                         <mat-list role="list">
                             <mat-list-item *ngFor="let player of game.players" role="listitem">
-                                <mat-icon matListItemIcon [ngClass]="{'ai-player-icon': player.is_ai}">{{ player.is_ai ? 'smart_toy' : 'person' }}</mat-icon>
-                                <div matListItemTitle>{{ player.username || player.email }} (P{{player.player_number}})</div>
+                                <mat-icon matListItemIcon [ngClass]="{'ai-player-icon': player.isAi}">{{ player.isAi ? 'smart_toy' : 'person' }}</mat-icon>
+                                <div matListItemTitle>{{ player.username || player.email }} (P{{player.playerNumber}})</div>
                                 <div matListItemLine>UID: {{ player.uid }}</div>
                                 <button mat-icon-button color="primary" 
-                                        *ngIf="!player.is_ai" 
+                                        *ngIf="!player.isAi" 
                                         (click)="impersonate(game.id, player)" 
                                         matTooltip="Impersonate {{ player.username || player.email }}">
                                     <mat-icon>how_to_reg</mat-icon>
@@ -101,10 +102,10 @@
                     <div class="game-actions-details">
                         <button mat-flat-button color="accent" 
                                 (click)="advanceRound(game.id, game.name)" 
-                                [matTooltip]="(game.game_status === 'pending' && game.current_round_number === 0) ? 'Start Game' : 'Process & Advance Round'"
-                                [disabled]="game.game_status === 'finished'">
-                            <mat-icon>{{ (game.game_status === 'pending' && game.current_round_number === 0) ? 'play_circle_filled' : 'play_arrow' }}</mat-icon>
-                            {{ (game.game_status === 'pending' && game.current_round_number === 0) ? 'Start Game' : 'Process & Advance Round' }}
+                                [matTooltip]="(game.gameStatus === 'pending' && game.currentRoundNumber === 0) ? 'Start Game' : 'Process & Advance Round'"
+                                [disabled]="game.gameStatus === 'finished'">
+                            <mat-icon>{{ (game.gameStatus === 'pending' && game.currentRoundNumber === 0) ? 'play_circle_filled' : 'play_arrow' }}</mat-icon>
+                            {{ (game.gameStatus === 'pending' && game.currentRoundNumber === 0) ? 'Start Game' : 'Process & Advance Round' }}
                         </button>
                         <button mat-stroked-button color="warn" (click)="confirmDeleteGame(game.id, game.name)" matTooltip="Delete Game">
                             <mat-icon>delete_forever</mat-icon> Delete Game

@@ -9,7 +9,6 @@
     "files": [
       "src/main.ts",
       "src/main.server.ts"
-      // "server.ts" // Removed this line
     ],
     "include": [
       "src/**/*.d.ts"

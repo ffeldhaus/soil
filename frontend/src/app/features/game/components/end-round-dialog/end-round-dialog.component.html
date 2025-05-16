@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>Confirm Round Decisions</h1>
+<mat-dialog-content [formGroup]="decisionsForm">
+  <p>Please confirm your general decisions for this round:</p>
+
+  <mat-checkbox formControlName="fertilize" labelPosition="after">Fertilize</mat-checkbox><br>
+  <mat-checkbox formControlName="pesticide" labelPosition="after">Use Pesticides</mat-checkbox><br>
+  <mat-checkbox formControlName="biological_control" labelPosition="after">Use Biological Control</mat-checkbox><br>
+  <mat-checkbox formControlName="attempt_organic_certification" labelPosition="after">Attempt Organic Certification</mat-checkbox><br><br>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Machine Investment Level (0-50%)</mat-label>
+    <input matInput type="number" formControlName="machine_investment_level" min="0" max="50">
+    <mat-hint align="end">{{ decisionsForm.get('machine_investment_level')?.value || 0 }} / 50</mat-hint>
+    <mat-error *ngIf="decisionsForm.get('machine_investment_level')?.hasError('min') || decisionsForm.get('machine_investment_level')?.hasError('max')">
+      Must be between 0 and 50.
+    </mat-error>
+  </mat-form-field>
+  <mat-slider min="0" max="50" step="1" discrete formControlName="machine_investment_level">
+    <input matSliderThumb>
+  </mat-slider>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()" [disabled]="!decisionsForm.valid">Confirm Decisions</button>
+</mat-dialog-actions>

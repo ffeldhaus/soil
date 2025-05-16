@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
   selector: 'app-privacy',
   standalone: true,
   imports: [MatCardModule],
-  templateUrl: './privacy.component.html',
-  styleUrls: ['./privacy.component.scss']
+  templateUrl: './privacy.component.html'
 })
 export class PrivacyComponent {}

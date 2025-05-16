@@ -1,0 +1,20 @@
+{
+  "overview": {
+    "title": "Willkommen bei SOIL: Der Nachhaltige Landwirtschafts-Simulator",
+    "description": "Meistern Sie die Herausforderungen und Chancen der modernen Landwirtschaft in diesem interaktiven Simulationsspiel.",
+    "paragraph1": "SOIL ist ein immersives Simulationsspiel, bei dem Sie in die Rolle eines Landwirts schlüpfen und entscheidende ökologische sowie ökonomische Entscheidungen treffen. Erleben Sie die direkten Auswirkungen Ihrer Entscheidungen auf die Gesundheit und Produktivität Ihres virtuellen Bauernhofs.",
+    "paragraph2": "Entdecken Sie die Prinzipien nachhaltiger Landwirtschaft, meistern Sie das Ressourcenmanagement und verstehen Sie das feine Gleichgewicht zwischen landwirtschaftlichen Praktiken und dem Wohlergehen der Umwelt. SOIL wurde entwickelt, um Spieler über die Komplexität der Lebensmittelproduktion und ihre Auswirkungen auf unseren Planeten aufzuklären und zu motivieren.",
+    "howToPlayTitle": "So nehmen Sie an einem Spiel teil",
+    "playerInstructions": "Wenn Sie hier sind, um zu spielen, erhalten Sie normalerweise eine Spiel-ID, Spielernummer und ein Passwort von Ihrem Spieladministrator oder Lehrer. Verwenden Sie diese Details, um sich anzumelden",
+    "adminInstructionsPart1": "Möchten Sie eine Spielsitzung für Ihre Schüler oder Gruppe leiten? Sie müssen sich zuerst",
+    "adminInstructionsPart2": "Sobald Sie als Administrator registriert sind, können Sie ganz einfach mehrere Spielsitzungen erstellen und verwalten.",
+    "backgroundInfoPart1": "Möchten Sie tiefer in den pädagogischen Kontext und die Ziele von SOIL eintauchen? Erkunden Sie den Bereich",
+    "backgroundInfoPart2": ".",
+    "loginButton": "Anmelden",
+    "registerButton": "Als Administrator registrieren",
+    "backgroundInfoLink": "Hintergrundinformationen"
+  },
+  "legalNotice": "Impressum",
+  "privacyPolicy": "Datenschutz",
+  "language": "Sprache"
+}

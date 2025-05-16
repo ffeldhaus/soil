@@ -1,5 +1,4 @@
 // File: frontend/src/app/core/models/parcel.model.ts
-// NEW (or update if a basic one exists)
 
 // Corresponds to backend app.schemas.parcel.PlantationType
 export enum PlantationType {
@@ -37,16 +36,21 @@ export enum PlantationType {
   // Corresponds to backend app.schemas.parcel.ParcelInDB
   export interface Parcel {
     id?: string; // Document ID from Firestore, if available/needed on frontend
-    parcel_number: number;
-    soil_quality: number;
-    nutrient_level: number;
-    current_plantation: PlantationType;
-    previous_plantation?: PlantationType | null;
-    pre_previous_plantation?: PlantationType | null;
-    crop_sequence_effect: CropSequenceEffect;
-    last_harvest_yield_dt: number;
-    last_harvest_outcome_category: HarvestOutcome;
+    parcelNumber: number;
+    soilQuality: number;
+    nutrientLevel: number;
+    currentPlantation: PlantationType;
+    previousPlantation?: PlantationType | null;
+    prePreviousPlantation?: PlantationType | null;
+    cropSequenceEffect: CropSequenceEffect;
+    lastHarvestYieldDt: number;
+    lastHarvestOutcomeCategory: HarvestOutcome;
     // any other fields from ParcelInDB that the frontend needs to display or use
+    // For example, if the backend adds these to ParcelInDB, they should be here in camelCase:
+    previousSoilQuality?: number | null; 
+    prePreviousSoilQuality?: number | null;
+    previousNutrientLevel?: number | null;
+    prePreviousNutrientLevel?: number | null;
   }
   
   // Public representation of a player's field for a round
@@ -59,9 +63,9 @@ export enum PlantationType {
   // Corresponds to backend app.schemas.parcel.FieldState
   export interface FieldState extends FieldPublic {
     id: string; // e.g., gameID_playerID_roundNumber_field_state
-    game_id: string;
-    player_id: string;
-    round_number: number;
-    created_at?: string | Date; // ISO string or Date object
-    updated_at?: string | Date;
+    gameId: string;
+    playerId: string;
+    roundNumber: number;
+    createdAt?: string | Date; // ISO string or Date object
+    updatedAt?: string | Date;
   }

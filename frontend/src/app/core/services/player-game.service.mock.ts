@@ -4,16 +4,19 @@ import { Observable, of, delay } from 'rxjs';
 import {
   Parcel, PlantationType, FieldState, CropSequenceEffect, HarvestOutcome
 } from '../models/parcel.model';
-import { GameDetailsView } from '../models/game.model'; // Corrected: Removed PlayerPublic from here
-import { PlayerPublic } from '../models/player.model'; // Corrected: Added PlayerPublic import from player.model
+import { GamePublic } from '../models/game.model';
+import { PlayerPublic } from '../models/player.model';
 import { UserRole } from '../models/user.model'; 
-import { RoundWithFieldPublic, RoundDecisionBase } from '../models/round.model';
+import { RoundWithFieldPublic, RoundDecisionBase, PlayerRoundSubmission, RoundPublic } from '../models/round.model'; // Added RoundPublic
 import { ResultPublic } from '../models/result.model';
 import { IPlayerGameService } from './player-game.service.interface';
-import { TotalIncome, TotalExpenses } from '../models/financials.model';
+import { HarvestIncome, TotalExpensesBreakdown, SeedCosts, InvestmentCosts, RunningCosts } from '../models/financials.model';
 
 @Injectable()
 export class MockPlayerGameService implements IPlayerGameService {
+
+  private mockRoundStore: Record<string, RoundWithFieldPublic> = {}; // For storing round states
+  private mockGameStore: Record<string, GamePublic> = {}; // For storing game states
 
   private createMockParcels(count: number = 40): Parcel[] {
     const parcels: Parcel[] = [];
@@ -21,15 +24,15 @@ export class MockPlayerGameService implements IPlayerGameService {
     for (let i = 1; i <= count; i++) {
       parcels.push({
         id: `mock_parcel_${i}`,
-        parcel_number: i,
-        soil_quality: 75 + Math.floor(Math.random() * 10),
-        nutrient_level: 65 + Math.floor(Math.random() * 15),
-        current_plantation: plantationTypes[i % plantationTypes.length],
-        previous_plantation: plantationTypes[(i + 1) % plantationTypes.length],
-        pre_previous_plantation: plantationTypes[(i + 2) % plantationTypes.length],
-        crop_sequence_effect: CropSequenceEffect.OK,
-        last_harvest_yield_dt: Math.floor(Math.random() * 50) + 50,
-        last_harvest_outcome_category: HarvestOutcome.HIGH, 
+        parcelNumber: i, 
+        soilQuality: 75 + Math.floor(Math.random() * 10),
+        nutrientLevel: 65 + Math.floor(Math.random() * 15),
+        currentPlantation: plantationTypes[i % plantationTypes.length],
+        previousPlantation: plantationTypes[(i + 1) % plantationTypes.length],
+        prePreviousPlantation: plantationTypes[(i + 2) % plantationTypes.length],
+        cropSequenceEffect: CropSequenceEffect.OK,
+        lastHarvestYieldDt: Math.floor(Math.random() * 50) + 50,
+        lastHarvestOutcomeCategory: HarvestOutcome.HIGH, 
       });
     }
     return parcels;
@@ -37,119 +40,200 @@ export class MockPlayerGameService implements IPlayerGameService {
 
   getCurrentRoundWithField(gameId: string): Observable<RoundWithFieldPublic> {
     console.log(`MockPlayerGameService: getCurrentRoundWithField called for game ${gameId}`);
-    const mockRoundNumber = 2; 
-    const mockPlayerId = 'mockPlayerABC';
-    const mockParcels = this.createMockParcels();
+    const gameDetails = this.mockGameStore[gameId];
+    const currentRoundNumberFromGame = gameDetails ? gameDetails.currentRoundNumber : 2;
+    
+    const mockPlayerId = 'mockPlayerABC'; 
 
-    const mockRoundData: RoundWithFieldPublic = {
-      id: `${gameId}_${mockPlayerId}_round_${mockRoundNumber}`,
-      game_id: gameId,
-      player_id: mockPlayerId,
-      round_number: mockRoundNumber,
-      is_submitted: false,
-      decisions: { 
-        fertilize: true, 
-        pesticide: false,
-        biological_control: true,
-        attempt_organic_certification: false,
-        machine_investment_level: 1
-      },
-      field_state: { parcels: mockParcels },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    return of(mockRoundData).pipe(delay(150));
+    const roundKey = `${gameId}_${mockPlayerId}_round_${currentRoundNumberFromGame}`;
+
+    if (!this.mockRoundStore[roundKey]) {
+        const mockParcels = this.createMockParcels();
+        const newRound: RoundWithFieldPublic = {
+          id: roundKey,
+          gameId: gameId, 
+          playerId: mockPlayerId, 
+          roundNumber: currentRoundNumberFromGame, 
+          isSubmitted: false, 
+          decisions: { 
+            fertilize: true, 
+            pesticide: false,
+            biological_control: true,
+            attempt_organic_certification: false,
+            machine_investment_level: 1
+          },
+          field_state: { parcels: mockParcels }, 
+          createdAt: new Date().toISOString(), 
+          updatedAt: new Date().toISOString(), 
+          weatherEvent: 'Normal',
+          verminEvent: 'Keine',
+        };
+        this.mockRoundStore[roundKey] = newRound;
+        if (this.mockGameStore[gameId]) {
+            this.mockGameStore[gameId].currentRoundNumber = currentRoundNumberFromGame;
+        } else {
+            this.mockGameStore[gameId] = {
+                id: gameId,
+                name: 'Mock Player Game (Implicitly Created)',
+                gameStatus: 'active',
+                currentRoundNumber: currentRoundNumberFromGame,
+                maxPlayers: 3,
+                numberOfRounds: 10,
+                adminId: 'adminMockUser123',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                playerUids: [mockPlayerId],
+            } as GamePublic;
+        }
+    }
+    return of(this.mockRoundStore[roundKey]).pipe(delay(150));
   }
 
-  getGameDetails(gameId: string): Observable<GameDetailsView> {
+  getGameDetails(gameId: string): Observable<GamePublic> { 
     console.log(`MockPlayerGameService: getGameDetails called for game ${gameId}`);
-    const mockPlayers: PlayerPublic[] = [
-      { uid: 'player1', email: 'player1@example.com', username: 'Human Player Mock 1', game_id: gameId, player_number: 1, is_ai: false, user_type: UserRole.PLAYER },
-      { uid: 'player2', email: 'ai_player2@example.com', username: 'AI Player Mock Omega', game_id: gameId, player_number: 2, is_ai: true, user_type: UserRole.PLAYER },
-    ];
     
-    const mockGame: GameDetailsView = {
-      id: gameId,
-      name: 'Mock Player Game Detailed',
-      game_status: 'in_progress',
-      current_round_number: 2,
-      max_players: 3,
-      number_of_rounds: 10,
-      admin_id: 'adminMockUser123',
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-      updated_at: new Date().toISOString(),
-      weather_sequence: Array(10).fill('SUNNY'),
-      vermin_sequence: Array(10).fill('NONE'),
-      player_uids: mockPlayers.map(p => p.uid),
-      players: mockPlayers, 
-      ai_player_strategies: { 'player2': 'BALANCED'}
-    };
-    return of(mockGame).pipe(delay(100));
+    if (!this.mockGameStore[gameId]) {
+        const mockPlayers: PlayerPublic[] = [
+          { uid: 'player1', email: 'player1@example.com', username: 'Human Player Mock 1', gameId: gameId, playerNumber: 1, isAi: false, userType: UserRole.PLAYER }, 
+          { uid: 'player2', email: 'ai_player2@example.com', username: 'AI Player Mock Omega', gameId: gameId, playerNumber: 2, isAi: true, userType: UserRole.PLAYER }, 
+        ];
+        const initialRoundNumber = 1; 
+        this.mockGameStore[gameId] = { 
+          id: gameId,
+          name: 'Mock Player Game Detailed',
+          gameStatus: 'active',
+          currentRoundNumber: initialRoundNumber, 
+          maxPlayers: 3, 
+          numberOfRounds: 10, 
+          adminId: 'adminMockUser123', 
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), 
+          updatedAt: new Date().toISOString(), 
+          weatherSequence: Array(10).fill('SUNNY'), 
+          verminSequence: Array(10).fill('NONE'), 
+          playerUids: mockPlayers.map(p => p.uid), 
+          players: mockPlayers, 
+          aiPlayerStrategies: { 'player2': 'BALANCED'}
+        };
+    }
+    return of(this.mockGameStore[gameId]).pipe(delay(100));
   }
 
   submitPlayerDecisions(
     gameId: string,
-    payload: {
-      round_decisions: RoundDecisionBase;
-      parcel_plantation_choices: Record<number, PlantationType>;
+    roundNumber: number, 
+    payload: PlayerRoundSubmission 
+  ): Observable<RoundPublic> { 
+    console.log(`MockPlayerGameService: submitPlayerDecisions for round ${roundNumber} in game ${gameId} with payload:`, payload);
+    const mockPlayerId = 'mockPlayerABC'; 
+    
+    const roundKey = `${gameId}_${mockPlayerId}_round_${roundNumber}`;
+    if (this.mockRoundStore[roundKey]) {
+        this.mockRoundStore[roundKey].isSubmitted = true;
+        this.mockRoundStore[roundKey].decisions = payload.roundDecisions;
+        this.mockRoundStore[roundKey].field_state.parcels = this.mockRoundStore[roundKey].field_state.parcels.map(p => ({
+            ...p,
+            currentPlantation: payload.parcelPlantationChoices[p.parcelNumber] || p.currentPlantation
+        }));
+        this.mockRoundStore[roundKey].updatedAt = new Date().toISOString();
+        if (this.mockGameStore[gameId] && this.mockGameStore[gameId].currentRoundNumber === roundNumber) {
+            this.mockGameStore[gameId].currentRoundNumber++;
+        }
+
+    } else {
+        console.warn(`MockPlayerGameService: Round ${roundNumber} not found for submission. Creating a new entry.`);
+        const mockParcels = this.createMockParcels(); 
+        const newRoundForSubmission: RoundWithFieldPublic = {
+            id: roundKey,
+            gameId: gameId,
+            playerId: mockPlayerId,
+            roundNumber: roundNumber,
+            isSubmitted: true,
+            decisions: payload.roundDecisions,
+            field_state: { parcels: mockParcels.map(p => ({ 
+                ...p,
+                currentPlantation: payload.parcelPlantationChoices[p.parcelNumber] || p.currentPlantation
+            })) },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            weatherEvent: 'Normal', 
+            verminEvent: 'Keine',  
+        };
+        this.mockRoundStore[roundKey] = newRoundForSubmission;
+        if (this.mockGameStore[gameId]) {
+            if (this.mockGameStore[gameId].currentRoundNumber <= roundNumber) {
+                 this.mockGameStore[gameId].currentRoundNumber = roundNumber + 1;
+            }
+        } else {
+             this.mockGameStore[gameId] = {
+                id: gameId,
+                name: 'Mock Player Game (Implicitly Updated)',
+                gameStatus: 'active',
+                currentRoundNumber: roundNumber + 1,
+                maxPlayers: 3,
+                numberOfRounds: 10,
+                adminId: 'adminMockUser123',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                playerUids: [mockPlayerId],
+            } as GamePublic;
+        }
     }
-  ): Observable<RoundWithFieldPublic> {
-    console.log(`MockPlayerGameService: submitPlayerDecisions called for game ${gameId} with payload:`, payload);
-    const mockRoundNumber = 2;
-    const mockPlayerId = 'mockPlayerABC';
-    const mockResponse: RoundWithFieldPublic = {
-      id: `${gameId}_${mockPlayerId}_round_${mockRoundNumber}`,
-      game_id: gameId,
-      player_id: mockPlayerId,
-      round_number: mockRoundNumber,
-      is_submitted: true, 
-      decisions: payload.round_decisions,
-      field_state: { parcels: this.createMockParcels().map((p, index) => ({ 
-          ...p, 
-          id: `mock_parcel_${index + 1}`,
-          current_plantation: payload.parcel_plantation_choices[index + 1] || p.current_plantation 
-      })) },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    return of(mockResponse).pipe(delay(200));
+    
+    const { field_state, ...roundPublicData } = this.mockRoundStore[roundKey];
+    return of(roundPublicData as RoundPublic).pipe(delay(200));
   }
 
-  getPlayerResults(gameId: string): Observable<ResultPublic[]> {
-    console.log(`MockPlayerGameService: getPlayerResults called for game ${gameId}`);
-    const mockIncome1: TotalIncome = { total: 6000, crop_sales: 6000 };
-    const mockExpenses1: TotalExpenses = { total: 2500, seeds: 2500 };
-    const mockIncome2: TotalIncome = { total: 7500, crop_sales: 7500 };
-    const mockExpenses2: TotalExpenses = { total: 4000, seeds: 3000, fertilizer: 1000 };
+  getPlayerResults(gameId: string, playerId: string): Observable<ResultPublic[]> {
+    console.log(`MockPlayerGameService: getPlayerResults called for game ${gameId}, player ${playerId}`);
+    const mockIncome1: HarvestIncome = { total: 6000, fieldBean: 6000 }; 
+    const mockExpenses1: TotalExpensesBreakdown = { 
+        seedCosts: { fieldBean: 2500, total: 2500 } as SeedCosts,
+        investmentCosts: { total: 0 } as InvestmentCosts,
+        runningCosts: { total: 0 } as RunningCosts,
+        grandTotal: 2500
+    };
+    const mockIncome2: HarvestIncome = { total: 7500, corn: 7500 }; // Corrected maize to corn
+    const mockExpenses2: TotalExpensesBreakdown = {
+        seedCosts: { corn: 3000, total: 3000 } as SeedCosts, // Corrected maize to corn
+        investmentCosts: { total: 500 } as InvestmentCosts, 
+        runningCosts: { total: 200 } as RunningCosts,     
+        grandTotal: 3700
+    };
 
     const mockResults: ResultPublic[] = [
       {
         id: 'mockRes1', 
-        calculated_at: new Date().toISOString(),
-        game_id: gameId, 
-        player_id: 'mockPlayerABC', 
-        round_number: 0, 
-        income_details: mockIncome1,
-        expense_details: mockExpenses1,
-        profit_or_loss: mockIncome1.total - mockExpenses1.total, 
-        starting_capital: 10000,
-        closing_capital: 10000 + (mockIncome1.total - mockExpenses1.total),
-        achieved_organic_certification: false,
+        calculatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), 
+        gameId: gameId, 
+        playerId: playerId, 
+        roundNumber: 0, 
+        incomeDetails: mockIncome1, 
+        expenseDetails: mockExpenses1, 
+        profitOrLoss: mockIncome1.total - mockExpenses1.grandTotal, 
+        startingCapital: 10000, 
+        closingCapital: 10000 + (mockIncome1.total - mockExpenses1.grandTotal), 
+        achievedOrganicCertification: false,
+        weatherEvent: 'SUNNY',
+        verminEvent: 'NONE',
+        explanations: { general: 'A good start to the game.'}
       },
       {
-        id: 'mockRes2', 
-        calculated_at: new Date().toISOString(),
-        game_id: gameId, 
-        player_id: 'mockPlayerABC', 
-        round_number: 1, 
-        income_details: mockIncome2,
-        expense_details: mockExpenses2,
-        profit_or_loss: mockIncome2.total - mockExpenses2.total,
-        starting_capital: 13500, 
-        closing_capital: 13500 + (mockIncome2.total - mockExpenses2.total),
-        achieved_organic_certification: false,
+        id: 'mockRes2',
+        calculatedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+        gameId: gameId,
+        playerId: playerId,
+        roundNumber: 1, 
+        incomeDetails: mockIncome2,
+        expenseDetails: mockExpenses2,
+        profitOrLoss: mockIncome2.total - mockExpenses2.grandTotal,
+        startingCapital: 10000 + (mockIncome1.total - mockExpenses1.grandTotal), 
+        closingCapital: (10000 + (mockIncome1.total - mockExpenses1.grandTotal)) + (mockIncome2.total - mockExpenses2.grandTotal),
+        achievedOrganicCertification: false,
+        weatherEvent: 'RAINY_MILD',
+        verminEvent: 'APHIDS_LOW',
+        explanations: { yield: 'Rain helped the corn grow well.', costs: 'Slight increase in running costs due to wet conditions.'}
       }
     ];
-    return of(mockResults).pipe(delay(100));
+    return of(mockResults.filter(r => r.playerId === playerId && r.gameId === gameId)).pipe(delay(100));
   }
 }
