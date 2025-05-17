@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NgIf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -39,7 +40,8 @@ export function passwordMatchValidator(control: AbstractControl): ValidationErro
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    NgIf
+    NgIf,
+    TranslateModule
   ],
   templateUrl: './admin-register.component.html',
   styleUrls: ['./admin-register.component.scss']

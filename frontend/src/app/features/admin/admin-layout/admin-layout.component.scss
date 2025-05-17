@@ -4,7 +4,9 @@
 // File: frontend/src/app/features/admin/admin-layout/admin-layout.component.scss
 
 .admin-layout-container {
-  background-color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 10);
+  background-image: url('/assets/images/admin.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .admin-toolbar {
@@ -18,11 +20,11 @@
 }
 
 .content-wrapper {
-  background-color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 20);
+  //background-color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 20);
   color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 90); 
   margin: 16px;
-  border-radius: 8px;
-  border: 1px solid map.get(map.get(custom-theme-vars.$primary-palette, neutral), 30);
+  //border-radius: 8px;
+  //border: 1px solid map.get(map.get(custom-theme-vars.$primary-palette, neutral), 30);
 }
 
 .admin-footer {

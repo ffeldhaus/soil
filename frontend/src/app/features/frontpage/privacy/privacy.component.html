@@ -1,107 +1,89 @@
 <div class="page-container">
     <mat-card class="info-card">
       <mat-card-header>
-        <mat-card-title>Privacy Policy</mat-card-title>
+        <mat-card-title>{{ 'privacy.title' | translate }}</mat-card-title>
       </mat-card-header>
-      <mat-card-content> 
+      <mat-card-content>
         <section>
-          <h2>1. Introduction</h2>
+          <h2>{{ 'privacy.introductionTitle' | translate }}</h2>
           <p>
-            Welcome to the Soil Game. We are committed to protecting your privacy. This Privacy Policy explains how we
-            collect, use, disclose, and safeguard your information when you use our application.
+            {{ 'privacy.introductionText' | translate }}
           </p>
         </section>
-  
+
         <section>
-          <h2>2. Information We Collect</h2>
-          <p>We may collect information about you in a variety of ways. The information we may collect includes:</p>
+          <h2>{{ 'privacy.informationWeCollectTitle' | translate }}</h2>
+          <p>{{ 'privacy.informationWeCollectText' | translate }}</p>
           <ul>
             <li>
-              <strong>Personal Data:</strong> Personally identifiable information, such as your name (for administrators),
-              email address, and institution (for administrators), that you voluntarily give to us when you register
-              with the application. Player accounts may use system-generated or admin-provided email addresses.
+              <strong>{{ 'privacy.personalDataTitle' | translate }}</strong> <span>{{ 'privacy.personalDataText' | translate }}</span>
             </li>
             <li>
-              <strong>Derivative Data:</strong> Information our servers automatically collect when you access the application,
-              such as your IP address, browser type, operating system, access times, and the pages you have viewed
-              directly before and after accessing the application. This is standard server logging.
+              <strong>{{ 'privacy.derivativeDataTitle' | translate }}</strong> <span>{{ 'privacy.derivativeDataText' | translate }}</span>
             </li>
             <li>
-              <strong>Firebase Authentication Data:</strong> When you register or log in using Firebase Authentication,
-              Firebase collects certain data as described in their privacy policy. We receive your UID, email, and
-              any custom claims we set (like role or game ID).
+              <strong>{{ 'privacy.firebaseAuthDataTitle' | translate }}</strong> <span>{{ 'privacy.firebaseAuthDataText' | translate }}</span>
             </li>
             <li>
-              <strong>Game Data:</strong> Information related to your gameplay, such as game session IDs, player decisions,
-              parcel states, round results, and financial data within the game.
+              <strong>{{ 'privacy.gameDataTitle' | translate }}</strong> <span>{{ 'privacy.gameDataText' | translate }}</span>
             </li>
           </ul>
         </section>
-  
+
         <section>
-          <h2>3. Use of Your Information</h2>
-          <p>Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you to:</p>
+          <h2>{{ 'privacy.useOfInformationTitle' | translate }}</h2>
+          <p>{{ 'privacy.useOfInformationText' | translate }}</p>
           <ul>
-            <li>Create and manage your account.</li>
-            <li>Administer game sessions and facilitate gameplay.</li>
-            <li>Email you regarding your account or game notifications (e.g., new game credentials for admins, password resets).</li>
-            <li>Monitor and analyze usage and trends to improve your experience with the application.</li>
-            <li>Prevent fraudulent transactions, monitor against theft, and protect against criminal activity.</li>
-            <li>Respond to product and customer service requests.</li>
+            <li>{{ 'privacy.useOfInformationList.0' | translate }}</li>
+            <li>{{ 'privacy.useOfInformationList.1' | translate }}</li>
+            <li>{{ 'privacy.useOfInformationList.2' | translate }}</li>
+            <li>{{ 'privacy.useOfInformationList.3' | translate }}</li>
+            <li>{{ 'privacy.useOfInformationList.4' | translate }}</li>
+            <li>{{ 'privacy.useOfInformationList.5' | translate }}</li>
           </ul>
         </section>
-  
+
         <section>
-          <h2>4. Disclosure of Your Information</h2>
-          <p>We do not share your personal information with third parties except as described in this Privacy Policy or with your consent.</p>
+          <h2>{{ 'privacy.disclosureOfInformationTitle' | translate }}</h2>
+          <p>{{ 'privacy.disclosureOfInformationText' | translate }}</p>
           <ul>
             <li>
-              <strong>By Law or to Protect Rights:</strong> If we believe the release of information about you is necessary to
-              respond to legal process, to investigate or remedy potential violations of our policies, or to protect the
-              rights, property, and safety of others, we may share your information as permitted or required by any
-              applicable law, rule, or regulation.
+              <strong>{{ 'privacy.disclosureByLawTitle' | translate }}</strong> <span>{{ 'privacy.disclosureByLawText' | translate }}</span>
             </li>
             <li>
-              <strong>Service Providers:</strong> We may share your information with third-party vendors, service providers,
-              contractors, or agents who perform services for us or on our behalf and require access to such information
-              to do that work (e.g., email delivery services, hosting services like Google Cloud Platform / Firebase).
+              <strong>{{ 'privacy.disclosureServiceProvidersTitle' | translate }}</strong> <span>{{ 'privacy.disclosureServiceProvidersText' | translate }}</span>
             </li>
           </ul>
         </section>
-  
+
         <section>
-          <h2>5. Security of Your Information</h2>
+          <h2>{{ 'privacy.securityOfInformationTitle' | translate }}</h2>
           <p>
-            We use administrative, technical, and physical security measures to help protect your personal information.
-            While we have taken reasonable steps to secure the personal information you provide to us, please be aware
-            that despite our efforts, no security measures are perfect or impenetrable, and no method of data
-            transmission can be guaranteed against any interception or other type of misuse.
+            {{ 'privacy.securityOfInformationText' | translate }}
           </p>
         </section>
-  
+
         <section>
-          <h2>6. Your Data Rights (GDPR)</h2>
+          <h2>{{ 'privacy.yourDataRightsTitle' | translate }}</h2>
           <p>
-            If you are a resident of the European Economic Area (EEA), you have certain data protection rights.
-            We aim to take reasonable steps to allow you to correct, amend, delete, or limit the use of your Personal Data.
-            These rights include:
+            {{ 'privacy.yourDataRightsText' | translate }}
           </p>
           <ul>
-            <li>The right to access, update or delete the information we have on you.</li>
-            <li>The right of rectification.</li>
-            <li>The right to object.</li>
-            <li>The right of restriction.</li>
-            <li>The right to data portability.</li>
-            <li>The right to withdraw consent.</li>
+            <li>{{ 'privacy.yourDataRightsList.0' | translate }}</li>
+            <li>{{ 'privacy.yourDataRightsList.1' | translate }}</li>
+            <li>{{ 'privacy.yourDataRightsList.2' | translate }}</li>
+            <li>{{ 'privacy.yourDataRightsList.3' | translate }}</li>
+            <li>{{ 'privacy.yourDataRightsList.4' | translate }}</li>
+            <li>{{ 'privacy.yourDataRightsList.5' | translate }}</li>
           </ul>
-          <p>Please contact us to exercise these rights.</p>
         </section>
-  
+
         <section>
-          <h2>7. Contact Us</h2>
+          <h2>{{ 'privacy.contactUsTitle' | translate }}</h2>
           <p>
-            If you have questions or comments about this Privacy Policy, please contact us at:
-            <br>
+            {{ 'privacy.contactUsText' | translate }}
+          </p>
+          <p>
             Florian Feldhaus<br>
             Email: privacy [at] soil.app (or the admin email for data protection from Impressum)
           </p>
