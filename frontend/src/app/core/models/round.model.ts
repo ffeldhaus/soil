@@ -63,7 +63,7 @@ export interface RoundInDB extends RoundBase {
 export interface RoundPublic extends RoundInDB {}
 
 export interface RoundWithFieldPublic extends RoundPublic {
-  field_state: FieldPublic;
+  fieldState: FieldPublic;
   // The 'roundData' field previously here for weather/vermin specific to the active round (before results)
   // might be less necessary if these details are consistently part of RoundInDB/RoundPublic when available (e.g., from results).
   // Or, it can still be used for pre-result round-specific events if backend provides them separately.

@@ -1,7 +1,7 @@
 // File: frontend/src/app/core/services/admin-game.service.mock.ts
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { GameAdminListItem, GamePublic, GameCreateAdminPayload, GameStatus } from '../models/game.model'; // Changed GameDetailsView to GamePublic, Added GameStatus
+import { GameAdminListItem, GamePublic, GameCreateAdminPayload, GameStatus } from '../models/game.model';
 import { PlayerPublic } from '../models/player.model';
 import { UserRole } from '../models/user.model';
 import { IAdminGameService } from './admin-game.service.interface';
@@ -11,16 +11,15 @@ export class MockAdminGameService implements IAdminGameService {
     {
       id: 'mockGame1',
       name: 'Mock Game Alpha',
-      gameStatus: GameStatus.PENDING, // camelCase & Enum
-      currentRoundNumber: 0, // camelCase
-      maxPlayers: 4, // camelCase
-      adminId: 'adminUser123', // camelCase
-      numberOfRounds: 10, // camelCase
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // camelCase
-      updatedAt: new Date().toISOString(), // camelCase
-      weatherSequence: Array(10).fill('SUNNY'), // camelCase
-      verminSequence: Array(10).fill('NONE'), // camelCase
-      playerUids: ['player1', 'player2'], // camelCase
+      gameStatus: GameStatus.PENDING,
+      currentRoundNumber: 0,
+      adminId: 'adminUser123',
+      numberOfRounds: 10,
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+      updatedAt: new Date().toISOString(),
+      weatherSequence: Array(10).fill('SUNNY'),
+      verminSequence: Array(10).fill('NONE'),
+      playerUids: ['player1', 'player2'],
       players: [
         { uid: 'player1', email: 'player1@example.com', username: 'Human Player 1', gameId: 'mockGame1', playerNumber: 1, isAi: false, userType: UserRole.PLAYER },
         { uid: 'player2', email: 'ai_player2@example.com', username: 'AI Player Omega', gameId: 'mockGame1', playerNumber: 2, isAi: true, userType: UserRole.PLAYER },
@@ -29,9 +28,8 @@ export class MockAdminGameService implements IAdminGameService {
     {
       id: 'mockGame2',
       name: 'Mock Game Beta',
-      gameStatus: GameStatus.ACTIVE, // camelCase & Enum
+      gameStatus: GameStatus.ACTIVE,
       currentRoundNumber: 2,
-      maxPlayers: 3,
       adminId: 'adminUser123',
       numberOfRounds: 5,
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
@@ -50,17 +48,16 @@ export class MockAdminGameService implements IAdminGameService {
     const listItems: GameAdminListItem[] = this.mockGamesStore.map(game => ({
       id: game.id,
       name: game.name,
-      gameStatus: game.gameStatus, // camelCase
-      currentRoundNumber: game.currentRoundNumber, // camelCase
-      maxPlayers: game.maxPlayers, // camelCase
-      adminId: game.adminId, // camelCase
-      createdAt: game.createdAt, // Added createdAt
+      gameStatus: game.gameStatus,
+      currentRoundNumber: game.currentRoundNumber,
+      adminId: game.adminId,
+      createdAt: game.createdAt,
       playerCount: game.playerUids.length
     }));
     return of(listItems).pipe(delay(300));
   }
 
-  getGameDetails(gameId: string): Observable<GamePublic> { // Changed to GamePublic
+  getGameDetails(gameId: string): Observable<GamePublic> {
     console.log(`MockAdminGameService: getGameDetails called for game ${gameId}`);
     const game = this.mockGamesStore.find(g => g.id === gameId);
     if (game) {
@@ -71,29 +68,28 @@ export class MockAdminGameService implements IAdminGameService {
     return of(fallbackGame).pipe(delay(300)); 
   }
 
-  createGame(payload: GameCreateAdminPayload): Observable<GamePublic> { // Changed to GamePublic
+  createGame(payload: GameCreateAdminPayload): Observable<GamePublic> {
     console.log('MockAdminGameService: createGame called with', payload);
     const newMockGame: GamePublic = {
       id: `mockNew-${Math.random().toString(36).substring(7)}`,
       name: payload.name,
-      gameStatus: GameStatus.PENDING, // camelCase
-      currentRoundNumber: 0, // camelCase
-      maxPlayers: payload.maxPlayers, // camelCase
-      numberOfRounds: payload.numberOfRounds, // camelCase
-      adminId: 'currentAdminUserMock', // camelCase
-      createdAt: new Date().toISOString(), // camelCase
-      updatedAt: new Date().toISOString(), // camelCase
-      weatherSequence: Array(payload.numberOfRounds).fill('SUNNY'), // camelCase
-      verminSequence: Array(payload.numberOfRounds).fill('NONE'), // camelCase
-      playerUids: [], // camelCase
-      players: [],
+      gameStatus: GameStatus.PENDING,
+      currentRoundNumber: 0,
+      numberOfRounds: payload.numberOfRounds,
+      adminId: 'currentAdminUserMock',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      weatherSequence: Array(payload.numberOfRounds).fill('SUNNY'),
+      verminSequence: Array(payload.numberOfRounds).fill('NONE'),
+      playerUids: [], // Player UIDs will be added when players join/are added
+      players: [], // Player details will be added when players join/are added
       aiPlayerStrategies: {}
     };
     this.mockGamesStore.push(newMockGame);
     return of(newMockGame).pipe(delay(300));
   }
 
-  advanceGameRound(gameId: string): Observable<GamePublic> { // Changed to GamePublic
+  advanceGameRound(gameId: string): Observable<GamePublic> {
     console.log(`MockAdminGameService: advanceGameRound called for game ${gameId}`);
     const game = this.mockGamesStore.find(g => g.id === gameId);
     if (game) {
@@ -101,7 +97,7 @@ export class MockAdminGameService implements IAdminGameService {
       if (game.currentRoundNumber < game.numberOfRounds) {
         game.currentRoundNumber += 1;
       }
-      if (game.currentRoundNumber === game.numberOfRounds && game.gameStatus !== GameStatus.FINISHED) { // Prevent re-finishing
+      if (game.currentRoundNumber === game.numberOfRounds && game.gameStatus !== GameStatus.FINISHED) {
         game.gameStatus = GameStatus.FINISHED;
       }
       game.updatedAt = new Date().toISOString();

@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing'; // Keep for ApiService potentially
 import { PlayerGameService } from './player-game.service';
 import { ApiService } from './api.service';
-import { GameDetailsView } from '../models/game.model';
-import { RoundWithFieldPublic, RoundDecisionBase } from '../models/round.model';
+import { GamePublic } from '../models/game.model'; // Changed from GameDetailsView
+import { RoundWithFieldPublic, PlayerRoundSubmission, RoundDecisionBase, RoundPublic } from '../models/round.model'; // Added RoundPublic
 import { ResultPublic } from '../models/result.model';
 import { PlantationType } from '../models/parcel.model';
 import { of } from 'rxjs';
@@ -12,29 +11,25 @@ import { of } from 'rxjs';
 const mockApiService = {
   get: jest.fn(),
   put: jest.fn(),
-  post: jest.fn(), // Add other methods if ApiService has them
+  post: jest.fn(), 
   delete: jest.fn()
 };
 
 describe('PlayerGameService (Real Implementation with Jest)', () => {
   let service: PlayerGameService;
-  let apiServiceSpy: jest.Mocked<ApiService>; // Use Jest's mocked type
+  let apiServiceSpy: jest.Mocked<ApiService>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule], // May still be needed if ApiService has dependencies
       providers: [
         PlayerGameService,
-        // Provide the Jest mock
         { provide: ApiService, useValue: mockApiService }
       ]
     });
 
     service = TestBed.inject(PlayerGameService);
-    // Get the injected mock instance
     apiServiceSpy = TestBed.inject(ApiService) as jest.Mocked<ApiService>;
 
-    // Reset mocks before each test using Jest's reset functions
     apiServiceSpy.get.mockReset();
     apiServiceSpy.put.mockReset();
   });
@@ -45,21 +40,20 @@ describe('PlayerGameService (Real Implementation with Jest)', () => {
 
   it('getCurrentRoundWithField should call ApiService.get with correct URL', () => {
     const gameId = 'testGame123';
-    const expectedUrl = `/games/${gameId}/current-round`;
+    const expectedUrl = `/games/${gameId}/rounds/my-current-round`; // Updated URL
     const mockResponse: RoundWithFieldPublic = {} as RoundWithFieldPublic;
-    apiServiceSpy.get.mockReturnValue(of(mockResponse)); // Mock return value with Jest
+    apiServiceSpy.get.mockReturnValue(of(mockResponse));
 
     service.getCurrentRoundWithField(gameId).subscribe();
 
-    // Use Jest matchers
     expect(apiServiceSpy.get).toHaveBeenCalledTimes(1);
     expect(apiServiceSpy.get).toHaveBeenCalledWith(expectedUrl);
   });
 
   it('getGameDetails should call ApiService.get with correct URL', () => {
     const gameId = 'testGame456';
-    const expectedUrl = `/games/${gameId}`; // Adjust if endpoint differs
-    const mockResponse: GameDetailsView = {} as GameDetailsView;
+    const expectedUrl = `/games/${gameId}`;
+    const mockResponse: GamePublic = {} as GamePublic; // Changed from GameDetailsView
     apiServiceSpy.get.mockReturnValue(of(mockResponse));
 
     service.getGameDetails(gameId).subscribe();
@@ -70,15 +64,16 @@ describe('PlayerGameService (Real Implementation with Jest)', () => {
 
   it('submitPlayerDecisions should call ApiService.put with correct URL and payload', () => {
     const gameId = 'testGame789';
-    const payload = {
-      round_decisions: { fertilize: true } as RoundDecisionBase,
-      parcel_plantation_choices: { '1': PlantationType.CORN, '5': PlantationType.POTATO }
+    const roundNumber = 1; // Added mock roundNumber
+    const payload: PlayerRoundSubmission = { // Ensured type and corrected property names
+      roundDecisions: { fertilize: true } as RoundDecisionBase, // Corrected property name
+      parcelPlantationChoices: { '1': PlantationType.CORN, '5': PlantationType.POTATO } // Corrected property name
     };
-    const expectedUrl = `/games/${gameId}/current-round/submit`;
-    const mockResponse: RoundWithFieldPublic = {} as RoundWithFieldPublic;
+    const expectedUrl = `/games/${gameId}/rounds/${roundNumber}/my-decisions`; // Updated URL
+    const mockResponse: RoundPublic = {} as RoundPublic; // Changed to RoundPublic
     apiServiceSpy.put.mockReturnValue(of(mockResponse));
 
-    service.submitPlayerDecisions(gameId, payload).subscribe();
+    service.submitPlayerDecisions(gameId, roundNumber, payload).subscribe(); // Added roundNumber
 
     expect(apiServiceSpy.put).toHaveBeenCalledTimes(1);
     expect(apiServiceSpy.put).toHaveBeenCalledWith(expectedUrl, payload);
@@ -86,11 +81,12 @@ describe('PlayerGameService (Real Implementation with Jest)', () => {
 
   it('getPlayerResults should call ApiService.get with correct URL', () => {
     const gameId = 'testGameABC';
-    const expectedUrl = `/games/${gameId}/my-results`;
+    const playerId = 'playerXYZ'; // Added mock playerId
+    const expectedUrl = `/games/${gameId}/results/my-results`; // Updated URL
     const mockResponse: ResultPublic[] = [];
     apiServiceSpy.get.mockReturnValue(of(mockResponse));
 
-    service.getPlayerResults(gameId).subscribe();
+    service.getPlayerResults(gameId, playerId).subscribe(); // Added playerId
 
     expect(apiServiceSpy.get).toHaveBeenCalledTimes(1);
     expect(apiServiceSpy.get).toHaveBeenCalledWith(expectedUrl);

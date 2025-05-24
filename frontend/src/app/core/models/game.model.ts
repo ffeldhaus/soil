@@ -13,7 +13,6 @@ export enum GameStatus {
 export interface GameCreateAdminPayload {
   name: string;
   numberOfRounds: number;
-  maxPlayers: number;
   requestedPlayerSlots: number;
   aiPlayerCount?: number;
 }
@@ -25,7 +24,6 @@ export interface GameAdminListItem {
   currentRoundNumber: number;
   gameStatus: GameStatus | string; // Use enum if possible, or string if backend sends raw string
   adminId: string;
-  maxPlayers: number;
   playerCount?: number; // Often derived or sent by backend
   createdAt: string | Date; // ISO date string or Date object
 }
@@ -36,7 +34,6 @@ export interface GamePublic {
   id: string;
   name: string;
   numberOfRounds: number;
-  maxPlayers: number;
   currentRoundNumber: number;
   gameStatus: GameStatus | string; // Use enum if possible
   adminId: string;

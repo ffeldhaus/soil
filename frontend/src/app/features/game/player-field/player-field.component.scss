@@ -72,7 +72,7 @@ $fallback-accent-default: #2196F3; // Material Blue as a fallback accent
 
 .parcel-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+  grid-template-columns: repeat(8, 1fr);
   gap: 8px; 
   padding: 8px; 
 }

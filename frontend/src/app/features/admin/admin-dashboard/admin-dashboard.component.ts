@@ -44,7 +44,7 @@ export class AdminDashboardComponent implements OnInit {
   adminGames = signal<GameAdminListItem[]>([]);
   selectedGameDetails = signal<GamePublic | null>(null); // Changed to GamePublic
 
-  displayedColumns: string[] = ['name', 'status', 'currentRound', 'maxPlayers', 'actions'];
+  displayedColumns: string[] = ['name', 'status', 'currentRound', 'actions'];
 
   ngOnInit(): void {
     this.loadAdminGames();

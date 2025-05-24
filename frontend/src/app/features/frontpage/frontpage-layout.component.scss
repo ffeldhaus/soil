@@ -1,5 +1,9 @@
 // Extends global styles from styles.scss
 
+.frontpage-layout-container { 
+  background-image: url('/assets/images/farm.jpg'); 
+}
+
 .frontpage-toolbar {
   // Ensure items are vertically centered
   align-items: center;
@@ -17,7 +21,6 @@
     --mat-form-field-container-vertical-padding: 8px;
     --mat-form-field-container-height: 40px;
 
-    // Reverted width changes from container
 
     .mat-form-field-wrapper {
       margin: 0;

@@ -21,7 +21,6 @@ export class GameService {
       id: gameId,
       name: 'Placeholder Game Name',
       numberOfRounds: 15,
-      maxPlayers: 4,
       currentRoundNumber: 1, // This should be dynamic
       gameStatus: 'active',
       adminId: 'admin123',

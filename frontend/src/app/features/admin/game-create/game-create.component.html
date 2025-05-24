@@ -20,46 +20,36 @@
           <div class="form-row">
             <mat-form-field appearance="outline" class="form-field-half">
               <mat-label>Number of Rounds</mat-label>
-              <input matInput type="number" formControlName="number_of_rounds" required [min]="5" [max]="50">
-              <mat-error *ngIf="createGameForm.get('number_of_rounds')?.hasError('required')">Number of rounds is required.</mat-error>
-              <mat-error *ngIf="createGameForm.get('number_of_rounds')?.hasError('min') || createGameForm.get('number_of_rounds')?.hasError('max')">
+              <input matInput type="number" formControlName="numberOfRounds" required [min]="5" [max]="50">
+              <mat-error *ngIf="createGameForm.get('numberOfRounds')?.hasError('required')">Number of rounds is required.</mat-error>
+              <mat-error *ngIf="createGameForm.get('numberOfRounds')?.hasError('min') || createGameForm.get('numberOfRounds')?.hasError('max')">
                 Rounds must be between 5 and 50.
               </mat-error>
             </mat-form-field>
   
-            <mat-form-field appearance="outline" class="form-field-half">
-              <mat-label>Max Players in Game</mat-label>
-              <input matInput type="number" formControlName="max_players" required [min]="minPlayersRequired" [max]="10">
-              <mat-error *ngIf="createGameForm.get('max_players')?.hasError('required')">Max players is required.</mat-error>
-              <mat-error *ngIf="createGameForm.get('max_players')?.hasError('min') || createGameForm.get('max_players')?.hasError('max')">
-                Max players must be between {{ minPlayersRequired }} and 10.
-              </mat-error>
-            </mat-form-field>
+            <!-- Removed Max Players field -->
+            <div class="form-field-half"></div>
           </div>
   
           <div class="form-row">
             <mat-form-field appearance="outline" class="form-field-half">
               <mat-label>Number of Human Players</mat-label>
-              <input matInput type="number" formControlName="requested_player_slots" required min="0"
-                     [max]="createGameForm.get('max_players')?.value || maxPlayersLimit">
-              <mat-error *ngIf="createGameForm.get('requested_player_slots')?.hasError('required')">Human players count is required.</mat-error>
-              <mat-error *ngIf="createGameForm.get('requested_player_slots')?.hasError('min')">Cannot be negative.</mat-error>
-              <mat-error *ngIf="createGameForm.get('requested_player_slots')?.hasError('max')">Cannot exceed Max Players.</mat-error>
+              <input matInput type="number" formControlName="requestedPlayerSlots" required min="0">
+              <mat-error *ngIf="createGameForm.get('requestedPlayerSlots')?.hasError('required')">Human players count is required.</mat-error>
+              <mat-error *ngIf="createGameForm.get('requestedPlayerSlots')?.hasError('min')">Cannot be negative.</mat-error>
+              <!-- Removed max validation based on max_players -->
             </mat-form-field>
   
             <mat-form-field appearance="outline" class="form-field-half">
               <mat-label>Number of AI Players</mat-label>
-              <input matInput type="number" formControlName="ai_player_count" required min="0"
-                     [max]="(createGameForm.get('max_players')?.value || maxPlayersLimit) - (createGameForm.get('requested_player_slots')?.value || 0)">
-              <mat-error *ngIf="createGameForm.get('ai_player_count')?.hasError('required')">AI players count is required.</mat-error>
-              <mat-error *ngIf="createGameForm.get('ai_player_count')?.hasError('min')">Cannot be negative.</mat-error>
-              <mat-error *ngIf="createGameForm.get('ai_player_count')?.hasError('max')">Total players cannot exceed Max Players for game.</mat-error>
+              <input matInput type="number" formControlName="aiPlayerCount" required min="0">
+              <mat-error *ngIf="createGameForm.get('aiPlayerCount')?.hasError('required')">AI players count is required.</mat-error>
+              <mat-error *ngIf="createGameForm.get('aiPlayerCount')?.hasError('min')">Cannot be negative.</mat-error>
+              <!-- Removed max validation based on max_players -->
             </mat-form-field>
           </div>
           
-          <div *ngIf="createGameForm.hasError('totalPlayersExceedMax')" class="form-error">
-            {{ createGameForm.getError('totalPlayersExceedMax')?.message }}
-          </div>
+          <!-- Removed totalPlayersExceedMax error message -->
           <div *ngIf="createGameForm.hasError('totalPlayersBelowMin')" class="form-error">
             {{ createGameForm.getError('totalPlayersBelowMin')?.message }}
           </div>

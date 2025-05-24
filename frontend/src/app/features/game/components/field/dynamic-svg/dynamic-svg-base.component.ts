@@ -27,7 +27,7 @@ export abstract class DynamicSvgBaseComponent {
     'Fritfliege': 'assets/images/fritfliege.png', // Placeholder
     'Kartoffelkäfer': 'assets/images/kartoffelkaefer.png', // Placeholder
     'Maiszünsler': 'assets/images/maiszuensler.png', // Placeholder
-    'Drahtwurm': 'assets/images/drahtwurm.png', // Placeholder
+    'Drahtwurm': 'assets/images/drahtwurm.jpg', // Placeholder
     'Normal': 'assets/images/weather_normal.png', // Placeholder
     'Dürre': 'assets/images/weather_drought.png', // Placeholder
     'Überschwemmung': 'assets/images/weather_flood.png', // Placeholder

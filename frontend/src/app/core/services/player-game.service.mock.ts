@@ -43,12 +43,14 @@ export class MockPlayerGameService implements IPlayerGameService {
     const gameDetails = this.mockGameStore[gameId];
     const currentRoundNumberFromGame = gameDetails ? gameDetails.currentRoundNumber : 2;
     
+    // Using a static mockPlayerId for simplicity in this mock service
     const mockPlayerId = 'mockPlayerABC'; 
 
     const roundKey = `${gameId}_${mockPlayerId}_round_${currentRoundNumberFromGame}`;
 
     if (!this.mockRoundStore[roundKey]) {
-        const mockParcels = this.createMockParcels();
+        // Ensure 40 parcels are created for a new round state
+        const mockParcels = this.createMockParcels(40);
         const newRound: RoundWithFieldPublic = {
           id: roundKey,
           gameId: gameId, 
@@ -62,7 +64,7 @@ export class MockPlayerGameService implements IPlayerGameService {
             attempt_organic_certification: false,
             machine_investment_level: 1
           },
-          field_state: { parcels: mockParcels }, 
+          fieldState: { parcels: mockParcels }, 
           createdAt: new Date().toISOString(), 
           updatedAt: new Date().toISOString(), 
           weatherEvent: 'Normal',
@@ -72,12 +74,12 @@ export class MockPlayerGameService implements IPlayerGameService {
         if (this.mockGameStore[gameId]) {
             this.mockGameStore[gameId].currentRoundNumber = currentRoundNumberFromGame;
         } else {
+            // Create a basic mock game if it doesn't exist
             this.mockGameStore[gameId] = {
                 id: gameId,
                 name: 'Mock Player Game (Implicitly Created)',
                 gameStatus: 'active',
                 currentRoundNumber: currentRoundNumberFromGame,
-                maxPlayers: 3,
                 numberOfRounds: 10,
                 adminId: 'adminMockUser123',
                 createdAt: new Date().toISOString(),
@@ -94,8 +96,10 @@ export class MockPlayerGameService implements IPlayerGameService {
     
     if (!this.mockGameStore[gameId]) {
         const mockPlayers: PlayerPublic[] = [
-          { uid: 'player1', email: 'player1@example.com', username: 'Human Player Mock 1', gameId: gameId, playerNumber: 1, isAi: false, userType: UserRole.PLAYER }, 
-          { uid: 'player2', email: 'ai_player2@example.com', username: 'AI Player Mock Omega', gameId: gameId, playerNumber: 2, isAi: true, userType: UserRole.PLAYER }, 
+          // Add a mock player matching the user's reported email
+          { uid: 'player-playe', email: 'player-playe@example.mock', username: 'Mock Player User', gameId: gameId, playerNumber: 1, isAi: false, userType: UserRole.PLAYER },
+          { uid: 'player1', email: 'player1@example.com', username: 'Human Player Mock 1', gameId: gameId, playerNumber: 2, isAi: false, userType: UserRole.PLAYER }, 
+          { uid: 'player2', email: 'ai_player2@example.com', username: 'AI Player Mock Omega', gameId: gameId, playerNumber: 3, isAi: true, userType: UserRole.PLAYER }, 
         ];
         const initialRoundNumber = 1; 
         this.mockGameStore[gameId] = { 
@@ -103,7 +107,6 @@ export class MockPlayerGameService implements IPlayerGameService {
           name: 'Mock Player Game Detailed',
           gameStatus: 'active',
           currentRoundNumber: initialRoundNumber, 
-          maxPlayers: 3, 
           numberOfRounds: 10, 
           adminId: 'adminMockUser123', 
           createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), 
@@ -124,24 +127,35 @@ export class MockPlayerGameService implements IPlayerGameService {
     payload: PlayerRoundSubmission 
   ): Observable<RoundPublic> { 
     console.log(`MockPlayerGameService: submitPlayerDecisions for round ${roundNumber} in game ${gameId} with payload:`, payload);
+    // Using a static mockPlayerId for simplicity in this mock service
     const mockPlayerId = 'mockPlayerABC'; 
     
     const roundKey = `${gameId}_${mockPlayerId}_round_${roundNumber}`;
     if (this.mockRoundStore[roundKey]) {
         this.mockRoundStore[roundKey].isSubmitted = true;
         this.mockRoundStore[roundKey].decisions = payload.roundDecisions;
-        this.mockRoundStore[roundKey].field_state.parcels = this.mockRoundStore[roundKey].field_state.parcels.map(p => ({
+        // Ensure that when updating, we still have 40 parcels, mapping choices by parcelNumber
+        const currentParcels = this.mockRoundStore[roundKey].fieldState.parcels;
+        const updatedParcels = currentParcels.map(p => ({
             ...p,
             currentPlantation: payload.parcelPlantationChoices[p.parcelNumber] || p.currentPlantation
         }));
+         // If somehow the number of parcels changed (shouldn't happen with map, but as a safeguard)
+        if (updatedParcels.length !== 40) {
+             console.warn(`MockPlayerGameService: Parcel count mismatch during submission update. Expected 40, got ${updatedParcels.length}. Regenerating 40 parcels.`);
+             this.mockRoundStore[roundKey].fieldState.parcels = this.createMockParcels(40);
+        } else {
+             this.mockRoundStore[roundKey].fieldState.parcels = updatedParcels;
+        }
+
         this.mockRoundStore[roundKey].updatedAt = new Date().toISOString();
         if (this.mockGameStore[gameId] && this.mockGameStore[gameId].currentRoundNumber === roundNumber) {
             this.mockGameStore[gameId].currentRoundNumber++;
         }
 
     } else {
-        console.warn(`MockPlayerGameService: Round ${roundNumber} not found for submission. Creating a new entry.`);
-        const mockParcels = this.createMockParcels(); 
+        console.warn(`MockPlayerGameService: Round ${roundNumber} not found for submission. Creating a new entry with 40 parcels.`);
+        const mockParcels = this.createMockParcels(40); 
         const newRoundForSubmission: RoundWithFieldPublic = {
             id: roundKey,
             gameId: gameId,
@@ -149,7 +163,7 @@ export class MockPlayerGameService implements IPlayerGameService {
             roundNumber: roundNumber,
             isSubmitted: true,
             decisions: payload.roundDecisions,
-            field_state: { parcels: mockParcels.map(p => ({ 
+            fieldState: { parcels: mockParcels.map(p => ({ 
                 ...p,
                 currentPlantation: payload.parcelPlantationChoices[p.parcelNumber] || p.currentPlantation
             })) },
@@ -179,7 +193,7 @@ export class MockPlayerGameService implements IPlayerGameService {
         }
     }
     
-    const { field_state, ...roundPublicData } = this.mockRoundStore[roundKey];
+    const { fieldState: field_state, ...roundPublicData } = this.mockRoundStore[roundKey];
     return of(roundPublicData as RoundPublic).pipe(delay(200));
   }
 
@@ -234,6 +248,7 @@ export class MockPlayerGameService implements IPlayerGameService {
         explanations: { yield: 'Rain helped the corn grow well.', costs: 'Slight increase in running costs due to wet conditions.'}
       }
     ];
-    return of(mockResults.filter(r => r.playerId === playerId && r.gameId === gameId)).pipe(delay(100));
+    // Filter by player ID if necessary, but the mock results currently assume a single player context
+    return of(mockResults).pipe(delay(100));
   }
 }

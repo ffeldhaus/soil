@@ -14,11 +14,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { environment } from '../../../../environments/environment';
 import { AdminGameService } from '../../../core/services/admin-game.service';
-import { GameCreateAdminPayload, GamePublic } from '../../../core/models/game.model'; // Changed GameDetailsView to GamePublic
+import { GameCreateAdminPayload, GamePublic } from '../../../core/models/game.model';
 import { NotificationService } from '../../../core/services/notification.service';
 
 const FALLBACK_GAME_ROUNDS = 15;
-const FALLBACK_MAX_PLAYERS = 8;
 const FALLBACK_MIN_PLAYERS = 1;
 const FALLBACK_HUMAN_PLAYERS = 1;
 const FALLBACK_AI_PLAYERS = 0;
@@ -44,7 +43,6 @@ export class GameCreateComponent implements OnInit {
   isSubmitting = signal(false);
 
   defaultGameRounds = FALLBACK_GAME_ROUNDS;
-  maxPlayersLimit = FALLBACK_MAX_PLAYERS;
   minPlayersRequired = FALLBACK_MIN_PLAYERS;
   defaultHumanPlayers = FALLBACK_HUMAN_PLAYERS;
   defaultAiPlayers = FALLBACK_AI_PLAYERS;
@@ -55,60 +53,28 @@ export class GameCreateComponent implements OnInit {
         const devGame = environment.devDefaults.game;
         this.defaultGameName = devGame.name || '';
         this.defaultGameRounds = devGame.rounds || FALLBACK_GAME_ROUNDS;
-        this.maxPlayersLimit = devGame.maxPlayers || FALLBACK_MAX_PLAYERS;
         this.defaultHumanPlayers = devGame.humanPlayers ?? FALLBACK_HUMAN_PLAYERS;
         this.defaultAiPlayers = devGame.aiPlayers ?? FALLBACK_AI_PLAYERS;
      }
 
     this.createGameForm = this.fb.group({
       name: [this.defaultGameName, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      // Form control names are camelCase to match GameCreateAdminPayload model
       numberOfRounds: [this.defaultGameRounds, [Validators.required, Validators.min(5), Validators.max(50)]],
-      maxPlayers: [this.maxPlayersLimit, [Validators.required, Validators.min(this.minPlayersRequired), Validators.max(10)]],
       requestedPlayerSlots: [this.defaultHumanPlayers, [Validators.required, Validators.min(0)]],
       aiPlayerCount: [this.defaultAiPlayers, [Validators.required, Validators.min(0)]]
     }, { validators: this.totalPlayerCountValidator.bind(this) });
   }
 
   ngOnInit(): void {
-    this.setupDynamicValidators();
-  }
-
-  setupDynamicValidators(): void {
-    this.createGameForm.get('maxPlayers')?.valueChanges.subscribe(max => {
-      this.createGameForm.get('requestedPlayerSlots')?.setValidators([
-        Validators.required, Validators.min(0), Validators.max(max)
-      ]);
-      this.createGameForm.get('requestedPlayerSlots')?.updateValueAndValidity();
-
-      const currentHumans = this.createGameForm.get('requestedPlayerSlots')?.value || 0;
-      this.createGameForm.get('aiPlayerCount')?.setValidators([
-        Validators.required, Validators.min(0), Validators.max(max - currentHumans)
-      ]);
-      this.createGameForm.get('aiPlayerCount')?.updateValueAndValidity();
-    });
-
-    this.createGameForm.get('requestedPlayerSlots')?.valueChanges.subscribe(humans => {
-        const max = this.createGameForm.get('maxPlayers')?.value || this.maxPlayersLimit;
-        this.createGameForm.get('aiPlayerCount')?.setValidators([
-            Validators.required, Validators.min(0), Validators.max(max - humans)
-        ]);
-        this.createGameForm.get('aiPlayerCount')?.updateValueAndValidity();
-    });
-
-    this.createGameForm.get('maxPlayers')?.updateValueAndValidity();
-    this.createGameForm.get('requestedPlayerSlots')?.updateValueAndValidity();
+    // Initialization logic can go here if needed in the future
   }
 
   totalPlayerCountValidator(group: AbstractControl): { [key: string]: any } | null {
     const human = group.get('requestedPlayerSlots')?.value ?? 0;
     const ai = group.get('aiPlayerCount')?.value ?? 0;
-    const max = group.get('maxPlayers')?.value ?? this.maxPlayersLimit;
     const totalPlayers = human + ai;
 
-    if (totalPlayers > max) {
-      return { totalPlayersExceedMax: { requiredMax: max, actual: totalPlayers, message: `Total players (Human: ${human} + AI: ${ai} = ${totalPlayers}) cannot exceed Max Players set for game (${max}).` } };
-    }
+    // Only check minimum players required
     if (totalPlayers < this.minPlayersRequired) {
       return { totalPlayersBelowMin: { requiredMin: this.minPlayersRequired, actual: totalPlayers, message: `A game must have at least ${this.minPlayersRequired} player(s) (Human or AI). Current total: ${totalPlayers}.`} };
     }
@@ -126,7 +92,7 @@ export class GameCreateComponent implements OnInit {
     const gameData: GameCreateAdminPayload = this.createGameForm.value;
 
     this.adminGameService.createGame(gameData).subscribe({
-      next: (createdGame: GamePublic) => { // Changed to GamePublic
+      next: (createdGame: GamePublic) => {
         this.notificationService.showSuccess(`Game "${createdGame.name}" created successfully! Player credentials will be sent to your email.`);
         this.router.navigate(['/admin/dashboard']);
       },

@@ -25,7 +25,6 @@ export const environment = {
     adminPassword: 'password',
     game: {
       name: 'Dev Test Game',
-      maxPlayers: 2, // Must be >= human + AI
       humanPlayers: 1,
       aiPlayers: 1,
       rounds: 10 // Example default rounds
