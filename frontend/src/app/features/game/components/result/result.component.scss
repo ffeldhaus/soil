@@ -1,0 +1,66 @@
+// File: frontend/src/app/features/game/components/result/result.component.scss
+.result-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+mat-card-title {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+section {
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+
+  h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+  h4 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1.1em;
+  }
+  p, div, ul {
+    font-size: 0.95em;
+    color: #444;
+    margin-bottom: 8px;
+  }
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    li {
+        margin-bottom: 4px;
+    }
+  }
+  strong {
+    color: #222;
+  }
+}
+
+.text-success {
+    color: #28a745; // Green
+    font-weight: bold;
+}
+.text-danger {
+    color: #dc3545; // Red
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}

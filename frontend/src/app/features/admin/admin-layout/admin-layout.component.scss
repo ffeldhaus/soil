@@ -1,0 +1,42 @@
+@use 'sass:map';
+@use '../../../../_theme-colors' as custom-theme-vars;
+
+// File: frontend/src/app/features/admin/admin-layout/admin-layout.component.scss
+
+.admin-layout-container {
+  background-image: url('/assets/images/admin.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.admin-toolbar {
+  // color="primary" in HTML uses the Material theme (black background, white text from $primary-palette).
+  .toolbar-links {
+    a.active-link, button.active-link {
+        // $primary-palette IS the primary color map.
+        background-color: map.get(custom-theme-vars.$primary-palette, 30); // Lighter shade of the primary color itself
+      }
+  }
+}
+
+.content-wrapper {
+  //background-color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 20);
+  color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 90); 
+  margin: 16px;
+  //border-radius: 8px;
+  //border: 1px solid map.get(map.get(custom-theme-vars.$primary-palette, neutral), 30);
+}
+
+.admin-footer {
+  app-footer {
+    --footer-bg-color: #{map.get(map.get(custom-theme-vars.$primary-palette, neutral), 5)};
+    --footer-text-color: #{map.get(map.get(custom-theme-vars.$primary-palette, neutral), 70)};
+    border-top: 1px solid #{map.get(map.get(custom-theme-vars.$primary-palette, neutral), 25)};
+  }
+}
+
+@media (max-width: 599px) { 
+  .content-wrapper {
+    margin: 8px;
+  }
+}

@@ -1,0 +1,231 @@
+/* You can add global styles to this file, and also import other style files */
+
+// Import Angular Material theming functions
+@use '@angular/material' as mat;
+@use './_theme-colors' as my-custom-theme; // Import the generated theme colors
+@use 'sass:map'; // Import the sass:map module
+
+// Include the core styles for Angular Material. We need this here for general Material styles.
+@include mat.core();
+
+// Applying theme directly using the generated palettes and M3 typography map
+html {
+  @include mat.theme(( 
+    color: (
+      primary: my-custom-theme.$primary-palette,
+      theme-type: dark 
+    ),
+    typography: (
+      plain-family: 'Noto Sans, sans-serif',
+      brand-family: 'Noto Sans, sans-serif',
+      bold-weight: 700,   // Standard bold
+      medium-weight: 500, // Standard medium
+      regular-weight: 400 // Standard regular
+    ),
+    density: 0 
+  ));
+
+  // Apply high-contrast overrides if the user prefers more contrast
+  @media (prefers-contrast: more) {
+    @include my-custom-theme.high-contrast-overrides(dark);
+  }
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Noto Sans', sans-serif; // Ensure Noto Sans is the base font
+    background-color: map.get(map.get(my-custom-theme.$primary-palette, neutral), 10); 
+    color: map.get(map.get(my-custom-theme.$primary-palette, neutral), 90); 
+    overscroll-behavior-y: none;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+  a {
+    color: map.get(map.get(my-custom-theme.$primary-palette, secondary), 70); 
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+      color: map.get(map.get(my-custom-theme.$primary-palette, secondary), 80); 
+    }
+  }
+  
+  .container {
+    max-width: 1280px; 
+    margin: 0 auto;
+    padding: 16px; 
+    background-color: inherit; 
+    color: inherit; 
+  }
+
+mat-card {
+  max-width: 1024px; // General max-width for layout
+  margin-left: auto;  // Centering
+  margin-right: auto; // Centering
+}
+
+// SnackBar custom styles
+// ... (snackbar styles remain the same) ...
+.snackbar-success {
+  $success-bg: map.get(map.get(my-custom-theme.$primary-palette, neutral), 80); 
+  $success-text: map.get(map.get(my-custom-theme.$primary-palette, neutral), 10); 
+  --mdc-snackbar-container-color: #{$success-bg};
+  --mdc-snackbar-supporting-text-color: #{$success-text};
+  .mat-mdc-button { 
+    --mdc-text-button-label-text-color: #{$success-text};
+  }
+}
+
+.snackbar-error {
+  $error-palette: map.get(my-custom-theme.$primary-palette, error);
+  --mdc-snackbar-container-color: #{map.get($error-palette, 40)}; 
+  --mdc-snackbar-supporting-text-color: #{map.get($error-palette, 100)}; 
+  .mat-mdc-button { 
+    --mdc-text-button-label-text-color: #{map.get($error-palette, 100)};
+  }
+}
+
+.snackbar-info {
+  $info-bg: map.get(map.get(my-custom-theme.$primary-palette, neutral), 70); 
+  $info-text: map.get(map.get(my-custom-theme.$primary-palette, neutral), 10);  
+  --mdc-snackbar-container-color: #{$info-bg};
+  --mdc-snackbar-supporting-text-color: #{$info-text};
+  .mat-mdc-button { 
+    --mdc-text-button-label-text-color: #{$info-text};
+  }
+}
+
+// --- GLOBAL LAYOUT STYLES ---
+// ... (other global layout styles remain the same) ...
+.app-layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw; 
+  overflow-x: hidden; 
+}
+
+.app-layout-container--with-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex; 
+  flex-direction: row; 
+  align-items: center; 
+
+  .toolbar-title {
+    color: inherit; 
+    text-decoration: none; 
+    &:hover {
+        text-decoration: none; 
+    }
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .toolbar-links {
+    display: flex;
+    align-items: center;
+    a, button {
+      margin-left: 16px; 
+      text-transform: none; 
+      color: inherit; 
+      text-decoration: none;
+      &:hover {
+        background-color: rgba(255,255,255,0.1); 
+        text-decoration: none;
+      }
+    }
+    .toolbar-icon {
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+     a.active-link, button.active-link { 
+        font-weight: bold;
+        background-color: map.get(my-custom-theme.$primary-palette, 30); 
+      }
+  }
+   .user-email {
+    font-size: 0.8rem;
+    margin-left: 10px;
+    opacity: 0.8;
+    color: inherit; 
+  }
+  .mobile-menu-button {
+      color: inherit; 
+  }
+}
+
+.app-toolbar--transparent {
+  background-color: rgb(0 0 0 / 70%) !important; 
+  color: white !important; 
+
+  .toolbar-title,
+  .toolbar-links a,
+  .toolbar-links button,
+  .toolbar-links .mat-icon,
+  .user-email,
+  .mobile-menu-button mat-icon {
+    color: white !important;
+  }
+  
+  .toolbar-links {
+    a, button {
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2); 
+        }
+    }
+    a.active-link, button.active-link {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
+  }
+}
+
+.app-content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px; 
+  box-sizing: border-box;
+  background-color: inherit;
+  color: inherit;
+}
+
+.app-footer-wrapper {
+  app-footer {
+    --footer-bg-color: #{map.get(map.get(my-custom-theme.$primary-palette, neutral), 5)};
+    --footer-text-color: #{map.get(map.get(my-custom-theme.$primary-palette, neutral), 70)};
+    display: block; 
+  }
+}
+
+.app-footer-wrapper--transparent-dark-bg {
+    app-footer {
+        --footer-bg-color: rgba(0,0,0,0.3);
+        --footer-text-color: #{map.get(map.get(my-custom-theme.$primary-palette, neutral), 90)};
+    }
+}
+
+@media (max-width: 599px) { 
+  .app-content-wrapper {
+    padding: 16px;
+  }
+  .app-toolbar .toolbar-title {
+    font-size: 1.1rem; 
+  }
+  mat-card { // Ensures this overrides the desktop max-width
+    max-width: 100% !important;
+  }
+}

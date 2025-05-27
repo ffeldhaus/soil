@@ -1,0 +1,59 @@
+# File: backend/.gitignore
+
+# IDX
+.idx/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg
+*.egg-info/
+dist/
+build/
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.pot
+*.mo
+
+# Poetry
+.venv/
+# poetry.lock # Typically committed to ensure consistent dependencies across environments
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Environment files
+.env       # Ignore the actual .env file with secrets
+.env.*     # Ignore other .env variations like .env.local, .env.production
+!/.env.example # IMPORTANT: Do NOT ignore .env.example
+
+# macOS
+.DS_Store
+
+# Firebase/Google Cloud credentials (if stored locally and not in .env)
+# Ensure these are never committed if they contain sensitive information!
+# It's best practice to reference them via GOOGLE_APPLICATION_CREDENTIALS in .env
+# serviceAccountKey.json
+# *.json # Be careful with broad patterns like this for credentials, ensure they are named specifically if ignored.
+
+# Terraform (if any backend-specific terraform state were to be kept here)
+# .terraform/
+# *.tfstate
+# *.tfstate.backup
+
+# MyPy
+.mypy_cache/

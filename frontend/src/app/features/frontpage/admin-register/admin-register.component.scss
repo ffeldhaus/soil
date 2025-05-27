@@ -1,0 +1,61 @@
+@use 'sass:map';
+@use '../../../../_theme-colors' as custom-theme-vars; // Import the generated theme colors
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 64px - 56px - 40px); // Viewport height minus toolbar, footer, and padding
+    padding: 20px;
+  }
+  
+  .register-card {
+    width: 100%;
+    max-width: 500px; // Slightly wider for more form fields
+    // Background and text color should be inherited from .mat-card global styles
+  }
+  
+  mat-card-title {
+    text-align: center;
+    margin-bottom: 16px;
+    // Color should be inherited
+  }
+  
+  .info-text {
+      font-size: 0.9rem;
+      // Use a lighter neutral color from the theme for info text
+      color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 70);
+      margin-bottom: 24px;
+      line-height: 1.5;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  mat-form-field {
+    margin-bottom: 12px; // Slightly less margin for more fields
+  }
+  
+  button[mat-raised-button] {
+    margin-top: 16px;
+    padding: 10px 0;
+  }
+  
+  .additional-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+  
+    a {
+      display: block;
+      margin-top: 8px;
+      // Use a color from the theme's secondary palette
+      color: map.get(map.get(custom-theme-vars.$primary-palette, secondary), 70);
+  
+      &:hover {
+        // Lighter on hover from the secondary palette
+        color: map.get(map.get(custom-theme-vars.$primary-palette, secondary), 80);
+      }
+    }
+  }

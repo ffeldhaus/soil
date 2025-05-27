@@ -1,0 +1,9 @@
+# This file is used by the Angular CLI and other tools to determine target browsers.
+# For more information, see: https://github.com/browserslist/browserslist
+
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+not dead
+> 0.5%

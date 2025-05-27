@@ -1,9 +1,0 @@
-<h1 mat-dialog-title>Start von Runde {{result.round.number}}</h1>
-<div mat-dialog-content>
-    <mat-list>
-        <mat-list-item>Wetter: {{result.weather}}</mat-list-item>
-        <mat-list-item>Schädlinge: {{result.vermin}}</mat-list-item>
-        <mat-list-item>Gewinn: {{result.profit | currency : 'EUR'}}</mat-list-item>
-        <mat-list-item *ngIf="result.organic">Das Biosiegel wurde erworben!</mat-list-item>
-    </mat-list>
-</div>

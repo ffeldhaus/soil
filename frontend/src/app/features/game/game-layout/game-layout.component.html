@@ -1,0 +1,52 @@
+<!-- File: frontend/src/app/features/game/game-layout/game-layout.component.html -->
+<div class="app-layout-container app-layout-container--with-bg game-layout-container" style="background-image: url('assets/images/bauernhof.jpg')">
+  <mat-toolbar class="app-toolbar app-toolbar--transparent game-toolbar">
+    <!-- Hamburger button for mobile - can be removed if not desired with top-only menu -->
+    <button
+      type="button"
+      aria-label="Toggle menu"
+      mat-icon-button
+      (click)="drawer.toggle()" 
+      *ngIf="isHandset$ | async">
+      <mat-icon aria-label="Menu icon">menu</mat-icon>
+    </button>
+    
+    <a [routerLink]="['/game', gameId(), 'field']" class="toolbar-title">Soil Game - {{ playerDisplayName() }}</a>
+    <span class="spacer"></span>
+
+    <!-- Desktop Menu Items -->
+    <div class="toolbar-links" *ngIf="!(isHandset$ | async)">
+      <a mat-button *ngFor="let item of gameNavItems()" [routerLink]="item.linkParts" [queryParams]="item.queryParams" routerLinkActive="active-link">
+        <mat-icon *ngIf="item.icon" class="toolbar-icon">{{ item.icon }}</mat-icon> {{ item.label }}
+      </a>
+      <button mat-button (click)="onLogout()">
+        <mat-icon class="toolbar-icon">logout</mat-icon> Logout
+      </button>
+      <span class="user-email" *ngIf="authService.currentUser()?.email">({{ authService.currentUser()?.email }})</span>
+    </div>
+
+    <!-- Mobile Menu Items -->
+    <mat-menu #mobileMenu="matMenu" *ngIf="isHandset$ | async">
+        <a mat-menu-item *ngFor="let item of gameNavItems()" [routerLink]="item.linkParts" [queryParams]="item.queryParams" routerLinkActive="active-link">
+            <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+        </a>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="onLogout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+        </button>
+    </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="mobileMenu" *ngIf="isHandset$ | async" class="mobile-menu-button">
+        <mat-icon>more_vert</mat-icon>
+    </button>
+
+  </mat-toolbar>
+
+  <main class="app-content-wrapper content-wrapper">
+    <router-outlet></router-outlet>
+  </main>
+  <div class="app-footer-wrapper app-footer-wrapper--transparent-dark-bg game-footer">
+    <!-- Footer content removed -->
+  </div>
+</div>

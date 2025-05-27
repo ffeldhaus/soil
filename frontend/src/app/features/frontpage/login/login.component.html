@@ -1,0 +1,48 @@
+<div class="page-container login-container">
+    <mat-card class="login-card">
+      <mat-card-header>
+        <mat-card-title *ngIf="!isPlayerLoginMode()">{{ 'login.title' | translate }}</mat-card-title>
+        <mat-card-title *ngIf="isPlayerLoginMode()">{{ 'login.playerLoginTitle' | translate: { gameIdQueryParam: gameIdQueryParam } }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width" *ngIf="!isPlayerLoginMode()">
+            <mat-label>{{ 'login.emailLabel' | translate }}</mat-label>
+            <input matInput formControlName="email" type="email" required
+                   placeholder="{{ 'login.emailPlaceholder' | translate }}">
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              {{ 'login.emailRequired' | translate }}
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              {{ 'login.emailInvalid' | translate }}
+            </mat-error>
+          </mat-form-field>
+  
+          <div *ngIf="isPlayerLoginMode()" class="player-login-info">
+              <p>{{ 'login.playerLoginInfo' | translate: { playerNumberQueryParam: playerNumberQueryParam, gameIdQueryParam: gameIdQueryParam } }}</p>
+          </div>
+  
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'login.passwordLabel' | translate }}</mat-label>
+            <input matInput formControlName="password" [type]="showPassword() ? 'text' : 'password'" required
+                   placeholder="{{ 'login.passwordPlaceholder' | translate }}">
+            <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button" [attr.aria-label]="'login.togglePasswordVisibilityAriaLabel' | translate" [attr.aria-pressed]="showPassword()">
+              <mat-icon>{{showPassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              {{ 'login.passwordRequired' | translate }}
+            </mat-error>
+          </mat-form-field>
+  
+          <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? ('login.loggingInButton' | translate) : (isPlayerLoginMode() ? ('login.loginToGameButton' | translate) : ('login.loginButton' | translate)) }}
+          </button>
+        </form>
+  
+        <div class="additional-links" *ngIf="!isPlayerLoginMode()">
+          <a routerLink="../register">{{ 'login.registerLink' | translate }}</a>
+          <!-- <a routerLink="/auth/forgot-password">Forgot Password?</a> -->
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>

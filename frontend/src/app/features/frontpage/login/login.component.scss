@@ -1,0 +1,61 @@
+@use 'sass:map';
+// Import the generated theme colors directly
+@use '../../../../_theme-colors' as custom-theme-vars;
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 64px - 56px - 40px); 
+    padding: 20px;
+  }
+  
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  mat-card-title {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  mat-form-field {
+    margin-bottom: 16px;
+  }
+  
+  button[mat-raised-button] {
+    margin-top: 8px;
+    padding: 10px 0;
+  }
+  
+  .additional-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+  
+    a {
+      display: block;
+      margin-top: 8px;
+      color: map.get(map.get(custom-theme-vars.$primary-palette, secondary), 70);
+  
+      &:hover {
+        color: map.get(map.get(custom-theme-vars.$primary-palette, secondary), 80);
+      }
+    }
+  }
+  
+  .player-login-info {
+    background-color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 20); 
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: map.get(map.get(custom-theme-vars.$primary-palette, neutral), 80); 
+    border: 1px solid map.get(map.get(custom-theme-vars.$primary-palette, neutral), 30); 
+  }

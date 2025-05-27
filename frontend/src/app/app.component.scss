@@ -1,0 +1,59 @@
+/* Styles for the root application component */
+
+// Example: Ensure the app-root takes up full height if needed for certain layouts
+// :host {
+//   display: flex;
+//   flex-direction: column;
+//   min-height: 100vh;
+// }
+
+.impersonation-banner {
+    position: sticky;
+    top: 0;
+    z-index: 1000; // Ensure it's above other content
+  
+    .mat-toolbar {
+      display: flex;
+      align-items: center;
+    }
+  
+    .impersonation-text {
+      margin-left: 10px;
+      font-size: 0.9em;
+    }
+  
+    .impersonation-spacer {
+      flex-grow: 1;
+    }
+  
+    .stop-impersonation-button {
+      // Example to make it stand out on warn toolbar
+      // Use custom class or attribute selectors for more specific styling if Material theming conflicts
+      // background-color: white !important; 
+      // color: red !important;
+      // Instead of !important, try to use higher specificity or Material theming variables if possible
+    }
+  }
+
+.toolbar-spacer {
+  flex-grow: 1;
+}
+
+.language-selector {
+  font-size: 2em; // Smaller language selector
+  margin-left: 20px; // Add some space to the left
+  width: 150px; // Adjust width as needed
+}
+  
+  // If the banner is sticky and pushes content down, this might not be needed.
+  // If the banner is fixed and overlays content, then the router-outlet might need padding.
+  // router-outlet {
+  //   display: block;
+  //   padding-top: 56px; /* Adjust to match toolbar height (mobile) */
+  // }
+  
+  // @media (min-width: 600px) {
+  //   router-outlet {
+  //     padding-top: 64px; /* Adjust to match toolbar height (desktop) */
+  //   }
+  // }

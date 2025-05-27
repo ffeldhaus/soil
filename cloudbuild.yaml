@@ -1,0 +1,188 @@
+steps:
+  # --- Backend Build & Deploy ---
+  - name: 'gcr.io/cloud-builders/docker'
+    id: BuildBackend
+    args: ['build', '-t', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/soil-game-${_ENV}-repo/backend:${SHORT_SHA}', './backend']
+    waitFor: ['-']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: PushBackend
+    args: ['push', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/soil-game-${_ENV}-repo/backend:${SHORT_SHA}']
+    waitFor: ['BuildBackend']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: DeployBackend
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'soil-backend-${_ENV}' # Construct service name
+      - '--image'
+      - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/soil-game-${_ENV}-repo/backend:${SHORT_SHA}'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--quiet'
+    waitFor: ['PushBackend']
+
+  # --- Frontend Build & Deploy ---
+  - name: 'gcr.io/cloud-builders/npm'
+    id: NpmInstallFrontend
+    args: ['ci']
+    dir: 'frontend'
+    waitFor: ['-']
+
+  # Get secrets for frontend config (use secret version 'latest')
+  # Ensure secret IDs match those created in Terraform main.tf
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetFirebaseApiKey
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=firebase-api-key-${_ENV} --project=${_PROJECT_ID} > /workspace/firebase_api_key.txt']
+    waitFor: ['NpmInstallFrontend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetFirebaseAuthDomain
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=firebase-auth-domain-${_ENV} --project=${_PROJECT_ID} > /workspace/firebase_auth_domain.txt']
+    waitFor: ['NpmInstallFrontend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetFirebaseProjectId
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=firebase-project-id-${_ENV} --project=${_PROJECT_ID} > /workspace/firebase_project_id.txt']
+    waitFor: ['NpmInstallFrontend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetFirebaseStorageBucket
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=firebase-storage-bucket-${_ENV} --project=${_PROJECT_ID} > /workspace/firebase_storage_bucket.txt']
+    waitFor: ['NpmInstallFrontend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetFirebaseMessagingId
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=firebase-messaging-id-${_ENV} --project=${_PROJECT_ID} > /workspace/firebase_messaging_id.txt']
+    waitFor: ['NpmInstallFrontend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetFirebaseAppId
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=firebase-app-id-${_ENV} --project=${_PROJECT_ID} > /workspace/firebase_app_id.txt']
+    waitFor: ['NpmInstallFrontend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetFirebaseMeasurementId
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=firebase-measurement-id-${_ENV} --project=${_PROJECT_ID} > /workspace/firebase_measurement_id.txt || echo "DISABLED" > /workspace/firebase_measurement_id.txt'] # Handle potential missing secret
+    waitFor: ['NpmInstallFrontend']
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: GetApiUrl
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud secrets versions access latest --secret=frontend-api-url-${_ENV} --project=${_PROJECT_ID} > /workspace/api_url.txt']
+    waitFor: ['NpmInstallFrontend']
+
+  # Prepare environment file
+  - name: 'ubuntu'
+    id: PrepareEnvFile
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Target file is always environment.prod.ts for CI builds,
+        # as we use --configuration production for ng build.
+        TARGET_ENV_FILE="frontend/src/environments/environment.prod.ts"
+        PROD_FLAG="true" # Always true for CI builds using this template
+
+        # Determine Player Email Domain based on ENV
+        if [ "$_ENV" = "dev" ]; then
+          EMAIL_DOMAIN="soil.dev.app" # Example dev domain
+        elif [ "$_ENV" = "staging" ]; then
+          EMAIL_DOMAIN="soil.staging.app" # Example staging domain
+        else # prod
+          EMAIL_DOMAIN="soil.app" # Example prod domain
+        fi
+
+        echo "Preparing environment file: $TARGET_ENV_FILE for ENV: $_ENV"
+        cp frontend/src/environments/environment.template.ts $$TARGET_ENV_FILE
+
+        # Replace placeholders using values fetched from secrets
+        sed -i "s|__PRODUCTION_FLAG__|$$PROD_FLAG|g" $$TARGET_ENV_FILE
+        sed -i "s|__PLAYER_EMAIL_DOMAIN__|$$EMAIL_DOMAIN|g" $$TARGET_ENV_FILE
+
+        API_KEY=$$(cat /workspace/firebase_api_key.txt)
+        AUTH_DOMAIN=$$(cat /workspace/firebase_auth_domain.txt)
+        PROJECT_ID=$$(cat /workspace/firebase_project_id.txt)
+        STORAGE_BUCKET=$$(cat /workspace/firebase_storage_bucket.txt)
+        MESSAGING_ID=$$(cat /workspace/firebase_messaging_id.txt)
+        APP_ID=$$(cat /workspace/firebase_app_id.txt)
+        MEASUREMENT_ID=$$(cat /workspace/firebase_measurement_id.txt)
+        API_URL=$$(cat /workspace/api_url.txt)
+
+        # Escape potential special characters in values before using sed
+        API_KEY_ESC=$$(printf '%s
+' "$$API_KEY" | sed -e 's/[\/&]/\&/g')
+        AUTH_DOMAIN_ESC=$$(printf '%s
+' "$$AUTH_DOMAIN" | sed -e 's/[\/&]/\&/g')
+        PROJECT_ID_ESC=$$(printf '%s
+' "$$PROJECT_ID" | sed -e 's/[\/&]/\&/g')
+        STORAGE_BUCKET_ESC=$$(printf '%s
+' "$$STORAGE_BUCKET" | sed -e 's/[\/&]/\&/g')
+        MESSAGING_ID_ESC=$$(printf '%s
+' "$$MESSAGING_ID" | sed -e 's/[\/&]/\&/g')
+        APP_ID_ESC=$$(printf '%s
+' "$$APP_ID" | sed -e 's/[\/&]/\&/g')
+        MEASUREMENT_ID_ESC=$$(printf '%s
+' "$$MEASUREMENT_ID" | sed -e 's/[\/&]/\&/g')
+        API_URL_ESC=$$(printf '%s
+' "$$API_URL" | sed -e 's/[\/&]/\&/g')
+
+
+        sed -i "s|__FIREBASE_API_KEY__|$$API_KEY_ESC|g" $$TARGET_ENV_FILE
+        sed -i "s|__FIREBASE_AUTH_DOMAIN__|$$AUTH_DOMAIN_ESC|g" $$TARGET_ENV_FILE
+        sed -i "s|__FIREBASE_PROJECT_ID__|$$PROJECT_ID_ESC|g" $$TARGET_ENV_FILE
+        sed -i "s|__FIREBASE_STORAGE_BUCKET__|$$STORAGE_BUCKET_ESC|g" $$TARGET_ENV_FILE
+        sed -i "s|__FIREBASE_MESSAGING_SENDER_ID__|$$MESSAGING_ID_ESC|g" $$TARGET_ENV_FILE
+        sed -i "s|__FIREBASE_APP_ID__|$$APP_ID_ESC|g" $$TARGET_ENV_FILE
+        sed -i "s|__FIREBASE_MEASUREMENT_ID__|$$MEASUREMENT_ID_ESC|g" $$TARGET_ENV_FILE
+        sed -i "s|__API_URL__|$$API_URL_ESC|g" $$TARGET_ENV_FILE
+
+        echo "Content of $$TARGET_ENV_FILE after replacement:"
+        cat $$TARGET_ENV_FILE
+
+    waitFor:
+      - GetFirebaseApiKey
+      - GetFirebaseAuthDomain
+      - GetFirebaseProjectId
+      - GetFirebaseStorageBucket
+      - GetFirebaseMessagingId
+      - GetFirebaseAppId
+      - GetFirebaseMeasurementId
+      - GetApiUrl
+
+  - name: 'gcr.io/cloud-builders/npm'
+    id: BuildFrontend
+    args: ['run', 'build', '--configuration', 'production'] # Always use prod config for CI builds
+    dir: 'frontend'
+    waitFor: ['PrepareEnvFile']
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    id: DeployFrontend
+    args:
+      - '-m'
+      - 'rsync'
+      - '-R'
+      - '-c'
+      - '-d'
+      # Adjust source path based on actual ng build output for production
+      - './dist/soil-frontend/browser/'
+      - 'gs://soil-frontend-${_ENV}-${_PROJECT_ID}' # Construct bucket name
+    dir: 'frontend'
+    waitFor: ['BuildFrontend']
+
+images:
+  - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/soil-game-${_ENV}-repo/backend:${SHORT_SHA}'
+
+# Make sure substitutions are defined in Triggers
+# _ENV: dev, staging, or prod
+# _PROJECT_ID: Target GCP Project ID
+# _REGION: GCP Region
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  # Optional: Specify machine type if needed
+  # machineType: 'N1_HIGHCPU_8'

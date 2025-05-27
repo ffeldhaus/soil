@@ -1,0 +1,109 @@
+// File: frontend/src/app/features/game/components/player/player.component.scss
+.player-view-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px); // Assuming 64px toolbar
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  p {
+    margin-top: 10px;
+    font-size: 1.1em;
+  }
+}
+
+.game-header {
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  text-align: center;
+
+  h1 {
+    margin: 0 0 5px 0;
+    font-size: 1.8em;
+    color: #333;
+  }
+  .round-info, .game-status {
+    font-size: 1em;
+    color: #555;
+    margin: 3px 0;
+  }
+}
+
+mat-tab-group {
+  margin-bottom: 15px;
+  flex-shrink: 0;
+  // Ensure tabs themselves don't cause overflow if many rounds
+  ::ng-deep .mat-mdc-tab-header {
+    overflow-x: auto; // Allow scrolling for many tabs
+  }
+}
+
+.round-content-area {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; // Content area scrolls if needed
+}
+
+.view-controls {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  button {
+    mat-icon {
+      margin-right: 6px;
+    }
+  }
+}
+
+.round-actions {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  button {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.game-ended-message, .no-round-data, .critical-error-message {
+  padding: 20px;
+  text-align: center;
+  font-size: 1.2em;
+  color: #777;
+  background-color: #f9f9f9;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  margin-top: 20px;
+  h2 {
+    color: #555;
+  }
+}
+
+// Ensure app-field and app-result take up available space if needed
+app-field, app-result {
+  display: block; // Or flex, depending on their internal layout needs
+  width: 100%;
+  // min-height: 400px; // Example, to ensure they have some space
+}
+

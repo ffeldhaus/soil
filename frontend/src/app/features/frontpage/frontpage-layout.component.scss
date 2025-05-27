@@ -1,0 +1,75 @@
+// Extends global styles from styles.scss
+
+.frontpage-layout-container { 
+  background-image: url('/assets/images/farm.jpg'); 
+}
+
+.frontpage-toolbar {
+  // Ensure items are vertically centered
+  align-items: center;
+  // Default toolbar height is 64px, dense is 48px. Ensure it's set if not inherited properly.
+  // Let's aim for the default height and make the selector fit within it.
+
+  .language-selector {
+    // Make the form field compact
+    // Reduce the overall height by adjusting margin and padding
+    margin: 0 8px;
+    padding: 0;
+    height: auto; // Allow content to dictate height, but control inner elements
+
+    // Set custom properties for material form field
+    --mat-form-field-container-vertical-padding: 8px;
+    --mat-form-field-container-height: 40px;
+
+
+    .mat-form-field-wrapper {
+      margin: 0;
+      padding-bottom: 0; // Remove space for the underline
+      height: 100%; // Allow flex to control height
+    }
+
+    .mat-form-field-flex {
+      align-items: center; // Vertically center content inside the flex container
+      padding-top: 0; // Remove default padding
+      height: 100%;
+      // Reverted width change from flex
+    }
+
+    .mat-form-field-infix {
+      padding: 0; // Remove default vertical padding
+      border-top-width: 0; // Remove space for the floating label
+    }
+
+    // New rule for MDC infix
+    .mat-mdc-form-field-infix {
+      width: 100px !important;
+    }
+    // End new rule
+
+    // Hide elements not needed in a compact toolbar select
+    .mat-form-field-label-wrapper,
+    .mat-form-field-underline,
+    .mat-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    // Specific adjustments for the outline appearance if used
+    &.mat-form-field-appearance-outline {
+      .mat-form-field-outline {
+        display: none; // Hide the outline borders
+      }
+      .mat-form-field-wrapper {
+         // Ensure no border remains
+         border: none;
+      }
+    }
+
+    // Adjust the select trigger to control its height and padding and width
+    .mat-select-trigger {
+      height: 40px; // Match infix height
+      line-height: 40px; // Vertically center text
+      padding: 0 8px; // Horizontal padding
+      // Reverted width change from trigger
+    }
+  }
+}
