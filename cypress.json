@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:4200", 
+  "integrationFolder": "e2e/cypress/integration",
+  "supportFile": "e2e/cypress/support/index.js",
+  "fixturesFolder": false,
+  "video": false,
+  "screenshotOnRunFailure": false
+}
