@@ -20,8 +20,8 @@ export class DisplayPlantationNamePipe implements PipeTransform {
   };
 
   transform(value: PlantationType | string | undefined | null): string {
-    if (!value) return 'N/A';
-    const key = typeof value === 'string' ? value : value.valueOf();
+    if (value === null || typeof value === 'undefined') return 'N/A';
+    const key = typeof value === 'string' ? value : String(value);
     return this.nameMap[key] || key;
   }
 }
