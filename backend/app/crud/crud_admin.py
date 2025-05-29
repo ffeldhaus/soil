@@ -1,4 +1,5 @@
 from typing import Any, Dict, Optional, Union
+from datetime import datetime, timezone # Added
 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from google.cloud.firestore_v1.base_client import BaseClient # For type hint of sync client if needed
@@ -49,6 +50,11 @@ class CRUDAdmin(CRUDBase[AdminInDB, AdminCreate, AdminUpdate]):
         admin_data_to_store.setdefault("is_superuser", True) # Admins are superusers
         admin_data_to_store.setdefault("is_active", True)    # Active by default
 
+        # Add timestamps
+        current_time = datetime.now(timezone.utc)
+        admin_data_to_store["created_at"] = current_time
+        admin_data_to_store["updated_at"] = current_time
+
         # Ensure full_name is consistent if first_name and last_name are primary
         # AdminCreate includes full_name from UserCreate, but also first_name, last_name.
         # If UserCreate's root_validator handles full_name, this might be redundant.
@@ -84,7 +90,8 @@ class CRUDAdmin(CRUDBase[AdminInDB, AdminCreate, AdminUpdate]):
             if "password" in update_data: # Should not happen if using AdminUpdate schema
                 del update_data["password"]
 
-
+        # Add updated_at timestamp
+        update_data["updated_at"] = datetime.now(timezone.utc)
         return await super().update(db, doc_id=doc_id, obj_in=update_data)
 
     # You can add other admin-specific query methods here if needed

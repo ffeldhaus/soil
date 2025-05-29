@@ -1,9 +1,10 @@
 # File: backend/app/crud/crud_player.py
 from typing import Any, Dict, List, Optional, Union
+from datetime import datetime, timezone # Added
 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from google.cloud.firestore_v1.base_client import BaseClient # For type hint of sync client
-from google.cloud.firestore_v1.base_query import AsyncବQuery
+from google.cloud.firestore_v1.async_query import AsyncQuery
 
 
 from app.crud.base import CRUDBase
@@ -71,6 +72,7 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
             if "password" in update_data:
                 del update_data["password"]
         
+        update_data["updated_at"] = datetime.now(timezone.utc) # Add updated_at timestamp
         return await super().update(db, doc_id=doc_id, obj_in=update_data)
 
     async def get_players_by_game_id(
@@ -81,11 +83,9 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
         Requires a composite index on ('game_id', <any other field for ordering if used>).
         Or a single field index on 'game_id' if no other ordering/filtering is applied here.
         """
-        query: AsyncବQuery = db.collection(self.collection_name).where(field="game_id", op_string="==", value=game_id).limit(limit)
-        snapshots = await query.stream() # type: ignore
-        
+        query: AsyncQuery = db.collection(self.collection_name).where(field="game_id", op_string="==", value=game_id).limit(limit)
         results = []
-        async for snapshot in snapshots:
+        async for snapshot in query.stream(): # type: ignore
             if snapshot.exists:
                 data = snapshot.to_dict()
                 data["id"] = snapshot.id
@@ -101,20 +101,25 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
         Get a specific player in a game by their player_number.
         Requires a composite index on ('game_id', 'player_number').
         """
-        query: AsyncବQuery = (
+        query: AsyncQuery = (
             db.collection(self.collection_name)
             .where(field="game_id", op_string="==", value=game_id)
             .where(field="player_number", op_string="==", value=player_number)
             .limit(1)
         )
-        snapshots = await query.stream() # type: ignore
-        async for snapshot in snapshots:
-            if snapshot.exists:
-                data = snapshot.to_dict()
-                data["id"] = snapshot.id
-                if "uid" not in data and "id" in data and hasattr(self.model_schema, "uid"):
-                    data["uid"] = data["id"]
-                return self.model_schema(**data)
+        # snapshots = await query.stream() # type: ignore # Incorrect usage
+        # async for snapshot in snapshots:
+        snapshot_result = None
+        async for s in query.stream(): # Correctly iterate and expect one
+            snapshot_result = s
+            break # Since limit is 1, we only need the first one
+
+        if snapshot_result and snapshot_result.exists:
+            data = snapshot_result.to_dict()
+            data["id"] = snapshot_result.id # Corrected indentation and variable name
+            if "uid" not in data and "id" in data and hasattr(self.model_schema, "uid"):
+                data["uid"] = data["id"]
+            return self.model_schema(**data)
         return None
 
     async def clear_temp_password_hash(self, db: Union[AsyncFirestoreClient, BaseClient], *, player_uid: str) -> bool:
@@ -123,11 +128,12 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
         or when they set a permanent password.
         """
         try:
-            await super().update(db, doc_id=player_uid, obj_in={"temp_password_hash": None})
-            return True
+            # Call super().update and return its result (which should be the updated player dict or None)
+            updated_player_data = await super().update(db, doc_id=player_uid, obj_in={"temp_password_hash": None})
+            return updated_player_data # Return the dict or None
         except Exception as e:
             print(f"Error clearing temp_password_hash for player {player_uid}: {e}")
-            return False
+            return None # Return None in case of an exception to match expected Optional[Dict]
 
 
 # Instantiate the CRUDPlayer class

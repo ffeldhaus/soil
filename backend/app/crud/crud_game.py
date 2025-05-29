@@ -1,9 +1,10 @@
 from typing import Any, Dict, List, Optional, Union
 from uuid import uuid4
+from datetime import datetime, timezone # Added
 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from google.cloud.firestore_v1.base_client import BaseClient # For type hint of sync client
-from google.cloud.firestore_v1.base_query import AsyncବQuery
+from google.cloud.firestore_v1.async_query import AsyncQuery
 
 
 from app.crud.base import CRUDBase
@@ -58,13 +59,12 @@ class CRUDGame(CRUDBase[GameInDB, GameCreate, GameUpdate]):
         Get all games created by a specific admin.
         Requires an index on 'admin_id'.
         """
-        query: AsyncବQuery = db.collection(self.collection_name).where(
+        query: AsyncQuery = db.collection(self.collection_name).where(
             field="admin_id", op_string="==", value=admin_id
         ).limit(limit) # Add .order_by("created_at", direction="DESCENDING") if desired (needs composite index)
         
-        snapshots = await query.stream() # type: ignore
         results = []
-        async for snapshot in snapshots:
+        async for snapshot in query.stream(): # type: ignore
             if snapshot.exists:
                 data = snapshot.to_dict()
                 data["id"] = snapshot.id
