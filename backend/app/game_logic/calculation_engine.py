@@ -6,7 +6,7 @@ from app.schemas.player import PlayerInDB
 from app.schemas.round import RoundInDB, RoundDecisionBase 
 from app.schemas.parcel import ParcelInDB, PlantationType
 from app.schemas.result import ResultCreate 
-from app.schemas.financials import TotalIncome, TotalExpenses
+from app.schemas.financials import TotalIncome, TotalExpensesBreakdown
 from pydantic import BaseModel # To ensure TotalIncome/Expenses are models
 
 from app.game_logic import game_rules, decision_impacts
@@ -143,9 +143,9 @@ async def _calculate_single_player_round_outcome(
         updated_player_machine_level 
     )
 
-    total_expenses_obj = TotalExpenses(
-        seeds=seed_costs, investments=investment_costs, running_costs=running_costs,
-        total=round(seed_costs.total + investment_costs.total + running_costs.total, 2)
+    total_expenses_obj = TotalExpensesBreakdown(
+        seed_costs=seed_costs, investment_costs=investment_costs, running_costs=running_costs,
+        grand_total=round(seed_costs.total + investment_costs.total + running_costs.total, 2)
     )
 
     # Harvest income is based on the yields calculated by update_parcel_ecological_state,
@@ -155,11 +155,11 @@ async def _calculate_single_player_round_outcome(
         parcels_state_for_next_round_start, is_organic_certified_this_round
     )
     total_income_obj = TotalIncome(
-        harvests=harvest_income_obj, 
-        total=round(harvest_income_obj.total if harvest_income_obj else 0.0, 2) # Ensure harvest_income_obj is not None
+        harvest_income=harvest_income_obj, # Corrected field name from harvests to harvest_income
+        grand_total=round(harvest_income_obj.total if harvest_income_obj else 0.0, 2) # Corrected field name from total to grand_total
     )
 
-    profit_this_round = total_income_obj.total - total_expenses_obj.total
+    profit_this_round = total_income_obj.grand_total - total_expenses_obj.grand_total # Use grand_total
     closing_capital = starting_capital + profit_this_round
 
     result_for_this_round = ResultCreate(

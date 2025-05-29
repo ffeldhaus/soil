@@ -114,13 +114,20 @@ async def test_calculate_single_player_round_1_fallow_to_wheat_normal():
 
 @pytest.mark.asyncio
 async def test_calculate_single_player_round_2_potato_after_wheat_with_investment_and_fertilizer():
-    game = create_test_game(current_round_number=2) 
+    game = create_test_game(current_round_number=2)
     player = create_test_player()
 
+    # --- Make test deterministic for round 2 weather/vermin ---
+    if len(game.weather_sequence) > 1: # Should be true given num_rounds=15
+        game.weather_sequence[1] = game_rules.DROUGHT
+    if len(game.vermin_sequence) > 1:
+        game.vermin_sequence[1] = game_rules.APHIDS
+    # ---
+
     parcel1_start_of_round2 = create_initial_field_state(
-        num_parcels=1, 
-        start_plantation=PlantationType.POTATO, 
-        previous_plantation=PlantationType.WHEAT  
+        num_parcels=1,
+        start_plantation=PlantationType.POTATO,
+        previous_plantation=PlantationType.WHEAT
     )[0]
     parcel1_start_of_round2.soil_quality = 78.5 
     parcel1_start_of_round2.nutrient_level = 62.0 
@@ -166,5 +173,5 @@ async def test_calculate_single_player_round_2_potato_after_wheat_with_investmen
                                    game_rules.MACHINE_DEPRECIATION_PER_ROUND)
     assert result_round2.player_machine_efficiency == pytest.approx(expected_machine_eff_end_r2)
     
-    # Corrected expectation based on consistent code output
-    assert parcel_after_round2.nutrient_level == pytest.approx(79.7, abs=0.1)
+    # Expectation based on manual trace with DROUGHT and APHIDS for round 2
+    assert parcel_after_round2.nutrient_level == pytest.approx(78.9, abs=0.1)

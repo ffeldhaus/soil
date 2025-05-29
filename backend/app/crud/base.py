@@ -1,7 +1,7 @@
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 from pydantic import BaseModel
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
-from google.cloud.firestore_v1.base_query import AsyncବQuery # Use Async types
+# from google.cloud.firestore_v1.base_query import AsyncବQuery # Removed problematic import
 from google.cloud.firestore_v1.document import DocumentReference, DocumentSnapshot
 from google.cloud.firestore_v1.base_client import BaseClient # For type hint of sync client if needed
 
@@ -75,10 +75,9 @@ class CRUDBase(Generic[ModelSchemaType, CreateSchemaType, UpdateSchemaType]):
         Returns:
             A Pydantic model instance of the first matching document if found, otherwise None.
         """
-        query: AsyncବQuery = db.collection(self.collection_name).where(field=field_name, op_string="==", value=field_value).limit(1)
-        snapshots: List[DocumentSnapshot] = await query.stream() # type: ignore
+        query = db.collection(self.collection_name).where(field=field_name, op_string="==", value=field_value).limit(1)
         
-        async for snapshot in snapshots: # Iterate through the async generator
+        async for snapshot in query.stream(): # Corrected: Iterate directly over async generator
             if snapshot.exists:
                 data = snapshot.to_dict()
                 data["id"] = snapshot.id
@@ -107,12 +106,11 @@ class CRUDBase(Generic[ModelSchemaType, CreateSchemaType, UpdateSchemaType]):
         # A simple offset (skip) can be inefficient for large datasets.
         # For robust pagination, you'd pass around document snapshots or specific field values.
         # This is a simplified version.
-        query: AsyncବQuery = db.collection(self.collection_name).limit(limit + skip) # Fetch more to simulate skip
-        snapshots: List[DocumentSnapshot] = await query.stream() # type: ignore
+        query = db.collection(self.collection_name).limit(limit + skip) # Fetch more to simulate skip
         
         results = []
         count = 0
-        async for snapshot in snapshots:
+        async for snapshot in query.stream(): # Corrected: Iterate directly over async generator
             if count >= skip:
                 data = snapshot.to_dict()
                 data["id"] = snapshot.id
