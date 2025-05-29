@@ -65,11 +65,11 @@ export class GameCreateComponent implements OnInit {
     }, { validators: this.totalPlayerCountValidator.bind(this) });
   }
 
-  ngOnInit(): void {
-    // Initialization logic can go here if needed in the future
-  }
+  // ngOnInit(): void { // Removed empty lifecycle method
+  //   // Initialization logic can go here if needed in the future
+  // }
 
-  totalPlayerCountValidator(group: AbstractControl): { [key: string]: any } | null {
+  totalPlayerCountValidator(group: AbstractControl): { [key: string]: { requiredMin: number; actual: number; message: string } } | null {
     const human = group.get('requestedPlayerSlots')?.value ?? 0;
     const ai = group.get('aiPlayerCount')?.value ?? 0;
     const totalPlayers = human + ai;
@@ -96,8 +96,9 @@ export class GameCreateComponent implements OnInit {
         this.notificationService.showSuccess(`Game "${createdGame.name}" created successfully! Player credentials will be sent to your email.`);
         this.router.navigate(['/admin/dashboard']);
       },
-      error: (err: HttpErrorResponse | any) => {
-        this.notificationService.showError(`Failed to create game: ${err.message || 'Unknown error'}`);
+      error: (err: unknown) => {
+        const message = (err instanceof HttpErrorResponse && err.message) || (err instanceof Error && err.message) || 'Unknown error';
+        this.notificationService.showError(`Failed to create game: ${message}`);
         this.isSubmitting.set(false);
       },
       complete: () => {

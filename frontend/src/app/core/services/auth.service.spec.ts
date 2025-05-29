@@ -2,12 +2,13 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { Auth, User as FirebaseUser, IdTokenResult } from '@angular/fire/auth';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { PLATFORM_ID } from '@angular/core';
-import { of, throwError, Subject, firstValueFrom, Observable } from 'rxjs';
-import { take, filter } from 'rxjs/operators';
+// HttpClient, Router, PLATFORM_ID removed
+// import { Observable } from 'rxjs'; // of, throwError, Subject, firstValueFrom removed. Observable removed.
+import { take } from 'rxjs/operators'; // filter removed
 
 import { AuthService } from './auth.service';
 import { User, UserRole } from '../models/user.model';
@@ -28,8 +29,9 @@ interface FirebaseAuthMock {
 describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
-  let authInstanceMock: any;
+  let authInstanceMock: Auth; // Changed any to Auth
 
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const firebaseAuthMock = require('@angular/fire/auth') as FirebaseAuthMock;
 
   beforeEach(fakeAsync(() => {
@@ -127,7 +129,7 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
         const error = new Error('Firebase auth error');
         firebaseAuthMock.mockSignInWithEmailAndPassword.mockRejectedValue(error);
         
-        let actualError: any;
+        let actualError: unknown; // Changed any to unknown
         service.adminLogin(testEmail, testPassword).subscribe({
           next: () => fail('should have failed'),
           error: (err) => actualError = err
@@ -135,7 +137,7 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
 
         tick(); // Allow signInWithEmailAndPassword rejection and catchError logic
         
-        expect(actualError).toBe(error);
+        expect(actualError).toBe(error); // No property access, so direct comparison is fine
         expect(service.isAuthenticated()).toBe(false);
         expect(service.currentUser()).toBeNull();
         expect(service.backendToken()).toBeNull();

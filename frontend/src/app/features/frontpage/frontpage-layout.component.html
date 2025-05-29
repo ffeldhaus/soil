@@ -7,7 +7,7 @@
     <span class="spacer"></span>
 
     <!-- Desktop Menu -->
-    <div class="toolbar-links" *ngIf="!(isHandset$ | async)">
+    <div class="toolbar-links" *ngIf="(isHandset$ | async) === false">
       <mat-form-field
         subscriptSizing="dynamic"
         appearance="outline"

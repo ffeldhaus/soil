@@ -2,7 +2,7 @@
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { GameAdminListItem, GamePublic, GameCreateAdminPayload, GameStatus } from '../models/game.model';
-import { PlayerPublic } from '../models/player.model';
+// import { PlayerPublic } from '../models/player.model'; // Not directly used as a type
 import { UserRole } from '../models/user.model';
 import { IAdminGameService } from './admin-game.service.interface';
 
@@ -44,7 +44,7 @@ export class MockAdminGameService implements IAdminGameService {
   ];
 
   getAdminGames(): Observable<GameAdminListItem[]> {
-    console.log('MockAdminGameService: getAdminGames called');
+    // console.log('MockAdminGameService: getAdminGames called');
     const listItems: GameAdminListItem[] = this.mockGamesStore.map(game => ({
       id: game.id,
       name: game.name,
@@ -58,7 +58,7 @@ export class MockAdminGameService implements IAdminGameService {
   }
 
   getGameDetails(gameId: string): Observable<GamePublic> {
-    console.log(`MockAdminGameService: getGameDetails called for game ${gameId}`);
+    // console.log(`MockAdminGameService: getGameDetails called for game ${gameId}`);
     const game = this.mockGamesStore.find(g => g.id === gameId);
     if (game) {
       return of({...game}).pipe(delay(300));
@@ -69,7 +69,7 @@ export class MockAdminGameService implements IAdminGameService {
   }
 
   createGame(payload: GameCreateAdminPayload): Observable<GamePublic> {
-    console.log('MockAdminGameService: createGame called with', payload);
+    // console.log('MockAdminGameService: createGame called with', payload);
     const newMockGame: GamePublic = {
       id: `mockNew-${Math.random().toString(36).substring(7)}`,
       name: payload.name,
@@ -90,7 +90,7 @@ export class MockAdminGameService implements IAdminGameService {
   }
 
   advanceGameRound(gameId: string): Observable<GamePublic> {
-    console.log(`MockAdminGameService: advanceGameRound called for game ${gameId}`);
+    // console.log(`MockAdminGameService: advanceGameRound called for game ${gameId}`);
     const game = this.mockGamesStore.find(g => g.id === gameId);
     if (game) {
       if (game.gameStatus === GameStatus.PENDING) game.gameStatus = GameStatus.ACTIVE;
@@ -108,7 +108,7 @@ export class MockAdminGameService implements IAdminGameService {
   }
 
   deleteGame(gameId: string): Observable<void> {
-    console.log(`MockAdminGameService: deleteGame called for game ${gameId}`);
+    // console.log(`MockAdminGameService: deleteGame called for game ${gameId}`);
     this.mockGamesStore = this.mockGamesStore.filter(g => g.id !== gameId);
     return of(undefined).pipe(delay(300));
   }

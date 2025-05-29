@@ -58,7 +58,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   readonly isSubmittingRound = signal(false);
   readonly isLoadingData = signal(false); // For initial load and selected round load
 
-  private pollingIntervalId: any | null = null;
+  private pollingIntervalId: NodeJS.Timeout | null = null; // Changed any to NodeJS.Timeout
   private newRoundDialogRef: MatDialogRef<NewRoundDialogComponent, NewRoundDialogData> | null = null;
 
   // Computed signal to determine if the selected round is the current playable one
@@ -90,7 +90,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     });
 
     // Effect to fetch details when selectedRoundNumberSignal changes
-    effect(async (onCleanup) => {
+    effect(async () => { // Removed _onCleanup
       const gameId = this.gameIdSignal();
       const selectedRoundNum = this.selectedRoundNumberSignal();
       const currentPlayableRound = this.currentPlayableRoundSignal();
@@ -114,7 +114,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
           // Fetch details for a past round or a round not currently loaded as currentPlayable
           const roundDetails = await firstValueFrom(
             this.roundService.getPlayerRoundDetails(gameId, selectedRoundNum)
-            .pipe(catchError(err => { 
+            .pipe(catchError(() => { 
               this.notificationService.showError(`Failed to load details for round ${selectedRoundNum}.`); return of(null); 
             }))
           );
@@ -169,9 +169,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.isLoadingData.set(true);
     try {
       const [gameDetails, allRounds, currentPlayableRoundData] = await Promise.all([
-        firstValueFrom(this.gameService.getGameById(gameId).pipe(catchError(err => { this.notificationService.showError('Failed to load game details.'); return of(null); }))),
-        firstValueFrom(this.roundService.getPlayerRounds(gameId).pipe(catchError(err => { this.notificationService.showError('Failed to load round list.'); return of([]); }))),
-        firstValueFrom(this.roundService.getPlayerCurrentRoundDetails(gameId).pipe(catchError(err => { this.notificationService.showError('Failed to load current round.'); return of(null); })))
+        firstValueFrom(this.gameService.getGameById(gameId).pipe(catchError(() => { this.notificationService.showError('Failed to load game details.'); return of(null); }))), 
+        firstValueFrom(this.roundService.getPlayerRounds(gameId).pipe(catchError(() => { this.notificationService.showError('Failed to load round list.'); return of([]); }))), 
+        firstValueFrom(this.roundService.getPlayerCurrentRoundDetails(gameId).pipe(catchError(() => { this.notificationService.showError('Failed to load current round.'); return of(null); })))
       ]);
 
       if (!gameDetails || !currentPlayableRoundData) {
@@ -208,9 +208,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
         if (this.pollingIntervalId) clearInterval(this.pollingIntervalId);
       }
       
-    } catch (error) { // Should be caught by individual catches now
+    } catch { // Removed error parameter
       this.notificationService.showError('An unexpected error occurred while loading game data.');
-      console.error("Error loading initial data:", error);
+      // console.error("Error loading initial data:");
     } finally {
       this.isLoadingData.set(false);
     }
@@ -277,9 +277,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
           this.fieldComponentInstance.clearTemporaryChoices();
           this.cdr.detectChanges(); 
           this.waitForNewRoundOrResults(this.gameIdSignal()!, currentPlayable.roundNumber);
-        } catch (error) {
+        } catch { // Removed error parameter
           this.notificationService.showError('Failed to submit round decisions.');
-          console.error("Error submitting round:", error);
+          // console.error("Error submitting round:");
         } finally {
           this.isSubmittingRound.set(false);
         }
@@ -307,7 +307,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
             ]);
 
             if (!latestGameDetails || !latestPlayableRoundData) {
-                console.warn("Polling: Could not get latest game or round details, using fallback.");
+                // console.warn("Polling: Could not get latest game or round details, using fallback."); // Keep console.warn commented
                 // If fallbacks are also null, we might be in a bad state, but loop continues
             }
             
@@ -351,13 +351,13 @@ export class PlayerComponent implements OnInit, OnDestroy {
                 this.newRoundDialogRef?.close();
                 this.notificationService.showInfo('Still waiting for the next round. You can try refreshing later.');
             }
-        } catch (err) {
-            console.error("Polling error in waitForNewRoundOrResults:", err); 
+        } catch { // Removed err parameter
+            // console.error("Polling error in waitForNewRoundOrResults:");
         }
     }, 5000);
   }
 
-  onTabChange(event: any): void {
+  onTabChange(event: { index: number }): void { // Changed event: any to event: { index: number }
     const selectedRoundFromList = this.allPlayerRoundsSignal()[event.index];
     if (selectedRoundFromList && this.selectedRoundNumberSignal() !== selectedRoundFromList.roundNumber) {
       this.selectedRoundNumberSignal.set(selectedRoundFromList.roundNumber); // This will trigger the effect

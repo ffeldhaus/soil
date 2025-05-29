@@ -16,7 +16,7 @@ export class GameService {
   getGameById(gameId: string): Observable<GamePublic> {
     // return this.http.get<GamePublic>(`${this.apiUrl}/${gameId}`);
     // Placeholder until backend endpoint is confirmed for player access to general game details
-    console.warn('GameService.getGameById is using placeholder data.');
+    // console.warn('GameService.getGameById is using placeholder data.');
     return of({
       id: gameId,
       name: 'Placeholder Game Name',

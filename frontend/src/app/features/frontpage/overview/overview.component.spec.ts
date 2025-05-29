@@ -49,7 +49,7 @@ const translationsDe = {
 };
 
 class MockTranslateLoader implements TranslateLoader {
-  getTranslation(lang: string): Observable<any> {
+  getTranslation(lang: string): Observable<Record<string, string>> {
     if (lang === 'de') {
       return of(translationsDe);
     }

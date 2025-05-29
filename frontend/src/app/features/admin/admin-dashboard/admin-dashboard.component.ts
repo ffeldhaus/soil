@@ -18,8 +18,8 @@ import { PlayerPublic } from '../../../core/models/player.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { IAuthService } from '../../../core/services/auth.service.interface';
 import { AUTH_SERVICE_TOKEN } from '../../../core/services/injection-tokens';
-import { AuthService } from '../../../core/services/auth.service';
-import { MockAuthService } from '../../../core/services/auth.service.mock';
+// import { AuthService } from '../../../core/services/auth.service'; // Unused
+// import { MockAuthService } from '../../../core/services/auth.service.mock'; // Unused
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -64,8 +64,9 @@ export class AdminDashboardComponent implements OnInit {
         this.adminGames.set(games);
         this.isLoading.set(false);
       },
-      error: (err: HttpErrorResponse | any) => { 
-        this.notificationService.showError('Failed to load games: ' + (err.message || 'Unknown error'));
+      error: (err: unknown) => { 
+        const message = (err instanceof HttpErrorResponse && err.message) || (err instanceof Error && err.message) || 'Unknown error';
+        this.notificationService.showError('Failed to load games: ' + message);
         this.isLoading.set(false);
       }
     });
@@ -83,8 +84,9 @@ export class AdminDashboardComponent implements OnInit {
         this.selectedGameDetails.set(details);
         this.isLoadingDetails.set(false);
       },
-      error: (err: HttpErrorResponse | any) => {
-        this.notificationService.showError(`Failed to load game details for ${gameId}: ` + (err.message || 'Unknown error'));
+      error: (err: unknown) => {
+        const message = (err instanceof HttpErrorResponse && err.message) || (err instanceof Error && err.message) || 'Unknown error';
+        this.notificationService.showError(`Failed to load game details for ${gameId}: ` + message);
         this.isLoadingDetails.set(false);
       }
     });
@@ -100,8 +102,9 @@ export class AdminDashboardComponent implements OnInit {
       try {
         await this.authService.impersonatePlayer(gameId, player.uid);
         this.notificationService.showSuccess(`Now impersonating ${playerName}.`);
-      } catch (error: any) {
-        this.notificationService.showError("Impersonation failed: " + (error.message || 'Unknown error'));
+      } catch (error: unknown) {
+        const message = (error instanceof Error && error.message) || 'Unknown error';
+        this.notificationService.showError("Impersonation failed: " + message);
       }
     }
   }
@@ -127,8 +130,9 @@ export class AdminDashboardComponent implements OnInit {
           this.viewGameDetails(gameId); 
         }
       },
-      error: (err: HttpErrorResponse | any) => { 
-        this.notificationService.showError(`Failed to ${actionText.toLowerCase()} for game '${gameName}': ${err.message || 'Unknown error'}`);
+      error: (err: unknown) => { 
+        const message = (err instanceof HttpErrorResponse && err.message) || (err instanceof Error && err.message) || 'Unknown error';
+        this.notificationService.showError(`Failed to ${actionText.toLowerCase()} for game '${gameName}': ${message}`);
         this.isLoading.set(false);
       },
       complete: () => {
@@ -150,8 +154,9 @@ export class AdminDashboardComponent implements OnInit {
         this.notificationService.showSuccess(`Game "${gameName}" deleted successfully.`);
         this.loadAdminGames(); 
       },
-      error: (err: HttpErrorResponse | any) => { 
-        this.notificationService.showError(`Failed to delete game "${gameName}": ${err.message || 'Unknown error'}`);
+      error: (err: unknown) => { 
+        const message = (err instanceof HttpErrorResponse && err.message) || (err instanceof Error && err.message) || 'Unknown error';
+        this.notificationService.showError(`Failed to delete game "${gameName}": ${message}`);
         this.isLoading.set(false);
       }
     });

@@ -1,5 +1,5 @@
 // File: frontend/src/app/features/game/components/result/result.component.ts
-import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core'; // Removed inject
 import { CommonModule, JsonPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { RoundWithFieldPublic, RoundPublic } from '../../../../core/models/round.model';

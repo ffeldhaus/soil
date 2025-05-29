@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, signal, computed, effect, inject, ChangeDetectionStrategy, ViewChild, ElementRef, AfterViewInit, WritableSignal, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, effect, ChangeDetectionStrategy, ViewChild, ElementRef, AfterViewInit, WritableSignal, PLATFORM_ID, Inject } from '@angular/core'; // Removed inject
 import { isPlatformBrowser, CommonModule } from '@angular/common'; // Added isPlatformBrowser
 
 // Remove the static import of Selectable if it's only used client-side
 // import Selectable from 'selectable.js'; 
-// Declare Selectable type for when it's dynamically imported
-type Selectable = any; // You can use the more detailed type from your .d.ts file if preferred
+// Type alias for Selectable will be removed, direct usage of imported types from .d.ts if possible, or specific types for SelectableLib
+import { type Selectable as SelectableType, type SelectableNode } from './selectable'; // Assuming selectable.d.ts is in the same folder or path adjusted
 
 // Angular Material Modules
 import { MatIconModule } from '@angular/material/icon';
@@ -33,11 +33,11 @@ enum CropSequenceEffect {
 })
 export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('parcelGrid') parcelGrid!: ElementRef<HTMLDivElement>;
-  private selectableInstance: Selectable | null = null; // Type Selectable might need to be 'any' or a more specific type if using dynamic import
-  private SelectableLib: any = null; // To store the dynamically imported library
+  private selectableInstance: SelectableType | null = null; 
+  private SelectableLib: typeof SelectableType | null = null; // To store the dynamically imported library
 
-  parcels = signal<any[]>([]);
-  fieldState = signal<any | null>(null);
+  parcels = signal<Parcel[]>([]); // Changed any[] to Parcel[]
+  fieldState = signal<RoundWithFieldPublic | RoundPublic | null>(null); // Changed any to specific types
   isLoading = signal<boolean>(true);
   selectedParcels: WritableSignal<Set<number>> = signal(new Set<number>());
   currentOverlay = signal<string | null>(null);
@@ -46,16 +46,16 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) { // Inject PLATFORM_ID
     effect(async () => { // Make effect async for dynamic import
-      const currentParcels = this.parcels();
-      const isInteractable = this.isCurrentRound();
+      // const currentParcels = this.parcels(); // Unused
+      // const isInteractable = this.isCurrentRound(); // Unused
       
       if (isPlatformBrowser(this.platformId)) { // Check if browser
         // Ensure SelectableLib is loaded before calling initializeSelectable
         if (!this.SelectableLib) {
             try {
                 this.SelectableLib = (await import('selectable.js')).default;
-            } catch (e) {
-                console.error('Error loading selectable.js', e);
+            } catch { // Removed e
+                // console.error('Error loading selectable.js');
                 return; // Don't proceed if library fails to load
             }
         }
@@ -93,8 +93,8 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.SelectableLib) {
             try {
                 this.SelectableLib = (await import('selectable.js')).default;
-            } catch (e) {
-                console.error('Error loading selectable.js in ngAfterViewInit', e);
+            } catch { // Removed e
+                // console.error('Error loading selectable.js in ngAfterViewInit');
                 return;
             }
         }
@@ -131,10 +131,10 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectableInstance.enable();
       }
 
-      this.selectableInstance.on('select', (event: any) => {
-        const items = Array.isArray(event) ? event : [event];
-        items.forEach((item: any) => { // Add type for item
-          const parcelNumber = parseInt(item.node.dataset.parcelNumber, 10);
+      this.selectableInstance.on('select', (itemOrItems: SelectableNode | SelectableNode[]) => { // Changed event: any
+        const items = Array.isArray(itemOrItems) ? itemOrItems : [itemOrItems];
+        items.forEach((item: SelectableNode) => { // Changed item: any to SelectableNode
+          const parcelNumber = parseInt(item.node.dataset.parcelNumber!, 10); // Added non-null assertion for dataset
           if (!isNaN(parcelNumber) && isInteractable) {
             this.selectedParcels.update(currentSelection => {
               const newSelection = new Set(currentSelection);
@@ -143,14 +143,14 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           }
         });
-        console.log('Selected parcels (selectable.js):', this.selectedParcels());
+        // console.log('Selected parcels (selectable.js):', this.selectedParcels());
       });
 
-      this.selectableInstance.on('deselect', (event: any) => {
-        const items = Array.isArray(event) ? event : [event];
-        items.forEach((item: any) => { // Add type for item
-          const parcelNumber = parseInt(item.node.dataset.parcelNumber, 10);
-          if (!isNaN(parcelNumber) && isInteractable) {
+      this.selectableInstance.on('deselect', (itemOrItems: SelectableNode | SelectableNode[]) => { // Changed event: any
+        const items = Array.isArray(itemOrItems) ? itemOrItems : [itemOrItems];
+        items.forEach((item: SelectableNode) => { // Changed item: any to SelectableNode
+          const parcelNumber = parseInt(item.node.dataset.parcelNumber!, 10); // Added non-null assertion for dataset
+          if (!isNaN(parcelNumber) && this.isCurrentRound()) { // Used isCurrentRound() directly
             this.selectedParcels.update(currentSelection => {
               const newSelection = new Set(currentSelection);
               newSelection.delete(parcelNumber);
@@ -158,7 +158,7 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           }
         });
-        console.log('Selected parcels (selectable.js after deselect):', this.selectedParcels());
+        // console.log('Selected parcels (selectable.js after deselect):', this.selectedParcels());
       });
     }
   }
@@ -171,14 +171,14 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Dummy methods
   latestRoundNumberFromGameService(): number { return 5; }
-  navigateToPreviousRound() { console.log('Navigating to previous round'); }
-  navigateToNextRound() { console.log('Navigating to next round'); }
-  openPlantationDialog() { console.log('Opening plantation dialog'); }
+  navigateToPreviousRound() { /* console.log('Navigating to previous round'); */ }
+  navigateToNextRound() { /* console.log('Navigating to next round'); */ }
+  openPlantationDialog() { /* console.log('Opening plantation dialog'); */ }
   getParcelImagePath(plantation: string): string { return `assets/images/crops/${plantation?.toLowerCase()}.jpg`; }
   getParcelPlantationClass(plantation: string): string { return `plantation-${plantation?.toLowerCase()}`; }
   getSoilQualityClass(quality: number): string { return `soil-${Math.round(quality / 20)}`; }
   getNutrientLevelClass(level: number): string { return `nutrient-${Math.round(level / 20)}`; }
-  getHarvestOutcomeClass(outcome: any): string { return outcome ? `harvest-${outcome.toString().toLowerCase().replace(/_/g, '-')}` : ''; }
-  getCropSequenceClass(effect: any): string { return effect ? `sequence-${effect.toString().toLowerCase()}` : ''; }
+  getHarvestOutcomeClass(outcome: HarvestOutcome | string | undefined | null): string { return outcome ? `harvest-${outcome.toString().toLowerCase().replace(/_/g, '-')}` : ''; }
+  getCropSequenceClass(effect: CropSequenceEffect | string | undefined | null): string { return effect ? `sequence-${effect.toString().toLowerCase()}` : ''; }
   isSelected(parcelNumber: number): boolean { return this.selectedParcels().has(parcelNumber); }
 }

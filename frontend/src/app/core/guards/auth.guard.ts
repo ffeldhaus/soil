@@ -18,7 +18,7 @@ export const authGuard: CanActivateFn = (
     map((user: User | null | undefined) => !!user),
     tap(isAuthenticated => {
       if (!isAuthenticated) {
-        console.log('AuthGuard: User not authenticated, redirecting to login.');
+        // console.log('AuthGuard: User not authenticated, redirecting to login.');
         router.navigate(['/frontpage/login'], { queryParams: { returnUrl: state.url } });
       }
     })

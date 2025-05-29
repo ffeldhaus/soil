@@ -1,7 +1,7 @@
 import { Component, inject, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Parcel, HarvestOutcome, PlantationType, CropSequenceEffect } from '../../../../../../core/models/parcel.model'; // Using Parcel (camelCase)
+import { HarvestOutcome, PlantationType, CropSequenceEffect } from '../../../../../../core/models/parcel.model'; // Removed Parcel
 import { RoundDecisionBase } from '../../../../../../core/models/round.model';
 import { DynamicSvgBaseComponent } from '../dynamic-svg-base.component';
 

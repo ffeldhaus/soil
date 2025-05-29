@@ -11,16 +11,16 @@ export class TranslateServerLoader implements TranslateLoader {
     // the build output is typically in 'dist/browser/'.
     private assetsPath: string = join(process.cwd(), 'dist/browser/assets/i18n')
   ) {
-    console.log('[TranslateServerLoader] Initialized. Reading translations from:', this.assetsPath);
+    // console.log('[TranslateServerLoader] Initialized. Reading translations from:', this.assetsPath);
   }
 
-  public getTranslation(lang: string): Observable<any> {
+  public getTranslation(lang: string): Observable<unknown> { // Changed Observable<any> to Observable<unknown>
     const filePath = join(this.assetsPath, `${lang}.json`);
     try {
       const data = fs.readFileSync(filePath, 'utf8');
       return of(JSON.parse(data));
-    } catch (e) {
-      console.warn(`[TranslateServerLoader] Could not read translation file: ${filePath}. Error: ${e}`);
+    } catch { // Removed e
+      // console.warn(`[TranslateServerLoader] Could not read translation file: ${filePath}. Error: e`);
       return of({});
     }
   }

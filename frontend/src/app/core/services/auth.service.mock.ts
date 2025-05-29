@@ -16,8 +16,8 @@ interface MockFirebaseUserInternal {
   getIdToken(forceRefresh?: boolean): Promise<string>; 
   emailVerified: boolean; 
   isAnonymous: boolean;
-  metadata: any; 
-  providerData: any[]; 
+  metadata: unknown; // Changed any to unknown
+  providerData: unknown[]; // Changed any[] to unknown[]
   providerId: string;
   refreshToken: string;
   tenantId: string | null;
@@ -50,7 +50,7 @@ export class MockAuthService implements IAuthService {
   isImpersonating: Signal<boolean> = computed(() => !!this._originalAdminToken()); // Based on originalAdminToken
 
   constructor() {
-    console.log('MockAuthService initialized');
+    // console.log('MockAuthService initialized');
   }
 
   public mockLoginAsAdmin(adminDetails?: Partial<AppUser>): void {
@@ -78,7 +78,7 @@ export class MockAuthService implements IAuthService {
     this._firebaseUser.set(mockFbUser);
     this._currentUser.set(appUser);
     this._backendToken.set('mock-backend-jwt-admin-token');
-    console.log('MockAuthService: mockLoginAsAdmin complete. Current user:', this._currentUser(), 'Token:', this._backendToken());
+    // console.log('MockAuthService: mockLoginAsAdmin complete. Current user:', this._currentUser(), 'Token:', this._backendToken());
   }
 
   public mockLoginAsPlayer(playerDetails?: Partial<AppUser>): void {
@@ -124,14 +124,14 @@ export class MockAuthService implements IAuthService {
     if (!fbUser) return null;
     try {
       return await fbUser.getIdToken(forceRefresh);
-    } catch (e) {
-      console.error('MockAuthService: Error in getCurrentFirebaseIdToken', e);
+    } catch { // Removed e
+      // console.error('MockAuthService: Error in getCurrentFirebaseIdToken');
       return null;
     }
   }
 
   adminLogin(email: string, password: string): Observable<AppUser | null> {
-    console.log('MockAuthService: adminLogin attempt for:', email);
+    // console.log('MockAuthService: adminLogin attempt for:', email);
     const defaultAdminEmail = environment.devDefaults?.adminEmail ?? 'admin@local.dev';
     const defaultAdminPassword = environment.devDefaults?.adminPassword ?? 'password';
     if (email === defaultAdminEmail && password === defaultAdminPassword) {
@@ -142,7 +142,7 @@ export class MockAuthService implements IAuthService {
   }
 
   playerLoginWithCredentials(gameId: string, playerNumber: number, password: string): Observable<AppUser | null> {
-    console.log('MockAuthService: playerLogin for game:', gameId, 'player:', playerNumber);
+    // console.log('MockAuthService: playerLogin for game:', gameId, 'player:', playerNumber);
     if (password === 'password') { // Simple mock check
         this.mockLoginAsPlayer({ gameId, playerNumber, email: `player${playerNumber}@${gameId}.mock`, uid: `mock-player-${playerNumber}` });
         return of(this._currentUser()!).pipe(delay(50));
@@ -150,16 +150,16 @@ export class MockAuthService implements IAuthService {
     return throwError(() => new Error('Mock Player Login Failed: Invalid credentials'));
   }
 
-  adminRegister(payload: any): Observable<any> {
+  adminRegister(/* _payload: unknown */): Observable<unknown> { // Removed _payload
     return of({ success: true, message: 'Admin registered successfully (mock)' }).pipe(delay(50));
   }
 
-  requestPasswordReset(email: string): Observable<void> {
+  requestPasswordReset(/* _email: string */): Observable<void> { // Removed _email
     return of(undefined).pipe(delay(50));
   }
 
   async logout(): Promise<void> {
-    console.log('MockAuthService: logout called');
+    // console.log('MockAuthService: logout called');
     this.mockLogout();
     this.router.navigate(['/frontpage/login']);
   }
@@ -170,16 +170,16 @@ export class MockAuthService implements IAuthService {
 
   // Impersonation methods for IAuthService
   async impersonatePlayer(gameId: string, playerId: string): Promise<void> {
-    console.log(`MockAuthService: impersonatePlayer called for gameId: ${gameId}, playerId: ${playerId}`);
+    // console.log(`MockAuthService: impersonatePlayer called for gameId: ${gameId}, playerId: ${playerId}`);
     const adminToken = this._backendToken();
     const adminUser = this._currentUser();
 
     if (!adminToken || !adminUser || adminUser.role !== UserRole.ADMIN) {
-      console.error('MockAuthService: Cannot impersonate. Admin not logged in or not an admin.');
+      // console.error('MockAuthService: Cannot impersonate. Admin not logged in or not an admin.');
       throw new Error('Mock: Admin not logged in or not an admin.');
     }
     if (this.isImpersonating()) {
-      console.warn('MockAuthService: Already impersonating.');
+      // console.warn('MockAuthService: Already impersonating.');
       throw new Error('Mock: Already impersonating.');
     }
 
@@ -203,17 +203,17 @@ export class MockAuthService implements IAuthService {
     // In a real scenario, _firebaseUser might also need to change or be handled carefully.
     // For mock, we might not need to change _firebaseUser if it's not strictly checked by player views.
 
-    console.log('MockAuthService: Impersonation successful. Now user:', this._currentUser());
+    // console.log('MockAuthService: Impersonation successful. Now user:', this._currentUser());
     this.router.navigate(['/game', gameId, 'dashboard']);
   }
 
   async stopImpersonation(): Promise<void> {
-    console.log('MockAuthService: stopImpersonation called');
+    // console.log('MockAuthService: stopImpersonation called');
     const originalToken = this._originalAdminToken();
     const originalUser = this._originalAdminUser();
 
     if (!originalToken || !originalUser) {
-      console.warn('MockAuthService: No original admin state to restore.');
+      // console.warn('MockAuthService: No original admin state to restore.');
       // Might still clear current state to avoid being stuck as player
       this.mockLoginAsAdmin(); // Or some other default admin state
       return;
@@ -224,7 +224,7 @@ export class MockAuthService implements IAuthService {
     this._originalAdminToken.set(null);
     this._originalAdminUser.set(null);
     
-    console.log('MockAuthService: Impersonation stopped. Restored admin user:', this._currentUser());
+    // console.log('MockAuthService: Impersonation stopped. Restored admin user:', this._currentUser());
     this.router.navigate(['/admin/dashboard']);
   }
 }

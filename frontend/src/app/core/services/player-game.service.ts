@@ -1,11 +1,9 @@
 // File: frontend/src/app/core/services/player-game.service.ts
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { Observable } from 'rxjs'; // Removed of
+// Removed delay, map from rxjs/operators
 import { ApiService } from './api.service';
-import {
-  Parcel, PlantationType, FieldState, CropSequenceEffect, HarvestOutcome
-} from '../models/parcel.model';
+// Removed Parcel, PlantationType, FieldState, CropSequenceEffect, HarvestOutcome
 import { GamePublic } from '../models/game.model'; // Changed from GameDetailsView
 import { RoundWithFieldPublic, PlayerRoundSubmission, RoundPublic } from '../models/round.model'; // Used PlayerRoundSubmission, RoundPublic
 import { ResultPublic } from '../models/result.model';
@@ -23,7 +21,7 @@ export class PlayerGameService implements IPlayerGameService {
   constructor() {
     if (environment.useMocks) {
       this.mockService = new MockPlayerGameService();
-      console.log('PlayerGameService: Using MOCK data via MockPlayerGameService');
+      // console.log('PlayerGameService: Using MOCK data via MockPlayerGameService');
     }
   }
 

@@ -3,10 +3,10 @@ import { provideServerRendering } from '@angular/platform-server';
 import { appConfig } from './app.config'; // Import the browser app config
 import { TranslateLoader } from '@ngx-translate/core';
 import { TranslateServerLoader } from './core/translate-server.loader';
-import { REQUEST_LANGUAGE } from './core/tokens'; // Import the token
+// import { REQUEST_LANGUAGE } from './core/tokens'; // Import the token
 
 export function translateServerLoaderFactory() {
-  console.log('[app.config.server.ts] Creating TranslateServerLoader');
+  // console.log('[app.config.server.ts] Creating TranslateServerLoader');
   return new TranslateServerLoader();
 }
 
