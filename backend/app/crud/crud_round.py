@@ -1,10 +1,11 @@
 from typing import Any, Dict, List, Optional, Union
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timezone # Added timezone
+from pydantic import BaseModel # Added import
 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from google.cloud.firestore_v1.base_client import BaseClient # For type hint of sync client
-from google.cloud.firestore_v1.base_query import AsyncବQuery
+from google.cloud.firestore_v1.async_query import AsyncQuery # Corrected import
 from google.cloud.firestore_v1.document import DocumentReference
 
 from app.crud.base import CRUDBase
@@ -81,8 +82,8 @@ class CRUDRound(CRUDBase[RoundInDB, RoundCreate, RoundUpdate]):
         
         # Firestore uses server timestamps for created_at/updated_at often,
         # but Pydantic defaults can also be used if preferred.
-        round_data_to_create["created_at"] = datetime.now(datetime.UTC)
-        round_data_to_create["updated_at"] = datetime.now(datetime.UTC)
+        round_data_to_create["created_at"] = datetime.now(timezone.utc) # Changed to timezone.utc
+        round_data_to_create["updated_at"] = datetime.now(timezone.utc) # Changed to timezone.utc
         round_data_to_create["id"] = round_doc_ref.id # Store the doc ID in the document itself
 
         await round_doc_ref.set(round_data_to_create)
@@ -95,8 +96,8 @@ class CRUDRound(CRUDBase[RoundInDB, RoundCreate, RoundUpdate]):
             "player_id": obj_in.player_id,
             "round_number": obj_in.round_number,
             "parcels": initial_parcels, # List of ParcelInDB compatible dicts
-            "created_at": datetime.now(datetime.UTC),
-            "updated_at": datetime.now(datetime.UTC)
+            "created_at": datetime.now(timezone.utc), # Changed to timezone.utc
+            "updated_at": datetime.now(timezone.utc)  # Changed to timezone.utc
         }
         await field_state_doc_ref.set(field_state_data)
         
@@ -145,9 +146,9 @@ class CRUDRound(CRUDBase[RoundInDB, RoundCreate, RoundUpdate]):
         update_data_round = obj_in.model_dump(exclude_unset=True)
         if isinstance(obj_in.decisions, BaseModel):
              update_data_round["decisions"] = obj_in.decisions.model_dump()
-        update_data_round["updated_at"] = datetime.now(datetime.UTC)
+        update_data_round["updated_at"] = datetime.now(timezone.utc) # Changed to timezone.utc
         if obj_in.is_submitted:
-            update_data_round["submitted_at"] = datetime.now(datetime.UTC)
+            update_data_round["submitted_at"] = datetime.now(timezone.utc) # Changed to timezone.utc
 
         await round_doc_ref.update(update_data_round)
 
@@ -155,7 +156,7 @@ class CRUDRound(CRUDBase[RoundInDB, RoundCreate, RoundUpdate]):
         field_state_doc_ref = self._get_field_state_doc_ref(db, game_id, player_id, round_number)
         await field_state_doc_ref.update({
             "parcels": updated_parcels_data,
-            "updated_at": datetime.now(datetime.UTC)
+            "updated_at": datetime.now(timezone.utc) # Changed to timezone.utc
         })
         
         updated_snapshot = await round_doc_ref.get()
@@ -181,11 +182,9 @@ class CRUDRound(CRUDBase[RoundInDB, RoundCreate, RoundUpdate]):
         # or requires round_number to be a field for server-side filtering.
         # If round_number is part of the document ID (e.g. playerID_round_X), this query changes.
         # Assuming round_number is a field in the document:
-        query: AsyncବQuery = db.collection(collection_path).where(field="round_number", op_string="==", value=round_number)
-        snapshots = await query.stream() # type: ignore
-        
+        query: AsyncQuery = db.collection(collection_path).where(field="round_number", op_string="==", value=round_number) # Corrected type hint
         results = []
-        async for snapshot in snapshots:
+        async for snapshot in query.stream(): # type: ignore # Iterate directly over query.stream()
             if snapshot.exists:
                 data = snapshot.to_dict()
                 data["id"] = snapshot.id
@@ -204,7 +203,7 @@ class CRUDRound(CRUDBase[RoundInDB, RoundCreate, RoundUpdate]):
             await round_doc_ref.update({
                 "result_id": result_id, # Assuming RoundInDB has a result_id field
                 "status": "calculated", # Assuming a status field
-                "updated_at": datetime.now(datetime.UTC)
+                "updated_at": datetime.now(timezone.utc) # Changed to timezone.utc
             })
             return True
         except Exception:

@@ -3,11 +3,26 @@ from typing import Optional, List, Dict, Any
 from uuid import UUID, uuid4
 from datetime import datetime, timezone
 
-from pydantic import BaseModel, Field, ConfigDict, field_validator, model_validator 
+from pydantic import BaseModel, Field, ConfigDict, field_validator, model_validator
 from pydantic.alias_generators import to_camel # Import to_camel
+from enum import Enum
 
 from .player import PlayerPublic # PlayerPublic will need its own camelCase config
-from app.core.config import settings 
+from app.core.config import settings
+
+class GameStatus(str, Enum):
+    PENDING = "pending"
+    ACTIVE = "active"
+    FINISHED = "finished"
+    ARCHIVED = "archived"
+
+class GameStage(str, Enum):
+    INITIAL_SETUP = "initial_setup"
+    REGISTRATION = "registration"
+    PRE_ROUND = "pre_round"
+    MID_ROUND = "mid_round"
+    POST_ROUND = "post_round"
+    GAME_OVER = "game_over"
 
 class GameBase(BaseModel):
     name: str = Field(..., min_length=3, max_length=100, description="Name of the game session")
@@ -79,7 +94,8 @@ class GameInDBBase(GameBase):
     id: str = Field(default_factory=lambda: str(uuid4()), description="Unique ID for the game (Firestore Document ID)")
     admin_id: str = Field(..., description="UID of the admin who created the game")
     current_round_number: int = Field(default=0, description="Current active round number (0 means game not started or just finished)")
-    game_status: str = Field(default="pending", description="Status: pending, active, finished, archived") 
+    game_status: GameStatus = Field(default=GameStatus.PENDING, description="Status of the game")
+    game_stage: GameStage = Field(default=GameStage.INITIAL_SETUP, description="Current stage of the game lifecycle")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     weather_sequence: List[str] = Field(default_factory=list, description="Sequence of weather events for each round")

@@ -1,10 +1,11 @@
 from typing import Any, Dict, List, Optional, Union
 from uuid import uuid4
 from datetime import datetime
+from pydantic import BaseModel # Added import
 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from google.cloud.firestore_v1.base_client import BaseClient # For type hint of sync client
-from google.cloud.firestore_v1.base_query import AsyncବQuery
+from google.cloud.firestore_v1.async_query import AsyncQuery # Corrected import
 from google.cloud.firestore_v1.document import DocumentReference
 
 from app.crud.base import CRUDBase

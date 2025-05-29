@@ -2,11 +2,20 @@
 from typing import Optional, List, Any, Dict
 from uuid import UUID, uuid4
 from datetime import datetime, timezone
+from enum import Enum # Added import
 
 from pydantic import BaseModel, Field, ConfigDict
 from pydantic.alias_generators import to_camel
 
 from .parcel import FieldPublic, PlantationType # FieldPublic will also need camelCase output config
+
+# Define RoundStatus Enum before it's used
+class RoundStatus(str, Enum):
+    PENDING = "pending"         # Round is open for player decisions
+    SUBMITTED = "submitted"     # Player has submitted decisions
+    CALCULATING = "calculating" # System is processing the round
+    CALCULATED = "calculated"   # Round processing is complete, results available
+    ERROR = "error"             # An error occurred during calculation
 
 class RoundDecisionBase(BaseModel):
     fertilize: bool = Field(False, description="Conventional fertilizer applied this round")
@@ -37,6 +46,7 @@ class RoundBase(BaseModel):
     game_id: str = Field(..., description="ID of the game this round belongs to")
     player_id: str = Field(..., description="UID of the player this round belongs to")
     round_number: int = Field(..., ge=1, description="The sequential number of this round in the game")
+    status: RoundStatus = Field(default=RoundStatus.PENDING, description="Status of the round") # Added status
     decisions: Optional[RoundDecisionBase] = Field(None, description="Player's decisions for this round")
     is_submitted: bool = Field(False, description="Whether the player has submitted their decisions for this round")
     submitted_at: Optional[datetime] = Field(None, description="Timestamp when the round was submitted")

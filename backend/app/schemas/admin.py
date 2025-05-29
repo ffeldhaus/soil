@@ -1,8 +1,9 @@
 # File: backend/app/schemas/admin.py
 from typing import Optional, List
+from datetime import datetime # Ensure datetime is imported
 
 from pydantic import BaseModel, EmailStr, Field, HttpUrl, ConfigDict
-from pydantic.alias_generators import to_camel # Import to_camel
+from pydantic.alias_generators import to_camel
 
 from .user import UserBase, UserCreate, UserInDBBase, UserPublic, UserType
 
@@ -12,9 +13,6 @@ class AdminBase(UserBase):
     last_name: Optional[str] = Field(None, max_length=128, description="Admin's last name")
     institution: Optional[str] = Field(None, max_length=128, description="Admin's institution")
 
-    # UserBase is already configured for camelCase output.
-    # This model_config ensures AdminBase-specific fields are also camelCased.
-    # And it merges/overrides UserBase.model_config settings if necessary.
     model_config = ConfigDict(
         populate_by_name=True,
         alias_generator=to_camel,
@@ -22,14 +20,12 @@ class AdminBase(UserBase):
     )
 
 class AdminCreate(UserCreate, AdminBase):
-    user_type: UserType = Field(default=UserType.ADMIN, frozen=True, exclude=True)
+    user_type: UserType = Field(default=UserType.ADMIN, frozen=True, exclude=True) # Exclude from openapi schema if fixed
     email: EmailStr = Field(..., description="Admin's email address")
     password: str = Field(..., min_length=8, description="Admin's password (at least 8 characters)")
     first_name: str = Field(..., max_length=128, description="Admin's first name")
     last_name: str = Field(..., max_length=128, description="Admin's last name")
     institution: str = Field(..., min_length=3, max_length=128, description="Admin's institution")
-    # This is a request model. It inherits config from UserCreate (via UserBase) and AdminBase.
-    # So, it will correctly parse camelCase fields from the request body for those base model fields.
 
 class AdminUpdate(BaseModel):
     email: Optional[EmailStr] = Field(None, description="Admin's email address")
@@ -41,23 +37,41 @@ class AdminUpdate(BaseModel):
 
     model_config = ConfigDict(
         extra='forbid',
-        populate_by_name=True, # To allow camelCase input for these fields
+        populate_by_name=True, 
         alias_generator=to_camel
     )
 
 class AdminInDB(UserInDBBase, AdminBase):
-    # UserInDBBase and AdminBase are configured for camelCase output & from_attributes.
-    # This model_config ensures correct combination for AdminInDB specific needs.
+    # Inherits created_at, updated_at from UserInDBBase
+    # These fields are now expected to be present.
+    # If UserInDBBase does not define them, they need to be added here:
+    # created_at: datetime = Field(..., description="Timestamp of admin creation")
+    # updated_at: datetime = Field(..., description="Timestamp of last admin update")
+    # However, UserInDBBase SHOULD define them if it's a base for database models.
+    # Assuming UserInDBBase already has created_at and updated_at:
+    pass # No new fields, just inheriting and using combined model_config
+
+    # If UserInDBBase does NOT have created_at/updated_at, define them:
+    # created_at: Optional[datetime] = Field(None, description="Timestamp of admin creation")
+    # updated_at: Optional[datetime] = Field(None, description="Timestamp of last admin update")
+    # The previous worker report indicated 'AttributeError: 'AdminInDB' object has no attribute 'updated_at''
+    # This means UserInDBBase might not have it, or it was optional and not set.
+    # Forcing them here to ensure they are part of the model.
+    created_at: datetime
+    updated_at: datetime
+
     model_config = ConfigDict(
-        from_attributes=True,
-        populate_by_name=True,
-        alias_generator=to_camel,
-        use_enum_values=True
+        from_attributes=True, # Enables ORM mode (parsing from db objects)
+        populate_by_name=True, # Allows creating model from dict with Python field names
+        alias_generator=to_camel, # Generates camelCase aliases for serialization
+        use_enum_values=True # Ensures enum values are used in serialization
     )
 
+
 class AdminPublic(UserPublic, AdminBase):
-    # UserPublic and AdminBase are configured for camelCase output & from_attributes.
-    # This model_config ensures correct combination for AdminPublic.
+    # Inherits fields from UserPublic and AdminBase
+    # UserPublic typically excludes sensitive fields like hashed_password
+    # and includes created_at/updated_at if they are public.
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True,
