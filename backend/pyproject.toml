@@ -1,5 +1,5 @@
 # File: backend/pyproject.toml
-[tool.poetry]
+[project]
 name = "soil-game-backend"
 version = "0.1.0"
 description = "Backend for the Soil educational game, rewritten in Python."
@@ -7,45 +7,41 @@ authors = ["Your Name <you@example.com>"]
 license = "MIT"
 readme = "README.md" 
 package-mode = false # <--- ADDED THIS LINE: Disables packaging features for this project
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.1",
+    "pydantic[email]>=2.7.1",
+    "pydantic-settings>=2.3.1",
+    "firebase-admin>=6.5.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-jose[cryptography]>=3.3.0",
+    "python-multipart>=0.0.9",
+    "aiosmtplib>=3.0.1",
+    # Optional: If choosing Cloud SQL (PostgreSQL) instead of/alongside Firestore
+    # "asyncpg>=0.29.0",
+    # "sqlalchemy[asyncio]>=2.0.30",
+    # "alembic>=1.13.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.13"
-fastapi = "^0.111.0"
-uvicorn = {extras = ["standard"], version = "^0.30.1"}
-pydantic = {extras = ["email"], version = "^2.7.1"}
-pydantic-settings = "^2.3.1"
-# For Firebase Admin SDK (Authentication, Firestore)
-firebase-admin = "^6.5.0"
-# For password hashing
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-# For sending emails (e.g., registration confirmation)
-python-multipart = "^0.0.9" # For form data in FastAPI
-aiosmtplib = "^3.0.1" # For async email sending
-# For I18N - though FastAPI doesn't have a direct equivalent to Rails I18n,
-# we can use standard libraries if needed for error messages, etc.
-# For now, focusing on frontend I18N.
-
-# Optional: If choosing Cloud SQL (PostgreSQL) instead of/alongside Firestore
-# asyncpg = "^0.29.0" # For asyncio PostgreSQL driver
-# sqlalchemy = {extras = ["asyncio"], version = "^2.0.30"}
-# alembic = "^1.13.1"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.2.0"
-pytest-asyncio = "^0.23.7"
-httpx = "^0.27.0" # For testing FastAPI endpoints
-black = "^24.4.2"
-ruff = "^0.4.4"
-mypy = "^1.10.0"
-pre-commit = "^3.7.1"
-# For generating .env files from .env.example
-python-dotenv = {extras = ["cli"], version = "^1.0.1"}
-pytest-cov = "^4.1.0"
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.7",
+    "httpx>=0.27.0", # For testing FastAPI endpoints
+    "black>=24.4.2",
+    "ruff>=0.4.4",
+    "mypy>=1.10.0",
+    "pre-commit>=3.7.1",
+    # For generating .env files from .env.example
+    "python-dotenv[cli]>=1.0.1",
+    "pytest-cov>=4.1.0",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv>=0.1.17"]
+build-backend = "uv"
+backend-path = "."
 
 [tool.black]
 line-length = 88

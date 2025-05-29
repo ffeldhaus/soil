@@ -7,20 +7,17 @@ FROM python:3.13-slim as builder
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV POETRY_VERSION=1.8.3
-ENV POETRY_HOME="/opt/poetry"
-ENV POETRY_VENV="/opt/poetry-venv"
-ENV PATH="$POETRY_HOME/bin:$PATH"
+# ENV PATH="$POETRY_HOME/bin:$PATH" # PATH will be updated by venv activation if needed
 
-# Install system dependencies required for Poetry and potential build dependencies
+# Install system dependencies required for uv and potential build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
+    # curl # No longer needed for poetry install
     # Add other build-time dependencies if needed (e.g., for C extensions)
     # build-essential libpq-dev etc.
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
+# Install uv
+RUN pip install uv
 
 # Create a non-root user and group
 RUN groupadd -r appgroup && useradd --no-log-init -r -g appgroup appuser
@@ -29,13 +26,13 @@ RUN groupadd -r appgroup && useradd --no-log-init -r -g appgroup appuser
 WORKDIR /app
 
 # Copy only the files necessary for installing dependencies
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml uv.lock ./
 
-# Install dependencies using Poetry
-# --no-root: Don't install the project itself as editable, it will be copied later
-# --no-dev: Don't install development dependencies
-# Create a virtual environment within the image for better isolation (optional but good practice)
-RUN poetry install --no-root --no-dev
+# Install dependencies using uv
+# Create a virtual environment within the image
+RUN python -m venv /app/.venv
+# Activate the venv and install dependencies from uv.lock
+RUN . /app/.venv/bin/activate && uv pip sync --frozen-lockfile
 
 # --- Stage 2: Runtime stage ---
 FROM python:3.13-slim
