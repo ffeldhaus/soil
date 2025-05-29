@@ -1,66 +1,130 @@
 <!-- File: frontend/src/app/features/admin/game-create/game-create.component.html -->
 <div class="create-game-container">
-    <mat-card class="create-game-card">
-      <mat-card-header>
-        <button mat-icon-button (click)="goBack()" matTooltip="Back to Dashboard" class="back-button">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <mat-card-title>Create New Soil Game</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form [formGroup]="createGameForm" (ngSubmit)="onSubmit()">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Game Name</mat-label>
-            <input matInput formControlName="name" required>
-            <mat-error *ngIf="createGameForm.get('name')?.hasError('required')">Game name is required.</mat-error>
-            <mat-error *ngIf="createGameForm.get('name')?.hasError('minlength')">Name must be at least 3 characters.</mat-error>
-            <mat-error *ngIf="createGameForm.get('name')?.hasError('maxlength')">Name is too long (max 100 chars).</mat-error>
+  <mat-card class="create-game-card">
+    <mat-card-header>
+      <button
+        mat-icon-button
+        (click)="goBack()"
+        matTooltip="Back to Dashboard"
+        class="back-button"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <mat-card-title>Create New Soil Game</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="createGameForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Game Name</mat-label>
+          <input matInput formControlName="name" required />
+          <mat-error *ngIf="createGameForm.get('name')?.hasError('required')"
+            >Game name is required.</mat-error
+          >
+          <mat-error *ngIf="createGameForm.get('name')?.hasError('minlength')"
+            >Name must be at least 3 characters.</mat-error
+          >
+          <mat-error *ngIf="createGameForm.get('name')?.hasError('maxlength')"
+            >Name is too long (max 100 chars).</mat-error
+          >
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field-half">
+            <mat-label>Number of Rounds</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="numberOfRounds"
+              required
+              [min]="5"
+              [max]="50"
+            />
+            <mat-error
+              *ngIf="createGameForm.get('numberOfRounds')?.hasError('required')"
+              >Number of rounds is required.</mat-error
+            >
+            <mat-error
+              *ngIf="
+                createGameForm.get('numberOfRounds')?.hasError('min') ||
+                createGameForm.get('numberOfRounds')?.hasError('max')
+              "
+            >
+              Rounds must be between 5 and 50.
+            </mat-error>
           </mat-form-field>
-  
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="form-field-half">
-              <mat-label>Number of Rounds</mat-label>
-              <input matInput type="number" formControlName="numberOfRounds" required [min]="5" [max]="50">
-              <mat-error *ngIf="createGameForm.get('numberOfRounds')?.hasError('required')">Number of rounds is required.</mat-error>
-              <mat-error *ngIf="createGameForm.get('numberOfRounds')?.hasError('min') || createGameForm.get('numberOfRounds')?.hasError('max')">
-                Rounds must be between 5 and 50.
-              </mat-error>
-            </mat-form-field>
-  
-            <!-- Removed Max Players field -->
-            <div class="form-field-half"></div>
-          </div>
-  
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="form-field-half">
-              <mat-label>Number of Human Players</mat-label>
-              <input matInput type="number" formControlName="requestedPlayerSlots" required min="0">
-              <mat-error *ngIf="createGameForm.get('requestedPlayerSlots')?.hasError('required')">Human players count is required.</mat-error>
-              <mat-error *ngIf="createGameForm.get('requestedPlayerSlots')?.hasError('min')">Cannot be negative.</mat-error>
-              <!-- Removed max validation based on max_players -->
-            </mat-form-field>
-  
-            <mat-form-field appearance="outline" class="form-field-half">
-              <mat-label>Number of AI Players</mat-label>
-              <input matInput type="number" formControlName="aiPlayerCount" required min="0">
-              <mat-error *ngIf="createGameForm.get('aiPlayerCount')?.hasError('required')">AI players count is required.</mat-error>
-              <mat-error *ngIf="createGameForm.get('aiPlayerCount')?.hasError('min')">Cannot be negative.</mat-error>
-              <!-- Removed max validation based on max_players -->
-            </mat-form-field>
-          </div>
-          
-          <!-- Removed totalPlayersExceedMax error message -->
-          <div *ngIf="createGameForm.hasError('totalPlayersBelowMin')" class="form-error">
-            {{ createGameForm.getError('totalPlayersBelowMin')?.message }}
-          </div>
-  
-          <div class="actions-row">
-            <button mat-stroked-button type="button" (click)="goBack()">Cancel</button>
-            <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting() || createGameForm.invalid">
-              {{ isSubmitting() ? 'Creating Game...' : 'Create Game' }}
-            </button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </div>
+
+          <!-- Removed Max Players field -->
+          <div class="form-field-half"></div>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field-half">
+            <mat-label>Number of Human Players</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="requestedPlayerSlots"
+              required
+              min="0"
+            />
+            <mat-error
+              *ngIf="
+                createGameForm.get('requestedPlayerSlots')?.hasError('required')
+              "
+              >Human players count is required.</mat-error
+            >
+            <mat-error
+              *ngIf="
+                createGameForm.get('requestedPlayerSlots')?.hasError('min')
+              "
+              >Cannot be negative.</mat-error
+            >
+            <!-- Removed max validation based on max_players -->
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field-half">
+            <mat-label>Number of AI Players</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="aiPlayerCount"
+              required
+              min="0"
+            />
+            <mat-error
+              *ngIf="createGameForm.get('aiPlayerCount')?.hasError('required')"
+              >AI players count is required.</mat-error
+            >
+            <mat-error
+              *ngIf="createGameForm.get('aiPlayerCount')?.hasError('min')"
+              >Cannot be negative.</mat-error
+            >
+            <!-- Removed max validation based on max_players -->
+          </mat-form-field>
+        </div>
+
+        <!-- Removed totalPlayersExceedMax error message -->
+        <div
+          *ngIf="createGameForm.hasError('totalPlayersBelowMin')"
+          class="form-error"
+        >
+          {{ createGameForm.getError("totalPlayersBelowMin")?.message }}
+        </div>
+
+        <div class="actions-row">
+          <button mat-stroked-button type="button" (click)="goBack()">
+            Cancel
+          </button>
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="isSubmitting() || createGameForm.invalid"
+          >
+            {{ isSubmitting() ? "Creating Game..." : "Create Game" }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

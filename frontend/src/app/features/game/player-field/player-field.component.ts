@@ -41,10 +41,10 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = signal<boolean>(true);
   selectedParcels: WritableSignal<Set<number>> = signal(new Set<number>());
   currentOverlay = signal<string | null>(null);
-  isCurrentRound = computed(() => this.fieldState()?.round_number === this.latestRoundNumberFromGameService());
-  isFirstRound = computed(() => this.fieldState()?.round_number === 1);
+  isCurrentRound = computed(() => this.fieldState()?.roundNumber === this.latestRoundNumberFromGameService());
+  isFirstRound = computed(() => this.fieldState()?.roundNumber === 1);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { // Inject PLATFORM_ID
+  constructor(@Inject(PLATFORM_ID) private platformId: object) { // Inject PLATFORM_ID
     effect(async () => { // Make effect async for dynamic import
       const currentParcels = this.parcels();
       const isInteractable = this.isCurrentRound();
@@ -74,16 +74,16 @@ export class PlayerFieldComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     setTimeout(() => {
       const exampleParcels = Array.from({ length: 30 }, (_, i) => ({
-        parcel_number: i + 1,
-        current_plantation: ['Ackerbohne', 'Hafer', 'Kartoffel', 'Weizen', 'Mais', 'Zuckerruebe', 'Brachland', 'Tiere'][i % 8],
-        soil_quality: 70 + Math.random() * 30,
-        nutrient_level: 60 + Math.random() * 40,
-        last_harvest_outcome_category: Object.values(HarvestOutcome)[i % Object.keys(HarvestOutcome).length],
-        last_harvest_yield_dt: Math.floor(Math.random() * 100),
-        crop_sequence_effect: Object.values(CropSequenceEffect)[i % Object.keys(CropSequenceEffect).length]
+        parcelNumber: i + 1,
+        currentPlantation: ['Ackerbohne', 'Hafer', 'Kartoffel', 'Weizen', 'Mais', 'Zuckerruebe', 'Brachland', 'Tiere'][i % 8],
+        soilQuality: 70 + Math.random() * 30,
+        nutrientLevel: 60 + Math.random() * 40,
+        lastHarvestOutcomeCategory: Object.values(HarvestOutcome)[i % Object.keys(HarvestOutcome).length],
+        lastHarvestYieldDt: Math.floor(Math.random() * 100),
+        cropSequenceEffect: Object.values(CropSequenceEffect)[i % Object.keys(CropSequenceEffect).length]
       }));
       this.parcels.set(exampleParcels);
-      this.fieldState.set({ round_number: 2 });
+      this.fieldState.set({ roundNumber: 2 });
       this.isLoading.set(false);
     }, 500);
   }

@@ -9,7 +9,12 @@
     <header class="game-header">
       <h1>{{ game.name }}</h1>
       <p class="round-info">
-        <span *ngIf="game.gameStatus !== 'finished' && currentPlayableRoundSignal() as cpRound">
+        <span
+          *ngIf="
+            game.gameStatus !== 'finished' &&
+            currentPlayableRoundSignal() as cpRound
+          "
+        >
           Current Round: {{ cpRound.roundNumber }} / {{ game.numberOfRounds }}
         </span>
         <span *ngIf="game.gameStatus === 'finished'">
@@ -19,73 +24,134 @@
       <p class="game-status">Status: {{ game.gameStatus | titlecase }}</p>
     </header>
 
-    <mat-tab-group 
-      animationDuration="0ms" 
-      (selectedIndexChange)="onTabChange($event)" 
-      [selectedIndex]="selectedRoundNumberSignal() ? selectedRoundNumberSignal()! - 1 : 0"
-      *ngIf="allPlayerRoundsSignal().length > 0 && displayModeSignal() !== 'game_ended'">
-      <mat-tab *ngFor="let round of allPlayerRoundsSignal(); let i = index" label="Round {{round.roundNumber}}">
+    <mat-tab-group
+      animationDuration="0ms"
+      (selectedIndexChange)="onTabChange($event)"
+      [selectedIndex]="
+        selectedRoundNumberSignal() ? selectedRoundNumberSignal()! - 1 : 0
+      "
+      *ngIf="
+        allPlayerRoundsSignal().length > 0 &&
+        displayModeSignal() !== 'game_ended'
+      "
+    >
+      <mat-tab
+        *ngFor="let round of allPlayerRoundsSignal(); let i = index"
+        label="Round {{ round.roundNumber }}"
+      >
         <!-- Tab content will be shown below based on selectedRoundDetailsSignal -->
       </mat-tab>
     </mat-tab-group>
 
-    <div class="round-content-area" *ngIf="selectedRoundDetailsSignal() as selectedDetails">
+    <div
+      class="round-content-area"
+      *ngIf="selectedRoundDetailsSignal() as selectedDetails"
+    >
       <div class="view-controls" *ngIf="displayModeSignal() !== 'game_ended'">
-        <button mat-stroked-button 
-                (click)="setView('field')" 
-                [disabled]="displayModeSignal() === 'field' || (game.gameStatus === 'finished' && selectedDetails.roundNumber !== currentPlayableRoundSignal()?.roundNumber)">
+        <button
+          mat-stroked-button
+          (click)="setView('field')"
+          [disabled]="
+            displayModeSignal() === 'field' ||
+            (game.gameStatus === 'finished' &&
+              selectedDetails.roundNumber !==
+                currentPlayableRoundSignal()?.roundNumber)
+          "
+        >
           <mat-icon>eco</mat-icon> View Field
         </button>
-        <button mat-stroked-button 
-                (click)="setView('result')" 
-                [disabled]="displayModeSignal() === 'result' || !selectedDetails.result_id">
+        <button
+          mat-stroked-button
+          (click)="setView('result')"
+          [disabled]="
+            displayModeSignal() === 'result' || !selectedDetails.result_id
+          "
+        >
           <mat-icon>assessment</mat-icon> View Results
         </button>
       </div>
 
       <ng-container [ngSwitch]="displayModeSignal()">
-        <app-field 
-          *ngSwitchCase="'field'" 
-          [currentRound]="selectedDetails" 
-          [isGameActive]="game.gameStatus === 'active'" 
-          [isRoundSubmitted]="selectedDetails.isSubmitted || selectedDetails.roundNumber < (currentPlayableRoundSignal()?.roundNumber || Infinity)">
+        <app-field
+          *ngSwitchCase="'field'"
+          [currentRound]="selectedDetails"
+          [isGameActive]="game.gameStatus === 'active'"
+          [isRoundSubmitted]="
+            selectedDetails.isSubmitted ||
+            selectedDetails.roundNumber <
+              (currentPlayableRoundSignal()?.roundNumber || Infinity)
+          "
+        >
         </app-field>
-        
-        <app-result 
-          *ngSwitchCase="'result'" 
-          [roundData]="selectedDetails">
+
+        <app-result *ngSwitchCase="'result'" [roundData]="selectedDetails">
         </app-result>
 
         <div *ngSwitchCase="'game_ended'" class="game-ended-message">
-            <h2>Game Over!</h2>
-            <p>This game has finished. You can review the results of the final round or previous rounds.</p>
-            <!-- Link to final results or overall game summary if available -->
+          <h2>Game Over!</h2>
+          <p>
+            This game has finished. You can review the results of the final
+            round or previous rounds.
+          </p>
+          <!-- Link to final results or overall game summary if available -->
         </div>
       </ng-container>
 
-      <div class="round-actions" *ngIf="isViewingCurrentPlayableRound() && displayModeSignal() === 'field'">
-        <button mat-raised-button color="primary" (click)="endRound()" [disabled]="!canSubmitRound() || isSubmittingRound()">
-          <mat-icon>done_all</mat-icon> 
-          {{ isSubmittingRound() ? 'Submitting...' : 'Submit Decisions for Round ' + currentPlayableRoundSignal()?.roundNumber }}
+      <div
+        class="round-actions"
+        *ngIf="
+          isViewingCurrentPlayableRound() && displayModeSignal() === 'field'
+        "
+      >
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="endRound()"
+          [disabled]="!canSubmitRound() || isSubmittingRound()"
+        >
+          <mat-icon>done_all</mat-icon>
+          {{
+            isSubmittingRound()
+              ? "Submitting..."
+              : "Submit Decisions for Round " +
+                currentPlayableRoundSignal()?.roundNumber
+          }}
         </button>
       </div>
-    
     </div>
 
-    <div *ngIf="!selectedRoundDetailsSignal() && !isLoadingData() && displayModeSignal() !== 'game_ended'" class="no-round-data">
-        <p>Select a round to view its details.</p>
-        <p *ngIf="allPlayerRoundsSignal().length === 0">No rounds available yet for this game.</p>
+    <div
+      *ngIf="
+        !selectedRoundDetailsSignal() &&
+        !isLoadingData() &&
+        displayModeSignal() !== 'game_ended'
+      "
+      class="no-round-data"
+    >
+      <p>Select a round to view its details.</p>
+      <p *ngIf="allPlayerRoundsSignal().length === 0">
+        No rounds available yet for this game.
+      </p>
     </div>
 
-    <div *ngIf="displayModeSignal() === 'game_ended' && !selectedRoundDetailsSignal()" class="game-ended-message">
-        <h2>Game Over!</h2>
-        <p>This game has finished. Select a round tab to view its details.</p>
+    <div
+      *ngIf="
+        displayModeSignal() === 'game_ended' && !selectedRoundDetailsSignal()
+      "
+      class="game-ended-message"
+    >
+      <h2>Game Over!</h2>
+      <p>This game has finished. Select a round tab to view its details.</p>
     </div>
-
   </ng-container>
 
-  <div *ngIf="!isLoadingData() && !currentGameSignal()" class="critical-error-message">
-    <p>Could not load game data. Please try refreshing the page or contact support.</p>
+  <div
+    *ngIf="!isLoadingData() && !currentGameSignal()"
+    class="critical-error-message"
+  >
+    <p>
+      Could not load game data. Please try refreshing the page or contact
+      support.
+    </p>
   </div>
-
 </div>

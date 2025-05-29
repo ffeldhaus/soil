@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Parcel, HarvestOutcome, PlantationType, CropSequenceEffect } from '../../../../../../core/models/parcel.model'; // Using Parcel (camelCase)
@@ -12,7 +12,7 @@ import { DynamicSvgBaseComponent } from '../dynamic-svg-base.component';
   template: `<div [innerHTML]="processedSvgContent" class="svg-container"></div>`,
   styleUrls: ['./harvest-svg.component.scss']
 })
-export class HarvestSvgComponent extends DynamicSvgBaseComponent {
+export class HarvestSvgComponent extends DynamicSvgBaseComponent implements OnChanges {
   private sanitizer = inject(DomSanitizer);
   processedSvgContent!: SafeHtml;
 
@@ -55,7 +55,7 @@ export class HarvestSvgComponent extends DynamicSvgBaseComponent {
     const pesticideUsed = decisions?.pesticide;
     const biocontrolUsed = decisions?.biological_control;
 
-    let svgElements: string[] = [];
+    const svgElements: string[] = [];
     // Adjusted viewBox height to accommodate more factors if needed, e.g., 180 or 190
     svgElements.push(`<svg width="100%" height="100%" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">`);
     svgElements.push(`

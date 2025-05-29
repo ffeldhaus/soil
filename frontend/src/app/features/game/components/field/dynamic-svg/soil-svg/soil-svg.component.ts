@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CropSequenceEffect, Parcel, PlantationType } from '../../../../../../core/models/parcel.model'; // Using Parcel (camelCase)
@@ -12,7 +12,7 @@ import { DynamicSvgBaseComponent } from '../dynamic-svg-base.component';
   template: `<div [innerHTML]="processedSvgContent" class="svg-container"></div>`,
   styleUrls: ['./soil-svg.component.scss']
 })
-export class SoilSvgComponent extends DynamicSvgBaseComponent {
+export class SoilSvgComponent extends DynamicSvgBaseComponent implements OnChanges {
   private sanitizer = inject(DomSanitizer);
   processedSvgContent!: SafeHtml;
 
@@ -75,7 +75,7 @@ export class SoilSvgComponent extends DynamicSvgBaseComponent {
                                 this.parcel.prePreviousPlantation &&
                                 this.parcel.currentPlantation === this.parcel.prePreviousPlantation;
 
-    let svgElements: string[] = [];
+    const svgElements: string[] = [];
 
     svgElements.push(`<svg width="100%" height="100%" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">`);
     svgElements.push(`

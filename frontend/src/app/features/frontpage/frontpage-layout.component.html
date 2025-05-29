@@ -1,48 +1,101 @@
 <!-- File: frontend/src/app/features/frontpage/frontpage-layout.component.html -->
-<div class="app-layout-container app-layout-container--with-bg frontpage-layout-container">
+<div
+  class="app-layout-container app-layout-container--with-bg frontpage-layout-container"
+>
   <mat-toolbar class="app-toolbar app-toolbar--transparent frontpage-toolbar">
     <a routerLink="/frontpage/overview" class="toolbar-title">SOIL</a>
     <span class="spacer"></span>
 
     <!-- Desktop Menu -->
     <div class="toolbar-links" *ngIf="!(isHandset$ | async)">
-      <mat-form-field subscriptSizing="dynamic" appearance="outline" class="language-selector">
-        <mat-select (selectionChange)="onLanguageChange($event.value)" [value]="currentLang">
-          <mat-option *ngFor="let lang of languages" [value]="lang.code">{{ lang.label }}</mat-option>
+      <mat-form-field
+        subscriptSizing="dynamic"
+        appearance="outline"
+        class="language-selector"
+      >
+        <mat-select
+          (selectionChange)="onLanguageChange($event.value)"
+          [value]="currentLang"
+        >
+          <mat-option *ngFor="let lang of languages" [value]="lang.code">{{
+            lang.label
+          }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <a mat-button *ngFor="let item of navItems" [routerLink]="item.link" routerLinkActive="active-link">{{ item.label }}</a>
-      <ng-container *ngIf="!(authService.isAuthenticated())">
-        <a mat-button routerLink="register" routerLinkActive="active-link">Register (Admin)</a>
-        <a mat-button routerLink="login" routerLinkActive="active-link">Login</a>
+      <a
+        mat-button
+        *ngFor="let item of navItems"
+        [routerLink]="item.link"
+        routerLinkActive="active-link"
+        >{{ item.label }}</a
+      >
+      <ng-container *ngIf="!authService.isAuthenticated()">
+        <a mat-button routerLink="register" routerLinkActive="active-link"
+          >Register (Admin)</a
+        >
+        <a mat-button routerLink="login" routerLinkActive="active-link"
+          >Login</a
+        >
       </ng-container>
       <ng-container *ngIf="authService.isAuthenticated()">
-        <a mat-button *ngIf="authService.isAdmin()" routerLink="/admin">Admin Dashboard</a>
-        <a mat-button *ngIf="authService.isPlayer() && authService.currentUser()?.gameId" [routerLink]="['/game', authService.currentUser()?.gameId]">My Game</a>
+        <a mat-button *ngIf="authService.isAdmin()" routerLink="/admin"
+          >Admin Dashboard</a
+        >
+        <a
+          mat-button
+          *ngIf="authService.isPlayer() && authService.currentUser()?.gameId"
+          [routerLink]="['/game', authService.currentUser()?.gameId]"
+          >My Game</a
+        >
         <button mat-button (click)="onLogout()">Logout</button>
-        <span class="user-email" *ngIf="authService.currentUser()?.email">({{ authService.currentUser()?.email }})</span>
+        <span class="user-email" *ngIf="authService.currentUser()?.email"
+          >({{ authService.currentUser()?.email }})</span
+        >
       </ng-container>
     </div>
 
     <!-- Mobile Menu -->
-    <button mat-icon-button [matMenuTriggerFor]="mobileMenu" *ngIf="isHandset$ | async" class="mobile-menu-button">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="mobileMenu"
+      *ngIf="isHandset$ | async"
+      class="mobile-menu-button"
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #mobileMenu="matMenu">
-      <a mat-menu-item *ngFor="let item of navItems" [routerLink]="item.link" routerLinkActive="active-link">{{ item.label }}</a>
-      <mat-divider *ngIf="!(authService.isAuthenticated())"></mat-divider>
-      <ng-container *ngIf="!(authService.isAuthenticated())">
-        <a mat-menu-item routerLink="register" routerLinkActive="active-link">Register (Admin)</a>
-        <a mat-menu-item routerLink="login" routerLinkActive="active-link">Login</a>
+      <a
+        mat-menu-item
+        *ngFor="let item of navItems"
+        [routerLink]="item.link"
+        routerLinkActive="active-link"
+        >{{ item.label }}</a
+      >
+      <mat-divider *ngIf="!authService.isAuthenticated()"></mat-divider>
+      <ng-container *ngIf="!authService.isAuthenticated()">
+        <a mat-menu-item routerLink="register" routerLinkActive="active-link"
+          >Register (Admin)</a
+        >
+        <a mat-menu-item routerLink="login" routerLinkActive="active-link"
+          >Login</a
+        >
       </ng-container>
       <mat-divider *ngIf="authService.isAuthenticated()"></mat-divider>
       <ng-container *ngIf="authService.isAuthenticated()">
-        <a mat-menu-item *ngIf="authService.isAdmin()" routerLink="/admin">Admin Dashboard</a>
-        <a mat-menu-item *ngIf="authService.isPlayer() && authService.currentUser()?.gameId" [routerLink]="['/game', authService.currentUser()?.gameId]">My Game</a>
-        <button mat-menu-item (click)="onLogout()">Logout ({{ authService.currentUser()?.email }})</button>
+        <a mat-menu-item *ngIf="authService.isAdmin()" routerLink="/admin"
+          >Admin Dashboard</a
+        >
+        <a
+          mat-menu-item
+          *ngIf="authService.isPlayer() && authService.currentUser()?.gameId"
+          [routerLink]="['/game', authService.currentUser()?.gameId]"
+          >My Game</a
+        >
+        <button mat-menu-item (click)="onLogout()">
+          Logout ({{ authService.currentUser()?.email }})
+        </button>
       </ng-container>
     </mat-menu>
-
   </mat-toolbar>
 
   <main class="app-content-wrapper content-wrapper">

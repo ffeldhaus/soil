@@ -60,9 +60,9 @@ export class MockPlayerGameService implements IPlayerGameService {
           decisions: { 
             fertilize: true, 
             pesticide: false,
-            biological_control: true,
-            attempt_organic_certification: false,
-            machine_investment_level: 1
+            biologicalControl: true,
+            attemptOrganicCertification: false,
+            machineInvestmentLevel: 1
           },
           fieldState: { parcels: mockParcels }, 
           createdAt: new Date().toISOString(), 
@@ -193,7 +193,7 @@ export class MockPlayerGameService implements IPlayerGameService {
         }
     }
     
-    const { fieldState: field_state, ...roundPublicData } = this.mockRoundStore[roundKey];
+    const { fieldState, ...roundPublicData } = this.mockRoundStore[roundKey];
     return of(roundPublicData as RoundPublic).pipe(delay(200));
   }
 

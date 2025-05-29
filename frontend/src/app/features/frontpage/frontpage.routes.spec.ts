@@ -46,7 +46,7 @@ describe('Frontpage Routes', () => {
         MockBackgroundComponent,
         MockLoginComponent,
         MockAdminRegisterComponent,
-        MockImprintComponent,\
+        MockImprintComponent,
         MockPrivacyComponent
       ]
     }).compileComponents();

@@ -1,14 +1,24 @@
 <div class="field-grid-container" #fieldGrid>
-  <div 
-    *ngFor="let parcel of parcelsSignal()" 
-    class="parcel-container" 
+  <div
+    *ngFor="let parcel of parcelsSignal()"
+    class="parcel-container"
     [ngClass]="getParcelCssClasses(parcel)"
-    [attr.data-parcel-number]="parcel.parcelNumber" 
-    (contextmenu)="onParcelContextMenu($event, parcel)">
-
+    [attr.data-parcel-number]="parcel.parcelNumber"
+    (contextmenu)="onParcelContextMenu($event, parcel)"
+  >
     <div class="parcel-base-display {{ parcel.currentPlantation | lowercase }}">
-      <svg viewBox="0 0 100 20" preserveAspectRatio="xMidYMid meet" class="plantation-text-svg">
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" class="plantation-name">
+      <svg
+        viewBox="0 0 100 20"
+        preserveAspectRatio="xMidYMid meet"
+        class="plantation-text-svg"
+      >
+        <text
+          x="50%"
+          y="50%"
+          dominant-baseline="middle"
+          text-anchor="middle"
+          class="plantation-name"
+        >
           {{ parcel.currentPlantation | displayPlantationName }}
         </text>
       </svg>
@@ -16,40 +26,43 @@
 
     <!-- Overlays using dynamic SVG components -->
     <div *ngIf="overlaySignal() === 'soil'" class="overlay svg-overlay">
-      <app-soil-svg 
-        [parcel]="parcel" 
+      <app-soil-svg
+        [parcel]="parcel"
         [previousParcel]="getPreviousParcelFor(parcel)"
         [prePreviousParcel]="getPrePreviousParcelFor(parcel)"
-        [roundData]="currentRoundSignal()?.roundData" 
-        [playerDecisions]="currentRoundSignal()?.decisions">
+        [roundData]="currentRoundSignal()?.roundData"
+        [playerDecisions]="currentRoundSignal()?.decisions"
+      >
       </app-soil-svg>
     </div>
     <div *ngIf="overlaySignal() === 'nutrition'" class="overlay svg-overlay">
-      <app-nutrition-svg 
-        [parcel]="parcel" 
+      <app-nutrition-svg
+        [parcel]="parcel"
         [previousParcel]="getPreviousParcelFor(parcel)"
-        [roundData]="currentRoundSignal()?.roundData" 
-        [playerDecisions]="currentRoundSignal()?.decisions">
+        [roundData]="currentRoundSignal()?.roundData"
+        [playerDecisions]="currentRoundSignal()?.decisions"
+      >
       </app-nutrition-svg>
     </div>
     <div *ngIf="overlaySignal() === 'cropsequence'" class="overlay svg-overlay">
-      <app-cropsequence-svg 
-        [parcel]="parcel" 
-        [previousParcel]="getPreviousParcelFor(parcel)" 
-        [prePreviousParcel]="getPrePreviousParcelFor(parcel)">
+      <app-cropsequence-svg
+        [parcel]="parcel"
+        [previousParcel]="getPreviousParcelFor(parcel)"
+        [prePreviousParcel]="getPrePreviousParcelFor(parcel)"
+      >
       </app-cropsequence-svg>
     </div>
     <div *ngIf="overlaySignal() === 'harvest'" class="overlay svg-overlay">
-      <app-harvest-svg 
-        [parcel]="parcel" 
-        [roundData]="currentRoundSignal()?.roundData" 
-        [playerDecisions]="currentRoundSignal()?.decisions">
+      <app-harvest-svg
+        [parcel]="parcel"
+        [roundData]="currentRoundSignal()?.roundData"
+        [playerDecisions]="currentRoundSignal()?.decisions"
+      >
       </app-harvest-svg>
     </div>
 
     <!-- Selection highlight (managed by Selectable.js styles) -->
     <!-- Add specific content for the parcel if needed, e.g. parcel number display -->
     <div class="parcel-number-label">{{ parcel.parcelNumber }}</div>
-
   </div>
 </div>
