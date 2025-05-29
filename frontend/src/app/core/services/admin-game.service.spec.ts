@@ -82,7 +82,7 @@ describe('AdminGameService', () => {
     });
 
     it('createGame should call mockService.createGame', () => {
-      const payload: GameCreateAdminPayload = { name: 'Test', number_of_players: 2 };
+      const payload: GameCreateAdminPayload = { name: 'Test', numberOfPlayers: 2 };
       service.createGame(payload);
       expect(mockAdminGameServiceInstance!.createGame).toHaveBeenCalledWith(payload);
     });
@@ -112,7 +112,7 @@ describe('AdminGameService', () => {
     });
 
     it('getAdminGames should make an HTTP GET request', () => {
-      const dummyGames: GameAdminListItem[] = [{id: 'g1', name: 'Real Game', game_status: 'pending', current_round_number: 0, max_players: 1}];
+      const dummyGames: GameAdminListItem[] = [{id: 'g1', name: 'Real Game', gameStatus: 'pending', currentRoundNumber: 0, maxPlayers: 1}];
       service.getAdminGames().subscribe(games => {
         expect(games.length).toBe(1);
         expect(games).toEqual(dummyGames);
@@ -123,15 +123,15 @@ describe('AdminGameService', () => {
     });
 
     it('createGame should make an HTTP POST request', () => {
-      const payload: GameCreateAdminPayload = { name: 'New Game', number_of_players: 2 };
+      const payload: GameCreateAdminPayload = { name: 'New Game', numberOfPlayers: 2 };
       const dummyResponse: GameDetailsView = { 
         id: 'g2', 
         name: 'New Game', 
-        game_status: 'pending', 
-        current_round_number: 0, 
-        max_players: 2, 
-        created_at: new Date().toISOString(), 
-        updated_at: new Date().toISOString()  
+        gameStatus: 'pending', 
+        currentRoundNumber: 0, 
+        maxPlayers: 2, 
+        createdAt: new Date().toISOString(), 
+        updatedAt: new Date().toISOString()  
       };
       service.createGame(payload).subscribe(response => {
         expect(response).toEqual(dummyResponse);
@@ -147,11 +147,11 @@ describe('AdminGameService', () => {
       const dummyResponse: GameDetailsView = { 
         id: gameId, 
         name: 'Advanced Game', 
-        game_status: 'in_progress', 
-        current_round_number: 1, 
-        max_players: 2,
-        created_at: new Date().toISOString(), 
-        updated_at: new Date().toISOString()  
+        gameStatus: 'in_progress', 
+        currentRoundNumber: 1, 
+        maxPlayers: 2,
+        createdAt: new Date().toISOString(), 
+        updatedAt: new Date().toISOString()  
       };
       service.advanceGameRound(gameId).subscribe(response => {
         expect(response).toEqual(dummyResponse);

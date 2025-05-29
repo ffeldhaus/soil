@@ -43,7 +43,8 @@
             }
           ],
           "no-console": "warn", // Warn about console.log, can be "error" for stricter policy
-          "no-debugger": "error"
+          "no-debugger": "error",
+          "camelcase": ["error", { "properties": "always" }]
         }
       },
       {

@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Parcel, PlantationType, CropSequenceEffect } from '../../../../../../core/models/parcel.model'; // Using Parcel (camelCase)
@@ -10,7 +10,7 @@ import { DynamicSvgBaseComponent } from '../dynamic-svg-base.component';
   imports: [CommonModule],
   template: `<div [innerHTML]="processedSvgContent"></div>`,
 })
-export class CropsequenceSvgComponent extends DynamicSvgBaseComponent {
+export class CropsequenceSvgComponent extends DynamicSvgBaseComponent implements OnChanges {
   // Ensure that parcel, previousParcel, and prePreviousParcel inputs in DynamicSvgBaseComponent
   // are also typed as Parcel (from parcel.model.ts) if they aren't already.
   // For this component, we assume they are correctly typed from the base or direct inputs.
@@ -39,7 +39,7 @@ export class CropsequenceSvgComponent extends DynamicSvgBaseComponent {
     const prevPlantation = this.previousParcel?.currentPlantation;
     const prePrevPlantation = this.prePreviousParcel?.currentPlantation;
 
-    let svgString = `
+    const svgString = `
     <svg width="180" height="60" viewBox="0 0 358.92996 118.14562" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <defs>
         <marker refX="0" refY="0" orient="auto" id="Arrow2Lend" style="overflow:visible">

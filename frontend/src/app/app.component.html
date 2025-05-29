@@ -3,11 +3,19 @@
   <mat-toolbar color="warn">
     <mat-icon>admin_panel_settings</mat-icon>
     <span class="impersonation-text">
-      Impersonating: <strong>{{ currentUser()?.displayName || currentUser()?.email }}</strong> (Player {{ currentUser()?.playerNumber }})
-      <span *ngIf="currentUser()?.impersonatorUid"> (Admin: {{ currentUser()?.impersonatorUid?.substring(0,8) }}...)</span>
+      Impersonating:
+      <strong>{{ currentUser()?.displayName || currentUser()?.email }}</strong>
+      (Player {{ currentUser()?.playerNumber }})
+      <span *ngIf="currentUser()?.impersonatorUid">
+        (Admin: {{ currentUser()?.impersonatorUid?.substring(0, 8) }}...)</span
+      >
     </span>
     <span class="impersonation-spacer"></span>
-    <button mat-stroked-button (click)="stopImpersonation()" class="stop-impersonation-button">
+    <button
+      mat-stroked-button
+      (click)="stopImpersonation()"
+      class="stop-impersonation-button"
+    >
       <mat-icon>stop_circle</mat-icon> Return to Admin View
     </button>
   </mat-toolbar>

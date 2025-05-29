@@ -88,9 +88,9 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
     };
 
     const backendAdminResponse: AuthResponse = {
-      access_token: 'backend-admin-jwt',
-      token_type: 'Bearer',
-      user_info: { uid: 'admin-uid', email: testEmail, role: UserRole.ADMIN, displayName: 'Admin User' }
+      accessToken: 'backend-admin-jwt',
+      tokenType: 'Bearer',
+      userInfo: { uid: 'admin-uid', email: testEmail, role: UserRole.ADMIN, displayName: 'Admin User' }
     };
 
     it('adminLogin success should authenticate and set user', fakeAsync(() => {
@@ -146,7 +146,7 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
     it('logout should clear user data and call Firebase signOut', fakeAsync(() => {
       const loggedInFbUser: Partial<FirebaseUser> = { uid: 'test-uid' };
       const loggedInIdTokenResult: Partial<IdTokenResult> = { token: 'test-token', claims: { role: UserRole.PLAYER } };
-      const backendLoginResponse: AuthResponse = { access_token: 'backend-test-jwt', token_type: 'Bearer', user_info: { uid: 'test-uid', email: 'test@test.com', role: UserRole.PLAYER } };
+      const backendLoginResponse: AuthResponse = { accessToken: 'backend-test-jwt', tokenType: 'Bearer', userInfo: { uid: 'test-uid', email: 'test@test.com', role: UserRole.PLAYER } };
 
       firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(loggedInIdTokenResult as IdTokenResult);
       firebaseAuthMock.simulateAuthStateChange(loggedInFbUser); // Trigger login state change

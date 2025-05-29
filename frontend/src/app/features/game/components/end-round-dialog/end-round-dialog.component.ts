@@ -41,10 +41,10 @@ export class EndRoundDialogComponent {
     this.decisionsForm = this.fb.group({
       fertilize: [data.roundDecisions.fertilize || false],
       pesticide: [data.roundDecisions.pesticide || false],
-      biological_control: [data.roundDecisions.biological_control || false],
-      attempt_organic_certification: [data.roundDecisions.attempt_organic_certification || false],
-      machine_investment_level: [
-        data.roundDecisions.machine_investment_level || 0, 
+      biologicalControl: [data.roundDecisions.biologicalControl || false],
+      attemptOrganicCertification: [data.roundDecisions.attemptOrganicCertification || false],
+      machineInvestmentLevel: [
+        data.roundDecisions.machineInvestmentLevel || 0, 
         [Validators.min(0), Validators.max(50)]
       ]
     });

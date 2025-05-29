@@ -82,18 +82,18 @@ export class AuthService implements IAuthService {
       const idTokenResult = await getIdTokenResult(firebaseUser, true);
       const claims = idTokenResult.claims;
       const role = claims['role'] as UserRole | undefined;
-      const gameId = claims['game_id'] as string | undefined;
-      const isAi = claims['is_ai'] as boolean | undefined;
-      const playerNumber = claims['player_number'] as number | undefined;
+      const gameIdClaim = claims['game_id'] as string | undefined;
+      const isAiClaim = claims['is_ai'] as boolean | undefined;
+      const playerNumberClaim = claims['player_number'] as number | undefined;
 
       const appUser: User = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: firebaseUser.displayName,
         role: role || null,
-        gameId: gameId,
-        playerNumber: playerNumber,
-        isAi: isAi,
+        gameId: gameIdClaim,
+        playerNumber: playerNumberClaim,
+        isAi: isAiClaim,
       };
       this.appUserInternal.set(appUser);
       console.log('AuthService: App user processed from Firebase claims:', appUser);
@@ -115,12 +115,12 @@ export class AuthService implements IAuthService {
     console.log('AuthService: fetchAndStoreBackendToken called with Firebase ID token (first 50 chars): ', firebaseIdToken.substring(0,50));
     try {
       const response = await firstValueFrom(
-        this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login/id-token`, { id_token: firebaseIdToken })
+        this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login/id-token`, { idToken: firebaseIdToken })
       );
-      if (response && response.access_token) {
-        this.storeBackendToken(response.access_token);
-        if (response.user_info) {
-            const newUser = response.user_info as User;
+      if (response && response.accessToken) {
+        this.storeBackendToken(response.accessToken);
+        if (response.userInfo) {
+            const newUser = response.userInfo as User;
             this.appUserInternal.set(newUser);
             console.log('AuthService: AppUser updated from backend token user_info:', newUser);
         }
@@ -224,7 +224,7 @@ export class AuthService implements IAuthService {
     console.log(`AuthService: playerLoginWithCredentials for game ${gameId}, player ${playerNumber}`);
     return this.http.post<{ customToken: string }>(
       `${environment.apiUrl}/auth/login/player-credentials`,
-      { game_id: gameId, player_number: playerNumber, password: password }
+      { gameId: gameId, playerNumber: playerNumber, password: password }
     ).pipe(
       switchMap(response => {
         if (!response || !response.customToken) {
@@ -312,23 +312,23 @@ export class AuthService implements IAuthService {
       );
       console.log('AuthService: Impersonation backend response received:', response);
 
-      if (response && response.access_token && response.user_info) {
+      if (response && response.accessToken && response.userInfo) {
         this.storeOriginalAdminToken(currentAdminToken);
-        this.storeBackendToken(response.access_token);    
+        this.storeBackendToken(response.accessToken);    
         
         const impersonatedUser: User = {
-            uid: response.user_info.uid,
-            email: response.user_info.email,
-            displayName: response.user_info.displayName || `Player ${response.user_info.playerNumber}`,
-            role: response.user_info.role as UserRole,
-            gameId: response.user_info.gameId,
-            playerNumber: response.user_info.playerNumber,
-            isAi: response.user_info.isAi,
-            impersonatorUid: response.user_info.impersonatorUid 
+            uid: response.userInfo.uid,
+            email: response.userInfo.email,
+            displayName: response.userInfo.displayName || `Player ${response.userInfo.playerNumber}`,
+            role: response.userInfo.role as UserRole,
+            gameId: response.userInfo.gameId,
+            playerNumber: response.userInfo.playerNumber,
+            isAi: response.userInfo.isAi,
+            impersonatorUid: response.userInfo.impersonatorUid 
         };
         this.appUserInternal.set(impersonatedUser);
 
-        console.log('AuthService: Impersonation successful. Acting as player:', impersonatedUser.uid, 'New backend token (first 50 chars):', response.access_token.substring(0,50));
+        console.log('AuthService: Impersonation successful. Acting as player:', impersonatedUser.uid, 'New backend token (first 50 chars):', response.accessToken.substring(0,50));
         if (impersonatedUser.gameId) {
             this.router.navigate(['/game', impersonatedUser.gameId, 'dashboard']);
         } else {

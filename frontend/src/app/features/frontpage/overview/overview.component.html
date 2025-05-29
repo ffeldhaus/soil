@@ -1,27 +1,38 @@
 <div class="page-container">
-    <mat-card class="info-card">
-      <mat-card-header>
-        <mat-card-title>{{ 'overview.title' | translate }}</mat-card-title>
-        <mat-card-subtitle>{{ 'overview.description' | translate }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>
-          {{ 'overview.paragraph1' | translate }}
-        </p>
-        <p>
-          {{ 'overview.paragraph2' | translate }}
-        </p>
-        <h3>{{ 'overview.howToPlayTitle' | translate }}</h3>
-        <p>
-          {{ 'overview.playerInstructions' | translate }} <a routerLink="../login">{{ 'overview.loginButton' | translate }}</a>.
-        </p>
-        <p>
-          {{ 'overview.adminInstructionsPart1' | translate }}
-          <a routerLink="../register">{{ 'overview.registerButton' | translate }}</a>{{ 'overview.adminInstructionsPart2' | translate }}
-        </p>
-        <p>
-          {{ 'overview.backgroundInfoPart1' | translate }} <a routerLink="../background">{{ 'overview.backgroundInfoLink' | translate }}</a> {{ 'overview.backgroundInfoPart2' | translate }}
-        </p>
-      </mat-card-content>
-    </mat-card>
-  </div>
+  <mat-card class="info-card">
+    <mat-card-header>
+      <mat-card-title>{{ "overview.title" | translate }}</mat-card-title>
+      <mat-card-subtitle>{{
+        "overview.description" | translate
+      }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>
+        {{ "overview.paragraph1" | translate }}
+      </p>
+      <p>
+        {{ "overview.paragraph2" | translate }}
+      </p>
+      <h3>{{ "overview.howToPlayTitle" | translate }}</h3>
+      <p>
+        {{ "overview.playerInstructions" | translate }}
+        <a routerLink="../login">{{ "overview.loginButton" | translate }}</a
+        >.
+      </p>
+      <p>
+        {{ "overview.adminInstructionsPart1" | translate }}
+        <a routerLink="../register">{{
+          "overview.registerButton" | translate
+        }}</a
+        >{{ "overview.adminInstructionsPart2" | translate }}
+      </p>
+      <p>
+        {{ "overview.backgroundInfoPart1" | translate }}
+        <a routerLink="../background">{{
+          "overview.backgroundInfoLink" | translate
+        }}</a>
+        {{ "overview.backgroundInfoPart2" | translate }}
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>

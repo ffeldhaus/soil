@@ -2,62 +2,117 @@
 <div class="field-container" *ngIf="!isLoading(); else loadingField">
   <div class="field-header" *ngIf="fieldState()">
     <div class="round-navigation">
-      <button mat-icon-button (click)="navigateToPreviousRound()" [disabled]="isFirstRound()" matTooltip="View Previous Round">
+      <button
+        mat-icon-button
+        (click)="navigateToPreviousRound()"
+        [disabled]="isFirstRound()"
+        matTooltip="View Previous Round"
+      >
         <mat-icon>chevron_left</mat-icon>
       </button>
       <h2>Your Field - Round {{ fieldState()?.round_number }}</h2>
-      <button mat-icon-button (click)="navigateToNextRound()" [disabled]="isCurrentRound()" matTooltip="View Next Round">
+      <button
+        mat-icon-button
+        (click)="navigateToNextRound()"
+        [disabled]="isCurrentRound()"
+        matTooltip="View Next Round"
+      >
         <mat-icon>chevron_right</mat-icon>
       </button>
     </div>
     <div class="field-actions">
-      <button mat-stroked-button color="primary" (click)="openPlantationDialog()" [disabled]="selectedParcels().size === 0 || !isCurrentRound()" matTooltip="Change plantation for selected parcels (only available in current round)">
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="openPlantationDialog()"
+        [disabled]="selectedParcels().size === 0 || !isCurrentRound()"
+        matTooltip="Change plantation for selected parcels (only available in current round)"
+      >
         <mat-icon>eco</mat-icon> Change Plantation
       </button>
       <!-- Add other overlay toggle buttons here if needed -->
     </div>
   </div>
 
-  <div class="parcel-grid" #parcelGrid *ngIf="parcels().length > 0; else noParcels">
+  <div
+    class="parcel-grid"
+    #parcelGrid
+    *ngIf="parcels().length > 0; else noParcels"
+  >
     <div
       *ngFor="let parcel of parcels()"
       class="parcel-cell"
       [class.selected]="isSelected(parcel.parcel_number)"
       [attr.data-parcel-number]="parcel.parcel_number"
-      [style.background-image]="'url(' + getParcelImagePath(parcel.current_plantation) + ')'"
+      [style.background-image]="
+        'url(' + getParcelImagePath(parcel.current_plantation) + ')'
+      "
       [ngClass]="getParcelPlantationClass(parcel.current_plantation)"
-      [matTooltip]="parcel.current_plantation + ' (Parcel ' + parcel.parcel_number + ')' + (!isCurrentRound() ? ' - Round ' + fieldState()?.round_number : '')"
+      [matTooltip]="
+        parcel.current_plantation +
+        ' (Parcel ' +
+        parcel.parcel_number +
+        ')' +
+        (!isCurrentRound() ? ' - Round ' + fieldState()?.round_number : '')
+      "
       tabindex="0"
       [attr.role]="isCurrentRound() ? 'button' : 'img'"
-      [attr.aria-label]="'Parcel ' + parcel.parcel_number + ', currently ' + parcel.current_plantation + (!isCurrentRound() ? ' in round ' + fieldState()?.round_number : '')"
-      [attr.aria-pressed]="isSelected(parcel.parcel_number)">
-
+      [attr.aria-label]="
+        'Parcel ' +
+        parcel.parcel_number +
+        ', currently ' +
+        parcel.current_plantation +
+        (!isCurrentRound() ? ' in round ' + fieldState()?.round_number : '')
+      "
+      [attr.aria-pressed]="isSelected(parcel.parcel_number)"
+    >
       <div class="parcel-overlay" [ngSwitch]="currentOverlay()">
-          <!-- Default: Plantation Name -->
-          <div *ngSwitchCase="null" class="overlay-content plantation-name">
-            {{ parcel.current_plantation | titlecase }}
-            <span class="parcel-number">#{{parcel.parcel_number}}</span>
-          </div>
+        <!-- Default: Plantation Name -->
+        <div *ngSwitchCase="null" class="overlay-content plantation-name">
+          {{ parcel.current_plantation | titlecase }}
+          <span class="parcel-number">#{{ parcel.parcel_number }}</span>
+        </div>
 
-          <!-- Soil Quality Overlay -->
-          <div *ngSwitchCase="'soil_quality'" class="overlay-content" [ngClass]="getSoilQualityClass(parcel.soil_quality)">
-            Soil: {{ parcel.soil_quality | number:'1.0-1' }}%
-          </div>
+        <!-- Soil Quality Overlay -->
+        <div
+          *ngSwitchCase="'soil_quality'"
+          class="overlay-content"
+          [ngClass]="getSoilQualityClass(parcel.soil_quality)"
+        >
+          Soil: {{ parcel.soil_quality | number: "1.0-1" }}%
+        </div>
 
-          <!-- Nutrient Level Overlay -->
-          <div *ngSwitchCase="'nutrient_level'" class="overlay-content" [ngClass="getNutrientLevelClass(parcel.nutrient_level)">
-            Nutr: {{ parcel.nutrient_level | number:'1.0-1' }}%
-          </div>
+        <!-- Nutrient Level Overlay -->
+        <div
+          *ngSwitchCase="'nutrient_level'"
+          class="overlay-content"
+          [ngClass="getNutrientLevelClass(parcel.nutrient_level)"
+        >
+          Nutr: {{ parcel.nutrient_level | number: "1.0-1" }}%
+        </div>
 
-          <!-- Harvest Outcome Overlay -->
-          <div *ngSwitchCase="'harvest_outcome'" class="overlay-content" [ngClass]="getHarvestOutcomeClass(parcel.last_harvest_outcome_category)">
-            Harvest: {{ parcel.last_harvest_outcome_category | titlecase }} ({{parcel.last_harvest_yield_dt}} dt)
-          </div>
+        <!-- Harvest Outcome Overlay -->
+        <div
+          *ngSwitchCase="'harvest_outcome'"
+          class="overlay-content"
+          [ngClass]="
+            getHarvestOutcomeClass(parcel.last_harvest_outcome_category)
+          "
+        >
+          Harvest: {{ parcel.last_harvest_outcome_category | titlecase }} ({{
+            parcel.last_harvest_yield_dt
+          }}
+          dt)
+        </div>
 
-          <!-- Crop Sequence Effect Overlay -->
-          <div *ngSwitchCase="'crop_sequence'" class="overlay-content" [ngClass="getCropSequenceClass(parcel.crop_sequence_effect)">
-            Seq: {{ parcel.crop_sequence_effect | titlecase }}
-          </div>
+        <!-- Crop Sequence Effect Overlay -->
+        <div
+          *ngSwitchCase="'crop_sequence'"
+          class="overlay-content"
+          [ngClass="getCropSequenceClass(parcel.crop_sequence_effect)"
+        >
+          Seq: {{ parcel.crop_sequence_effect | titlecase }}
+        </div>
       </div>
     </div>
   </div>
