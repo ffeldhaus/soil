@@ -3,7 +3,7 @@ import { FieldPublic } from './parcel.model';
 import { PlantationType } from './parcel.model';
 import { HarvestIncome, TotalExpensesBreakdown } from './financials.model'; // Import financial models
 
-export interface Dict<K extends string | number, V> {
+export interface Dict<V> { // Removed unused _K parameter
     [key: string]: V;
 }
 
@@ -60,7 +60,7 @@ export interface RoundInDB extends RoundBase {
   calculatedAt?: string | Date; // When the results were calculated
 }
 
-export interface RoundPublic extends RoundInDB {}
+export type RoundPublic = RoundInDB;
 
 export interface RoundWithFieldPublic extends RoundPublic {
   fieldState: FieldPublic;

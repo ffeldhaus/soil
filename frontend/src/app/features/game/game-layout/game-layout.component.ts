@@ -18,12 +18,12 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { IAuthService } from '../../../core/services/auth.service.interface';
 import { NotificationService } from '../../../core/services/notification.service';
 import { GamePublic } from '../../../core/models/game.model'; // Changed from GameDetailsView
-import { IPlayerGameService } from '../../../core/services/player-game.service.interface'; 
+// import { IPlayerGameService } from '../../../core/services/player-game.service.interface'; // Removed unused import
 import { AUTH_SERVICE_TOKEN } from '../../../core/services/injection-tokens';
 
 interface GameNavItem {
   label: string;
-  linkParts: any[];
+  linkParts: (string | number)[]; // Changed any[] to (string | number)[]
   icon?: string;
   queryParams?: Record<string, string>;
 }
@@ -105,8 +105,8 @@ export class GameLayoutComponent implements OnInit {
       await this.authService.logout();
       // Navigate to login or home page after logout
       this.router.navigate(['/login']); 
-    } catch (error) {
-      console.error('Logout failed in game layout', error);
+    } catch { // Removed error parameter
+      // console.error('Logout failed in game layout');
       this.notificationService.showError('Logout failed.');
     }
   }

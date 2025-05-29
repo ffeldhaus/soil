@@ -9,27 +9,43 @@ interface LanguageTag {
   q: number;
 }
 
+// Define a type for a request-like object with headers
+type RequestLike = { headers?: Record<string, string | string[] | undefined> };
+
+import { HttpHeaders } from '@angular/common/http'; // Import HttpHeaders
+
 // Function to extract preferred language from Accept-Language header
-function getPreferredLanguage(req: HttpRequest<unknown> | any): string {
-  const acceptLanguageHeader = req.headers?.get('accept-language') || req.headers?.['accept-language'];
-  if (acceptLanguageHeader) {
-    const languages = acceptLanguageHeader.split(',').map((lang: string): LanguageTag => { // Added type for lang and return type
-      const parts = lang.trim().split(';');
-      const q = parts[1] ? parseFloat(parts[1].split('=S')[1]) : 1;
-      return { lang: parts[0].split('-')[0].toLowerCase(), q };
+function getPreferredLanguage(req: HttpRequest<unknown> | RequestLike): string {
+  let acceptLanguageHeaderValue: string | null | undefined = null;
+  if (req.headers) {
+    if (typeof (req.headers as HttpHeaders).get === 'function') {
+      acceptLanguageHeaderValue = (req.headers as HttpHeaders).get('accept-language');
+    } else if (req.headers['accept-language']) {
+      const headerVal = req.headers['accept-language'];
+      acceptLanguageHeaderValue = Array.isArray(headerVal) ? headerVal.join(',') : headerVal;
+    }
+  }
+
+  if (acceptLanguageHeaderValue && typeof acceptLanguageHeaderValue === 'string') {
+    const languages = acceptLanguageHeaderValue.split(',').map((langStr: string): LanguageTag => {
+      const parts = langStr.trim().split(';');
+      // Ensure qValueString is valid before parseFloat
+      const qValueString = parts[1]?.split('=')[1];
+      const q = qValueString ? parseFloat(qValueString) : 1;
+      return { lang: parts[0].split('-')[0].toLowerCase(), q: isNaN(q) ? 1 : q }; // Handle NaN for q
     });
-    languages.sort((a: LanguageTag, b: LanguageTag) => b.q - a.q); // Added types for a and b
-    const preferred = languages.find((l: LanguageTag) => ['en', 'de'].includes(l.lang)); // Added type for l
+    languages.sort((a, b) => b.q - a.q); // Types inferred
+    const preferred = languages.find(l => ['en', 'de'].includes(l.lang)); // Type inferred
     if (preferred) {
-      console.log(`[main.server.ts] Detected preferred language from header: ${preferred.lang}`);
+      // console.log(`[main.server.ts] Detected preferred language from header: ${preferred.lang}`);
       return preferred.lang;
     }
   }
-  console.log('[main.server.ts] No preferred language detected or supported from header, defaulting to en');
+  // console.log('[main.server.ts] No preferred language detected or supported from header, defaulting to en');
   return 'en'; // Default language
 }
 
-const bootstrap = (req?: HttpRequest<unknown> | any) => {
+const bootstrap = (req?: HttpRequest<unknown> | RequestLike) => {
   const requestLanguage = req ? getPreferredLanguage(req) : 'en';
   
   const serverProviders = [

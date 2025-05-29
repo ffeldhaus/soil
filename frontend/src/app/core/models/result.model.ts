@@ -18,11 +18,11 @@ export interface ResultBase {
   explanations?: Dict<string, string> | null; // Using Dict for consistency
 }
 
-export interface ResultCreate extends ResultBase {}
+export type ResultCreate = ResultBase;
 
 export interface ResultInDB extends ResultBase {
   id: string; // Firestore document ID
   calculatedAt: string | Date; // camelCase
 }
 
-export interface ResultPublic extends ResultInDB {}
+export type ResultPublic = ResultInDB;

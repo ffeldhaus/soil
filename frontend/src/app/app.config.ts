@@ -1,10 +1,10 @@
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection, inject, PLATFORM_ID, APP_INITIALIZER, TransferState } from '@angular/core'; // Added TransferState from @angular/core
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection, PLATFORM_ID, APP_INITIALIZER, TransferState } from '@angular/core'; // Added TransferState from @angular/core
 import { provideRouter, withComponentInputBinding, withViewTransitions, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors, HttpClientModule } from '@angular/common/http';
 import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser'; 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { Router } from '@angular/router';
-import { Auth } from '@angular/fire/auth';
+// import { Router } from '@angular/router'; // Not used
+// import { Auth } from '@angular/fire/auth'; // Not used
 import { HttpClient } from '@angular/common/http';
 
 // ngx-translate

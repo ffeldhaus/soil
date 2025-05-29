@@ -2,12 +2,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import {
-  Parcel, PlantationType, FieldState, CropSequenceEffect, HarvestOutcome
+  Parcel, PlantationType, CropSequenceEffect, HarvestOutcome // Removed FieldState
 } from '../models/parcel.model';
 import { GamePublic } from '../models/game.model';
 import { PlayerPublic } from '../models/player.model';
 import { UserRole } from '../models/user.model'; 
-import { RoundWithFieldPublic, RoundDecisionBase, PlayerRoundSubmission, RoundPublic } from '../models/round.model'; // Added RoundPublic
+import { RoundWithFieldPublic, PlayerRoundSubmission, RoundPublic } from '../models/round.model'; // Added RoundPublic, Removed RoundDecisionBase
 import { ResultPublic } from '../models/result.model';
 import { IPlayerGameService } from './player-game.service.interface';
 import { HarvestIncome, TotalExpensesBreakdown, SeedCosts, InvestmentCosts, RunningCosts } from '../models/financials.model';
@@ -39,7 +39,7 @@ export class MockPlayerGameService implements IPlayerGameService {
   }
 
   getCurrentRoundWithField(gameId: string): Observable<RoundWithFieldPublic> {
-    console.log(`MockPlayerGameService: getCurrentRoundWithField called for game ${gameId}`);
+    // console.log(`MockPlayerGameService: getCurrentRoundWithField called for game ${gameId}`);
     const gameDetails = this.mockGameStore[gameId];
     const currentRoundNumberFromGame = gameDetails ? gameDetails.currentRoundNumber : 2;
     
@@ -92,7 +92,7 @@ export class MockPlayerGameService implements IPlayerGameService {
   }
 
   getGameDetails(gameId: string): Observable<GamePublic> { 
-    console.log(`MockPlayerGameService: getGameDetails called for game ${gameId}`);
+    // console.log(`MockPlayerGameService: getGameDetails called for game ${gameId}`);
     
     if (!this.mockGameStore[gameId]) {
         const mockPlayers: PlayerPublic[] = [
@@ -126,7 +126,7 @@ export class MockPlayerGameService implements IPlayerGameService {
     roundNumber: number, 
     payload: PlayerRoundSubmission 
   ): Observable<RoundPublic> { 
-    console.log(`MockPlayerGameService: submitPlayerDecisions for round ${roundNumber} in game ${gameId} with payload:`, payload);
+    // console.log(`MockPlayerGameService: submitPlayerDecisions for round ${roundNumber} in game ${gameId} with payload:`, payload);
     // Using a static mockPlayerId for simplicity in this mock service
     const mockPlayerId = 'mockPlayerABC'; 
     
@@ -142,7 +142,7 @@ export class MockPlayerGameService implements IPlayerGameService {
         }));
          // If somehow the number of parcels changed (shouldn't happen with map, but as a safeguard)
         if (updatedParcels.length !== 40) {
-             console.warn(`MockPlayerGameService: Parcel count mismatch during submission update. Expected 40, got ${updatedParcels.length}. Regenerating 40 parcels.`);
+             // console.warn(`MockPlayerGameService: Parcel count mismatch during submission update. Expected 40, got ${updatedParcels.length}. Regenerating 40 parcels.`);
              this.mockRoundStore[roundKey].fieldState.parcels = this.createMockParcels(40);
         } else {
              this.mockRoundStore[roundKey].fieldState.parcels = updatedParcels;
@@ -154,7 +154,7 @@ export class MockPlayerGameService implements IPlayerGameService {
         }
 
     } else {
-        console.warn(`MockPlayerGameService: Round ${roundNumber} not found for submission. Creating a new entry with 40 parcels.`);
+        // console.warn(`MockPlayerGameService: Round ${roundNumber} not found for submission. Creating a new entry with 40 parcels.`);
         const mockParcels = this.createMockParcels(40); 
         const newRoundForSubmission: RoundWithFieldPublic = {
             id: roundKey,
@@ -193,12 +193,15 @@ export class MockPlayerGameService implements IPlayerGameService {
         }
     }
     
-    const { fieldState, ...roundPublicData } = this.mockRoundStore[roundKey];
+    // Avoid unused variable by creating a new object without fieldState
+    const currentRoundFullData = this.mockRoundStore[roundKey];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { fieldState, ...roundPublicData } = currentRoundFullData; // Keep fieldState in destructuring for type safety, but disable lint for this line.
     return of(roundPublicData as RoundPublic).pipe(delay(200));
   }
 
   getPlayerResults(gameId: string, playerId: string): Observable<ResultPublic[]> {
-    console.log(`MockPlayerGameService: getPlayerResults called for game ${gameId}, player ${playerId}`);
+    // console.log(`MockPlayerGameService: getPlayerResults called for game ${gameId}, player ${playerId}`);
     const mockIncome1: HarvestIncome = { total: 6000, fieldBean: 6000 }; 
     const mockExpenses1: TotalExpensesBreakdown = { 
         seedCosts: { fieldBean: 2500, total: 2500 } as SeedCosts,

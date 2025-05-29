@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { MockAuthService } from './auth.service.mock';
-import { UserRole, User } from '../models/user.model';
+import { UserRole } from '../models/user.model'; // Removed User import
 import { environment } from '../../../environments/environment';
 import { firstValueFrom } from 'rxjs';
 
@@ -94,8 +94,12 @@ describe('MockAuthService', () => {
         try {
             await firstValueFrom(service.adminLogin('wrong@admin.com', 'wrongpass'));
             fail('should have thrown an error');
-        } catch (e: any) {
-            expect(e.message).toContain('Mock Admin Login Failed');
+        } catch (e: unknown) { // Changed e: any to e: unknown
+            if (e instanceof Error) {
+                expect(e.message).toContain('Mock Admin Login Failed');
+            } else {
+                fail('Error caught is not an instance of Error');
+            }
             expect(service.isAuthenticated()).toBe(false);
         }
     });

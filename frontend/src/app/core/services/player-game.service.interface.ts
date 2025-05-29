@@ -1,6 +1,6 @@
 // File: frontend/src/app/core/services/player-game.service.interface.ts
 import { Observable } from 'rxjs';
-import { PlantationType } from '../models/parcel.model';
+// import { PlantationType } from '../models/parcel.model'; // Removed as PlantationType is not used
 import { GamePublic } from '../models/game.model';
 // Corrected import to include RoundPublic
 import { RoundWithFieldPublic, PlayerRoundSubmission, RoundPublic } from '../models/round.model'; 

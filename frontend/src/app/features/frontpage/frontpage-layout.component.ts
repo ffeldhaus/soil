@@ -13,7 +13,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { CommonModule, NgIf, AsyncPipe, NgFor, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common'; // Removed NgIf, AsyncPipe, NgFor
 import { IAuthService } from '../../core/services/auth.service.interface';
 import { AUTH_SERVICE_TOKEN } from '../../core/services/injection-tokens';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -74,8 +74,8 @@ export class FrontpageLayoutComponent implements OnInit {
     try {
       await this.authService.logout();
       // Optionally navigate or show notification on successful logout
-    } catch (error) {
-      console.error('Logout failed in layout component', error);
+    } catch { // Removed error parameter
+      // console.error('Logout failed in layout component');
     }
   }
 

@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { NotificationService } from '../services/notification.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+// import { Router } from '@angular/router'; // Commented out as router is unused
 
 export const errorInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -13,7 +13,7 @@ export const errorInterceptor: HttpInterceptorFn = (
 ): Observable<HttpEvent<unknown>> => {
   const notificationService = inject(NotificationService);
   const authService = inject(AuthService);
-  const router = inject(Router);
+  // const router = inject(Router); // Commented out as router is unused
   const platformId = inject(PLATFORM_ID); // Inject PLATFORM_ID
 
   return next(req).pipe(
@@ -40,7 +40,9 @@ export const errorInterceptor: HttpInterceptorFn = (
             notificationService.showError('Your session has expired or you are not authorized. Please log in again.');
             authService.logout().then(() => {
                 // Navigation is handled within logout or can be done here
-            }).catch(logoutErr => console.error("Error during logout after 401:", logoutErr));
+            }).catch(() => { // Removed _logoutErr
+              // console.error("Error during logout after 401:")
+            });
             break;
           case 403: // Forbidden
             notificationService.showError('You do not have permission to access this resource or perform this action.');
@@ -66,7 +68,7 @@ export const errorInterceptor: HttpInterceptorFn = (
         }
       }
       
-      console.error("Global HTTP Error Interceptor caught:", error, "Processed message:", errorMessage);
+      // console.error("Global HTTP Error Interceptor caught:", error, "Processed message:", errorMessage);
       return throwError(() => new Error(errorMessage)); 
     })
   );

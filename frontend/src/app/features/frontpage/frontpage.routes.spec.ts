@@ -2,13 +2,14 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FRONTPAGE_ROUTES } from './frontpage.routes';
-import { FrontpageLayoutComponent } from './frontpage-layout.component';
-import { OverviewComponent } from './overview/overview.component';
-import { BackgroundComponent } from './background/background.component';
-import { LoginComponent } from './login/login.component';
-import { AdminRegisterComponent } from './admin-register/admin-register.component';
-import { ImprintComponent } from './imprint/imprint.component';
-import { PrivacyComponent } from './privacy/privacy.component';
+// Removed unused component imports as they are mocked below for testing purposes
+// import { FrontpageLayoutComponent } from './frontpage-layout.component';
+// import { OverviewComponent } from './overview/overview.component';
+// import { BackgroundComponent } from './background/background.component';
+// import { LoginComponent } from './login/login.component';
+// import { AdminRegisterComponent } from './admin-register/admin-register.component';
+// import { ImprintComponent } from './imprint/imprint.component';
+// import { PrivacyComponent } from './privacy/privacy.component';
 import { Component } from '@angular/core';
 
 // Create stub components for those not directly tested here, if needed for routing setup

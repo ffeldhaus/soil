@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
       if (!environment.production && environment.devDefaults) {
         defaultEmail = environment.devDefaults.adminEmail || '';
         defaultPassword = environment.devDefaults.adminPassword || '';
-        console.log('LoginComponent: Using dev defaults for admin login');
+        // console.log('LoginComponent: Using dev defaults for admin login');
       } else {
          defaultEmail = this.route.snapshot.queryParamMap.get('uid') || this.route.snapshot.queryParamMap.get('email') || '';
       }
@@ -107,7 +107,7 @@ export class LoginComponent implements OnInit {
           }
         },
         error: (err: Error) => {
-          console.error('Player login error:', err);
+          // console.error('Player login error:', err);
           this.notificationService.showError(err.message || 'Player login failed. Invalid credentials or game/player details.');
           this.isSubmitting.set(false);
         },
@@ -129,7 +129,7 @@ export class LoginComponent implements OnInit {
           }
         },
         error: (err: Error) => {
-          console.error('Login error:', err);
+          // console.error('Login error:', err);
           this.notificationService.showError(err.message || 'Login failed. Invalid email or password.');
           this.isSubmitting.set(false);
         },

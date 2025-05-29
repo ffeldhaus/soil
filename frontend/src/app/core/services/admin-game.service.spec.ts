@@ -13,7 +13,7 @@ describe('AdminGameService', () => {
   // Helper to spy on the internal mockService instance
   const spyOnInternalMock = () => {
     // Access the privately instantiated mockService for spying.
-    mockAdminGameServiceInstance = (service as any).mockService;
+    mockAdminGameServiceInstance = (service as AdminGameService & { mockService: MockAdminGameService | null }).mockService;
     if (mockAdminGameServiceInstance) {
       // Use jest.spyOn
       jest.spyOn(mockAdminGameServiceInstance, 'getAdminGames');
@@ -72,7 +72,7 @@ describe('AdminGameService', () => {
 
     it('should be created and use MockAdminGameService', () => {
       expect(service).toBeTruthy();
-      expect((service as any).mockService).toBeInstanceOf(MockAdminGameService);
+      expect((service as AdminGameService & { mockService: MockAdminGameService | null }).mockService).toBeInstanceOf(MockAdminGameService);
       expect(mockAdminGameServiceInstance).not.toBeNull(); // Ensure the spy helper found the mock
     });
 
@@ -107,7 +107,7 @@ describe('AdminGameService', () => {
 
     it('should be created and not use MockAdminGameService', () => {
       expect(service).toBeTruthy();
-      expect((service as any).mockService).toBeNull();
+      expect((service as AdminGameService & { mockService: MockAdminGameService | null }).mockService).toBeNull();
       expect(mockAdminGameServiceInstance).toBeNull();
     });
 

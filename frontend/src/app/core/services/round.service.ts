@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http'; // Removed HttpParams
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { RoundWithFieldPublic, PlayerRoundSubmission, RoundPublic } from '../models/round.model';

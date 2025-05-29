@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router'; // Removed RouterStateSnapshot
 import { IAuthService } from '../services/auth.service.interface';
 import { AUTH_SERVICE_TOKEN } from '../services/injection-tokens';
 import { User, UserRole } from '../models/user.model';
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 export const playerGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+  // _state: RouterStateSnapshot // Removed as it's unused
 ): Observable<boolean> | Promise<boolean> | boolean => {
   // Explicitly type the injected service
   const authService: IAuthService = inject(AUTH_SERVICE_TOKEN);
@@ -22,7 +22,7 @@ export const playerGuard: CanActivateFn = (
           return true;
         }
         if (gameIdFromRoute && user.gameId !== gameIdFromRoute) {
-          console.warn(`PlayerGuard: Player ${user.uid} is in game ${user.gameId}, attempted to access game ${gameIdFromRoute}.`);
+          // console.warn(`PlayerGuard: Player ${user.uid} is in game ${user.gameId}, attempted to access game ${gameIdFromRoute}.`);
         }
         return false;
       }
@@ -30,7 +30,7 @@ export const playerGuard: CanActivateFn = (
     }),
     tap(isAuthorizedPlayer => {
       if (!isAuthorizedPlayer) {
-        console.log('PlayerGuard: User is not an authorized player for this game, redirecting.');
+        // console.log('PlayerGuard: User is not an authorized player for this game, redirecting.');
         router.navigate(['/frontpage/overview']);
       }
     })

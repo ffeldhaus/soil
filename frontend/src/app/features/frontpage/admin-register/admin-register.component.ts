@@ -96,12 +96,12 @@ export class AdminRegisterComponent {
     };
 
     this.authService.adminRegister(adminData).subscribe({
-      next: (response) => {
+      next: () => { // Removed unused 'response' parameter
         this.notificationService.showSuccess('Registration successful! Please check your email to confirm your account.');
         this.router.navigate(['/frontpage/login'], { queryParams: { email: adminData.email } });
       },
       error: (error) => {
-        console.error('Admin registration error:', error);
+        // console.error('Admin registration error:', error);
         this.notificationService.showError(error.message || 'Registration failed. Please try again.');
         this.isSubmitting.set(false);
       },

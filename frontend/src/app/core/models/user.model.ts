@@ -18,7 +18,9 @@ export enum UserRole {
     impersonatorUid?: string; 
   }
   
-  export interface AuthUserInfo extends User {
+  export type AuthUserInfo = User & {
     // This interface is for the user_info part of the Token response.
     // Ensure its properties match what auth.py constructs for user_info dict.
-  }
+    // If AuthUserInfo can have additional properties not in User, define them here.
+    // For example: extraAuthField?: string;
+  };

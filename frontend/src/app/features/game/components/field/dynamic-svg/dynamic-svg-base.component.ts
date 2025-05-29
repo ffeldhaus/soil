@@ -1,13 +1,21 @@
 import { Input, Directive } from '@angular/core'; // Changed to Directive as it's a base
 import { ParcelInDB } from '../../../../../core/models/parcel.model'; // Adjust path as needed
+import { RoundDecisionBase } from '../../../../../core/models/round.model'; // Import for playerDecisions
+
+// Define a more specific type for roundData if possible
+export interface RoundContextData {
+  weatherEvent?: string;
+  verminEvent?: string;
+  // Add other relevant properties from roundData if known
+}
 
 @Directive() // Use @Directive for base class without its own template
 export abstract class DynamicSvgBaseComponent {
   @Input() parcel!: ParcelInDB;
   @Input() previousParcel?: ParcelInDB; // For crop sequence
   @Input() prePreviousParcel?: ParcelInDB; // For crop sequence
-  @Input() roundData?: any; // General round data if needed (weather, vermin, decisions)
-  @Input() playerDecisions?: any; // Specific player decisions for the round
+  @Input() roundData?: RoundContextData; // General round data if needed (weather, vermin, decisions)
+  @Input() playerDecisions?: RoundDecisionBase; // Specific player decisions for the round
 
   // Image path mapping - similar to original Rails helper
   // This should ideally be a service or a constant/enum for better management

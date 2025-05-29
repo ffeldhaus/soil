@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { User as AppUser, UserRole } from '../models/user.model'; // Renamed User to AppUser to avoid clash
+import { User as AppUser } from '../models/user.model'; // Renamed User to AppUser to avoid clash, removed UserRole
 import { User as FirebaseUser } from '@angular/fire/auth'; // Correct type is User
 import { Signal } from '@angular/core';
 
@@ -21,7 +21,7 @@ export interface IAuthService {
   getCurrentFirebaseIdToken(forceRefresh?: boolean): Promise<string | null>;
   adminLogin(email: string, password: string): Observable<AppUser | null>; // Use AppUser
   playerLoginWithCredentials(gameId: string, playerNumber: number, password: string): Observable<AppUser | null>; // Use AppUser
-  adminRegister(payload: any): Observable<any>; // Define payload type more strictly if possible
+  adminRegister(payload: unknown): Observable<unknown>; // Define payload type more strictly if possible
   requestPasswordReset(email: string): Observable<void>;
   logout(): Promise<void>;
   getStoredBackendTokenSnapshot(): string | null;

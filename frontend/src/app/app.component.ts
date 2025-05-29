@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID, inject, Signal } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject, Signal } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,24 +34,24 @@ export class AppComponent implements OnInit {
   currentUser: Signal<User | null | undefined>;
 
   constructor() { // Removed TranslateService from constructor
-    console.log('AppComponent initialized - Language setup moved to APP_INITIALIZER');
+    // console.log('AppComponent initialized - Language setup moved to APP_INITIALIZER');
     this.isImpersonating = this.authService.isImpersonating;
     this.currentUser = this.authService.currentUser;
   }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId) && !environment.production && environment.devDefaults) {
-      console.log('--- Development Defaults ---');
+      // console.log('--- Development Defaults ---');
       // ... (rest of your dev defaults logging)
-      console.log('---------------------------');
+      // console.log('---------------------------');
     }
   }
 
   async stopImpersonation(): Promise<void> {
     try {
       await this.authService.stopImpersonation();
-    } catch (error) {
-      console.error('Failed to stop impersonation from AppComponent', error);
+    } catch { // Removed _error
+      // console.error('Failed to stop impersonation from AppComponent');
     }
   }
 }

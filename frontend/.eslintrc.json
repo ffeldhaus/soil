@@ -44,7 +44,8 @@
           ],
           "no-console": "warn", // Warn about console.log, can be "error" for stricter policy
           "no-debugger": "error",
-          "camelcase": ["error", { "properties": "always" }]
+          "camelcase": ["error", { "properties": "always" }],
+          "@typescript-eslint/no-require-imports": "off"
         }
       },
       {

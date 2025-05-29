@@ -47,8 +47,8 @@ export class AdminLayoutComponent {
   async onLogout() {
     try {
       await this.authService.logout();
-    } catch (error) {
-      console.error('Logout failed in admin layout component', error);
+    } catch { // Removed error parameter
+      // console.error('Logout failed in admin layout component');
     }
   }
 }

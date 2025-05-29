@@ -9,7 +9,7 @@ import { SoilSvgComponent } from './dynamic-svg/soil-svg/soil-svg.component';
 import { NutritionSvgComponent } from './dynamic-svg/nutrition-svg/nutrition-svg.component';
 import { HarvestSvgComponent } from './dynamic-svg/harvest-svg/harvest-svg.component';
 import { Parcel, PlantationType, CropSequenceEffect } from '../../../../core/models/parcel.model'; 
-import { RoundWithFieldPublic, RoundPublic, RoundDecisionBase, Dict } from '../../../../core/models/round.model'; // Removed PlayerRoundSubmission as it's not used here
+import { RoundWithFieldPublic, RoundPublic, Dict } from '../../../../core/models/round.model'; // Removed RoundDecisionBase
 import { DisplayPlantationNamePipe } from '../../../../shared/pipes/display-plantation-name.pipe';
 import { PlantationDialogComponent } from '../plantation-dialog/plantation-dialog.component';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -140,7 +140,7 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
         }
       });
     } else if (!this.fieldGrid || !this.fieldGrid.nativeElement) {
-      console.error("Field grid element not found for Selectable.js initialization");
+      // console.error("Field grid element not found for Selectable.js initialization");
     }
   }
 
@@ -170,8 +170,8 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
 
   private updateSelectedParcelNumbersForDialog(): void {
     if (!this.selectableInstance) return;
-    this._selectedParcelNumbersForDialog = this.selectableInstance.getSelectedItems().map((el: any) => {
-        const parcelNumAttr = (el as HTMLElement).getAttribute('data-parcel-number');
+    this._selectedParcelNumbersForDialog = this.selectableInstance.getSelectedItems().map((el: HTMLElement) => {
+        const parcelNumAttr = el.getAttribute('data-parcel-number'); // el is already HTMLElement
         return parcelNumAttr ? parseInt(parcelNumAttr, 10) : -1;
       }).filter(num => num !== -1);
   }
@@ -306,7 +306,7 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
     return classes;
   }
 
-  onParcelContextMenu(event: MouseEvent, parcel: Parcel) {
+  onParcelContextMenu(event: MouseEvent /* Removed _parcel: Parcel */) {
     event.preventDefault();
   }
 }
