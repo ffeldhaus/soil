@@ -18,6 +18,7 @@ describe('AdminGameService', () => {
       // Use jest.spyOn
       jest.spyOn(mockAdminGameServiceInstance, 'getAdminGames');
       jest.spyOn(mockAdminGameServiceInstance, 'createGame');
+      jest.spyOn(mockAdminGameServiceInstance, 'getGameDetails'); // Added spy
       jest.spyOn(mockAdminGameServiceInstance, 'advanceGameRound');
       jest.spyOn(mockAdminGameServiceInstance, 'deleteGame');
     }
@@ -59,6 +60,9 @@ describe('AdminGameService', () => {
     if (mockAdminGameServiceInstance) {
        (mockAdminGameServiceInstance.getAdminGames as jest.Mock).mockRestore();
        (mockAdminGameServiceInstance.createGame as jest.Mock).mockRestore();
+       if (mockAdminGameServiceInstance.getGameDetails) { // Check if spy exists before restoring
+        (mockAdminGameServiceInstance.getGameDetails as jest.Mock).mockRestore();
+       }
        (mockAdminGameServiceInstance.advanceGameRound as jest.Mock).mockRestore();
        (mockAdminGameServiceInstance.deleteGame as jest.Mock).mockRestore();
        mockAdminGameServiceInstance = null; // Clear reference
@@ -91,6 +95,12 @@ describe('AdminGameService', () => {
       const gameId = 'mockGame1';
       service.advanceGameRound(gameId);
       expect(mockAdminGameServiceInstance!.advanceGameRound).toHaveBeenCalledWith(gameId);
+    });
+
+    it('getGameDetails should call mockService.getGameDetails', () => {
+      const gameId = 'mockGameId';
+      service.getGameDetails(gameId);
+      expect(mockAdminGameServiceInstance!.getGameDetails).toHaveBeenCalledWith(gameId);
     });
 
     it('deleteGame should call mockService.deleteGame', () => {
@@ -156,9 +166,59 @@ describe('AdminGameService', () => {
       service.advanceGameRound(gameId).subscribe(response => {
         expect(response).toEqual(dummyResponse);
       });
-      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}/advance`); // Use correct base URL
+      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}/advance-to-next-round`); // Corrected URL
       expect(req.request.method).toBe('POST');
       req.flush(dummyResponse);
+    });
+
+    describe('getGameDetails', () => {
+      const mockGamePublic: GameDetailsView = { // Using GameDetailsView as it's often more comprehensive for details
+        id: 'game1',
+        name: 'Test Game 1',
+        gameStatus: 'pending',
+        currentRoundNumber: 0,
+        maxPlayers: 8,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        players: [
+          { id: 'p1', name: 'Player 1', gameId: 'game1', score: 0, isOnline: true, lastSeen: new Date().toISOString() }
+        ]
+      };
+
+      it('should make a GET request and return game details with players array', () => {
+        const gameId = 'game1';
+        service.getGameDetails(gameId).subscribe(response => {
+          expect(response).toEqual(mockGamePublic);
+          expect(response.players?.length).toBe(1);
+        });
+        const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}`);
+        expect(req.request.method).toBe('GET');
+        req.flush(mockGamePublic);
+      });
+
+      it('should make a GET request and return game details with empty players array if players is undefined', () => {
+        const gameId = 'game2';
+        const mockGameWithoutPlayers: GameDetailsView = { ...mockGamePublic, id: gameId, players: undefined };
+        service.getGameDetails(gameId).subscribe(response => {
+          expect(response.id).toBe(gameId);
+          expect(response.players).toEqual([]);
+        });
+        const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}`);
+        expect(req.request.method).toBe('GET');
+        req.flush(mockGameWithoutPlayers);
+      });
+
+      it('should make a GET request and return game details with empty players array if players is null', () => {
+        const gameId = 'game3';
+        const mockGameWithNullPlayers: GameDetailsView = { ...mockGamePublic, id: gameId, players: null as any }; // Cast to any to allow null
+        service.getGameDetails(gameId).subscribe(response => {
+          expect(response.id).toBe(gameId);
+          expect(response.players).toEqual([]);
+        });
+        const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}`);
+        expect(req.request.method).toBe('GET');
+        req.flush(mockGameWithNullPlayers);
+      });
     });
 
     it('deleteGame should make an HTTP DELETE request', () => {
