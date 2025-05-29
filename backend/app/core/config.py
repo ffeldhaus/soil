@@ -48,6 +48,15 @@ class Settings(BaseSettings):
     # In Cloud Run, this is often not needed if Workload Identity is used.
     GOOGLE_APPLICATION_CREDENTIALS: Optional[str] = None
 
+    # --- Firestore Collection Names ---
+    FIRESTORE_COLLECTION_ADMINS: str = "admins"
+    FIRESTORE_COLLECTION_USERS: str = "users" # General users/players
+    FIRESTORE_COLLECTION_GAMES: str = "games"
+    FIRESTORE_COLLECTION_ROUNDS: str = "rounds" # Subcollection of games or players
+    FIRESTORE_COLLECTION_RESULTS: str = "results" # Subcollection of games or players
+    FIRESTORE_COLLECTION_PARCEL_STATES: str = "parcel_states" # Subcollection of games or players
+
+
     # --- Email Settings (for notifications, password reset, etc.) ---
     SMTP_TLS: bool = True
     SMTP_PORT: Optional[int] = 587

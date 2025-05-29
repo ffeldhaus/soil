@@ -59,8 +59,8 @@ class HarvestIncome(BaseModel):
 # The TotalIncome model previously defined might be redundant if ResultBase directly uses HarvestIncome
 # for income_details, which is the current setup in result.py and frontend model alignment.
 # If there were other income sources like subsidies, TotalIncome would aggregate them.
-# class TotalIncome(BaseModel):
-#     harvest_income: HarvestIncome = Field(default_factory=HarvestIncome)
-#     # subsidies: float = Field(0.0)
-#     grand_total: float = Field(0.0, description="Grand total of all income")
-#     model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)
+class TotalIncome(BaseModel):
+    harvest_income: HarvestIncome = Field(default_factory=HarvestIncome)
+    # subsidies: float = Field(0.0)
+    grand_total: float = Field(0.0, description="Grand total of all income")
+    model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)

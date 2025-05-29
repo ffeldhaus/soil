@@ -122,15 +122,13 @@ if __name__ == "__main__":
     # --- Token Creation Example ---
     user_data = {"sub": "user123", "role": "player", "game_id": "gameABC", "custom_info": "hello"}
     token = create_access_token(data=user_data)
-    print(f"
-Generated Token: {token}")
+    print(f"Generated Token: {token}")
 
     # --- Token Decoding Example ---
     try:
         decoded_payload = decode_access_token(token)
         if decoded_payload:
-            print(f"
-Decoded Payload (sub): {decoded_payload.sub}")
+            print(f"Decoded Payload (sub): {decoded_payload.sub}")
             print(f"Decoded Payload (role): {decoded_payload.role}")
             print(f"Decoded Payload (game_id): {decoded_payload.game_id}")
             print(f"Decoded Payload (exp): {datetime.fromtimestamp(decoded_payload.exp, timezone.utc)}")
@@ -140,8 +138,7 @@ Decoded Payload (sub): {decoded_payload.sub}")
 
     # --- Expired Token Example ---
     # expired_token = create_access_token(data={"sub": "test_expiry"}, expires_delta_minutes=-5)
-    # print(f"
-Generated Expired Token: {expired_token}")
+    # print(f"Generated Expired Token: {expired_token}")
     # try:
     #     decode_access_token(expired_token)
     # except JWTError as e:

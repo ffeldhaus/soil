@@ -8,7 +8,7 @@ from pydantic.alias_generators import to_camel # Import to_camel
 
 # TotalIncome and TotalExpenses (which should be detailed breakdowns)
 # will need their own camelCase output config in financials.py
-from .financials import HarvestIncome, TotalExpensesBreakdown 
+from .financials import HarvestIncome, TotalExpensesBreakdown, TotalIncome
 
 class ResultBase(BaseModel):
     game_id: str = Field(..., description="ID of the game")
@@ -26,7 +26,7 @@ class ResultBase(BaseModel):
         description="Player's overall machine efficiency at the end of this round / start of next (e.g. 100.0)"
     )
     # Updated to use more specific financial breakdown models
-    income_details: HarvestIncome = Field(default_factory=HarvestIncome)
+    income_details: TotalIncome = Field(default_factory=TotalIncome) # Changed from HarvestIncome
     expense_details: TotalExpensesBreakdown = Field(default_factory=TotalExpensesBreakdown)
     explanations: Optional[Dict[str, str]] = Field(
         default_factory=dict,

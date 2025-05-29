@@ -23,57 +23,60 @@ def update_parcel_ecological_state(
     parcel_at_end_of_round = parcel.model_copy(deep=True)
 
     parcel_at_end_of_round.pre_previous_plantation = parcel.previous_plantation
-    parcel_at_end_of_round.previous_plantation = parcel.current_plantation 
+    parcel_at_end_of_round.previous_plantation = parcel.current_plantation
 
-    if parcel.previous_plantation: 
-        rules_for_current_crop = game_rules.CROP_SEQUENCE_RULES.get(parcel.current_plantation.value, {})
+    # Ensure current_plantation and previous_plantation are enums before accessing .value
+    current_plantation_enum = PlantationType(parcel.current_plantation)
+    previous_plantation_enum = PlantationType(parcel.previous_plantation) if parcel.previous_plantation else None
+
+    if previous_plantation_enum:
+        rules_for_current_crop = game_rules.CROP_SEQUENCE_RULES.get(current_plantation_enum.value, {})
         effect_str = rules_for_current_crop.get(
-            parcel.previous_plantation.value, # This should be parcel.previous_plantation.value if it's an enum
+            previous_plantation_enum.value, 
             rules_for_current_crop.get("default", CropSequenceEffect.OK.value)
         )
-        # Ensure effect_str is a valid CropSequenceEffect value before assignment
         try:
             parcel_at_end_of_round.crop_sequence_effect = CropSequenceEffect(effect_str)
-        except ValueError: # Handle case where effect_str might not be a valid enum value
-            parcel_at_end_of_round.crop_sequence_effect = CropSequenceEffect.OK 
+        except ValueError: 
+            parcel_at_end_of_round.crop_sequence_effect = CropSequenceEffect.OK
             print(f"Warning: Invalid crop sequence effect string '{effect_str}' derived. Defaulting to OK.")
 
-        if parcel_at_end_of_round.crop_sequence_effect == CropSequenceEffect.GOOD: 
-            explanations["crop_sequence_info"] = f"Gute Fruchtfolge: {parcel.current_plantation.value} nach {parcel.previous_plantation.value}."
-        elif parcel_at_end_of_round.crop_sequence_effect == CropSequenceEffect.BAD: 
-            explanations["crop_sequence_info"] = f"Schlechte Fruchtfolge: {parcel.current_plantation.value} nach {parcel.previous_plantation.value}."
-    else: 
+        if parcel_at_end_of_round.crop_sequence_effect == CropSequenceEffect.GOOD:
+            explanations["crop_sequence_info"] = f"Gute Fruchtfolge: {current_plantation_enum.value} nach {previous_plantation_enum.value}."
+        elif parcel_at_end_of_round.crop_sequence_effect == CropSequenceEffect.BAD:
+            explanations["crop_sequence_info"] = f"Schlechte Fruchtfolge: {current_plantation_enum.value} nach {previous_plantation_enum.value}."
+    else:
         parcel_at_end_of_round.crop_sequence_effect = CropSequenceEffect.NONE
 
     current_harvest_yield_dt = 0.0
     current_harvest_outcome_category = HarvestOutcome.NONE
 
-    if parcel.current_plantation not in [PlantationType.FALLOW, PlantationType.ANIMAL_HUSBANDRY]:
-        base_yield = game_rules.HARVEST_BASE_YIELD_DT.get(parcel.current_plantation.value, 0.0)
+    if current_plantation_enum not in [PlantationType.FALLOW, PlantationType.ANIMAL_HUSBANDRY]:
+        base_yield = game_rules.HARVEST_BASE_YIELD_DT.get(current_plantation_enum.value, 0.0)
         effective_yield = base_yield
 
         soil_quality_norm = parcel.soil_quality / game_rules.SOIL_TARGET_FOR_HARVEST_OPTIMUM
-        soil_exponent = game_rules.HARVEST_SOIL_EXPONENT.get(parcel.current_plantation.value, 1.0)
+        soil_exponent = game_rules.HARVEST_SOIL_EXPONENT.get(current_plantation_enum.value, 1.0)
         soil_factor = max(0.1, min(1.5, soil_quality_norm ** soil_exponent))
         effective_yield *= soil_factor
         if soil_factor < 0.85 and parcel.soil_quality < game_rules.SOIL_TARGET_FOR_HARVEST_OPTIMUM: explanations["harvest_soil"] = f"Niedrige Bodenqualität ({parcel.soil_quality:.0f}%) reduzierte Ertrag."
         elif soil_factor > 1.1 and parcel.soil_quality > game_rules.SOIL_TARGET_FOR_HARVEST_OPTIMUM: explanations["harvest_soil"] = f"Gute Bodenqualität ({parcel.soil_quality:.0f}%) steigerte Ertrag."
 
         nutrient_level_norm = parcel.nutrient_level / game_rules.NUTRITION_TARGET_FOR_HARVEST_OPTIMUM
-        nutrient_exponent = game_rules.HARVEST_NUTRITION_EXPONENT.get(parcel.current_plantation.value, 1.0)
+        nutrient_exponent = game_rules.HARVEST_NUTRITION_EXPONENT.get(current_plantation_enum.value, 1.0)
         nutrient_factor = max(0.1, min(1.5, nutrient_level_norm ** nutrient_exponent))
         effective_yield *= nutrient_factor
         if nutrient_factor < 0.85 and parcel.nutrient_level < game_rules.NUTRITION_TARGET_FOR_HARVEST_OPTIMUM: explanations["harvest_nutrient"] = f"Niedriger Nährstoffgehalt ({parcel.nutrient_level:.0f}%) reduzierte Ertrag."
         elif nutrient_factor > 1.1 and parcel.nutrient_level > game_rules.NUTRITION_TARGET_FOR_HARVEST_OPTIMUM: explanations["harvest_nutrient"] = f"Hoher Nährstoffgehalt ({parcel.nutrient_level:.0f}%) steigerte Ertrag."
         
-        weather_impact_rules = game_rules.HARVEST_WEATHER_IMPACT.get(parcel.current_plantation.value, {})
+        weather_impact_rules = game_rules.HARVEST_WEATHER_IMPACT.get(current_plantation_enum.value, {})
         weather_multiplier = weather_impact_rules.get(round_weather, 1.0)
         if is_organic_certified_this_round and weather_multiplier < 1.0:
              weather_multiplier = min(1.0, weather_multiplier * game_rules.HARVEST_ORGANIC_WEATHER_RESILIENCE_FACTOR)
         effective_yield *= weather_multiplier
         if weather_multiplier < 0.9 and round_weather != game_rules.NORMAL_WEATHER: explanations["harvest_weather"] = f"Ernte durch {round_weather} um {((1-weather_multiplier)*100):.0f}% reduziert."
         
-        vermin_is_relevant = game_rules.HARVEST_VERMIN_RELEVANCE.get(parcel.current_plantation.value, {}).get(round_vermin, False)
+        vermin_is_relevant = game_rules.HARVEST_VERMIN_RELEVANCE.get(current_plantation_enum.value, {}).get(round_vermin, False)
         if vermin_is_relevant and round_vermin != game_rules.NO_VERMIN:
             vermin_damage_multiplier = 1.0
             control_measure_applied = False
@@ -117,38 +120,38 @@ def update_parcel_ecological_state(
     parcel_at_end_of_round.last_harvest_outcome_category = current_harvest_outcome_category
 
     soil_change_points = 0.0
-    soil_quality_at_start_of_round = parcel.soil_quality 
+    soil_quality_at_start_of_round = parcel.soil_quality
 
-    if parcel.current_plantation == PlantationType.FALLOW:
+    if current_plantation_enum == PlantationType.FALLOW:
         soil_change_points += game_rules.SOIL_FALLOW_RECOVERY_PER_ROUND
         if soil_quality_at_start_of_round < game_rules.SOIL_TARGET_OPTIMUM: explanations["soil_fallow"] = f"Brache verbessert Bodenqualität um {game_rules.SOIL_FALLOW_RECOVERY_PER_ROUND:.1f} Punkte."
-    elif parcel.current_plantation == PlantationType.ANIMAL_HUSBANDRY:
+    elif current_plantation_enum == PlantationType.ANIMAL_HUSBANDRY:
         soil_change_points += game_rules.SOIL_ANIMAL_HUSBANDRY_EFFECT_PER_ROUND
         if game_rules.SOIL_ANIMAL_HUSBANDRY_EFFECT_PER_ROUND > 0: explanations["soil_animals"] = f"Tierhaltung verbessert Bodenqualität um {game_rules.SOIL_ANIMAL_HUSBANDRY_EFFECT_PER_ROUND:.1f} Punkte."
         elif game_rules.SOIL_ANIMAL_HUSBANDRY_EFFECT_PER_ROUND < 0: explanations["soil_animals"] = f"Tierhaltung verschlechtert Bodenqualität um {-game_rules.SOIL_ANIMAL_HUSBANDRY_EFFECT_PER_ROUND:.1f} Punkte."
-    else: 
-        soil_change_points += game_rules.SOIL_IMPACT_BY_PLANTATION.get(parcel.current_plantation.value, 0.0)
+    else:
+        soil_change_points += game_rules.SOIL_IMPACT_BY_PLANTATION.get(current_plantation_enum.value, 0.0)
         if parcel_at_end_of_round.crop_sequence_effect == CropSequenceEffect.GOOD: soil_change_points += game_rules.SOIL_CROPSEQUENCE_GOOD_BONUS
-        if parcel_at_end_of_round.crop_sequence_effect == CropSequenceEffect.BAD: soil_change_points += game_rules.SOIL_CROPSEQUENCE_BAD_PENALTY 
+        if parcel_at_end_of_round.crop_sequence_effect == CropSequenceEffect.BAD: soil_change_points += game_rules.SOIL_CROPSEQUENCE_BAD_PENALTY
         if player_decisions.fertilize: soil_change_points += game_rules.SOIL_CONV_FERTILIZER_PENALTY
         if player_decisions.pesticide: soil_change_points += game_rules.SOIL_PESTICIDE_PENALTY
         if round_weather == game_rules.FLOOD: soil_change_points += game_rules.SOIL_FLOOD_DAMAGE
         elif round_weather == game_rules.DROUGHT: soil_change_points += game_rules.SOIL_DROUGHT_DAMAGE
         
-        is_monoculture_streak = (parcel.current_plantation == parcel.previous_plantation and
-                                 parcel.current_plantation == parcel.pre_previous_plantation and
-                                 parcel.previous_plantation is not None and 
+        is_monoculture_streak = (current_plantation_enum == previous_plantation_enum and
+                                 current_plantation_enum == PlantationType(parcel.pre_previous_plantation) if parcel.pre_previous_plantation else None and
+                                 previous_plantation_enum is not None and
                                  parcel.pre_previous_plantation is not None)
-        is_second_year_monoculture = (parcel.current_plantation == parcel.previous_plantation and
-                                      parcel.previous_plantation is not None and
+        is_second_year_monoculture = (current_plantation_enum == previous_plantation_enum and
+                                      previous_plantation_enum is not None and
                                       not is_monoculture_streak)
 
         if is_monoculture_streak:
             soil_change_points += game_rules.SOIL_MONOCULTURE_STREAK_PENALTY
-            explanations["soil_monoculture"] = f"Anhaltende Monokultur ({parcel.current_plantation.value}) schadet dem Boden stark ({-game_rules.SOIL_MONOCULTURE_STREAK_PENALTY:.1f} Pkt)."
+            explanations["soil_monoculture"] = f"Anhaltende Monokultur ({current_plantation_enum.value}) schadet dem Boden stark ({-game_rules.SOIL_MONOCULTURE_STREAK_PENALTY:.1f} Pkt)."
         elif is_second_year_monoculture:
              soil_change_points += game_rules.SOIL_MONOCULTURE_PENALTY
-             explanations["soil_monoculture"] = f"Monokultur ({parcel.current_plantation.value}, 2. Jahr) schadet dem Boden ({-game_rules.SOIL_MONOCULTURE_PENALTY:.1f} Pkt)."
+             explanations["soil_monoculture"] = f"Monokultur ({current_plantation_enum.value}, 2. Jahr) schadet dem Boden ({-game_rules.SOIL_MONOCULTURE_PENALTY:.1f} Pkt)."
 
     parcel_at_end_of_round.soil_quality = round(max(0.0, min(100.0, soil_quality_at_start_of_round + soil_change_points)), 1)
     if soil_change_points < -0.1 and not any(k in explanations for k in ["soil_fallow", "soil_monoculture", "soil_animals"]) :
@@ -157,25 +160,25 @@ def update_parcel_ecological_state(
          explanations["soil_general_change"] = f"Bodenqualität um {soil_change_points:.1f} Punkte verbessert."
 
     nutrient_change_points = 0.0
-    nutrient_level_at_start_of_round = parcel.nutrient_level 
+    nutrient_level_at_start_of_round = parcel.nutrient_level
 
-    if parcel.current_plantation == PlantationType.FALLOW:
+    if current_plantation_enum == PlantationType.FALLOW:
         nutrient_change_points += game_rules.NUTRIENT_FALLOW_RECOVERY_PER_ROUND
         if nutrient_level_at_start_of_round < game_rules.NUTRIENT_TARGET_OPTIMUM: explanations["nutrient_fallow"] = f"Brache erhöht Nährstoffgehalt um {game_rules.NUTRIENT_FALLOW_RECOVERY_PER_ROUND:.1f} Pkt."
-    elif parcel.current_plantation == PlantationType.ANIMAL_HUSBANDRY:
+    elif current_plantation_enum == PlantationType.ANIMAL_HUSBANDRY:
         nutrient_change_points += game_rules.NUTRIENT_ANIMAL_MANURE_BONUS_PER_ROUND
         explanations["nutrient_animals"] = f"Tierhaltung/Düngung reichert Nährstoffe um {game_rules.NUTRIENT_ANIMAL_MANURE_BONUS_PER_ROUND:.1f} Pkt an."
-    else: 
-        base_yield_for_uptake = game_rules.HARVEST_BASE_YIELD_DT.get(parcel.current_plantation.value, 1.0) 
-        relative_yield_factor = current_harvest_yield_dt / base_yield_for_uptake if base_yield_for_uptake > 0.01 else 0 
+    else:
+        base_yield_for_uptake = game_rules.HARVEST_BASE_YIELD_DT.get(current_plantation_enum.value, 1.0)
+        relative_yield_factor = current_harvest_yield_dt / base_yield_for_uptake if base_yield_for_uptake > 0.01 else 0
         
-        uptake_rate_percentage = game_rules.NUTRIENT_UPTAKE_BY_PLANTATION.get(parcel.current_plantation.value, 0.0)
-        nutrient_change_points -= uptake_rate_percentage * nutrient_level_at_start_of_round * max(0.25, min(1.5, relative_yield_factor)) 
+        uptake_rate_percentage = game_rules.NUTRIENT_UPTAKE_BY_PLANTATION.get(current_plantation_enum.value, 0.0)
+        nutrient_change_points -= uptake_rate_percentage * nutrient_level_at_start_of_round * max(0.25, min(1.5, relative_yield_factor))
         
         if player_decisions.fertilize:
             nutrient_change_points += game_rules.NUTRIENT_CONV_FERTILIZER_GAIN
             explanations["nutrient_fertilizer"] = f"Konventioneller Dünger erhöht Nährstoffe um {game_rules.NUTRIENT_CONV_FERTILIZER_GAIN:.1f} Pkt."
-        if parcel.current_plantation == PlantationType.FIELD_BEAN: 
+        if current_plantation_enum == PlantationType.FIELD_BEAN:
             nutrient_change_points += game_rules.NUTRIENT_LEGUME_FIXATION_BONUS
             explanations["nutrient_legumes"] = f"{PlantationType.FIELD_BEAN.value} bindet Stickstoff (+{game_rules.NUTRIENT_LEGUME_FIXATION_BONUS:.1f} Pkt Nährstoffe)."
 

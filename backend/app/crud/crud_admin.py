@@ -35,16 +35,33 @@ class CRUDAdmin(CRUDBase[AdminInDB, AdminCreate, AdminUpdate]):
         The password from AdminCreate is for Firebase Auth and should not be stored directly.
         The obj_in here is AdminCreate, which includes password, but we exclude it.
         """
-        admin_data = obj_in.model_dump(exclude_unset=True, exclude={"password"})
-        # Ensure user_type is correctly set if not implicitly handled by AdminCreate's default
-        admin_data["user_type"] = obj_in.user_type.value # Store enum value
+        # Start with all fields from AdminCreate model dump, exclude plain password by default
+        admin_data_to_store = obj_in.model_dump(exclude={"password"})
+        
+        # Hash the password and add it to the data to be stored
+        hashed_password = get_password_hash(obj_in.password)
+        admin_data_to_store["hashed_password"] = hashed_password
+        
+        # Ensure user_type enum is stored as its value
+        admin_data_to_store["user_type"] = obj_in.user_type.value
+        
+        # Set defaults for fields managed by UserInDBBase/AdminInDB if not already set by AdminCreate
+        admin_data_to_store.setdefault("is_superuser", True) # Admins are superusers
+        admin_data_to_store.setdefault("is_active", True)    # Active by default
 
-        # If you needed to store a hashed password for some reason (not typical with Firebase Auth handling it):
-        # if obj_in.password:
-        #     hashed_password = get_password_hash(obj_in.password)
-        #     admin_data["hashed_password"] = hashed_password # Don't store plain password
+        # Ensure full_name is consistent if first_name and last_name are primary
+        # AdminCreate includes full_name from UserCreate, but also first_name, last_name.
+        # If UserCreate's root_validator handles full_name, this might be redundant.
+        # If not, or to be explicit:
+        if obj_in.first_name and obj_in.last_name:
+            admin_data_to_store["full_name"] = f"{obj_in.first_name} {obj_in.last_name}"
+        
+        # Remove fields that are part of AdminCreate but not directly stored or are handled otherwise
+        # (e.g., if 'full_name' was only for validation in UserCreate and not direct storage if first/last are used)
+        # For this example, assume all fields dumped (excluding 'password') are intended for storage
+        # after the above transformations.
 
-        return await super().create_with_uid(db, uid=uid, obj_in=admin_data)
+        return await super().create_with_uid(db, uid=uid, obj_in=admin_data_to_store)
 
     async def update(
         self, db: Union[AsyncFirestoreClient, BaseClient], *, doc_id: str, obj_in: Union[AdminUpdate, Dict[str, Any]]
