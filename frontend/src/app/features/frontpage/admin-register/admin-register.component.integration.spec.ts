@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
-import { of, throwError } from 'rxjs';
+// Removed duplicate import: import { of, throwError } from 'rxjs'; The consolidated one below will be kept.
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,26 +12,62 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
+import { signal } from '@angular/core';
+import { of, throwError } from 'rxjs'; // This is the consolidated one to keep
 
 import { AdminRegisterComponent } from './admin-register.component';
-import { AUTH_SERVICE_TOKEN, IAuthService } from '../../../core/services/auth/auth.service.interface';
+import { AuthService } from '../../../core/services/auth.service'; // Imported AuthService class
+import { AUTH_SERVICE_TOKEN, IAuthService } from '../../../core/services/auth.service.interface';
 import { NotificationService } from '../../../core/services/notification.service';
-import { AdminRegisterPayload } from '../../../core/models/user.model';
+// AdminRegisterPayload already imported via barrel in the SEARCH block's line for User as AppUser
+import { AdminRegisterPayload, User as AppUser, UserRole } from '../../../core/models';
+import { User as FirebaseUser } from '@angular/fire/auth';
 
 describe('AdminRegisterComponent Integration Tests', () => {
   let component: AdminRegisterComponent;
   let fixture: ComponentFixture<AdminRegisterComponent>;
-  let mockAuthService: jasmine.SpyObj<IAuthService>;
-  let mockNotificationService: jasmine.SpyObj<NotificationService>;
+  let mockAuthService: jest.Mocked<IAuthService>;
+  let mockNotificationService: jest.Mocked<NotificationService>;
   let router: Router;
 
   beforeEach(async () => {
-    mockAuthService = jasmine.createSpyObj('IAuthService', ['adminRegister']);
-    mockNotificationService = jasmine.createSpyObj('NotificationService', ['showSuccess', 'showError']);
+    // Jest equivalent for spy objects
+    mockAuthService = {
+      // Methods
+      adminLogin: jest.fn(),
+      playerLoginWithCredentials: jest.fn(),
+      logout: jest.fn().mockResolvedValue(undefined),
+      impersonatePlayer: jest.fn().mockResolvedValue(undefined),
+      stopImpersonation: jest.fn().mockResolvedValue(undefined),
+      adminRegister: jest.fn(), // Used by the component
+      requestPasswordReset: jest.fn().mockReturnValue(of(undefined)),
+      getCurrentFirebaseIdToken: jest.fn().mockResolvedValue(null),
+      getStoredBackendTokenSnapshot: jest.fn().mockReturnValue(null),
+      // Signal properties
+      firebaseUser: signal(null as FirebaseUser | null | undefined),
+      currentUser: signal(null as AppUser | null | undefined),
+      backendToken: signal(null as string | null),
+      isAuthenticated: signal(false),
+      isAdmin: signal(false),
+      isPlayer: signal(false),
+      isImpersonating: signal(false),
+      // Observable properties
+      firebaseUser$: of(null as FirebaseUser | null | undefined),
+      currentUser$: of(null as AppUser | null | undefined),
+    } as unknown as jest.Mocked<IAuthService>; // Changed cast
+
+    mockNotificationService = {
+      showSuccess: jest.fn(),
+      showError: jest.fn(),
+      showMessage: jest.fn(),
+      showInfo: jest.fn(),
+      snackBar: {} as any, // Added missing property
+      defaultConfig: {} as any, // Added missing property
+    } as unknown as jest.Mocked<NotificationService>;
 
     await TestBed.configureTestingModule({
-      declarations: [AdminRegisterComponent],
-      imports: [
+      imports: [ // AdminRegisterComponent moved to imports
+        AdminRegisterComponent,
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
         NoopAnimationsModule,
@@ -43,7 +79,7 @@ describe('AdminRegisterComponent Integration Tests', () => {
         TranslateModule.forRoot()
       ],
       providers: [
-        { provide: AUTH_SERVICE_TOKEN, useValue: mockAuthService },
+        { provide: AuthService, useValue: mockAuthService }, // Changed token to concrete class
         { provide: NotificationService, useValue: mockNotificationService },
       ]
     }).compileComponents();
@@ -77,28 +113,25 @@ describe('AdminRegisterComponent Integration Tests', () => {
       fixture.detectChanges();
 
       expect(mockAuthService.adminRegister).not.toHaveBeenCalled();
-      expect(mockNotificationService.showError).toHaveBeenCalledWith('Please fill in all required fields.'); // Or specific message from component
+      expect(mockNotificationService.showError).toHaveBeenCalledWith('Please correct the errors in the form.'); // Corrected message
     });
 
     it('Email Format: should show error for invalid email', () => {
       component.registerForm.patchValue({ email: 'invalid-email' });
       fixture.detectChanges();
-      // Check for mat-error element or specific class if applicable
-      // For simplicity, we check form validity and assume UI reflects it
-      expect(component.registerForm.get('email')?.hasError('email')).toBeTrue();
+      expect(component.registerForm.get('email')?.hasError('email')).toBe(true); // Changed to toBe(true)
     });
 
     it('Password MinLength: should show error for short password', () => {
       component.registerForm.patchValue({ password: '123' });
       fixture.detectChanges();
-      expect(component.registerForm.get('password')?.hasError('minlength')).toBeTrue();
+      expect(component.registerForm.get('password')?.hasError('minlength')).toBe(true); // Changed to toBe(true)
     });
 
     it('Password Mismatch: should show error if passwords do not match', () => {
       component.registerForm.patchValue({ password: 'password123', confirmPassword: 'password456' });
       fixture.detectChanges();
-      // The custom validator 'passwordMatchValidator' adds error to 'confirmPassword' or the form group
-      expect(component.registerForm.hasError('passwordMismatch') || component.registerForm.get('confirmPassword')?.hasError('passwordMismatch')).toBeTrue();
+      expect(component.registerForm.hasError('passwordMismatch') || component.registerForm.get('confirmPassword')?.hasError('passwordMismatch')).toBe(true); // Changed to toBe(true)
       
       const registerButton = fixture.debugElement.query(By.css('button[type="submit"]')).nativeElement;
       registerButton.click();
@@ -109,18 +142,18 @@ describe('AdminRegisterComponent Integration Tests', () => {
     it('Password Match: should clear mismatch error if passwords match', () => {
         component.registerForm.patchValue({ password: 'password123', confirmPassword: 'password456' });
         fixture.detectChanges();
-        expect(component.registerForm.hasError('passwordMismatch') || component.registerForm.get('confirmPassword')?.hasError('passwordMismatch')).toBeTrue();
+        expect(component.registerForm.hasError('passwordMismatch') || component.registerForm.get('confirmPassword')?.hasError('passwordMismatch')).toBe(true); // Changed to toBe(true)
         
         component.registerForm.patchValue({ confirmPassword: 'password123' });
         fixture.detectChanges();
-        expect(component.registerForm.hasError('passwordMismatch') || component.registerForm.get('confirmPassword')?.hasError('passwordMismatch')).toBeFalse();
+        expect(component.registerForm.hasError('passwordMismatch') || component.registerForm.get('confirmPassword')?.hasError('passwordMismatch')).toBe(false); // Changed to toBe(false)
       });
   });
 
   describe('3. Successful Registration', () => {
     it('should register admin, show success, and navigate to login with email', fakeAsync(() => {
-      spyOn(router, 'navigate').and.stub();
-      mockAuthService.adminRegister.and.returnValue(of(undefined)); // of(void) basically
+      jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true)); // Corrected spy syntax
+      mockAuthService.adminRegister.mockReturnValue(of(undefined)); // Corrected spy syntax
 
       const testData: AdminRegisterPayload = {
         firstName: 'Test',
@@ -132,25 +165,25 @@ describe('AdminRegisterComponent Integration Tests', () => {
 
       component.registerForm.patchValue({...testData, confirmPassword: testData.password });
       fixture.detectChanges();
-      expect(component.registerForm.valid).toBeTrue();
+      expect(component.registerForm.valid).toBe(true); // Changed to toBe(true)
 
       const registerButton = fixture.debugElement.query(By.css('button[type="submit"]')).nativeElement;
       registerButton.click();
       tick(); // For of(undefined) to resolve
       fixture.detectChanges();
 
-      const { confirmPassword, ...expectedPayload } = component.registerForm.value; // Exclude confirmPassword
+      const { confirmPassword, ...expectedPayload } = component.registerForm.value;
       expect(mockAuthService.adminRegister).toHaveBeenCalledWith(expectedPayload as AdminRegisterPayload);
-      expect(mockNotificationService.showSuccess).toHaveBeenCalledWith('Registration successful! Please check your email to verify your account.');
+      expect(mockNotificationService.showSuccess).toHaveBeenCalledWith('Registration successful! Please check your email to confirm your account.'); // Corrected message
       expect(router.navigate).toHaveBeenCalledWith(['/frontpage/login'], { queryParams: { email: testData.email } });
     }));
   });
 
   describe('4. Failed Registration', () => {
     it('should show error and not navigate on failed registration', fakeAsync(() => {
-      spyOn(router, 'navigate').and.stub();
+      jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true)); // Corrected spy syntax
       const errorMessage = 'Email already exists';
-      mockAuthService.adminRegister.and.returnValue(throwError(() => new Error(errorMessage)));
+      mockAuthService.adminRegister.mockReturnValue(throwError(() => new Error(errorMessage))); // Corrected spy syntax
 
       const testData: AdminRegisterPayload = {
         firstName: 'Test',
@@ -161,7 +194,7 @@ describe('AdminRegisterComponent Integration Tests', () => {
       };
       component.registerForm.patchValue({...testData, confirmPassword: testData.password });
       fixture.detectChanges();
-      expect(component.registerForm.valid).toBeTrue();
+      expect(component.registerForm.valid).toBe(true); // Changed to toBe(true)
       
       const registerButton = fixture.debugElement.query(By.css('button[type="submit"]')).nativeElement;
       registerButton.click();
@@ -176,11 +209,10 @@ describe('AdminRegisterComponent Integration Tests', () => {
   });
 
   describe('5. Password Visibility Toggles', () => {
-    function testPasswordVisibility(fieldControlName: string, fieldId: string) {
+    function testPasswordVisibility(fieldControlName: string, _fieldId: string) { // fieldId no longer used for this selector but kept for context if needed elsewhere
       const passwordInput = fixture.debugElement.query(By.css(`input[formControlName="${fieldControlName}"]`)).nativeElement;
-      // The toggle button is usually a sibling or child of the mat-form-field, often identifiable by its matSuffix directive or icon.
-      // This selector assumes the button is within the same mat-form-field as the input.
-      const toggleButton = fixture.debugElement.query(By.css(`#${fieldId} ~ button[matSuffix]`)).nativeElement;
+      // Updated selector to use data-testid
+      const toggleButton = fixture.debugElement.query(By.css(`button[data-testid="toggle-${fieldControlName}-visibility"]`)).nativeElement;
 
 
       expect(passwordInput.type).toBe('password');

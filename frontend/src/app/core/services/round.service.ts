@@ -10,7 +10,7 @@ import { RoundWithFieldPublic, PlayerRoundSubmission, RoundPublic } from '../mod
 export class RoundService {
   private http = inject(HttpClient);
   // Adjusted to point to general API, specific paths will be appended
-  private baseApiUrl = `${environment.apiBaseUrl}`;
+  private baseApiUrl = `${environment.apiUrl}`; // Corrected apiBaseUrl to apiUrl
 
   getPlayerRounds(gameId: string): Observable<RoundPublic[]> {
     return this.http.get<RoundPublic[]>(`${this.baseApiUrl}/games/${gameId}/rounds/my-rounds`);

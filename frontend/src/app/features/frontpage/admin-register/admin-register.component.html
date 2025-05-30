@@ -80,6 +80,7 @@
           <mat-label>{{ "adminRegister.passwordLabel" | translate }}</mat-label>
           <input
             matInput
+            id="password-field"
             formControlName="password"
             [type]="showPassword() ? 'text' : 'password'"
             required
@@ -93,6 +94,7 @@
               'adminRegister.togglePasswordVisibilityAriaLabel' | translate
             "
             [attr.aria-pressed]="showPassword()"
+            data-testid="toggle-password-visibility"
           >
             <mat-icon>{{
               showPassword() ? "visibility_off" : "visibility"
@@ -118,6 +120,7 @@
           }}</mat-label>
           <input
             matInput
+            id="confirm-password-field"
             formControlName="confirmPassword"
             [type]="showConfirmPassword() ? 'text' : 'password'"
             required
@@ -132,6 +135,7 @@
                 | translate
             "
             [attr.aria-pressed]="showConfirmPassword()"
+            data-testid="toggle-confirmPassword-visibility"
           >
             <mat-icon>{{
               showConfirmPassword() ? "visibility_off" : "visibility"

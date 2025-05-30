@@ -1,7 +1,9 @@
 import { Observable } from 'rxjs';
 import { User as AppUser } from '../models/user.model'; // Renamed User to AppUser to avoid clash, removed UserRole
 import { User as FirebaseUser } from '@angular/fire/auth'; // Correct type is User
-import { Signal } from '@angular/core';
+import { Signal, InjectionToken } from '@angular/core'; // Added InjectionToken
+
+export const AUTH_SERVICE_TOKEN = new InjectionToken<IAuthService>('auth.service'); // Added InjectionToken export
 
 export interface IAuthService {
   // Signals as readonly properties (or methods returning Signals)

@@ -23,6 +23,7 @@ export const mockOnAuthStateChanged = jest.fn((authInstance: any, callback: any)
 // Helper to Simulate State Change
 export const simulateAuthStateChange = (user: Partial<FirebaseUser> | null) => {
   console.log('>>> MOCK simulateAuthStateChange CALLED with:', user);
+  console.trace('simulateAuthStateChange TRACE'); // DEBUG TRACE
   if (authStateCallback) {
     authStateCallback(user);
   } else {

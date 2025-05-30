@@ -4,19 +4,23 @@ import { NotificationService } from './notification.service';
 
 describe('NotificationService', () => {
   let service: NotificationService;
-  let matSnackBarMock: jasmine.SpyObj<MatSnackBar>;
+  let matSnackBarMock: jest.Mocked<MatSnackBar>; // Changed to jest.Mocked
 
   beforeEach(() => {
-    const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
+    // Create a Jest-compatible mock for MatSnackBar
+    matSnackBarMock = {
+      open: jest.fn()
+    } as any as jest.Mocked<MatSnackBar>; // Using 'as any' to bypass strict structural typing for the mock
 
     TestBed.configureTestingModule({
       providers: [
         NotificationService,
-        { provide: MatSnackBar, useValue: snackBarSpy }
+        { provide: MatSnackBar, useValue: matSnackBarMock } // Use the created mock
       ]
     });
     service = TestBed.inject(NotificationService);
-    matSnackBarMock = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
+    // The line below is no longer needed as matSnackBarMock is already initialized.
+    // matSnackBarMock = TestBed.inject(MatSnackBar) as jest.Mocked<MatSnackBar>;
   });
 
   it('should be created', () => {

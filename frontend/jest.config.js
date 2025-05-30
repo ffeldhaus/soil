@@ -21,5 +21,6 @@ module.exports = {
     '!**/main.ts',
     '!**/polyfills.ts',
     '!**/environment*.ts',
-  ]
+  ],
+  coverageReporters: ['json', 'lcov', 'text', 'clover', 'html']
 };

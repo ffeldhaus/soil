@@ -15,7 +15,7 @@ export interface ResultBase {
   playerMachineEfficiency?: number | null;
   incomeDetails: HarvestIncome; // Updated from TotalIncome
   expenseDetails: TotalExpensesBreakdown; // Updated from TotalExpenses
-  explanations?: Dict<string, string> | null; // Using Dict for consistency
+  explanations?: Dict<string> | null; // Corrected: Dict<string, string> to Dict<string>
 }
 
 export type ResultCreate = ResultBase;

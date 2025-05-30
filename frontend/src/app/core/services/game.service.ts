@@ -10,7 +10,7 @@ import { GamePublic } from '../models/game.model';
 })
 export class GameService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiBaseUrl}/games`; // Adjust if admin endpoints are different
+  private apiUrl = `${environment.apiUrl}/games`; // Corrected apiBaseUrl to apiUrl
 
   // Get game details (public view)
   getGameById(gameId: string): Observable<GamePublic> {

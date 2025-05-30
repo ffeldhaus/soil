@@ -1,26 +1,25 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
-import { IAuthService, AUTH_SERVICE_TOKEN } from '../services/auth/auth.service.interface';
+import { IAuthService } from '../services/auth.service.interface'; // IAuthService for type
+import { AUTH_SERVICE_TOKEN } from '../services/injection-tokens'; // Corrected token import
 import { authInterceptor } from './auth.interceptor';
 import { environment } from '../../../environments/environment';
 
 describe('authInterceptor', () => {
   let authServiceMock: Partial<IAuthService>;
-  let nextHandlerMock: jasmine.Spy<HttpHandlerFn>;
+  let nextHandlerMock: jest.MockedFn<HttpHandlerFn>;
 
-  const testApiUrl = 'http://localhost:3000/api'; // Example API URL
+  // const testApiUrl = 'http://localhost:3000/api'; // No longer needed
 
   beforeEach(() => {
-    // Mock environment directly
-    (window as any).environment = { ...environment, apiUrl: testApiUrl };
-
+    // No longer manipulating (window as any).environment
 
     authServiceMock = {
-      getStoredBackendTokenSnapshot: () => null, // Default to null
+      getStoredBackendTokenSnapshot: () => null,
     };
 
-    nextHandlerMock = jasmine.createSpy('next').and.returnValue(of({} as HttpEvent<any>));
+    nextHandlerMock = jest.fn().mockReturnValue(of({} as HttpEvent<any>));
 
     TestBed.configureTestingModule({
       providers: [
@@ -30,33 +29,36 @@ describe('authInterceptor', () => {
   });
 
   afterEach(() => {
-    // Clean up the global environment mock
-    delete (window as any).environment;
+    // No window.environment to clean up
   });
 
   it('should add Authorization header for backend API request when token exists', () => {
     authServiceMock.getStoredBackendTokenSnapshot = () => 'test-token';
-    const request = new HttpRequest<any>('GET', `${testApiUrl}/data`);
+    // Use the actual imported environment.apiUrl for the request
+    const requestUrl = `${environment.apiUrl}/data`;
+    const request = new HttpRequest<any>('GET', requestUrl);
 
     TestBed.runInInjectionContext(() => authInterceptor(request, nextHandlerMock));
 
     expect(nextHandlerMock).toHaveBeenCalledTimes(1);
-    const modifiedReq = nextHandlerMock.calls.first().args[0] as HttpRequest<any>;
-    expect(modifiedReq.url).toBe(`${testApiUrl}/data`);
-    expect(modifiedReq.headers.has('Authorization')).toBeTrue();
+    const modifiedReq = nextHandlerMock.mock.calls[0][0] as HttpRequest<any>;
+    expect(modifiedReq.url).toBe(requestUrl);
+    expect(modifiedReq.headers.has('Authorization')).toBe(true);
     expect(modifiedReq.headers.get('Authorization')).toBe('Bearer test-token');
   });
 
   it('should not add Authorization header for backend API request when no token exists', () => {
     authServiceMock.getStoredBackendTokenSnapshot = () => null;
-    const request = new HttpRequest<any>('GET', `${testApiUrl}/data`);
+    // Use the actual imported environment.apiUrl for the request
+    const requestUrl = `${environment.apiUrl}/data`;
+    const request = new HttpRequest<any>('GET', requestUrl);
 
     TestBed.runInInjectionContext(() => authInterceptor(request, nextHandlerMock));
 
     expect(nextHandlerMock).toHaveBeenCalledTimes(1);
-    const passedReq = nextHandlerMock.calls.first().args[0] as HttpRequest<any>;
-    expect(passedReq).toBe(request); // Or check for essential equality if cloning occurs
-    expect(passedReq.headers.has('Authorization')).toBeFalse();
+    const passedReq = nextHandlerMock.mock.calls[0][0] as HttpRequest<any>;
+    expect(passedReq).toBe(request);
+    expect(passedReq.headers.has('Authorization')).toBe(false);
   });
 
   it('should not add Authorization header for non-backend API request even if token exists', () => {
@@ -66,9 +68,9 @@ describe('authInterceptor', () => {
     TestBed.runInInjectionContext(() => authInterceptor(request, nextHandlerMock));
 
     expect(nextHandlerMock).toHaveBeenCalledTimes(1);
-    const passedReq = nextHandlerMock.calls.first().args[0] as HttpRequest<any>;
+    const passedReq = nextHandlerMock.mock.calls[0][0] as HttpRequest<any>; // Changed to mock.calls[0][0]
     expect(passedReq).toBe(request);
-    expect(passedReq.headers.has('Authorization')).toBeFalse();
+    expect(passedReq.headers.has('Authorization')).toBe(false); // Changed to toBe(false)
   });
 
   it('should not add Authorization header for non-backend API request when no token exists', () => {
@@ -78,30 +80,23 @@ describe('authInterceptor', () => {
     TestBed.runInInjectionContext(() => authInterceptor(request, nextHandlerMock));
 
     expect(nextHandlerMock).toHaveBeenCalledTimes(1);
-    const passedReq = nextHandlerMock.calls.first().args[0] as HttpRequest<any>;
+    const passedReq = nextHandlerMock.mock.calls[0][0] as HttpRequest<any>; // Changed to mock.calls[0][0]
     expect(passedReq).toBe(request);
-    expect(passedReq.headers.has('Authorization')).toBeFalse();
+    expect(passedReq.headers.has('Authorization')).toBe(false); // Changed to toBe(false)
   });
 
   it('should use the actual environment.apiUrl for backend requests', () => {
-    // Reset global mock to use actual environment value for this specific test
-    delete (window as any).environment;
-    // Ensure environment is imported if not already
-    // import { environment } from '../../../environments/environment'; // (already imported)
-
+    // This test now inherently uses the actual environment.apiUrl because window manipulation was removed.
     authServiceMock.getStoredBackendTokenSnapshot = () => 'test-token-for-actual-url';
-    // Use the actual environment.apiUrl
-    const request = new HttpRequest<any>('GET', `${environment.apiUrl}/realdata`);
+    const requestUrl = `${environment.apiUrl}/realdata`;
+    const request = new HttpRequest<any>('GET', requestUrl);
 
     TestBed.runInInjectionContext(() => authInterceptor(request, nextHandlerMock));
 
     expect(nextHandlerMock).toHaveBeenCalledTimes(1);
-    const modifiedReq = nextHandlerMock.calls.first().args[0] as HttpRequest<any>;
-    expect(modifiedReq.url).toBe(`${environment.apiUrl}/realdata`);
-    expect(modifiedReq.headers.has('Authorization')).toBeTrue();
+    const modifiedReq = nextHandlerMock.mock.calls[0][0] as HttpRequest<any>;
+    expect(modifiedReq.url).toBe(requestUrl);
+    expect(modifiedReq.headers.has('Authorization')).toBe(true);
     expect(modifiedReq.headers.get('Authorization')).toBe('Bearer test-token-for-actual-url');
-
-    // Re-apply the mock for other tests if needed, or ensure cleanup in afterEach
-    (window as any).environment = { ...environment, apiUrl: testApiUrl };
   });
 });

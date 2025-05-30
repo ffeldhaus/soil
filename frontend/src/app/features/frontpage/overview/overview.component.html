@@ -1,32 +1,32 @@
 <div class="page-container">
   <mat-card class="info-card">
     <mat-card-header>
-      <mat-card-title>{{ "overview.title" | translate }}</mat-card-title>
-      <mat-card-subtitle>{{
+      <mat-card-title data-testid="overview-title">{{ "overview.title" | translate }}</mat-card-title>
+      <mat-card-subtitle data-testid="overview-description">{{
         "overview.description" | translate
       }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <p>
+      <p data-testid="overview-paragraph1">
         {{ "overview.paragraph1" | translate }}
       </p>
-      <p>
+      <p data-testid="overview-paragraph2">
         {{ "overview.paragraph2" | translate }}
       </p>
-      <h3>{{ "overview.howToPlayTitle" | translate }}</h3>
-      <p>
+      <h3 data-testid="overview-howToPlayTitle">{{ "overview.howToPlayTitle" | translate }}</h3>
+      <p data-testid="overview-playerInstructions">
         {{ "overview.playerInstructions" | translate }}
         <a routerLink="../login">{{ "overview.loginButton" | translate }}</a
         >.
       </p>
-      <p>
+      <p data-testid="overview-adminInstructions">
         {{ "overview.adminInstructionsPart1" | translate }}
         <a routerLink="../register">{{
           "overview.registerButton" | translate
         }}</a
         >{{ "overview.adminInstructionsPart2" | translate }}
       </p>
-      <p>
+      <p data-testid="overview-backgroundInfo">
         {{ "overview.backgroundInfoPart1" | translate }}
         <a routerLink="../background">{{
           "overview.backgroundInfoLink" | translate

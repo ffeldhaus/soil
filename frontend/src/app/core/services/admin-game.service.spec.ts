@@ -3,8 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { AdminGameService } from './admin-game.service';
 import { MockAdminGameService } from './admin-game.service.mock';
 import { environment } from '../../../environments/environment';
-import { GameAdminListItem, GameCreateAdminPayload, GameDetailsView } from '../models/game.model';
-
+import { GameAdminListItem, GameCreateAdminPayload, GamePublic, GameStatus, UserRole } from '../models'; // Added UserRole
 describe('AdminGameService', () => {
   let service: AdminGameService;
   let httpMock: HttpTestingController;
@@ -13,7 +12,7 @@ describe('AdminGameService', () => {
   // Helper to spy on the internal mockService instance
   const spyOnInternalMock = () => {
     // Access the privately instantiated mockService for spying.
-    mockAdminGameServiceInstance = (service as AdminGameService & { mockService: MockAdminGameService | null }).mockService;
+    mockAdminGameServiceInstance = (service as any).mockService; // Changed to (service as any)
     if (mockAdminGameServiceInstance) {
       // Use jest.spyOn
       jest.spyOn(mockAdminGameServiceInstance, 'getAdminGames');
@@ -76,8 +75,8 @@ describe('AdminGameService', () => {
 
     it('should be created and use MockAdminGameService', () => {
       expect(service).toBeTruthy();
-      expect((service as AdminGameService & { mockService: MockAdminGameService | null }).mockService).toBeInstanceOf(MockAdminGameService);
-      expect(mockAdminGameServiceInstance).not.toBeNull(); // Ensure the spy helper found the mock
+      expect((service as any).mockService).toBeInstanceOf(MockAdminGameService); // Changed to (service as any)
+      expect(mockAdminGameServiceInstance).not.toBeNull();
     });
 
     it('getAdminGames should call mockService.getAdminGames', () => {
@@ -86,7 +85,8 @@ describe('AdminGameService', () => {
     });
 
     it('createGame should call mockService.createGame', () => {
-      const payload: GameCreateAdminPayload = { name: 'Test', numberOfPlayers: 2 };
+      // Corrected payload to match GameCreateAdminPayload interface
+      const payload: GameCreateAdminPayload = { name: 'Test', numberOfRounds: 10, requestedPlayerSlots: 2, aiPlayerCount: 0 };
       service.createGame(payload);
       expect(mockAdminGameServiceInstance!.createGame).toHaveBeenCalledWith(payload);
     });
@@ -117,36 +117,48 @@ describe('AdminGameService', () => {
 
     it('should be created and not use MockAdminGameService', () => {
       expect(service).toBeTruthy();
-      expect((service as AdminGameService & { mockService: MockAdminGameService | null }).mockService).toBeNull();
+      expect((service as any).mockService).toBeNull(); // Changed to (service as any)
       expect(mockAdminGameServiceInstance).toBeNull();
     });
 
     it('getAdminGames should make an HTTP GET request', () => {
-      const dummyGames: GameAdminListItem[] = [{id: 'g1', name: 'Real Game', gameStatus: 'pending', currentRoundNumber: 0, maxPlayers: 1}];
+      // Corrected dummyGames to match GameAdminListItem interface
+      const dummyGames: GameAdminListItem[] = [{
+        id: 'g1',
+        name: 'Real Game',
+        gameStatus: GameStatus.PENDING,
+        currentRoundNumber: 0,
+        adminId: 'adminUser1',
+        createdAt: new Date().toISOString(),
+        playerCount: 1
+      }];
       service.getAdminGames().subscribe(games => {
         expect(games.length).toBe(1);
         expect(games).toEqual(dummyGames);
       });
-      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games`); // Use correct base URL
+      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games`);
       expect(req.request.method).toBe('GET');
       req.flush(dummyGames);
     });
 
     it('createGame should make an HTTP POST request', () => {
-      const payload: GameCreateAdminPayload = { name: 'New Game', numberOfPlayers: 2 };
-      const dummyResponse: GameDetailsView = { 
+      // Corrected payload and dummyResponse to match interfaces
+      const payload: GameCreateAdminPayload = { name: 'New Game', numberOfRounds: 5, requestedPlayerSlots: 2 };
+      const dummyResponse: GamePublic = {
         id: 'g2', 
         name: 'New Game', 
-        gameStatus: 'pending', 
+        gameStatus: GameStatus.PENDING,
         currentRoundNumber: 0, 
-        maxPlayers: 2, 
+        numberOfRounds: 5,
+        adminId: 'adminUser1',
+        playerUids: [],
         createdAt: new Date().toISOString(), 
         updatedAt: new Date().toISOString()  
       };
       service.createGame(payload).subscribe(response => {
         expect(response).toEqual(dummyResponse);
       });
-      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games`); // Use correct base URL
+      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(payload);
       req.flush(dummyResponse);
@@ -154,51 +166,56 @@ describe('AdminGameService', () => {
 
     it('advanceGameRound should make an HTTP POST request', () => {
       const gameId = 'game123';
-      const dummyResponse: GameDetailsView = { 
+      const dummyResponse: GamePublic = {
         id: gameId, 
         name: 'Advanced Game', 
-        gameStatus: 'in_progress', 
+        gameStatus: GameStatus.ACTIVE,
         currentRoundNumber: 1, 
-        maxPlayers: 2,
+        numberOfRounds: 5,
+        adminId: 'adminUser1',
+        playerUids: [],
         createdAt: new Date().toISOString(), 
         updatedAt: new Date().toISOString()  
       };
       service.advanceGameRound(gameId).subscribe(response => {
         expect(response).toEqual(dummyResponse);
       });
-      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}/advance-to-next-round`); // Corrected URL
+      const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}/advance-to-next-round`);
       expect(req.request.method).toBe('POST');
       req.flush(dummyResponse);
     });
 
     describe('getGameDetails', () => {
-      const mockGamePublic: GameDetailsView = { // Using GameDetailsView as it's often more comprehensive for details
+      const mockGameDetails: GamePublic = {
         id: 'game1',
         name: 'Test Game 1',
-        gameStatus: 'pending',
+        gameStatus: GameStatus.PENDING,
         currentRoundNumber: 0,
-        maxPlayers: 8,
+        numberOfRounds: 10,
+        adminId: 'adminTest1',
+        playerUids: ['p1'],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         players: [
-          { id: 'p1', name: 'Player 1', gameId: 'game1', score: 0, isOnline: true, lastSeen: new Date().toISOString() }
+          // Removed 'role: null' as it does not exist on PlayerPublic
+          { uid: 'p1', username: 'Player 1', email: 'p1@example.com', playerNumber: 1, gameId: 'game1', isAi: false, userType: UserRole.PLAYER }
         ]
       };
 
       it('should make a GET request and return game details with players array', () => {
         const gameId = 'game1';
         service.getGameDetails(gameId).subscribe(response => {
-          expect(response).toEqual(mockGamePublic);
+          expect(response).toEqual(mockGameDetails);
           expect(response.players?.length).toBe(1);
         });
         const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameId}`);
         expect(req.request.method).toBe('GET');
-        req.flush(mockGamePublic);
+        req.flush(mockGameDetails);
       });
 
       it('should make a GET request and return game details with empty players array if players is undefined', () => {
         const gameId = 'game2';
-        const mockGameWithoutPlayers: GameDetailsView = { ...mockGamePublic, id: gameId, players: undefined };
+        const mockGameWithoutPlayers: GamePublic = { ...mockGameDetails, id: gameId, players: undefined, playerUids: [] };
         service.getGameDetails(gameId).subscribe(response => {
           expect(response.id).toBe(gameId);
           expect(response.players).toEqual([]);
@@ -210,7 +227,7 @@ describe('AdminGameService', () => {
 
       it('should make a GET request and return game details with empty players array if players is null', () => {
         const gameId = 'game3';
-        const mockGameWithNullPlayers: GameDetailsView = { ...mockGamePublic, id: gameId, players: null as any }; // Cast to any to allow null
+        const mockGameWithNullPlayers: GamePublic = { ...mockGameDetails, id: gameId, players: null as any, playerUids: [] };
         service.getGameDetails(gameId).subscribe(response => {
           expect(response.id).toBe(gameId);
           expect(response.players).toEqual([]);

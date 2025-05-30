@@ -6,6 +6,7 @@
         mat-stroked-button
         class="plantation-button parcel {{ getPlantationCssClass(plantation) }}"
         (click)="onPlantationSelect(plantation)"
+        [attr.data-testid]="'plantation-button-' + plantation"
       >
         <div class="plantation-button-content">
           {{ plantation | displayPlantationName }}

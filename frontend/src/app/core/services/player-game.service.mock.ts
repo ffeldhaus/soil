@@ -60,9 +60,9 @@ export class MockPlayerGameService implements IPlayerGameService {
           decisions: { 
             fertilize: true, 
             pesticide: false,
-            biologicalControl: true,
-            attemptOrganicCertification: false,
-            machineInvestmentLevel: 1
+            biological_control: true, // Corrected property name
+            attempt_organic_certification: false,
+            machine_investment_level: 1 // Corrected property name
           },
           fieldState: { parcels: mockParcels }, 
           createdAt: new Date().toISOString(), 
