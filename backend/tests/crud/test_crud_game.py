@@ -384,7 +384,7 @@ async def test_update_game_status(
     assert updated_game.created_at == FIXED_DATETIME_NOW_GAME # Ensure created_at is not affected
 
 @pytest.mark.parametrize("new_status", [
-    GameStatus.ACTIVE, GameStatus.PAUSED, GameStatus.FINISHED, GameStatus.ARCHIVED
+    GameStatus.ACTIVE, GameStatus.PENDING, GameStatus.FINISHED, GameStatus.ARCHIVED
 ])
 @pytest.mark.asyncio
 async def test_update_game_status_parametrized(

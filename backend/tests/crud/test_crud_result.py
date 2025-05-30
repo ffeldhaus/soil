@@ -7,7 +7,7 @@ from google.cloud.firestore_v1.async_query import AsyncQuery # Correct import
 
 from app.crud.crud_result import CRUDResult, RESULT_COLLECTION_NAME_TEMPLATE
 from app.schemas.result import ResultCreate, ResultInDB, TotalIncome
-from app.schemas.financials import TotalExpensesBreakdown # Import correct schema
+from app.schemas.financials import TotalExpensesBreakdown, SeedCosts, RunningCosts, InvestmentCosts # Import correct schema
 from app.schemas.game import GameStatus
 
 # --- Constants ---
