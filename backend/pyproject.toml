@@ -6,7 +6,6 @@ description = "Backend for the Soil educational game, rewritten in Python."
 authors = [{name="Florian Feldhaus", email="florian.feldhaus@gmail.com"}]
 license = "MIT"
 readme = "README.md" 
-package-mode = false
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.111.0",
@@ -82,8 +81,9 @@ module = [
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 pythonpath = ["."]
+asyncio_mode = "auto"
+
 
 [dependency-groups]
 dev = [
