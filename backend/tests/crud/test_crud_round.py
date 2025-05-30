@@ -100,15 +100,18 @@ async def test_create_player_round(
     round_set_args, _ = mock_round_doc_ref.set.call_args
     round_set_data = round_set_args[0]
 
-    assert round_set_data["game_id"] == TEST_GAME_ID_R
-    assert round_set_data["player_id"] == TEST_PLAYER_ID_R
-    assert round_set_data["round_number"] == TEST_ROUND_NUMBER_R
-    assert round_set_data["is_submitted"] == False
-    assert round_set_data["status"] == RoundStatus.PENDING.value
-    assert isinstance(round_set_data["decisions"], dict) # Pydantic model dumped
+    assert round_set_data["game_id"] == round_create_obj.game_id
+    assert round_set_data["player_id"] == round_create_obj.player_id
+    assert round_set_data["round_number"] == round_create_obj.round_number
+    assert round_set_data["is_submitted"] == round_create_obj.is_submitted
+    assert round_set_data["status"] == round_create_obj.status.value
+    assert round_set_data["decisions"] == round_create_obj.decisions.model_dump() # Compare dumped dicts
     assert round_set_data["created_at"] == FIXED_DATETIME_ROUND
     assert round_set_data["updated_at"] == FIXED_DATETIME_ROUND
     assert round_set_data["id"] == mock_round_doc_ref.id
+    assert round_set_data.get("submitted_at") is None # Should not be set on creation
+    assert round_set_data.get("result_id") is None # Should not be set on creation
+
 
     # Check field state document creation
     mock_field_state_doc_ref.set.assert_called_once()
@@ -123,11 +126,19 @@ async def test_create_player_round(
     assert field_set_data["updated_at"] == FIXED_DATETIME_ROUND
     assert field_set_data["id"] == mock_field_state_doc_ref.id
     
-    # Check returned RoundInDB object
+    # Check returned RoundInDB object (built from round_set_data)
     assert isinstance(created_round, RoundInDB)
     assert created_round.id == mock_round_doc_ref.id
-    assert created_round.status == RoundStatus.PENDING
+    assert created_round.game_id == round_create_obj.game_id
+    assert created_round.player_id == round_create_obj.player_id
+    assert created_round.round_number == round_create_obj.round_number
+    assert created_round.decisions == round_create_obj.decisions # Pydantic models should be comparable
+    assert created_round.is_submitted == round_create_obj.is_submitted
+    assert created_round.status == round_create_obj.status
     assert created_round.created_at == FIXED_DATETIME_ROUND
+    assert created_round.updated_at == FIXED_DATETIME_ROUND
+    assert created_round.submitted_at is None
+    assert created_round.result_id is None
 
 
 FIXED_DATETIME_ROUND_LATER = datetime(2023, 11, 1, 13, 0, 0, tzinfo=timezone.utc)
@@ -221,6 +232,8 @@ async def test_update_player_round_decisions(
     assert round_update_data["updated_at"] == FIXED_DATETIME_ROUND_LATER
     if round_update_obj.is_submitted:
         assert round_update_data["submitted_at"] == FIXED_DATETIME_ROUND_LATER
+    else:
+        assert "submitted_at" not in round_update_data # Or assert it's None if field is always present
 
     # Check field state document update
     mock_field_state_doc_ref.update.assert_called_once()
@@ -236,7 +249,88 @@ async def test_update_player_round_decisions(
     assert updated_round.decisions.fertilize == round_update_obj.decisions.fertilize # Example decision
     if updated_round.is_submitted:
         assert updated_round.submitted_at == FIXED_DATETIME_ROUND_LATER
+    else:
+        assert updated_round.submitted_at is None # Should remain None or be explicitly set to None
     assert updated_round.updated_at == FIXED_DATETIME_ROUND_LATER
+
+
+@pytest.mark.asyncio
+async def test_update_player_round_decisions_not_submitted(
+    crud_round_instance: CRUDRound,
+    mock_firestore_db: MagicMock,
+    mock_round_doc_ref: MagicMock,
+    mock_field_state_doc_ref: MagicMock,
+    updated_parcels_data_example: list[dict],
+    round_create_obj: RoundCreate # To shape the snapshot data
+):
+    # Arrange
+    round_update_not_submitted = RoundUpdate(
+        decisions=RoundDecisionBase(fertilize=True), # Example decision
+        is_submitted=False # Key difference for this test
+    )
+
+    # Snapshot data for the round document *after* it's updated
+    final_round_snapshot_data = round_create_obj.model_dump()
+    final_round_snapshot_data["id"] = mock_round_doc_ref.id
+    final_round_snapshot_data["decisions"] = round_update_not_submitted.decisions.model_dump()
+    final_round_snapshot_data["is_submitted"] = round_update_not_submitted.is_submitted
+    # submitted_at should NOT be set or should be None
+    final_round_snapshot_data["submitted_at"] = None
+    final_round_snapshot_data["updated_at"] = FIXED_DATETIME_ROUND_LATER
+    # Convert datetimes to ISO strings for .to_dict()
+    final_round_snapshot_dict = final_round_snapshot_data.copy()
+    original_created_at = final_round_snapshot_data.get("created_at", FIXED_DATETIME_ROUND)
+    if isinstance(original_created_at, datetime):
+        final_round_snapshot_dict["created_at"] = original_created_at.isoformat()
+    final_round_snapshot_dict["updated_at"] = final_round_snapshot_data["updated_at"].isoformat()
+    if final_round_snapshot_data.get("submitted_at") is None: # Ensure it's explicitly None if not set
+        final_round_snapshot_dict["submitted_at"] = None
+
+
+    mock_final_round_snapshot = MagicMock(spec=DocumentSnapshot)
+    mock_final_round_snapshot.exists = True
+    mock_final_round_snapshot.to_dict.return_value = final_round_snapshot_dict
+    mock_final_round_snapshot.id = mock_round_doc_ref.id
+    mock_round_doc_ref.get = AsyncMock(return_value=mock_final_round_snapshot)
+
+    with patch.object(CRUDRound, "_get_round_doc_ref", return_value=mock_round_doc_ref), \
+         patch.object(CRUDRound, "_get_field_state_doc_ref", return_value=mock_field_state_doc_ref), \
+         patch("app.crud.crud_round.datetime") as mock_datetime:
+
+        mock_datetime.now.return_value = FIXED_DATETIME_ROUND_LATER
+        mock_datetime.UTC = timezone.utc
+
+        # Act
+        updated_round = await crud_round_instance.update_player_round_decisions(
+            db=mock_firestore_db,
+            game_id=TEST_GAME_ID_R,
+            player_id=TEST_PLAYER_ID_R,
+            round_number=TEST_ROUND_NUMBER_R,
+            obj_in=round_update_not_submitted,
+            updated_parcels_data=updated_parcels_data_example
+        )
+
+    # Assert round document update
+    mock_round_doc_ref.update.assert_called_once()
+    round_update_args, _ = mock_round_doc_ref.update.call_args
+    round_update_data = round_update_args[0]
+    assert round_update_data["is_submitted"] == False
+    assert "submitted_at" not in round_update_data # Should not be in payload if not submitted
+    assert round_update_data["updated_at"] == FIXED_DATETIME_ROUND_LATER
+
+    # Assert field state document update (still happens)
+    mock_field_state_doc_ref.update.assert_called_once()
+    field_update_args, _ = mock_field_state_doc_ref.update.call_args
+    field_update_data = field_update_args[0]
+    assert field_update_data["parcels"] == updated_parcels_data_example
+    assert field_update_data["updated_at"] == FIXED_DATETIME_ROUND_LATER
+
+    # Assert returned RoundInDB object
+    assert isinstance(updated_round, RoundInDB)
+    assert updated_round.is_submitted == False
+    assert updated_round.submitted_at is None
+    assert updated_round.updated_at == FIXED_DATETIME_ROUND_LATER
+
 
 @pytest.mark.asyncio
 async def test_get_player_round_found(
@@ -282,9 +376,16 @@ async def test_get_player_round_found(
     mock_get_ref.assert_called_once_with(mock_firestore_db, TEST_GAME_ID_R, TEST_PLAYER_ID_R, TEST_ROUND_NUMBER_R)
     assert isinstance(result, RoundInDB)
     assert result.id == mock_round_doc_ref.id
-    assert result.round_number == TEST_ROUND_NUMBER_R
-    assert result.status == round_create_obj.status # Default is PENDING
-    assert result.created_at == FIXED_DATETIME_ROUND # Pydantic model converts ISO string to datetime
+    assert result.game_id == round_create_obj.game_id
+    assert result.player_id == round_create_obj.player_id
+    assert result.round_number == round_create_obj.round_number
+    assert result.decisions == round_create_obj.decisions # Compares Pydantic models
+    assert result.is_submitted == round_create_obj.is_submitted
+    assert result.status == round_create_obj.status
+    assert result.created_at == FIXED_DATETIME_ROUND
+    assert result.updated_at == FIXED_DATETIME_ROUND # From snapshot_data
+    assert result.submitted_at is None # Was not set in round_create_obj
+    assert result.result_id is None # Was not set
 
 @pytest.mark.asyncio
 async def test_get_player_round_not_found(
@@ -372,12 +473,30 @@ async def test_get_all_player_rounds_for_game_round_multiple_found(
     mock_collection_ref.where.assert_called_once_with(field="round_number", op_string="==", value=TEST_ROUND_NUMBER_R)
     
     assert len(results) == 2
-    result_ids = {res.id for res in results}
-    assert mock_snapshot_p1r1.id in result_ids
-    assert mock_snapshot_p2r1.id in result_ids
-    player_ids = {res.player_id for res in results}
-    assert round_create_obj.player_id in player_ids
-    assert round_create_obj_player2_round1.player_id in player_ids
+    assert len(results) == 2
+
+    # Create a map for easier lookup and assertion
+    expected_rounds_data = {
+        mock_snapshot_p1r1.id: round_create_obj,
+        mock_snapshot_p2r1.id: round_create_obj_player2_round1
+    }
+
+    for res_obj in results:
+        assert isinstance(res_obj, RoundInDB)
+        assert res_obj.id in expected_rounds_data
+        expected_data_create_obj = expected_rounds_data[res_obj.id]
+
+        assert res_obj.game_id == expected_data_create_obj.game_id
+        assert res_obj.player_id == expected_data_create_obj.player_id
+        assert res_obj.round_number == expected_data_create_obj.round_number
+        assert res_obj.decisions == expected_data_create_obj.decisions
+        assert res_obj.is_submitted == expected_data_create_obj.is_submitted
+        assert res_obj.status == expected_data_create_obj.status
+        assert res_obj.created_at == FIXED_DATETIME_ROUND # Based on create_round_mock_snapshot
+        assert res_obj.updated_at == FIXED_DATETIME_ROUND # Based on create_round_mock_snapshot
+        assert res_obj.submitted_at is None # Not set in create_obj
+        assert res_obj.result_id is None # Not set in create_obj
+
 
 @pytest.mark.asyncio
 async def test_get_all_player_rounds_for_game_round_empty(
@@ -496,8 +615,13 @@ async def test_get_player_field_state_found(
     mock_get_ref.assert_called_once_with(mock_firestore_db, TEST_GAME_ID_R, TEST_PLAYER_ID_R, TEST_ROUND_NUMBER_R)
     assert isinstance(result_dict, dict)
     assert result_dict["id"] == mock_field_state_doc_ref.id
+    assert result_dict["game_id"] == TEST_GAME_ID_R
+    assert result_dict["player_id"] == TEST_PLAYER_ID_R
     assert result_dict["round_number"] == TEST_ROUND_NUMBER_R
     assert result_dict["parcels"] == initial_parcels_data
+    # Timestamps in snapshot_data were ISO strings, to_dict() returns them as is.
+    assert result_dict["created_at"] == FIXED_DATETIME_ROUND.isoformat()
+    assert result_dict["updated_at"] == FIXED_DATETIME_ROUND.isoformat()
 
 @pytest.mark.asyncio
 async def test_get_player_field_state_not_found(

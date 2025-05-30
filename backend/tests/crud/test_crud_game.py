@@ -137,18 +137,44 @@ async def test_create_game_with_admin(
     mock_vermin_gen.assert_called_once_with(game_create_obj.number_of_rounds)
 
     mock_crudbase_create.assert_called_once()
-    # Check the 'obj_in' passed to CRUDBase.create
+    # Check the 'obj_in' passed to CRUDBase.create (this is 'game_data' from CRUDGame.create_with_admin)
     passed_obj_to_crudbase = mock_crudbase_create.call_args[1]['obj_in']
 
+    # Assertions for fields from GameCreate schema
     assert passed_obj_to_crudbase["name"] == game_create_obj.name
-    assert passed_obj_to_crudbase["admin_id"] == ADMIN_ID # Internal data uses Python field names
+    assert passed_obj_to_crudbase["number_of_rounds"] == game_create_obj.number_of_rounds
+    assert passed_obj_to_crudbase["max_players"] == game_create_obj.max_players
+    # requested_player_slots is part of GameCreate but might not be directly stored or used later in GameInDB
+    # assert passed_obj_to_crudbase["requested_player_slots"] == game_create_obj.requested_player_slots
+
+    # Assertions for fields added/set by CRUDGame.create_with_admin
+    assert passed_obj_to_crudbase["admin_id"] == ADMIN_ID
+    assert passed_obj_to_crudbase["current_round_number"] == 0
+    assert passed_obj_to_crudbase["game_status"] == GameStatus.PENDING.value # Stored as string value
+    assert passed_obj_to_crudbase["player_uids"] == []
     assert passed_obj_to_crudbase["weather_sequence"] == DEFAULT_WEATHER_SEQ
     assert passed_obj_to_crudbase["vermin_sequence"] == DEFAULT_VERMIN_SEQ
-    assert passed_obj_to_crudbase["game_status"] == GameStatus.PENDING.value # Check added fields
+    # Timestamps (created_at, updated_at) are handled by CRUDBase.create or Firestore,
+    # so they are not expected in passed_obj_to_crudbase here.
+    # ai_player_strategies is not set by create_with_admin, defaults to {} in Pydantic if not provided by CRUDBase.create mock
 
+    # Assertions for the returned GameInDB object (created_game)
+    # This object is initialized from 'expected_game_dict_from_base_create'
+    assert created_game.id == TEST_GAME_ID
+    assert created_game.uid == TEST_GAME_ID
     assert created_game.name == game_create_obj.name
-    assert created_game.admin_id == ADMIN_ID # Pydantic model should allow access by Python name
-    assert created_game.game_status == GameStatus.PENDING
+    assert created_game.admin_id == ADMIN_ID
+    assert created_game.number_of_rounds == game_create_obj.number_of_rounds
+    assert created_game.max_players == game_create_obj.max_players
+    assert created_game.current_round_number == 0
+    assert created_game.game_status == GameStatus.PENDING # Parsed as enum
+    assert created_game.game_stage == GameStage.INITIAL_SETUP # From expected_game_dict / BASE_GAME_IN_DB_DICT
+    assert created_game.player_uids == []
+    assert created_game.weather_sequence == DEFAULT_WEATHER_SEQ
+    assert created_game.vermin_sequence == DEFAULT_VERMIN_SEQ
+    assert created_game.created_at == FIXED_DATETIME_NOW_GAME
+    assert created_game.updated_at == FIXED_DATETIME_NOW_GAME
+    assert created_game.ai_player_strategies == {} # From expected_game_dict
 
 
 @pytest.mark.asyncio
@@ -170,9 +196,29 @@ async def test_get_games_by_admin_id_found(
     games_list = await crud_game_instance.get_games_by_admin_id(db=mock_firestore_db, admin_id=ADMIN_ID)
     
     mock_collection_ref.where.assert_called_once_with("admin_id", "==", ADMIN_ID)
-    assert mock_query.limit.called_with(100) # Check if limit was called (default is 100)
+    # CRUDBase.get_games_by_admin_id has a default limit. Check it or the passed one.
+    # The test calls it with default limit.
+    # The mock_query in this test is the one *after* .where(). The .limit() is called on this.
+    mock_query.limit.assert_called_once_with(100)
+
     assert len(games_list) == 1
-    assert games_list[0].id == mock_game_doc_snapshot.id
+    game = games_list[0]
+    # Assertions based on mock_game_doc_snapshot which uses mock_game_doc_snapshot_data / BASE_GAME_IN_DB_DICT
+    assert game.id == TEST_GAME_ID
+    assert game.uid == TEST_GAME_ID
+    assert game.name == BASE_GAME_IN_DB_DICT["name"]
+    assert game.admin_id == ADMIN_ID # Matches the query
+    assert game.number_of_rounds == BASE_GAME_IN_DB_DICT["number_of_rounds"]
+    assert game.max_players == BASE_GAME_IN_DB_DICT["max_players"]
+    assert game.current_round_number == BASE_GAME_IN_DB_DICT["current_round_number"]
+    assert game.game_status == GameStatus(BASE_GAME_IN_DB_DICT["game_status"])
+    assert game.game_stage == GameStage(BASE_GAME_IN_DB_DICT["game_stage"])
+    assert game.player_uids == BASE_GAME_IN_DB_DICT["player_uids"]
+    assert game.weather_sequence == BASE_GAME_IN_DB_DICT["weather_sequence"]
+    assert game.vermin_sequence == BASE_GAME_IN_DB_DICT["vermin_sequence"]
+    assert game.created_at == FIXED_DATETIME_NOW_GAME
+    assert game.updated_at == FIXED_DATETIME_NOW_GAME
+    assert game.ai_player_strategies == BASE_GAME_IN_DB_DICT["ai_player_strategies"]
 
 @pytest.mark.asyncio
 async def test_get_games_by_admin_id_not_found(
@@ -209,6 +255,24 @@ async def test_add_player_to_game_success(
     mock_array_union_class.assert_called_once_with([PLAYER_UID_1])
     game_doc_ref.update.assert_called_once_with({"player_uids": mock_array_union_class.return_value})
 
+@pytest.mark.asyncio
+async def test_add_player_to_game_firestore_error(
+    crud_game_instance: CRUDGame,
+    mock_firestore_db: AsyncFirestoreClient,
+    mock_array_union_class # Ensure ArrayUnion is mocked but we make update fail
+):
+    game_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(TEST_GAME_ID)
+    game_doc_ref.update = AsyncMock(side_effect=Exception("Firestore update failed"))
+
+    # Patch print to check if it's called, though not strictly necessary for functionality
+    with patch("builtins.print") as mock_print:
+        result = await crud_game_instance.add_player_to_game(
+            db=mock_firestore_db, game_id=TEST_GAME_ID, player_uid=PLAYER_UID_1
+        )
+
+    assert result is False
+    game_doc_ref.update.assert_called_once() # Still called
+    mock_print.assert_called_once() # Check that the error was printed
 
 @pytest.mark.asyncio
 async def test_remove_player_from_game_success(
@@ -225,6 +289,23 @@ async def test_remove_player_from_game_success(
     mock_array_remove_class.assert_called_once_with([PLAYER_UID_1])
     game_doc_ref.update.assert_called_once_with({"player_uids": mock_array_remove_class.return_value})
 
+@pytest.mark.asyncio
+async def test_remove_player_from_game_firestore_error(
+    crud_game_instance: CRUDGame,
+    mock_firestore_db: AsyncFirestoreClient,
+    mock_array_remove_class # Ensure ArrayRemove is mocked but we make update fail
+):
+    game_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(TEST_GAME_ID)
+    game_doc_ref.update = AsyncMock(side_effect=Exception("Firestore update failed"))
+
+    with patch("builtins.print") as mock_print:
+        result = await crud_game_instance.remove_player_from_game(
+            db=mock_firestore_db, game_id=TEST_GAME_ID, player_uid=PLAYER_UID_1
+        )
+
+    assert result is False
+    game_doc_ref.update.assert_called_once()
+    mock_print.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_update_game_status(
@@ -289,33 +370,113 @@ async def test_update_game_status(
     # The `expected_return_dict_for_pydantic` has datetime objects.
     # The actual `game_doc_ref.update` payload will have `updated_at` from `update_game_status`.
     
-    # Check the payload sent to Firestore
+    # Check the payload sent to Firestore via CRUDBase.update
+    # The obj_in for super().update in update_game_status is {"game_status": status, "updated_at": datetime.utcnow()}
     game_doc_ref.update.assert_called_once()
-    update_call_payload = game_doc_ref.update.call_args[0][0]
-    assert update_call_payload["game_status"] == new_status.value
-    assert update_call_payload["updated_at"] == FIXED_DATETIME_LATER_GAME # This is set by update_game_status
+    update_call_args = game_doc_ref.update.call_args[0][0]
+    assert update_call_args["game_status"] == new_status.value
+    assert update_call_args["updated_at"] == FIXED_DATETIME_LATER_GAME # This is from the patched datetime.utcnow()
 
     # Check the returned Pydantic model
-    updated_game = GameInDB(**updated_game_dict_result) # This should work if dict has right types/aliases
+    updated_game = GameInDB(**updated_game_dict_result)
     assert updated_game.game_status == new_status
     assert updated_game.updated_at == FIXED_DATETIME_LATER_GAME
+    assert updated_game.created_at == FIXED_DATETIME_NOW_GAME # Ensure created_at is not affected
+
+@pytest.mark.parametrize("new_status", [
+    GameStatus.ACTIVE, GameStatus.PAUSED, GameStatus.FINISHED, GameStatus.ARCHIVED
+])
+@pytest.mark.asyncio
+async def test_update_game_status_parametrized(
+    crud_game_instance: CRUDGame,
+    mock_firestore_db: AsyncFirestoreClient,
+    new_status: GameStatus # Parametrized status
+):
+    game_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(TEST_GAME_ID)
+
+    # Snapshot data for return by game_doc_ref.get() after update
+    # This data should reflect the new status and new updated_at time.
+    # created_at should remain original. Other game fields are from BASE_GAME_IN_DB_DICT.
+    updated_snapshot_data_dict = {
+        **BASE_GAME_IN_DB_DICT, # Base game data
+        "id": TEST_GAME_ID, # Ensure ID is correct
+        "uid": TEST_GAME_ID,
+        "game_status": new_status.value, # New status
+        "created_at": FIXED_DATETIME_NOW_GAME.isoformat(), # Original created_at as ISO
+        "updated_at": FIXED_DATETIME_LATER_GAME.isoformat(), # New updated_at as ISO
+    }
+
+    mock_snapshot_after_update = MagicMock(spec=DocumentSnapshot)
+    mock_snapshot_after_update.exists = True
+    mock_snapshot_after_update.to_dict.return_value = updated_snapshot_data_dict
+    mock_snapshot_after_update.id = TEST_GAME_ID
+    game_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_update) # Mock .get() called by CRUDBase.update
+
+    # Patch datetime.utcnow within app.crud.crud_game where update_game_status uses it
+    with patch("app.crud.crud_game.datetime") as mock_datetime_crud_game:
+        mock_datetime_crud_game.utcnow.return_value = FIXED_DATETIME_LATER_GAME # This is for 'updated_at'
+
+        updated_game_dict = await crud_game_instance.update_game_status(
+            db=mock_firestore_db, game_id=TEST_GAME_ID, status=new_status.value # Pass status string
+        )
+
+    # Assertions for the data passed to Firestore's update
+    game_doc_ref.update.assert_called_once()
+    firestore_payload = game_doc_ref.update.call_args[0][0]
+    assert firestore_payload["game_status"] == new_status.value
+    assert firestore_payload["updated_at"] == FIXED_DATETIME_LATER_GAME # from patched datetime.utcnow()
+
+    # Assertions for the returned GameInDB object
+    assert updated_game_dict is not None
+    returned_game_obj = GameInDB(**updated_game_dict) # Pydantic handles ISO string to datetime
+    assert returned_game_obj.game_status == new_status # Enum comparison
+    assert returned_game_obj.updated_at == FIXED_DATETIME_LATER_GAME
+    assert returned_game_obj.created_at == FIXED_DATETIME_NOW_GAME # Ensure created_at unchanged
+    assert returned_game_obj.name == BASE_GAME_IN_DB_DICT["name"] # Check other fields are preserved
 
 
 @pytest.mark.asyncio
 async def test_get_game_by_id_found(
     crud_game_instance: CRUDGame,
-    mock_firestore_db: AsyncFirestoreClient, # From conftest.py
-    mock_game_doc_snapshot: MagicMock # Specific game snapshot for TEST_GAME_ID
+    mock_firestore_db: AsyncFirestoreClient,
+    mock_game_doc_snapshot: MagicMock
 ):
-    # mock_game_doc_snapshot is already configured by its fixture to be returned
-    # by mock_firestore_db.collection(...).document(TEST_GAME_ID).get()
-    
+    # mock_game_doc_snapshot is configured by its fixture
     game_dict = await crud_game_instance.get(db=mock_firestore_db, doc_id=TEST_GAME_ID)
     assert game_dict is not None
-    game = GameInDB(**game_dict) # Pydantic should parse ISO strings from snapshot data
-    assert game.id == TEST_GAME_ID
-    assert game.name == BASE_GAME_IN_DB_DICT["name"]
+    game = GameInDB(**game_dict)
 
+    # Comprehensive check of all fields based on mock_game_doc_snapshot_data / BASE_GAME_IN_DB_DICT
+    assert game.id == TEST_GAME_ID
+    assert game.uid == TEST_GAME_ID
+    assert game.name == BASE_GAME_IN_DB_DICT["name"]
+    assert game.admin_id == BASE_GAME_IN_DB_DICT["adminId"] # Check alias mapping
+    assert game.number_of_rounds == BASE_GAME_IN_DB_DICT["number_of_rounds"]
+    assert game.max_players == BASE_GAME_IN_DB_DICT["max_players"]
+    assert game.current_round_number == BASE_GAME_IN_DB_DICT["current_round_number"]
+    assert game.game_status == GameStatus(BASE_GAME_IN_DB_DICT["game_status"]) # Compare with enum
+    assert game.game_stage == GameStage(BASE_GAME_IN_DB_DICT["game_stage"]) # Compare with enum
+    assert game.player_uids == BASE_GAME_IN_DB_DICT["player_uids"]
+    assert game.weather_sequence == BASE_GAME_IN_DB_DICT["weather_sequence"]
+    assert game.vermin_sequence == BASE_GAME_IN_DB_DICT["vermin_sequence"]
+    assert game.created_at == FIXED_DATETIME_NOW_GAME # Fixture uses datetime, to_dict returns ISO
+    assert game.updated_at == FIXED_DATETIME_NOW_GAME
+    assert game.ai_player_strategies == BASE_GAME_IN_DB_DICT["ai_player_strategies"]
+
+@pytest.mark.asyncio
+async def test_get_game_by_id_not_found(
+    crud_game_instance: CRUDGame,
+    mock_firestore_db: AsyncFirestoreClient
+):
+    non_existent_id = "non-existent-game-id"
+    doc_ref_mock = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(non_existent_id)
+
+    mock_snapshot_not_found = MagicMock(spec=DocumentSnapshot)
+    mock_snapshot_not_found.exists = False
+    doc_ref_mock.get = AsyncMock(return_value=mock_snapshot_not_found) # Configure .get() for this ID
+
+    game = await crud_game_instance.get(db=mock_firestore_db, doc_id=non_existent_id)
+    assert game is None
 
 @pytest.mark.asyncio
 async def test_update_game_general(

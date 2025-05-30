@@ -164,12 +164,29 @@ async def test_create_player_round_result(
     assert set_data["expense_details"]["running_costs"]["fertilizer"] == result_create_obj_round1_player1.expense_details.running_costs.fertilizer
     assert set_data["calculated_at"] == FIXED_DATETIME_RESULT
     assert set_data["id"] == mock_result_doc_ref.id
+    # Assert data integrity fields
+    assert set_data["market_demand_multiplier"] == result_create_obj_round1_player1.market_demand_multiplier
+    assert set_data["environmental_score"] == result_create_obj_round1_player1.environmental_score
+    assert set_data["total_yield"] == result_create_obj_round1_player1.total_yield
+    assert set_data["total_revenue"] == result_create_obj_round1_player1.total_revenue
+    assert set_data["total_expenses_sum"] == result_create_obj_round1_player1.total_expenses_sum
 
     assert isinstance(created_result, ResultInDB) # create_player_round_result returns ResultInDB
     assert created_result.id == mock_result_doc_ref.id
-    assert created_result.profit_or_loss == result_create_obj_round1_player1.profit_or_loss # Changed
-    assert created_result.calculated_at == FIXED_DATETIME_RESULT # Pydantic model has datetime object
+    assert created_result.player_id == result_create_obj_round1_player1.player_id
+    assert created_result.game_id == result_create_obj_round1_player1.game_id
+    assert created_result.round_number == result_create_obj_round1_player1.round_number
+    assert created_result.profit_or_loss == result_create_obj_round1_player1.profit_or_loss
+    assert created_result.calculated_at == FIXED_DATETIME_RESULT
     assert created_result.expense_details.seed_costs.total == result_create_obj_round1_player1.expense_details.seed_costs.total
+    assert created_result.income_details.crop_sales == result_create_obj_round1_player1.income_details.crop_sales
+    assert created_result.market_demand_multiplier == result_create_obj_round1_player1.market_demand_multiplier
+    assert created_result.environmental_score == result_create_obj_round1_player1.environmental_score
+    assert created_result.total_yield == result_create_obj_round1_player1.total_yield
+    assert created_result.total_revenue == result_create_obj_round1_player1.total_revenue
+    assert created_result.total_expenses_sum == result_create_obj_round1_player1.total_expenses_sum
+    assert created_result.parcel_results == result_create_obj_round1_player1.parcel_results
+
 
 @pytest.mark.asyncio
 async def test_get_player_round_result_found(
@@ -194,10 +211,34 @@ async def test_get_player_round_result_found(
 
     mock_get_ref.assert_called_once_with(mock_firestore_db, TEST_GAME_ID, TEST_PLAYER_ID, TEST_ROUND_NUMBER)
     assert isinstance(result, ResultInDB)
+
+    # Comprehensive assertions for all fields
     assert result.id == mock_result_doc_ref.id
-    assert result.profit_or_loss == result_create_obj_round1_player1.profit_or_loss # Changed
+    assert result.game_id == result_create_obj_round1_player1.game_id
+    assert result.player_id == result_create_obj_round1_player1.player_id
+    assert result.round_number == result_create_obj_round1_player1.round_number
     assert result.calculated_at == FIXED_DATETIME_RESULT
+
+    # Data integrity fields
+    assert result.market_demand_multiplier == result_create_obj_round1_player1.market_demand_multiplier
+    assert result.environmental_score == result_create_obj_round1_player1.environmental_score
+    assert result.total_yield == result_create_obj_round1_player1.total_yield
+    assert result.total_revenue == result_create_obj_round1_player1.total_revenue
+    assert result.total_expenses_sum == result_create_obj_round1_player1.total_expenses_sum
+    assert result.profit_or_loss == result_create_obj_round1_player1.profit_or_loss
+
+    # Nested models - assuming create_mock_snapshot sets these up as dicts
+    # and ResultInDB parses them into Pydantic models.
+    assert isinstance(result.income_details, TotalIncome)
+    assert result.income_details.crop_sales == result_create_obj_round1_player1.income_details.crop_sales
+    assert result.income_details.bonuses == result_create_obj_round1_player1.income_details.bonuses
+
+    assert isinstance(result.expense_details, TotalExpensesBreakdown)
     assert result.expense_details.seed_costs.total == result_create_obj_round1_player1.expense_details.seed_costs.total
+    assert result.expense_details.running_costs.fertilizer == result_create_obj_round1_player1.expense_details.running_costs.fertilizer
+    # Add more checks for other nested fields in expense_details if necessary
+
+    assert result.parcel_results == result_create_obj_round1_player1.parcel_results
 
 @pytest.mark.asyncio
 async def test_get_player_round_result_not_found(
@@ -255,10 +296,32 @@ async def test_get_all_results_for_player(
     mock_query.limit.assert_called_once_with(10)
     
     assert len(results) == 2
-    assert results[0].id == doc_id1
-    assert results[0].round_number == TEST_ROUND_NUMBER
-    assert results[1].id == doc_id2
-    assert results[1].round_number == TEST_ROUND_NUMBER_2
+
+    # Result 1 assertions (Round 1)
+    res1 = results[0]
+    assert res1.id == doc_id1
+    assert res1.player_id == TEST_PLAYER_ID
+    assert res1.round_number == TEST_ROUND_NUMBER
+    assert res1.profit_or_loss == result_create_obj_round1_player1.profit_or_loss
+    assert res1.calculated_at == FIXED_DATETIME_RESULT
+    assert res1.market_demand_multiplier == result_create_obj_round1_player1.market_demand_multiplier
+    assert res1.environmental_score == result_create_obj_round1_player1.environmental_score
+    assert res1.total_yield == result_create_obj_round1_player1.total_yield
+    assert res1.income_details.crop_sales == result_create_obj_round1_player1.income_details.crop_sales
+    assert res1.expense_details.seed_costs.total == result_create_obj_round1_player1.expense_details.seed_costs.total
+
+    # Result 2 assertions (Round 2)
+    res2 = results[1]
+    assert res2.id == doc_id2
+    assert res2.player_id == TEST_PLAYER_ID
+    assert res2.round_number == TEST_ROUND_NUMBER_2
+    assert res2.profit_or_loss == result_create_obj_round2_player1.profit_or_loss
+    assert res2.calculated_at == FIXED_DATETIME_RESULT + timezone.timedelta(minutes=1) # As per mock_snapshot2
+    assert res2.market_demand_multiplier == result_create_obj_round2_player1.market_demand_multiplier
+    assert res2.environmental_score == result_create_obj_round2_player1.environmental_score
+    assert res2.total_yield == result_create_obj_round2_player1.total_yield
+    assert res2.income_details.crop_sales == result_create_obj_round2_player1.income_details.crop_sales
+    assert res2.expense_details.seed_costs.total == result_create_obj_round2_player1.expense_details.seed_costs.total
 
 @pytest.mark.asyncio
 async def test_get_all_results_for_player_empty(
@@ -309,13 +372,26 @@ async def test_get_all_results_for_game_round(
 
     mock_collection_ref.where.assert_called_once_with(field="round_number", op_string="==", value=TEST_ROUND_NUMBER)
     assert len(results) == 2
-    # Order is not guaranteed by this query, so check for presence
-    result_ids = {res.id for res in results}
-    assert doc_id1 in result_ids
-    assert doc_id2 in result_ids
-    player_ids = {res.player_id for res in results}
-    assert TEST_PLAYER_ID in player_ids
-    assert TEST_PLAYER_ID_2 in player_ids
+    # Order is not guaranteed by this query, so check for presence by iterating
+    expected_results_map = {
+        doc_id1: result_create_obj_round1_player1,
+        doc_id2: result_create_obj_round1_player2
+    }
+    assert len(results) == len(expected_results_map)
+
+    for res in results:
+        assert res.id in expected_results_map
+        expected_obj = expected_results_map[res.id]
+
+        assert res.player_id == expected_obj.player_id
+        assert res.round_number == TEST_ROUND_NUMBER # All results are for this round
+        assert res.profit_or_loss == expected_obj.profit_or_loss
+        assert res.calculated_at == FIXED_DATETIME_RESULT # Both snapshots used same time
+        assert res.market_demand_multiplier == expected_obj.market_demand_multiplier
+        assert res.environmental_score == expected_obj.environmental_score
+        assert res.total_yield == expected_obj.total_yield
+        assert res.income_details.crop_sales == expected_obj.income_details.crop_sales
+        assert res.expense_details.seed_costs.total == expected_obj.expense_details.seed_costs.total
 
 @pytest.mark.asyncio
 async def test_get_all_results_for_game_round_empty(

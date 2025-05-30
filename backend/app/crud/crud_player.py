@@ -47,6 +47,11 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
 
         if plain_password_for_hash: # Store hash of the initial/temp password
             player_data_for_firestore["temp_password_hash"] = get_password_hash(plain_password_for_hash)
+
+        # Add timestamps
+        current_time = datetime.now(timezone.utc)
+        player_data_for_firestore["created_at"] = current_time
+        player_data_for_firestore["updated_at"] = current_time
         # MODIFIED END
         
         # Ensure game_id is stored, it's mandatory in PlayerCreate
@@ -126,14 +131,20 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
         """
         Clears the temp_password_hash for a player, typically after first successful login
         or when they set a permanent password.
+        Returns the updated player data as a dictionary, or None if the update failed.
         """
         try:
+            obj_to_update = {
+                "temp_password_hash": None,
+                "updated_at": datetime.now(timezone.utc) # Set updated_at timestamp
+            }
             # Call super().update and return its result (which should be the updated player dict or None)
-            updated_player_data = await super().update(db, doc_id=player_uid, obj_in={"temp_password_hash": None})
+            updated_player_data = await super().update(db, doc_id=player_uid, obj_in=obj_to_update)
             return updated_player_data # Return the dict or None
         except Exception as e:
+            # Log the exception (consider using logging module for production)
             print(f"Error clearing temp_password_hash for player {player_uid}: {e}")
-            return None # Return None in case of an exception to match expected Optional[Dict]
+            return None # Return None in case of an exception
 
 
 # Instantiate the CRUDPlayer class
