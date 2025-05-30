@@ -24,3 +24,13 @@ export enum UserRole {
     // If AuthUserInfo can have additional properties not in User, define them here.
     // For example: extraAuthField?: string;
   };
+
+// Payload for admin registration
+export interface AdminRegisterPayload {
+  firstName: string;
+  lastName: string;
+  institution: string;
+  email: string;
+  password: string; // Note: In a real app, never store plain passwords long-term
+  displayName?: string; // Optional, often derived from firstName and lastName
+}

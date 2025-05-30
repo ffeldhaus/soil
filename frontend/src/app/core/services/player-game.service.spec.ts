@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing'; // Added import
 import { PlayerGameService } from './player-game.service';
 import { ApiService } from './api.service';
 import { GamePublic } from '../models/game.model';
@@ -25,25 +26,35 @@ describe('PlayerGameService', () => {
     originalUseMocks = environment.useMocks; // Store original value
     environment.useMocks = useMocks;
 
+    const providers: any[] = [PlayerGameService];
+    if (useMocks) {
+      providers.push(MockPlayerGameService); // Provide MockPlayerGameService
+    } else {
+      providers.push({ provide: ApiService, useValue: mockRealApiService });
+    }
+
     TestBed.configureTestingModule({
-      providers: [
-        PlayerGameService,
-        // Provide ApiService only if not using mocks, otherwise PlayerGameService creates its own mock
-        useMocks ? [] : { provide: ApiService, useValue: mockRealApiService }
-      ]
+      imports: [HttpClientTestingModule], // HttpClientTestingModule is needed for ApiService
+      providers: providers
     });
 
     service = TestBed.inject(PlayerGameService);
   };
 
+  // afterEach(() => { // Original afterEach for resetting mocks is moved/changed
+  //   environment.useMocks = originalUseMocks;
+  //   if (!environment.useMocks) {
+  //       mockRealApiService.get.mockReset();
+  //       mockRealApiService.put.mockReset();
+  //       mockRealApiService.post.mockReset();
+  //       mockRealApiService.delete.mockReset();
+  //   }
+  // });
+  // Simpler global afterEach for environment restoration
   afterEach(() => {
-    environment.useMocks = originalUseMocks; // Restore original value
-    // Reset mocks for real ApiService if they were used
-    mockRealApiService.get.mockReset();
-    mockRealApiService.put.mockReset();
-    mockRealApiService.post.mockReset();
-    mockRealApiService.delete.mockReset();
+    environment.useMocks = originalUseMocks;
   });
+
 
   describe('PlayerGameService (when useMocks is true)', () => {
     let getCurrentRoundWithFieldSpy: jest.SpyInstance;
@@ -89,7 +100,14 @@ describe('PlayerGameService', () => {
     it('submitPlayerDecisions should call mockService.submitPlayerDecisions', () => {
       const gameId = 'mockGame3';
       const roundNumber = 1;
-      const payload: PlayerRoundSubmission = { roundDecisions: {}, parcelPlantationChoices: {} };
+      const mockRoundDecisions: RoundDecisionBase = { // Create a full RoundDecisionBase object
+        fertilize: false,
+        pesticide: false,
+        biological_control: false,
+        attempt_organic_certification: false,
+        machine_investment_level: 0
+      };
+      const payload: PlayerRoundSubmission = { roundDecisions: mockRoundDecisions, parcelPlantationChoices: {} };
       service.submitPlayerDecisions(gameId, roundNumber, payload);
       expect(submitPlayerDecisionsSpy).toHaveBeenCalledWith(gameId, roundNumber, payload);
     });
@@ -107,7 +125,12 @@ describe('PlayerGameService', () => {
 
     beforeEach(() => {
       setupTestBed(false);
-      apiServiceSpy = mockRealApiService as jest.Mocked<ApiService>; // Use the alias for clarity
+      apiServiceSpy = mockRealApiService as unknown as jest.Mocked<ApiService>;
+      // Reset mocks before each test in this block
+      apiServiceSpy.get.mockReset();
+      apiServiceSpy.put.mockReset();
+      apiServiceSpy.post.mockReset();
+      apiServiceSpy.delete.mockReset();
     });
 
     it('should be created and not use MockPlayerGameService', () => {
@@ -118,7 +141,13 @@ describe('PlayerGameService', () => {
     it('getCurrentRoundWithField should call ApiService.get with correct URL and return its response', (done) => {
       const gameId = 'testGame123';
       const expectedUrl = `/games/${gameId}/rounds/my-current-round`;
-      const mockResponse: RoundWithFieldPublic = { id: 1, roundNumber: 1 } as RoundWithFieldPublic; // Example data
+      // Expanded mockResponse to be a valid RoundWithFieldPublic
+      const mockResponse: RoundWithFieldPublic = {
+        id: 'round1', gameId: gameId, playerId: 'player1', roundNumber: 1, isSubmitted: false,
+        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+        fieldState: { parcels: [] },
+        decisions: { fertilize: false, pesticide: false, biological_control: false, attempt_organic_certification: false, machine_investment_level: 0 }
+      };
       apiServiceSpy.get.mockReturnValue(of(mockResponse));
 
       service.getCurrentRoundWithField(gameId).subscribe(response => {
@@ -132,7 +161,12 @@ describe('PlayerGameService', () => {
     it('getGameDetails should call ApiService.get with correct URL and return its response', (done) => {
       const gameId = 'testGame456';
       const expectedUrl = `/games/${gameId}`;
-      const mockResponse: GamePublic = { id: 'g1', name: 'Test Game' } as GamePublic; // Example data
+      // Expanded mockResponse to be a valid GamePublic
+      const mockResponse: GamePublic = {
+        id: gameId, name: 'Test Game', numberOfRounds: 10, currentRoundNumber: 1,
+        gameStatus: 'active', adminId: 'admin1', createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(), playerUids: ['player1']
+      };
       apiServiceSpy.get.mockReturnValue(of(mockResponse));
 
       service.getGameDetails(gameId).subscribe(response => {
@@ -147,11 +181,16 @@ describe('PlayerGameService', () => {
       const gameId = 'testGame789';
       const roundNumber = 1;
       const payload: PlayerRoundSubmission = {
-        roundDecisions: { fertilize: true } as RoundDecisionBase,
+        roundDecisions: { fertilize: true, pesticide: false, biological_control: false, attempt_organic_certification: false, machine_investment_level: 1 } as RoundDecisionBase,
         parcelPlantationChoices: { '1': PlantationType.CORN }
       };
       const expectedUrl = `/games/${gameId}/rounds/${roundNumber}/my-decisions`;
-      const mockResponse: RoundPublic = { id: 1, roundNumber: 1 } as RoundPublic; // Example data
+      // Expanded mockResponse to be a valid RoundPublic
+      const mockResponse: RoundPublic = {
+        id: 'roundSubmit1', gameId: gameId, playerId: 'player1', roundNumber: roundNumber, isSubmitted: true,
+        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+        decisions: payload.roundDecisions
+      };
       apiServiceSpy.put.mockReturnValue(of(mockResponse));
 
       service.submitPlayerDecisions(gameId, roundNumber, payload).subscribe(response => {
@@ -166,7 +205,13 @@ describe('PlayerGameService', () => {
       const gameId = 'testGameABC';
       const playerId = 'playerXYZ';
       const expectedUrl = `/games/${gameId}/results/my-results`;
-      const mockResponse: ResultPublic[] = [{ id: 'r1', score: 100 } as ResultPublic]; // Example data
+      // Expanded mockResponse to be a valid ResultPublic[]
+      const mockResponse: ResultPublic[] = [{
+        id: 'r1', gameId: gameId, playerId: playerId, roundNumber: 0, profitOrLoss: 1000, closingCapital: 11000,
+        startingCapital: 10000, achievedOrganicCertification: false, calculatedAt: new Date().toISOString(),
+        incomeDetails: { total: 2000 } as any, // Cast to any for brevity, should be full HarvestIncome
+        expenseDetails: { grandTotal: 1000 } as any // Cast to any for brevity, should be full TotalExpensesBreakdown
+      }];
       apiServiceSpy.get.mockReturnValue(of(mockResponse));
 
       service.getPlayerResults(gameId, playerId).subscribe(response => {

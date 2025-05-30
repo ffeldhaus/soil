@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { authGuard } from './auth.guard';
 import { IAuthService } from '../services/auth.service.interface';
 import { AUTH_SERVICE_TOKEN } from '../services/injection-tokens';
-import { User, UserRole } from '../models/user.model';
+import { User, UserRole } from '../models'; // Changed to use barrel import
 
 describe('authGuard', () => {
   let authServiceMock: { currentUser$: BehaviorSubject<User | null | undefined> };

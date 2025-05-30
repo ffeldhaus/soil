@@ -8,8 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 import { PlantationDialogComponent } from './plantation-dialog.component';
-import { PlantationType } from '../../../../core/models/parcel.model';
-import { DisplayPlantationNamePipe } from '../../../../shared/pipes/display-plantation-name.pipe'; // Import the pipe
+import { PlantationType } from '../../../../core/models'; // Changed to use barrel import
+import { DisplayPlantationNamePipe } from '../../../../shared/pipes/display-plantation-name.pipe';
 
 // Mock MAT_DIALOG_DATA - even if not used by current component logic, it's good practice if dialogs often expect it.
 // For this component, it seems it doesn't use injected data to populate its list of plantations.

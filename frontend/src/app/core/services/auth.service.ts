@@ -52,16 +52,17 @@ export class AuthService implements IAuthService {
     }
     
     onAuthStateChanged(this.auth, async (fbUser) => {
+      console.log('[DEBUG] onAuthStateChanged triggered with user: ', fbUser ? fbUser.uid : null); // DEBUG
       this.firebaseUserInternal.set(fbUser);
       if (fbUser) {
-        // console.log('AuthService: Firebase user state changed - Logged In', fbUser.uid, 'Is Impersonating:', this.isImpersonating());
+        console.log('[DEBUG] onAuthStateChanged: fbUser present. Is Impersonating:', this.isImpersonating()); // DEBUG
         if (this.isImpersonating()) {
-            // console.log('AuthService: Currently impersonating. Backend token and app user will not be auto-updated from Firebase admin user.');
+            console.log('[DEBUG] onAuthStateChanged: Currently impersonating. Skipping processFirebaseUser.'); // DEBUG
         } else {
             await this.processFirebaseUser(fbUser);
         }
       } else {
-        // console.log('AuthService: Firebase user state changed - Logged Out');
+        console.log('[DEBUG] onAuthStateChanged: fbUser is null. Clearing auth data.'); // DEBUG
         this.clearAuthData(true);
       }
     }, () => { // Removed _error
@@ -76,10 +77,12 @@ export class AuthService implements IAuthService {
     });
   }
 
-  protected async processFirebaseUser(firebaseUser: FirebaseUser): Promise<void> { // Changed to protected
-    // console.log('AuthService: processFirebaseUser for UID:', firebaseUser.uid);
+  protected async processFirebaseUser(firebaseUser: FirebaseUser): Promise<void> {
+    console.log('[DEBUG] processFirebaseUser called with firebaseUser: ', firebaseUser.uid); // DEBUG
     try {
+      console.log('[DEBUG] processFirebaseUser: Calling getIdTokenResult for UID:', firebaseUser.uid); // DEBUG
       const idTokenResult = await getIdTokenResult(firebaseUser, true);
+      console.log('[DEBUG] processFirebaseUser: Got idTokenResult. Token present:', !!idTokenResult?.token); // DEBUG
       const claims = idTokenResult.claims;
       const role = claims['role'] as UserRole | undefined;
       const gameIdClaim = claims['game_id'] as string | undefined;
@@ -96,12 +99,13 @@ export class AuthService implements IAuthService {
         isAi: isAiClaim,
       };
       this.appUserInternal.set(appUser);
-      // console.log('AuthService: App user processed from Firebase claims:', appUser);
+      console.log('[DEBUG] processFirebaseUser: App user set from claims:', appUser); // DEBUG
 
+      console.log('[DEBUG] processFirebaseUser: Calling fetchAndStoreBackendToken with token:', idTokenResult.token ? 'token_present' : 'token_MISSING'); // DEBUG
       await this.fetchAndStoreBackendToken(idTokenResult.token);
 
-    } catch { // Removed error
-      // console.error("AuthService: Error processing Firebase user or fetching backend token:");
+    } catch (error) {
+      console.error("[DEBUG] processFirebaseUser: Error processing Firebase user or fetching backend token:", error); // DEBUG
       await this.logoutOnError();
     }
   }
@@ -112,30 +116,32 @@ export class AuthService implements IAuthService {
       this.clearBackendToken();
       return;
     }
-    // console.log('AuthService: fetchAndStoreBackendToken called with Firebase ID token (first 50 chars): ', firebaseIdToken.substring(0,50));
+    console.log('[DEBUG] fetchAndStoreBackendToken called with Firebase ID token (first 10 chars): ', firebaseIdToken ? firebaseIdToken.substring(0,10) + "..." : "null_or_undefined_token"); // DEBUG
     try {
+      console.log('[DEBUG] fetchAndStoreBackendToken: Attempting HTTP POST to /auth/login/id-token'); // DEBUG
       const response = await firstValueFrom(
         this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login/id-token`, { idToken: firebaseIdToken })
       );
-      if (response && response.accessToken) {
-        this.storeBackendToken(response.accessToken);
-        if (response.userInfo) {
-            const newUser = response.userInfo as User;
+      console.log('[DEBUG] fetchAndStoreBackendToken: HTTP POST response received:', response); // DEBUG
+      if (response && response.access_token) {
+        this.storeBackendToken(response.access_token);
+        if (response.user_info) {
+            const newUser = response.user_info as User;
             this.appUserInternal.set(newUser);
-            // console.log('AuthService: AppUser updated from backend token user_info:', newUser);
+            console.log('[DEBUG] fetchAndStoreBackendToken: AppUser updated from backend token user_info:', newUser); // DEBUG
         }
       } else {
-        // console.warn('AuthService: Backend token not found in response.');
+        console.warn('[DEBUG] fetchAndStoreBackendToken: Backend token not found in response.'); // DEBUG
         this.clearBackendToken();
       }
-    } catch { // Removed error
-      // console.error("AuthService: Error fetching backend token:");
-      this.clearBackendToken(); // Ensure token is cleared on error
+    } catch (error) {
+      console.error("[DEBUG] fetchAndStoreBackendToken: Error fetching backend token:", error); // DEBUG
+      this.clearBackendToken();
     }
   }
 
-  protected storeBackendToken(token: string): void { // Changed to protected
-    // console.log('AuthService: storeBackendToken saving token (first 50 chars):', token.substring(0,50));
+  protected storeBackendToken(token: string): void {
+    console.log('[DEBUG] storeBackendToken saving token (first 10 chars):', token ? token.substring(0,10) + "..." : "null_or_undefined_token" ); // DEBUG
     if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem(BACKEND_JWT_KEY, token);
     }
@@ -316,23 +322,23 @@ export class AuthService implements IAuthService {
       );
       // console.log('AuthService: Impersonation backend response received:', response);
 
-      if (response && response.accessToken && response.userInfo) {
+      if (response && response.access_token && response.user_info) { // Changed to access_token and user_info
         this.storeOriginalAdminToken(currentAdminToken);
-        this.storeBackendToken(response.accessToken);    
+        this.storeBackendToken(response.access_token);    // Changed to access_token
         
         const impersonatedUser: User = {
-            uid: response.userInfo.uid,
-            email: response.userInfo.email,
-            displayName: response.userInfo.displayName || `Player ${response.userInfo.playerNumber}`,
-            role: response.userInfo.role as UserRole,
-            gameId: response.userInfo.gameId,
-            playerNumber: response.userInfo.playerNumber,
-            isAi: response.userInfo.isAi,
-            impersonatorUid: response.userInfo.impersonatorUid 
+            uid: response.user_info.uid, // Changed to user_info
+            email: response.user_info.email, // Changed to user_info
+            displayName: response.user_info.displayName || `Player ${response.user_info.playerNumber}`, // Changed to user_info
+            role: response.user_info.role as UserRole, // Changed to user_info
+            gameId: response.user_info.gameId, // Changed to user_info
+            playerNumber: response.user_info.playerNumber, // Changed to user_info
+            isAi: response.user_info.isAi, // Changed to user_info
+            impersonatorUid: response.user_info.impersonatorUid // Changed to user_info
         };
         this.appUserInternal.set(impersonatedUser);
 
-        // console.log('AuthService: Impersonation successful. Acting as player:', impersonatedUser.uid, 'New backend token (first 50 chars):', response.accessToken.substring(0,50));
+        // console.log('AuthService: Impersonation successful. Acting as player:', impersonatedUser.uid, 'New backend token (first 50 chars):', response.access_token.substring(0,50));
         if (impersonatedUser.gameId) {
             this.router.navigate(['/game', impersonatedUser.gameId, 'dashboard']);
         } else {

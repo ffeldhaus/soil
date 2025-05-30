@@ -1,5 +1,5 @@
 import { DisplayPlantationNamePipe } from './display-plantation-name.pipe';
-import { PlantationType } from '../../core/models/parcel.model';
+import { PlantationType } from '../../core/models'; // Changed to use barrel import
 
 describe('DisplayPlantationNamePipe', () => {
   let pipe: DisplayPlantationNamePipe;

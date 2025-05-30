@@ -63,6 +63,7 @@
               'login.togglePasswordVisibilityAriaLabel' | translate
             "
             [attr.aria-pressed]="showPassword()"
+            data-testid="toggle-password-visibility"
           >
             <mat-icon>{{
               showPassword() ? "visibility_off" : "visibility"

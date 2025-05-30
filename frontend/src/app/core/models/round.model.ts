@@ -17,7 +17,7 @@ export interface RoundDecisionBase {
 
 export interface PlayerRoundSubmission {
   roundDecisions: RoundDecisionBase;
-  parcelPlantationChoices: Dict<number, PlantationType>;
+  parcelPlantationChoices: Record<number, PlantationType>; // Changed from Dict<number, PlantationType>
 }
 
 export interface RoundBase {
@@ -43,7 +43,7 @@ export interface RoundInDB extends RoundBase {
   createdAt: string | Date;
   updatedAt: string | Date;
   result_id?: string | null; 
-  parcelDecisionState?: Dict<number, PlantationType>;
+  parcelDecisionState?: Record<number, PlantationType>; // Changed from Dict<number, PlantationType>
 
   // Optional Result fields that might be embedded if a result exists for this round
   // These would come from the backend's ResultPublic schema
