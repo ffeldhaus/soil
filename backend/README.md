@@ -14,7 +14,7 @@ The backend provides the API endpoints for game logic, player and admin authenti
 *   **Database:** Firestore (primary for game state, player data, rounds, results, field states).
 *   **Deployment:** Google Cloud Run (containerized)
 *   **Infrastructure as Code:** Terraform (managed in root project `terraform/` directory)
-*   **Dependency Management:** Poetry
+*   **Dependency Management:** uv
 *   **Linting & Formatting:** Ruff, Black
 *   **Type Checking:** MyPy
 *   **Email:** `aiosmtplib` for asynchronous email sending.
@@ -77,7 +77,7 @@ backend/
 ├── .env.example          # Example environment variables
 ├── .gitignore
 ├── Dockerfile            # For containerizing the application
-├── poetry.lock
+├── uv.lock
 ├── pyproject.toml
 └── README.md             # This file
 ```
@@ -86,7 +86,7 @@ backend/
 
 1.  **Prerequisites:**
     *   Python 3.13+
-    *   Poetry (Python dependency manager): [Installation Guide](https://python-poetry.org/docs/#installation)
+    *   uv (Python project and virtual environment manager): Install via `pip install uv` or see [official uv documentation](https://github.com/astral-sh/uv).
     *   Google Cloud SDK (gcloud CLI) - Optional for local dev if not deploying yet, but needed for Firebase interaction if GOOGLE_APPLICATION_CREDENTIALS is not manually set.
     *   Firebase Admin SDK credentials (a JSON service account key file) for local development. Download this from your Firebase project settings: Project settings > Service accounts > Generate new private key.
 
@@ -97,11 +97,12 @@ backend/
     cd <your-repo-url>/backend
     ```
 
-3.  **Install dependencies using Poetry:**
+3.  **Create a virtual environment and install dependencies using uv:**
     ```bash
-    poetry install
+    uv venv # Create a virtual environment (e.g., .venv)
+    uv sync # Install dependencies from pyproject.toml and uv.lock
     ```
-    This will create a virtual environment (usually in `.venv/` inside the `backend` directory) and install all dependencies listed in `pyproject.toml` and `poetry.lock`.
+    This will create a virtual environment (usually `.venv/` inside the `backend` directory) and install all dependencies listed in `pyproject.toml` and `uv.lock`. Remember to activate the environment for your shell session (e.g., `source .venv/bin/activate`).
 
 4.  **Environment Variables:**
     *   Copy `.env.example` to `.env`:
@@ -126,13 +127,17 @@ backend/
 
 ## Running Locally
 
-1.  **Activate the Poetry virtual environment:**
+1.  **Activate the virtual environment (if not already active):**
     ```bash
-    poetry shell
+    source .venv/bin/activate 
     ```
     (This step might be optional if your IDE or terminal automatically uses the project's virtualenv).
 
-2.  **Run the FastAPI application using Uvicorn:**
+2.  **Run the FastAPI application using Uvicorn (via uv):**
+    ```bash
+    uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    ```
+    Or, if Uvicorn is installed in your activated virtual environment:
     ```bash
     uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     ```
@@ -148,19 +153,23 @@ Alternative API documentation (ReDoc) will be at `http://127.0.0.1:8000/redoc`.
 
 Unit and integration tests are written using `pytest`.
 
-1.  **Activate the Poetry virtual environment (if not already active):**
+1.  **Activate the virtual environment (if not already active):**
     ```bash
-    poetry shell
+    source .venv/bin/activate
     ```
 
-2.  **Run all tests:**
+2.  **Run all tests (via uv):**
+    ```bash
+    uv run pytest
+    ```
+    Or, if pytest is installed in your activated virtual environment:
     ```bash
     pytest
     ```
     You can also run specific test files or directories:
     ```bash
-    pytest tests/game_logic/test_decision_impacts.py
-    pytest tests/services/
+    uv run pytest tests/game_logic/test_decision_impacts.py
+    uv run pytest tests/services/
     ```
 
 **Current Testing Status:**
@@ -176,10 +185,10 @@ This project uses Ruff for linting and Black for code formatting. MyPy is used f
 
 It's highly recommended to use `pre-commit` to automatically run these tools before each commit:
 
-1.  **Install pre-commit (if not already installed globally):**
+1.  **Install pre-commit (if not already installed globally or in your project):**
     ```bash
-    pip install pre-commit
-    # or poetry add pre-commit --group dev (if you prefer to manage it via Poetry for the project)
+    pip install pre-commit 
+    # or uv pip install pre-commit (if you prefer to manage it via uv for the project)
     ```
 2.  **Install the pre-commit hooks defined in `.pre-commit-config.yaml` (to be created in the project root):**
     ```bash
@@ -187,12 +196,16 @@ It's highly recommended to use `pre-commit` to automatically run these tools bef
     ```
 Now, Ruff and Black (and potentially MyPy) will run on changed files automatically when you `git commit`.
 
-To run them manually:
+To run them manually (ensure your virtual environment is active or use `uv run`):
 ```bash
-poetry shell # Activate environment
-ruff check . --fix
-black .
-mypy app
+# Activate environment if not already: source .venv/bin/activate
+uv run ruff check . --fix
+uv run black .
+uv run mypy app
+# Or, if environment is active:
+# ruff check . --fix
+# black .
+# mypy app
 ```
 
 ## Deployment

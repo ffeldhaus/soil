@@ -3,10 +3,10 @@
 name = "soil-game-backend"
 version = "0.1.0"
 description = "Backend for the Soil educational game, rewritten in Python."
-authors = ["Your Name <you@example.com>"]
+authors = [{name="Florian Feldhaus", email="florian.feldhaus@gmail.com"}]
 license = "MIT"
 readme = "README.md" 
-package-mode = false # <--- ADDED THIS LINE: Disables packaging features for this project
+package-mode = false
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.111.0",
@@ -37,11 +37,6 @@ dev = [
     "python-dotenv[cli]>=1.0.1",
     "pytest-cov>=4.1.0",
 ]
-
-[build-system]
-requires = ["uv>=0.1.17"]
-build-backend = "uv"
-backend-path = "."
 
 [tool.black]
 line-length = 88
@@ -89,4 +84,9 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
 # Add test file patterns if needed, e.g., testpaths = ["tests"]
