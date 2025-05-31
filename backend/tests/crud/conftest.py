@@ -94,14 +94,14 @@ def mock_doc_snapshot_non_existent(mock_firestore_db: AsyncFirestoreClient) -> M
 
 @pytest.fixture
 def mock_array_union_class():
-    with patch("google.cloud.firestore.ArrayUnion") as mock:
-        # Simulate ArrayUnion by returning a specific type or structure if needed for assertions
-        # For simple value checking, just returning the items might be enough.
-        mock.side_effect = lambda items: items # Or a more specific mock if type matters
-        yield mock
+    with patch('google.cloud.firestore.ArrayUnion', new_callable=MagicMock) as mock_class:
+        # mock_class is the mock for the ArrayUnion class.
+        # Its return_value (when mock_class() is called) will be another MagicMock by default,
+        # representing an instance of ArrayUnion.
+        # Tests will assert that this instance is used.
+        yield mock_class
 
 @pytest.fixture
 def mock_array_remove_class():
-    with patch("google.cloud.firestore.ArrayRemove") as mock:
-        mock.side_effect = lambda items: items
-        yield mock
+    with patch('google.cloud.firestore.ArrayRemove', new_callable=MagicMock) as mock_class:
+        yield mock_class

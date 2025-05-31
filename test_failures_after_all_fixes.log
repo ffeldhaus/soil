@@ -1,0 +1,370 @@
+/app/backend/.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+============================= test session starts ==============================
+platform linux -- Python 3.13.3, pytest-8.3.5, pluggy-1.6.0 -- /app/backend/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /app/backend
+configfile: pyproject.toml
+plugins: asyncio-1.0.0, cov-6.1.1, anyio-4.9.0
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 60 items
+
+tests/crud/test_crud_admin.py::test_create_admin_with_uid PASSED         [  1%]
+tests/crud/test_crud_admin.py::test_get_admin_by_email_found PASSED      [  3%]
+tests/crud/test_crud_admin.py::test_get_admin_by_email_not_found PASSED  [  5%]
+tests/crud/test_crud_admin.py::test_update_admin PASSED                  [  6%]
+tests/crud/test_crud_admin.py::test_update_admin_ignores_password PASSED [  8%]
+tests/crud/test_crud_admin.py::test_update_admin_non_existent PASSED     [ 10%]
+tests/crud/test_crud_admin.py::test_get_admin_by_id_found PASSED         [ 11%]
+tests/crud/test_crud_admin.py::test_get_admin_by_id_not_found PASSED     [ 13%]
+tests/crud/test_crud_admin.py::test_get_multi_admins PASSED              [ 15%]
+tests/crud/test_crud_admin.py::test_get_multi_admins_empty PASSED        [ 16%]
+tests/crud/test_crud_admin.py::test_remove_admin_success PASSED          [ 18%]
+tests/crud/test_crud_admin.py::test_remove_admin_non_existent PASSED     [ 20%]
+tests/crud/test_crud_game.py::test_create_game_with_admin PASSED         [ 21%]
+tests/crud/test_crud_game.py::test_get_games_by_admin_id_found FAILED    [ 23%]
+tests/crud/test_crud_game.py::test_get_games_by_admin_id_not_found PASSED [ 25%]
+tests/crud/test_crud_game.py::test_add_player_to_game_success FAILED     [ 26%]
+tests/crud/test_crud_game.py::test_add_player_to_game_firestore_error FAILED [ 28%]
+tests/crud/test_crud_game.py::test_remove_player_from_game_success FAILED [ 30%]
+tests/crud/test_crud_game.py::test_remove_player_from_game_firestore_error FAILED [ 31%]
+tests/crud/test_crud_game.py::test_update_game_status PASSED             [ 33%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[active] PASSED [ 35%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[pending] PASSED [ 36%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[finished] PASSED [ 38%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[archived] PASSED [ 40%]
+tests/crud/test_crud_game.py::test_get_game_by_id_found PASSED           [ 41%]
+tests/crud/test_crud_game.py::test_get_game_by_id_not_found PASSED       [ 43%]
+tests/crud/test_crud_game.py::test_update_game_general PASSED            [ 45%]
+tests/crud/test_crud_game.py::test_remove_game_success PASSED            [ 46%]
+tests/crud/test_crud_player.py::test_create_player_with_uid PASSED       [ 48%]
+tests/crud/test_crud_player.py::test_get_player_by_email_found PASSED    [ 50%]
+tests/crud/test_crud_player.py::test_get_player_by_email_not_found PASSED [ 51%]
+tests/crud/test_crud_player.py::test_update_player PASSED                [ 53%]
+tests/crud/test_crud_player.py::test_update_player_ignores_password PASSED [ 55%]
+tests/crud/test_crud_player.py::test_get_players_by_game_id_found FAILED [ 56%]
+tests/crud/test_crud_player.py::test_get_players_by_game_id_not_found PASSED [ 58%]
+tests/crud/test_crud_player.py::test_get_player_in_game_by_number_found PASSED [ 60%]
+tests/crud/test_crud_player.py::test_get_player_in_game_by_number_not_found PASSED [ 61%]
+tests/crud/test_crud_player.py::test_clear_temp_password_hash_success PASSED [ 63%]
+tests/crud/test_crud_player.py::test_clear_temp_password_hash_failure_doc_not_found PASSED [ 65%]
+tests/crud/test_crud_player.py::test_get_player_by_id_found PASSED       [ 66%]
+tests/crud/test_crud_player.py::test_get_player_by_id_not_found PASSED   [ 68%]
+tests/crud/test_crud_player.py::test_remove_player_success PASSED        [ 70%]
+tests/crud/test_crud_result.py::test_create_player_round_result PASSED   [ 71%]
+tests/crud/test_crud_result.py::test_get_player_round_result_found PASSED [ 73%]
+tests/crud/test_crud_result.py::test_get_player_round_result_not_found PASSED [ 75%]
+tests/crud/test_crud_result.py::test_get_all_results_for_player PASSED   [ 76%]
+tests/crud/test_crud_result.py::test_get_all_results_for_player_empty PASSED [ 78%]
+tests/crud/test_crud_result.py::test_get_all_results_for_game_round PASSED [ 80%]
+tests/crud/test_crud_result.py::test_get_all_results_for_game_round_empty PASSED [ 81%]
+tests/crud/test_crud_round.py::test_create_player_round PASSED           [ 83%]
+tests/crud/test_crud_round.py::test_update_player_round_decisions PASSED [ 85%]
+tests/crud/test_crud_round.py::test_update_player_round_decisions_not_submitted PASSED [ 86%]
+tests/crud/test_crud_round.py::test_get_player_round_found PASSED        [ 88%]
+tests/crud/test_crud_round.py::test_get_player_round_not_found PASSED    [ 90%]
+tests/crud/test_crud_round.py::test_get_all_player_rounds_for_game_round_multiple_found PASSED [ 91%]
+tests/crud/test_crud_round.py::test_get_all_player_rounds_for_game_round_empty PASSED [ 93%]
+tests/crud/test_crud_round.py::test_set_round_calculated_success PASSED  [ 95%]
+tests/crud/test_crud_round.py::test_set_round_calculated_failure_exception PASSED [ 96%]
+tests/crud/test_crud_round.py::test_get_player_field_state_found PASSED  [ 98%]
+tests/crud/test_crud_round.py::test_get_player_field_state_not_found PASSED [100%]
+
+=================================== FAILURES ===================================
+_______________________ test_get_games_by_admin_id_found _______________________
+
+crud_game_instance = <app.crud.crud_game.CRUDGame object at 0x7f5f773db9d0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140047997398928'>
+mock_game_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140047997672080'>
+
+    @pytest.mark.asyncio
+    async def test_get_games_by_admin_id_found(
+        crud_game_instance: CRUDGame,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        mock_game_doc_snapshot: MagicMock # Specific snapshot for a game
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES)
+        mock_query = AsyncMock(spec=AsyncQuery) # This is the object after .where().limit() etc.
+        mock_collection_ref.where.return_value = mock_query # Assuming where returns the final query obj for simplicity here
+
+        async def stream_results_gen(*args, **kwargs):
+            yield mock_game_doc_snapshot
+
+        # query.stream is a method that returns an async generator
+        mock_query.stream = MagicMock(return_value=stream_results_gen())
+
+        games_list = await crud_game_instance.get_games_by_admin_id(db=mock_firestore_db, admin_id=ADMIN_ID)
+
+        mock_collection_ref.where.assert_called_once_with(field="admin_id", op_string="==", value=ADMIN_ID)
+        # CRUDBase.get_games_by_admin_id has a default limit. Check it or the passed one.
+        # The test calls it with default limit.
+        # The mock_query in this test is the one *after* .where(). The .limit() is called on this.
+        mock_query.limit.assert_called_once_with(100)
+
+>       assert len(games_list) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/crud/test_crud_game.py:205: AssertionError
+_______________________ test_add_player_to_game_success ________________________
+
+self = <Coroutine test_add_player_to_game_success>
+
+    def runtest(self) -> None:
+        self.obj = wrap_in_sync(
+            # https://github.com/pytest-dev/pytest-asyncio/issues/596
+            self.obj,  # type: ignore[has-type]
+        )
+>       super().runtest()
+
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:508:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:773: in inner
+    _loop.run_until_complete(task)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py:719: in run_until_complete
+    return future.result()
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1440: in patched
+    with self.decoration_helper(patched,
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1405: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:530: in enter_context
+    result = _enter(cm)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1497: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x7f5f7743c440>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+
+        original = DEFAULT
+        local = False
+
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.crud.crud_game' from '/app/backend/app/crud/crud_game.py'> does not have the attribute 'ArrayUnion'
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1467: AttributeError
+___________________ test_add_player_to_game_firestore_error ____________________
+
+self = <Coroutine test_add_player_to_game_firestore_error>
+
+    def runtest(self) -> None:
+        self.obj = wrap_in_sync(
+            # https://github.com/pytest-dev/pytest-asyncio/issues/596
+            self.obj,  # type: ignore[has-type]
+        )
+>       super().runtest()
+
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:508:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:773: in inner
+    _loop.run_until_complete(task)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py:719: in run_until_complete
+    return future.result()
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1440: in patched
+    with self.decoration_helper(patched,
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1405: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:530: in enter_context
+    result = _enter(cm)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1497: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x7f5f773da350>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+
+        original = DEFAULT
+        local = False
+
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.crud.crud_game' from '/app/backend/app/crud/crud_game.py'> does not have the attribute 'ArrayUnion'
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1467: AttributeError
+_____________________ test_remove_player_from_game_success _____________________
+
+self = <Coroutine test_remove_player_from_game_success>
+
+    def runtest(self) -> None:
+        self.obj = wrap_in_sync(
+            # https://github.com/pytest-dev/pytest-asyncio/issues/596
+            self.obj,  # type: ignore[has-type]
+        )
+>       super().runtest()
+
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:508:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:773: in inner
+    _loop.run_until_complete(task)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py:719: in run_until_complete
+    return future.result()
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1440: in patched
+    with self.decoration_helper(patched,
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1405: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:530: in enter_context
+    result = _enter(cm)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1497: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x7f5f773da850>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+
+        original = DEFAULT
+        local = False
+
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.crud.crud_game' from '/app/backend/app/crud/crud_game.py'> does not have the attribute 'ArrayRemove'
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1467: AttributeError
+_________________ test_remove_player_from_game_firestore_error _________________
+
+self = <Coroutine test_remove_player_from_game_firestore_error>
+
+    def runtest(self) -> None:
+        self.obj = wrap_in_sync(
+            # https://github.com/pytest-dev/pytest-asyncio/issues/596
+            self.obj,  # type: ignore[has-type]
+        )
+>       super().runtest()
+
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:508:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:773: in inner
+    _loop.run_until_complete(task)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/asyncio/base_events.py:719: in run_until_complete
+    return future.result()
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1440: in patched
+    with self.decoration_helper(patched,
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:141: in __enter__
+    return next(self.gen)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1405: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/contextlib.py:530: in enter_context
+    result = _enter(cm)
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1497: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x7f5f773d15b0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+
+        original = DEFAULT
+        local = False
+
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.crud.crud_game' from '/app/backend/app/crud/crud_game.py'> does not have the attribute 'ArrayRemove'
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1467: AttributeError
+______________________ test_get_players_by_game_id_found _______________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5f7745a250>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140047995481328'>
+mock_player_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140047998726032'>
+
+    @pytest.mark.asyncio
+    async def test_get_players_by_game_id_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        mock_player_doc_snapshot: MagicMock
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
+        mock_query = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query # .where().limit() if limit is part of query
+
+        async def stream_results_gen_async(*args, **kwargs):
+            yield mock_player_doc_snapshot
+        mock_query.stream = MagicMock(return_value=stream_results_gen_async())
+
+        players_list = await crud_player_instance.get_players_by_game_id(
+            db=mock_firestore_db, game_id=TEST_GAME_ID_FOR_PLAYER, limit=10 # Explicit limit
+        )
+
+        mock_collection_ref.where.assert_called_once_with(field="game_id", op_string="==", value=TEST_GAME_ID_FOR_PLAYER)
+        mock_query.limit.assert_called_once_with(10) # Check limit passed to query
+
+>       assert len(players_list) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/crud/test_crud_player.py:366: AssertionError
+=========================== short test summary info ============================
+FAILED tests/crud/test_crud_game.py::test_get_games_by_admin_id_found - asser...
+FAILED tests/crud/test_crud_game.py::test_add_player_to_game_success - Attrib...
+FAILED tests/crud/test_crud_game.py::test_add_player_to_game_firestore_error
+FAILED tests/crud/test_crud_game.py::test_remove_player_from_game_success - A...
+FAILED tests/crud/test_crud_game.py::test_remove_player_from_game_firestore_error
+FAILED tests/crud/test_crud_player.py::test_get_players_by_game_id_found - as...
+========================= 6 failed, 54 passed in 1.61s =========================

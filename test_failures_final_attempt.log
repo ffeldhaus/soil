@@ -1,0 +1,154 @@
+/app/backend/.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+============================= test session starts ==============================
+platform linux -- Python 3.13.3, pytest-8.3.5, pluggy-1.6.0 -- /app/backend/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /app/backend
+configfile: pyproject.toml
+plugins: asyncio-1.0.0, cov-6.1.1, anyio-4.9.0
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 60 items
+
+tests/crud/test_crud_admin.py::test_create_admin_with_uid PASSED         [  1%]
+tests/crud/test_crud_admin.py::test_get_admin_by_email_found PASSED      [  3%]
+tests/crud/test_crud_admin.py::test_get_admin_by_email_not_found PASSED  [  5%]
+tests/crud/test_crud_admin.py::test_update_admin PASSED                  [  6%]
+tests/crud/test_crud_admin.py::test_update_admin_ignores_password PASSED [  8%]
+tests/crud/test_crud_admin.py::test_update_admin_non_existent PASSED     [ 10%]
+tests/crud/test_crud_admin.py::test_get_admin_by_id_found PASSED         [ 11%]
+tests/crud/test_crud_admin.py::test_get_admin_by_id_not_found PASSED     [ 13%]
+tests/crud/test_crud_admin.py::test_get_multi_admins PASSED              [ 15%]
+tests/crud/test_crud_admin.py::test_get_multi_admins_empty PASSED        [ 16%]
+tests/crud/test_crud_admin.py::test_remove_admin_success PASSED          [ 18%]
+tests/crud/test_crud_admin.py::test_remove_admin_non_existent PASSED     [ 20%]
+tests/crud/test_crud_game.py::test_create_game_with_admin PASSED         [ 21%]
+tests/crud/test_crud_game.py::test_get_games_by_admin_id_found FAILED    [ 23%]
+tests/crud/test_crud_game.py::test_get_games_by_admin_id_not_found PASSED [ 25%]
+tests/crud/test_crud_game.py::test_add_player_to_game_success PASSED     [ 26%]
+tests/crud/test_crud_game.py::test_add_player_to_game_firestore_error PASSED [ 28%]
+tests/crud/test_crud_game.py::test_remove_player_from_game_success PASSED [ 30%]
+tests/crud/test_crud_game.py::test_remove_player_from_game_firestore_error PASSED [ 31%]
+tests/crud/test_crud_game.py::test_update_game_status PASSED             [ 33%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[active] PASSED [ 35%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[pending] PASSED [ 36%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[finished] PASSED [ 38%]
+tests/crud/test_crud_game.py::test_update_game_status_parametrized[archived] PASSED [ 40%]
+tests/crud/test_crud_game.py::test_get_game_by_id_found PASSED           [ 41%]
+tests/crud/test_crud_game.py::test_get_game_by_id_not_found PASSED       [ 43%]
+tests/crud/test_crud_game.py::test_update_game_general PASSED            [ 45%]
+tests/crud/test_crud_game.py::test_remove_game_success PASSED            [ 46%]
+tests/crud/test_crud_player.py::test_create_player_with_uid PASSED       [ 48%]
+tests/crud/test_crud_player.py::test_get_player_by_email_found PASSED    [ 50%]
+tests/crud/test_crud_player.py::test_get_player_by_email_not_found PASSED [ 51%]
+tests/crud/test_crud_player.py::test_update_player PASSED                [ 53%]
+tests/crud/test_crud_player.py::test_update_player_ignores_password PASSED [ 55%]
+tests/crud/test_crud_player.py::test_get_players_by_game_id_found PASSED [ 56%]
+tests/crud/test_crud_player.py::test_get_players_by_game_id_not_found PASSED [ 58%]
+tests/crud/test_crud_player.py::test_get_player_in_game_by_number_found PASSED [ 60%]
+tests/crud/test_crud_player.py::test_get_player_in_game_by_number_not_found PASSED [ 61%]
+tests/crud/test_crud_player.py::test_clear_temp_password_hash_success PASSED [ 63%]
+tests/crud/test_crud_player.py::test_clear_temp_password_hash_failure_doc_not_found PASSED [ 65%]
+tests/crud/test_crud_player.py::test_get_player_by_id_found PASSED       [ 66%]
+tests/crud/test_crud_player.py::test_get_player_by_id_not_found PASSED   [ 68%]
+tests/crud/test_crud_player.py::test_remove_player_success PASSED        [ 70%]
+tests/crud/test_crud_result.py::test_create_player_round_result PASSED   [ 71%]
+tests/crud/test_crud_result.py::test_get_player_round_result_found PASSED [ 73%]
+tests/crud/test_crud_result.py::test_get_player_round_result_not_found PASSED [ 75%]
+tests/crud/test_crud_result.py::test_get_all_results_for_player PASSED   [ 76%]
+tests/crud/test_crud_result.py::test_get_all_results_for_player_empty PASSED [ 78%]
+tests/crud/test_crud_result.py::test_get_all_results_for_game_round PASSED [ 80%]
+tests/crud/test_crud_result.py::test_get_all_results_for_game_round_empty PASSED [ 81%]
+tests/crud/test_crud_round.py::test_create_player_round PASSED           [ 83%]
+tests/crud/test_crud_round.py::test_update_player_round_decisions PASSED [ 85%]
+tests/crud/test_crud_round.py::test_update_player_round_decisions_not_submitted PASSED [ 86%]
+tests/crud/test_crud_round.py::test_get_player_round_found PASSED        [ 88%]
+tests/crud/test_crud_round.py::test_get_player_round_not_found PASSED    [ 90%]
+tests/crud/test_crud_round.py::test_get_all_player_rounds_for_game_round_multiple_found PASSED [ 91%]
+tests/crud/test_crud_round.py::test_get_all_player_rounds_for_game_round_empty PASSED [ 93%]
+tests/crud/test_crud_round.py::test_set_round_calculated_success PASSED  [ 95%]
+tests/crud/test_crud_round.py::test_set_round_calculated_failure_exception PASSED [ 96%]
+tests/crud/test_crud_round.py::test_get_player_field_state_found PASSED  [ 98%]
+tests/crud/test_crud_round.py::test_get_player_field_state_not_found PASSED [100%]
+
+=================================== FAILURES ===================================
+_______________________ test_get_games_by_admin_id_found _______________________
+
+crud_game_instance = <app.crud.crud_game.CRUDGame object at 0x7f71b1a2f9d0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140126284459920'>
+mock_game_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140126284716688'>
+
+    @pytest.mark.asyncio
+    async def test_get_games_by_admin_id_found(
+        crud_game_instance: CRUDGame,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        mock_game_doc_snapshot: MagicMock # Specific snapshot for a game
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES)
+        mock_query_after_where = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query_after_where
+
+        mock_query_after_limit = AsyncMock(spec=AsyncQuery) # This mock is after .limit()
+        mock_query_after_where.limit.return_value = mock_query_after_limit # .limit() returns this
+
+        async def stream_results_gen(*args, **kwargs):
+            yield mock_game_doc_snapshot
+
+        # .stream() is called on the object returned by .limit()
+        mock_query_after_limit.stream = MagicMock(return_value=stream_results_gen())
+
+        games_list = await crud_game_instance.get_games_by_admin_id(db=mock_firestore_db, admin_id=ADMIN_ID)
+
+        mock_collection_ref.where.assert_called_once_with(field="admin_id", op_string="==", value=ADMIN_ID)
+        mock_query_after_where.limit.assert_called_once_with(100) # limit is called on the object returned by where()
+
+        assert len(games_list) == 1
+        game = games_list[0]
+        # Assertions based on mock_game_doc_snapshot which uses mock_game_doc_snapshot_data / BASE_GAME_IN_DB_DICT
+        assert game.id == TEST_GAME_ID
+>       assert game.uid == TEST_GAME_ID
+
+tests/crud/test_crud_game.py:209:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = GameInDB(name='Test Game Alpha', number_of_rounds=5, max_players=2, id='test-game-id-123', admin_id='admin-user-id-abc...e=['Normal', 'Drought', 'Normal'], vermin_sequence=['None', 'Aphids', 'None'], player_uids=[], ai_player_strategies={})
+item = 'uid'
+
+    def __getattr__(self, item: str) -> Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+
+            if pydantic_extra:
+                try:
+                    return pydantic_extra[item]
+                except KeyError as exc:
+                    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+>                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'GameInDB' object has no attribute 'uid'. Did you mean: 'id'?
+
+.venv/lib/python3.13/site-packages/pydantic/main.py:991: AttributeError
+=========================== short test summary info ============================
+FAILED tests/crud/test_crud_game.py::test_get_games_by_admin_id_found - Attri...
+========================= 1 failed, 59 passed in 0.92s =========================

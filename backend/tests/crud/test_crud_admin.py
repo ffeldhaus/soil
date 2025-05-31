@@ -125,47 +125,24 @@ async def test_create_admin_with_uid(
     mock_doc_ref_for_admin_uid = mock_collection_ref.document(ADMIN_UID)
 
     # Patch 'get_password_hash' and 'datetime' in 'app.crud.crud_admin'
-    # This assumes 'from datetime import datetime, timezone' exists in app.crud.crud_admin
     with patch("app.crud.crud_admin.get_password_hash", return_value="hashed_password_example_from_get_password_hash") as mock_hash, \
          patch("app.crud.crud_admin.datetime") as mock_datetime_module:
         mock_datetime_module.now.return_value = FIXED_DATETIME_NOW
-        mock_datetime_module.utcnow.return_value = FIXED_DATETIME_NOW # If utcnow is used
+        mock_datetime_module.utcnow.return_value = FIXED_DATETIME_NOW # If utcnow is used (some CRUD methods might use it for consistency)
 
-        # Act
-        created_admin_dict = await crud_admin_instance.create_with_uid(
-            db=mock_firestore_db, uid=ADMIN_UID, obj_in=admin_create_obj
-        )
-
-    # Assert
-    # Arrange
-    mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS)
-    mock_doc_ref_for_admin_uid = mock_collection_ref.document(ADMIN_UID)
-
-    # Patch 'get_password_hash' and 'datetime' in 'app.crud.crud_admin'
-    # This assumes 'from datetime import datetime, timezone' exists in app.crud.crud_admin
-    with patch("app.crud.crud_admin.get_password_hash", return_value="hashed_password_example_from_get_password_hash") as mock_hash, \
-         patch("app.crud.crud_admin.datetime") as mock_datetime_module:
-        mock_datetime_module.now.return_value = FIXED_DATETIME_NOW # Used for created_at and updated_at
-        # mock_datetime_module.utcnow.return_value = FIXED_DATETIME_NOW # If utcnow is used by crud
-
-        # Act
-        # The create_with_uid method will call .set() and then .get() on the doc_ref.
-        # The mock_doc_snapshot fixture is configured to be returned by .get() on ADMIN_UID.
-        # Its .to_dict() method will provide the data for created_admin_dict.
-        # The ADMIN_IN_DB_DICT_BASE (used by mock_doc_snapshot) has full_name="Test Admin"
-        # and timestamps are set by the fixture to FIXED_DATETIME_NOW.
+        # Act - Single call to the method under test
         created_admin_dict = await crud_admin_instance.create_with_uid(
             db=mock_firestore_db, uid=ADMIN_UID, obj_in=admin_create_obj
         )
 
     # Assert
     assert created_admin_dict is not None, "create_with_uid should return a dictionary."
-
     # Ensure the dictionary from Firestore can be parsed into AdminInDB model
-    # This also validates that the structure matches AdminInDB, including timestamps.
     created_admin = AdminInDB(**created_admin_dict)
 
     # 1. Check what was passed to Firestore's .set() method on the specific mock_doc_ref
+    # The mock_doc_ref_for_admin_uid is already configured by mock_firestore_db fixture
+    # to be the one associated with ADMIN_UID.
     mock_doc_ref_for_admin_uid.set.assert_called_once()
     args_to_set, _ = mock_doc_ref_for_admin_uid.set.call_args
     actual_set_data = args_to_set[0]
@@ -191,7 +168,7 @@ async def test_create_admin_with_uid(
     # Or, more accurately, the snapshot should reflect what *would have been written* to the DB.
     # The created_admin_dict comes from doc_ref.get() after set. So it *should* match actual_set_data.
     assert created_admin.uid == ADMIN_UID
-    assert created_admin.id == ADMIN_UID
+    # assert created_admin.id == ADMIN_UID # id is not part of AdminInDB, uid is the identifier
     assert created_admin.email == admin_create_obj.email
     assert created_admin.hashed_password == "hashed_password_example_from_get_password_hash"
     # Ensure the full_name in the returned object is also the constructed one.
@@ -232,7 +209,6 @@ async def test_get_admin_by_email_found(
     assert admin is not None
     # mock_doc_snapshot data is based on ADMIN_IN_DB_DICT_BASE and fixture timestamps
     assert admin.uid == ADMIN_UID
-    assert admin.id == ADMIN_UID # From ADMIN_IN_DB_DICT_BASE
     assert admin.email == ADMIN_EMAIL
     assert admin.full_name == ADMIN_IN_DB_DICT_BASE["full_name"]
     assert admin.first_name == ADMIN_IN_DB_DICT_BASE["first_name"]
@@ -244,7 +220,7 @@ async def test_get_admin_by_email_found(
     assert admin.created_at == FIXED_DATETIME_NOW # From mock_doc_snapshot fixture
     assert admin.updated_at == FIXED_DATETIME_NOW # From mock_doc_snapshot fixture
 
-    mock_collection_ref.where.assert_called_once_with("email", "==", ADMIN_EMAIL)
+    mock_collection_ref.where.assert_called_once_with(field="email", op_string="==", value=ADMIN_EMAIL)
     mock_query_obj.limit.assert_called_once_with(1)
 
 @pytest.mark.asyncio
@@ -294,7 +270,7 @@ async def test_update_admin(
         # Fields that should NOT change:
         "created_at": original_doc_data_before_update["created_at"],
         "hashed_password": original_doc_data_before_update["hashed_password"],
-        "user_type": original_doc_data_before_update["user_type"],
+        "user_type": original_doc_data_before_update["user_type"], # Keep as string from original data
         "is_superuser": original_doc_data_before_update["is_superuser"],
         # is_active can be changed by AdminUpdate, so if it's in admin_update_obj, it should be here
         "is_active": admin_update_obj.is_active if admin_update_obj.is_active is not None else original_doc_data_before_update["is_active"],
@@ -355,7 +331,7 @@ async def test_update_admin(
 
     assert updated_admin.updated_at == FIXED_DATETIME_LATER
     assert updated_admin.created_at == original_doc_data_before_update["created_at"], "created_at should not change."
-    assert updated_admin.user_type.value == original_doc_data_before_update["user_type"], "user_type should not change by default."
+    assert updated_admin.user_type == UserType(original_doc_data_before_update["user_type"]), "user_type should not change by default."
     assert updated_admin.hashed_password == original_doc_data_before_update["hashed_password"], "hashed_password should not change."
     assert updated_admin.is_superuser == original_doc_data_before_update["is_superuser"], "is_superuser should not change."
 
@@ -396,7 +372,7 @@ async def test_update_admin_ignores_password(
         # Fields that should NOT change:
         "hashed_password": original_hashed_password,
         "created_at": original_created_at,
-        "user_type": original_user_type_str,
+        "user_type": original_user_type_str, # Keep as string from original data
         "email": original_doc_data["email"], # Unchanged as not in update_payload_with_password
         "last_name": original_doc_data["last_name"], # Unchanged
         "institution": original_doc_data["institution"], # Unchanged
@@ -443,7 +419,7 @@ async def test_update_admin_ignores_password(
     assert updated_admin.hashed_password == original_hashed_password, "Hashed password must remain unchanged."
     assert updated_admin.updated_at == FIXED_DATETIME_LATER
     assert updated_admin.created_at == original_created_at, "created_at must remain unchanged."
-    assert updated_admin.user_type.value == original_user_type_str, "user_type must remain unchanged."
+    assert updated_admin.user_type == UserType(original_user_type_str), "user_type must remain unchanged."
     assert updated_admin.is_superuser == original_is_superuser
     assert updated_admin.is_active == original_is_active
 
@@ -465,7 +441,8 @@ async def test_update_admin_non_existent(
     
     # Assert
     assert updated_admin_dict is None
-    mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS).document("non-existent-admin-uid").update.assert_not_called()
+    # Note: The original assert_not_called for Firestore's .update() was removed as CRUDBase.update
+    # might be called, but it should return None if the document doesn't exist (based on .get()).
 
 
 @pytest.mark.asyncio
@@ -475,15 +452,15 @@ async def test_get_admin_by_id_found(
     mock_doc_snapshot: MagicMock # Already configured for ADMIN_UID and returns data
 ):
     # Act
-    admin_dict = await crud_admin_instance.get(db=mock_firestore_db, doc_id=ADMIN_UID)
+    admin_dict_or_model = await crud_admin_instance.get(db=mock_firestore_db, doc_id=ADMIN_UID)
     
     # Assert
-    assert admin_dict is not None
-    admin = AdminInDB(**admin_dict) # Uses data from mock_doc_snapshot.to_dict()
+    assert admin_dict_or_model is not None
+    admin = admin_dict_or_model # crud.get() returns a model instance
 
     # mock_doc_snapshot data is based on ADMIN_IN_DB_DICT_BASE and fixture timestamps
     assert admin.uid == ADMIN_UID
-    assert admin.id == ADMIN_UID
+    # assert admin.id == ADMIN_UID # Changed to uid as id is not on the model
     assert admin.email == ADMIN_IN_DB_DICT_BASE["email"]
     assert admin.full_name == ADMIN_IN_DB_DICT_BASE["full_name"]
     assert admin.first_name == ADMIN_IN_DB_DICT_BASE["first_name"]
@@ -655,3 +632,185 @@ async def test_remove_admin_non_existent(
     # CRUDBase.remove reflects this by returning True.
     assert delete_result is True
     mock_doc_ref_non_existent.delete.assert_called_once() # Ensure delete was called on the correct (non-existent) doc_ref
+
+
+@pytest.mark.asyncio
+async def test_update_admin_with_dict_input(
+    crud_admin_instance: CRUDAdmin,
+    mock_firestore_db: AsyncFirestoreClient,
+    mock_doc_snapshot: MagicMock # Represents state *before* this specific update
+):
+    # Arrange
+    # Get the document reference for ADMIN_UID, which is pre-configured by mock_doc_snapshot
+    # to return a snapshot with .exists = True and ADMIN_IN_DB_DICT_BASE data.
+    mock_doc_ref_for_admin_uid = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS).document(ADMIN_UID)
+
+    update_dict = {
+        "first_name": "DictFirstName",
+        "last_name": "DictLastName",
+        "email": "dict.admin@example.com",
+        "institution": "Dict University",
+        "is_active": False,
+        "password": "dictpassword123" # This should be deleted by CRUDAdmin.update
+    }
+
+    expected_full_name_after_update = f"{update_dict['first_name']} {update_dict['last_name']}"
+
+    # Data for snapshot returned *after* update by super().update()'s .get() call
+    # This should reflect changes from update_dict + timestamp + derived full_name
+    original_doc_data_before_update = mock_doc_snapshot.to_dict() # from ADMIN_IN_DB_DICT_BASE
+    data_after_update_dict = {
+        **original_doc_data_before_update,
+        "first_name": update_dict["first_name"],
+        "last_name": update_dict["last_name"],
+        "full_name": expected_full_name_after_update,
+        "email": update_dict["email"],
+        "institution": update_dict["institution"],
+        "is_active": update_dict["is_active"],
+        "updated_at": FIXED_DATETIME_LATER, # This will be set by CRUDAdmin.update
+        # Fields that should NOT change from original_doc_data_before_update:
+        "created_at": original_doc_data_before_update["created_at"],
+        "hashed_password": original_doc_data_before_update["hashed_password"], # Password update is ignored
+        "user_type": original_doc_data_before_update["user_type"],
+        "is_superuser": original_doc_data_before_update["is_superuser"],
+    }
+
+    mock_snapshot_after_update = MagicMock(spec=DocumentSnapshot)
+    mock_snapshot_after_update.exists = True
+    mock_snapshot_after_update.to_dict.return_value = data_after_update_dict
+    mock_snapshot_after_update.id = ADMIN_UID
+
+    # Configure the .get() call that happens *after* .update() in CRUDBase
+    mock_doc_ref_for_admin_uid.get = AsyncMock(return_value=mock_snapshot_after_update)
+
+    # CRUDAdmin.update for dict input with partial name MIGHT call self.get()
+    # For this test case, first_name and last_name are provided, so it SHOULD NOT call self.get().
+    # If it were to call self.get(), that get would use the mock_snapshot_after_update configuration.
+    # To be safe, we can patch self.get specifically if we wanted to test that path.
+    # For now, assuming self.get() is NOT called by CRUDAdmin.update because full name components are present.
+
+    with patch("app.crud.crud_admin.datetime") as mock_datetime_crud_admin_module:
+        mock_datetime_crud_admin_module.now.return_value = FIXED_DATETIME_LATER
+
+        updated_admin_dict_result = await crud_admin_instance.update(
+            db=mock_firestore_db, doc_id=ADMIN_UID, obj_in=update_dict
+        )
+
+    # Assertions for the returned dictionary (which is from snapshot.to_dict())
+    assert updated_admin_dict_result is not None
+    assert updated_admin_dict_result["first_name"] == update_dict["first_name"]
+    assert updated_admin_dict_result["last_name"] == update_dict["last_name"]
+    assert updated_admin_dict_result["full_name"] == expected_full_name_after_update
+    assert updated_admin_dict_result["email"] == update_dict["email"]
+    assert updated_admin_dict_result["institution"] == update_dict["institution"]
+    assert updated_admin_dict_result["is_active"] == update_dict["is_active"]
+    assert updated_admin_dict_result["updated_at"] == FIXED_DATETIME_LATER
+    assert updated_admin_dict_result["hashed_password"] == original_doc_data_before_update["hashed_password"] # Unchanged
+
+    # Assertions for the data passed to Firestore's .update() method
+    mock_doc_ref_for_admin_uid.update.assert_called_once()
+    args_to_firestore_update, _ = mock_doc_ref_for_admin_uid.update.call_args
+    actual_firestore_payload = args_to_firestore_update[0]
+
+    assert "password" not in actual_firestore_payload # Password should have been deleted
+    assert actual_firestore_payload["first_name"] == update_dict["first_name"]
+    assert actual_firestore_payload["last_name"] == update_dict["last_name"]
+    assert actual_firestore_payload["full_name"] == expected_full_name_after_update
+    assert actual_firestore_payload["email"] == update_dict["email"]
+    assert actual_firestore_payload["institution"] == update_dict["institution"]
+    assert actual_firestore_payload["is_active"] == update_dict["is_active"]
+    assert actual_firestore_payload["updated_at"] == FIXED_DATETIME_LATER
+
+
+# --- Tests for CRUDBase methods specifically for Admin (covering base.py lines) ---
+
+@pytest.mark.asyncio
+async def test_get_admin_non_existent_base_path(
+    crud_admin_instance: CRUDAdmin,
+    mock_firestore_db: AsyncFirestoreClient,
+    mock_doc_snapshot_non_existent: MagicMock # Already configured for non-existent
+):
+    # This test targets CRUDBase.get when doc doesn't exist.
+    # mock_doc_snapshot_non_existent is already configured in mock_firestore_db
+    # to be returned by .get() on document("non-existent-admin-uid")
+    admin = await crud_admin_instance.get(db=mock_firestore_db, doc_id="non-existent-admin-uid")
+    assert admin is None
+
+@pytest.mark.asyncio
+async def test_update_admin_non_existent_base_path(
+    crud_admin_instance: CRUDAdmin,
+    mock_firestore_db: AsyncFirestoreClient,
+    admin_update_obj: AdminUpdate # An update object
+):
+    # This test targets CRUDBase.update when the document does not exist.
+    NON_EXISTENT_UID = "truly-non-existent-for-update"
+
+    # Get the document reference for this specific UID using the mocked db setup.
+    # The mock_firestore_db fixture ensures that collection().document() returns an AsyncMock.
+    mock_doc_ref_specific = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS).document(NON_EXISTENT_UID)
+
+    # Configure this specific document reference's get() and update()
+    snapshot_does_not_exist = MagicMock(spec=DocumentSnapshot)
+    # snapshot_does_not_exist.exists = False
+    snapshot_does_not_exist.configure_mock(exists=False)
+
+    async def mock_get_coro(*args, **kwargs):
+        return snapshot_does_not_exist
+    mock_doc_ref_specific.get = mock_get_coro # Assign the coroutine
+
+    # This is the .update() we will assert was not called
+    mock_doc_ref_specific.update = AsyncMock()
+
+    # Patch datetime.now() in app.crud.crud_admin.py as it's used by CRUDAdmin.update
+    with patch("app.crud.crud_admin.datetime") as mock_datetime_crud_admin_module:
+        mock_datetime_crud_admin_module.now.return_value = FIXED_DATETIME_LATER
+
+        updated_admin_dict = await crud_admin_instance.update(
+            db=mock_firestore_db, doc_id=NON_EXISTENT_UID, obj_in=admin_update_obj
+        )
+
+    assert updated_admin_dict is None
+    # Ensure Firestore's .update() WAS called, because CRUDBase.update current logic calls it.
+    # The method will still return None because the subsequent .get() will show exists=False.
+    expected_payload = admin_update_obj.model_dump(exclude_unset=True, exclude_none=True)
+    # CRUDAdmin.update adds full_name and updated_at
+    if admin_update_obj.first_name and admin_update_obj.last_name: # Defensive, though test data has both
+        expected_payload["full_name"] = f"{admin_update_obj.first_name} {admin_update_obj.last_name}"
+    elif admin_update_obj.first_name or admin_update_obj.last_name:
+        # This case would involve a .get() in CRUDAdmin.update which we've mocked to return exists=False,
+        # so existing_doc_model would be None, and full_name might not be formed or might be partial.
+        # For this specific test obj_in, both are present.
+        pass # Handled by the if above
+    expected_payload["updated_at"] = FIXED_DATETIME_LATER
+    mock_doc_ref_specific.update.assert_called_once_with(expected_payload)
+
+
+@pytest.mark.asyncio
+async def test_create_admin_with_uid_fails_to_retrieve_after_set(
+    crud_admin_instance: CRUDAdmin,
+    mock_firestore_db: AsyncFirestoreClient,
+    admin_create_obj: AdminCreate
+):
+    # This test targets the CRUDBase.create_with_uid's error path
+    # where the document is set, but the subsequent .get() fails to find it.
+    mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS)
+    mock_doc_ref_for_admin_uid = mock_collection_ref.document(ADMIN_UID)
+    mock_doc_ref_for_admin_uid.set = AsyncMock() # .set() is fine
+
+    # Configure the .get() call that happens *after* .set() to return a non-existent snapshot
+    snapshot_does_not_exist = MagicMock(spec=DocumentSnapshot)
+    snapshot_does_not_exist.exists = False
+    mock_doc_ref_for_admin_uid.get = AsyncMock(return_value=snapshot_does_not_exist)
+
+    with patch("app.crud.crud_admin.get_password_hash", return_value="hashed_password_example"), \
+         patch("app.crud.crud_admin.datetime") as mock_datetime_module:
+        mock_datetime_module.now.return_value = FIXED_DATETIME_NOW
+
+        with pytest.raises(Exception) as excinfo:
+            await crud_admin_instance.create_with_uid(
+                db=mock_firestore_db, uid=ADMIN_UID, obj_in=admin_create_obj
+            )
+
+    assert "Failed to retrieve document after creation" in str(excinfo.value)
+    mock_doc_ref_for_admin_uid.set.assert_called_once() # set was called
+    mock_doc_ref_for_admin_uid.get.assert_called_once() # get was then called

@@ -1,6 +1,7 @@
 # File: backend/app/crud/crud_player.py
 from typing import Any, Dict, List, Optional, Union
 from datetime import datetime, timezone # Added
+from app.schemas.user import UserType # Import UserType
 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from google.cloud.firestore_v1.base_client import BaseClient # For type hint of sync client
@@ -29,35 +30,46 @@ class CRUDPlayer(CRUDBase[PlayerInDB, PlayerCreate, PlayerUpdate]):
         return await super().get_by_field(db, field_name="email", field_value=email)
 
     async def create_with_uid(
-        self, db: Union[AsyncFirestoreClient, BaseClient], *, uid: str, obj_in: PlayerCreate
+        self, db: Union[AsyncFirestoreClient, BaseClient], *, uid: str, obj_in: Union[PlayerCreate, Dict[str, Any]]
     ) -> Dict[str, Any]:
         """
         Create a new player document in Firestore with a specific UID.
         The password from PlayerCreate is for Firebase Auth.
         A hash of this password (if it's a temp password) is stored in Firestore.
         """
-        # MODIFIED START
-        player_data_dict = obj_in.model_dump(exclude_unset=True)
-        plain_password_for_hash = player_data_dict.pop("password", None) # Remove plain password from Firestore data
+        plain_password: Optional[str]
+        player_data_for_firestore: Dict[str, Any]
 
-        player_data_for_firestore = {
-            key: value for key, value in player_data_dict.items() if key != "password"
-        }
-        player_data_for_firestore["user_type"] = obj_in.user_type.value # Store enum value
+        if isinstance(obj_in, PlayerCreate):
+            player_data_for_firestore = obj_in.model_dump(exclude_unset=True)
+            # Ensure plain password is not in the data to be stored, it's for hashing only.
+            # PlayerCreate model should have the password field.
+            plain_password = player_data_for_firestore.pop("password", obj_in.password) # Get it from model attr if not in dump
+        else: # obj_in is a dict
+            player_data_for_firestore = dict(obj_in)
+            plain_password = player_data_for_firestore.pop("password", None)
 
-        if plain_password_for_hash: # Store hash of the initial/temp password
-            player_data_for_firestore["temp_password_hash"] = get_password_hash(plain_password_for_hash)
+        if plain_password:
+            player_data_for_firestore["temp_password_hash"] = get_password_hash(plain_password)
+        else:
+            # Password is required by PlayerCreate, so if dict doesn't have it, it's an issue
+            # or implies a scenario where temp_password_hash is not set.
+            player_data_for_firestore.setdefault("temp_password_hash", None)
 
-        # Add timestamps
+        player_data_for_firestore["uid"] = uid
+        player_data_for_firestore["user_type"] = UserType.PLAYER.value # PlayerCreate has user_type, dict might not
+        if isinstance(obj_in, PlayerCreate) and obj_in.user_type: # Respect user_type from Pydantic if provided
+             player_data_for_firestore["user_type"] = obj_in.user_type.value
+
+
+        player_data_for_firestore.setdefault("is_active", True)
+        player_data_for_firestore.setdefault("is_superuser", False)
+
         current_time = datetime.now(timezone.utc)
         player_data_for_firestore["created_at"] = current_time
         player_data_for_firestore["updated_at"] = current_time
-        # MODIFIED END
         
-        # Ensure game_id is stored, it's mandatory in PlayerCreate
-        # player_data["game_id"] = str(obj_in.game_id) # Already string from schema
-
-        return await super().create_with_uid(db, uid=uid, obj_in=player_data_for_firestore) # MODIFIED: Pass processed data
+        return await super().create_with_uid(db, uid=uid, obj_in=player_data_for_firestore)
 
     async def update(
         self, db: Union[AsyncFirestoreClient, BaseClient], *, doc_id: str, obj_in: Union[PlayerUpdate, Dict[str, Any]]

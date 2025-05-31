@@ -157,7 +157,7 @@ async def test_create_player_with_uid(
     # PlayerCreate -> UserCreate -> UserBase. UserBase has is_active = True.
     # model_dump should include this default.
     assert actual_set_data["is_active"] is True
-    assert "is_superuser" not in actual_set_data # Not part of PlayerCreate schema
+    assert actual_set_data["is_superuser"] is False # is_superuser is set by CRUDPlayer.create_with_uid
 
     # Check returned PlayerInDB object (comes from snapshot mock which should align with these values)
     assert created_player.uid == PLAYER_UID
@@ -194,13 +194,13 @@ async def test_get_player_by_email_found(
     mock_limit_query.stream = MagicMock(return_value=stream_results_gen())
 
 
-    player_dict = await crud_player_instance.get_by_email(db=mock_firestore_db, email=PLAYER_EMAIL)
-    assert player_dict is not None
-    player = PlayerInDB(**player_dict) # Pydantic parses ISO strings from snapshot
+    player_dict_or_model = await crud_player_instance.get_by_email(db=mock_firestore_db, email=PLAYER_EMAIL)
+    assert player_dict_or_model is not None
+    player = player_dict_or_model # Changed: crud.get_by_email returns a model instance
 
     # Comprehensive assertions
     assert player.uid == PLAYER_UID
-    assert player.id == PLAYER_UID
+    # assert player.id == PLAYER_UID # id is not a field on PlayerInDB, uid is the id.
     assert player.email == PLAYER_EMAIL
     assert player.game_id == TEST_GAME_ID_FOR_PLAYER
     assert player.player_number == PLAYER_NUMBER
@@ -215,7 +215,7 @@ async def test_get_player_by_email_found(
     assert player.ai_strategy == BASE_PLAYER_IN_DB_DICT["ai_strategy"]
     assert player.temp_password_hash == BASE_PLAYER_IN_DB_DICT["temp_password_hash"]
 
-    mock_collection_ref.where.assert_called_once_with("email", "==", PLAYER_EMAIL)
+    mock_collection_ref.where.assert_called_once_with(field="email", op_string="==", value=PLAYER_EMAIL)
     # Ensure limit(1) was used by get_by_field
     mock_query.limit.assert_called_once_with(1)
 
@@ -262,11 +262,8 @@ async def test_update_player(
     player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_update) # CRUDBase.update calls .get()
 
     # Patch datetime.now() in app.crud.crud_player (used by CRUDPlayer.update)
-    # and app.crud.base (if it were to also set updated_at, though current CRUDBase does not)
-    with patch("app.crud.crud_player.datetime") as mock_dt_player, \
-         patch("app.crud.base.datetime") as mock_dt_base: # CRUDBase might use it in future
+    with patch("app.crud.crud_player.datetime") as mock_dt_player: # CRUDBase does not set timestamps, only CRUDPlayer
         mock_dt_player.now.return_value = FIXED_DATETIME_LATER_PLAYER
-        mock_dt_base.now.return_value = FIXED_DATETIME_LATER_PLAYER 
 
         updated_player_dict = await crud_player_instance.update(
             db=mock_firestore_db, doc_id=PLAYER_UID, obj_in=player_update_obj
@@ -292,7 +289,7 @@ async def test_update_player(
     assert updated_player.temp_password_hash == original_player_data["temp_password_hash"]
     assert updated_player.game_id == original_player_data["game_id"]
     assert updated_player.player_number == original_player_data["player_number"]
-    assert updated_player.user_type.value == original_player_data["user_type"] # Compare string value to string value
+    assert updated_player.user_type == UserType(original_player_data["user_type"])
 
 @pytest.mark.asyncio
 async def test_update_player_ignores_password(
@@ -352,18 +349,23 @@ async def test_get_players_by_game_id_found(
     mock_player_doc_snapshot: MagicMock
 ):
     mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
-    mock_query = AsyncMock(spec=AsyncQuery)
-    mock_collection_ref.where.return_value = mock_query # .where().limit() if limit is part of query
+    mock_query_after_where = AsyncMock(spec=AsyncQuery)
+    mock_collection_ref.where.return_value = mock_query_after_where
     
-    async def stream_results_gen(*args, **kwargs): yield mock_player_doc_snapshot
-    mock_query.stream = MagicMock(return_value=stream_results_gen())
+    mock_query_after_limit = AsyncMock(spec=AsyncQuery)
+    mock_query_after_where.limit.return_value = mock_query_after_limit
+
+    async def stream_results_gen_async(*args, **kwargs):
+        yield mock_player_doc_snapshot
+
+    mock_query_after_limit.stream = MagicMock(return_value=stream_results_gen_async())
 
     players_list = await crud_player_instance.get_players_by_game_id(
         db=mock_firestore_db, game_id=TEST_GAME_ID_FOR_PLAYER, limit=10 # Explicit limit
     )
 
-    mock_collection_ref.where.assert_called_once_with("game_id", "==", TEST_GAME_ID_FOR_PLAYER)
-    mock_query.limit.assert_called_once_with(10) # Check limit passed to query
+    mock_collection_ref.where.assert_called_once_with(field="game_id", op_string="==", value=TEST_GAME_ID_FOR_PLAYER)
+    mock_query_after_where.limit.assert_called_once_with(10) # Check limit passed to query
 
     assert len(players_list) == 1
     player = players_list[0]
@@ -399,7 +401,7 @@ async def test_get_players_by_game_id_not_found(
     players_list = await crud_player_instance.get_players_by_game_id(
         db=mock_firestore_db, game_id="non-existent-game-id", limit=5
     )
-    mock_collection_ref.where.assert_called_once_with("game_id", "==", "non-existent-game-id")
+    mock_collection_ref.where.assert_called_once_with(field="game_id", op_string="==", value="non-existent-game-id")
     mock_query.limit.assert_called_once_with(5)
     assert len(players_list) == 0
 
@@ -423,16 +425,19 @@ async def test_get_player_in_game_by_number_found(
         yield mock_player_doc_snapshot
     mock_query_limit.stream = MagicMock(return_value=stream_one_result())
 
-    player_dict = await crud_player_instance.get_player_in_game_by_number(
+    player_dict_or_model = await crud_player_instance.get_player_in_game_by_number(
         db=mock_firestore_db, game_id=TEST_GAME_ID_FOR_PLAYER, player_number=PLAYER_NUMBER
     )
-    assert player_dict is not None
-    player = PlayerInDB(**player_dict)
+    assert player_dict_or_model is not None
+    player = player_dict_or_model # Changed: crud method returns a model instance
     
     # Assert correct query construction
     calls = mock_collection_ref.where.call_args_list
-    assert calls[0][0] == ("game_id", "==", TEST_GAME_ID_FOR_PLAYER) # First where call
-    mock_query_game_id.where.assert_called_once_with("player_number", "==", PLAYER_NUMBER) # Second where call
+    assert calls[0][1]['field'] == "game_id"
+    assert calls[0][1]['op_string'] == "=="
+    assert calls[0][1]['value'] == TEST_GAME_ID_FOR_PLAYER
+
+    mock_query_game_id.where.assert_called_once_with(field="player_number", op_string="==", value=PLAYER_NUMBER) # Second where call
     mock_query_player_num.limit.assert_called_once_with(1)
 
     # Comprehensive assertions for the returned player
@@ -476,8 +481,10 @@ async def test_get_player_in_game_by_number_not_found(
     )
     assert player is None
     calls = mock_collection_ref.where.call_args_list
-    assert calls[0][0] == ("game_id", "==", "some-game-id")
-    mock_query_game_id.where.assert_called_once_with("player_number", "==", 99)
+    assert calls[0][1]['field'] == "game_id"
+    assert calls[0][1]['op_string'] == "=="
+    assert calls[0][1]['value'] == "some-game-id"
+    mock_query_game_id.where.assert_called_once_with(field="player_number", op_string="==", value=99)
     mock_query_player_num.limit.assert_called_once_with(1)
 
 @pytest.mark.asyncio
@@ -502,11 +509,8 @@ async def test_clear_temp_password_hash_success(
     player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_clear)
 
     # Patch datetime.now() in app.crud.crud_player (used by CRUDPlayer.update which is called by super().update)
-    # and in app.crud.base (if CRUDBase.update also set it, though it doesn't)
-    with patch("app.crud.crud_player.datetime") as mock_dt_player, \
-         patch("app.crud.base.datetime") as mock_dt_base: # For CRUDBase if it used it
+    with patch("app.crud.crud_player.datetime") as mock_dt_player: # For CRUDBase if it used it
         mock_dt_player.now.return_value = FIXED_DATETIME_LATER_PLAYER
-        mock_dt_base.now.return_value = FIXED_DATETIME_LATER_PLAYER
 
         cleared_player_dict_result = await crud_player_instance.clear_temp_password_hash(
             db=mock_firestore_db, player_uid=PLAYER_UID
@@ -555,7 +559,7 @@ async def test_clear_temp_password_hash_failure_doc_not_found(
         "updated_at": FIXED_DATETIME_LATER_PLAYER
     }
     mock_base_update.assert_called_once_with(
-        db=mock_firestore_db, doc_id="non-existent-player-uid", obj_in=expected_payload_to_base
+        mock_firestore_db, doc_id="non-existent-player-uid", obj_in=expected_payload_to_base
     )
 
 
@@ -568,13 +572,13 @@ async def test_get_player_by_id_found(
     player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(PLAYER_UID)
     player_doc_ref.get = AsyncMock(return_value=mock_player_doc_snapshot) # Ensure this specific doc ID returns our snapshot
     
-    player_dict = await crud_player_instance.get(db=mock_firestore_db, doc_id=PLAYER_UID)
-    assert player_dict is not None
-    player = PlayerInDB(**player_dict) # Pydantic parses ISO strings
+    player_dict_or_model = await crud_player_instance.get(db=mock_firestore_db, doc_id=PLAYER_UID)
+    assert player_dict_or_model is not None
+    player = player_dict_or_model # Changed: crud.get returns a model instance
 
     # Comprehensive assertions
     assert player.uid == PLAYER_UID
-    assert player.id == PLAYER_UID
+    # assert player.id == PLAYER_UID # id is not a field on PlayerInDB, uid is the id.
     assert player.email == PLAYER_EMAIL
     assert player.game_id == TEST_GAME_ID_FOR_PLAYER
     assert player.player_number == PLAYER_NUMBER
@@ -618,3 +622,257 @@ async def test_remove_player_success( # Renamed
     result = await crud_player_instance.remove(db=mock_firestore_db, doc_id=PLAYER_UID)
     assert result is True
     player_doc_ref.delete.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_update_player_with_dict_input(
+    crud_player_instance: CRUDPlayer,
+    mock_firestore_db: AsyncFirestoreClient,
+    mock_player_doc_snapshot_data: dict # To get base data for constructing snapshot after update
+):
+    # Arrange
+    player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(PLAYER_UID)
+
+    update_dict = {
+        "username": "dict_user_updated",
+        "password": "fakepassword_dict", # Should be ignored and deleted
+        "is_active": False,
+        "current_capital": 1234.56, # Field specific to Player
+    }
+
+    data_after_update_dict = {
+        **mock_player_doc_snapshot_data,
+        "username": update_dict["username"],
+        "is_active": update_dict["is_active"],
+        "current_capital": update_dict["current_capital"],
+        "updated_at": FIXED_DATETIME_LATER_PLAYER.isoformat(),
+    }
+
+    mock_snapshot_after_update = MagicMock(spec=DocumentSnapshot)
+    mock_snapshot_after_update.exists = True
+    mock_snapshot_after_update.to_dict.return_value = data_after_update_dict
+    mock_snapshot_after_update.id = PLAYER_UID
+
+    # Configure the .get() call that happens *after* .update() in CRUDBase
+    player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_update)
+    # Configure .update() on the specific doc_ref to be an AsyncMock we can assert
+    player_doc_ref.update = AsyncMock()
+
+
+    with patch("app.crud.crud_player.datetime") as mock_datetime_crud_player:
+        mock_datetime_crud_player.now.return_value = FIXED_DATETIME_LATER_PLAYER
+
+        updated_player_dict_result = await crud_player_instance.update(
+            db=mock_firestore_db, doc_id=PLAYER_UID, obj_in=update_dict
+        )
+
+    assert updated_player_dict_result is not None
+    assert updated_player_dict_result["username"] == update_dict["username"]
+    assert updated_player_dict_result["is_active"] == update_dict["is_active"]
+    assert updated_player_dict_result["current_capital"] == update_dict["current_capital"]
+    assert updated_player_dict_result["updated_at"] == FIXED_DATETIME_LATER_PLAYER.isoformat()
+    assert updated_player_dict_result["email"] == mock_player_doc_snapshot_data["email"] # Unchanged
+
+    player_doc_ref.update.assert_called_once()
+    args_to_firestore_update, _ = player_doc_ref.update.call_args
+    actual_firestore_payload = args_to_firestore_update[0]
+
+    assert "password" not in actual_firestore_payload
+    assert actual_firestore_payload["username"] == update_dict["username"]
+    assert actual_firestore_payload["is_active"] == update_dict["is_active"]
+    assert actual_firestore_payload["current_capital"] == update_dict["current_capital"]
+    assert actual_firestore_payload["updated_at"] == FIXED_DATETIME_LATER_PLAYER
+
+
+@pytest.mark.asyncio
+async def test_create_player_with_uid_dict_input(
+    crud_player_instance: CRUDPlayer,
+    mock_firestore_db: AsyncFirestoreClient
+):
+    NEW_PLAYER_UID = "new-player-uid-dict"
+    # The mock_firestore_db fixture ensures collection(...).document(...) returns a configurable AsyncMock
+    player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(NEW_PLAYER_UID)
+
+    create_dict = {
+        "email": "dict_creator@example.com",
+        "game_id": "game_for_dict_player",
+        "player_number": 7,
+        "username": "DictCreator",
+        "password": "dict_raw_password",
+        "is_ai": True,
+        "ai_strategy": "Aggressive"
+    }
+
+    expected_player_data_in_db = {
+        "uid": NEW_PLAYER_UID, "id": NEW_PLAYER_UID,
+        "email": create_dict["email"],
+        "game_id": create_dict["game_id"],
+        "player_number": create_dict["player_number"],
+        "username": create_dict["username"],
+        "temp_password_hash": "hashed_temp_password_for_dict_input",
+        "user_type": UserType.PLAYER.value,
+        "is_active": True,
+        "is_superuser": False,
+        "created_at": FIXED_DATETIME_NOW_PLAYER.isoformat(),
+        "updated_at": FIXED_DATETIME_NOW_PLAYER.isoformat(),
+        "current_capital": 0.0,
+        "is_ai": create_dict["is_ai"],
+        "ai_strategy": create_dict["ai_strategy"]
+    }
+
+    mock_snapshot_after_set = MagicMock(spec=DocumentSnapshot)
+    mock_snapshot_after_set.exists = True
+    mock_snapshot_after_set.to_dict.return_value = expected_player_data_in_db
+    mock_snapshot_after_set.id = NEW_PLAYER_UID
+
+    # Configure the specific doc_ref for this test
+    player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_set)
+    player_doc_ref.set = AsyncMock()
+
+    with patch("app.crud.crud_player.get_password_hash", return_value="hashed_temp_password_for_dict_input") as mock_hash, \
+         patch("app.crud.crud_player.datetime") as mock_dt_crud_player:
+        mock_dt_crud_player.now.return_value = FIXED_DATETIME_NOW_PLAYER
+
+        created_player_dict_result = await crud_player_instance.create_with_uid(
+            db=mock_firestore_db, uid=NEW_PLAYER_UID, obj_in=create_dict
+        )
+
+    assert created_player_dict_result is not None
+    assert created_player_dict_result["email"] == create_dict["email"]
+    assert created_player_dict_result["username"] == create_dict["username"]
+    assert created_player_dict_result["temp_password_hash"] == "hashed_temp_password_for_dict_input"
+    assert created_player_dict_result["is_ai"] == create_dict["is_ai"]
+
+    mock_hash.assert_called_once_with(create_dict["password"])
+
+    player_doc_ref.set.assert_called_once()
+    actual_set_data = player_doc_ref.set.call_args[0][0]
+
+    assert actual_set_data["uid"] == NEW_PLAYER_UID
+    assert actual_set_data["email"] == create_dict["email"]
+    assert actual_set_data["temp_password_hash"] == "hashed_temp_password_for_dict_input"
+    assert "password" not in actual_set_data
+    assert actual_set_data["game_id"] == create_dict["game_id"]
+    assert actual_set_data["player_number"] == create_dict["player_number"]
+    assert actual_set_data["username"] == create_dict["username"]
+    assert actual_set_data["is_ai"] == create_dict["is_ai"]
+    assert actual_set_data["ai_strategy"] == create_dict["ai_strategy"]
+    assert actual_set_data["user_type"] == UserType.PLAYER.value
+    assert actual_set_data["is_active"] is True
+    assert actual_set_data["is_superuser"] is False
+    assert actual_set_data["created_at"] == FIXED_DATETIME_NOW_PLAYER
+    assert actual_set_data["updated_at"] == FIXED_DATETIME_NOW_PLAYER
+
+
+@pytest.mark.asyncio
+async def test_create_player_with_uid_no_password(
+    crud_player_instance: CRUDPlayer,
+    mock_firestore_db: AsyncFirestoreClient
+):
+    # Test covering create_with_uid when input dict has no "password"
+    # This should hit the `else` for `if plain_password:` in crud_player.py
+    NEW_PLAYER_UID_NO_PASS = "new-player-no-pass"
+    player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(NEW_PLAYER_UID_NO_PASS)
+
+    create_dict_no_password = {
+        "email": "nopass@example.com",
+        "game_id": "game_for_no_pass",
+        "player_number": 8,
+        "username": "NoPassUser",
+        # "password": "..." // Password intentionally omitted
+    }
+
+    expected_data_in_db = {
+        "uid": NEW_PLAYER_UID_NO_PASS, "id": NEW_PLAYER_UID_NO_PASS,
+        "email": create_dict_no_password["email"],
+        "game_id": create_dict_no_password["game_id"],
+        "player_number": create_dict_no_password["player_number"],
+        "username": create_dict_no_password["username"],
+        "temp_password_hash": None, # Expected due to no password provided
+        "user_type": UserType.PLAYER.value,
+        "is_active": True, "is_superuser": False,
+        "created_at": FIXED_DATETIME_NOW_PLAYER.isoformat(),
+        "updated_at": FIXED_DATETIME_NOW_PLAYER.isoformat(),
+        "current_capital": 0.0, "is_ai": False # Assuming default for is_ai if not provided
+    }
+
+    mock_snapshot_after_set = MagicMock(spec=DocumentSnapshot)
+    mock_snapshot_after_set.exists = True
+    mock_snapshot_after_set.to_dict.return_value = expected_data_in_db
+    mock_snapshot_after_set.id = NEW_PLAYER_UID_NO_PASS
+
+    player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_set)
+    player_doc_ref.set = AsyncMock()
+
+    # No need to mock get_password_hash as it shouldn't be called if plain_password is None
+    with patch("app.crud.crud_player.datetime") as mock_dt_crud_player:
+        mock_dt_crud_player.now.return_value = FIXED_DATETIME_NOW_PLAYER
+
+        created_player_dict = await crud_player_instance.create_with_uid(
+            db=mock_firestore_db, uid=NEW_PLAYER_UID_NO_PASS, obj_in=create_dict_no_password
+        )
+
+    assert created_player_dict is not None
+    assert created_player_dict["temp_password_hash"] is None
+
+    player_doc_ref.set.assert_called_once()
+    actual_set_data = player_doc_ref.set.call_args[0][0]
+    assert actual_set_data["temp_password_hash"] is None
+    assert actual_set_data["email"] == create_dict_no_password["email"]
+
+
+@pytest.mark.asyncio
+async def test_get_players_by_game_id_non_existent_snapshot_in_stream(
+    crud_player_instance: CRUDPlayer,
+    mock_firestore_db: AsyncFirestoreClient
+):
+    # Test covering get_players_by_game_id when stream yields a snapshot with exists=False
+    mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
+    mock_query_after_where = AsyncMock(spec=AsyncQuery)
+    mock_collection_ref.where.return_value = mock_query_after_where
+
+    mock_query_after_limit = AsyncMock(spec=AsyncQuery)
+    mock_query_after_where.limit.return_value = mock_query_after_limit
+
+    mock_non_existent_snapshot = MagicMock(spec=DocumentSnapshot)
+    mock_non_existent_snapshot.exists = False # Key part of this test
+
+    async def stream_one_non_existent_snapshot(*args, **kwargs):
+        yield mock_non_existent_snapshot
+
+    mock_query_after_limit.stream = MagicMock(return_value=stream_one_non_existent_snapshot())
+
+    players_list = await crud_player_instance.get_players_by_game_id(
+        db=mock_firestore_db, game_id=TEST_GAME_ID_FOR_PLAYER, limit=10
+    )
+    assert len(players_list) == 0 # Should be empty as the only snapshot "didn't exist"
+
+
+@pytest.mark.asyncio
+async def test_clear_temp_password_hash_super_update_raises_exception(
+    crud_player_instance: CRUDPlayer,
+    mock_firestore_db: AsyncFirestoreClient
+):
+    # Test covering the except block in clear_temp_password_hash
+    PLAYER_UID_FOR_EXCEPTION_TEST = "player-uid-exception"
+
+    # Patch CRUDBase.update to raise an exception
+    with patch.object(CRUDBase, "update", new_callable=AsyncMock) as mock_super_update, \
+         patch("builtins.print") as mock_print: # To assert error logging
+        mock_super_update.side_effect = Exception("DB update error")
+
+        # We still need to patch datetime.now used by clear_temp_password_hash itself
+        with patch("app.crud.crud_player.datetime") as mock_dt_player:
+             mock_dt_player.now.return_value = FIXED_DATETIME_LATER_PLAYER
+
+             result = await crud_player_instance.clear_temp_password_hash(
+                db=mock_firestore_db, player_uid=PLAYER_UID_FOR_EXCEPTION_TEST
+             )
+
+    assert result is None # Method should return None on exception
+    mock_super_update.assert_called_once()
+    mock_print.assert_called_once()
+    # Check that the print call contains the error message and player UID
+    args, _ = mock_print.call_args
+    assert "Error clearing temp_password_hash" in args[0]
+    assert PLAYER_UID_FOR_EXCEPTION_TEST in args[0]

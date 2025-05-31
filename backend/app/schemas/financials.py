@@ -61,6 +61,6 @@ class HarvestIncome(BaseModel):
 # If there were other income sources like subsidies, TotalIncome would aggregate them.
 class TotalIncome(BaseModel):
     harvest_income: HarvestIncome = Field(default_factory=HarvestIncome)
-    # subsidies: float = Field(0.0)
+    bonuses: float = Field(0.0, description="Income from bonuses")
     grand_total: float = Field(0.0, description="Grand total of all income")
     model_config = ConfigDict(populate_by_name=True, alias_generator=to_camel, use_enum_values=True)

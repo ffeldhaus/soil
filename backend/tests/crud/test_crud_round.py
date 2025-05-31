@@ -104,7 +104,7 @@ async def test_create_player_round(
     assert round_set_data["player_id"] == round_create_obj.player_id
     assert round_set_data["round_number"] == round_create_obj.round_number
     assert round_set_data["is_submitted"] == round_create_obj.is_submitted
-    assert round_set_data["status"] == round_create_obj.status.value
+    assert round_set_data["status"] == round_create_obj.status # If status on model is str
     assert round_set_data["decisions"] == round_create_obj.decisions.model_dump() # Compare dumped dicts
     assert round_set_data["created_at"] == FIXED_DATETIME_ROUND
     assert round_set_data["updated_at"] == FIXED_DATETIME_ROUND
@@ -410,6 +410,50 @@ async def test_get_player_round_not_found(
     # Assert
     mock_get_ref.assert_called_once_with(mock_firestore_db, TEST_GAME_ID_R, TEST_PLAYER_ID_R, TEST_ROUND_NUMBER_R)
     assert result is None
+
+
+@pytest.mark.asyncio
+async def test_get_player_field_state_not_found_calls_real_helper(
+    crud_round_instance: CRUDRound,
+    mock_firestore_db: MagicMock,
+):
+    # This test ensures _get_field_state_doc_ref is covered.
+    # We are NOT patching _get_field_state_doc_ref here.
+
+    GAME_ID = "game-for-real-field-helper"
+    PLAYER_ID = "player-for-real-field-helper"
+    ROUND_NUMBER = 2
+
+    expected_collection_path = FIELD_STATE_COLLECTION_NAME_TEMPLATE.format(game_id=GAME_ID)
+    expected_doc_id = f"{PLAYER_ID}_round_{ROUND_NUMBER}_field_state"
+
+    mock_collection_object = AsyncMock(spec=MagicMock)
+    mock_doc_ref_object = AsyncMock(spec=DocumentReference)
+
+    def collection_side_effect(path_called):
+        if path_called == expected_collection_path:
+            return mock_collection_object
+        return AsyncMock()
+    mock_firestore_db.collection = MagicMock(side_effect=collection_side_effect)
+
+    def document_side_effect(doc_id_called):
+        if doc_id_called == expected_doc_id:
+            return mock_doc_ref_object
+        return AsyncMock()
+    mock_collection_object.document = MagicMock(side_effect=document_side_effect)
+
+    mock_snapshot_not_found = MagicMock(spec=DocumentSnapshot)
+    mock_snapshot_not_found.exists = False
+    mock_doc_ref_object.get = AsyncMock(return_value=mock_snapshot_not_found)
+
+    result = await crud_round_instance.get_player_field_state(
+        db=mock_firestore_db, game_id=GAME_ID, player_id=PLAYER_ID, round_number=ROUND_NUMBER
+    )
+
+    assert result is None
+    mock_firestore_db.collection.assert_called_with(expected_collection_path)
+    mock_collection_object.document.assert_called_with(expected_doc_id)
+    mock_doc_ref_object.get.assert_called_once()
 
 
 # Need to define result_create_obj_round1_player2 for one of the new tests

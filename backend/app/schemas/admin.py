@@ -11,6 +11,7 @@ class AdminBase(UserBase):
     user_type: UserType = Field(default=UserType.ADMIN, frozen=True, description="Type of the user, fixed to admin")
     first_name: Optional[str] = Field(None, max_length=128, description="Admin's first name")
     last_name: Optional[str] = Field(None, max_length=128, description="Admin's last name")
+    full_name: Optional[str] = Field(None, description="Admin's full name")
     institution: Optional[str] = Field(None, max_length=128, description="Admin's institution")
 
     model_config = ConfigDict(
