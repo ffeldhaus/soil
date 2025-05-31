@@ -47,7 +47,7 @@ class CRUDAdmin(CRUDBase[AdminInDB, AdminCreate, AdminUpdate]):
         admin_data_to_store["user_type"] = obj_in.user_type.value
         
         # Set defaults for fields managed by UserInDBBase/AdminInDB if not already set by AdminCreate
-        admin_data_to_store.setdefault("is_superuser", True) # Admins are superusers
+        admin_data_to_store["is_superuser"] = True # Admins are superusers
         admin_data_to_store.setdefault("is_active", True)    # Active by default
 
         # Add timestamps
@@ -66,6 +66,7 @@ class CRUDAdmin(CRUDBase[AdminInDB, AdminCreate, AdminUpdate]):
         # (e.g., if 'full_name' was only for validation in UserCreate and not direct storage if first/last are used)
         # For this example, assume all fields dumped (excluding 'password') are intended for storage
         # after the above transformations.
+        admin_data_to_store["uid"] = uid # Ensure UID is in the dict for CRUDBase
 
         return await super().create_with_uid(db, uid=uid, obj_in=admin_data_to_store)
 
@@ -80,19 +81,39 @@ class CRUDAdmin(CRUDBase[AdminInDB, AdminCreate, AdminUpdate]):
         update_data: Dict[str, Any]
         if isinstance(obj_in, AdminUpdate):
             update_data = obj_in.model_dump(exclude_unset=True, exclude_none=True)
-            # If password is part of update_data, it implies Firebase Auth password update.
-            # This CRUD method focuses on Firestore document update.
-            # Password update logic should be in the endpoint, calling Firebase Auth.
             if "password" in update_data:
-                del update_data["password"] # Do not store plain password or attempt to hash here
-        else:
-            update_data = dict(obj_in)
-            if "password" in update_data: # Should not happen if using AdminUpdate schema
                 del update_data["password"]
 
-        # Add updated_at timestamp
-        update_data["updated_at"] = datetime.now(timezone.utc)
-        return await super().update(db, doc_id=doc_id, obj_in=update_data)
+            # Handling full_name derivation
+            first_name_in_update = "first_name" in update_data
+            last_name_in_update = "last_name" in update_data
+
+            if first_name_in_update and last_name_in_update:
+                update_data["full_name"] = f"{update_data['first_name']} {update_data['last_name']}"
+            elif first_name_in_update or last_name_in_update:
+                # Fetch existing doc to get the other part of the name
+                existing_doc_model = await self.get(db, doc_id=doc_id)
+                if existing_doc_model:
+                    current_first_name = existing_doc_model.first_name
+                    current_last_name = existing_doc_model.last_name
+
+                    new_first_name = update_data.get("first_name", current_first_name)
+                    new_last_name = update_data.get("last_name", current_last_name)
+                    if new_first_name and new_last_name: # Ensure both parts are available
+                         update_data["full_name"] = f"{new_first_name} {new_last_name}"
+        else: # obj_in is a dict
+            update_data = dict(obj_in)
+            # Similar logic if dict input also needs partial name update handling for full_name
+            if "password" in update_data: # Ensure password is not in dict update either
+                del update_data["password"]
+            first_name = update_data.get("first_name")
+            last_name = update_data.get("last_name")
+            if first_name and last_name:
+                update_data["full_name"] = f"{first_name} {last_name}"
+            # Not fetching for dict inputs for simplicity here, assuming dicts would provide full_name if needed.
+
+        update_data["updated_at"] = datetime.now(timezone.utc) # Ensure timezone is imported
+        return await super().update(db, doc_id=doc_id, obj_in=update_data) # super().update is from CRUDBase
 
     # You can add other admin-specific query methods here if needed
     # For example, to get all admins from a specific institution:

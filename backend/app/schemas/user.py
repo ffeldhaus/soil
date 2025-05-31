@@ -1,5 +1,6 @@
 # File: backend/app/schemas/user.py
-from typing import Optional
+from typing import Optional, List, Any # Added List, Any
+from datetime import datetime # Added datetime
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from pydantic.alias_generators import to_camel # Import to_camel
 from enum import Enum
@@ -14,6 +15,7 @@ class UserBase(BaseModel):
     email: EmailStr = Field(..., description="User's email address (must be unique for Firebase Auth)")
     user_type: UserType = Field(UserType.PLAYER, description="Type of the user (admin or player)")
     is_active: bool = Field(True, description="Whether the user account is active")
+    is_superuser: bool = Field(False, description="Whether the user has superuser privileges")
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -30,9 +32,10 @@ class UserCreate(UserBase):
 # --- Properties stored in DB ---
 class UserInDBBase(UserBase):
     uid: str = Field(..., description="Firebase Authentication User ID (UID)")
+    hashed_password: Optional[str] = None
     # Timestamps can be added here if managed by application logic alongside Firestore auto-timestamps
-    # created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
-    # updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(
         from_attributes=True, 

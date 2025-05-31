@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from datetime import datetime, timezone
 
+from google.cloud import firestore # Added import
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from google.cloud.firestore_v1.document import DocumentReference, DocumentSnapshot
 from google.cloud.firestore_v1.async_query import AsyncQuery
@@ -160,8 +161,8 @@ async def test_create_game_with_admin(
 
     # Assertions for the returned GameInDB object (created_game)
     # This object is initialized from 'expected_game_dict_from_base_create'
-    assert created_game.id == TEST_GAME_ID
-    assert created_game.uid == TEST_GAME_ID
+    assert created_game.id == TEST_GAME_ID # GameInDB uses id as primary identifier
+    # assert created_game.uid == TEST_GAME_ID # uid might be an alias or not present; id is canonical for GameInDB
     assert created_game.name == game_create_obj.name
     assert created_game.admin_id == ADMIN_ID
     assert created_game.number_of_rounds == game_create_obj.number_of_rounds
@@ -184,28 +185,28 @@ async def test_get_games_by_admin_id_found(
     mock_game_doc_snapshot: MagicMock # Specific snapshot for a game
 ):
     mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES)
-    mock_query = AsyncMock(spec=AsyncQuery) # This is the object after .where().limit() etc.
-    mock_collection_ref.where.return_value = mock_query # Assuming where returns the final query obj for simplicity here
+    mock_query_after_where = AsyncMock(spec=AsyncQuery)
+    mock_collection_ref.where.return_value = mock_query_after_where
     
+    mock_query_after_limit = AsyncMock(spec=AsyncQuery) # This mock is after .limit()
+    mock_query_after_where.limit.return_value = mock_query_after_limit # .limit() returns this
+
     async def stream_results_gen(*args, **kwargs):
         yield mock_game_doc_snapshot
     
-    # query.stream is a method that returns an async generator
-    mock_query.stream = MagicMock(return_value=stream_results_gen())
+    # .stream() is called on the object returned by .limit()
+    mock_query_after_limit.stream = MagicMock(return_value=stream_results_gen())
 
     games_list = await crud_game_instance.get_games_by_admin_id(db=mock_firestore_db, admin_id=ADMIN_ID)
     
-    mock_collection_ref.where.assert_called_once_with("admin_id", "==", ADMIN_ID)
-    # CRUDBase.get_games_by_admin_id has a default limit. Check it or the passed one.
-    # The test calls it with default limit.
-    # The mock_query in this test is the one *after* .where(). The .limit() is called on this.
-    mock_query.limit.assert_called_once_with(100)
+    mock_collection_ref.where.assert_called_once_with(field="admin_id", op_string="==", value=ADMIN_ID)
+    mock_query_after_where.limit.assert_called_once_with(100) # limit is called on the object returned by where()
 
     assert len(games_list) == 1
     game = games_list[0]
     # Assertions based on mock_game_doc_snapshot which uses mock_game_doc_snapshot_data / BASE_GAME_IN_DB_DICT
     assert game.id == TEST_GAME_ID
-    assert game.uid == TEST_GAME_ID
+    # uid is not a direct attribute on GameInDB model, id is the identifier.
     assert game.name == BASE_GAME_IN_DB_DICT["name"]
     assert game.admin_id == ADMIN_ID # Matches the query
     assert game.number_of_rounds == BASE_GAME_IN_DB_DICT["number_of_rounds"]
@@ -239,27 +240,31 @@ async def test_get_games_by_admin_id_not_found(
 
 @pytest.mark.asyncio
 async def test_add_player_to_game_success(
-    crud_game_instance: CRUDGame,
-    mock_firestore_db: AsyncFirestoreClient, # From conftest.py
-    mock_array_union_class # From conftest.py (patches google.cloud.firestore.ArrayUnion)
+    crud_game_instance: CRUDGame, # Fixture from this file
+    mock_firestore_db: AsyncFirestoreClient, # Fixture from conftest.py
+    mock_array_union_class: MagicMock # Fixture from conftest.py
 ):
     game_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(TEST_GAME_ID)
-    # game_doc_ref.update is an AsyncMock from mock_firestore_db in conftest
+    # game_doc_ref.update is an AsyncMock
 
     result = await crud_game_instance.add_player_to_game(
         db=mock_firestore_db, game_id=TEST_GAME_ID, player_uid=PLAYER_UID_1
     )
     assert result is True
-    # mock_array_union_class is the MagicMock for the class ArrayUnion
-    # Its return_value is what's passed to update
+    # mock_array_union_class is now the mock of ArrayUnion itself.
+    # When ArrayUnion([PLAYER_UID_1]) is called in the SUT, it's this mock_array_union_class being called.
+    # Its return value is what's used in the update.
+    expected_array_union_instance = mock_array_union_class.return_value
+
     mock_array_union_class.assert_called_once_with([PLAYER_UID_1])
-    game_doc_ref.update.assert_called_once_with({"player_uids": mock_array_union_class.return_value})
+    game_doc_ref.update.assert_called_once_with({"player_uids": expected_array_union_instance})
 
 @pytest.mark.asyncio
 async def test_add_player_to_game_firestore_error(
     crud_game_instance: CRUDGame,
     mock_firestore_db: AsyncFirestoreClient,
-    mock_array_union_class # Ensure ArrayUnion is mocked but we make update fail
+    mock_array_union_class: MagicMock # Fixture from conftest.py, though name suggests it's ignored
+    # Renaming to mock_array_union_class to match fixture name for clarity, even if not used in assertions.
 ):
     game_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(TEST_GAME_ID)
     game_doc_ref.update = AsyncMock(side_effect=Exception("Firestore update failed"))
@@ -277,8 +282,8 @@ async def test_add_player_to_game_firestore_error(
 @pytest.mark.asyncio
 async def test_remove_player_from_game_success(
     crud_game_instance: CRUDGame,
-    mock_firestore_db: AsyncFirestoreClient, # From conftest.py
-    mock_array_remove_class # From conftest.py
+    mock_firestore_db: AsyncFirestoreClient,
+    mock_array_remove_class: MagicMock # Fixture from conftest.py
 ):
     game_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(TEST_GAME_ID)
 
@@ -286,14 +291,17 @@ async def test_remove_player_from_game_success(
         db=mock_firestore_db, game_id=TEST_GAME_ID, player_uid=PLAYER_UID_1
     )
     assert result is True
+    expected_array_remove_instance = mock_array_remove_class.return_value
+
     mock_array_remove_class.assert_called_once_with([PLAYER_UID_1])
-    game_doc_ref.update.assert_called_once_with({"player_uids": mock_array_remove_class.return_value})
+    game_doc_ref.update.assert_called_once_with({"player_uids": expected_array_remove_instance})
 
 @pytest.mark.asyncio
 async def test_remove_player_from_game_firestore_error(
     crud_game_instance: CRUDGame,
     mock_firestore_db: AsyncFirestoreClient,
-    mock_array_remove_class # Ensure ArrayRemove is mocked but we make update fail
+    mock_array_remove_class: MagicMock # Fixture from conftest.py, though name suggests it's ignored
+    # Renaming to mock_array_remove_class to match fixture name for clarity
 ):
     game_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_GAMES).document(TEST_GAME_ID)
     game_doc_ref.update = AsyncMock(side_effect=Exception("Firestore update failed"))
@@ -343,10 +351,10 @@ async def test_update_game_status(
     mock_snapshot_after_update.id = TEST_GAME_ID
     game_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_update) # After .update() in CRUDBase
 
-    # Patch datetime.now used within CRUDGame.update_game_status
+    # Patch datetime.utcnow used within CRUDGame.update_game_status
     with patch("app.crud.crud_game.datetime") as mock_datetime_crud_game:
         # This datetime is for the 'updated_at' set by update_game_status itself
-        mock_datetime_crud_game.now.return_value = FIXED_DATETIME_LATER_GAME
+        mock_datetime_crud_game.utcnow.return_value = FIXED_DATETIME_LATER_GAME
         # If CRUDBase.update also sets its own updated_at, that would need patching too
         # but current CRUDBase.update doesn't add timestamps to the dict it sends to Firestore.
         # It relies on the snapshot returned by .get() for the final data.
@@ -442,13 +450,12 @@ async def test_get_game_by_id_found(
     mock_game_doc_snapshot: MagicMock
 ):
     # mock_game_doc_snapshot is configured by its fixture
-    game_dict = await crud_game_instance.get(db=mock_firestore_db, doc_id=TEST_GAME_ID)
-    assert game_dict is not None
-    game = GameInDB(**game_dict)
+    game_model_instance = await crud_game_instance.get(db=mock_firestore_db, doc_id=TEST_GAME_ID)
+    assert game_model_instance is not None
+    game = game_model_instance # get() returns a model instance
 
     # Comprehensive check of all fields based on mock_game_doc_snapshot_data / BASE_GAME_IN_DB_DICT
     assert game.id == TEST_GAME_ID
-    assert game.uid == TEST_GAME_ID
     assert game.name == BASE_GAME_IN_DB_DICT["name"]
     assert game.admin_id == BASE_GAME_IN_DB_DICT["adminId"] # Check alias mapping
     assert game.number_of_rounds == BASE_GAME_IN_DB_DICT["number_of_rounds"]

@@ -70,6 +70,7 @@ class RoundUpdate(BaseModel):
 
 class RoundInDBBase(RoundBase):
     id: str = Field(..., description="Unique ID for the round document")
+    result_id: Optional[str] = Field(None, description="ID of the associated result document")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     # Inherits model_config from RoundBase. Also add from_attributes=True for ORM mode.

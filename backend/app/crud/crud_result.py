@@ -94,10 +94,10 @@ class CRUDResult(CRUDBase[ResultInDB, ResultCreate, Any]): # Using Any for Updat
             .order_by("round_number") # Ascending by default
             .limit(limit)
         )
-        snapshots = await query.stream() # type: ignore
+        # snapshots = await query.stream() # type: ignore # This was the error
         
         results = []
-        async for snapshot in snapshots:
+        async for snapshot in query.stream(): # Correct: Directly iterate over the stream
             if snapshot.exists:
                 data = snapshot.to_dict()
                 data["id"] = snapshot.id
@@ -113,10 +113,10 @@ class CRUDResult(CRUDBase[ResultInDB, ResultCreate, Any]): # Using Any for Updat
         """
         collection_path = RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=game_id)
         query: AsyncବQuery = db.collection(collection_path).where(field="round_number", op_string="==", value=round_number)
-        snapshots = await query.stream() # type: ignore
+        # snapshots = await query.stream() # type: ignore # This was the error
         
         results = []
-        async for snapshot in snapshots:
+        async for snapshot in query.stream(): # Correct: Directly iterate over the stream
             if snapshot.exists:
                 data = snapshot.to_dict()
                 data["id"] = snapshot.id

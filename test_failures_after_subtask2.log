@@ -1,0 +1,1512 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.3, pytest-8.3.5, pluggy-1.6.0
+rootdir: /app/backend
+configfile: pyproject.toml
+plugins: asyncio-1.0.0, cov-6.1.1, anyio-4.9.0
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 44 items
+
+tests/crud/test_crud_admin.py FF.FFFF.....                               [ 27%]
+tests/crud/test_crud_player.py FF.F.FFFFFFF..                            [ 59%]
+tests/crud/test_crud_result.py FF.FFFF                                   [ 75%]
+tests/crud/test_crud_round.py F..........                                [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_create_admin_with_uid __________________________
+
+crud_admin_instance = <app.crud.crud_admin.CRUDAdmin object at 0x7f5ae44f8e10>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028347844992'>
+admin_create_obj = AdminCreate(email='admin@example.com', user_type=<UserType.ADMIN: 'admin'>, is_active=True, first_name='Test', last_name='Admin', full_name=None, institution='Test University', password='securepassword123')
+mock_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028347849696'>
+
+    @pytest.mark.asyncio
+    async def test_create_admin_with_uid(
+        crud_admin_instance: CRUDAdmin,
+        mock_firestore_db: AsyncFirestoreClient,
+        admin_create_obj: AdminCreate,
+        mock_doc_snapshot: MagicMock # Used to mock the .get() call after .set()
+    ):
+        # Arrange
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS)
+        # document(ADMIN_UID) is already configured by mock_doc_snapshot to return it on .get()
+        mock_doc_ref_for_admin_uid = mock_collection_ref.document(ADMIN_UID)
+
+        # Patch 'get_password_hash' and 'datetime' in 'app.crud.crud_admin'
+        # This assumes 'from datetime import datetime, timezone' exists in app.crud.crud_admin
+        with patch("app.crud.crud_admin.get_password_hash", return_value="hashed_password_example_from_get_password_hash") as mock_hash, \
+             patch("app.crud.crud_admin.datetime") as mock_datetime_module:
+            mock_datetime_module.now.return_value = FIXED_DATETIME_NOW
+            mock_datetime_module.utcnow.return_value = FIXED_DATETIME_NOW # If utcnow is used
+
+            # Act
+            created_admin_dict = await crud_admin_instance.create_with_uid(
+                db=mock_firestore_db, uid=ADMIN_UID, obj_in=admin_create_obj
+            )
+
+        # Assert
+        # Arrange
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS)
+        mock_doc_ref_for_admin_uid = mock_collection_ref.document(ADMIN_UID)
+
+        # Patch 'get_password_hash' and 'datetime' in 'app.crud.crud_admin'
+        # This assumes 'from datetime import datetime, timezone' exists in app.crud.crud_admin
+        with patch("app.crud.crud_admin.get_password_hash", return_value="hashed_password_example_from_get_password_hash") as mock_hash, \
+             patch("app.crud.crud_admin.datetime") as mock_datetime_module:
+            mock_datetime_module.now.return_value = FIXED_DATETIME_NOW # Used for created_at and updated_at
+            # mock_datetime_module.utcnow.return_value = FIXED_DATETIME_NOW # If utcnow is used by crud
+
+            # Act
+            # The create_with_uid method will call .set() and then .get() on the doc_ref.
+            # The mock_doc_snapshot fixture is configured to be returned by .get() on ADMIN_UID.
+            # Its .to_dict() method will provide the data for created_admin_dict.
+            # The ADMIN_IN_DB_DICT_BASE (used by mock_doc_snapshot) has full_name="Test Admin"
+            # and timestamps are set by the fixture to FIXED_DATETIME_NOW.
+            created_admin_dict = await crud_admin_instance.create_with_uid(
+                db=mock_firestore_db, uid=ADMIN_UID, obj_in=admin_create_obj
+            )
+
+        # Assert
+        assert created_admin_dict is not None, "create_with_uid should return a dictionary."
+
+        # Ensure the dictionary from Firestore can be parsed into AdminInDB model
+        # This also validates that the structure matches AdminInDB, including timestamps.
+        created_admin = AdminInDB(**created_admin_dict)
+
+        # 1. Check what was passed to Firestore's .set() method on the specific mock_doc_ref
+>       mock_doc_ref_for_admin_uid.set.assert_called_once()
+
+tests/crud/test_crud_admin.py:169:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <AsyncMock name='mock.set' id='140028347847344'>
+
+    def assert_called_once(self):
+        """assert that the mock was called only once.
+        """
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to have been called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'set' to have been called once. Called 2 times.
+E           Calls: [call({'email': 'admin@example.com', 'is_active': True, 'first_name': 'Test', 'last_name': 'Admin', 'full_name': 'Test Admin', 'institution': 'Test University', 'hashed_password': 'hashed_password_example_from_get_password_hash', 'user_type': 'admin', 'is_superuser': True, 'created_at': datetime.datetime(2023, 1, 1, 12, 0, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2023, 1, 1, 12, 0, tzinfo=datetime.timezone.utc)}),
+E            call({'email': 'admin@example.com', 'is_active': True, 'first_name': 'Test', 'last_name': 'Admin', 'full_name': 'Test Admin', 'institution': 'Test University', 'hashed_password': 'hashed_password_example_from_get_password_hash', 'user_type': 'admin', 'is_superuser': True, 'created_at': datetime.datetime(2023, 1, 1, 12, 0, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2023, 1, 1, 12, 0, tzinfo=datetime.timezone.utc)})].
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:958: AssertionError
+________________________ test_get_admin_by_email_found _________________________
+
+crud_admin_instance = <app.crud.crud_admin.CRUDAdmin object at 0x7f5ae45c3d90>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028347855072'>
+mock_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028350612880'>
+
+    @pytest.mark.asyncio
+    async def test_get_admin_by_email_found(
+        crud_admin_instance: CRUDAdmin,
+        mock_firestore_db: AsyncFirestoreClient,
+        mock_doc_snapshot: MagicMock # This snapshot is configured with ADMIN_EMAIL
+    ):
+        # Arrange
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS)
+        # Setup for .where().limit().stream()
+        # This complex mocking is to ensure the chained calls .where().limit().stream() work as expected.
+        mock_query_obj = AsyncMock() # This will be returned by .where()
+        mock_limit_query_obj = AsyncMock() # This will be returned by .limit()
+
+        async def stream_results_generator(*args, **kwargs): # The async generator for .stream()
+            yield mock_doc_snapshot
+
+        mock_limit_query_obj.stream = stream_results_generator # .stream() method returns the generator
+        mock_query_obj.limit = MagicMock(return_value=mock_limit_query_obj) # .limit() method returns mock_limit_query_obj
+        mock_collection_ref.where = MagicMock(return_value=mock_query_obj) # .where() method returns mock_query_obj
+
+        # Act
+        admin = await crud_admin_instance.get_by_email(db=mock_firestore_db, email=ADMIN_EMAIL)
+
+        # Assert
+        assert admin is not None
+        # mock_doc_snapshot data is based on ADMIN_IN_DB_DICT_BASE and fixture timestamps
+        assert admin.uid == ADMIN_UID
+        # assert admin.id == ADMIN_UID # From ADMIN_IN_DB_DICT_BASE # Changed: id does not exist on AdminInDB, uid is the id.
+        assert admin.email == ADMIN_EMAIL
+        assert admin.full_name == ADMIN_IN_DB_DICT_BASE["full_name"]
+        assert admin.first_name == ADMIN_IN_DB_DICT_BASE["first_name"]
+        assert admin.last_name == ADMIN_IN_DB_DICT_BASE["last_name"]
+        assert admin.institution == ADMIN_IN_DB_DICT_BASE["institution"]
+>       assert admin.is_superuser == ADMIN_IN_DB_DICT_BASE["is_superuser"]
+
+tests/crud/test_crud_admin.py:241:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = AdminInDB(email='admin@example.com', user_type='admin', is_active=True, first_name='Test', last_name='Admin', full_nam...1, 12, 0, tzinfo=datetime.timezone.utc), updated_at=datetime.datetime(2023, 1, 1, 12, 0, tzinfo=datetime.timezone.utc))
+item = 'is_superuser'
+
+    def __getattr__(self, item: str) -> Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+
+            if pydantic_extra:
+                try:
+                    return pydantic_extra[item]
+                except KeyError as exc:
+                    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+>                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'AdminInDB' object has no attribute 'is_superuser'
+
+.venv/lib/python3.13/site-packages/pydantic/main.py:991: AttributeError
+______________________________ test_update_admin _______________________________
+
+crud_admin_instance = <app.crud.crud_admin.CRUDAdmin object at 0x7f5ae403c640>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028350622624'>
+admin_update_obj = AdminUpdate(email='updated.admin@example.com', first_name='UpdatedTest', last_name='AdminUser', institution='Updated University', is_active=None, password=None)
+mock_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028350627328'>
+
+    @pytest.mark.asyncio
+    async def test_update_admin(
+        crud_admin_instance: CRUDAdmin,
+        mock_firestore_db: AsyncFirestoreClient,
+        admin_update_obj: AdminUpdate,
+        mock_doc_snapshot: MagicMock # Represents state *before* update for the first .get()
+    ):
+        # Arrange
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS)
+        mock_doc_ref_for_admin_uid = mock_collection_ref.document(ADMIN_UID)
+
+        # Data for snapshot returned *after* update.
+        # This should reflect the changes made by admin_update_obj.
+        # Original created_at, user_type, and hashed_password should remain.
+        original_doc_data_before_update = mock_doc_snapshot.to_dict() # Data from ADMIN_IN_DB_DICT_BASE + timestamps
+        expected_full_name_after_update = f"{admin_update_obj.first_name} {admin_update_obj.last_name}"
+
+        data_after_update_dict = {
+            **original_doc_data_before_update, # Start with existing data
+            "first_name": admin_update_obj.first_name,
+            "last_name": admin_update_obj.last_name,
+            "full_name": expected_full_name_after_update,
+            "email": admin_update_obj.email,
+            "institution": admin_update_obj.institution,
+            "updated_at": FIXED_DATETIME_LATER, # This will be set by the update method in CRUDAdmin
+            # Fields that should NOT change:
+            "created_at": original_doc_data_before_update["created_at"],
+            "hashed_password": original_doc_data_before_update["hashed_password"],
+            "user_type": original_doc_data_before_update["user_type"],
+            "is_superuser": original_doc_data_before_update["is_superuser"],
+            # is_active can be changed by AdminUpdate, so if it's in admin_update_obj, it should be here
+            "is_active": admin_update_obj.is_active if admin_update_obj.is_active is not None else original_doc_data_before_update["is_active"],
+        }
+
+        mock_snapshot_after_update = MagicMock(spec=DocumentSnapshot)
+        mock_snapshot_after_update.exists = True
+        mock_snapshot_after_update.to_dict.return_value = data_after_update_dict
+        mock_snapshot_after_update.id = ADMIN_UID
+
+        # CRUDBase.update calls doc_ref.update() then doc_ref.get().
+        # The mock_doc_snapshot fixture (passed to this test) represents the state *before* this update.
+        # It's used by CRUDBase if it internally calls .get() before .update() (which it doesn't explicitly).
+        # More importantly, the .get() *after* the .update() call needs to return the new state.
+        mock_doc_ref_for_admin_uid.get = AsyncMock(return_value=mock_snapshot_after_update)
+
+
+        # Patch datetime.now() in app.crud.crud_admin.py as it's used by CRUDAdmin.update
+        with patch("app.crud.crud_admin.datetime") as mock_datetime_crud_admin_module:
+            # Mock datetime.now(timezone.utc) specifically if that's what's used.
+            # If it's just datetime.now(), this is fine.
+            mock_datetime_crud_admin_module.now.return_value = FIXED_DATETIME_LATER # Time of update
+
+            # Act
+            updated_admin_dict = await crud_admin_instance.update(
+                db=mock_firestore_db, doc_id=ADMIN_UID, obj_in=admin_update_obj
+            )
+
+        # Assert
+        assert updated_admin_dict is not None, "Update should return the updated admin dictionary."
+        updated_admin = AdminInDB(**updated_admin_dict)
+
+        # 1. Check what was passed to Firestore's .update() method
+        mock_doc_ref_for_admin_uid.update.assert_called_once()
+        args_to_update, _ = mock_doc_ref_for_admin_uid.update.call_args
+        actual_update_payload = args_to_update[0]
+
+        assert "password" not in actual_update_payload, "Plain password should not be in Firestore update payload."
+        assert "hashed_password" not in actual_update_payload, "Hashed password should not be sent directly in this payload."
+        assert actual_update_payload["first_name"] == admin_update_obj.first_name
+        assert actual_update_payload["last_name"] == admin_update_obj.last_name
+        assert actual_update_payload["email"] == admin_update_obj.email
+        assert actual_update_payload["institution"] == admin_update_obj.institution
+        assert actual_update_payload["full_name"] == expected_full_name_after_update
+        assert actual_update_payload["updated_at"] == FIXED_DATETIME_LATER # This must be set by CRUDAdmin.update
+        if admin_update_obj.is_active is not None:
+            assert actual_update_payload["is_active"] == admin_update_obj.is_active
+
+        # 2. Check the returned AdminInDB object (comes from the .get() call after update)
+        assert updated_admin.first_name == admin_update_obj.first_name
+        assert updated_admin.full_name == expected_full_name_after_update
+        assert updated_admin.email == admin_update_obj.email
+        assert updated_admin.institution == admin_update_obj.institution
+        if admin_update_obj.is_active is not None:
+            assert updated_admin.is_active == admin_update_obj.is_active
+        else:
+            assert updated_admin.is_active == original_doc_data_before_update["is_active"]
+
+        assert updated_admin.updated_at == FIXED_DATETIME_LATER
+        assert updated_admin.created_at == original_doc_data_before_update["created_at"], "created_at should not change."
+>       assert updated_admin.user_type.value == original_doc_data_before_update["user_type"], "user_type should not change by default."
+E       AttributeError: 'str' object has no attribute 'value'
+
+tests/crud/test_crud_admin.py:358: AttributeError
+______________________ test_update_admin_ignores_password ______________________
+
+crud_admin_instance = <app.crud.crud_admin.CRUDAdmin object at 0x7f5ae4317770>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028350617920'>
+mock_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028352301104'>
+
+    @pytest.mark.asyncio
+    async def test_update_admin_ignores_password(
+        crud_admin_instance: CRUDAdmin,
+        mock_firestore_db: AsyncFirestoreClient,
+        mock_doc_snapshot: MagicMock # Represents current state in DB (before this specific test's update)
+    ):
+        # Arrange
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS)
+        mock_doc_ref_for_admin_uid = mock_collection_ref.document(ADMIN_UID)
+
+        original_doc_data = mock_doc_snapshot.to_dict()
+        original_hashed_password = original_doc_data["hashed_password"]
+        original_created_at = original_doc_data["created_at"]
+        original_user_type_str = original_doc_data["user_type"] # e.g., "admin"
+        original_is_superuser = original_doc_data["is_superuser"]
+        original_is_active = original_doc_data["is_active"]
+
+
+        update_payload_with_password = AdminUpdate(
+            first_name="PasswordTestFirstName", # Changed field
+            # last_name, email, institution will be None, so they shouldn't be in payload unless model_dump(exclude_none=False)
+            # CRUDAdmin.update uses obj_in.model_dump(exclude_unset=True, exclude_none=True)
+            # So only first_name and password (which is then deleted) will be in update_data from AdminUpdate.
+            password="newfakepassword123" # This should be ignored by CRUDAdmin.update logic
+        )
+
+        # Data for snapshot returned *after* this specific update attempt.
+        # Only first_name and updated_at should change. Password-related fields remain untouched.
+        data_after_update_attempt_dict = {
+            **original_doc_data, # Start with existing data
+            "first_name": update_payload_with_password.first_name,
+            # full_name should also update if first_name changes and last_name is present
+            "full_name": f"{update_payload_with_password.first_name} {original_doc_data['last_name']}",
+            "updated_at": FIXED_DATETIME_LATER, # This will be set by CRUDAdmin.update
+            # Fields that should NOT change:
+            "hashed_password": original_hashed_password,
+            "created_at": original_created_at,
+            "user_type": original_user_type_str,
+            "email": original_doc_data["email"], # Unchanged as not in update_payload_with_password
+            "last_name": original_doc_data["last_name"], # Unchanged
+            "institution": original_doc_data["institution"], # Unchanged
+            "is_superuser": original_is_superuser, # Unchanged
+            "is_active": original_is_active, # Unchanged
+        }
+        mock_snapshot_after_update_attempt = MagicMock(spec=DocumentSnapshot)
+        mock_snapshot_after_update_attempt.exists = True
+        mock_snapshot_after_update_attempt.to_dict.return_value = data_after_update_attempt_dict
+        mock_snapshot_after_update_attempt.id = ADMIN_UID
+
+        # Configure .get() on the specific doc ref to return the state *after* the update call
+        mock_doc_ref_for_admin_uid.get = AsyncMock(return_value=mock_snapshot_after_update_attempt)
+
+        with patch("app.crud.crud_admin.datetime") as mock_datetime_module:
+            mock_datetime_module.now.return_value = FIXED_DATETIME_LATER # Time of update
+
+            # Act
+            updated_admin_dict = await crud_admin_instance.update(
+                db=mock_firestore_db, doc_id=ADMIN_UID, obj_in=update_payload_with_password
+            )
+
+        # Assert
+        assert updated_admin_dict is not None, "Update should return a dictionary even if only timestamps change."
+        updated_admin = AdminInDB(**updated_admin_dict)
+
+        # 1. Check what was passed to Firestore's .update() method
+        mock_doc_ref_for_admin_uid.update.assert_called_once()
+        args_to_update, _ = mock_doc_ref_for_admin_uid.update.call_args
+        actual_update_payload = args_to_update[0]
+
+        assert "password" not in actual_update_payload, "Plain password should NOT be in Firestore update payload."
+        assert "hashed_password" not in actual_update_payload, "Hashed password should NOT be in this update payload."
+        assert actual_update_payload["first_name"] == update_payload_with_password.first_name
+        assert "last_name" not in actual_update_payload # Was not in AdminUpdate with exclude_none=True
+        assert "email" not in actual_update_payload # Was not in AdminUpdate
+>       assert actual_update_payload["full_name"] == f"{update_payload_with_password.first_name} {original_doc_data['last_name']}"
+E       KeyError: 'full_name'
+
+tests/crud/test_crud_admin.py:436: KeyError
+________________________ test_update_admin_non_existent ________________________
+
+crud_admin_instance = <app.crud.crud_admin.CRUDAdmin object at 0x7f5ae42439b0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352301776'>
+admin_update_obj = AdminUpdate(email='updated.admin@example.com', first_name='UpdatedTest', last_name='AdminUser', institution='Updated University', is_active=None, password=None)
+mock_doc_snapshot_non_existent = <MagicMock spec='DocumentSnapshot' id='140028352309168'>
+
+    @pytest.mark.asyncio
+    async def test_update_admin_non_existent(
+        crud_admin_instance: CRUDAdmin,
+        mock_firestore_db: AsyncFirestoreClient,
+        admin_update_obj: AdminUpdate,
+        mock_doc_snapshot_non_existent: MagicMock # Configured for "non-existent-admin-uid"
+    ):
+        # Arrange
+        # mock_firestore_db.collection().document("non-existent-admin-uid").get is already mocked by the fixture
+
+        # Act
+        # No need to patch datetime if .get() returns non-existent, as .update won't be called.
+        updated_admin_dict = await crud_admin_instance.update(
+            db=mock_firestore_db, doc_id="non-existent-admin-uid", obj_in=admin_update_obj
+        )
+
+        # Assert
+        assert updated_admin_dict is None
+>       mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_ADMINS).document("non-existent-admin-uid").update.assert_not_called()
+
+tests/crud/test_crud_admin.py:468:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <AsyncMock name='mock.update' id='140028352307488'>
+
+    def assert_not_called(self):
+        """assert that the mock was never called.
+        """
+        if self.call_count != 0:
+            msg = ("Expected '%s' to not have been called. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'update' to not have been called. Called 1 times.
+E           Calls: [call({'email': 'updated.admin@example.com', 'first_name': 'UpdatedTest', 'last_name': 'AdminUser', 'institution': 'Updated University', 'full_name': 'UpdatedTest AdminUser', 'updated_at': datetime.datetime(2025, 5, 30, 22, 57, 59, 425888, tzinfo=datetime.timezone.utc)})].
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:940: AssertionError
+__________________________ test_get_admin_by_id_found __________________________
+
+crud_admin_instance = <app.crud.crud_admin.CRUDAdmin object at 0x7f5ae43487c0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352311184'>
+mock_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028349645888'>
+
+    @pytest.mark.asyncio
+    async def test_get_admin_by_id_found(
+        crud_admin_instance: CRUDAdmin,
+        mock_firestore_db: AsyncFirestoreClient,
+        mock_doc_snapshot: MagicMock # Already configured for ADMIN_UID and returns data
+    ):
+        # Act
+        admin_dict_or_model = await crud_admin_instance.get(db=mock_firestore_db, doc_id=ADMIN_UID)
+
+        # Assert
+        assert admin_dict_or_model is not None
+        admin = admin_dict_or_model # crud.get() returns a model instance
+
+        # mock_doc_snapshot data is based on ADMIN_IN_DB_DICT_BASE and fixture timestamps
+        assert admin.uid == ADMIN_UID
+>       assert admin.id == ADMIN_UID
+
+tests/crud/test_crud_admin.py:486:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = AdminInDB(email='admin@example.com', user_type='admin', is_active=True, first_name='Test', last_name='Admin', full_nam...1, 12, 0, tzinfo=datetime.timezone.utc), updated_at=datetime.datetime(2023, 1, 1, 12, 0, tzinfo=datetime.timezone.utc))
+item = 'id'
+
+    def __getattr__(self, item: str) -> Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+
+            if pydantic_extra:
+                try:
+                    return pydantic_extra[item]
+                except KeyError as exc:
+                    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+>                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'AdminInDB' object has no attribute 'id'. Did you mean: 'uid'?
+
+.venv/lib/python3.13/site-packages/pydantic/main.py:991: AttributeError
+_________________________ test_create_player_with_uid __________________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae44f8e10>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352307488'>
+player_create_obj = PlayerCreate(email='player.test@example.com', user_type=<UserType.PLAYER: 'player'>, is_active=True, username='TestPla...ha', game_id='test-game-id-for-player-tests', player_number=1, is_ai=False, ai_strategy=None, password='playerpass789')
+
+    @pytest.mark.asyncio
+    async def test_create_player_with_uid(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        player_create_obj: PlayerCreate
+    ):
+        player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(PLAYER_UID)
+
+        # Data for the snapshot that .get() will return after .set()
+        # This is what CRUDBase.create_with_uid will use to build the returned PlayerInDB
+        expected_player_dict_from_get = {
+            **BASE_PLAYER_IN_DB_DICT, # Start with base, override as needed
+            "temp_password_hash": "hashed_temp_password_from_patch", # This is set by create_with_uid
+            # created_at/updated_at will be FIXED_DATETIME_NOW_PLAYER due to patching datetime.now
+        }
+        # snapshot.to_dict() returns ISO strings for datetimes
+        snap_dict_return = expected_player_dict_from_get.copy()
+        snap_dict_return["created_at"] = FIXED_DATETIME_NOW_PLAYER.isoformat()
+        snap_dict_return["updated_at"] = FIXED_DATETIME_NOW_PLAYER.isoformat()
+
+        mock_snapshot_after_set = MagicMock(spec=DocumentSnapshot)
+        mock_snapshot_after_set.exists = True
+        mock_snapshot_after_set.to_dict.return_value = snap_dict_return
+        mock_snapshot_after_set.id = PLAYER_UID
+        player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_set) # Used by CRUDBase after set
+
+        # Patch get_password_hash and datetime.now in app.crud.crud_player
+        with patch("app.crud.crud_player.get_password_hash", return_value="hashed_temp_password_from_patch") as mock_hash, \
+             patch("app.crud.crud_player.datetime") as mock_dt_crud_player: # For created_at/updated_at in Player
+            mock_dt_crud_player.now.return_value = FIXED_DATETIME_NOW_PLAYER
+
+            created_player_dict_result = await crud_player_instance.create_with_uid(
+                db=mock_firestore_db, uid=PLAYER_UID, obj_in=player_create_obj
+            )
+
+        assert created_player_dict_result is not None
+        created_player = PlayerInDB(**created_player_dict_result)
+
+        mock_hash.assert_called_once_with(player_create_obj.password)
+
+        # Check data passed to Firestore .set()
+        player_doc_ref.set.assert_called_once()
+        actual_set_data = player_doc_ref.set.call_args[0][0]
+
+        assert actual_set_data["uid"] == PLAYER_UID
+        assert actual_set_data["email"] == player_create_obj.email
+        assert actual_set_data["temp_password_hash"] == "hashed_temp_password_from_patch"
+        # Timestamps are set by CRUDPlayer.create_with_uid (which calls super().create_with_uid)
+        # CRUDBase.create_with_uid does NOT add timestamps itself to the data it passes to .set()
+        # It relies on what's in obj_in. CRUDPlayer.create_with_uid adds them to its internal dict.
+        # The patch for app.crud.crud_player.datetime ensures these are fixed.
+        # However, CRUDPlayer.create_with_uid in the actual code doesn't add created_at/updated_at.
+        # This logic was in CRUDAdmin. Player.create_with_uid now adds created_at/updated_at.
+        assert actual_set_data["created_at"] == FIXED_DATETIME_NOW_PLAYER
+        assert actual_set_data["updated_at"] == FIXED_DATETIME_NOW_PLAYER
+        assert "password" not in actual_set_data # Plain password should not be stored
+
+        # Verify all fields from PlayerCreate are present and correct
+        assert actual_set_data["game_id"] == player_create_obj.game_id
+        assert actual_set_data["player_number"] == player_create_obj.player_number
+        assert actual_set_data["username"] == player_create_obj.username
+        assert actual_set_data["is_ai"] == player_create_obj.is_ai
+        assert actual_set_data["user_type"] == UserType.PLAYER.value # Set by CRUDPlayer
+
+        # Verify defaults like is_active (is_superuser is not in PlayerCreate/UserBase)
+        # PlayerCreate -> UserCreate -> UserBase. UserBase has is_active = True.
+        # model_dump should include this default.
+>       assert actual_set_data["is_active"] is True
+E       KeyError: 'is_active'
+
+tests/crud/test_crud_player.py:159: KeyError
+________________________ test_get_player_by_email_found ________________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae45c3250>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028349651264'>
+mock_player_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028352480992'>
+
+    @pytest.mark.asyncio
+    async def test_get_player_by_email_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        mock_player_doc_snapshot: MagicMock # Specific player snapshot
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
+        mock_query = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query
+
+        async def stream_results_gen(*args, **kwargs): yield mock_player_doc_snapshot
+        # query.limit(1).stream() -> query.limit() returns a new query object.
+        # So, the final object that .stream() is called on needs to have .stream mocked.
+        mock_limit_query = AsyncMock(spec=AsyncQuery)
+        mock_query.limit = MagicMock(return_value=mock_limit_query)
+        mock_limit_query.stream = MagicMock(return_value=stream_results_gen())
+
+
+        player_dict_or_model = await crud_player_instance.get_by_email(db=mock_firestore_db, email=PLAYER_EMAIL)
+        assert player_dict_or_model is not None
+        player = player_dict_or_model # Changed: crud.get_by_email returns a model instance
+
+        # Comprehensive assertions
+        assert player.uid == PLAYER_UID
+>       assert player.id == PLAYER_UID
+
+tests/crud/test_crud_player.py:203:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PlayerInDB(email='player.test@example.com', user_type='player', is_active=True, username='TestPlayerAlpha', game_id='t...me.datetime(2023, 1, 2, 10, 0, tzinfo=TzInfo(UTC)), temp_password_hash='initial_hashed_temp_pass', current_capital=0.0)
+item = 'id'
+
+    def __getattr__(self, item: str) -> Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+
+            if pydantic_extra:
+                try:
+                    return pydantic_extra[item]
+                except KeyError as exc:
+                    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+>                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'PlayerInDB' object has no attribute 'id'. Did you mean: 'uid'?
+
+.venv/lib/python3.13/site-packages/pydantic/main.py:991: AttributeError
+______________________________ test_update_player ______________________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae45d7a80>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028349547584'>
+player_update_obj = PlayerUpdate(username='TestPlayerAlphaUpdated', password=None, is_active=False)
+mock_player_doc_snapshot_data = {'ai_strategy': None, 'created_at': '2023-01-02T10:00:00+00:00', 'current_capital': 0.0, 'email': 'player.test@example.com', ...}
+
+    @pytest.mark.asyncio
+    async def test_update_player(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        player_update_obj: PlayerUpdate,
+        mock_player_doc_snapshot_data: dict # Base data for the player
+    ):
+        player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(PLAYER_UID)
+
+        # Data for snapshot *after* update
+        data_after_update_dict = {
+            **mock_player_doc_snapshot_data, # Contains original created_at, email etc. as ISO strings
+            "username": player_update_obj.username,
+            "is_active": player_update_obj.is_active,
+            "updated_at": FIXED_DATETIME_LATER_PLAYER.isoformat() # Updated timestamp as ISO string
+        }
+        mock_snapshot_after_update = MagicMock(spec=DocumentSnapshot)
+        mock_snapshot_after_update.exists = True
+        mock_snapshot_after_update.to_dict.return_value = data_after_update_dict
+        mock_snapshot_after_update.id = PLAYER_UID
+        player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_update) # CRUDBase.update calls .get()
+
+        # Patch datetime.now() in app.crud.crud_player (used by CRUDPlayer.update)
+        # and app.crud.base (if it were to also set updated_at, though current CRUDBase does not)
+        with patch("app.crud.crud_player.datetime") as mock_dt_player, \
+>            patch("app.crud.base.datetime") as mock_dt_base: # CRUDBase might use it in future
+
+tests/crud/test_crud_player.py:267:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1497: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x7f5ae41cf150>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+
+        original = DEFAULT
+        local = False
+
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.crud.base' from '/app/backend/app/crud/base.py'> does not have the attribute 'datetime'
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1467: AttributeError
+______________________ test_get_players_by_game_id_found _______________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae4241e10>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028349652608'>
+mock_player_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028347853728'>
+
+    @pytest.mark.asyncio
+    async def test_get_players_by_game_id_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        mock_player_doc_snapshot: MagicMock
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
+        mock_query = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query # .where().limit() if limit is part of query
+
+        async def stream_results_gen(*args, **kwargs): yield mock_player_doc_snapshot
+        mock_query.stream = MagicMock(return_value=stream_results_gen())
+
+        players_list = await crud_player_instance.get_players_by_game_id(
+            db=mock_firestore_db, game_id=TEST_GAME_ID_FOR_PLAYER, limit=10 # Explicit limit
+        )
+
+>       mock_collection_ref.where.assert_called_once_with("game_id", "==", TEST_GAME_ID_FOR_PLAYER)
+
+tests/crud/test_crud_player.py:365:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:991: in assert_called_once_with
+    return self.assert_called_with(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <MagicMock name='mock.where' id='140028347847008'>
+args = ('game_id', '==', 'test-game-id-for-player-tests'), kwargs = {}
+expected = call('game_id', '==', 'test-game-id-for-player-tests')
+actual = call(field='game_id', op_string='==', value='test-game-id-for-player-tests')
+_error_message = <function NonCallableMock.assert_called_with.<locals>._error_message at 0x7f5ae435ad40>
+cause = None
+
+    def assert_called_with(self, /, *args, **kwargs):
+        """assert that the last call was made with the specified arguments.
+
+        Raises an AssertionError if the args and keyword args passed in are
+        different to the last call to the mock."""
+        if self.call_args is None:
+            expected = self._format_mock_call_signature(args, kwargs)
+            actual = 'not called.'
+            error_message = ('expected call not found.\nExpected: %s\n  Actual: %s'
+                    % (expected, actual))
+            raise AssertionError(error_message)
+
+        def _error_message():
+            msg = self._format_mock_failure_message(args, kwargs)
+            return msg
+        expected = self._call_matcher(_Call((args, kwargs), two=True))
+        actual = self._call_matcher(self.call_args)
+        if actual != expected:
+            cause = expected if isinstance(expected, Exception) else None
+>           raise AssertionError(_error_message()) from cause
+E           AssertionError: expected call not found.
+E           Expected: where('game_id', '==', 'test-game-id-for-player-tests')
+E             Actual: where(field='game_id', op_string='==', value='test-game-id-for-player-tests')
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:979: AssertionError
+____________________ test_get_players_by_game_id_not_found _____________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae4243ac0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352313872'>
+
+    @pytest.mark.asyncio
+    async def test_get_players_by_game_id_not_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
+        mock_query = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query
+
+        async def stream_no_results(*args, **kwargs):
+            if False: yield # Empty async generator
+        mock_query.stream = MagicMock(return_value=stream_no_results()) # After .limit()
+
+        players_list = await crud_player_instance.get_players_by_game_id(
+            db=mock_firestore_db, game_id="non-existent-game-id", limit=5
+        )
+>       mock_collection_ref.where.assert_called_once_with("game_id", "==", "non-existent-game-id")
+
+tests/crud/test_crud_player.py:402:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:991: in assert_called_once_with
+    return self.assert_called_with(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <MagicMock name='mock.where' id='140028352306480'>
+args = ('game_id', '==', 'non-existent-game-id'), kwargs = {}
+expected = call('game_id', '==', 'non-existent-game-id')
+actual = call(field='game_id', op_string='==', value='non-existent-game-id')
+_error_message = <function NonCallableMock.assert_called_with.<locals>._error_message at 0x7f5ae435aa20>
+cause = None
+
+    def assert_called_with(self, /, *args, **kwargs):
+        """assert that the last call was made with the specified arguments.
+
+        Raises an AssertionError if the args and keyword args passed in are
+        different to the last call to the mock."""
+        if self.call_args is None:
+            expected = self._format_mock_call_signature(args, kwargs)
+            actual = 'not called.'
+            error_message = ('expected call not found.\nExpected: %s\n  Actual: %s'
+                    % (expected, actual))
+            raise AssertionError(error_message)
+
+        def _error_message():
+            msg = self._format_mock_failure_message(args, kwargs)
+            return msg
+        expected = self._call_matcher(_Call((args, kwargs), two=True))
+        actual = self._call_matcher(self.call_args)
+        if actual != expected:
+            cause = expected if isinstance(expected, Exception) else None
+>           raise AssertionError(_error_message()) from cause
+E           AssertionError: expected call not found.
+E           Expected: where('game_id', '==', 'non-existent-game-id')
+E             Actual: where(field='game_id', op_string='==', value='non-existent-game-id')
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:979: AssertionError
+___________________ test_get_player_in_game_by_number_found ____________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae41ce550>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352304128'>
+mock_player_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028352472672'>
+
+    @pytest.mark.asyncio
+    async def test_get_player_in_game_by_number_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient,
+        mock_player_doc_snapshot: MagicMock
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
+        # Mocking the chain: collection.where().where().limit().stream()
+        mock_query_game_id = AsyncMock(spec=AsyncQuery) # After first .where()
+        mock_query_player_num = AsyncMock(spec=AsyncQuery) # After second .where()
+        mock_query_limit = AsyncMock(spec=AsyncQuery)      # After .limit()
+
+        mock_collection_ref.where.return_value = mock_query_game_id
+        mock_query_game_id.where.return_value = mock_query_player_num
+        mock_query_player_num.limit.return_value = mock_query_limit
+
+        async def stream_one_result(*args, **kwargs):
+            yield mock_player_doc_snapshot
+        mock_query_limit.stream = MagicMock(return_value=stream_one_result())
+
+        player_dict_or_model = await crud_player_instance.get_player_in_game_by_number(
+            db=mock_firestore_db, game_id=TEST_GAME_ID_FOR_PLAYER, player_number=PLAYER_NUMBER
+        )
+        assert player_dict_or_model is not None
+        player = player_dict_or_model # Changed: crud method returns a model instance
+
+        # Assert correct query construction
+        calls = mock_collection_ref.where.call_args_list
+>       assert calls[0][0] == ("game_id", "==", TEST_GAME_ID_FOR_PLAYER) # First where call
+E       AssertionError: assert () == ('game_id', '...player-tests')
+E
+E         Right contains 3 more items, first extra item: 'game_id'
+E         Use -v to get more diff
+
+tests/crud/test_crud_player.py:434: AssertionError
+_________________ test_get_player_in_game_by_number_not_found __________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae41ce150>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352475696'>
+
+    @pytest.mark.asyncio
+    async def test_get_player_in_game_by_number_not_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient
+    ):
+        mock_collection_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS)
+        mock_query_game_id = AsyncMock(spec=AsyncQuery)
+        mock_query_player_num = AsyncMock(spec=AsyncQuery)
+        mock_query_limit = AsyncMock(spec=AsyncQuery)
+
+        mock_collection_ref.where.return_value = mock_query_game_id
+        mock_query_game_id.where.return_value = mock_query_player_num
+        mock_query_player_num.limit.return_value = mock_query_limit
+
+        async def stream_no_results(*args, **kwargs):
+            if False: yield
+        mock_query_limit.stream = MagicMock(return_value=stream_no_results())
+
+        player = await crud_player_instance.get_player_in_game_by_number(
+            db=mock_firestore_db, game_id="some-game-id", player_number=99
+        )
+        assert player is None
+        calls = mock_collection_ref.where.call_args_list
+>       assert calls[0][0] == ("game_id", "==", "some-game-id")
+E       AssertionError: assert () == ('game_id', '...some-game-id')
+E
+E         Right contains 3 more items, first extra item: 'game_id'
+E         Use -v to get more diff
+
+tests/crud/test_crud_player.py:479: AssertionError
+____________________ test_clear_temp_password_hash_success _____________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae4398050>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028349164448'>
+mock_player_doc_snapshot_data = {'ai_strategy': None, 'created_at': '2023-01-02T10:00:00+00:00', 'current_capital': 0.0, 'email': 'player.test@example.com', ...}
+
+    @pytest.mark.asyncio
+    async def test_clear_temp_password_hash_success(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        mock_player_doc_snapshot_data: dict
+    ):
+        player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(PLAYER_UID)
+
+        # Data for snapshot *after* update (temp_password_hash is None)
+        # This is what CRUDBase.update will make its .get() call return
+        data_after_clear_dict = {
+            **mock_player_doc_snapshot_data, # has ISO strings
+            "temp_password_hash": None,
+            "updated_at": FIXED_DATETIME_LATER_PLAYER.isoformat() # as ISO string
+        }
+        mock_snapshot_after_clear = MagicMock(spec=DocumentSnapshot)
+        mock_snapshot_after_clear.exists = True
+        mock_snapshot_after_clear.to_dict.return_value = data_after_clear_dict
+        mock_snapshot_after_clear.id = PLAYER_UID
+        player_doc_ref.get = AsyncMock(return_value=mock_snapshot_after_clear)
+
+        # Patch datetime.now() in app.crud.crud_player (used by CRUDPlayer.update which is called by super().update)
+        # and in app.crud.base (if CRUDBase.update also set it, though it doesn't)
+        with patch("app.crud.crud_player.datetime") as mock_dt_player, \
+>            patch("app.crud.base.datetime") as mock_dt_base: # For CRUDBase if it used it
+
+tests/crud/test_crud_player.py:507:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1497: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x7f5ae41860b0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+
+        original = DEFAULT
+        local = False
+
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'app.crud.base' from '/app/backend/app/crud/base.py'> does not have the attribute 'datetime'
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:1467: AttributeError
+_____________ test_clear_temp_password_hash_failure_doc_not_found ______________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae42a3890>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028349162768'>
+
+    @pytest.mark.asyncio
+    async def test_clear_temp_password_hash_failure_doc_not_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient,
+    ):
+        # Patch the super().update() call within clear_temp_password_hash to simulate failure
+        with patch.object(CRUDBase, "update", new_callable=AsyncMock) as mock_base_update:
+            mock_base_update.return_value = None # Simulate document not found or update failure
+
+            # We still need to patch datetime.now used by clear_temp_password_hash itself for its own updated_at
+            with patch("app.crud.crud_player.datetime") as mock_dt_player:
+                 mock_dt_player.now.return_value = FIXED_DATETIME_LATER_PLAYER
+
+                 result_dict = await crud_player_instance.clear_temp_password_hash(
+                    db=mock_firestore_db, player_uid="non-existent-player-uid"
+                 )
+
+        assert result_dict is None
+        # Check that super().update was called correctly by clear_temp_password_hash
+        expected_payload_to_base = {
+            "temp_password_hash": None,
+            "updated_at": FIXED_DATETIME_LATER_PLAYER
+        }
+>       mock_base_update.assert_called_once_with(
+            db=mock_firestore_db, doc_id="non-existent-player-uid", obj_in=expected_payload_to_base
+        )
+
+tests/crud/test_crud_player.py:557:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:991: in assert_called_once_with
+    return self.assert_called_with(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <AsyncMock name='update' id='140028352305472'>, args = ()
+kwargs = {'db': <AsyncMock spec='AsyncClient' id='140028349162768'>, 'doc_id': 'non-existent-player-uid', 'obj_in': {'temp_password_hash': None, 'updated_at': datetime.datetime(2023, 1, 2, 11, 0, tzinfo=datetime.timezone.utc)}}
+expected = call(db=<AsyncMock spec='AsyncClient' id='140028349162768'>, doc_id='non-existent-player-uid', obj_in={'temp_password_hash': None, 'updated_at': datetime.datetime(2023, 1, 2, 11, 0, tzinfo=datetime.timezone.utc)})
+actual = call(<AsyncMock spec='AsyncClient' id='140028349162768'>, doc_id='non-existent-player-uid', obj_in={'temp_password_hash': None, 'updated_at': datetime.datetime(2023, 1, 2, 11, 0, tzinfo=datetime.timezone.utc)})
+_error_message = <function NonCallableMock.assert_called_with.<locals>._error_message at 0x7f5ae435b6a0>
+cause = None
+
+    def assert_called_with(self, /, *args, **kwargs):
+        """assert that the last call was made with the specified arguments.
+
+        Raises an AssertionError if the args and keyword args passed in are
+        different to the last call to the mock."""
+        if self.call_args is None:
+            expected = self._format_mock_call_signature(args, kwargs)
+            actual = 'not called.'
+            error_message = ('expected call not found.\nExpected: %s\n  Actual: %s'
+                    % (expected, actual))
+            raise AssertionError(error_message)
+
+        def _error_message():
+            msg = self._format_mock_failure_message(args, kwargs)
+            return msg
+        expected = self._call_matcher(_Call((args, kwargs), two=True))
+        actual = self._call_matcher(self.call_args)
+        if actual != expected:
+            cause = expected if isinstance(expected, Exception) else None
+>           raise AssertionError(_error_message()) from cause
+E           AssertionError: expected call not found.
+E           Expected: update(db=<AsyncMock spec='AsyncClient' id='140028349162768'>, doc_id='non-existent-player-uid', obj_in={'temp_password_hash': None, 'updated_at': datetime.datetime(2023, 1, 2, 11, 0, tzinfo=datetime.timezone.utc)})
+E             Actual: update(<AsyncMock spec='AsyncClient' id='140028349162768'>, doc_id='non-existent-player-uid', obj_in={'temp_password_hash': None, 'updated_at': datetime.datetime(2023, 1, 2, 11, 0, tzinfo=datetime.timezone.utc)})
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/unittest/mock.py:979: AssertionError
+_________________________ test_get_player_by_id_found __________________________
+
+crud_player_instance = <app.crud.crud_player.CRUDPlayer object at 0x7f5ae41a0ad0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352299088'>
+mock_player_doc_snapshot = <MagicMock spec='DocumentSnapshot' id='140028352310848'>
+
+    @pytest.mark.asyncio
+    async def test_get_player_by_id_found(
+        crud_player_instance: CRUDPlayer,
+        mock_firestore_db: AsyncFirestoreClient, # From conftest.py
+        mock_player_doc_snapshot: MagicMock # Specific player snapshot
+    ):
+        player_doc_ref = mock_firestore_db.collection(settings.FIRESTORE_COLLECTION_USERS).document(PLAYER_UID)
+        player_doc_ref.get = AsyncMock(return_value=mock_player_doc_snapshot) # Ensure this specific doc ID returns our snapshot
+
+        player_dict_or_model = await crud_player_instance.get(db=mock_firestore_db, doc_id=PLAYER_UID)
+        assert player_dict_or_model is not None
+        player = player_dict_or_model # Changed: crud.get returns a model instance
+
+        # Comprehensive assertions
+        assert player.uid == PLAYER_UID
+>       assert player.id == PLAYER_UID
+
+tests/crud/test_crud_player.py:577:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PlayerInDB(email='player.test@example.com', user_type='player', is_active=True, username='TestPlayerAlpha', game_id='t...me.datetime(2023, 1, 2, 10, 0, tzinfo=TzInfo(UTC)), temp_password_hash='initial_hashed_temp_pass', current_capital=0.0)
+item = 'id'
+
+    def __getattr__(self, item: str) -> Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+
+            if pydantic_extra:
+                try:
+                    return pydantic_extra[item]
+                except KeyError as exc:
+                    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+>                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'PlayerInDB' object has no attribute 'id'. Did you mean: 'uid'?
+
+.venv/lib/python3.13/site-packages/pydantic/main.py:991: AttributeError
+_______________________ test_create_player_round_result ________________________
+
+crud_result_instance = <app.crud.crud_result.CRUDResult object at 0x7f5ae45c34d0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352309840'>
+result_create_obj_round1_player1 = ResultCreate(game_id='test-game-r1', player_id='player-r1', round_number=1, profit_or_loss=2500.0, closing_capital=0.0...=1.1, environmental_score=85.5, total_yield=1000.0, total_revenue=5000.0, total_expenses_sum=2500.0, parcel_results=[])
+mock_result_doc_ref = <MagicMock spec='DocumentReference' id='140028354047888'>
+
+    @pytest.mark.asyncio
+    async def test_create_player_round_result(
+        crud_result_instance: CRUDResult,
+        mock_firestore_db: MagicMock,
+        result_create_obj_round1_player1: ResultCreate, # Use specific fixture
+        mock_result_doc_ref: MagicMock
+    ):
+        with patch.object(CRUDResult, "_get_result_doc_ref", return_value=mock_result_doc_ref) as mock_get_ref, \
+             patch("app.crud.crud_result.datetime") as mock_datetime:
+            mock_datetime.now.return_value = FIXED_DATETIME_RESULT
+            mock_datetime.UTC = timezone.utc # Ensure datetime.UTC is available if used by SUT
+
+            created_result = await crud_result_instance.create_player_round_result(
+                db=mock_firestore_db, obj_in=result_create_obj_round1_player1
+            )
+
+        mock_get_ref.assert_called_once_with(
+            mock_firestore_db,
+            result_create_obj_round1_player1.game_id,
+            result_create_obj_round1_player1.player_id,
+            result_create_obj_round1_player1.round_number
+        )
+        mock_result_doc_ref.set.assert_called_once()
+        call_args, _ = mock_result_doc_ref.set.call_args
+        set_data = call_args[0]
+
+        assert set_data["game_id"] == result_create_obj_round1_player1.game_id
+        assert set_data["player_id"] == result_create_obj_round1_player1.player_id
+        assert set_data["profit_or_loss"] == result_create_obj_round1_player1.profit_or_loss # Changed
+        assert isinstance(set_data["income_details"], dict)
+>       assert set_data["income_details"]["crop_sales"] == result_create_obj_round1_player1.income_details.crop_sales
+E       KeyError: 'crop_sales'
+
+tests/crud/test_crud_result.py:160: KeyError
+______________________ test_get_player_round_result_found ______________________
+
+crud_result_instance = <app.crud.crud_result.CRUDResult object at 0x7f5ae42f11d0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028354051248'>
+mock_result_doc_ref = <MagicMock spec='DocumentReference' id='140028349688400'>
+result_create_obj_round1_player1 = ResultCreate(game_id='test-game-r1', player_id='player-r1', round_number=1, profit_or_loss=2500.0, closing_capital=0.0...=1.1, environmental_score=85.5, total_yield=1000.0, total_revenue=5000.0, total_expenses_sum=2500.0, parcel_results=[])
+
+    @pytest.mark.asyncio
+    async def test_get_player_round_result_found(
+        crud_result_instance: CRUDResult,
+        mock_firestore_db: MagicMock,
+        mock_result_doc_ref: MagicMock,
+        result_create_obj_round1_player1: ResultCreate
+    ):
+        mock_snapshot = create_mock_snapshot(result_create_obj_round1_player1, mock_result_doc_ref.id, FIXED_DATETIME_RESULT)
+        # Pydantic model expects datetime obj for calculated_at, but Firestore to_dict might return ISO string
+        # The create_mock_snapshot helper already sets calculated_at as datetime object in the dict it returns
+        # so that CRUDBase can parse it directly.
+        # If Firestore to_dict() returns ISO string, CRUDBase needs to handle parsing.
+        # For this test, create_mock_snapshot returns datetime object for calculated_at.
+        mock_result_doc_ref.get = AsyncMock(return_value=mock_snapshot)
+
+
+        with patch.object(CRUDResult, "_get_result_doc_ref", return_value=mock_result_doc_ref) as mock_get_ref:
+            result = await crud_result_instance.get_player_round_result(
+                db=mock_firestore_db, game_id=TEST_GAME_ID, player_id=TEST_PLAYER_ID, round_number=TEST_ROUND_NUMBER
+            )
+
+        mock_get_ref.assert_called_once_with(mock_firestore_db, TEST_GAME_ID, TEST_PLAYER_ID, TEST_ROUND_NUMBER)
+        assert isinstance(result, ResultInDB)
+
+        # Comprehensive assertions for all fields
+        assert result.id == mock_result_doc_ref.id
+        assert result.game_id == result_create_obj_round1_player1.game_id
+        assert result.player_id == result_create_obj_round1_player1.player_id
+        assert result.round_number == result_create_obj_round1_player1.round_number
+        assert result.calculated_at == FIXED_DATETIME_RESULT
+
+        # Data integrity fields
+        assert result.market_demand_multiplier == result_create_obj_round1_player1.market_demand_multiplier
+        assert result.environmental_score == result_create_obj_round1_player1.environmental_score
+        assert result.total_yield == result_create_obj_round1_player1.total_yield
+        assert result.total_revenue == result_create_obj_round1_player1.total_revenue
+        assert result.total_expenses_sum == result_create_obj_round1_player1.total_expenses_sum
+        assert result.profit_or_loss == result_create_obj_round1_player1.profit_or_loss
+
+        # Nested models - assuming create_mock_snapshot sets these up as dicts
+        # and ResultInDB parses them into Pydantic models.
+        assert isinstance(result.income_details, TotalIncome)
+>       assert result.income_details.crop_sales == result_create_obj_round1_player1.income_details.crop_sales
+
+tests/crud/test_crud_result.py:233:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = TotalIncome(harvest_income=HarvestIncome(field_bean=0.0, barley=0.0, oat=0.0, potato=0.0, corn=0.0, rye=0.0, wheat=0.0, sugar_beet=0.0, animal_products=0.0, total=0.0), grand_total=0.0)
+item = 'crop_sales'
+
+    def __getattr__(self, item: str) -> Any:
+        private_attributes = object.__getattribute__(self, '__private_attributes__')
+        if item in private_attributes:
+            attribute = private_attributes[item]
+            if hasattr(attribute, '__get__'):
+                return attribute.__get__(self, type(self))  # type: ignore
+
+            try:
+                # Note: self.__pydantic_private__ cannot be None if self.__private_attributes__ has items
+                return self.__pydantic_private__[item]  # type: ignore
+            except KeyError as exc:
+                raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+        else:
+            # `__pydantic_extra__` can fail to be set if the model is not yet fully initialized.
+            # See `BaseModel.__repr_args__` for more details
+            try:
+                pydantic_extra = object.__getattribute__(self, '__pydantic_extra__')
+            except AttributeError:
+                pydantic_extra = None
+
+            if pydantic_extra:
+                try:
+                    return pydantic_extra[item]
+                except KeyError as exc:
+                    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}') from exc
+            else:
+                if hasattr(self.__class__, item):
+                    return super().__getattribute__(item)  # Raises AttributeError if appropriate
+                else:
+                    # this is the current error
+>                   raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E                   AttributeError: 'TotalIncome' object has no attribute 'crop_sales'
+
+.venv/lib/python3.13/site-packages/pydantic/main.py:991: AttributeError
+_______________________ test_get_all_results_for_player ________________________
+
+crud_result_instance = <app.crud.crud_result.CRUDResult object at 0x7f5ae45d7820>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028347856752'>
+result_create_obj_round1_player1 = ResultCreate(game_id='test-game-r1', player_id='player-r1', round_number=1, profit_or_loss=2500.0, closing_capital=0.0...=1.1, environmental_score=85.5, total_yield=1000.0, total_revenue=5000.0, total_expenses_sum=2500.0, parcel_results=[])
+result_create_obj_round2_player1 = ResultCreate(game_id='test-game-r1', player_id='player-r1', round_number=2, profit_or_loss=1800.0, closing_capital=0.0...r=1.0, environmental_score=80.0, total_yield=900.0, total_revenue=4000.0, total_expenses_sum=2200.0, parcel_results=[])
+
+    @pytest.mark.asyncio
+    async def test_get_all_results_for_player(
+        crud_result_instance: CRUDResult,
+        mock_firestore_db: MagicMock,
+        result_create_obj_round1_player1: ResultCreate,
+        result_create_obj_round2_player1: ResultCreate
+    ):
+        # Arrange
+        mock_collection_ref = mock_firestore_db.collection(RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=TEST_GAME_ID))
+        mock_query = AsyncMock(spec=AsyncQuery) # Object returned by where().order_by().limit()
+        mock_collection_ref.where.return_value = mock_query
+        mock_query.order_by.return_value = mock_query # Chain order_by
+        mock_query.limit.return_value = mock_query    # Chain limit
+
+        doc_id1 = f"{TEST_PLAYER_ID}_round_{TEST_ROUND_NUMBER}_result"
+        doc_id2 = f"{TEST_PLAYER_ID}_round_{TEST_ROUND_NUMBER_2}_result"
+
+        mock_snapshot1 = create_mock_snapshot(result_create_obj_round1_player1, doc_id1, FIXED_DATETIME_RESULT)
+        # For second result, use a slightly different time if it matters, or same if not.
+>       mock_snapshot2 = create_mock_snapshot(result_create_obj_round2_player1, doc_id2, FIXED_DATETIME_RESULT + datetime.timedelta(minutes=1))
+
+tests/crud/test_crud_result.py:278:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+datetime = <module 'datetime' from '/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/datetime.py'>
+
+    @classmethod
+    def timedelta(cls, days=0, seconds=0, microseconds=0,
+                  milliseconds=0, minutes=0, hours=0, weeks=0):
+        """Represent the difference between two datetime objects.
+
+        Supported units are weeks, days, hours, minutes, seconds,
+        milliseconds, and microseconds.
+        """
+        d = days + weeks*7
+        s = seconds + minutes*60 + hours*3600
+        us = microseconds + milliseconds*1000
+
+        # Get rid of all fractions of a day.
+        if isinstance(s, float):
+            dayfrac, s = _math.modf(s)
+            us += dayfrac * (24.*3600.*1e6)
+            s = int(s)
+
+        # Get rid of all fractions of a second.
+        if isinstance(us, float):
+            secfrac, us = _math.modf(us)
+            s += int(secfrac)
+            us = int(round(us)) # Round to nearest microsecond.
+
+        # Normalize everything to days, seconds, and microseconds.
+        # Get rid of fractions of a microsecond.
+        if abs(us) > _MAX_MICROSECOND:
+            s += us // _MAX_MICROSECOND
+            us %= _MAX_MICROSECOND
+
+        if abs(s) > _SECONDS_PER_DAY:
+            d += s // _SECONDS_PER_DAY
+            s %= _SECONDS_PER_DAY
+
+        if isinstance(d, float):
+>           raise TypeError("float days is not supported")
+E           TypeError: float days is not supported
+
+/home/swebot/.local/share/uv/python/cpython-3.13.3-linux-x86_64-gnu/lib/python3.13/datetime.py:1567: TypeError
+____________________ test_get_all_results_for_player_empty _____________________
+
+crud_result_instance = <app.crud.crud_result.CRUDResult object at 0x7f5ae414d130>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028352309504'>
+
+    @pytest.mark.asyncio
+    async def test_get_all_results_for_player_empty(
+        crud_result_instance: CRUDResult,
+        mock_firestore_db: MagicMock
+    ):
+        mock_collection_ref = mock_firestore_db.collection(RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=TEST_GAME_ID))
+        mock_query = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query
+        mock_query.order_by.return_value = mock_query
+        mock_query.limit.return_value = mock_query
+
+        async def stream_no_results_gen(*args, **kwargs):
+            if False: yield
+        mock_query.stream = MagicMock(return_value=stream_no_results_gen())
+
+>       results = await crud_result_instance.get_all_results_for_player(
+            db=mock_firestore_db, game_id=TEST_GAME_ID, player_id="unknown_player", limit=10
+        )
+
+tests/crud/test_crud_result.py:341:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.crud.crud_result.CRUDResult object at 0x7f5ae414d130>
+db = <AsyncMock spec='AsyncClient' id='140028352309504'>
+
+    async def get_all_results_for_player(
+        self, db: Union[AsyncFirestoreClient, BaseClient], *, game_id: str, player_id: str, limit: int = 50 # Max rounds
+    ) -> List[ResultInDB]:
+        """
+        Get all results for a specific player in a game, ordered by round_number.
+        Requires a composite index on (player_id, round_number) if 'player_results' is top-level.
+        If using subcollections based on game_id, then index on round_number within that.
+        """
+        collection_path = RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=game_id)
+        # This query strategy depends on how documents are identified and stored.
+        # If doc IDs are like "playerID_round_X_result", a prefix query might be complex.
+        # Easier if player_id is a field:
+        query: AsyncବQuery = (
+            db.collection(collection_path)
+            .where(field="player_id", op_string="==", value=player_id)
+            .order_by("round_number") # Ascending by default
+            .limit(limit)
+        )
+>       snapshots = await query.stream() # type: ignore
+E       TypeError: object async_generator can't be used in 'await' expression
+
+app/crud/crud_result.py:97: TypeError
+_____________________ test_get_all_results_for_game_round ______________________
+
+crud_result_instance = <app.crud.crud_result.CRUDResult object at 0x7f5ae4241d00>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028349163440'>
+result_create_obj_round1_player1 = ResultCreate(game_id='test-game-r1', player_id='player-r1', round_number=1, profit_or_loss=2500.0, closing_capital=0.0...=1.1, environmental_score=85.5, total_yield=1000.0, total_revenue=5000.0, total_expenses_sum=2500.0, parcel_results=[])
+result_create_obj_round1_player2 = ResultCreate(game_id='test-game-r1', player_id='player-r2', round_number=1, profit_or_loss=2900.0, closing_capital=0.0...=1.2, environmental_score=90.0, total_yield=1100.0, total_revenue=5500.0, total_expenses_sum=2600.0, parcel_results=[])
+
+    @pytest.mark.asyncio
+    async def test_get_all_results_for_game_round(
+        crud_result_instance: CRUDResult,
+        mock_firestore_db: MagicMock,
+        result_create_obj_round1_player1: ResultCreate,
+        result_create_obj_round1_player2: ResultCreate # Result from another player for the same round
+    ):
+        mock_collection_ref = mock_firestore_db.collection(RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=TEST_GAME_ID))
+        mock_query = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query # query.where()
+
+        doc_id1 = f"{TEST_PLAYER_ID}_round_{TEST_ROUND_NUMBER}_result"
+        doc_id2 = f"{TEST_PLAYER_ID_2}_round_{TEST_ROUND_NUMBER}_result"
+
+        mock_snapshot1 = create_mock_snapshot(result_create_obj_round1_player1, doc_id1, FIXED_DATETIME_RESULT)
+        mock_snapshot2 = create_mock_snapshot(result_create_obj_round1_player2, doc_id2, FIXED_DATETIME_RESULT)
+
+
+        async def stream_results_gen(*args, **kwargs):
+            yield mock_snapshot1
+            yield mock_snapshot2
+        mock_query.stream = MagicMock(return_value=stream_results_gen())
+
+>       results = await crud_result_instance.get_all_results_for_game_round(
+            db=mock_firestore_db, game_id=TEST_GAME_ID, round_number=TEST_ROUND_NUMBER
+        )
+
+tests/crud/test_crud_result.py:369:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.crud.crud_result.CRUDResult object at 0x7f5ae4241d00>
+db = <AsyncMock spec='AsyncClient' id='140028349163440'>
+
+    async def get_all_results_for_game_round(
+        self, db: Union[AsyncFirestoreClient, BaseClient], *, game_id: str, round_number: int
+    ) -> List[ResultInDB]:
+        """
+        Get results for all players for a specific game round.
+        Useful for displaying a summary/comparison at the end of a round.
+        """
+        collection_path = RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=game_id)
+        query: AsyncବQuery = db.collection(collection_path).where(field="round_number", op_string="==", value=round_number)
+>       snapshots = await query.stream() # type: ignore
+E       TypeError: object async_generator can't be used in 'await' expression
+
+app/crud/crud_result.py:116: TypeError
+__________________ test_get_all_results_for_game_round_empty ___________________
+
+crud_result_instance = <app.crud.crud_result.CRUDResult object at 0x7f5ae4348d10>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028353693072'>
+
+    @pytest.mark.asyncio
+    async def test_get_all_results_for_game_round_empty(
+        crud_result_instance: CRUDResult,
+        mock_firestore_db: MagicMock
+    ):
+        mock_collection_ref = mock_firestore_db.collection(RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=TEST_GAME_ID))
+        mock_query = AsyncMock(spec=AsyncQuery)
+        mock_collection_ref.where.return_value = mock_query
+
+        async def stream_no_results_gen(*args, **kwargs):
+            if False: yield
+        mock_query.stream = MagicMock(return_value=stream_no_results_gen())
+
+>       results = await crud_result_instance.get_all_results_for_game_round(
+            db=mock_firestore_db, game_id=TEST_GAME_ID, round_number=3 # Assuming round 3 has no results
+        )
+
+tests/crud/test_crud_result.py:409:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.crud.crud_result.CRUDResult object at 0x7f5ae4348d10>
+db = <AsyncMock spec='AsyncClient' id='140028353693072'>
+
+    async def get_all_results_for_game_round(
+        self, db: Union[AsyncFirestoreClient, BaseClient], *, game_id: str, round_number: int
+    ) -> List[ResultInDB]:
+        """
+        Get results for all players for a specific game round.
+        Useful for displaying a summary/comparison at the end of a round.
+        """
+        collection_path = RESULT_COLLECTION_NAME_TEMPLATE.format(game_id=game_id)
+        query: AsyncବQuery = db.collection(collection_path).where(field="round_number", op_string="==", value=round_number)
+>       snapshots = await query.stream() # type: ignore
+E       TypeError: object async_generator can't be used in 'await' expression
+
+app/crud/crud_result.py:116: TypeError
+___________________________ test_create_player_round ___________________________
+
+crud_round_instance = <app.crud.crud_round.CRUDRound object at 0x7f5ae42f0cd0>
+mock_firestore_db = <AsyncMock spec='AsyncClient' id='140028353705504'>
+round_create_obj = RoundCreate(game_id='test-game-round-crud', player_id='player-round-crud', round_number=1, status='pending', decisions...control=False, attempt_organic_certification=False, machine_investment_level=0), is_submitted=False, submitted_at=None)
+initial_parcels_data = [{'crop_sequence_effect': <CropSequenceEffect.NONE: 'keine'>, 'current_plantation': 'Brachland', 'last_harvest_outcome...on': 'Brachland', 'last_harvest_outcome_category': <HarvestOutcome.NONE: 'keiner'>, 'last_harvest_yield_dt': 0.0, ...}]
+mock_round_doc_ref = <MagicMock spec='DocumentReference' id='140028348687296'>
+mock_field_state_doc_ref = <MagicMock spec='DocumentReference' id='140028353692064'>
+
+    @pytest.mark.asyncio
+    async def test_create_player_round(
+        crud_round_instance: CRUDRound,
+        mock_firestore_db: MagicMock, # From conftest.py
+        round_create_obj: RoundCreate,
+        initial_parcels_data: list[dict],
+        mock_round_doc_ref: MagicMock,
+        mock_field_state_doc_ref: MagicMock
+    ):
+        # Arrange
+        # Patch the helper methods that construct doc refs
+        with patch.object(CRUDRound, "_get_round_doc_ref", return_value=mock_round_doc_ref) as mock_get_round_ref, \
+             patch.object(CRUDRound, "_get_field_state_doc_ref", return_value=mock_field_state_doc_ref) as mock_get_field_ref, \
+             patch("app.crud.crud_round.datetime") as mock_datetime: # Patch datetime used in crud_round.py
+
+            mock_datetime.now.return_value = FIXED_DATETIME_ROUND
+            mock_datetime.UTC = timezone.utc # Make sure timezone.utc is available if SUT uses datetime.UTC
+
+            # Act
+            created_round = await crud_round_instance.create_player_round(
+                db=mock_firestore_db, obj_in=round_create_obj, initial_parcels=initial_parcels_data
+            )
+
+        # Assert
+        mock_get_round_ref.assert_called_once_with(
+            mock_firestore_db, TEST_GAME_ID_R, TEST_PLAYER_ID_R, TEST_ROUND_NUMBER_R
+        )
+        mock_get_field_ref.assert_called_once_with(
+            mock_firestore_db, TEST_GAME_ID_R, TEST_PLAYER_ID_R, TEST_ROUND_NUMBER_R
+        )
+
+        # Check round document creation
+        mock_round_doc_ref.set.assert_called_once()
+        round_set_args, _ = mock_round_doc_ref.set.call_args
+        round_set_data = round_set_args[0]
+
+        assert round_set_data["game_id"] == round_create_obj.game_id
+        assert round_set_data["player_id"] == round_create_obj.player_id
+        assert round_set_data["round_number"] == round_create_obj.round_number
+        assert round_set_data["is_submitted"] == round_create_obj.is_submitted
+>       assert round_set_data["status"] == round_create_obj.status.value
+E       AttributeError: 'str' object has no attribute 'value'
+
+tests/crud/test_crud_round.py:107: AttributeError
+=========================== short test summary info ============================
+FAILED tests/crud/test_crud_admin.py::test_create_admin_with_uid - AssertionE...
+FAILED tests/crud/test_crud_admin.py::test_get_admin_by_email_found - Attribu...
+FAILED tests/crud/test_crud_admin.py::test_update_admin - AttributeError: 'st...
+FAILED tests/crud/test_crud_admin.py::test_update_admin_ignores_password - Ke...
+FAILED tests/crud/test_crud_admin.py::test_update_admin_non_existent - Assert...
+FAILED tests/crud/test_crud_admin.py::test_get_admin_by_id_found - AttributeE...
+FAILED tests/crud/test_crud_player.py::test_create_player_with_uid - KeyError...
+FAILED tests/crud/test_crud_player.py::test_get_player_by_email_found - Attri...
+FAILED tests/crud/test_crud_player.py::test_update_player - AttributeError: <...
+FAILED tests/crud/test_crud_player.py::test_get_players_by_game_id_found - As...
+FAILED tests/crud/test_crud_player.py::test_get_players_by_game_id_not_found
+FAILED tests/crud/test_crud_player.py::test_get_player_in_game_by_number_found
+FAILED tests/crud/test_crud_player.py::test_get_player_in_game_by_number_not_found
+FAILED tests/crud/test_crud_player.py::test_clear_temp_password_hash_success
+FAILED tests/crud/test_crud_player.py::test_clear_temp_password_hash_failure_doc_not_found
+FAILED tests/crud/test_crud_player.py::test_get_player_by_id_found - Attribut...
+FAILED tests/crud/test_crud_result.py::test_create_player_round_result - KeyE...
+FAILED tests/crud/test_crud_result.py::test_get_player_round_result_found - A...
+FAILED tests/crud/test_crud_result.py::test_get_all_results_for_player - Type...
+FAILED tests/crud/test_crud_result.py::test_get_all_results_for_player_empty
+FAILED tests/crud/test_crud_result.py::test_get_all_results_for_game_round - ...
+FAILED tests/crud/test_crud_result.py::test_get_all_results_for_game_round_empty
+FAILED tests/crud/test_crud_round.py::test_create_player_round - AttributeErr...
+======================== 23 failed, 21 passed in 1.73s =========================
+ /app/backend/.venv/lib/python3.13/site-packages/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))

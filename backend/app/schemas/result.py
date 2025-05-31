@@ -1,5 +1,5 @@
 # File: backend/app/schemas/result.py
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, List # Added List
 from uuid import UUID, uuid4
 from datetime import datetime, timezone
 
@@ -32,6 +32,13 @@ class ResultBase(BaseModel):
         default_factory=dict,
         description="Key-value pairs of outcomes and their explanations"
     )
+    market_demand_multiplier: Optional[float] = Field(None, description="Market demand multiplier")
+    environmental_score: Optional[float] = Field(None, description="Environmental score")
+    total_yield: Optional[float] = Field(None, description="Total yield")
+    total_revenue: Optional[float] = Field(None, description="Total revenue")
+    total_expenses_sum: Optional[float] = Field(None, description="Sum of total expenses")
+    parcel_results: Optional[List[Any]] = Field(default_factory=list, description="Results from individual parcels")
+
     model_config = ConfigDict(
         populate_by_name=True,
         alias_generator=to_camel,
