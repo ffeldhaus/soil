@@ -392,46 +392,75 @@ def test_generate_decisions_organic_conflict_resolution(
     # Test RANDOM_EXPLORER strategy for conflict potential
     # It can randomly set fertilize=T, pesticide=T, attempt_organic_certification=T
     # The conflict resolution should then force fertilize and pesticide to False.
+    # And then test line 125:
+    # if strategy != AIStrategyType.ECO_CONSCIOUS and not round_decisions.biological_control:
+    #    round_decisions.biological_control = True if random.random() < 0.5 else False
 
-    def random_choice_side_effect_for_conflict(options_list):
-        # For boolean choices related to decisions
-        if options_list == [True, False]: # fertilize, attempt_organic_certification
-            return True 
-        elif options_list == [True, False, False, False]: # pesticide
-            return True 
-        elif options_list == [True, True, False] : # biological_control (when pesticide is True)
-             return False 
-        # For machine_investment_level
-        elif all(isinstance(x, int) for x in options_list) and 0 in options_list and 30 in options_list:
-            return 10
-        # For _choose_plantation_for_parcel's internal random.choice if not mocked separately
-        elif all(isinstance(x, PlantationType) for x in options_list):
-            return PlantationType.WHEAT # Dummy choice for plantation
-        return random.choice(options_list) # Fallback for any other calls
+    # Test RANDOM_EXPLORER strategy for conflict potential
+    # It can randomly set fertilize=T, pesticide=T, attempt_organic_certification=T
+    # The conflict resolution should then force fertilize and pesticide to False.
+    # And then test line 125:
+    # if strategy != AIStrategyType.ECO_CONSCIOUS and not round_decisions.biological_control:
+    #    round_decisions.biological_control = True if random.random() < 0.5 else False
 
-    with patch("app.game_logic.ai_player.random.choice", side_effect=random_choice_side_effect_for_conflict) as mock_rand_choice, \
-         patch("app.game_logic.ai_player._choose_plantation_for_parcel") as mock_choose_plantation:
+    # --- Test Case 1: line 125 sets biological_control to True ---
+    # RANDOM_EXPLORER initial choices sequence:
+    # 1. fertilize: True
+    # 2. pesticide: True (this implies initial biological_control = False)
+    # 3. attempt_organic_certification: True
+    # 4. machine_investment_level: 10 (example)
+    mock_choices_case1 = [True, True, True, 10]
+
+    with patch("app.game_logic.ai_player.random.choice", side_effect=mock_choices_case1) as mock_rand_choice_c1, \
+         patch("app.game_logic.ai_player.random.random") as mock_rand_random_c1, \
+         patch("app.game_logic.ai_player._choose_plantation_for_parcel") as mock_choose_plantation_c1:
         
-        # _choose_plantation_for_parcel is called for each parcel.
-        # Its return value doesn't affect the general decisions part being tested here.
-        mock_choose_plantation.return_value = PlantationType.OAT
+        mock_rand_random_c1.return_value = 0.4 # For line 125: random.random() < 0.5 is True
+        mock_choose_plantation_c1.return_value = PlantationType.OAT # Dummy
 
         round_decisions, _ = generate_ai_player_decisions(
-            player_id="ai_conflict_test",
+            player_id="ai_conflict_test_1",
             current_field_state=two_mock_parcels,
-            strategy=AIStrategyType.RANDOM_EXPLORER,
+            strategy=AIStrategyType.RANDOM_EXPLORER, # Not ECO_CONSCIOUS
             current_round_number=3,
-            previous_result=previous_result_example # Removed available_crops
+            previous_result=previous_result_example
         )
             
-    # Assert conflict resolution: if attempt_organic_certification was True,
-    # then fertilize and pesticide should have been forced to False.
-    # The side_effect for random.choice was set to make them all True initially.
-    assert round_decisions.attempt_organic_certification is True
-    assert round_decisions.fertilize is False # Should be corrected by SUT
-    assert round_decisions.pesticide is False # Should be corrected by SUT
-    # biological_control depends on pesticide. If pesticide became False,
-    # then biological_control decision might be re-evaluated based on random.choice
-    # (if not pesticide: biological_control = random.choice([True, True, False]))
-    # This part is complex to assert without knowing the exact order of operations and re-evaluation
-    # For now, focus on the core conflict: organic=T -> fert=F, pest=F
+        assert round_decisions.attempt_organic_certification is True
+        assert round_decisions.fertilize is False # Corrected by conflict resolution
+        assert round_decisions.pesticide is False # Corrected by conflict resolution
+        assert round_decisions.biological_control is True # Set by line 125
+
+        # Verify random.choice calls for initial decisions
+        # Call 1: fertilize (options [True, False])
+        # Call 2: pesticide (options [True, False, False, False])
+        # Call 3: attempt_organic_certification (options [True, False])
+        # Call 4: machine_investment_level (options range(0, 31, 5))
+        assert mock_rand_choice_c1.call_count == 4 # Ensure it's called for all expected decisions
+        # Example check for one of the calls (optional, if specific options lists are important)
+        # assert mock_rand_choice_c1.call_args_list[1][0][0] == [True, False, False, False] # pesticide options
+
+
+    # --- Test Case 2: line 125 sets biological_control to False ---
+    # Same initial choices by RANDOM_EXPLORER
+    mock_choices_case2 = [True, True, True, 10]
+    with patch("app.game_logic.ai_player.random.choice", side_effect=mock_choices_case2) as mock_rand_choice_c2, \
+         patch("app.game_logic.ai_player.random.random") as mock_rand_random_c2, \
+         patch("app.game_logic.ai_player._choose_plantation_for_parcel") as mock_choose_plantation_c2:
+
+        mock_rand_random_c2.return_value = 0.6 # For line 125: random.random() < 0.5 is False
+        mock_choose_plantation_c2.return_value = PlantationType.OAT # Dummy
+
+        round_decisions_2, _ = generate_ai_player_decisions(
+            player_id="ai_conflict_test_2",
+            current_field_state=two_mock_parcels,
+            strategy=AIStrategyType.RANDOM_EXPLORER, # Not ECO_CONSCIOUS
+            current_round_number=3,
+            previous_result=previous_result_example
+        )
+
+        assert round_decisions_2.attempt_organic_certification is True
+        assert round_decisions_2.fertilize is False # Corrected
+        assert round_decisions_2.pesticide is False # Corrected
+        assert round_decisions_2.biological_control is False # Set by line 125 (random.random() >= 0.5)
+        assert mock_rand_choice_c2.call_count == 4
