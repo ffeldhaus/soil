@@ -59,7 +59,7 @@ def create_access_token(
     return encoded_jwt
 
 
-def decode_access_token(token: str) -> Optional[TokenData]:
+def decode_access_token(token: str, jwt_options: Optional[dict] = None) -> Optional[TokenData]:
     """
     Decodes a JWT access token and returns its payload.
 
@@ -71,7 +71,7 @@ def decode_access_token(token: str) -> Optional[TokenData]:
         Raises JWTError for various token validation issues.
     """
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], options=jwt_options)
         
         # Extract standard claims
         token_sub: Optional[str] = payload.get("sub")
