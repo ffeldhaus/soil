@@ -10,7 +10,7 @@
       >
         <mat-icon>chevron_left</mat-icon>
       </button>
-      <h2>Your Field - Round {{ fieldState()?.round_number }}</h2>
+      <h2>Your Field - Round {{ fieldState()?.roundNumber }}</h2>
       <button
         mat-icon-button
         (click)="navigateToNextRound()"
@@ -42,53 +42,53 @@
     <div
       *ngFor="let parcel of parcels()"
       class="parcel-cell"
-      [class.selected]="isSelected(parcel.parcel_number)"
-      [attr.data-parcel-number]="parcel.parcel_number"
+      [class.selected]="isSelected(parcel.parcelNumber)"
+      [attr.data-parcel-number]="parcel.parcelNumber"
       [style.background-image]="
-        'url(' + getParcelImagePath(parcel.current_plantation) + ')'
+        'url(' + getParcelImagePath(parcel.currentPlantation) + ')'
       "
-      [ngClass]="getParcelPlantationClass(parcel.current_plantation)"
+      [ngClass]="getParcelPlantationClass(parcel.currentPlantation)"
       [matTooltip]="
-        parcel.current_plantation +
+        parcel.currentPlantation +
         ' (Parcel ' +
-        parcel.parcel_number +
+        parcel.parcelNumber +
         ')' +
-        (!isCurrentRound() ? ' - Round ' + fieldState()?.round_number : '')
+        (!isCurrentRound() ? ' - Round ' + fieldState()?.roundNumber : '')
       "
       tabindex="0"
       [attr.role]="isCurrentRound() ? 'button' : 'img'"
       [attr.aria-label]="
         'Parcel ' +
-        parcel.parcel_number +
+        parcel.parcelNumber +
         ', currently ' +
-        parcel.current_plantation +
-        (!isCurrentRound() ? ' in round ' + fieldState()?.round_number : '')
+        parcel.currentPlantation +
+        (!isCurrentRound() ? ' in round ' + fieldState()?.roundNumber : '')
       "
-      [attr.aria-pressed]="isSelected(parcel.parcel_number)"
+      [attr.aria-pressed]="isSelected(parcel.parcelNumber)"
     >
       <div class="parcel-overlay" [ngSwitch]="currentOverlay()">
         <!-- Default: Plantation Name -->
         <div *ngSwitchCase="null" class="overlay-content plantation-name">
-          {{ parcel.current_plantation | titlecase }}
-          <span class="parcel-number">#{{ parcel.parcel_number }}</span>
+          {{ parcel.currentPlantation | titlecase }}
+          <span class="parcel-number">#{{ parcel.parcelNumber }}</span>
         </div>
 
         <!-- Soil Quality Overlay -->
         <div
           *ngSwitchCase="'soil_quality'"
           class="overlay-content"
-          [ngClass]="getSoilQualityClass(parcel.soil_quality)"
+          [ngClass]="getSoilQualityClass(parcel.soilQuality)"
         >
-          Soil: {{ parcel.soil_quality | number: "1.0-1" }}%
+          Soil: {{ parcel.soilQuality | number: "1.0-1" }}%
         </div>
 
         <!-- Nutrient Level Overlay -->
         <div
           *ngSwitchCase="'nutrient_level'"
           class="overlay-content"
-          [ngClass="getNutrientLevelClass(parcel.nutrient_level)"
+          [ngClass="getNutrientLevelClass(parcel.nutrientLevel)"
         >
-          Nutr: {{ parcel.nutrient_level | number: "1.0-1" }}%
+          Nutr: {{ parcel.nutrientLevel | number: "1.0-1" }}%
         </div>
 
         <!-- Harvest Outcome Overlay -->
@@ -96,11 +96,11 @@
           *ngSwitchCase="'harvest_outcome'"
           class="overlay-content"
           [ngClass]="
-            getHarvestOutcomeClass(parcel.last_harvest_outcome_category)
+            getHarvestOutcomeClass(parcel.lastHarvestOutcomeCategory)
           "
         >
-          Harvest: {{ parcel.last_harvest_outcome_category | titlecase }} ({{
-            parcel.last_harvest_yield_dt
+          Harvest: {{ parcel.lastHarvestOutcomeCategory | titlecase }} ({{
+            parcel.lastHarvestYieldDt
           }}
           dt)
         </div>
@@ -109,9 +109,9 @@
         <div
           *ngSwitchCase="'crop_sequence'"
           class="overlay-content"
-          [ngClass="getCropSequenceClass(parcel.crop_sequence_effect)"
+          [ngClass="getCropSequenceClass(parcel.cropSequenceEffect)"
         >
-          Seq: {{ parcel.crop_sequence_effect | titlecase }}
+          Seq: {{ parcel.cropSequenceEffect | titlecase }}
         </div>
       </div>
     </div>

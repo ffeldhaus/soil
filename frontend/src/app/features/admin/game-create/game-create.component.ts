@@ -65,9 +65,9 @@ export class GameCreateComponent implements OnInit {
     }, { validators: this.totalPlayerCountValidator.bind(this) });
   }
 
-  // ngOnInit(): void { // Removed empty lifecycle method
+  ngOnInit(): void { // Removed empty lifecycle method
   //   // Initialization logic can go here if needed in the future
-  // }
+  }
 
   totalPlayerCountValidator(group: AbstractControl): { [key: string]: { requiredMin: number; actual: number; message: string } } | null {
     const human = group.get('requestedPlayerSlots')?.value ?? 0;

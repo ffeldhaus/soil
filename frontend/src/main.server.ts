@@ -20,8 +20,8 @@ function getPreferredLanguage(req: HttpRequest<unknown> | RequestLike): string {
   if (req.headers) {
     if (typeof (req.headers as HttpHeaders).get === 'function') {
       acceptLanguageHeaderValue = (req.headers as HttpHeaders).get('accept-language');
-    } else if (req.headers['accept-language']) {
-      const headerVal = req.headers['accept-language'];
+    } else if ((req.headers as any)['accept-language']) { // Use type assertion
+      const headerVal = (req.headers as any)['accept-language']; // Use type assertion
       acceptLanguageHeaderValue = Array.isArray(headerVal) ? headerVal.join(',') : headerVal;
     }
   }

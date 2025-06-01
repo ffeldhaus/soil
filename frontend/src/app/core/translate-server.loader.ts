@@ -1,4 +1,4 @@
-import { TranslateLoader } from '@ngx-translate/core';
+import { TranslateLoader, TranslationObject } from '@ngx-translate/core';
 import { join } from 'path';
 import { Observable, of } from 'rxjs';
 import * as fs from 'fs';
@@ -14,7 +14,7 @@ export class TranslateServerLoader implements TranslateLoader {
     // console.log('[TranslateServerLoader] Initialized. Reading translations from:', this.assetsPath);
   }
 
-  public getTranslation(lang: string): Observable<unknown> { // Changed Observable<any> to Observable<unknown>
+  public getTranslation(lang: string): Observable<TranslationObject> { // Changed Observable<any> to Observable<unknown>
     const filePath = join(this.assetsPath, `${lang}.json`);
     try {
       const data = fs.readFileSync(filePath, 'utf8');

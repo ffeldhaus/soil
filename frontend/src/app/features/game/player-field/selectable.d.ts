@@ -19,7 +19,7 @@ declare module 'selectable.js' {
     // Add other options as needed based on the library's documentation
   }
 
-  interface SelectableNode {
+  export interface SelectableNode {
     node: HTMLElement;
     // Add other properties of the selected item if available
   }
