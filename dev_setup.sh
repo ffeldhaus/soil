@@ -2,7 +2,7 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # add $HOME/.local/bin to PATH
-source $HOME/.local/bin/env
+\. $HOME/.local/bin/env
 
 # Download and install nvm:
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
