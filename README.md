@@ -30,6 +30,90 @@ This project contains the frontend (Angular) and backend (Python/FastAPI) for th
 *   Access to a Google Cloud Organization.
 *   A Google Cloud Billing Account.
 
+## Running E2E Tests
+
+To run the End-to-End (E2E) tests, you will need the following prerequisites:
+
+*   **Node.js:** Ensure you have Node.js (LTS version recommended) installed. This is required to run Cypress.
+*   **Cypress:** The E2E tests for this project are built using Cypress. Cypress is a JavaScript-based end-to-end testing framework that enables you to write and run tests that simulate user interactions with your application in a real browser.
+
+    To install Cypress as a development dependency in your project, navigate to the `frontend` directory and run one of the following commands:
+
+    Using npm:
+    ```bash
+    npm install cypress --save-dev
+    ```
+
+    Or using yarn:
+    ```bash
+    yarn add cypress --dev
+    ```
+    This will add Cypress to your project's `package.json` and install the Cypress binary. You might also need to install system dependencies depending on your operating system. Please refer to the official Cypress documentation for detailed installation instructions and troubleshooting.
+
+### Frontend Setup
+
+Before running the E2E tests, ensure the frontend application is running locally. Follow these steps:
+
+1.  Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
+2.  Install project dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the Angular development server:
+    ```bash
+    ng serve
+    ```
+    Alternatively, you can use `npm start`.
+
+This will typically make the application available at `http://localhost:4200/`. Refer to the `frontend/README.md` for more detailed setup and configuration instructions for the frontend application.
+
+### Backend Setup
+
+Similarly, the backend API needs to be running for the E2E tests to function correctly. Follow these steps to set up and run the backend:
+
+1.  Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
+2.  Create a virtual environment and install dependencies using `uv` (ensure `uv` is installed, as per general prerequisites):
+    ```bash
+    uv venv
+    uv sync
+    ```
+3.  Activate the virtual environment:
+    ```bash
+    source .venv/bin/activate
+    ```
+    (On Windows, use `.venv\Scripts\activate`)
+4.  Set up environment variables. Copy the example file and fill in the necessary values:
+    ```bash
+    cp .env.example .env
+    ```
+    Make sure to edit the `.env` file with your actual database URLs, secrets, etc.
+5.  Start the FastAPI development server using Uvicorn:
+    ```bash
+    uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    ```
+This will typically make the API available at `http://localhost:8000/`. Refer to the `backend/README.md` for more detailed setup, database migrations, and configuration instructions for the backend application.
+
+Once Cypress is installed and the frontend and backend are running, ensure you are in the `frontend` directory (you might need to `cd ../frontend` if you were just setting up the backend). Then, you can run the tests using the following commands:
+
+*   **Open Cypress Test Runner:**
+    This command opens the interactive Cypress Test Runner, which allows you to see your tests run in real-time, debug, and select specific tests to run.
+    ```bash
+    npx cypress open
+    ```
+
+*   **Run Cypress Tests in Command Line (headless):**
+    This command runs all Cypress tests headlessly in the command line. This is typically used for CI environments.
+    ```bash
+    npx cypress run
+    ```
+    You can also run specific test files or apply other configurations. Refer to the Cypress CLI documentation for more options.
+
 ## Setup and Deployment Workflow
 
 This project uses Terraform to manage Google Cloud infrastructure and Cloud Build for CI/CD. Deployment follows these general steps:
