@@ -18,6 +18,27 @@ def initialize_firebase_app():
         # print("Firebase app already initialized.")
         return
 
+    # Check if running in emulator mode
+    if os.environ.get('USE_FIREBASE_EMULATOR') == 'true':
+        print("USE_FIREBASE_EMULATOR is true. Configuring Firebase Admin SDK to use emulators.")
+        os.environ['FIREBASE_AUTH_EMULATOR_HOST'] = os.environ.get('FIREBASE_AUTH_EMULATOR_HOST', '127.0.0.1:9099')
+        os.environ['FIRESTORE_EMULATOR_HOST'] = os.environ.get('FIRESTORE_EMULATOR_HOST', '127.0.0.1:8080')
+        # For emulators, a project ID is still good practice, but credentials are not strictly needed.
+        # The SDK will automatically connect to emulators if the above env vars are set.
+        try:
+            gcp_project_id = settings.GCP_PROJECT_ID or "local-emulator-project"
+            firebase_admin.initialize_app(options={
+                'projectId': gcp_project_id,
+            })
+            _firebase_app_initialized = True
+            print(f"Firebase Admin SDK initialized for emulators with project ID: {gcp_project_id}.")
+            return
+        except Exception as e:
+            print(f"Error initializing Firebase Admin SDK for emulators: {e}")
+            # Potentially raise or handle as critical
+            raise
+
+    # Original initialization path (non-emulator)
     try:
         cred_path = settings.GOOGLE_APPLICATION_CREDENTIALS
         gcp_project_id = settings.GCP_PROJECT_ID
@@ -25,6 +46,7 @@ def initialize_firebase_app():
         if not cred_path:
             print("GOOGLE_APPLICATION_CREDENTIALS not set. Firebase Admin SDK will try to use default credentials (e.g., from gcloud or Compute Engine metadata).")
             # Attempt to initialize without explicit credentials (relies on environment)
+            # This path might still be used if emulators are not explicitly enabled but no creds are found.
             firebase_admin.initialize_app(options={
                 'projectId': gcp_project_id,
             } if gcp_project_id else None)

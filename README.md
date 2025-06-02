@@ -30,6 +30,59 @@ This project contains the frontend (Angular) and backend (Python/FastAPI) for th
 *   Access to a Google Cloud Organization.
 *   A Google Cloud Billing Account.
 
+## Local Development with Firebase Emulators
+
+This project is configured to use the Firebase Emulator Suite for local development and testing, allowing you to run the backend and frontend against local emulators for Firebase Auth and Firestore without needing a live Firebase project for these services.
+
+### Prerequisites
+
+1.  **Firebase CLI**: Ensure the Firebase CLI is installed. Run the `dev_setup.sh` script in the repository root:
+    ```bash
+    ./dev_setup.sh
+    ```
+    This script handles installing `nvm` (Node Version Manager), the correct Node.js version, and then installs `firebase-tools` globally.
+
+### Configuration
+
+*   **Emulator Settings**: The Firebase emulators are configured in `firebase.json` at the root of the project. This file defines which emulators to use and their ports (e.g., Auth on 9099, Firestore on 8080).
+*   **Backend**: The Python backend (`backend/app/db/firebase_setup.py`) will automatically connect to the emulators if the `USE_FIREBASE_EMULATOR=true` environment variable is set. This is pre-configured for E2E tests via `cypress.json`. For local backend development, you can set this environment variable manually.
+*   **Frontend**: The Angular frontend (`frontend/src/environments/environment.ts`) is configured to use emulators when `useEmulators: true`. This flag is enabled by default for local development builds (`ng serve`).
+
+### Running the Emulators
+
+1.  **Navigate to the frontend directory**:
+    ```bash
+    cd frontend
+    ```
+2.  **Start the Emulators**:
+    ```bash
+    npm run firebase:start
+    ```
+    This command will:
+    *   Start the Auth, Firestore, and other configured emulators.
+    *   Import data from `./firebase-data` (if it exists) into the emulators on startup.
+    *   Export data from the emulators to `./firebase-data` when the emulators are shut down (e.g., with Ctrl+C). This helps persist data between local development sessions.
+    *   The Emulator UI will also be available (typically at `http://127.0.0.1:4000`).
+
+### Using Emulators with Local Development Servers
+
+*   **Backend**: Start your backend server as usual. If you set `USE_FIREBASE_EMULATOR=true` in its environment, it will connect to the running emulators.
+*   **Frontend**: Start the Angular development server (`npm start` in the `frontend` directory). It will automatically connect to the emulators as per its environment configuration.
+
+### Stopping the Emulators
+
+*   If you started the emulators with `npm run firebase:start` in your terminal, you can stop them by pressing `Ctrl+C` in that terminal.
+*   Alternatively, you can run the following command from the `frontend` directory:
+    ```bash
+    npm run firebase:stop
+    ```
+
+### Testing with Emulators
+
+The E2E test setup is configured to use the Firebase emulators automatically.
+*   The `cypress.json` configuration sets `USE_FIREBASE_EMULATOR=true` for the tests.
+*   The main test script `test.sh` automatically starts the Firebase Emulator Suite before running the E2E tests and stops them afterwards. Refer to the "Running E2E Tests" section and the `test.sh` script for more details.
+
 ## Running E2E Tests
 
 To run the End-to-End (E2E) tests, you will need the following prerequisites:
