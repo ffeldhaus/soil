@@ -45,7 +45,7 @@ export class NutritionSvgComponent extends DynamicSvgBaseComponent implements On
     const soilQuality = this.parcel.soilQuality; // camelCase
 
     const nutrientCategory = this.getNutrientCategory(nutrientLevel);
-    const nutrientColor = this.nutrientLevelColorMapping[nutrientCategory] || this.nutrientLevelColorMapping.default;
+    const nutrientColor = this.nutrientLevelColorMapping[nutrientCategory] || this.nutrientLevelColorMapping['default']; // Bracket notation
 
     const fertilizerUsed = decisions?.fertilize;
     const isLegume = currentPlantation === PlantationType.FIELD_BEAN;
@@ -92,7 +92,7 @@ export class NutritionSvgComponent extends DynamicSvgBaseComponent implements On
 
     let textY = 95;
     if (soilQuality < 50) {
-      svgElements.push(`<text x="10" y="${textY}" class="info-text" fill="${this.nutrientLevelColorMapping.low}">Niedrige Bodenqualität (${soilQuality.toFixed(0)}%) kann Nährstoffaufnahme behindern.</text>`);
+      svgElements.push(`<text x="10" y="${textY}" class="info-text" fill="${this.nutrientLevelColorMapping['low']}">Niedrige Bodenqualität (${soilQuality.toFixed(0)}%) kann Nährstoffaufnahme behindern.</text>`); // Bracket notation
       textY += 12;
     }
     if (currentPlantation && currentPlantation !== PlantationType.FALLOW && currentPlantation !== PlantationType.ANIMAL_HUSBANDRY) {
@@ -100,7 +100,7 @@ export class NutritionSvgComponent extends DynamicSvgBaseComponent implements On
         textY += 12;
     }
     if (nutrientLevel < 40 && (decisions && !decisions.fertilize && !manureAppliedLastRound && !isLegume)) {
-         svgElements.push(`<text x="10" y="${textY}" class="info-text" fill="${this.nutrientLevelColorMapping.low}">Geringe Nährstoffe, keine Düngung.</text>`);
+         svgElements.push(`<text x="10" y="${textY}" class="info-text" fill="${this.nutrientLevelColorMapping['low']}">Geringe Nährstoffe, keine Düngung.</text>`); // Bracket notation
     }
 
     svgElements.push(`</svg>`);

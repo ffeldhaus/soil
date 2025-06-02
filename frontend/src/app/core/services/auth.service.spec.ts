@@ -135,35 +135,35 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
         loggedInUser = user;
       });
       
-      tick(); // For signInWithEmailAndPassword to resolve and adminLogin's switchMap to potentially start.
-
-      tick(); // For signInWithEmailAndPassword to resolve.
-
-      firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockAdminIdTokenResult as IdTokenResult);
-
-      firebaseAuthMock.simulateAuthStateChange(mockFbAdminUser); // Triggers onAuthStateChanged
-      
-      firebaseAuthMock.simulateAuthStateChange(mockFbAdminUser); // Triggers onAuthStateChanged
-
-      // Let's try a slightly longer, more explicit series of ticks.
-      tick(); // #1: onAuthStateChanged starts, processFirebaseUser called, getIdTokenResult (mock) called & promise scheduled
-      tick(); // #2: getIdTokenResult promise resolves, appUserInternal set from claims, fetchAndStoreBackendToken called
-      tick(); // #3: fetchAndStoreBackendToken calls http.post - request should be pending now.
-      // Adding one more just in case there's an extra microtask layer with firstValueFrom.
+      // Tick for signInWithEmailAndPassword to resolve
       tick();
 
+      // At this point, signInWithEmailAndPassword has resolved.
+      // The Firebase SDK would trigger onAuthStateChanged.
+      // Ensure mocks are ready for what onAuthStateChanged -> processFirebaseUser will do.
+      firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockAdminIdTokenResult as IdTokenResult);
+      firebaseAuthMock.simulateAuthStateChange(mockFbAdminUser); // This calls processFirebaseUser internally
 
+      // Ticks for processFirebaseUser:
+      tick(); // 1. onAuthStateChanged -> processFirebaseUser -> getIdTokenResult (promise created)
+      tick(); // 2. getIdTokenResult resolves -> appUser is set (partially) -> fetchAndStoreBackendToken is called (http.post promise created)
+      
+      // Expect and flush the backend token request
       const req = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
       expect(req.request.method).toBe('POST');
       req.flush(backendAdminAuthResponse);
-
-      tick(); // #A: firstValueFrom(http.post) promise resolves, backendTokenInternal set, appUserInternal potentially updated.
-      tick(); // #B: processFirebaseUser (async) completes.
-      tick(); // #C: switchMap in adminLogin (which awaits currentUser$) resolves and emits.
-      tick(); // #D: Final safety tick for any effects or chained operations.
       
+      tick(); // 3. http.post promise resolves in fetchAndStoreBackendToken -> backendToken is set, appUser potentially updated from response
+      tick(); // 4. fetchAndStoreBackendToken completes, processFirebaseUser completes.
+
+      // Tick for the switchMap in adminLogin to complete, which depends on currentUser$ emitting
+      // and the filter condition (user being set AND backend token being set).
+      tick();
+
       expect(loggedInUser).toBeTruthy();
-      expect(loggedInUser!.role).toBe(UserRole.ADMIN);
+      if(loggedInUser) { // Type guard for loggedInUser
+        expect(loggedInUser.role).toBe(UserRole.ADMIN);
+      }
       expect(service.isAuthenticated()).toBe(true);
       expect(service.backendToken()).toBe(backendAdminAuthResponse.access_token);
       expect(firebaseAuthMock.mockGetIdTokenResult).toHaveBeenCalledWith(mockFbAdminUser, true); // Ensure it was called during processFirebaseUser
@@ -230,26 +230,33 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
       // Backend controller for player-credentials expects playerNumber
       expect(playerCredentialsReq.request.body).toEqual({ gameId: testGameId, playerNumber: testPlayerNumber, password: testPassword });
       playerCredentialsReq.flush(customTokenResponse);
+
+      // Tick for the first switchMap (HTTP call) to resolve and signInWithCustomToken to be called
       tick();
+      // signInWithCustomToken promise resolves, Firebase SDK would trigger onAuthStateChanged.
+      // Ensure mocks are ready for what onAuthStateChanged -> processFirebaseUser will do for the player.
+      firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockPlayerIdTokenResult as IdTokenResult);
+      firebaseAuthMock.simulateAuthStateChange(mockFbPlayerUser); // This calls processFirebaseUser internally
 
-      firebaseAuthMock.simulateAuthStateChange(mockFbPlayerUser);
+      // Ticks for processFirebaseUser (for player):
+      tick(); // 1. onAuthStateChanged -> processFirebaseUser -> getIdTokenResult (promise created)
+      tick(); // 2. getIdTokenResult resolves -> appUser is set (partially) -> fetchAndStoreBackendToken is called (http.post promise created)
 
-      tick(); // #1
-      tick(); // #2
-      tick(); // #3
-      tick(); // #4 - extra tick
-
+      // Expect and flush the backend token request for the player
       const idTokenReq = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
       expect(idTokenReq.request.method).toBe('POST');
       idTokenReq.flush(backendPlayerAuthResponse);
 
-      tick(); // #A
-      tick(); // #B
-      tick(); // #C
-      tick(); // #D
+      tick(); // 3. http.post promise resolves in fetchAndStoreBackendToken -> backendToken is set, appUser potentially updated
+      tick(); // 4. fetchAndStoreBackendToken completes, processFirebaseUser completes.
+
+      // Tick for the final switchMap in playerLoginWithCredentials to complete
+      tick();
 
       expect(loggedInUser).toBeTruthy();
-      expect(loggedInUser!.role).toBe(UserRole.PLAYER);
+      if(loggedInUser) { // Type guard
+        expect(loggedInUser.role).toBe(UserRole.PLAYER);
+      }
       expect(loggedInUser!.gameId).toBe(testGameId);
       expect(loggedInUser!.playerNumber).toBe(testPlayerNumber); // Changed from playerId to playerNumber
       expect(service.isAuthenticated()).toBe(true);
@@ -351,44 +358,33 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
 
   describe('Logout', () => {
     it('logout should clear user data and call Firebase signOut', fakeAsync(() => {
-      const loggedInFbUser: Partial<FirebaseUser> = { uid: 'test-uid' };
-      const loggedInIdTokenResult: Partial<IdTokenResult> = { token: 'test-token', claims: { role: UserRole.PLAYER } };
-      const backendLoginResponse: AuthResponse = { access_token: 'backend-test-jwt', token_type: 'Bearer', user_info: { uid: 'test-uid', email: 'test@test.com', role: UserRole.PLAYER, playerNumber: 1 } }; // Corrected tokenType and userInfo
-
-      firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(loggedInIdTokenResult as IdTokenResult);
-      // Setup for initial login state
-      firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(loggedInIdTokenResult as IdTokenResult);
-      firebaseAuthMock.simulateAuthStateChange(loggedInFbUser);
-
-      tick(); // #1
-      tick(); // #2
-      tick(); // #3
-      tick(); // #4 - extra tick
-
-      const loginReq = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
-      expect(loginReq.request.method).toBe('POST');
-      loginReq.flush(backendLoginResponse);
-
-      tick(); // #A
-      tick(); // #B
-      tick(); // #C
-      tick(); // #D
+      // Setup admin user to ensure a clean logged-in state
+      setupAdminUser();
+      // setupAdminUser already calls tick sufficiently to settle the login state.
 
       expect(service.isAuthenticated()).toBe(true);
-      expect(service.currentUser()?.uid).toBe('test-uid');
-      expect(service.backendToken()).toBe(backendLoginResponse.access_token);
+      expect(service.currentUser()?.role).toBe(UserRole.ADMIN);
+      expect(service.backendToken()).toBe(backendAdminAuthResponse.access_token);
 
       firebaseAuthMock.mockSignOut.mockResolvedValue(undefined);
-      service.logout();
-      tick();
 
+      service.logout(); // Call logout on the service
+
+      tick(); // Allow signOut promise within service.logout() to resolve.
+              // This should trigger the onAuthStateChanged(null) by the mock if signOut was successful.
+
+      // Simulate Firebase SDK's onAuthStateChanged(null) after signOut completes
       firebaseAuthMock.simulateAuthStateChange(null);
-      tick();
+      tick(); // Allow onAuthStateChanged(null) handler to execute and clear data.
 
       expect(service.isAuthenticated()).toBe(false);
       expect(service.currentUser()).toBeNull();
       expect(service.backendToken()).toBeNull();
+      expect(service.firebaseUser()).toBeNull();
+      expect(localStorage.removeItem).toHaveBeenCalledWith('soil_game_backend_token');
+      expect(localStorage.removeItem).toHaveBeenCalledWith('soil_game_original_admin_token'); // Ensure this is also cleared
       expect(firebaseAuthMock.mockSignOut).toHaveBeenCalledWith(authInstanceMock);
+      expect(router.navigate).toHaveBeenCalledWith(['/frontpage/login']);
     }));
   });
 
@@ -411,17 +407,17 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
     };
 
     describe('impersonatePlayer', () => {
-      // Inlined setupAdminUser logic here to avoid nested fakeAsync
       beforeEach(fakeAsync(() => {
+        // Setup admin user (this is essentially setupAdminUser)
         firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockAdminIdTokenResult as IdTokenResult);
         firebaseAuthMock.simulateAuthStateChange(mockFbAdminUser);
-        tick();
-        tick();
+        tick(); // onAuthStateChanged -> processFirebaseUser (starts) -> getIdTokenResult (mock resolves)
+        tick(); // Allow the http.post from fetchAndStoreBackendToken to be made
         const req = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
         expect(req.request.method).toBe('POST');
         req.flush(backendAdminAuthResponse);
-        tick();
-        tick();
+        tick(); // Allow fetchAndStoreBackendToken to complete
+        tick(); // Ensure currentUser$ has emitted & processFirebaseUser completes
         expect(service.currentUser()?.role).toBe(UserRole.ADMIN);
         expect(service.backendToken()).toBe(backendAdminAuthResponse.access_token);
         expect(service.isImpersonating()).toBe(false);
@@ -452,142 +448,182 @@ describe('AuthService (Real Implementation with Jest Manual Mock)', () => {
       }));
 
       it('should throw error if not admin or no token', fakeAsync(async () => {
-        service.logout();
-        tick();
-        firebaseAuthMock.simulateAuthStateChange(null);
-        tick();
+        // Ensure logged out state
+        service.logout(); // Call logout
+        tick(); // Allow signOut to complete
+        firebaseAuthMock.simulateAuthStateChange(null); // Simulate auth state changed to null
+        tick(); // Allow onAuthStateChanged handler to complete
         
+        expect(service.isAuthenticated()).toBe(false); // Pre-condition
+
         try {
           await service.impersonatePlayer(gameIdToImpersonate, playerNumberToImpersonate.toString());
           fail('should have thrown');
-        } catch (e: any) {
+        } catch (e: any) { // Explicitly type 'e' as any or Error
           expect(e.message).toContain('Admin not logged in or token unavailable.');
         }
       }));
       
       it('should throw error if already impersonating', fakeAsync(async () => {
+        // Admin is logged in from the describe's beforeEach
+        // First impersonation
         await service.impersonatePlayer(gameIdToImpersonate, playerNumberToImpersonate.toString());
-        tick();
+        tick(); // Start the http.post
         const req1 = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameIdToImpersonate}/impersonate/${playerNumberToImpersonate}`);
         req1.flush(impersonationAuthResponse);
-        tick();
+        tick(); // Complete the first impersonation
         expect(service.isImpersonating()).toBe(true);
 
+        // Attempt to impersonate again
         try {
           await service.impersonatePlayer('anotherGame', 'anotherPlayer');
           fail('should have thrown');
-        } catch (e: any) {
+        } catch (e: any) { // Explicitly type 'e' as any or Error
           expect(e.message).toContain('Already impersonating. Stop current impersonation first.');
         }
       }));
 
       it('should throw error and preserve state on backend HTTP error', fakeAsync(async () => {
+        // Admin is logged in from the describe's beforeEach
         const originalAdminToken = service.backendToken();
         const originalUser = service.currentUser();
 
+        let impersonationError;
         try {
-          await service.impersonatePlayer(gameIdToImpersonate, playerNumberToImpersonate.toString());
-          fail('should have thrown');
-        } catch (err: any) {
-          expect(err.message).toContain('Impersonation HTTP request failed'); // Check for the specific error message
+          // No 'await' here if we want to flush the HTTP request that's part of this async call
+          service.impersonatePlayer(gameIdToImpersonate, playerNumberToImpersonate.toString()).catch(e => impersonationError = e);
+          tick(); // Start the async operation and allow the HTTP call to be made
+        } catch (err) {
+            // This catch might not be reached if the promise rejection is handled by the test's try/catch later
         }
-        tick();
 
         const req = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameIdToImpersonate}/impersonate/${playerNumberToImpersonate}`);
         req.flush({ message: 'Forbidden' }, { status: 403, statusText: 'Forbidden' });
-        tick();
+        tick(); // Allow the error from http.post to propagate and be caught by impersonatePlayer
+
+        expect(impersonationError).toBeTruthy();
+        // Check the error message that impersonatePlayer itself throws
+        expect((impersonationError as Error).message).toContain('Impersonation HTTP request failed');
+
 
         expect(service.isImpersonating()).toBe(false);
         expect(service.backendToken()).toBe(originalAdminToken);
-        expect(service.currentUser()).toEqual(originalUser);
+        expect(service.currentUser())?.toEqual(originalUser); // Use toEqual for object comparison
+        // Check that setItem for originalAdminToken was NOT called because impersonation failed before that step
         expect(localStorage.setItem).not.toHaveBeenCalledWith('soil_game_original_admin_token', expect.anything());
       }));
     });
 
     describe('stopImpersonation', () => {
-      // Inlined setupAdminUser logic and initial impersonation for these tests
+      // This beforeEach sets up a state where admin is logged in AND is impersonating a player.
       beforeEach(fakeAsync(async () => {
-        // Setup admin user first
+        // 1. Setup Admin User
+        firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockAdminIdTokenResult as IdTokenResult);
+        firebaseAuthMock.simulateAuthStateChange(mockFbAdminUser);
+        tick(); // onAuthStateChanged -> processFirebaseUser (starts) -> getIdTokenResult (mock resolves)
+        tick(); // Allow the http.post from fetchAndStoreBackendToken to be made
+        const adminLoginReq = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
+        adminLoginReq.flush(backendAdminAuthResponse);
+        tick(); // Allow fetchAndStoreBackendToken to complete
+        tick(); // Ensure currentUser$ has emitted & processFirebaseUser completes
+        expect(service.currentUser()?.role).toBe(UserRole.ADMIN);
+
+        // 2. Perform Impersonation
+        await service.impersonatePlayer(gameIdToImpersonate, playerNumberToImpersonate.toString());
+        tick(); // Start the impersonatePlayer async call (http.post)
+        const impReq = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameIdToImpersonate}/impersonate/${playerNumberToImpersonate}`);
+        impReq.flush(impersonationAuthResponse);
+        tick(); // Complete all async operations within impersonatePlayer (state updates)
+
+        expect(service.isImpersonating()).toBe(true);
+        expect(service.currentUser()?.uid).toBe(impersonationAuthResponse.user_info.uid);
+
+        // Clear mockGetIdTokenResult calls from admin setup to ensure we're testing stopImpersonation's call correctly
+        firebaseAuthMock.mockGetIdTokenResult.mockClear(); 
+      }));
+
+      it('should successfully stop impersonation and restore admin state', fakeAsync(async () => {
+        // Ensure that when processFirebaseUser is called for the original admin, it gets the admin's IdTokenResult
+        firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockAdminIdTokenResult as IdTokenResult);
+
+        await service.stopImpersonation();
+
+        // Ticks for stopImpersonation's call to processFirebaseUser(adminFirebaseUser):
+        tick(); // 1. stopImpersonation calls processFirebaseUser -> getIdTokenResult (promise created for admin)
+        tick(); // 2. getIdTokenResult resolves for admin -> fetchAndStoreBackendToken is called (http.post promise created for admin)
+
+        // Expect and flush the backend token request for restoring admin
+        const restoreAdminReq = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
+        expect(restoreAdminReq.request.method).toBe('POST');
+        // This flush is for restoring the original admin's backend session using their Firebase ID token.
+        restoreAdminReq.flush(backendAdminAuthResponse);
+
+        tick(); // 3. http.post promise resolves in fetchAndStoreBackendToken
+        tick(); // 4. fetchAndStoreBackendToken completes, processFirebaseUser (for admin) completes.
+        tick(); // 5. Allow router.navigate and any final state updates/effects to settle.
+
+        expect(service.isImpersonating()).toBe(false);
+        expect(service.backendToken()).toBe(backendAdminAuthResponse.access_token); // Original admin token restored
+        const currentUser = service.currentUser();
+        expect(currentUser?.role).toBe(UserRole.ADMIN);
+        expect(currentUser?.uid).toBe(mockFbAdminUser.uid);
+        expect(localStorage.removeItem).toHaveBeenCalledWith('soil_game_original_admin_token');
+        expect(localStorage.setItem).toHaveBeenCalledWith('soil_game_backend_token', backendAdminAuthResponse.access_token);
+        expect(router.navigate).toHaveBeenCalledWith(['/admin/dashboard']);
+      }));
+
+      // This test needs a different beforeEach or setup, as the default one leaves the service in an impersonating state.
+      it('should do nothing if not impersonating', fakeAsync(() => {
+        // 1. Reset to a clean admin state (not impersonating)
+        // Logout from current (impersonated) state from beforeEach
+        firebaseAuthMock.mockSignOut.mockResolvedValue(undefined);
+        service.logout(); // This will try to logout the impersonated user
+        tick();
+        firebaseAuthMock.simulateAuthStateChange(null); // Firebase user becomes null
+        tick(); // Process logout
+        httpMock.expectNone(`${environment.apiUrl}/auth/login/id-token`); // No restore attempt during this logout
+
+        // 2. Setup Admin User again (freshly logged in, not impersonating)
         firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockAdminIdTokenResult as IdTokenResult);
         firebaseAuthMock.simulateAuthStateChange(mockFbAdminUser);
         tick(); tick();
         const adminLoginReq = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
         adminLoginReq.flush(backendAdminAuthResponse);
         tick(); tick();
-
-        // Then impersonate
-        await service.impersonatePlayer(gameIdToImpersonate, playerNumberToImpersonate.toString());
-        tick();
-        const impReq = httpMock.expectOne(`${environment.apiUrl}/admin/games/${gameIdToImpersonate}/impersonate/${playerNumberToImpersonate}`);
-        impReq.flush(impersonationAuthResponse);
-        tick();
-        expect(service.isImpersonating()).toBe(true);
-        firebaseAuthMock.mockGetIdTokenResult.mockClear(); 
-      }));
-
-      it('should successfully stop impersonation and restore admin state', fakeAsync(async () => {
-        firebaseAuthMock.mockGetIdTokenResult.mockResolvedValue(mockAdminIdTokenResult as IdTokenResult);
-
-        await service.stopImpersonation();
-        // stopImpersonation calls processFirebaseUser, which calls fetchAndStoreBackendToken for the admin
-        tick(); // Allow processFirebaseUser to start and getIdTokenResult to resolve
-        tick(); // Allow fetchAndStoreBackendToken to be called and http.post to be made for admin restoration
-
-        const restoreAdminReq = httpMock.expectOne(`${environment.apiUrl}/auth/login/id-token`);
-        expect(restoreAdminReq.request.method).toBe('POST');
-        restoreAdminReq.flush(backendAdminAuthResponse); // This is for restoring the original admin session
-
-        tick(); // Resolve http.post promise
-        tick(); // Resolve processFirebaseUser promise
-        tick(); // Allow currentUser$ to settle
-
-        expect(service.isImpersonating()).toBe(false);
-        expect(service.backendToken()).toBe(backendAdminAuthResponse.access_token);
-        const currentUser = service.currentUser();
-        expect(currentUser?.role).toBe(UserRole.ADMIN);
-        expect(currentUser?.uid).toBe(mockFbAdminUser.uid);
-        expect(localStorage.removeItem).toHaveBeenCalledWith('soil_game_original_admin_token'); // Use string literal
-        expect(localStorage.setItem).toHaveBeenCalledWith('soil_game_backend_token', backendAdminAuthResponse.access_token); // Use string literal
-        expect(router.navigate).toHaveBeenCalledWith(['/admin/dashboard']);
-      }));
-
-      it('should do nothing if not impersonating', fakeAsync(async () => {
-        service.logout(); tick(); firebaseAuthMock.simulateAuthStateChange(null); tick();
-        setupAdminUser();
         
+        expect(service.isImpersonating()).toBe(false); // Pre-condition: not impersonating
         const originalToken = service.backendToken();
         const originalUser = service.currentUser();
+        const routerNavigateSpy = jest.spyOn(router, 'navigate'); // Re-spy after setup
+        const localStorageRemoveSpy = jest.spyOn(Storage.prototype, 'removeItem');
 
-        await service.stopImpersonation();
-        tick();
+        service.stopImpersonation(); // Call stopImpersonation
+        tick(); // Allow any potential async (though it should be sync in this path)
 
-        expect(service.isImpersonating()).toBe(false);
-        expect(service.backendToken()).toBe(originalToken);
-        expect(service.currentUser()).toEqual(originalUser);
-        expect(router.navigate).not.toHaveBeenCalledWith(['/admin/dashboard']);
-        expect(localStorage.removeItem).not.toHaveBeenCalledWith('soil_game_original_admin_token');
+        expect(service.isImpersonating()).toBe(false); // Still false
+        expect(service.backendToken()).toBe(originalToken); // Unchanged
+        expect(service.currentUser())?.toEqual(originalUser); // Unchanged
+        expect(routerNavigateSpy).not.toHaveBeenCalledWith(['/admin/dashboard']); // No navigation
+        expect(localStorageRemoveSpy).not.toHaveBeenCalledWith('soil_game_original_admin_token'); // No token removal
       }));
       
-      it('should call logout if original admin Firebase user is lost', fakeAsync(async () => {
-        expect(service.isImpersonating()).toBe(true);
+      it('should call logout if original admin Firebase user is lost during stopImpersonation', fakeAsync(async () => {
+        // State from beforeEach: admin was logged in, then impersonation started.
+        // service.isImpersonating() is true.
+        // service.firebaseUserInternal() currently holds the admin Firebase user.
         
+        // Simulate FirebaseUser being lost before stopImpersonation attempts to use it
         (service as any).firebaseUserInternal.set(null);
 
-        const logoutSpy = jest.spyOn(service, 'logout');
+        const logoutSpy = jest.spyOn(service, 'logout').mockImplementation(() => Promise.resolve()); // Spy and mock implementation
 
-        try {
-          await service.stopImpersonation();
-          // This case might not throw if it directly calls logout.
-          // If logout is called, the subsequent expectations on state will fail if not handled.
-          // The service logic is: if adminFirebaseUser is null, it calls this.logout()
-        } catch (err: any) {
-          // Depending on exact implementation, it might throw or just log out.
-          // If it doesn't throw, this catch block may not be hit.
-          // The key is that logoutSpy should be called.
-        }
-        tick(); // allow async operations in stopImpersonation/logout to complete
+        await service.stopImpersonation();
+        tick(); // Allow async operations in stopImpersonation (like calling logout)
 
         expect(logoutSpy).toHaveBeenCalled();
+        // Further state assertions depend on what logout() does, which is already tested elsewhere.
+        // For example, router navigation to login page might be expected if logout is called.
+        // expect(router.navigate).toHaveBeenCalledWith(['/frontpage/login']);
       }));
     });
   });

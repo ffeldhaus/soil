@@ -59,10 +59,10 @@ export class SoilSvgComponent extends DynamicSvgBaseComponent implements OnChang
 
     const soilQuality = this.parcel.soilQuality; // camelCase
     const soilQualityCategory = this.getSoilQualityCategory(soilQuality);
-    const soilColor = this.soilQualityColorMapping[soilQualityCategory] || this.soilQualityColorMapping.default;
+    const soilColor = this.soilQualityColorMapping[soilQualityCategory] || this.soilQualityColorMapping['default']; // Bracket notation
 
     const cropSequenceEff = this.parcel.cropSequenceEffect || CropSequenceEffect.NONE; // camelCase
-    const cropSequenceColor = this.cropSequenceColorMapping[cropSequenceEff.valueOf()] || this.soilQualityColorMapping.default;
+    const cropSequenceColor = this.cropSequenceColorMapping[cropSequenceEff.valueOf()] || this.soilQualityColorMapping['default']; // Bracket notation for fallback
 
     const fertilizerUsed = decisions?.fertilize;
     const pesticideUsed = decisions?.pesticide;
@@ -137,15 +137,15 @@ export class SoilSvgComponent extends DynamicSvgBaseComponent implements OnChang
       svgElements.push(`<text x="10" y="${textY}" class="label-text">Vorfrucht: ${this.previousParcel.currentPlantation}</text>`);
       textY += 12;
     }
-    if (this.prePreviousParcel?.prePreviousPlantation) { // Corrected: should be prePreviousParcel.currentPlantation
+    if (this.prePreviousParcel?.currentPlantation) { // Changed prePreviousParcel.prePreviousPlantation to prePreviousParcel.currentPlantation
       svgElements.push(`<text x="10" y="${textY}" class="label-text">Vor-Vorfrucht: ${this.prePreviousParcel.currentPlantation}</text>`);
       textY += 12;
     }
 
     if (isMonocultureStreak) {
-      svgElements.push(`<text x="10" y="${textY}" class="label-text" fill="${this.soilQualityColorMapping.poor}">Starke Monokultur!</text>`);
+      svgElements.push(`<text x="10" y="${textY}" class="label-text" fill="${this.soilQualityColorMapping['poor']}">Starke Monokultur!</text>`); // Bracket notation
     } else if (isMonoculture) {
-      svgElements.push(`<text x="10" y="${textY}" class="label-text" fill="${this.soilQualityColorMapping.ok}">Monokultur</text>`);
+      svgElements.push(`<text x="10" y="${textY}" class="label-text" fill="${this.soilQualityColorMapping['ok']}">Monokultur</text>`); // Bracket notation
     }
 
     svgElements.push(`</svg>`);
