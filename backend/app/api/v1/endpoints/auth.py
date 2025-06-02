@@ -18,7 +18,7 @@ from app.db.firebase_setup import get_firestore_client
 from app.services.email_service import get_email_service, EmailService 
 
 # Import Pydantic utils for model config
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 from pydantic.alias_generators import to_camel
 
 router = APIRouter()

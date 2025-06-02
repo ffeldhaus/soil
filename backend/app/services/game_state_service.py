@@ -2,6 +2,7 @@
 from typing import Any, List, Optional, Dict 
 from google.cloud.firestore_v1.async_client import AsyncClient as AsyncFirestoreClient
 from datetime import datetime 
+from fastapi import Depends # Added this line
 
 from app.crud.crud_game import crud_game
 from app.crud.crud_round import crud_round, RoundUpdate # Added RoundUpdate

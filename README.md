@@ -36,19 +36,7 @@ To run the End-to-End (E2E) tests, you will need the following prerequisites:
 
 *   **Node.js:** Ensure you have Node.js (LTS version recommended) installed. This is required to run Cypress.
 *   **Cypress:** The E2E tests for this project are built using Cypress. Cypress is a JavaScript-based end-to-end testing framework that enables you to write and run tests that simulate user interactions with your application in a real browser.
-
-    To install Cypress as a development dependency in your project, navigate to the `frontend` directory and run one of the following commands:
-
-    Using npm:
-    ```bash
-    npm install cypress --save-dev
-    ```
-
-    Or using yarn:
-    ```bash
-    yarn add cypress --dev
-    ```
-    This will add Cypress to your project's `package.json` and install the Cypress binary. You might also need to install system dependencies depending on your operating system. Please refer to the official Cypress documentation for detailed installation instructions and troubleshooting.
+*  **uvicorn:** The backend app is executed with uvicorn, an ASGI web server for Python.
 
 ### Frontend Setup
 
@@ -64,9 +52,8 @@ Before running the E2E tests, ensure the frontend application is running locally
     ```
 3.  Start the Angular development server:
     ```bash
-    ng serve
+    npm start
     ```
-    Alternatively, you can use `npm start`.
 
 This will typically make the application available at `http://localhost:4200/`. Refer to the `frontend/README.md` for more detailed setup and configuration instructions for the frontend application.
 

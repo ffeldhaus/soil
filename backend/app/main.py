@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.api.v1.api import api_router as api_router_v1
 from app.core.config import settings
-from app.db.firebase_setup import initialize_firebase_app, close_firebase_app
+from app.db.firebase_setup import initialize_firebase_app # Removed close_firebase_app
 
 # Define a lifespan event handler for application startup and shutdown
 @asynccontextmanager
