@@ -25,3 +25,23 @@ npm install
 
 # change back to main app folder
 cd ..
+
+# Check if Firebase CLI is installed and install if not
+echo "Checking Firebase CLI installation..."
+if ! command -v firebase &> /dev/null
+then
+    echo "Firebase CLI not found, installing globally via npm..."
+    npm install -g firebase-tools
+    if ! command -v firebase &> /dev/null
+    then
+        echo "Firebase CLI installation failed. Please check npm output."
+        # Optionally, exit here if Firebase CLI is critical
+        # exit 1
+    else
+        echo "Firebase CLI installed successfully."
+        firebase --version
+    fi
+else
+    echo "Firebase CLI is already installed."
+    firebase --version
+fi

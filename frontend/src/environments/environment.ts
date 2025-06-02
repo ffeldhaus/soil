@@ -19,6 +19,11 @@ export const environment = {
     appId: 'YOUR_FIREBASE_APP_ID',
     // measurementId: 'YOUR_FIREBASE_MEASUREMENT_ID' // Optional, for Google Analytics
   },
+  useEmulators: true, // Set to true to use Firebase Emulators
+  emulatorAuthHost: '127.0.0.1',
+  emulatorAuthPort: 9099,
+  emulatorFirestoreHost: '127.0.0.1',
+  emulatorFirestorePort: 8080,
   // Add development defaults
   devDefaults: {
     adminEmail: 'admin@local.dev',
