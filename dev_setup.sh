@@ -45,3 +45,6 @@ else
     echo "Firebase CLI is already installed."
     firebase --version
 fi
+
+# use Firebase emulator for local development
+export USE_FIREBASE_EMULATOR=true
