@@ -42,6 +42,22 @@ This project is configured to use the Firebase Emulator Suite for local developm
     ```
     This script handles installing `nvm` (Node Version Manager), the correct Node.js version, and then installs `firebase-tools` globally.
 
+### Initial Emulator Setup / Reconfiguration
+If you are setting up the project for the first time and the `firebase.json` file does not yet contain an `emulators` block, or if you need to change which emulators are active or their ports, you'll need to initialize the emulator configuration. Run the following command from the project root directory:
+```bash
+firebase init emulators
+```
+When prompted, select the services you wish to emulate. For this project, the currently configured emulators are:
+- Authentication
+- Firestore
+- Functions
+- Database
+- Hosting
+- Pub/Sub
+- Storage
+
+This will generate or update the `emulators` section in your `firebase.json` file. You can then proceed with the rest of the setup and running instructions.
+
 ### Configuration
 
 *   **Emulator Settings**: The Firebase emulators are configured in `firebase.json` at the root of the project. This file defines which emulators to use and their ports (e.g., Auth on 9099, Firestore on 8080).
@@ -50,19 +66,18 @@ This project is configured to use the Firebase Emulator Suite for local developm
 
 ### Running the Emulators
 
-1.  **Navigate to the frontend directory**:
-    ```bash
-    cd frontend
-    ```
-2.  **Start the Emulators**:
-    ```bash
-    npm run firebase:start
-    ```
-    This command will:
-    *   Start the Auth, Firestore, and other configured emulators.
-    *   Import data from `./firebase-data` (if it exists) into the emulators on startup.
-    *   Export data from the emulators to `./firebase-data` when the emulators are shut down (e.g., with Ctrl+C). This helps persist data between local development sessions.
-    *   The Emulator UI will also be available (typically at `http://127.0.0.1:4000`).
+To start the Firebase emulators for local development, ensure you are in the **project root directory** (the directory containing the main `firebase.json` file and the `frontend` and `backend` subdirectories). Then, run the following command:
+
+```bash
+npm run firebase:start --prefix frontend
+```
+
+This command will:
+*   Execute the `firebase:start` script (which is `firebase emulators:start --import=./firebase-data --export-on-exit=./firebase-data`) from `frontend/package.json`, but run it as if you are in the project root.
+*   Start the Auth, Firestore, and other configured emulators as defined in your root `firebase.json` file.
+*   Import data from a `./firebase-data` directory (located in the project root, if it exists) into the emulators on startup.
+*   Export data from the emulators to the `./firebase-data` directory (in the project root) when the emulators are shut down (e.g., with Ctrl+C). This helps persist data between local development sessions.
+*   The Emulator UI will also be available (typically at `http://127.0.0.1:4000`).
 
 ### Using Emulators with Local Development Servers
 
@@ -71,10 +86,10 @@ This project is configured to use the Firebase Emulator Suite for local developm
 
 ### Stopping the Emulators
 
-*   If you started the emulators with `npm run firebase:start` in your terminal, you can stop them by pressing `Ctrl+C` in that terminal.
-*   Alternatively, you can run the following command from the `frontend` directory:
+*   If you started the emulators with `npm run firebase:start --prefix frontend` in your terminal, you can stop them by pressing `Ctrl+C` in that terminal.
+*   Alternatively, you can run the following command from the **project root directory**:
     ```bash
-    npm run firebase:stop
+    npm run firebase:stop --prefix frontend
     ```
 
 ### Testing with Emulators
