@@ -50,7 +50,7 @@ export class HarvestSvgComponent extends DynamicSvgBaseComponent implements OnCh
 
     const harvestYield = this.parcel.lastHarvestYieldDt;
     const harvestCategory = this.parcel.lastHarvestOutcomeCategory || HarvestOutcome.NONE;
-    const harvestColor = this.harvestOutcomeColorMapping[harvestCategory.valueOf()] || this.harvestOutcomeColorMapping.default;
+    const harvestColor = this.harvestOutcomeColorMapping[harvestCategory.valueOf()] || this.harvestOutcomeColorMapping['default']; // Bracket notation
 
     const pesticideUsed = decisions?.pesticide;
     const biocontrolUsed = decisions?.biological_control;

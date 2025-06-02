@@ -25,7 +25,7 @@ declare module 'selectable.js' {
   }
 
   class Selectable {
-    constructor(options?: SelectableOptions);
+    constructor(element: HTMLElement | string, options?: SelectableOptions); // Added element parameter
     on(event: 'select', callback: (itemOrItems: SelectableNode | SelectableNode[]) => void): void;
     on(event: 'deselect', callback: (itemOrItems: SelectableNode | SelectableNode[]) => void): void;
     on(event: 'dragstart' | 'drag' | 'dragend' | 'init' | 'destroy' | 'enable' | 'disable', callback: (e?: unknown) => void): void;

@@ -9,7 +9,7 @@ import { SoilSvgComponent } from './dynamic-svg/soil-svg/soil-svg.component';
 import { NutritionSvgComponent } from './dynamic-svg/nutrition-svg/nutrition-svg.component';
 import { HarvestSvgComponent } from './dynamic-svg/harvest-svg/harvest-svg.component';
 import { Parcel, PlantationType, CropSequenceEffect } from '../../../../core/models/parcel.model'; 
-import { RoundWithFieldPublic, RoundPublic, Dict } from '../../../../core/models/round.model'; // Removed RoundDecisionBase
+import { RoundWithFieldPublic, RoundPublic } from '../../../../core/models/round.model'; // Removed Dict, RoundDecisionBase
 import { DisplayPlantationNamePipe } from '../../../../shared/pipes/display-plantation-name.pipe';
 import { PlantationDialogComponent } from '../plantation-dialog/plantation-dialog.component';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -50,23 +50,23 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
   // This internal signal mirrors the relevant parts of roundDisplayData for SVG components, etc.
   readonly internalCurrentRoundData = signal<RoundWithFieldPublic | RoundPublic | null>(null);
 
-  private _tempParcelPlantationChoices: Dict<number, PlantationType> = {};
+  private _tempParcelPlantationChoices: Record<number, PlantationType> = {}; // Changed Dict to Record
   private _selectedParcelNumbersForDialog: number[] = [];
 
   constructor() {
     // Effect to update parcelsSignal based on internalCurrentRoundData and temporary choices
     effect(() => {
       const roundData = this.internalCurrentRoundData();
-      if (roundData && roundData.field_state) {
+      if (roundData && 'field_state' in roundData && roundData.field_state) { // Type guard for field_state
         this.parcelsSignal.set(
-          roundData.field_state.parcels.map(p => ({
+          (roundData as RoundWithFieldPublic).field_state.parcels.map((p: Parcel) => ({ // Added type for p
             ...p,
             currentPlantation: this._tempParcelPlantationChoices[p.parcelNumber] || p.currentPlantation
           }))
         );
-      } else if (roundData && roundData.parcels) { // If past round data (RoundPublic) which might just have parcels list directly
+      } else if (roundData && 'parcels' in roundData && roundData.parcels) { // Type guard for parcels on RoundPublic
         this.parcelsSignal.set(
-          roundData.parcels.map(p => ({
+          roundData.parcels.map((p: Parcel) => ({ // Added type for p
             ...p,
             currentPlantation: this._tempParcelPlantationChoices[p.parcelNumber] || p.currentPlantation
           }))
@@ -120,17 +120,19 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
         }
       });
 
-      this.selectableInstance.on('selectable.select', (item: HTMLElement) => {
-        if(!this.canInteract()) return;
-        item.classList.add('parcel-selected');
+      this.selectableInstance.on('select', (itemOrItems: any) => { // Changed event name, item: HTMLElement to any to handle SelectableNode | SelectableNode[]
+        if (!this.canInteract()) return;
+        const items = Array.isArray(itemOrItems) ? itemOrItems : [itemOrItems];
+        items.forEach(item => (item.node as HTMLElement).classList.add('parcel-selected'));
         this.updateSelectedParcelNumbersForDialog();
       });
-      this.selectableInstance.on('selectable.deselect', (item: HTMLElement) => {
-        if(!this.canInteract()) return;
-        item.classList.remove('parcel-selected');
+      this.selectableInstance.on('deselect', (itemOrItems: any) => { // Changed event name
+        if (!this.canInteract()) return;
+        const items = Array.isArray(itemOrItems) ? itemOrItems : [itemOrItems];
+        items.forEach(item => (item.node as HTMLElement).classList.remove('parcel-selected'));
         this.updateSelectedParcelNumbersForDialog();
       });
-      this.selectableInstance.on('end', () => { // Removed event: any
+      this.selectableInstance.on('end', () => {
         if (this.canInteract() && this._selectedParcelNumbersForDialog.length > 0) {
           this.openPlantationDialog(this._selectedParcelNumbersForDialog);
         } else if (!this.canInteract() && this._selectedParcelNumbersForDialog.length > 0) {
@@ -170,8 +172,9 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
 
   private updateSelectedParcelNumbersForDialog(): void {
     if (!this.selectableInstance) return;
-    this._selectedParcelNumbersForDialog = this.selectableInstance.getSelectedItems().map((el: HTMLElement) => {
-        const parcelNumAttr = el.getAttribute('data-parcel-number'); // el is already HTMLElement
+    this._selectedParcelNumbersForDialog = this.selectableInstance.getSelectedNodes().map(selectableNode => { // Changed getSelectedItems to getSelectedNodes
+        const el = selectableNode.node as HTMLElement; // Access the node property
+        const parcelNumAttr = el.getAttribute('data-parcel-number');
         return parcelNumAttr ? parseInt(parcelNumAttr, 10) : -1;
       }).filter(num => num !== -1);
   }
@@ -183,7 +186,7 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
     }
   }
 
-  public getCurrentParcelPlantationChoices(): Dict<number, PlantationType> {
+  public getCurrentParcelPlantationChoices(): Record<number, PlantationType> { // Changed Dict to Record
     return { ...this._tempParcelPlantationChoices };
   }
 
@@ -198,10 +201,10 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
     } else {
         // If not resetting round data, just ensure parcelsSignal reflects cleared choices
         const roundData = this.internalCurrentRoundData();
-        if (roundData && roundData.field_state) {
-            this.parcelsSignal.set(roundData.field_state.parcels.map(p => ({...p}))); // Map to new array to trigger changes
-        } else if (roundData && roundData.parcels) {
-            this.parcelsSignal.set(roundData.parcels.map(p => ({...p})));
+        if (roundData && 'field_state' in roundData && roundData.field_state) { // Type guard
+            this.parcelsSignal.set((roundData as RoundWithFieldPublic).field_state.parcels.map((p: Parcel) => ({...p}))); // Added type for p
+        } else if (roundData && 'parcels' in roundData && roundData.parcels) { // Type guard
+            this.parcelsSignal.set(roundData.parcels.map((p: Parcel) => ({...p}))); // Added type for p
         }
     }
     if (this.selectableInstance) {
@@ -255,16 +258,16 @@ export class FieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChang
 
     if (changesMade) {
       const roundData = this.internalCurrentRoundData();
-      if (roundData && roundData.field_state) {
+      if (roundData && 'field_state' in roundData && roundData.field_state) { // Type guard
          this.parcelsSignal.set(
-          roundData.field_state.parcels.map(p => ({
+          (roundData as RoundWithFieldPublic).field_state.parcels.map((p: Parcel) => ({ // Added type for p
             ...p,
             currentPlantation: this._tempParcelPlantationChoices[p.parcelNumber] || p.currentPlantation
           }))
         );
-      } else if (roundData && roundData.parcels) { // For RoundPublic from past rounds
+      } else if (roundData && 'parcels' in roundData && roundData.parcels) { // Type guard
          this.parcelsSignal.set(
-          roundData.parcels.map(p => ({
+          roundData.parcels.map((p: Parcel) => ({ // Added type for p
             ...p,
             currentPlantation: this._tempParcelPlantationChoices[p.parcelNumber] || p.currentPlantation
           }))

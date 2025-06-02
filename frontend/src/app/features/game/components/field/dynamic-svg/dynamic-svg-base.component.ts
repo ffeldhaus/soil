@@ -1,19 +1,21 @@
 import { Input, Directive } from '@angular/core'; // Changed to Directive as it's a base
-import { ParcelInDB } from '../../../../../core/models/parcel.model'; // Adjust path as needed
+import { Parcel } from '../../../../../core/models/parcel.model'; // Changed ParcelInDB to Parcel
 import { RoundDecisionBase } from '../../../../../core/models/round.model'; // Import for playerDecisions
 
 // Define a more specific type for roundData if possible
 export interface RoundContextData {
   weatherEvent?: string;
   verminEvent?: string;
+  achievedOrganicCertification?: boolean; // Added
+  playerMachineEfficiency?: number; // Added
   // Add other relevant properties from roundData if known
 }
 
 @Directive() // Use @Directive for base class without its own template
 export abstract class DynamicSvgBaseComponent {
-  @Input() parcel!: ParcelInDB;
-  @Input() previousParcel?: ParcelInDB; // For crop sequence
-  @Input() prePreviousParcel?: ParcelInDB; // For crop sequence
+  @Input() parcel!: Parcel; // Changed ParcelInDB to Parcel
+  @Input() previousParcel?: Parcel; // Changed ParcelInDB to Parcel
+  @Input() prePreviousParcel?: Parcel; // Changed ParcelInDB to Parcel
   @Input() roundData?: RoundContextData; // General round data if needed (weather, vermin, decisions)
   @Input() playerDecisions?: RoundDecisionBase; // Specific player decisions for the round
 
