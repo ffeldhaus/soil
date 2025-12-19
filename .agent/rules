@@ -1,0 +1,15 @@
+# Development Rules
+
+- Ensure dependencies are up to date and prefer stable / LTS versions
+- Keep the codebase clean, readable and well documented
+- Node has been installed via NVM and is located in /Users/florianfeldhaus/.nvm/versions/node/
+- Consistently use HTML modals instead of Browser dialogs
+- All public pages / views must link to the impressum page
+- Always print the current version number to the developer console on first load
+- Always increment the version number in the package.json file when making signifcant changes
+- Always make sure all changes are being tested with unit tests and E2E tests where applicable
+- Always run all tests before deploying
+- Always build with localization
+- Only use Firebase services in the EU / europe
+- Always deploy to the Preview Channel. If the user confirms that everything works, push to the official channel.
+- Always verify that the deployed version matches the version number in the package.json file using curl

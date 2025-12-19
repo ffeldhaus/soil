@@ -1,0 +1,689 @@
+<div class="bg-gray-900 text-white font-sans">
+
+    <!-- Top HUD Bar -->
+    <div
+        class="fixed top-0 left-0 right-0 z-50 bg-gray-900/90 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <h1 class="text-2xl font-bold font-serif text-emerald-500 tracking-wider">SOIL ADMIN</h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div *ngIf="user$ | async as user" class="flex items-center gap-3">
+                <img *ngIf="user.photoURL" [src]="user.photoURL" class="w-8 h-8 rounded-full border border-gray-600">
+                <div *ngIf="!user.photoURL"
+                    class="w-8 h-8 rounded-full border border-gray-600 bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-300">
+                    {{ user.displayName?.charAt(0) || user.email?.charAt(0) }}
+                </div>
+                <span class="text-sm font-medium text-gray-300 hidden md:block">{{ user.displayName }}</span>
+            </div>
+
+            <app-language-switcher></app-language-switcher>
+
+            <button (click)="logout()"
+                class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition" title="Logout">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="pt-24 px-4 max-w-4xl mx-auto flex flex-col gap-6">
+
+    <div *ngIf="user$ | async as user" class="space-y-4">
+
+        <!-- Pending Approval State -->
+        <div *ngIf="!isLoading && (userStatus?.role === 'pending' || userStatus?.status === 'pending')"
+            class="p-8 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-yellow-600/50 shadow-xl text-center space-y-6 animate-fade-in-up">
+            <div class="inline-block p-4 bg-yellow-900/30 rounded-full mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-yellow-500" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-yellow-400 font-serif" i18n="@@dashboard.pending.title">Account Pending
+                Approval</h2>
+            <p class="text-xl text-gray-300 max-w-lg mx-auto leading-relaxed" i18n="@@dashboard.pending.welcome">
+                Thank you for registering, <span class="font-bold text-white">{{ user.displayName }}</span>!
+            </p>
+            <p class="text-gray-400 max-w-md mx-auto" i18n="@@dashboard.pending.message">
+                Your account is currently under review by a Super Admin. You will receive an email once your account has
+                been approved.
+            </p>
+            <div class="pt-6">
+                <button (click)="logout()"
+                    class="px-6 py-2 border border-gray-600 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+                    i18n="@@dashboard.logout">
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="p-12 flex flex-col items-center justify-center text-gray-400 animate-fade-in">
+            <svg class="animate-spin h-10 w-10 text-emerald-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+            <span class="animate-pulse" i18n="@@dashboard.loading.verifying">Verifying Account Status...</span>
+        </div>
+
+        <!-- Super Admin Redirect Fallback -->
+        <div *ngIf="!isLoading && userStatus?.role === 'superadmin'"
+            class="p-12 flex flex-col items-center justify-center text-center space-y-6 animate-fade-in">
+            <div class="p-4 bg-purple-900/30 rounded-full mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-purple-500" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-purple-400" i18n="@@dashboard.super.title">Super Admin Access</h2>
+            <p class="text-gray-400 max-w-md" i18n="@@dashboard.super.redirect">Redirecting you to the Super Admin
+                Console...</p>
+
+            <a routerLink="/admin/super"
+                class="px-8 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition shadow-lg hover:shadow-purple-500/20 flex items-center gap-2">
+                <ng-container i18n="@@dashboard.super.btnGo">Go to Console</ng-container>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+            </a>
+        </div>
+
+        <!-- Active Dashboard -->
+        <div *ngIf="!isLoading && !isPendingApproval && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin'"
+            class="p-6 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-fade-in">
+            <h2 class="text-2xl font-bold mb-4 text-emerald-400" i18n="@@dashboard.controls.title">Admin Controls</h2>
+            <p class="mb-4 text-gray-300" i18n="@@dashboard.welcome">Welcome, <span class="font-bold text-white">{{
+                    user.displayName }}</span>!</p>
+
+            <!-- Game Creation Form -->
+            <div class="mb-8 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
+                <h3 class="text-lg font-bold text-white mb-4" i18n="@@dashboard.createGame.title">Create New Game</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-xs text-gray-400 mb-1" i18n="@@dashboard.createGame.playerLabel">Player
+                            Label (e.g. Team, Farmers)</label>
+                        <input [(ngModel)]="newGameConfig.playerLabel" placeholder="Player"
+                            i18n-placeholder="@@dashboard.createGame.phPlayer"
+                            class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs text-gray-400"
+                                i18n="@@dashboard.createGame.players">Players</label>
+                            <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numPlayers
+                                }}</span>
+                        </div>
+                        <input [(ngModel)]="newGameConfig.numPlayers" (ngModelChange)="onPlayersChange()" type="range"
+                            min="1" max="50"
+                            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs text-gray-400"
+                                i18n="@@dashboard.createGame.rounds">Rounds</label>
+                            <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numRounds
+                                }}</span>
+                        </div>
+                        <input [(ngModel)]="newGameConfig.numRounds" type="range" min="10" max="100"
+                            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs text-gray-400" i18n="@@dashboard.createGame.bots">AI
+                                Bots</label>
+                            <span class="text-xs font-bold text-blue-400 font-mono">{{ newGameConfig.numAi }}</span>
+                        </div>
+                        <input [(ngModel)]="newGameConfig.numAi" type="range" min="0" [max]="newGameConfig.numPlayers"
+                            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                    </div>
+                </div>
+
+                <button (click)="createNewGame()" [disabled]="isCreatingGame"
+                    class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2">
+                    <span *ngIf="!isCreatingGame" i18n="@@dashboard.createGame.submit">+ Create New Game</span>
+                    <span *ngIf="isCreatingGame" class="flex items-center gap-2">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span i18n="@@dashboard.createGame.creating">Creating...</span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- Created Game Result -->
+            <div *ngIf="createdGame"
+                class="mb-8 p-4 bg-emerald-900/40 border border-emerald-500/50 rounded-lg animate-pulse-once">
+                <h3 class="text-lg font-bold text-emerald-400 mb-2" i18n="@@dashboard.created.title">Game Created!</h3>
+                <div class="grid grid-cols-1 gap-4 text-sm">
+                    <div>
+                        <span class="text-gray-400 block" i18n="@@dashboard.created.id">Game ID</span>
+                        <span class="font-mono text-white select-all text-lg">{{ createdGame.id }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Your Games List -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-xl font-bold text-white">
+                            <ng-container *ngIf="showTrash" i18n="@@dashboard.list.trash">Trash (Deleted
+                                Games)</ng-container>
+                            <ng-container *ngIf="!showTrash" i18n="@@dashboard.list.active">Active Games</ng-container>
+                        </h3>
+                        <div class="flex items-center gap-2 ml-4 bg-gray-800 rounded-lg p-1 border border-gray-700">
+                            <button (click)="!showTrash ? null : toggleTrashView()" [class.bg-emerald-600]="!showTrash"
+                                [class.text-white]="!showTrash" [class.text-gray-400]="showTrash"
+                                [class.hover:text-white]="showTrash"
+                                class="px-3 py-1 rounded text-xs font-bold transition"
+                                i18n="@@dashboard.filter.active">Active</button>
+                            <button (click)="showTrash ? null : toggleTrashView()" [class.bg-red-600]="showTrash"
+                                [class.text-white]="showTrash" [class.text-gray-400]="!showTrash"
+                                [class.hover:text-white]="!showTrash"
+                                class="px-3 py-1 rounded text-xs font-bold transition"
+                                i18n="@@dashboard.filter.trash">Trash</button>
+                        </div>
+                        <button (click)="loadGames()"
+                            class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white transition"
+                            title="Refresh List" i18n-title="@@dashboard.list.refresh">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div *ngIf="selectedGameIds.size > 0" class="flex gap-2">
+                        <button *ngIf="showTrash" (click)="restoreSelected()" [disabled]="isRestoring"
+                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded transition flex items-center gap-2 shadow-lg animate-fade-in">
+                            <span *ngIf="isRestoring"
+                                class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                            <span i18n="@@dashboard.actions.restoreSelected">Restore Selected</span> ({{
+                            selectedGameIds.size }})
+                        </button>
+
+                        <button *ngIf="!showTrash" (click)="deleteSelected()" [disabled]="isDeleting"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded transition flex items-center gap-2 shadow-lg animate-fade-in">
+                            <svg *ngIf="isDeleting" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4">
+                                </circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            <span i18n="@@dashboard.actions.deleteSelected">Delete Selected</span> ({{
+                            selectedGameIds.size }})
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="loadingError"
+                    class="mb-4 p-4 bg-red-900/30 border border-red-500/50 rounded-lg flex items-center justify-between text-red-200">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ loadingError }}</span>
+                    </div>
+                    <button (click)="loadGames()"
+                        class="px-3 py-1 bg-red-800 hover:bg-red-700 text-white text-sm font-medium rounded transition"
+                        i18n="@@dashboard.error.retry">
+                        Retry
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div *ngIf="isLoadingGames" class="py-12 flex flex-col items-center justify-center text-gray-400">
+                    <svg class="animate-spin h-8 w-8 text-emerald-500 mb-3" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <span class="animate-pulse" i18n="@@dashboard.loading.games">Loading games...</span>
+                </div>
+
+                <div *ngIf="!isLoadingGames && !loadingError"
+                    class="overflow-x-auto rounded-lg border border-gray-700 animate-fade-in">
+                    <table class="w-full text-sm text-left text-gray-300">
+                        <thead class="text-xs text-gray-400 uppercase bg-gray-800/60">
+                            <tr>
+                                <th class="px-4 py-3 w-10">
+                                    <input type="checkbox" (change)="toggleSelectAll($event)"
+                                        [checked]="isAllSelected()"
+                                        class="rounded bg-gray-700 border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900">
+                                </th>
+                                <th class="px-4 py-3 w-8"></th> <!-- Expand Token -->
+                                <th class="px-4 py-3" i18n="@@dashboard.table.name">Name</th>
+                                <th class="px-4 py-3" i18n="@@dashboard.table.details">Details</th>
+                                <th class="px-4 py-3" i18n="@@dashboard.table.round">Round</th>
+                                <th class="px-4 py-3" *ngIf="showTrash" i18n="@@dashboard.table.deletedAt">Deleted At
+                                </th>
+                                <th class="px-4 py-3" *ngIf="!showTrash" i18n="@@dashboard.table.created">Created</th>
+                                <th class="px-4 py-3" i18n="@@dashboard.table.actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let game of games">
+                                <tr class="border-b border-gray-700 hover:bg-gray-800/30 transition">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox" [checked]="isSelected(game.id)"
+                                            (change)="toggleSelection(game.id)"
+                                            class="rounded bg-gray-700 border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900">
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <button (click)="toggleExpand(game.id)"
+                                            class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white transition">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="h-4 w-4 transition-transform duration-200"
+                                                [class.rotate-90]="expandedGameId === game.id" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </button>
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-white">{{ game.name }}</td>
+                                    <td class="px-4 py-3 font-mono text-xs">
+                                        <div><ng-container i18n="@@dashboard.table.id">ID:</ng-container> <span
+                                                class="text-blue-300 select-all">{{ game.id }}</span></div>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm text-gray-300">{{ game.currentRoundNumber || 0 }}</td>
+
+                                    <td class="px-4 py-3" *ngIf="showTrash">{{ game.deletedAt | date:'short' }}</td>
+                                    <td class="px-4 py-3" *ngIf="!showTrash">{{ game.createdAt | date:'shortDate' }}
+                                    </td>
+
+                                    <td class="px-4 py-3 flex gap-2">
+                                        <button *ngIf="!showTrash" (click)="shareGame(game)"
+                                            class="p-1.5 text-blue-400 hover:text-white hover:bg-blue-600 rounded-lg transition"
+                                            title="Email Game Details" i18n-title="@@dashboard.table.email">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                            </svg>
+                                        </button>
+
+                                        <button *ngIf="showTrash" (click)="restoreGame(game)"
+                                            class="p-1.5 text-emerald-400 hover:text-white hover:bg-emerald-600 rounded-lg transition"
+                                            title="Restore Game" i18n-title="@@dashboard.table.restore">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                        </button>
+
+                                        <button (click)="deleteGame(game)"
+                                            class="p-1.5 text-red-400 hover:text-white hover:bg-red-600 rounded-lg transition"
+                                            [title]="showTrash ? 'Delete Permanently' : 'Delete Game'"
+                                            i18n-title="@@dashboard.table.delete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Expanded Details Row -->
+                                <tr *ngIf="expandedGameId === game.id" class="bg-gray-800/40 border-b border-gray-700">
+                                    <td colspan="8" class="px-4 py-4">
+                                        <div class="ml-12">
+                                            <h4 class="text-sm font-bold text-gray-400 mb-2 uppercase tracking-wide"
+                                                i18n="@@dashboard.details.players">
+                                                Players</h4>
+                                            <div *ngIf="!game.players || getPlayerKeys(game.players).length === 0"
+                                                class="text-gray-500 italic text-sm"
+                                                i18n="@@dashboard.details.noPlayers">No players joined yet.</div>
+
+                                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                <div *ngFor="let slot of getSlots(game)"
+                                                    class="p-4 bg-gray-900 rounded-xl border flex flex-col gap-3 transition"
+                                                    [ngClass]="{'border-emerald-500/30 bg-emerald-900/10': slot.isJoined && !slot.isAi, 'border-blue-500/30 bg-blue-900/10': slot.isAi, 'border-gray-700': !slot.isJoined}">
+
+                                                    <!-- Header -->
+                                                    <div class="flex justify-between items-start">
+                                                        <div>
+                                                            <div class="font-bold text-white flex items-center gap-2">
+                                                                <span class="text-gray-400">#{{slot.number}}</span>
+                                                                <span *ngIf="slot.isAi" class="text-blue-400">{{
+                                                                    slot.player?.displayName || 'Player ' + slot.number
+                                                                    }}</span>
+                                                                <span *ngIf="!slot.isAi && slot.isJoined"
+                                                                    class="text-emerald-400">{{ slot.player?.displayName
+                                                                    }}</span>
+                                                                <span *ngIf="!slot.isAi && !slot.isJoined"
+                                                                    class="text-gray-500"><ng-container
+                                                                        i18n="@@dashboard.player.label">Player</ng-container>
+                                                                    {{ slot.number
+                                                                    }}</span>
+                                                            </div>
+                                                            <div class="text-xs text-gray-500 font-mono mt-0.5"
+                                                                *ngIf="slot.isJoined">
+                                                                {{ slot.uid | slice:0:12 }}...
+                                                            </div>
+                                                            <!-- Password Display -->
+                                                            <div class="mt-1 flex items-center gap-2">
+                                                                <span
+                                                                    class="text-[10px] text-gray-500 uppercase tracking-widest">PIN</span>
+                                                                <span
+                                                                    class="font-mono text-emerald-400 font-bold select-all">{{
+                                                                    slot.password }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <span *ngIf="slot.isJoined"
+                                                            class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                                                            [ngClass]="slot.isAi ? 'bg-blue-900 text-blue-300' : 'bg-emerald-900 text-emerald-300'">
+                                                            {{ slot.isAi ? ('BOT' | i18nSelect: {'BOT': 'BOT'}) :
+                                                            ('ACTIVE' | i18nSelect: {'ACTIVE': 'ACTIVE'}) }}
+                                                        </span>
+                                                        <span *ngIf="!slot.isJoined"
+                                                            class="px-2 py-0.5 rounded text-[10px] bg-gray-800 text-gray-400 font-bold uppercase tracking-wider">
+                                                            EMPTY
+                                                        </span>
+                                                    </div>
+
+                                                    <!-- Stats -->
+                                                    <div
+                                                        class="grid grid-cols-2 gap-2 text-xs bg-black/20 p-2 rounded-lg">
+                                                        <div>
+                                                            <span class="block text-gray-500 mb-0.5"
+                                                                i18n="@@dashboard.player.capital">Capital</span>
+                                                            <span class="font-mono text-yellow-500 font-bold">{{
+                                                                (slot.player?.capital ?? 1000) |
+                                                                currency:'EUR':'symbol':'1.0-0' }}</span>
+                                                        </div>
+                                                        <div>
+                                                            <span class="block text-gray-500 mb-0.5"
+                                                                i18n="@@dashboard.player.round">Round</span>
+                                                            <span class="font-mono text-white">{{
+                                                                slot.player?.currentRound ?? 0 }}</span>
+                                                        </div>
+                                                        <div>
+                                                            <span class="block text-gray-500 mb-0.5"
+                                                                i18n="@@dashboard.player.submitted">Submitted?</span>
+                                                            <span class="font-bold" [class.text-green-400]="false"
+                                                                [class.text-red-400]="false">
+                                                                <!-- Logic to check current round vs game round? Not easily available in simplified player view. -->
+                                                                <!-- For now just static or based on currentRound -->
+                                                                {{ (slot.player?.currentRound > game.currentRoundNumber)
+                                                                ? 'Yes' : 'No' }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Actions -->
+                                                    <div
+                                                        class="flex flex-wrap gap-2 mt-auto pt-2 border-t border-gray-700/50">
+                                                        <!-- Convert -->
+                                                        <button (click)="convertPlayer(game, slot)"
+                                                            class="flex-1 px-2 py-1.5 rounded text-xs font-medium transition flex items-center justify-center gap-1"
+                                                            [ngClass]="slot.isAi ? 'bg-emerald-800/30 text-emerald-300 hover:bg-emerald-800/50' : 'bg-blue-800/30 text-blue-300 hover:bg-blue-800/50'">
+                                                            {{ slot.isAi ? 'To Human' : 'To AI' }}
+                                                        </button>
+
+                                                        <!-- Access / Impersonate -->
+                                                        <button *ngIf="!slot.isAi" (click)="impersonate(slot.uid)"
+                                                            class="px-2 py-1.5 bg-gray-700 hover:bg-white hover:text-black text-gray-300 rounded text-xs transition flex items-center justify-center gap-1.5"
+                                                            title="Impersonate Player">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                            </svg>
+                                                        </button>
+
+                                                        <!-- QR / Link (Only for humans) -->
+                                                        <button *ngIf="!slot.isAi"
+                                                            (click)="generateQrCode(game.id, slot.number, slot.password)"
+                                                            class="px-2 py-1.5 bg-gray-700 hover:bg-white hover:text-black text-gray-300 rounded text-xs transition font-mono"
+                                                            title="Show QR Code">
+                                                            QR
+                                                        </button>
+
+                                                        <!-- Email (Only for humans) -->
+                                                        <button *ngIf="!slot.isAi" (click)="sharePlayer(game, slot)"
+                                                            class="px-2 py-1.5 bg-gray-700 hover:bg-white hover:text-black text-gray-300 rounded text-xs transition"
+                                                            title="Send Email">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+
+                            <tr *ngIf="games.length === 0">
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                    <p class="text-lg mb-2" i18n="@@dashboard.empty.title">No games found.</p>
+                                    <p class="text-sm" i18n="@@dashboard.empty.subtitle">Create a new game to get
+                                        started!</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div *ngIf="totalGames > 0"
+                    class="flex flex-col sm:flex-row justify-between items-center mt-4 text-sm text-gray-400 gap-4">
+                    <div>
+                        <ng-container i18n="@@dashboard.pagination.showing">Showing</ng-container> <span
+                            class="text-white">{{ (currentPage - 1) * pageSize + 1 }}</span> - <span
+                            class="text-white">{{ (currentPage - 1) * pageSize + games.length }}</span> <ng-container
+                            i18n="@@dashboard.pagination.of">of</ng-container> <span class="text-white">{{ totalGames
+                            }}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button (click)="prevPage()" [disabled]="currentPage === 1"
+                            class="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            i18n="@@dashboard.pagination.prev">
+                            Previous
+                        </button>
+                        <span class="px-3 py-1 bg-gray-800/50 rounded border border-gray-700"><ng-container
+                                i18n="@@dashboard.pagination.page">Page</ng-container> {{ currentPage }} <ng-container
+                                i18n="@@dashboard.pagination.of">of</ng-container>
+                            {{ totalPages }}</span>
+                        <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+                            class="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            i18n="@@dashboard.pagination.next">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Overlay -->
+            <div *ngIf="qrCodeUrl"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                (click)="closeQr()">
+                <div class="bg-white p-6 rounded-xl flex flex-col items-center gap-4"
+                    (click)="$event.stopPropagation()">
+                    <h3 class="text-black font-bold text-xl">{{ qrCodePlayer }} <ng-container
+                            i18n="@@dashboard.qr.access">Access</ng-container></h3>
+                    <img [src]="qrCodeUrl" class="w-64 h-64">
+                    <p class="text-black text-sm text-center max-w-xs" i18n="@@dashboard.qr.scan">Scan to login
+                        automatically.</p>
+                    <div class="flex gap-2 w-full">
+                        <button onclick="window.print()"
+                            class="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-black rounded font-medium"
+                            i18n="@@dashboard.qr.print">Print</button>
+                        <button (click)="closeQr()"
+                            class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium"
+                            i18n="@@dashboard.qr.close">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div *ngIf="gameToDelete || isDeletingSelected"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                (click)="cancelDelete()">
+                <div class="bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl"
+                    (click)="$event.stopPropagation()">
+                    <h3 class="text-xl font-bold flex items-center gap-2" [class.text-red-400]="!showTrash"
+                        [class.text-red-600]="showTrash">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <ng-container *ngIf="showTrash" i18n="@@dashboard.delete.permanent">Permanent
+                            Deletion</ng-container>
+                        <ng-container *ngIf="!showTrash" i18n="@@dashboard.delete.confirm">Confirm
+                            Deletion</ng-container>
+                    </h3>
+
+                    <p class="text-gray-300">
+                        <span *ngIf="gameToDelete">
+                            <ng-container *ngIf="showTrash" i18n="@@dashboard.delete.questionPermanent">Are you sure you
+                                want to permanently delete</ng-container>
+                            <ng-container *ngIf="!showTrash" i18n="@@dashboard.delete.question">Are you sure you want to
+                                delete</ng-container>
+                            <span class="font-bold text-white"> {{ gameToDelete.name }}</span>?
+                        </span>
+                        <span *ngIf="isDeletingSelected">
+                            <ng-container *ngIf="showTrash" i18n="@@dashboard.delete.questionBatchPermanent">Are you
+                                sure you want to permanently delete</ng-container>
+                            <ng-container *ngIf="!showTrash" i18n="@@dashboard.delete.questionBatch">Are you sure you
+                                want to delete</ng-container>
+                            <span class="font-bold text-white"> {{ selectedGameIds.size }}</span> <ng-container
+                                i18n="@@dashboard.delete.games">game(s)</ng-container>?</span>
+                    </p>
+
+                    <!-- Soft Delete Info -->
+                    <div *ngIf="!showTrash"
+                        class="bg-red-900/20 border border-red-900/50 p-3 rounded-lg flex gap-3 items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div class="text-sm text-red-200/80">
+                            <strong i18n="@@dashboard.delete.soft.title">Soft Delete:</strong> <ng-container
+                                i18n="@@dashboard.delete.soft.desc">Games will be moved to the Trash. You can restore
+                                them anytime within</ng-container> <strong>30 <ng-container
+                                    i18n="@@dashboard.delete.days">days</ng-container></strong>.
+                        </div>
+                    </div>
+
+                    <!-- Permanent Delete Warning -->
+                    <div *ngIf="showTrash"
+                        class="bg-red-600/20 border border-red-500/50 p-3 rounded-lg flex gap-3 items-start animate-pulse-slow">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <div class="text-sm text-red-200">
+                            <strong i18n="@@dashboard.delete.warning">WARNING:</strong> <ng-container
+                                i18n="@@dashboard.delete.permanentDesc">This action cannot be undone. All game data will
+                                be destroyed immediately.</ng-container>
+                        </div>
+                    </div>
+
+                    <!-- Type Confirmation -->
+                    <div *ngIf="showTrash">
+                        <label class="text-xs text-gray-400 block mb-1" i18n="@@dashboard.delete.typeConfirm">Type <span
+                                class="font-mono font-bold text-red-400">DELETE</span> to confirm:</label>
+                        <input [(ngModel)]="deleteConfirmInput" placeholder="DELETE"
+                            class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-red-500 focus:outline-none placeholder-gray-600">
+                    </div>
+
+                    <div class="flex gap-3 mt-4">
+                        <button (click)="cancelDelete()"
+                            class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+                            i18n="@@dashboard.delete.cancel">
+                            Cancel
+                        </button>
+                        <button (click)="confirmDelete()"
+                            [disabled]="isDeleting || (showTrash && deleteConfirmInput !== 'DELETE')"
+                            class="flex-1 py-3 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2">
+                            <span *ngIf="!isDeleting">
+                                <ng-container *ngIf="showTrash" i18n="@@dashboard.delete.btnPermanent">Permanently
+                                    Delete</ng-container>
+                                <ng-container *ngIf="!showTrash" i18n="@@dashboard.delete.btnGame">Delete
+                                    Game</ng-container>
+                            </span>
+                            <span *ngIf="isDeleting"
+                                class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Modal -->
+            <div *ngIf="errorMessage"
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                (click)="closeError()">
+                <div class="bg-gray-800 border border-red-500/50 p-6 rounded-xl flex flex-col gap-4 max-w-sm w-full shadow-2xl animate-fade-in"
+                    (click)="$event.stopPropagation()">
+                    <h3 class="text-xl font-bold text-red-400 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span i18n="@@dashboard.error.title">Error</span>
+                    </h3>
+
+                    <p class="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed">{{ errorMessage }}</p>
+
+                    <button (click)="closeError()"
+                        class="mt-2 w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded font-medium transition shadow-lg"
+                        i18n="@@dashboard.error.close">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login State (If no user) -->
+        <div *ngIf="(user$ | async) === null" class="flex flex-col items-start gap-4">
+            <p i18n="@@dashboard.login.msg">Please log in to access the admin dashboard.</p>
+            <button (click)="login()"
+                class="px-6 py-2 bg-blue-600 rounded flex items-center gap-2 hover:bg-blue-700 transition"
+                i18n="@@dashboard.login.btn">
+                Login with Google
+            </button>
+        </div>
+    </div>

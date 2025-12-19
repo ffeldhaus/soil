@@ -1,0 +1,1533 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template" target-language="de">
+    <body>
+      <trans-unit id="dashboard.pending.title" datatype="html">
+        <source>Account Pending Approval</source>
+        <target>Konto wartet auf Genehmigung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">47,49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.pending.welcome" datatype="html">
+        <source> Thank you for registering, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ user.displayName }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>! </source>
+        <target> Thank you for registering, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ user.displayName }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>! </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">50,52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.pending.message" datatype="html">
+        <source> Your account is currently under review by a Super Admin. You will receive an email once your account has been approved. </source>
+        <target> Your account is currently under review by a Super Admin. You will receive an email once your account has been approved. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">53,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.logout" datatype="html">
+        <source> Logout </source>
+        <target>Abmelden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">60,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.loading.verifying" datatype="html">
+        <source>Verifying Account Status...</source>
+        <target>Konto-Status wird geprüft...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">74,77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.controls.title" datatype="html">
+        <source>Admin Controls</source>
+        <target>Admin-Steuerung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">80,81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.welcome" datatype="html">
+        <source>Welcome, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{
+                    user.displayName }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</source>
+        <target>Welcome, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{
+                    user.displayName }}"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">81,84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.title" datatype="html">
+        <source>Create New Game</source>
+        <target>Neues Spiel erstellen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">86,87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.name" datatype="html">
+        <source>Game Name</source>
+        <target>Spielname</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">90,91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.players" datatype="html">
+        <source>Players</source>
+        <target>Spieler</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">96,97</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.rounds" datatype="html">
+        <source>Rounds</source>
+        <target>Runden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">102,103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.bots" datatype="html">
+        <source>AI Bots</source>
+        <target>KI-Bots</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">108,109</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.submit" datatype="html">
+        <source>+ Create New Game</source>
+        <target>+ Neues Spiel erstellen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">116,117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.creating" datatype="html">
+        <source>Creating...</source>
+        <target>Wird erstellt...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">126,128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.created.title" datatype="html">
+        <source>Game Created!</source>
+        <target>Spiel erstellt!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">134,135</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.created.id" datatype="html">
+        <source>Game ID</source>
+        <target>Spiel-ID</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">137,138</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.list.trash" datatype="html">
+        <source>Trash (Deleted Games)</source>
+        <target>Papierkorb (Gelöschte Spiele)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">148,149</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.list.active" datatype="html">
+        <source>Active Games</source>
+        <target>Aktive Spiele</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">150,151</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.filter.active" datatype="html">
+        <source>Active</source>
+        <target>Aktiv</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">157,158</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.filter.trash" datatype="html">
+        <source>Trash</source>
+        <target>Papierkorb</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">162,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.actions.restoreSelected" datatype="html">
+        <source>Restore Selected</source>
+        <target>Ausgewählte wiederherstellen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">180,181</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.actions.deleteSelected" datatype="html">
+        <source>Delete Selected</source>
+        <target>Ausgewählte löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">195,196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.error.retry" datatype="html">
+        <source> Retry </source>
+        <target>Erneut versuchen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">215,216</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.loading.games" datatype="html">
+        <source>Loading games...</source>
+        <target>Spiele werden geladen...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">229,232</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.table.name" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">243,244</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.table.details" datatype="html">
+        <source>Details</source>
+        <target>Details</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">244,245</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.table.round" datatype="html">
+        <source>Round</source>
+        <target>Runde</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">245,246</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.table.deletedAt" datatype="html">
+        <source>Deleted At </source>
+        <target>Gelöscht am</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">246,248</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.table.created" datatype="html">
+        <source>Created</source>
+        <target>Erstellt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">248,249</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.table.actions" datatype="html">
+        <source>Actions</source>
+        <target>Aktionen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">249,250</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.details.noPlayers" datatype="html">
+        <source>No players joined yet.</source>
+        <target>Noch keine Spieler beigetreten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">322,324</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.label" datatype="html">
+        <source>Player</source>
+        <target>Spieler</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">342,343</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.capital" datatype="html">
+        <source>Capital</source>
+        <target>Kapital</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">375,376</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.round" datatype="html">
+        <source>Round</source>
+        <target>Runde</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">382,383</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.submitted" datatype="html">
+        <source>Submitted?</source>
+        <target>Abgegeben?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">388,389</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.empty.title" datatype="html">
+        <source>No games found.</source>
+        <target>Keine Spiele gefunden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">453,454</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.empty.subtitle" datatype="html">
+        <source>Create a new game to get started!</source>
+        <target>Erstelle ein neues Spiel, um zu beginnen!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">454,455</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.showing" datatype="html">
+        <source>Showing</source>
+        <target>Zeige</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">466,467</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.of" datatype="html">
+        <source>of</source>
+        <target>von</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">469</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">480,481</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.prev" datatype="html">
+        <source> Previous </source>
+        <target>Zurück</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">476,477</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.page" datatype="html">
+        <source>Page</source>
+        <target>Seite</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">479</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.next" datatype="html">
+        <source> Next </source>
+        <target>Weiter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">485,486</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.access" datatype="html">
+        <source>Access</source>
+        <target>Zugang</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">498,499</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.scan" datatype="html">
+        <source>Scan to login automatically.</source>
+        <target>Scannen zum automatischen Anmelden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">500,502</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.print" datatype="html">
+        <source>Print</source>
+        <target>Drucken</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">505,506</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.close" datatype="html">
+        <source>Close</source>
+        <target>Schließen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">508,509</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.permanent" datatype="html">
+        <source>Permanent Deletion</source>
+        <target>Dauerhaftes Löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">526,527</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.confirm" datatype="html">
+        <source>Confirm Deletion</source>
+        <target>Löschen bestätigen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">529</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.questionPermanent" datatype="html">
+        <source>Are you sure you want to permanently delete</source>
+        <target>Are you sure you want to permanently delete</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">534,536</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.question" datatype="html">
+        <source>Are you sure you want to delete</source>
+        <target>Are you sure you want to delete</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">536,537</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.questionBatchPermanent" datatype="html">
+        <source>Are you sure you want to permanently delete</source>
+        <target>Are you sure you want to permanently delete</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">542,543</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.questionBatch" datatype="html">
+        <source>Are you sure you want to delete</source>
+        <target>Are you sure you want to delete</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">543,544</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.games" datatype="html">
+        <source>game(s)</source>
+        <target>Spiel(e)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">546,547</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.soft.title" datatype="html">
+        <source>Soft Delete:</source>
+        <target>Papierkorb:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">558,559</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.soft.desc" datatype="html">
+        <source>Games will be moved to the Trash. You can restore them anytime within</source>
+        <target>Spiele werden in den Papierkorb verschoben. Du kannst sie jederzeit wiederherstellen innerhalb von</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">559,560</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.days" datatype="html">
+        <source>days</source>
+        <target>Tagen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">561,562</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.warning" datatype="html">
+        <source>WARNING:</source>
+        <target>WARNUNG:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">574,575</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.permanentDesc" datatype="html">
+        <source>This action cannot be undone. All game data will be destroyed immediately.</source>
+        <target>Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">575,576</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.typeConfirm" datatype="html">
+        <source>Type <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
+                                class=&quot;font-mono font-bold text-red-400&quot;&gt;"/>DELETE<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> to confirm:</source>
+        <target>Type <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
+                                class=&quot;font-mono font-bold text-red-400&quot;&gt;"/>DELETE<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> to confirm:</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">582,584</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.cancel" datatype="html">
+        <source> Cancel </source>
+        <target>Abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">592,593</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.btnPermanent" datatype="html">
+        <source>Permanently Delete</source>
+        <target>Dauerhaft löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">598,599</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.btnGame" datatype="html">
+        <source>Delete Game</source>
+        <target>Spiel löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">601</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.error.title" datatype="html">
+        <source>Error</source>
+        <target>Fehler</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">622,625</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.error.close" datatype="html">
+        <source> Close </source>
+        <target>Schließen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">630,631</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.login.msg" datatype="html">
+        <source>Please log in to access the admin dashboard.</source>
+        <target>Bitte melde dich an, um auf das Admin-Dashboard zuzugreifen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">638,639</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.login.btn" datatype="html">
+        <source> Login with Google </source>
+        <target>Anmelden mit Google</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">642,643</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="footer.impressum" datatype="html">
+        <source>Impressum</source>
+        <target>Impressum</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.html</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.adminTitle" datatype="html">
+        <source>Admin Access</source>
+        <target>Admin-Zugang</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.adminDesc" datatype="html">
+        <source>Manage games and orchestrate the simulation.</source>
+        <target>Spiele verwalten und die Simulation steuern.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">18,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.btnGoogle" datatype="html">
+        <source>Login with Google</source>
+        <target>Anmelden mit Google</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">26,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.playerTitle" datatype="html">
+        <source>Player Access</source>
+        <target>Spieler-Zugang</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">35,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.playerDesc" datatype="html">
+        <source>Enter Game ID and credentials.</source>
+        <target>Spiel-ID und Zugangsdaten eingeben.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">36,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.phGameId" datatype="html">
+        <source>Game ID</source>
+        <target>Spiel-ID</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.phPlayerNum" datatype="html">
+        <source>Player # (e.g. 1)</source>
+        <target>Spieler # (z.B. 1)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">43,44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.intro" datatype="html">
+        <source>An interactive simulation about</source>
+        <target>Eine interaktive Simulation über</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.agriculture" datatype="html">
+        <source>Agriculture</source>
+        <target>Landwirtschaft</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.economics" datatype="html">
+        <source>Economics</source>
+        <target>Wirtschaft</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.and" datatype="html">
+        <source>and</source>
+        <target>und</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.sustainability" datatype="html">
+        <source>Sustainability</source>
+        <target>Nachhaltigkeit</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.enterGame" datatype="html">
+        <source> Enter Game </source>
+        <target> Spiel betreten </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">37,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.teacherAdmin" datatype="html">
+        <source> Teacher / Admin </source>
+        <target> Lehrer / Admin </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">43,45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.register" datatype="html">
+        <source> Register </source>
+        <target> Registrieren </target>
+      </trans-unit>
+      <trans-unit id="landing.aboutTitle" datatype="html">
+        <source>About the Game</source>
+        <target>Über das Spiel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.aboutText1" datatype="html">
+        <source> Soil is an interactive simulation game where players make ecological and economic decisions and experience their immediate impact. In groups, students build an agricultural business over ten rounds. </source>
+        <target> Soil ist ein interaktives Planspiel, bei dem Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">61,63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.aboutText2" datatype="html">
+        <source> The goal is to run a profitable business sustainably. Strategies like crop selection, fertilization, and pest control must be balanced. After each round, groups receive feedback on the ecological and economic consequences of their actions. </source>
+        <target> Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtwahl, Düngung und Schädlingsbekämpfung müssen abgewogen werden. Nach jeder Runde erhalten die Gruppen Feedback zu den ökologischen und ökonomischen Konsequenzen ihres Handelns. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">65,67</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.backgroundTitle" datatype="html">
+        <source>Background</source>
+        <target>Hintergrund</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.backgroundText1" datatype="html">
+        <source> At the UN Conference in 1992, &quot;sustainability&quot; was declared a global development goal. This goal is to be achieved by integrating economic, ecological, and social perspectives. </source>
+        <target> Auf der UN-Konferenz 1992 wurde &quot;Nachhaltigkeit&quot; zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">73,75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.backgroundText2" datatype="html">
+        <source> The simulation game &quot;Soil&quot; was developed to make this concept of sustainability understandable. It allows learners to discover the centrality of ecological variables as natural limits to economic activities through hands-on experience. </source>
+        <target> Das Planspiel &quot;Soil&quot; wurde entwickelt, um dieses Konzept der Nachhaltigkeit verständlich zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns durch praktische Erfahrung zu entdecken. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">77,79</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landing.footer" datatype="html">
+        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Project. Developed for educational purposes.</source>
+        <target>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.phPin" datatype="html">
+        <source>Game Password</source>
+        <target>Spiel-Passwort</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.login.btnLogin" datatype="html">
+        <source>Login</source>
+        <target>Anmelden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">52,53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.hud.round" datatype="html">
+        <source>Round</source>
+        <target>Runde</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">70,71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.hud.capital" datatype="html">
+        <source>Capital</source>
+        <target>Kapital</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">73,74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.banner.readOnly" datatype="html">
+        <source>READ ONLY MODE</source>
+        <target>SCHREIBGESCHÜTZTER MODUS</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">129,130</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.settings.title" datatype="html">
+        <source>Settings</source>
+        <target>Einstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">139,141</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.settings.lang" datatype="html">
+        <source>Language</source>
+        <target>Sprache</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">142,143</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.settings.playerName" datatype="html">
+        <source>Player Name</source>
+        <target>Spielername</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">156,157</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.settings.phPlayerName" datatype="html">
+        <source>Enter name</source>
+        <target>Name eingeben</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.settings.cancel" datatype="html">
+        <source>Cancel</source>
+        <target>Abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">165,166</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.settings.save" datatype="html">
+        <source>Save</source>
+        <target>Speichern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">168,169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.error.title" datatype="html">
+        <source>Error</source>
+        <target>Fehler</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">186,187</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.error.close" datatype="html">
+        <source> Close </source>
+        <target>Schließen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">191,192</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.nextRound" datatype="html">
+        <source>Next Round &gt;</source>
+        <target>Nächste Runde ></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">200,201</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.yourField" datatype="html">
+        <source> &lt; Your Field &gt; </source>
+        <target>< Dein Feld ></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">211,212</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.wheat" datatype="html">
+        <source>Wheat</source>
+        <target>Weizen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.corn" datatype="html">
+        <source>Corn</source>
+        <target>Mais</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.potato" datatype="html">
+        <source>Potato</source>
+        <target>Kartoffel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.beet" datatype="html">
+        <source>Beet</source>
+        <target>Zuckerrübe</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.barley" datatype="html">
+        <source>Barley</source>
+        <target>Gerste</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.oat" datatype="html">
+        <source>Oat</source>
+        <target>Hafer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.rye" datatype="html">
+        <source>Rye</source>
+        <target>Roggen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.fieldbean" datatype="html">
+        <source>Fieldbean</source>
+        <target>Ackerbohne</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.animals" datatype="html">
+        <source>Animals</source>
+        <target>Tiere</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="crop.fallow" datatype="html">
+        <source>Fallow</source>
+        <target>Brachland</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/parcel/parcel.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planting.title" datatype="html">
+        <source>Select Crop to Plant</source>
+        <target>Fruchtart wählen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">13,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="planting.cancel" datatype="html">
+        <source>Cancel</source>
+        <target>Abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/planting-modal/planting-modal.ts</context>
+          <context context-type="linenumber">33,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.title" datatype="html">
+        <source>Legal Notice</source>
+        <target>Impressum</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.subtitle" datatype="html">
+        <source>Legal Notice &amp; Credits</source>
+        <target>Impressum & Credits</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.backToHome" datatype="html">
+        <source><x id="START_TAG__SVG_SVG" ctype="x-_svg_svg" equiv-text="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-4 w-4&quot; fill=&quot;none&quot; viewBox=&quot;0 0 24 24&quot; stroke=&quot;currentColor&quot;&gt;"/><x id="START_TAG__SVG_PATH" ctype="x-_svg_path" equiv-text="&lt;path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18&quot; /&gt;"/><x id="CLOSE_TAG__SVG_PATH" ctype="x-_svg_path" equiv-text="&lt;path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18&quot; /&gt;"/><x id="CLOSE_TAG__SVG_SVG" ctype="x-_svg_svg" equiv-text="&lt;/svg&gt;"/> Back to Home </source>
+        <target><x id="START_TAG__SVG_SVG" ctype="x-_svg_svg" equiv-text="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;h-4 w-4&quot; fill=&quot;none&quot; viewBox=&quot;0 0 24 24&quot; stroke=&quot;currentColor&quot;&gt;"/><x id="START_TAG__SVG_PATH" ctype="x-_svg_path" equiv-text="&lt;path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18&quot; /&gt;"/><x id="CLOSE_TAG__SVG_PATH" ctype="x-_svg_path" equiv-text="&lt;path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18&quot; /&gt;"/><x id="CLOSE_TAG__SVG_SVG" ctype="x-_svg_svg" equiv-text="&lt;/svg&gt;"/> Zurück zur Startseite </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">20,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.contact" datatype="html">
+        <source>Contact</source>
+        <target>Kontakt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">27,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.responsible" datatype="html">
+        <source>Responsible for Content</source>
+        <target>Verantwortlich für den Inhalt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">38,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.imageSources" datatype="html">
+        <source>Image Sources</source>
+        <target>Bildnachweise</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.farmstead" datatype="html">
+        <source>Background image Farmstead, Windsor Township, Berks County</source>
+        <target>Hintergrundbild Farmstead, Windsor Township, Berks County</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">51,52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.drought" datatype="html">
+        <source>Drought</source>
+        <target>Dürre</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">52,53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.borer" datatype="html">
+        <source>European Corn Borer</source>
+        <target>Maiszünsler</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">53,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.ladybug" datatype="html">
+        <source>Ladybug</source>
+        <target>Marienkäfer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">54,55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.oekolandbau" datatype="html">
+        <source>Ökolandbau - The Information Portal</source>
+        <target>Ökolandbau.de</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">55,56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.logo" datatype="html">
+        <source>Logo &quot;Euro-Leaf&quot;</source>
+        <target>Logo "Euro-Blatt"</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">56,57</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.chamber" datatype="html">
+        <source>Chamber of Agriculture North Rhine-Westphalia</source>
+        <target>Landwirtschaftskammer Nordrhein-Westfalen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">57,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.source.bioSiegel" datatype="html">
+        <source>Bio-Siegel</source>
+        <target>Bio-Siegel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">58,60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.title" datatype="html">
+        <source>Disclaimer</source>
+        <target>Haftungsausschluss (Disclaimer)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">64,65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.p1" datatype="html">
+        <source> No guarantee is assumed for the correctness and completeness of the contents of this website. The contents of this page are subject to German copyright law. Any duplication or distribution requires written consent. Downloads and copies are permitted only for non-commercial use. </source>
+        <target>Für die Richtigkeit und Vollständigkeit der Inhalte dieser Website wird keine Gewähr übernommen. Die Inhalte dieser Seite unterliegen dem deutschen Urheberrecht. Jede Vervielfältigung oder Verbreitung bedarf der schriftlichen Zustimmung. Downloads und Kopien sind nur für den nicht-kommerziellen Gebrauch gestattet.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">67,69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.p2" datatype="html">
+        <source> No responsibility is assumed for content of external sites linked to. For external sites, the respective providers are exclusively responsible. </source>
+        <target>Für die Inhalte externer Links wird keine Haftung übernommen. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">72,74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.p3" datatype="html">
+        <source> The use of the website is generally possible without providing personal data. Personal data required for registration as game management, as well as game data, will not be passed on to third parties. </source>
+        <target>Die Nutzung der Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Personenbezogene Daten, die für die Registrierung als Spielleitung erforderlich sind, sowie Spieldaten werden nicht an Dritte weitergegeben.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
+          <context context-type="linenumber">76,78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="adminLogin.title" datatype="html">
+        <source>Admin Login</source>
+        <target>Admin Login</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.subtitle" datatype="html">
+        <source>Access the Soil control center</source>
+        <target>Zugang zur Steuerzentrale von Soil</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.email" datatype="html">
+        <source>Email</source>
+        <target>E-Mail</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.password" datatype="html">
+        <source>Password</source>
+        <target>Passwort</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.loggingIn" datatype="html">
+        <source>Logging in...</source>
+        <target>Melde an...</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.loginButton" datatype="html">
+        <source>Login</source>
+        <target>Anmelden</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.googleSignIn" datatype="html">
+        <source>Sign in with Google</source>
+        <target>Mit Google anmelden</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.noAccount" datatype="html">
+        <source>Don&apos;t have an account?</source>
+        <target>Noch keinen Account?</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.registerLink" datatype="html">
+        <source>Register here</source>
+        <target>Hier registrieren</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.placeholder.email" datatype="html">
+        <source>admin@school.edu</source>
+        <target>admin@schule.de</target>
+      </trans-unit>
+
+      <!-- Admin Registration -->
+      <trans-unit id="adminRegister.title" datatype="html">
+        <source>Admin Registration</source>
+        <target>Admin Registrierung</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.subtitle" datatype="html">
+        <source>Join the Soil community as an educator or administrator</source>
+        <target>Tritt der Soil-Community als Lehrender oder Administrator bei</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.completeTitle" datatype="html">
+        <source>Complete Registration</source>
+        <target>Registrierung abschließen</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.signedInAs" datatype="html">
+        <source>Signed in as</source>
+        <target>Angemeldet als</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.viaGoogle" datatype="html">
+        <source>via Google</source>
+        <target>über Google</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.completeApp" datatype="html">
+        <source>Please complete your application.</source>
+        <target>Bitte vervollständige deinen Antrag.</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.email" datatype="html">
+        <source>Email</source>
+        <target>E-Mail</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.password" datatype="html">
+        <source>Password</source>
+        <target>Passwort</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.confirmPassword" datatype="html">
+        <source>Confirm Password</source>
+        <target>Passwort bestätigen</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.personalDetails" datatype="html">
+        <source>Personal Details</source>
+        <target>Persönliche Daten</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.firstName" datatype="html">
+        <source>First Name</source>
+        <target>Vorname</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.lastName" datatype="html">
+        <source>Last Name</source>
+        <target>Nachname</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.appDetails" datatype="html">
+        <source>Application Details</source>
+        <target>Details zum Antrag</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.institution" datatype="html">
+        <source>Institution / School</source>
+        <target>Institution / Schule</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.institutionLink" datatype="html">
+        <source>Institution Website</source>
+        <target>Webseite der Institution</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.explanation" datatype="html">
+        <source>Why do you want to use Soil?</source>
+        <target>Warum möchtest du Soil nutzen?</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.creatingAccount" datatype="html">
+        <source>Creating Account...</source>
+        <target>Konto wird erstellt...</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.btn.complete" datatype="html">
+        <source>Complete Registration</source>
+        <target>Registrierung abschließen</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.btn.register" datatype="html">
+        <source>Register</source>
+        <target>Registrieren</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.alreadyAccount" datatype="html">
+        <source>Already have an account?</source>
+        <target>Hast du schon ein Konto?</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.loginLink" datatype="html">
+        <source>Login here</source>
+        <target>Hier anmelden</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.backToHome" datatype="html">
+        <source> ← Back to Home </source>
+        <target> ← Zurück zur Startseite </target>
+      </trans-unit>
+
+      <!-- Errors -->
+      <trans-unit id="adminRegister.error.email" datatype="html">
+        <source>Valid email is required.</source>
+        <target>Eine gültige E-Mail ist erforderlich.</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.password" datatype="html">
+        <source>Password must be at least 6 characters.</source>
+        <target>Das Passwort muss mindestens 6 Zeichen lang sein.</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.mismatch" datatype="html">
+        <source>Passwords do not match.</source>
+        <target>Die Passwörter stimmen nicht überein.</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.required" datatype="html">
+        <source>Required.</source>
+        <target>Erforderlich.</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.url" datatype="html">
+        <source>Valid URL starting with http:// or https:// is required.</source>
+        <target>Eine gültige URL (beginnend mit http:// oder https://) ist erforderlich.</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.explanation" datatype="html">
+        <source>Explanation is required (min 10 characters).</source>
+        <target>Erklärung ist erforderlich (mind. 10 Zeichen).</target>
+      </trans-unit>
+
+      <!-- Admin Register Placeholders -->
+      <trans-unit id="adminRegister.placeholder.email" datatype="html">
+        <source>admin@school.edu</source>
+        <target>admin@schule.de</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.password" datatype="html">
+        <source>Minimum 6 characters</source>
+        <target>Mindestens 6 Zeichen</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.confirmPassword" datatype="html">
+        <source>Confirm Password</source>
+        <target>Passwort bestätigen</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.firstName" datatype="html">
+        <source>John</source>
+        <target>Max</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.lastName" datatype="html">
+        <source>Doe</source>
+        <target>Mustermann</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.institution" datatype="html">
+        <source>e.g. University of Berlin</source>
+        <target>z.B. Universität Berlin</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.institutionLink" datatype="html">
+        <source>https://...</source>
+        <target>https://...</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.explanation" datatype="html">
+        <source>Brief explanation (min 10 chars)...</source>
+        <target>Kurze Erklärung (mind. 10 Zeichen)...</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.backToHome" datatype="html">
+        <source> ← Back to Home </source>
+        <target> ← Zurück zur Startseite </target>
+      </trans-unit>
+      <trans-unit id="playerLogin.placeholder.gameId" datatype="html">
+        <source>Game ID</source>
+        <target>Spiel-ID</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.placeholder.pin" datatype="html">
+        <source>Unique Player PIN</source>
+        <target>Einzigartiger Spieler-PIN</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.title" datatype="html">
+        <source>Player Login</source>
+        <target>Spieler Login</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.gameId" datatype="html">
+        <source>Game ID</source>
+        <target>Spiel-ID</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.playerNumber" datatype="html">
+        <source>Player Number</source>
+        <target>Spielernummer</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.player1" datatype="html">
+        <source>Player 1</source>
+        <target>Spieler 1</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.player2" datatype="html">
+        <source>Player 2</source>
+        <target>Spieler 2</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.backToHome" datatype="html">
+        <source> ← Back to Home </source>
+        <target> ← Zurück zur Startseite </target>
+      </trans-unit>
+      <trans-unit id="playerLogin.player3" datatype="html">
+        <source>Player 3</source>
+        <target>Spieler 3</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.player4" datatype="html">
+        <source>Player 4</source>
+        <target>Spieler 4</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.player5" datatype="html">
+        <source>Player 5</source>
+        <target>Spieler 5</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.pin" datatype="html">
+        <source>Login Code (PIN)</source>
+        <target>Login-Code (PIN)</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.enteringGame" datatype="html">
+        <source>Entering Game...</source>
+        <target>Betrete Spiel...</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.startGame" datatype="html">
+        <source>Start Game</source>
+        <target>Spiel starten</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.backToHome" datatype="html">
+        <source>← Back to Home</source>
+        <target>← Zurück zur Startseite</target>
+      </trans-unit>
+      <trans-unit id="board.nav.names" datatype="html">
+        <source> NAMES </source>
+        <target> NAMEN </target>
+      </trans-unit>
+      <trans-unit id="board.nav.nutrition" datatype="html">
+        <source> NUTRITION </source>
+        <target> NÄHRSTOFFE </target>
+      </trans-unit>
+      <trans-unit id="board.nav.harvest" datatype="html">
+        <source> HARVEST </source>
+        <target> ERNTE </target>
+      </trans-unit>
+      <trans-unit id="board.nav.soil" datatype="html">
+        <source> SOIL </source>
+        <target> BODEN </target>
+      </trans-unit>
+      <trans-unit id="board.nav.options" datatype="html">
+        <source> OPTIONS </source>
+        <target> OPTIONEN </target>
+      </trans-unit>
+      <trans-unit id="board.nav.waiting" datatype="html">
+        <source>WAITING...</source>
+        <target>WARTEN...</target>
+      </trans-unit>
+      <trans-unit id="board.nav.nextRound" datatype="html">
+        <source>NEXT ROUND</source>
+        <target>NÄCHSTE RUNDE</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.overlays" datatype="html">
+        <source>Visual Overlays</source>
+        <target>Überlagerungen</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.names" datatype="html">
+        <source>Names Overlay</source>
+        <target>Namen-Überlagerung</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.nutrition" datatype="html">
+        <source>Nutrition Overlay</source>
+        <target>Nährstoff-Überlagerung</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.harvest" datatype="html">
+        <source>Harvest Overlay</source>
+        <target>Ernte-Überlagerung</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.soil" datatype="html">
+        <source>Soil Quality Overlay</source>
+        <target>Bodenqualität-Überlagerung</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.actions" datatype="html">
+        <source>Game Actions</source>
+        <target>Spiel-Aktionen</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.roundOptions" datatype="html">
+        <source>ROUND OPTIONS</source>
+        <target>RUNDEN-OPTIONEN</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.waiting" datatype="html">
+        <source>WAITING FOR OTHERS...</source>
+        <target>WARTE AUF ANDERE...</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.nextRound" datatype="html">
+        <source>NEXT ROUND</source>
+        <target>NÄCHSTE RUNDE</target>
+      </trans-unit>
+      <trans-unit id="board.activePlayer" datatype="html">
+        <source>Active Player</source>
+        <target>Aktiver Spieler</target>
+      </trans-unit>
+      <trans-unit id="dashboard.super.title" datatype="html">
+        <source>Super Admin Access</source>
+        <target>Super Admin Zugang</target>
+      </trans-unit>
+      <trans-unit id="dashboard.super.redirect" datatype="html">
+        <source>Redirecting you to the Super Admin Console...</source>
+        <target>Weiterleitung zur Super Admin Konsole...</target>
+      </trans-unit>
+      <trans-unit id="dashboard.super.btnGo" datatype="html">
+        <source>Go to Console</source>
+        <target>Zur Konsole</target>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.playerLabel" datatype="html">
+        <source>Player Label (e.g. Team, Farmers)</source>
+        <target>Spieler-Bezeichnung (z.B. Team, Farmer)</target>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.phPlayer" datatype="html">
+        <source>Player</source>
+        <target>Spieler</target>
+      </trans-unit>
+      <trans-unit id="dashboard.list.refresh" datatype="html">
+        <source>Refresh List</source>
+        <target>Liste aktualisieren</target>
+      </trans-unit>
+      <trans-unit id="dashboard.table.id" datatype="html">
+        <source>ID:</source>
+        <target>ID:</target>
+      </trans-unit>
+      <trans-unit id="dashboard.table.email" datatype="html">
+        <source>Email Game Details</source>
+        <target>Spieldetails per E-Mail senden</target>
+      </trans-unit>
+      <trans-unit id="dashboard.table.restore" datatype="html">
+        <source>Restore Game</source>
+        <target>Spiel wiederherstellen</target>
+      </trans-unit>
+      <trans-unit id="dashboard.details.players" datatype="html">
+        <source> Players</source>
+        <target> Spieler</target>
+      </trans-unit>
+      <trans-unit id="dashboard.status.bot" datatype="html">
+        <source>BOT</source>
+        <target>BOT</target>
+      </trans-unit>
+      <trans-unit id="dashboard.status.active" datatype="html">
+        <source>ACTIVE</source>
+        <target>AKTIV</target>
+      </trans-unit>
+      <trans-unit id="superadmin.title" datatype="html">
+        <source>SOIL SUPER ADMIN</source>
+        <target>SOIL SUPER ADMIN</target>
+      </trans-unit>
+      <trans-unit id="superadmin.badge" datatype="html">
+        <source>SUPER</source>
+        <target>SUPER</target>
+      </trans-unit>
+      <trans-unit id="superadmin.logout" datatype="html">
+        <source>Logout</source>
+        <target>Abmelden</target>
+      </trans-unit>
+      <trans-unit id="superadmin.loading" datatype="html">
+        <source>Loading Data...</source>
+        <target>Daten werden geladen...</target>
+      </trans-unit>
+      <trans-unit id="superadmin.dashboard.title" datatype="html">
+        <source>Dashboard</source>
+        <target>Dashboard</target>
+      </trans-unit>
+      <trans-unit id="superadmin.dashboard.subtitle" datatype="html">
+        <source>Manage pending approvals and system administrators.</source>
+        <target>Verwalte ausstehende Genehmigungen und Systemadministratoren.</target>
+      </trans-unit>
+      <trans-unit id="superadmin.dashboard.refresh" datatype="html">
+        <source>Refresh Data</source>
+        <target>Daten aktualisieren</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.totalGames" datatype="html">
+        <source>Total Games</source>
+        <target>Spiele insgesamt</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.created" datatype="html">
+        <source>created</source>
+        <target>erstellt</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.active" datatype="html">
+        <source>Active</source>
+        <target>Aktiv</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,23 @@
+.board-container {
+    background-image: url('../../../assets/bauernhof.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.game-grid {
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+
+    // Reduced overhead: Header (64px) + Round HUD (~40px) + minimal padding
+    $overhead: 160px;
+
+    // Ensure the grid maintains an aspect ratio based on its elements
+    aspect-ratio: var(--cols) / var(--rows);
+
+    width: min(calc(100vw - 32px), calc((100vh - 180px) * (var(--cols) / var(--rows))));
+    max-height: calc(100vh - 180px);
+    max-width: calc(100vw - 32px);
+
+    margin: auto;
+}

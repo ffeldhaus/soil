@@ -1,0 +1,51 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "games",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "hostUid",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "games",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "deletedAt",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "hostUid",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "games",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "hostUid",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "deletedAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}

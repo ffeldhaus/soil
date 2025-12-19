@@ -1,0 +1,55 @@
+<div
+  class="h-full w-full border bg-gray-800/80 relative cursor-pointer select-none group border-gray-700/50 transition-all duration-200"
+  [class.z-20]="selected" [class.shadow-[0_0_20px_5px_rgba(52,211,153,0.7)]]="selected"
+  [class.border-emerald-400]="selected" [class.border-opacity-50]="selected">
+
+  <!-- Color Overlay -->
+  <div class="absolute inset-0 z-10 pointer-events-none transition-colors duration-500"
+    [style.background-color]="getOverlayColor()">
+  </div>
+
+  <!-- Background Image -->
+  <img *ngIf="parcel.crop" [src]="'assets/images/' + getConfig(parcel.crop).image" [alt]="parcel.crop"
+    class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+    onerror="this.style.display='none'">
+
+  <!-- Text Overlay (Top Center) -->
+  <div *ngIf="showLabels"
+    class="absolute top-1 left-0 right-0 text-center pointer-events-none z-20 flex flex-col items-center">
+    <span class="text-[10px] sm:text-xs font-serif font-bold text-white tracking-wide"
+      style="-webkit-text-stroke: 0.5px black; paint-order: stroke fill; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">
+      {{ getConfig(parcel.crop).label }}
+    </span>
+  </div>
+
+  <!-- Bottom Stats with Yield -->
+  <div
+    class="absolute bottom-0 left-0 right-0 p-0.5 px-1 pointer-events-none z-20 bg-gradient-to-t from-black/80 to-transparent flex justify-end">
+    <div *ngIf="parcel.yield" class="text-yellow-300 font-bold text-[9px] drop-shadow-md">+{{parcel.yield}}</div>
+  </div>
+
+  <!-- Nutrition Overlay -->
+  <div *ngIf="showNutrition" class="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none z-30">
+    <div
+      class="bg-blue-600/90 text-white text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-blue-400/50">
+      {{parcel.nutrition}}
+    </div>
+  </div>
+
+  <!-- Harvest Overlay -->
+  <div *ngIf="showHarvest" class="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+    <div
+      class="bg-yellow-500/90 text-black text-xs sm:text-sm font-black px-2 py-0.5 rounded-full shadow-lg border-2 border-yellow-300 transform scale-110">
+      {{parcel.yield || 0}}
+    </div>
+  </div>
+
+  <!-- Soil Overlay -->
+  <div *ngIf="showSoil" class="absolute inset-x-0 top-6 flex justify-center pointer-events-none z-30">
+    <div
+      class="bg-emerald-700/90 text-white text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-emerald-400/50">
+      {{parcel.soil}}
+    </div>
+  </div>
+
+</div>
