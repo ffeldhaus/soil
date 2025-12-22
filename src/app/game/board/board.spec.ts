@@ -79,17 +79,17 @@ describe('Board', () => {
   });
 
   it('should open settings and populate name', async () => {
-    await component.openSettings();
-    expect(component.showSettings).toBe(true);
-    expect(component.newName).toBe('Test User');
+    await component.startEditName();
+    expect(component.isEditingName).toBe(true);
+    expect(component.tempName).toBe('Test User');
   });
 
   it('should save settings and close modal', async () => {
-    component.showSettings = true;
-    component.newName = 'New Name';
-    await component.saveSettings();
+    component.isEditingName = true;
+    component.tempName = 'New Name';
+    await component.saveName();
     expect(TestBed.inject(AuthService).updateDisplayName).toHaveBeenCalledWith('New Name');
-    expect(component.showSettings).toBe(false);
+    expect(component.isEditingName).toBe(false);
   });
 
   it('should open planting modal on selection', async () => {

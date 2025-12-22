@@ -5,7 +5,25 @@
 
 :host(.selected) {
     position: relative;
-    z-index: 20;
+    z-index: 40; // Above grid, but below modals (z-50) and nav (z-10 relative?)
+
+    .selected-border {
+        border-color: #34d399 !important; // emerald-400
+        box-shadow: 0 0 15px 4px rgba(52, 211, 153, 0.6);
+        animation: pulse-glow 2s infinite ease-in-out;
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px 4px rgba(52, 211, 153, 0.6);
+    }
+
+    50% {
+        box-shadow: 0 0 25px 8px rgba(52, 211, 153, 0.8);
+    }
 }
 
 .overlay-info {

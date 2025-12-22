@@ -36,6 +36,7 @@ export interface RoundResult {
         weather: string;
         vermin: string;
     };
+    bioSiegel: boolean;
 }
 
 export interface Round {
@@ -52,6 +53,7 @@ export interface PlayerState {
     aiLevel?: 'random' | 'rotation' | 'optimizer';
     capital: number;
     currentRound: number;
+    submittedRound?: number; // Tracks last round submitted
     pendingDecisions?: RoundDecision; // Draft decisions for the next round
     history: Round[]; // Store full history
 }

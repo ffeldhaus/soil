@@ -21,7 +21,8 @@ describe('AiAgent', () => {
                 profit: 0,
                 capital: 0,
                 harvestSummary: {} as any,
-                events: { weather: 'Normal', vermin: 'None' }
+                events: { weather: 'Normal', vermin: 'None' },
+                bioSiegel: false
             },
             parcelsSnapshot: Array(40).fill(null).map((_, i) => ({
                 index: i,

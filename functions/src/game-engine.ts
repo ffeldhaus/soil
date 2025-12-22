@@ -10,7 +10,8 @@ export class GameEngine {
         currentRoundNumber: number,
         previousRound: Round | undefined,
         decision: RoundDecision,
-        events: { weather: string, vermin: string }
+        events: { weather: string, vermin: string },
+        currentCapital: number
     ): Round {
 
         // Initialize parcels for the new round
@@ -113,9 +114,9 @@ export class GameEngine {
             parcelupdates.push({
                 index: index,
                 crop: newCrop,
-                soil: Math.max(0, Math.min(200, newSoil)),
-                nutrition: Math.max(0, Math.min(200, newNutrition)),
-                yield: Math.floor(yieldAmount)
+                soil: Math.round(Math.max(0, Math.min(200, newSoil))),
+                nutrition: Math.round(Math.max(0, Math.min(200, newNutrition))),
+                yield: Math.round(yieldAmount)
             });
         });
 
@@ -153,11 +154,9 @@ export class GameEngine {
         });
 
         const profit = income - totalExpenses;
-        const prevCapital = previousRound?.result?.capital || 0; // Or passed from player state
-
         const result: RoundResult = {
             profit,
-            capital: prevCapital + profit, // Note: This doesn't account for accumulated capital correctly if not passed.
+            capital: currentCapital + profit,
             harvestSummary: harvestSummary as Record<CropType, number>,
             expenses: {
                 seeds: seedCost,
@@ -167,7 +166,8 @@ export class GameEngine {
                 total: totalExpenses
             },
             income,
-            events
+            events,
+            bioSiegel: decision.organic && !decision.fertilizer && !decision.pesticide
         };
 
         return {

@@ -16,10 +16,10 @@ describe('GameEngine', () => {
         for (let i = 0; i < 40; i++)
             decision.parcels[i] = 'Fallow';
         const events = { weather: 'Normal', vermin: 'None' };
-        const round = game_engine_1.GameEngine.calculateRound(1, undefined, decision, events);
+        const round = game_engine_1.GameEngine.calculateRound(1, undefined, decision, events, 1000);
         (0, chai_1.expect)(round.number).to.equal(1);
         (0, chai_1.expect)(round.parcelsSnapshot).to.have.length(40);
-        (0, chai_1.expect)(round.parcelsSnapshot[0].soil).to.be.closeTo(82.4, 0.1);
+        (0, chai_1.expect)(round.parcelsSnapshot[0].soil).to.equal(82);
     });
     it('should decrease soil quality for heavy crops', () => {
         const decision = {
@@ -47,10 +47,10 @@ describe('GameEngine', () => {
             parcelsSnapshot: prevParcels,
             result: undefined
         };
-        const round = game_engine_1.GameEngine.calculateRound(2, prevRound, decision, events);
+        const round = game_engine_1.GameEngine.calculateRound(2, prevRound, decision, events, 1000);
         // Wheat degrades soil (-0.02) but Sequence Fallow->Wheat is good (+0.03). Net +0.01.
         // 80 + 80 * 0.01 = 80.8
-        (0, chai_1.expect)(round.parcelsSnapshot[0].soil).to.be.closeTo(80.8, 0.1);
+        (0, chai_1.expect)(round.parcelsSnapshot[0].soil).to.equal(81);
     });
 });
 //# sourceMappingURL=game-engine.test.js.map

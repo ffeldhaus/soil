@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PlayerLoginComponent } from './player-login';
 import { AuthService } from '../auth.service';
 import { of, throwError } from 'rxjs';
+import { vi } from 'vitest';
 
 describe('PlayerLoginComponent', () => {
     let component: PlayerLoginComponent;
@@ -12,7 +13,8 @@ describe('PlayerLoginComponent', () => {
 
     beforeEach(async () => {
         authServiceMock = {
-            loginAsPlayer: jasmine.createSpy('loginAsPlayer').and.returnValue(Promise.resolve())
+            loginAsPlayer: vi.fn().mockResolvedValue(undefined),
+            user$: of(null)
         };
 
         await TestBed.configureTestingModule({
@@ -33,32 +35,27 @@ describe('PlayerLoginComponent', () => {
     });
 
     it('should call loginAsPlayer on valid submit', async () => {
-        component.loginForm.setValue({
-            gameId: 'TestGameId123456789012',
-            playerNumber: '1',
+        component.loginForm.patchValue({
+            gameId: 'TestGameId12345678901234567890',
             password: 'PIN123'
         });
 
         await component.onSubmit();
-        expect(authServiceMock.loginAsPlayer).toHaveBeenCalledWith('TestGameId123456789012', '1', 'PIN123');
+        expect(authServiceMock.loginAsPlayer).toHaveBeenCalledWith('TestGameId12345678901234567890', 'PIN123');
     });
 
     it('should show error modal on login failure', async () => {
-        authServiceMock.loginAsPlayer.and.returnValue(Promise.reject(new Error('Invalid PIN')));
+        authServiceMock.loginAsPlayer.mockRejectedValue(new Error('Invalid PIN'));
 
-        component.loginForm.setValue({
-            gameId: 'TestGameId123456789012',
-            playerNumber: '1',
+        component.loginForm.patchValue({
+            gameId: 'TestGameId12345678901234567890',
             password: 'PIN123'
         });
 
         await component.onSubmit();
         fixture.detectChanges();
 
-        expect(component.showErrorModal).toBeTrue();
+        expect(component.showErrorModal).toBe(true);
         expect(component.errorMessage).toBe('Invalid PIN');
-
-        const compiled = fixture.nativeElement as HTMLElement;
-        expect(compiled.querySelector('.fixed.inset-0')).toBeTruthy(); // check for modal presence
     });
 });

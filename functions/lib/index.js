@@ -36,7 +36,8 @@ exports.getGameState = (0, https_1.onCall)(async (request) => {
             id: game.id,
             status: game.status,
             currentRoundNumber: game.currentRoundNumber,
-            settings: game.settings
+            settings: game.settings,
+            players: game.players // Include for Finance view
         },
         playerState: Object.assign(Object.assign({}, playerState), { playerNumber: uid.startsWith('player-') ? uid.split('-')[2] : undefined, history: rounds }),
         lastRound: rounds[rounds.length - 1]
@@ -53,29 +54,48 @@ exports.submitDecision = (0, https_1.onCall)(async (request) => {
     const gameRef = db.collection('games').doc(gameId);
     try {
         return await db.runTransaction(async (transaction) => {
+            var _a;
+            // 1. ALL READS FIRST
             const gameDoc = await transaction.get(gameRef);
             if (!gameDoc.exists)
                 throw new https_1.HttpsError('not-found', 'Game not found');
             const game = gameDoc.data();
+            // 2. LOGIC
             const players = game.players || {};
-            if (!players[uid])
-                throw new https_1.HttpsError('permission-denied', 'Not a player in this game');
-            // Mark player as submitted for CURRENT round
+            if (!players[uid]) {
+                console.error(`submitDecision: User ${uid} not found in players map for game ${gameId}. Players: ${Object.keys(players).join(', ')}`);
+                throw new https_1.HttpsError('permission-denied', `Not a player in this game: ${uid}`);
+            }
             const currentRound = game.currentRoundNumber || 0;
+            const roundLimit = ((_a = game.settings) === null || _a === void 0 ? void 0 : _a.length) || 10;
+            if (currentRound >= roundLimit) {
+                throw new https_1.HttpsError('failed-precondition', 'Game has reached the round limit.');
+            }
             players[uid].submittedRound = currentRound;
             players[uid].pendingDecisions = decision;
-            // Check if all HUMAN players have submitted
-            const allHumanPlayers = Object.values(players).filter((p) => !p.isAi);
-            const allSubmitted = allHumanPlayers.every((p) => p.submittedRound === currentRound);
+            // Process AI turns immediately (passes preloaded data to avoid internal reads)
+            const updatedPlayers = await internalProcessAiTurns(gameId, transaction, Object.assign(Object.assign({}, game), { players })) || players;
+            const allPlayersArr = Object.values(updatedPlayers);
+            const allSubmitted = allPlayersArr.every((p) => p.submittedRound === currentRound);
+            console.log(`Debug submitDecision: gameId=${gameId}, currentRound=${currentRound}, playerCount=${allPlayersArr.length}, allSubmitted=${allSubmitted}`);
+            if (!allSubmitted) {
+                allPlayersArr.forEach((p) => {
+                    console.log(`Player ${p.uid}: submittedRound=${p.submittedRound}, isAi=${p.isAi}`);
+                });
+            }
+            if (allSubmitted) {
+                // Pass preloaded game with updated players to avoid internal read in performCalculation
+                await performCalculation(gameId, decision, transaction, Object.assign(Object.assign({}, game), { players: updatedPlayers }));
+                // Retrieve the new round for THIS player
+                const myState = updatedPlayers[uid];
+                const myNewRound = myState.history[myState.history.length - 1];
+                return { status: 'calculated', nextRound: myNewRound };
+            }
+            // 3. WRITES (only if not calculating, since calculation does its own update)
             transaction.update(gameRef, {
-                players,
+                players: updatedPlayers,
                 updatedAt: admin.firestore.FieldValue.serverTimestamp()
             });
-            if (allSubmitted) {
-                console.log(`All players submitted for round ${currentRound}. Calculating next round...`);
-                const nextRound = await performCalculation(gameId, decision, transaction);
-                return { status: 'calculated', nextRound };
-            }
             return { status: 'submitted' };
         });
     }
@@ -84,31 +104,53 @@ exports.submitDecision = (0, https_1.onCall)(async (request) => {
         throw new https_1.HttpsError('internal', error.message || 'Internal Error');
     }
 });
-async function performCalculation(gameId, decision, transaction) {
+async function performCalculation(gameId, decision, transaction, preloadedGame) {
+    var _a, _b, _c, _d;
     const gameRef = db.collection('games').doc(gameId);
-    const roundsRef = gameRef.collection('rounds');
-    // Get latest round
-    const roundsSnap = await transaction.get(roundsRef.orderBy('number', 'desc').limit(1));
-    const lastRoundDoc = roundsSnap.docs[0];
-    const lastRound = lastRoundDoc ? lastRoundDoc.data() : undefined;
-    const nextRoundNumber = lastRound ? lastRound.number + 1 : 1;
-    console.log(`Calculating round ${nextRoundNumber} for game ${gameId}`);
-    // Calculate new state
+    const game = preloadedGame || (await transaction.get(gameRef)).data();
+    if (!game)
+        return;
+    const players = game.players || {};
+    const nextRoundNumber = (game.currentRoundNumber || 0) + 1;
+    console.log(`Calculating round ${nextRoundNumber} for all players in game ${gameId}`);
     const events = {
         weather: Math.random() > 0.8 ? 'Drought' : (Math.random() < 0.2 ? 'Flood' : 'Normal'),
         vermin: Math.random() > 0.9 ? 'Beetle' : 'None'
     };
-    const nextRound = game_engine_1.GameEngine.calculateRound(nextRoundNumber, lastRound, decision, events);
-    // Save new round
-    const newRoundRef = roundsRef.doc(`round_${nextRoundNumber}`);
-    transaction.set(newRoundRef, nextRound);
-    // Update game state (current round pointer)
+    // Calculate next round for EACH player
+    for (const uid of Object.keys(players)) {
+        const player = players[uid];
+        const playerDecision = player.pendingDecisions || decision; // Fallback to provided decision
+        // Get last round from player history
+        const lastRound = player.history && player.history.length > 0
+            ? player.history[player.history.length - 1]
+            : undefined;
+        const currentCapital = (_c = (_b = (_a = lastRound === null || lastRound === void 0 ? void 0 : lastRound.result) === null || _a === void 0 ? void 0 : _a.capital) !== null && _b !== void 0 ? _b : player.capital) !== null && _c !== void 0 ? _c : 1000;
+        const nextRound = game_engine_1.GameEngine.calculateRound(nextRoundNumber, lastRound, playerDecision, events, currentCapital);
+        // Calculate player-specific averages
+        const pAvgSoil = nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.soil, 0) / nextRound.parcelsSnapshot.length;
+        const pAvgNutrition = nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.nutrition, 0) / nextRound.parcelsSnapshot.length;
+        // Update player state
+        player.history = player.history || [];
+        player.history.push(nextRound);
+        player.currentRound = nextRoundNumber;
+        player.capital = nextRound.result.capital; // Sync current capital
+        player.avgSoil = Math.round(pAvgSoil);
+        player.avgNutrition = Math.round(pAvgNutrition);
+        // Reset pending decisions for next round (Firestore doesn't allow undefined)
+        delete player.pendingDecisions;
+    }
+    // Update game state (current round pointer and all players)
+    const roundLimit = ((_d = game.settings) === null || _d === void 0 ? void 0 : _d.length) || 10;
+    const isFinished = nextRoundNumber >= roundLimit;
     transaction.update(gameRef, {
         currentRoundNumber: nextRoundNumber,
+        status: isFinished ? 'finished' : game.status,
+        players,
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
-    console.log(`Round ${nextRoundNumber} saved successfully`);
-    return nextRound;
+    console.log(`Round ${nextRoundNumber} finalized for ${Object.keys(players).length} players`);
+    return { number: nextRoundNumber };
 }
 exports.calculateNextRound = (0, https_1.onCall)(async (request) => {
     if (!request.auth) {
@@ -185,12 +227,13 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
     // However, for bootstrap, we need to handle the first user.
     let userRole = request.auth.token['role'];
     let quota = 5;
-    let gameCount = 0;
+    // let gameCount = 0; // Legacy counter, ignored for quota check
     if (userSnap.exists) {
         const userData = userSnap.data();
         userRole = (userData === null || userData === void 0 ? void 0 : userData.role) || 'pending';
         quota = (userData === null || userData === void 0 ? void 0 : userData.quota) || 5;
-        gameCount = (userData === null || userData === void 0 ? void 0 : userData.gameCount) || 0;
+        quota = (userData === null || userData === void 0 ? void 0 : userData.quota) || 5;
+        // gameCount = userData?.gameCount || 0; // Legacy
     }
     else {
         // Bootstrap: If email is florian.feldhaus@gmail.com, make superadmin
@@ -212,8 +255,21 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
     if (userRole !== 'admin' && userRole !== 'superadmin') {
         throw new https_1.HttpsError('permission-denied', 'You must be an approved admin to create games.');
     }
-    if (gameCount >= quota) {
-        throw new https_1.HttpsError('resource-exhausted', `Game quota exceeded (${gameCount}/${quota}). Request an increase.`);
+    // Dynamic Quota Check
+    // Count games where hostUid == uid AND status != 'deleted' AND status != 'expired'
+    // Since we don't have a composite index for everything, and status can be multiple values,
+    // let's just count games where hostUid == uid and deletedAt == null. 
+    // This assumes 'status' is kept in sync with 'deletedAt' for soft checking.
+    // Ideally we filter status 'in' ['waiting', 'in_progress', 'finished'] but that requires an index.
+    // 'deletedAt == null' is a good proxy for active games.
+    const activeGamesCountSnap = await db.collection('games')
+        .where('hostUid', '==', uid)
+        .where('deletedAt', '==', null)
+        .count()
+        .get();
+    const currentActiveGames = activeGamesCountSnap.data().count;
+    if (currentActiveGames >= quota) {
+        throw new https_1.HttpsError('resource-exhausted', `Game quota exceeded (${currentActiveGames}/${quota}). Request an increase or delete old games.`);
     }
     // Validate retention
     const validRetention = Math.min(Math.max(Number(retentionDays) || 90, 1), 365);
@@ -234,20 +290,13 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
         status: 'waiting',
         settings,
         config,
-        players: Object.assign({ [request.auth.uid]: {
-                uid: request.auth.uid,
-                displayName: request.auth.token.name || 'Host',
-                isAi: false,
-                capital: 1000,
-                currentRound: 0,
-                history: []
-            } }, Array(config.numAi || 0).fill(0).reduce((acc, _, i) => {
+        players: Object.assign({}, Array(config.numPlayers || 1).fill(0).reduce((acc, _, i) => {
             const playerNumber = i + 1;
-            const aiId = `player-${gameId}-${playerNumber}`;
-            acc[aiId] = {
-                uid: aiId,
-                displayName: `AI Player ${playerNumber}`,
-                isAi: true,
+            const playerId = `player-${gameId}-${playerNumber}`;
+            acc[playerId] = {
+                uid: playerId,
+                displayName: `Player ${playerNumber}`,
+                isAi: playerNumber <= (config.numAi || 0),
                 capital: 1000,
                 currentRound: 0,
                 history: []
@@ -261,14 +310,25 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
         playerSecrets
     };
     await db.runTransaction(async (t) => {
-        t.set(db.collection('games').doc(gameId), newGame);
-        // Initialize Round 0
+        // Initialize Round 0 Metrics for all players
         const initialParcels = game_engine_1.GameEngine.createInitialParcels();
-        t.set(db.collection('games').doc(gameId).collection('rounds').doc('round_0'), {
+        const startSoil = Math.round(initialParcels.reduce((sum, p) => sum + p.soil, 0) / initialParcels.length);
+        const startNutrition = Math.round(initialParcels.reduce((sum, p) => sum + p.nutrition, 0) / initialParcels.length);
+        const round0 = {
             number: 0,
-            decision: { machines: 0, organic: false, fertilizer: false, pesticide: false, organisms: false, parcels: {} },
-            parcelsSnapshot: initialParcels
-        });
+            parcelsSnapshot: initialParcels,
+            avgSoil: startSoil,
+            avgNutrition: startNutrition
+        };
+        for (const uid of Object.keys(newGame.players)) {
+            newGame.players[uid].avgSoil = startSoil;
+            newGame.players[uid].avgNutrition = startNutrition;
+        }
+        // Auto-process AI turns for the first round BEFORE any writes
+        await internalProcessAiTurns(gameId, t, newGame);
+        t.set(db.collection('games').doc(gameId), newGame);
+        // Initialize Round 0 Doc (Global reference if needed)
+        await t.set(db.collection('games').doc(gameId).collection('rounds').doc('round_0'), round0);
         // Increment User Game Count
         if (userSnap.exists) { // Only increment if user doc exists (which it should for admins)
             t.update(userRef, { gameCount: admin.firestore.FieldValue.increment(1) });
@@ -279,6 +339,25 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
         password: (_a = playerSecrets['1']) === null || _a === void 0 ? void 0 : _a.password
     };
 });
+// --- Helper for AI Automation ---
+async function internalProcessAiTurns(gameId, transaction, preloadedGame) {
+    const game = preloadedGame || (await transaction.get(db.collection('games').doc(gameId))).data();
+    if (!game)
+        return null;
+    const players = game.players || {};
+    const currentRound = game.currentRoundNumber || 0;
+    for (const uid in players) {
+        const p = players[uid];
+        if (p.isAi && (p.submittedRound === undefined || p.submittedRound < currentRound)) {
+            // Use player's own history for decision context
+            const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
+            const decision = ai_agent_1.AiAgent.makeDecision(p.aiLevel || 'rotation', lastRound);
+            p.submittedRound = currentRound;
+            p.pendingDecisions = decision;
+        }
+    }
+    return players;
+}
 // --- User Management ---
 exports.submitOnboarding = (0, https_1.onCall)(async (request) => {
     if (!request.auth)
@@ -401,11 +480,18 @@ exports.getUserStatus = (0, https_1.onCall)(async (request) => {
     if (!doc.exists) {
         // Bootstrap Check
         if (request.auth.token.email === 'florian.feldhaus@gmail.com') {
-            return { role: 'superadmin', status: 'active', quota: 999 };
+            return { role: 'superadmin', status: 'active', quota: 999, gameCount: 0 };
         }
-        return { role: 'new', status: 'unknown' };
+        return { role: 'new', status: 'unknown', gameCount: 0 };
     }
-    return doc.data();
+    const userData = doc.data();
+    // Dynamic Count
+    const activeGamesCountSnap = await db.collection('games')
+        .where('hostUid', '==', request.auth.uid)
+        .where('deletedAt', '==', null)
+        .count()
+        .get();
+    return Object.assign(Object.assign({}, userData), { gameCount: activeGamesCountSnap.data().count });
 });
 exports.getSystemStats = (0, https_1.onCall)(async (request) => {
     var _a;
@@ -540,6 +626,7 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
     const uid = `player-${gameId}-${playerNumber}`;
     await db.runTransaction(async (t) => {
         var _a, _b, _c;
+        // 1. ALL READS FIRST
         const doc = await t.get(gameRef);
         if (!doc.exists)
             throw new https_1.HttpsError('not-found', 'Game not found');
@@ -547,6 +634,7 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
         if (game.hostUid !== request.auth.uid) {
             throw new https_1.HttpsError('permission-denied', 'Not your game');
         }
+        // 2. LOGIC
         const players = game.players || {};
         const existingPlayer = players[uid];
         if (type === 'ai') {
@@ -569,6 +657,11 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
                 };
             }
         }
+        // If changed to AI, auto-process turn (modifies players object)
+        if (type === 'ai') {
+            await internalProcessAiTurns(gameId, t, Object.assign(Object.assign({}, game), { players }));
+        }
+        // 3. WRITES
         t.update(gameRef, { players });
     });
     return { success: true };

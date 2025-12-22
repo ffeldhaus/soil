@@ -1,0 +1,307 @@
+<div class="h-full w-full bg-gray-950/98 backdrop-blur-2xl flex flex-col pt-16">
+    <div class="flex-1 overflow-auto p-4 md:p-8 space-y-8">
+        <div class="max-w-7xl mx-auto space-y-12">
+
+            <!-- Header & Round Switcher -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-800 pb-8">
+                <div>
+                    <h2 class="text-4xl font-bold text-white font-serif tracking-tight" i18n="@@finance.title">Financial
+                        Report</h2>
+                    <p class="text-gray-500 mt-2 text-sm" i18n="@@finance.subtitle">Across-player comparison and history
+                    </p>
+                </div>
+
+                <div
+                    class="flex items-center gap-1 bg-gray-900/80 p-1.5 rounded-xl border border-gray-800 shadow-inner">
+                    <button *ngFor="let r of availableRounds" (click)="setRound(r)"
+                        class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300"
+                        [class.bg-emerald-600]="currentViewingRound === r"
+                        [class.text-white]="currentViewingRound === r" [class.shadow-lg]="currentViewingRound === r"
+                        [class.text-gray-400]="currentViewingRound !== r"
+                        [class.hover:text-gray-200]="currentViewingRound !== r"
+                        [class.hover:bg-gray-800]="currentViewingRound !== r">
+                        {{r}}
+                    </button>
+                    <span *ngIf="availableRounds.length === 0" class="px-4 py-2 text-sm text-gray-500 font-mono"
+                        i18n="@@finance.noRounds">No rounds yet</span>
+                </div>
+            </div>
+
+            <!-- Capital History Chart -->
+            <div *ngIf="availableRounds.length > 0" class="space-y-4">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1"
+                    i18n="@@finance.charts.capital">Capital Growth</h3>
+                <div
+                    class="bg-gray-900/30 border border-gray-800 rounded-2xl p-6 h-48 flex items-end gap-2 relative overflow-hidden group">
+                    <!-- Grid Lines -->
+                    <div class="absolute inset-x-0 bottom-6 border-t border-gray-800/50"></div>
+                    <div class="absolute inset-x-0 bottom-24 border-t border-gray-800/30"></div>
+                    <div class="absolute inset-x-0 top-12 border-t border-gray-800/10"></div>
+
+                    <div *ngFor="let p of players"
+                        class="flex-1 flex flex-col items-center group/bar relative h-full justify-end">
+                        <div class="flex gap-0.5 items-end justify-center w-full h-full pb-1">
+                            <div *ngFor="let cap of p.capitalHistory; let i = index"
+                                class="w-full max-w-[12px] rounded-t-sm transition-all duration-500 ease-out"
+                                [style.height]="getChartHeight(cap, getMaxCapital())"
+                                [class.bg-emerald-500/40]="p.uid === playerUid && i === p.capitalHistory.length - 1"
+                                [class.bg-emerald-600]="p.uid === playerUid && i < p.capitalHistory.length - 1"
+                                [class.bg-blue-500/40]="p.uid !== playerUid && i === p.capitalHistory.length - 1"
+                                [class.bg-blue-600]="p.uid !== playerUid && i < p.capitalHistory.length - 1">
+                            </div>
+                        </div>
+                        <span
+                            class="text-[9px] font-bold text-gray-600 mt-2 truncate max-w-full group-hover/bar:text-gray-300 transition-colors">{{p.name}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-3xl border border-gray-800 bg-gray-900/40 shadow-2xl backdrop-blur-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-800/40">
+                            <th
+                                class="p-6 text-xs font-black text-gray-500 uppercase tracking-[0.2em] border-b border-gray-800">
+                                Category</th>
+                            <th *ngFor="let p of players"
+                                class="p-6 text-sm font-bold border-b border-gray-800 text-center min-w-[120px]">
+                                <div class="flex flex-col items-center gap-1">
+                                    <span [class.text-emerald-400]="p.uid === playerUid"
+                                        [class.text-blue-400]="p.uid !== playerUid">{{p.name}}</span>
+                                    <span *ngIf="p.uid === playerUid"
+                                        class="text-[9px] bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter"
+                                        i18n="@@finance.you">YOU</span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+
+                        <!-- Previous Decisions -->
+                        <tr class="bg-gray-800/10">
+                            <td colspan="100%"
+                                class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-widest border-b border-gray-800/50"
+                                i18n="@@finance.group.decisions">Decisions (From Prev. Round)</td>
+                        </tr>
+                        <tr class="hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50"
+                                i18n="@@finance.fertilizer">Conventional Fertilizer</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                                <span *ngIf="p.decision?.fertilizer" class="text-emerald-500 text-base">●</span>
+                                <span *ngIf="!p.decision?.fertilizer" class="text-gray-800 text-base">○</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50"
+                                i18n="@@finance.pesticide">Pesticides</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                                <span *ngIf="p.decision?.pesticide" class="text-red-500 text-base">●</span>
+                                <span *ngIf="!p.decision?.pesticide" class="text-gray-800 text-base">○</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50"
+                                i18n="@@finance.organisms">Beneficial Organisms</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                                <span *ngIf="p.decision?.organisms" class="text-emerald-500 text-base">●</span>
+                                <span *ngIf="!p.decision?.organisms" class="text-gray-800 text-base">○</span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50"
+                                i18n="@@finance.organic">Organic Farming Seal</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                                <span *ngIf="p.decision?.organic" class="text-emerald-500 text-base">●</span>
+                                <span *ngIf="!p.decision?.organic" class="text-gray-800 text-base">○</span>
+                            </td>
+                        </tr>
+
+                        <!-- Expenses Detail -->
+                        <tr class="bg-gray-800/10">
+                            <td colspan="100%" class="p-0 border-b border-gray-800/50">
+                                <div class="px-6 py-3 flex items-center justify-between">
+                                    <span class="text-[10px] font-black text-gray-600 uppercase tracking-widest"
+                                        i18n="@@finance.group.expenses">Expenses Detail</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Seeds Breakdown -->
+                        <tr class="group hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50"
+                                i18n="@@finance.header.seeds">Seeds (detailed)</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
+                                {{p.result?.expenses?.seeds | currency:'EUR':'symbol':'1.0-0'}}
+                            </td>
+                        </tr>
+                        <tr *ngFor="let crop of ['Wheat','Corn','Potato','Beet','Barley','Oat','Rye','Fieldbean']"
+                            class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{crop}}</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.seeds?.[crop] || 0) | currency:'EUR':'symbol':'1.0-0' }}
+                            </td>
+                        </tr>
+
+                        <!-- Investments Breakdown -->
+                        <tr class="group hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50"
+                                i18n="@@finance.header.investments">Investments (detailed)</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
+                                {{p.result?.expenses?.investments | currency:'EUR':'symbol':'1.0-0'}}
+                            </td>
+                        </tr>
+                        <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic" i18n="@@finance.sub.machines">
+                                Machines</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.investments?.machines || 0) | currency:'EUR':'symbol':'1.0-0' }}
+                            </td>
+                        </tr>
+                        <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic" i18n="@@finance.sub.animalsInvest">
+                                Animals (Initial)</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.investments?.animals || 0) | currency:'EUR':'symbol':'1.0-0' }}
+                            </td>
+                        </tr>
+
+                        <!-- Running Costs Breakdown -->
+                        <tr class="group hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50"
+                                i18n="@@finance.header.running">Running Costs (detailed)</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
+                                {{p.result?.expenses?.running | currency:'EUR':'symbol':'1.0-0'}}
+                            </td>
+                        </tr>
+                        <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic" i18n="@@finance.sub.base">Base
+                                Operation</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.running?.base || 0) | currency:'EUR':'symbol':'1.0-0' }}</td>
+                        </tr>
+                        <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic"
+                                i18n="@@finance.sub.organicControl">Eco Seal Control</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.running?.organic_control || 0) | currency:'EUR':'symbol':'1.0-0'
+                                }}</td>
+                        </tr>
+                        <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic" i18n="@@finance.sub.pesticide">
+                                Pesticide Application</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.running?.pesticide || 0) | currency:'EUR':'symbol':'1.0-0' }}
+                            </td>
+                        </tr>
+                        <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic" i18n="@@finance.sub.organisms">
+                                Beneficial Organisms</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.running?.organisms || 0) | currency:'EUR':'symbol':'1.0-0' }}
+                            </td>
+                        </tr>
+                        <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic"
+                                i18n="@@finance.sub.animalsRunning">Animals (Running)</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedExpenses?.running?.animals || 0) | currency:'EUR':'symbol':'1.0-0' }}</td>
+                        </tr>
+
+                        <!-- Income Breakdown -->
+                        <tr class="bg-gray-800/10 border-t border-gray-800">
+                            <td colspan="100%"
+                                class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-widest border-b border-gray-800/50"
+                                i18n="@@finance.group.income">Income Detail</td>
+                        </tr>
+                        <tr class="group hover:bg-gray-800/20 transition-colors">
+                            <td class="p-4 pl-8 text-sm font-bold text-emerald-400 border-b border-gray-800/50"
+                                i18n="@@finance.header.harvest">Total Harvest Income</td>
+                            <td *ngFor="let p of players"
+                                class="p-4 border-b border-gray-800/50 text-center font-black text-emerald-500">
+                                {{p.result?.income | currency:'EUR':'symbol':'1.0-0'}}
+                            </td>
+                        </tr>
+                        <tr *ngFor="let crop of ['Wheat','Corn','Potato','Beet','Barley','Oat','Rye','Fieldbean']"
+                            class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                            <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{crop}}</td>
+                            <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
+                                {{ (p.detailedIncome?.harvest?.[crop] || 0) | currency:'EUR':'symbol':'1.0-0' }}
+                            </td>
+                        </tr>
+
+                        <!-- Global Totals -->
+                        <tr class="bg-gray-900 border-t-2 border-gray-700">
+                            <td class="p-6 text-base font-black text-white" i18n="@@finance.result.profit">NET PROFIT /
+                                LOSS</td>
+                            <td *ngFor="let p of players" class="p-6 text-center text-xl font-black font-mono"
+                                [class.text-emerald-500]="(p.result?.profit || 0) >= 0"
+                                [class.text-red-500]="(p.result?.profit || 0) < 0">
+                                <span *ngIf="(p.result?.profit || 0) > 0">+</span>
+                                {{p.result?.profit | currency:'EUR':'symbol':'1.0-0'}}
+                            </td>
+                        </tr>
+                        <tr class="bg-gray-950">
+                            <td class="p-6 text-base font-black text-white" i18n="@@finance.result.capital">CLOSING
+                                CAPITAL</td>
+                            <td *ngFor="let p of players"
+                                class="p-6 text-center text-2xl font-black text-yellow-400 font-mono scale-110">
+                                {{ (p.result?.capital || p.prevResult?.capital || 0) | currency:'EUR':'symbol':'1.0-0'}}
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Events Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div *ngFor="let p of players"
+                    class="bg-gray-900/60 border border-gray-800 rounded-[2rem] p-8 shadow-xl space-y-6 relative overflow-hidden group hover:border-gray-700 transition-all">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-colors">
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black text-white bg-gray-800 shadow-lg border border-gray-700">
+                            {{p.name.charAt(0)}}
+                        </div>
+                        <div>
+                            <h4 class="font-black text-white group-hover:text-emerald-400 transition-colors">{{p.name}}
+                            </h4>
+                            <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest"
+                                i18n="@@finance.playerStatus">Farmer Status</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div *ngIf="p.result?.events?.weather" class="space-y-2">
+                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest"
+                                i18n="@@finance.event.weather">Regional Weather</p>
+                            <div
+                                class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
+                                "{{p.result?.events?.weather}}"
+                            </div>
+                        </div>
+                        <div *ngIf="p.result?.events?.vermin" class="space-y-2">
+                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest"
+                                i18n="@@finance.event.vermin">Pest Report</p>
+                            <div
+                                class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
+                                "{{p.result?.events?.vermin}}"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

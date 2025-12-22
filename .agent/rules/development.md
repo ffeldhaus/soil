@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Development Rules
 
 - Ensure dependencies are up to date and prefer stable / LTS versions
@@ -11,5 +15,5 @@
 - Always run all tests before deploying
 - Always build with localization
 - Only use Firebase services in the EU / europe
-- Always deploy to the Preview Channel. If the user confirms that everything works, push to the official channel.
+- Use scripts/deploy.js for deployment
 - Always verify that the deployed version matches the version number in the package.json file using curl

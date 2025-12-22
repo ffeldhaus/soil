@@ -3,8 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameEngine = void 0;
 const constants_1 = require("./constants");
 class GameEngine {
-    static calculateRound(currentRoundNumber, previousRound, decision, events) {
-        var _a;
+    static calculateRound(currentRoundNumber, previousRound, decision, events, currentCapital) {
         // Initialize parcels for the new round
         const parcelupdates = [];
         // We need to know the state of parcels from the previous round
@@ -94,9 +93,9 @@ class GameEngine {
             parcelupdates.push({
                 index: index,
                 crop: newCrop,
-                soil: Math.max(0, Math.min(200, newSoil)),
-                nutrition: Math.max(0, Math.min(200, newNutrition)),
-                yield: Math.floor(yieldAmount)
+                soil: Math.round(Math.max(0, Math.min(200, newSoil))),
+                nutrition: Math.round(Math.max(0, Math.min(200, newNutrition))),
+                yield: Math.round(yieldAmount)
             });
         });
         // 2. Financials
@@ -129,10 +128,9 @@ class GameEngine {
             }
         });
         const profit = income - totalExpenses;
-        const prevCapital = ((_a = previousRound === null || previousRound === void 0 ? void 0 : previousRound.result) === null || _a === void 0 ? void 0 : _a.capital) || 0; // Or passed from player state
         const result = {
             profit,
-            capital: prevCapital + profit,
+            capital: currentCapital + profit,
             harvestSummary: harvestSummary,
             expenses: {
                 seeds: seedCost,
@@ -142,7 +140,8 @@ class GameEngine {
                 total: totalExpenses
             },
             income,
-            events
+            events,
+            bioSiegel: decision.organic && !decision.fertilizer && !decision.pesticide
         };
         return {
             number: currentRoundNumber,

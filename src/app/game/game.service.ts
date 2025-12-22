@@ -108,8 +108,9 @@ export class GameService {
             parcels: {}
         };
 
+        const currentParcels = this.parcelsSubject.value;
         for (let i = 0; i < 40; i++) {
-            decision.parcels[i] = this.pendingDecisions[i] || 'Fallow';
+            decision.parcels[i] = this.pendingDecisions[i] || currentParcels[i].crop;
         }
 
         try {
@@ -122,10 +123,8 @@ export class GameService {
             if (data.status === 'calculated' && data.nextRound) {
                 const round = data.nextRound;
                 this.currentRound = round;
-                this.stateSubject.next({
-                    currentRound: round.number,
-                    capital: round.result?.capital ?? 1000
-                });
+                // Refresh full game state to ensure status='finished' is picked up
+                await this.loadGame(gameId);
                 this.pendingDecisions = {};
                 this.parcelsSubject.next(round.parcelsSnapshot);
                 return round;

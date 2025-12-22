@@ -8,7 +8,7 @@ import { CropType } from '../../types';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" (click)="cancel.emit()">
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" (click)="cancel.emit()">
       <div class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-2xl w-full" (click)="$event.stopPropagation()">
         <h2 class="text-2xl font-bold text-white mb-6 font-serif" i18n="@@planting.title">Select Crop to Plant</h2>
         

@@ -24,14 +24,31 @@ rl.question(`Enter new version (default ${nextPatch}): `, (answer) => {
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
     console.log(`Updated package.json to version ${newVersion}`);
 
+    // Update src/index.html
+    const indexHtmlPath = 'src/index.html';
+    if (fs.existsSync(indexHtmlPath)) {
+        let indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+        indexHtml = indexHtml.replace(/(<meta name="app-version" content=")[^"]+(")/, `$1${newVersion}$2`);
+        fs.writeFileSync(indexHtmlPath, indexHtml);
+        console.log(`Updated src/index.html to version ${newVersion}`);
+    }
+
     rl.close();
+
+    const nodePath = '/Users/florianfeldhaus/.nvm/versions/node/v24.12.0/bin/node';
+    const ngPath = './node_modules/@angular/cli/bin/ng.js';
+    const firebasePath = './node_modules/firebase-tools/lib/bin/firebase.js';
 
     try {
         console.log('Building with localization...');
-        execSync('ng build --localize', { stdio: 'inherit' });
+        execSync(`${nodePath} ${ngPath} build --localize`, { stdio: 'inherit' });
 
         console.log('Deploying to Firebase...');
-        execSync('npx firebase deploy', { stdio: 'inherit' });
+        const binDir = '/Users/florianfeldhaus/.nvm/versions/node/v24.12.0/bin';
+        execSync(`${nodePath} ${firebasePath} deploy`, {
+            stdio: 'inherit',
+            env: { ...process.env, PATH: `${binDir}:${process.env.PATH}` }
+        });
 
         console.log('Deployment complete!');
     } catch (error) {

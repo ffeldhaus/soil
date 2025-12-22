@@ -10,11 +10,12 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { Subscription, Observable } from 'rxjs';
 
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
+import { Finance } from '../../game/finance/finance';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, LanguageSwitcherComponent],
+  imports: [CommonModule, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -78,6 +79,23 @@ export class Dashboard implements OnInit, OnDestroy {
 
   // Game Expansion
   expandedGameId: string | null = null;
+
+  // Finance Modal
+  showFinanceModal = false;
+  selectedFinanceGame: any = null;
+  selectedFinancePlayer: any = null;
+
+  openFinance(game: any, slot: any) {
+    this.selectedFinanceGame = game;
+    this.selectedFinancePlayer = slot.player;
+    this.showFinanceModal = true;
+  }
+
+  closeFinance() {
+    this.showFinanceModal = false;
+    this.selectedFinanceGame = null;
+    this.selectedFinancePlayer = null;
+  }
 
   toggleExpand(gameId: string) {
     if (this.expandedGameId === gameId) {

@@ -1385,8 +1385,12 @@
         <target> ERNTE </target>
       </trans-unit>
       <trans-unit id="board.nav.soil" datatype="html">
-        <source> SOIL </source>
-        <target> BODEN </target>
+        <source> SOIL QUALITY </source>
+        <target> BODENQUALITÄT </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">122,127</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="board.nav.options" datatype="html">
         <source> OPTIONS </source>
@@ -1417,8 +1421,12 @@
         <target>Ernte-Überlagerung</target>
       </trans-unit>
       <trans-unit id="board.mobile.soil" datatype="html">
-        <source>Soil Quality Overlay</source>
+        <source>Soil quality Overlay</source>
         <target>Bodenqualität-Überlagerung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">219,224</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="board.mobile.actions" datatype="html">
         <source>Game Actions</source>

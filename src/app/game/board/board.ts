@@ -12,12 +12,14 @@ import { User } from 'firebase/auth';
 import { Parcel } from '../parcel/parcel';
 
 import { RoundSettingsModal, RoundSettings } from '../round-settings-modal/round-settings-modal';
+import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
+import { Finance } from '../finance/finance';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, Parcel, PlantingModal, RoundSettingsModal, RouterLink, FormsModule, LanguageSwitcherComponent],
+  imports: [CommonModule, Parcel, PlantingModal, RoundSettingsModal, RoundResultModal, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
@@ -43,6 +45,7 @@ export class Board {
   showRoundSettingsModal = false;
   showMenu = false;
   showSettings = false;
+  showFinance = false;
   newName = '';
 
   currentRoundSettings: RoundSettings = {
@@ -62,12 +65,20 @@ export class Board {
   maxRoundNumber = 0;
   history: Round[] = [];
   isSubmitted = false;
+  showRoundResultModal = false;
+  roundResultRound: Round | null = null;
+
   showNutritionOverlay = false;
   showHarvestOverlay = false;
   showSoilOverlay = false;
   showMobileMenu = false;
   playerLabel = 'Player';
   playerNumber: string | undefined;
+
+  // Game End Logic
+  showGameEndModal = false;
+  financialWinner: { name: string, capital: number } | null = null;
+  soilWinner: { name: string, avgSoil: number } | null = null;
 
   // Inline Name Editing
   isEditingName = false;
@@ -99,6 +110,12 @@ export class Board {
                 this.viewingRound = this.maxRoundNumber;
                 this.playerLabel = state.game.settings?.playerLabel || 'Player';
                 this.playerNumber = state.playerState?.playerNumber;
+
+                // Detect Game Finished
+                if (state.game.status === 'finished' && !this.showGameEndModal) {
+                  this.calculateWinners(state.game);
+                  this.showGameEndModal = true;
+                }
               }
             });
 
@@ -186,6 +203,10 @@ export class Board {
   toggleHarvest() { this.showHarvestOverlay = !this.showHarvestOverlay; }
   toggleSoil() { this.showSoilOverlay = !this.showSoilOverlay; }
   toggleMobileMenu() { this.showMobileMenu = !this.showMobileMenu; }
+  toggleFinance() {
+    if (this.maxRoundNumber === 0) return;
+    this.showFinance = !this.showFinance;
+  }
 
   async playerLogin() {
     try {
@@ -307,13 +328,14 @@ export class Board {
 
 
   onMouseDown(index: number, event: MouseEvent) {
+    if (this.isReadOnly) return;
     if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
       this.selectedIndices.clear();
     }
     this.isDragging = true;
     this.dragStartIndex = index;
     this.updateSelection(index);
-    event.preventDefault();
+    event.preventDefault(); // Prevent native drag to ensure custom selection works
   }
 
   onMouseEnter(index: number) {
@@ -392,7 +414,7 @@ export class Board {
     this.showRoundSettingsModal = true;
   }
 
-  private pendingNextRound = false;
+  pendingNextRound = false;
 
   onRoundSettingsSaved(settings: RoundSettings) {
     this.currentRoundSettings = settings;
@@ -407,9 +429,16 @@ export class Board {
     this.showRoundSettingsModal = true;
   }
 
+  cancelRoundSettings() {
+    this.pendingNextRound = false;
+    this.showRoundSettingsModal = false;
+  }
+
+
+
   async executeNextRound() {
     try {
-      this.pendingNextRound = false;
+      // Keep pendingNextRound true while submitting
       const result = await this.gameService.submitRound(this.gameId, this.currentRoundSettings);
 
       if ('status' in result && result.status === 'submitted') {
@@ -423,11 +452,17 @@ export class Board {
         this.viewingRound = this.maxRoundNumber;
         this.isSubmitted = false;
         this.updateReadOnly();
+
+        // Show Result Modal
+        this.roundResultRound = round;
+        this.showRoundResultModal = true;
       }
       this.selectedIndices = new Set();
     } catch (error: any) {
       console.error('Error submitting round', error);
       this.errorMessage = error.message || 'Failed to submit round. Please try again.';
+    } finally {
+      this.pendingNextRound = false;
     }
   }
 
@@ -435,5 +470,60 @@ export class Board {
     if (this.selectedIndices.size > 0 && !this.showPlantingModal) {
       this.selectedIndices.clear();
     }
+  }
+
+  closeRoundResultModal() {
+    this.showRoundResultModal = false;
+  }
+
+  private calculateWinners(game: any) {
+    if (!game.players) return;
+    const playerList = Object.values(game.players) as any[];
+    if (playerList.length === 0) return;
+
+    const getPlayerName = (p: any) => p.displayName || `${this.playerLabel} ${p.uid.startsWith('player-') ? p.uid.split('-')[2] : ''}`;
+
+    // Financial Winner
+    let bestFinancial = playerList[0];
+    playerList.forEach(p => {
+      if ((p.capital || 0) > (bestFinancial.capital || 0)) {
+        bestFinancial = p;
+      }
+    });
+    this.financialWinner = {
+      name: getPlayerName(bestFinancial),
+      capital: bestFinancial.capital || 0
+    };
+
+    // Soil Winner
+    let bestSoilPlayer = playerList[0];
+    let bestAvgSoil = this.calculateAvgSoil(bestSoilPlayer);
+
+    playerList.forEach(p => {
+      const avg = this.calculateAvgSoil(p);
+      if (avg > bestAvgSoil) {
+        bestAvgSoil = avg;
+        bestSoilPlayer = p;
+      }
+    });
+
+    this.soilWinner = {
+      name: getPlayerName(bestSoilPlayer),
+      avgSoil: Math.round(bestAvgSoil)
+    };
+  }
+
+  private calculateAvgSoil(player: any): number {
+    const history = player.history || [];
+    if (history.length === 0) return 0;
+    const lastRound = history[history.length - 1];
+    const parcels = lastRound.parcelsSnapshot || [];
+    if (parcels.length === 0) return 0;
+    const totalSoil = parcels.reduce((sum: number, p: any) => sum + (p.soil || 0), 0);
+    return totalSoil / parcels.length;
+  }
+
+  closeGameEndModal() {
+    this.showGameEndModal = false;
   }
 }

@@ -81,14 +81,14 @@
             <!-- Center/Right: Desktop Controls -->
             <div class="hidden lg:flex items-center gap-3">
                 <!-- User Info -->
-                <div class="flex items-center gap-2 mr-2 px-3 py-1 bg-gray-800/50 rounded-full border border-gray-700">
+                <div class="flex items-center gap-2 mr-2">
                     <img *ngIf="!isPlayer" [src]="user.photoURL" class="w-6 h-6 rounded-full border border-gray-600">
                     <ng-container *ngIf="!isEditingName; else editModeDesktop">
                         <span
-                            class="text-xs font-medium text-gray-300 cursor-pointer hover:text-emerald-400 px-2 py-1 -mx-2 -my-1"
+                            class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200 transition-colors"
                             (click)="startEditName(); $event.stopPropagation()">
                             {{ (isPlayer && !user.displayName) ? (playerLabel + ' ' + (playerNumber || '')) :
-                            user.displayName }}
+                            user.displayName | uppercase }}
                         </span>
                     </ng-container>
                     <ng-template #editModeDesktop>
@@ -124,7 +124,15 @@
                     [class.border-emerald-600]="showSoilOverlay" [class.bg-gray-800]="!showSoilOverlay"
                     [class.text-gray-400]="!showSoilOverlay" [class.border-gray-700]="!showSoilOverlay"
                     i18n="@@board.nav.soil">
-                    SOIL
+                    SOIL QUALITY
+                </button>
+                <button (click)="toggleFinance()" [disabled]="maxRoundNumber === 0"
+                    class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
+                    [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance"
+                    [class.border-emerald-500]="showFinance" [class.bg-gray-800]="!showFinance"
+                    [class.text-gray-400]="!showFinance" [class.border-gray-700]="!showFinance"
+                    [class.opacity-50]="maxRoundNumber === 0" i18n="@@board.nav.finance">
+                    FINANCE
                 </button>
 
                 <div class="h-6 w-px bg-gray-700 mx-1"></div>
@@ -135,10 +143,17 @@
                     i18n="@@board.nav.options">
                     OPTIONS
                 </button>
-                <button (click)="nextRound()" [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
+                <button *ngIf="(gameState$ | async)?.game?.status !== 'finished'" (click)="nextRound()"
+                    [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
                     class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500">
-                    <ng-container *ngIf="isSubmitted" i18n="@@board.nav.waiting">WAITING...</ng-container>
-                    <ng-container *ngIf="!isSubmitted" i18n="@@board.nav.nextRound">NEXT ROUND</ng-container>
+                    <ng-container *ngIf="isSubmitted || pendingNextRound"
+                        i18n="@@board.nav.waiting">WAITING...</ng-container>
+                    <ng-container *ngIf="!isSubmitted && !pendingNextRound" i18n="@@board.nav.nextRound">NEXT
+                        ROUND</ng-container>
+                </button>
+                <button *ngIf="(gameState$ | async)?.game?.status === 'finished'" (click)="showGameEndModal = true"
+                    class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg border border-amber-500 transition text-[10px] shadow-lg shadow-amber-900/40">
+                    <ng-container i18n="@@board.nav.endGame">END GAME</ng-container>
                 </button>
             </div>
 
@@ -213,7 +228,14 @@
                                 [class.bg-emerald-700]="showSoilOverlay" [class.border-emerald-600]="showSoilOverlay"
                                 [class.bg-gray-800]="!showSoilOverlay" [class.text-gray-400]="!showSoilOverlay"
                                 [class.border-gray-700]="!showSoilOverlay">
-                                <ng-container i18n="@@board.mobile.soil">Soil Quality Overlay</ng-container>
+                                <ng-container i18n="@@board.mobile.soil">Soil quality Overlay</ng-container>
+                            </button>
+                            <button (click)="toggleFinance(); toggleMobileMenu()" [disabled]="maxRoundNumber === 0"
+                                class="w-full text-left px-4 py-3 rounded-xl border transition"
+                                [class.bg-emerald-600]="showFinance" [class.border-emerald-500]="showFinance"
+                                [class.bg-gray-800]="!showFinance" [class.border-gray-700]="!showFinance"
+                                [class.opacity-50]="maxRoundNumber === 0">
+                                <ng-container i18n="@@board.mobile.finance">Finance View</ng-container>
                             </button>
                         </div>
                     </nav>
@@ -226,12 +248,18 @@
                             class="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl border border-gray-700 transition flex items-center justify-center gap-2">
                             <ng-container i18n="@@board.mobile.roundOptions">ROUND OPTIONS</ng-container>
                         </button>
-                        <button (click)="nextRound(); toggleMobileMenu()"
+                        <button *ngIf="(gameState$ | async)?.game?.status !== 'finished'"
+                            (click)="nextRound(); toggleMobileMenu()"
                             [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
                             class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl border border-emerald-500 transition shadow-lg flex items-center justify-center">
                             <ng-container *ngIf="isSubmitted" i18n="@@board.mobile.waiting">WAITING FOR
                                 OTHERS...</ng-container>
                             <ng-container *ngIf="!isSubmitted" i18n="@@board.mobile.nextRound">NEXT ROUND</ng-container>
+                        </button>
+                        <button *ngIf="(gameState$ | async)?.game?.status === 'finished'"
+                            (click)="showGameEndModal = true; toggleMobileMenu()"
+                            class="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl border border-amber-500 transition shadow-lg flex items-center justify-center">
+                            <ng-container i18n="@@board.mobile.endGame">END GAME</ng-container>
                         </button>
                     </div>
                 </div>
@@ -243,10 +271,10 @@
                         <div class="flex flex-col">
                             <ng-container *ngIf="!isEditingName; else editModeMobile">
                                 <span
-                                    class="text-xs font-bold text-white cursor-pointer hover:text-emerald-400 p-2 -m-2"
+                                    class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200"
                                     (click)="startEditName(); $event.stopPropagation()">
                                     {{ (isPlayer && !user.displayName) ? (playerLabel + ' ' + (playerNumber || '')) :
-                                    user.displayName }}
+                                    user.displayName | uppercase }}
                                 </span>
                             </ng-container>
                             <ng-template #editModeMobile>
@@ -297,12 +325,16 @@
             </div>
 
             <app-round-settings-modal *ngIf="showRoundSettingsModal" [settings]="currentRoundSettings"
-                (save)="onRoundSettingsSaved($event)" (cancel)="showRoundSettingsModal = false">
+                (save)="onRoundSettingsSaved($event)" (cancel)="cancelRoundSettings()">
             </app-round-settings-modal>
 
             <app-planting-modal *ngIf="showPlantingModal" [crops]="availableCrops" (selected)="onCropSelected($event)"
                 (cancel)="onPlantingCancel()">
             </app-planting-modal>
+
+            <app-round-result-modal *ngIf="showRoundResultModal && roundResultRound" [round]="roundResultRound!"
+                (close)="closeRoundResultModal()">
+            </app-round-result-modal>
 
             <!-- Round Header (Static Flex Item) -->
             <div class="shrink-0 pt-6 pb-1 flex flex-col items-center gap-1 z-30">
@@ -334,7 +366,7 @@
             </div>
 
             <!-- Grid (Flex Grow) -->
-            <div class="flex-1 w-full min-h-0 p-2 lg:p-4 flex items-center justify-center overflow-hidden">
+            <div class="flex-1 w-full min-h-0 p-2 lg:p-4 flex items-center justify-center board-grid-wrapper">
                 <div class="game-grid grid gap-2 max-w-7xl touch-none" [style.--cols]="cols" [style.--rows]="rows"
                     (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
                     (touchend)="onTouchEnd($event)" (click)="$event.stopPropagation()">
@@ -347,5 +379,76 @@
                 </div>
             </div>
         </div>
+
+        <!-- Finance View Overlay -->
+        <div *ngIf="showFinance" class="fixed inset-0 z-[60] flex flex-col">
+            <div class="absolute top-4 right-4 z-[70]">
+                <button (click)="toggleFinance()"
+                    class="p-4 bg-gray-800/80 hover:bg-gray-700 text-white rounded-full backdrop-blur-lg border border-gray-700 shadow-2xl transition transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <app-finance *ngIf="gameState$ | async as state" [game]="state.game" [viewingRound]="viewingRound"
+                [playerUid]="(user$ | async)?.uid || ''" class="flex-1"></app-finance>
+        </div>
+
+        <!-- Game End Celebration Modal -->
+        <div *ngIf="showGameEndModal"
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-black/60 overflow-hidden">
+            <!-- Confetti/Sparkles Container -->
+            <div class="absolute inset-0 pointer-events-none celebration-container">
+                <div *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" class="confetti"></div>
+            </div>
+
+            <div
+                class="relative bg-gray-900 border border-gray-700 shadow-2xl rounded-3xl max-w-2xl w-full p-8 text-center transform transition-all animate-modal-entrance">
+                <div class="mb-6">
+                    <h2 class="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight"
+                        i18n="@@board.gameEnd.title">Game Finished!</h2>
+                    <p class="text-gray-400 text-lg sm:text-xl" i18n="@@board.gameEnd.subtitle">Congratulations to our
+                        pioneers!</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8">
+                    <!-- Financial Champion -->
+                    <div
+                        class="bg-gradient-to-br from-amber-500/20 to-yellow-600/10 border border-amber-500/30 p-6 rounded-2xl shadow-lg transform hover:scale-105 transition-transform group">
+                        <div class="text-4xl mb-3 group-hover:animate-bounce">💰</div>
+                        <h3 class="text-amber-400 font-bold uppercase text-xs tracking-widest mb-1"
+                            i18n="@@board.gameEnd.financialTitle">Financial Champion</h3>
+                        <div class="text-white text-xl font-black mb-1">{{ financialWinner?.name }}</div>
+                        <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | number }} €</div>
+                    </div>
+
+                    <!-- Soil Guardian -->
+                    <div
+                        class="bg-gradient-to-br from-emerald-500/20 to-teal-600/10 border border-emerald-500/30 p-6 rounded-2xl shadow-lg transform hover:scale-105 transition-transform group">
+                        <div class="text-4xl mb-3 group-hover:animate-bounce">🌿</div>
+                        <h3 class="text-emerald-400 font-bold uppercase text-xs tracking-widest mb-1"
+                            i18n="@@board.gameEnd.soilTitle">Soil Guardian</h3>
+                        <div class="text-white text-xl font-black mb-1">{{ soilWinner?.name }}</div>
+                        <div class="text-emerald-200/70 text-sm font-mono">{{ soilWinner?.avgSoil }} / 200</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                    <button (click)="closeGameEndModal()"
+                        class="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition border border-gray-600 shadow-lg"
+                        i18n="@@board.gameEnd.viewResults">
+                        VIEW RESULTS
+                    </button>
+                    <button routerLink="/admin"
+                        class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-900/40"
+                        i18n="@@board.gameEnd.backToDashboard">
+                        BACK TO DASHBOARD
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
