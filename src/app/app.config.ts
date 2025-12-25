@@ -37,27 +37,33 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: (localeId: string) => () => {
-        // Robust I18n Fix v1.0.13: Verification
+        // Robust I18n Fix v1.0.14: Force-Fix & Cleanup
         try {
-          console.log(`[v1.0.13 DEBUG] Current LOCALE_ID: "${localeId}"`);
-
+          // 1. Always register the data (harmless if redundant)
           registerLocaleData(localeDe, 'de');
           registerLocaleData(localeDe, 'de-DE');
-          console.log('Locale "de" and "de-DE" registered via APP_INITIALIZER (v1.0.13)');
 
-          // Verify immediately
-          const testDate = new Date();
-          const formatted = formatDate(testDate, 'short', 'de');
-          console.log(`[v1.0.13 DEBUG] Verification SUCCESS: formatDate('de') result: ${formatted}`);
+          console.log(`[v1.0.14] Bootstrapped with LOCALE_ID: "${localeId}"`);
+
+          // 2. Verify availability
+          const formatted = formatDate(new Date(), 'short', 'de');
+          console.log(`[v1.0.14] Verification: formatDate('de') = ${formatted}`);
         } catch (e) {
-          console.error('[v1.0.13 DEBUG] Verification FAILED:', e);
+          console.error('[v1.0.14] Initialization Error:', e);
         }
       },
       deps: [LOCALE_ID],
       multi: true
     },
-    // Explicitly provide LOCALE_ID to ensure it matches the registered data
-    // { provide: LOCALE_ID, useValue: 'de' }, // Removed in v1.0.13 to see if "de" is inferred correctly or if hardcoding caused issues
+    // Dynamically set LOCALE_ID based on path to match the manual registration
+    // This prevents specific pipes from failing if the bundle served is English but the path is German
+    {
+      provide: LOCALE_ID,
+      useFactory: () => {
+        const isGerman = typeof window !== 'undefined' && (window.location.pathname.startsWith('/de/') || window.location.pathname === '/de');
+        return isGerman ? 'de' : 'en-US';
+      }
+    },
     provideFirebaseApp(() => app),
     provideAuth(() => {
       const auth = getAuth(app);

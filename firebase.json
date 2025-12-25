@@ -48,6 +48,14 @@
         ],
         "rewrites": [
             {
+                "source": "/de",
+                "destination": "/de/index.html"
+            },
+            {
+                "source": "/de/",
+                "destination": "/de/index.html"
+            },
+            {
                 "source": "/de/**",
                 "destination": "/de/index.html"
             },
