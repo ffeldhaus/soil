@@ -25,6 +25,7 @@ trigger: always_on
 - **Firebase App Hosting**: Deployment is fully automated via Firebase App Hosting, triggered by merges or pushes to the `main` branch on GitHub.
 - **Localization**: Builds are automatically performed with localization as specified in `apphosting.yaml`. Do not use manual deployment scripts for production.
 - **Regional Constraints**: Use Firebase services exclusively in the **EU (europe-west4)**.
+- **Cloud Build**: Check the Cloud Build triggered by CI/CD and monitor it is running succesfull - fix errors and try to address warnings
 - **Post-Deployment**: After a successful CI/CD run, verify that the live version matches the intended `package.json` version.
 
 ## Testing & Local Development Strategy
