@@ -1,4 +1,4 @@
-import { ApplicationConfig, isDevMode } from '@angular/core';
+import { ApplicationConfig, isDevMode, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideFirebaseApp } from '@angular/fire/app';
@@ -9,6 +9,8 @@ import { provideFirestore } from '@angular/fire/firestore';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { provideFunctions } from '@angular/fire/functions';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
 
 import { routes } from './app.routes';
 
@@ -32,6 +34,20 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {
+        // Robust I18n Fix v1.0.11: Register in Angular Context
+        try {
+          registerLocaleData(localeDe, 'de');
+          registerLocaleData(localeDe, 'de-DE');
+          console.log('Locale "de" and "de-DE" registered via APP_INITIALIZER (v1.0.11)');
+        } catch (e) {
+          console.error('Error registering locales in APP_INITIALIZER:', e);
+        }
+      },
+      multi: true
+    },
     provideFirebaseApp(() => app),
     provideAuth(() => {
       const auth = getAuth(app);
