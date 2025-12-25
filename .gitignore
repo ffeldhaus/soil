@@ -57,3 +57,6 @@ debug_de.html
 
 # Reference files
 soil-old-reference/
+
+# Backup files
+*.bak
