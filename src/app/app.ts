@@ -1,5 +1,6 @@
 import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { LanguageService } from './services/language.service';
 
 import packageJson from '../../package.json';
@@ -15,7 +16,29 @@ export class App {
   protected readonly title = signal('soil');
   version = packageJson.version;
 
-  constructor() {
-    console.log(` Soil Version ${this.version} `);
+  constructor(updates: SwUpdate) {
+    console.log(`Soil Version ${this.version} (main.ts - i18n fix v3 - sw debug)`);
+
+    if (updates.isEnabled) {
+      console.log('Service Worker is enabled');
+      updates.versionUpdates.subscribe(evt => {
+        switch (evt.type) {
+          case 'VERSION_DETECTED':
+            console.log(`Downloading new app version: ${evt.version.hash}`);
+            break;
+          case 'VERSION_READY':
+            console.log(`Current app version: ${evt.currentVersion.hash}`);
+            console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
+            // Reload the page to update to the latest version.
+            document.location.reload();
+            break;
+          case 'VERSION_INSTALLATION_FAILED':
+            console.log(`Failed to install app version '${evt.version.hash}': ${evt.error}`);
+            break;
+        }
+      });
+      // Force check for updates
+      updates.checkForUpdate();
+    }
   }
 }
