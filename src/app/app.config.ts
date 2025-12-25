@@ -1,4 +1,4 @@
-import { ApplicationConfig, isDevMode, APP_INITIALIZER } from '@angular/core';
+import { ApplicationConfig, isDevMode, APP_INITIALIZER, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideFirebaseApp } from '@angular/fire/app';
@@ -37,17 +37,23 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: () => () => {
-        // Robust I18n Fix v1.0.11: Register in Angular Context
+        // Robust I18n Fix v1.0.12: Debugging & Registration
         try {
+          console.log('[v1.0.12 DEBUG] typeof localeDe:', typeof localeDe);
+          console.log('[v1.0.12 DEBUG] isArray:', Array.isArray(localeDe));
+          console.log('[v1.0.12 DEBUG] localeDe[0]:', (localeDe as any)?.[0]);
+
           registerLocaleData(localeDe, 'de');
           registerLocaleData(localeDe, 'de-DE');
-          console.log('Locale "de" and "de-DE" registered via APP_INITIALIZER (v1.0.11)');
+          console.log('Locale "de" and "de-DE" registered via APP_INITIALIZER (v1.0.12)');
         } catch (e) {
           console.error('Error registering locales in APP_INITIALIZER:', e);
         }
       },
       multi: true
     },
+    // Explicitly provide LOCALE_ID to ensure it matches the registered data
+    { provide: LOCALE_ID, useValue: 'de' },
     provideFirebaseApp(() => app),
     provideAuth(() => {
       const auth = getAuth(app);
