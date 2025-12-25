@@ -1536,6 +1536,504 @@
         <source>Active</source>
         <target>Aktiv</target>
       </trans-unit>
+          <trans-unit id="dashboard.createGame.phName" datatype="html">
+        <source>Game Name</source>
+        <target>Name des Spiels eingeben</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">118,119</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.aiLevel" datatype="html">
+        <source>AI Level</source>
+        <target>KI-Level</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">162,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ai.level.elementary" datatype="html">
+        <source>Elementary School</source>
+        <target>Grundschule</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">165,166</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ai.level.middle" datatype="html">
+        <source>Middle School</source>
+        <target>Mittelstufe</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">166,167</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ai.level.high" datatype="html">
+        <source>High School</source>
+        <target>Oberstufe</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">167,168</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.title" datatype="html">
+        <source>Round Deadline Manager</source>
+        <target>Runden-Deadline-Manager</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">385,386</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.round" datatype="html">
+        <source>Current Round (<x id="INTERPOLATION" equiv-text="{{
+                                                            game.currentRoundNumber }}"/>)</source>
+        <target>Aktuelle Runde (<x id="INTERPOLATION" equiv-text="{{ game.currentRoundNumber }}"/>)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">389,391</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.set" datatype="html">
+        <source>Set Deadline</source>
+        <target>Deadline setzen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">399</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.hint" datatype="html">
+        <source> * If a deadline is set, AI will automatically take over for any player who hasn&apos;t submitted by then. </source>
+        <target>* Wenn eine Deadline gesetzt ist, übernimmt die KI automatisch für alle Spieler, die bis dahin nicht abgegeben haben.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">404,405</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.soil" datatype="html">
+        <source>Avg. Soil</source>
+        <target>Boden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">482,483</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.nutrition" datatype="html">
+        <source>Avg. Nutr.</source>
+        <target>Nährstoffe</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">494,495</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.toHuman" datatype="html">
+        <source>TO HUMAN</source>
+        <target>ZU MENSCH</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">531</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.toAi" datatype="html">
+        <source>TO AI (<x id="INTERPOLATION" equiv-text="{{
+                                                                newGameConfig.aiLevel | uppercase }}"/>)</source>
+        <target>ZU KI (<x id="INTERPOLATION" equiv-text="{{ newGameConfig.aiLevel | uppercase }}"/>)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.html</context>
+          <context context-type="linenumber">533,535</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.nav.finance" datatype="html">
+        <source> FINANCE </source>
+        <target>FINANZEN</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">135,136</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.nav.endGame" datatype="html">
+        <source>END GAME</source>
+        <target>SPIEL BEENDEN</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">156,157</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.logout" datatype="html">
+        <source>Logout</source>
+        <target>Abmelden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">165</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.mobile.finance" datatype="html">
+        <source>Finance View</source>
+        <target>Finanzansicht</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">238,239</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.mobile.endGame" datatype="html">
+        <source>END GAME</source>
+        <target>SPIEL BEENDEN</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">262,263</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.round" datatype="html">
+        <source>Round</source>
+        <target>Runde</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">355</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.title" datatype="html">
+        <source>Game Finished!</source>
+        <target>Spiel beendet!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">422,423</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.subtitle" datatype="html">
+        <source>Congratulations to our pioneers!</source>
+        <target>Herzlichen Glückwunsch an unsere Pioniere!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">423,425</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.financialTitle" datatype="html">
+        <source>Financial Champion</source>
+        <target>Finanz-Champion</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">433,434</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.soilTitle" datatype="html">
+        <source>Soil Guardian</source>
+        <target>Boden-Wächter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">443,444</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.viewResults" datatype="html">
+        <source> VIEW RESULTS </source>
+        <target>ERGEBNISSE ANSEHEN</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">453,454</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.backToDashboard" datatype="html">
+        <source> BACK TO DASHBOARD </source>
+        <target>ZURÜCK ZUM DASHBOARD</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/board/board.html</context>
+          <context context-type="linenumber">458,459</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.title" datatype="html">
+        <source>Financial Report</source>
+        <target>Finanzbericht</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">8,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.subtitle" datatype="html">
+        <source>Across-player comparison and history </source>
+        <target>Wirtschaftliche Leistung über alle Runden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">10,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.noRounds" datatype="html">
+        <source>No rounds yet</source>
+        <target>Keine Rundenhistorie verfügbar.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">26,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.charts.capital" datatype="html">
+        <source>Capital Growth</source>
+        <target>Kapitalverlauf</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">33,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.you" datatype="html">
+        <source>YOU</source>
+        <target>(Du)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">73,74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.group.decisions" datatype="html">
+        <source>Decisions (From Prev. Round)</source>
+        <target>Deine Entscheidungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">84,86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.fertilizer" datatype="html">
+        <source>Conventional Fertilizer</source>
+        <target>Dünger</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">88,89</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.pesticide" datatype="html">
+        <source>Pesticides</source>
+        <target>Pestizide</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">97,98</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.organisms" datatype="html">
+        <source>Beneficial Organisms</source>
+        <target>Nützlinge</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">106,107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.organic" datatype="html">
+        <source>Organic Farming Seal</source>
+        <target>Bio</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">115,116</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.group.expenses" datatype="html">
+        <source>Expenses Detail</source>
+        <target>Ausgabendetails</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">128,129</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.header.seeds" datatype="html">
+        <source>Seeds (detailed)</source>
+        <target>Saatgutkosten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">136,137</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.header.investments" datatype="html">
+        <source>Investments (detailed)</source>
+        <target>Investitionen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">153,154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.sub.machines" datatype="html">
+        <source> Machines</source>
+        <target>Maschinen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.sub.animalsInvest" datatype="html">
+        <source> Animals (Initial)</source>
+        <target>Tiere (Kauf)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">168,169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.header.running" datatype="html">
+        <source>Running Costs (detailed)</source>
+        <target>Laufende Kosten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">177,178</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.sub.base" datatype="html">
+        <source>Base Operation</source>
+        <target>Grundkosten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">185</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.sub.organicControl" datatype="html">
+        <source>Eco Seal Control</source>
+        <target>Bio-Kontrolle</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">191,192</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.sub.pesticide" datatype="html">
+        <source> Pesticide Application</source>
+        <target>Pestizideinsatz</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">198</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.sub.organisms" datatype="html">
+        <source> Beneficial Organisms</source>
+        <target>Nützlinge</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">205</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.sub.animalsRunning" datatype="html">
+        <source>Animals (Running)</source>
+        <target>Tiere (Anbau/Haltung)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">212,213</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.group.income" datatype="html">
+        <source>Income Detail</source>
+        <target>Einnahmendeteils</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">221,222</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.header.harvest" datatype="html">
+        <source>Total Harvest Income</source>
+        <target>Gesamte Ernteeinnahmen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">225,226</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.result.profit" datatype="html">
+        <source>NET PROFIT / LOSS</source>
+        <target>NETTOGEWINN / VERLUST</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">241,242</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.result.capital" datatype="html">
+        <source>CLOSING CAPITAL</source>
+        <target>ENDKAPITAL</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">252</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.playerStatus" datatype="html">
+        <source>Farmer Status</source>
+        <target>Farmer-Status</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">280,281</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.event.weather" datatype="html">
+        <source>Regional Weather</source>
+        <target>Regionales Wetter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">287,288</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="finance.event.vermin" datatype="html">
+        <source>Pest Report</source>
+        <target>Schädlingsbericht</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/finance/finance.html</context>
+          <context context-type="linenumber">295,296</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.title" datatype="html">
+        <source>Round Report </source>
+        <target>Rundenbericht </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">4,7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.profit" datatype="html">
+        <source>Profit</source>
+        <target>Gewinn</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegel" datatype="html">
+        <source>Bio Seal</source>
+        <target>Bio-Siegel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">20,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegelFail" datatype="html">
+        <source>Requirements not met</source>
+        <target>Anforderungen nicht erfüllt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">22,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegelSuccess" datatype="html">
+        <source> awarded!</source>
+        <target> verliehen!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.conditions" datatype="html">
+        <source>Conditions</source>
+        <target>Bedingungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">42,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.weather" datatype="html">
+        <source>Weather</source>
+        <target>Wetter</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.vermin" datatype="html">
+        <source>Pests</source>
+        <target>Schädlinge</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">48,49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="roundResult.continue" datatype="html">
+        <source> Continue to Round <x id="INTERPOLATION" equiv-text="{{ round.number + 1 }}"/> </source>
+        <target> Weiter zu Runde <x id="INTERPOLATION" equiv-text="{{ round.number + 1 }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/game/round-result-modal/round-result-modal.html</context>
+          <context context-type="linenumber">58,59</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

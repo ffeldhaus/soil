@@ -58,9 +58,10 @@ export class Dashboard implements OnInit, OnDestroy {
   newGameConfig = {
     name: '',
     numPlayers: 1,
-    numRounds: 10,
+    numRounds: 12,
     numAi: 0,
-    playerLabel: 'Player'
+    playerLabel: 'Player',
+    aiLevel: 'middle' as 'elementary' | 'middle' | 'high'
   };
 
   onPlayersChange() {
@@ -504,9 +505,10 @@ export class Dashboard implements OnInit, OnDestroy {
     // Logic:
     // Target state:
     const targetType = slot.isAi ? 'human' : 'ai';
+    const aiLevel = this.newGameConfig.aiLevel || 'middle';
 
     try {
-      await this.gameService.updatePlayerType(game.id, slot.number, targetType);
+      await this.gameService.updatePlayerType(game.id, slot.number, targetType, aiLevel);
       // Refresh games to show update
       await this.loadGames();
     } catch (e: any) {
@@ -541,6 +543,32 @@ export class Dashboard implements OnInit, OnDestroy {
 
   closeQr() {
     this.qrCodeUrl = '';
+  }
+
+  // Round Deadlines
+  isUpdatingDeadline = false;
+  async updateDeadline(gameId: string, round: number, dateStr: string) {
+    if (!dateStr) return;
+    this.isUpdatingDeadline = true;
+    try {
+      await this.gameService.updateRoundDeadline(gameId, round, dateStr);
+      await this.loadGames(); // Refresh
+    } catch (e: any) {
+      this.errorMessage = 'Failed to update deadline: ' + e.message;
+    } finally {
+      this.isUpdatingDeadline = false;
+    }
+  }
+
+  getDeadlineForRound(game: any, round: number): string {
+    if (!game.roundDeadlines || !game.roundDeadlines[round]) return '';
+    const d = game.roundDeadlines[round];
+    // Convert Firestore timestamp or ISO string to local datetime-local format
+    const date = d.seconds ? new Date(d.seconds * 1000) : new Date(d);
+
+    // Format to YYYY-MM-DDTHH:mm
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
   }
 
   // Random Names

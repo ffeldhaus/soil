@@ -4,11 +4,10 @@ import { CROP_SEQUENCE_MATRIX } from './constants';
 export class AiAgent {
 
     static makeDecision(
-        level: 'random' | 'rotation' | 'optimizer',
+        level: 'elementary' | 'middle' | 'high',
         previousRound: Round | undefined
     ): RoundDecision {
 
-        // Default decision
         const decision: RoundDecision = {
             machines: 0,
             organic: false,
@@ -19,45 +18,70 @@ export class AiAgent {
         };
 
         const crops: CropType[] = ['Fieldbean', 'Barley', 'Oat', 'Potato', 'Corn', 'Rye', 'Wheat', 'Beet', 'Fallow', 'Grass'];
+        const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet'];
 
-        for (let i = 0; i < 40; i++) {
-            let chosenCrop: CropType = 'Fallow';
+        // 1. Level Specific Strategy
+        if (level === 'elementary') {
+            // Elementary: Simple conventional farming, random main crops, no machines.
+            decision.machines = 0;
+            decision.fertilizer = Math.random() > 0.3; // Often fertilize
+            decision.pesticide = Math.random() > 0.5;
 
-            if (level === 'random') {
-                chosenCrop = crops[Math.floor(Math.random() * crops.length)];
+            for (let i = 0; i < 40; i++) {
+                decision.parcels[i] = mainCrops[Math.floor(Math.random() * mainCrops.length)];
+            }
+        }
+
+        else if (level === 'middle') {
+            // Middle: Follows rotation, basic machine usage, mostly conventional.
+            decision.machines = 1;
+            decision.fertilizer = true;
+            decision.pesticide = true;
+
+            for (let i = 0; i < 40; i++) {
+                if (!previousRound) {
+                    decision.parcels[i] = mainCrops[i % mainCrops.length];
+                } else {
+                    const prevCrop = previousRound.parcelsSnapshot[i].crop;
+                    const goodNext = crops.filter(c => CROP_SEQUENCE_MATRIX[prevCrop]?.[c] === 'good' && c !== 'Fallow' && c !== 'Grass');
+                    decision.parcels[i] = goodNext.length > 0 ? goodNext[0] : 'Wheat';
+                }
+            }
+        }
+
+        else if (level === 'high') {
+            // High: Strategic. Uses rotation, optimizes machines, considers organic if soil allows.
+            const averageSoil = previousRound
+                ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40
+                : 80;
+
+            decision.organic = averageSoil > 100; // Go organic if soil is excellent
+            decision.machines = averageSoil > 90 ? 2 : 1;
+
+            if (!decision.organic) {
+                decision.fertilizer = averageSoil < 120; // Only fertilize if soil needs boost
+                decision.pesticide = true;
+            } else {
+                decision.organisms = true;
             }
 
-            else if (level === 'rotation') {
-                if (!previousRound) {
-                    chosenCrop = crops[Math.floor(Math.random() * crops.length)];
+            for (let i = 0; i < 40; i++) {
+                const prevParcel = previousRound ? previousRound.parcelsSnapshot[i] : { soil: 80, nutrition: 80, crop: 'Fallow' };
+                const prevCrop = prevParcel.crop as string;
+
+                if (prevParcel.soil < 70 || prevParcel.nutrition < 60) {
+                    decision.parcels[i] = 'Fieldbean'; // Recovery
+                } else if (decision.organic && i < 8) {
+                    decision.parcels[i] = 'Grass'; // Needed for organic nutrition
                 } else {
-                    const prevParcel = previousRound.parcelsSnapshot[i];
-                    const prevCrop = prevParcel.crop;
-                    // Find a 'good' crop in sequence
-                    const goodCrops = crops.filter(c => CROP_SEQUENCE_MATRIX[prevCrop]?.[c] === 'good');
-                    if (goodCrops.length > 0) {
-                        chosenCrop = goodCrops[Math.floor(Math.random() * goodCrops.length)];
+                    const goodNext = mainCrops.filter(c => CROP_SEQUENCE_MATRIX[prevCrop]?.[c] === 'good');
+                    if (goodNext.length > 0) {
+                        decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
                     } else {
-                        chosenCrop = 'Fallow';
+                        decision.parcels[i] = 'Oat'; // Neutral
                     }
                 }
             }
-
-            else if (level === 'optimizer') {
-                // Simple heuristic optimizer: Prioritize high value crops if soil/nutrition is good
-                // Simplified: Just pick Wheat or Potato if soil is high, else Fallow/Beans
-                const prevParcel = previousRound ? previousRound.parcelsSnapshot[i] : { soil: 80, nutrition: 80, crop: 'Fallow' };
-
-                if (prevParcel.soil > 90 && prevParcel.nutrition > 90) {
-                    chosenCrop = 'Beet'; // High value, high cost
-                } else if (prevParcel.soil > 70) {
-                    chosenCrop = 'Wheat';
-                } else {
-                    chosenCrop = 'Fieldbean'; // Recover
-                }
-            }
-
-            decision.parcels[i] = chosenCrop;
         }
 
         return decision;

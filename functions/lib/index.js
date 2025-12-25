@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.saveDraft = exports.triggerAiTurn = exports.playerLogin = exports.dailyGamePurge = exports.undeleteGames = exports.deleteGames = exports.updatePlayerType = exports.getAdminGames = exports.getAllAdmins = exports.getPendingUsers = exports.getSystemStats = exports.getUserStatus = exports.manageAdmin = exports.submitOnboarding = exports.createGame = exports.setAdminRole = exports.impersonatePlayer = exports.calculateNextRound = exports.submitDecision = exports.getGameState = void 0;
+exports.saveDraft = exports.processDeadlines = exports.updateRoundDeadline = exports.triggerAiTurn = exports.playerLogin = exports.dailyGamePurge = exports.undeleteGames = exports.deleteGames = exports.updatePlayerType = exports.getAdminGames = exports.getAllAdmins = exports.getPendingUsers = exports.getSystemStats = exports.getUserStatus = exports.manageAdmin = exports.submitOnboarding = exports.createGame = exports.setAdminRole = exports.impersonatePlayer = exports.calculateNextRound = exports.submitDecision = exports.getGameState = void 0;
 const admin = require("firebase-admin");
 const https_1 = require("firebase-functions/v2/https");
 const v2_1 = require("firebase-functions/v2");
@@ -75,18 +75,8 @@ exports.submitDecision = (0, https_1.onCall)(async (request) => {
             players[uid].pendingDecisions = decision;
             // Process AI turns immediately (passes preloaded data to avoid internal reads)
             const updatedPlayers = await internalProcessAiTurns(gameId, transaction, Object.assign(Object.assign({}, game), { players })) || players;
-            const allPlayersArr = Object.values(updatedPlayers);
-            const allSubmitted = allPlayersArr.every((p) => p.submittedRound === currentRound);
-            console.log(`Debug submitDecision: gameId=${gameId}, currentRound=${currentRound}, playerCount=${allPlayersArr.length}, allSubmitted=${allSubmitted}`);
-            if (!allSubmitted) {
-                allPlayersArr.forEach((p) => {
-                    console.log(`Player ${p.uid}: submittedRound=${p.submittedRound}, isAi=${p.isAi}`);
-                });
-            }
-            if (allSubmitted) {
-                // Pass preloaded game with updated players to avoid internal read in performCalculation
-                await performCalculation(gameId, decision, transaction, Object.assign(Object.assign({}, game), { players: updatedPlayers }));
-                // Retrieve the new round for THIS player
+            const calculationPerformed = await checkAndPerformCalculation(gameId, transaction, Object.assign(Object.assign({}, game), { players: updatedPlayers }), uid, decision);
+            if (calculationPerformed) {
                 const myState = updatedPlayers[uid];
                 const myNewRound = myState.history[myState.history.length - 1];
                 return { status: 'calculated', nextRound: myNewRound };
@@ -104,6 +94,20 @@ exports.submitDecision = (0, https_1.onCall)(async (request) => {
         throw new https_1.HttpsError('internal', error.message || 'Internal Error');
     }
 });
+async function checkAndPerformCalculation(gameId, transaction, game, triggerUid, fallbackDecision) {
+    const players = game.players || {};
+    const currentRound = game.currentRoundNumber || 0;
+    const allPlayersArr = Object.values(players);
+    const allSubmitted = allPlayersArr.every((p) => p.submittedRound === currentRound);
+    console.log(`Debug checkAndPerformCalculation: gameId=${gameId}, currentRound=${currentRound}, playerCount=${allPlayersArr.length}, allSubmitted=${allSubmitted}`);
+    if (allSubmitted) {
+        // We use the provided decision if available, or an empty object.
+        // performCalculation prioritizes player.pendingDecisions anyway.
+        await performCalculation(gameId, fallbackDecision || {}, transaction, game);
+        return true;
+    }
+    return false;
+}
 async function performCalculation(gameId, decision, transaction, preloadedGame) {
     var _a, _b, _c, _d;
     const gameRef = db.collection('games').doc(gameId);
@@ -215,8 +219,13 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
     }
     const { name, 
     // password, // Unused
-    settings = { length: 10, difficulty: 'normal', playerLabel: 'Player' }, config = { numPlayers: 1, numRounds: 10, numAi: 0 }, // Default config
+    settings = { length: 10, difficulty: 'normal', playerLabel: 'Player' }, config = { numPlayers: 1, numRounds: 12, numAi: 0 }, // Default config to 12 as requested
     retentionDays = 90 } = request.data;
+    // Rounds range check: 10-12 minimum, 20-50 maximum. 
+    // We'll allow 10 to 100 for now but defaults should be better.
+    const numRounds = Math.min(100, Math.max(10, config.numRounds || 12));
+    config.numRounds = numRounds;
+    settings.length = numRounds;
     // Authorization & Quota Check
     const uid = request.auth.uid;
     const userRef = db.collection('users').doc(uid);
@@ -351,7 +360,7 @@ async function internalProcessAiTurns(gameId, transaction, preloadedGame) {
         if (p.isAi && (p.submittedRound === undefined || p.submittedRound < currentRound)) {
             // Use player's own history for decision context
             const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
-            const decision = ai_agent_1.AiAgent.makeDecision(p.aiLevel || 'rotation', lastRound);
+            const decision = ai_agent_1.AiAgent.makeDecision((p.aiLevel || 'middle'), lastRound);
             p.submittedRound = currentRound;
             p.pendingDecisions = decision;
         }
@@ -618,7 +627,7 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
     if (!request.auth) {
         throw new https_1.HttpsError('unauthenticated', 'User must be logged in');
     }
-    const { gameId, playerNumber, type } = request.data;
+    const { gameId, playerNumber, type, aiLevel } = request.data;
     if (!gameId || !playerNumber || !type) {
         throw new https_1.HttpsError('invalid-argument', 'Missing arguments');
     }
@@ -638,12 +647,13 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
         const players = game.players || {};
         const existingPlayer = players[uid];
         if (type === 'ai') {
-            players[uid] = Object.assign(Object.assign({}, (existingPlayer || {})), { uid: uid, displayName: (existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.displayName) || `AI Player ${playerNumber}`, isAi: true, capital: (_a = existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.capital) !== null && _a !== void 0 ? _a : 1000, currentRound: (_b = existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.currentRound) !== null && _b !== void 0 ? _b : 0, history: (_c = existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.history) !== null && _c !== void 0 ? _c : [] });
+            players[uid] = Object.assign(Object.assign({}, (existingPlayer || {})), { uid: uid, displayName: (existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.displayName) || `AI Player ${playerNumber}`, isAi: true, aiLevel: aiLevel || 'middle', capital: (_a = existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.capital) !== null && _a !== void 0 ? _a : 1000, currentRound: (_b = existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.currentRound) !== null && _b !== void 0 ? _b : 0, history: (_c = existingPlayer === null || existingPlayer === void 0 ? void 0 : existingPlayer.history) !== null && _c !== void 0 ? _c : [] });
         }
         else {
             // Convert to Human
             if (existingPlayer) {
                 players[uid].isAi = false;
+                delete players[uid].aiLevel;
                 players[uid].displayName = `Player ${playerNumber}`;
             }
             else {
@@ -659,10 +669,23 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
         }
         // If changed to AI, auto-process turn (modifies players object)
         if (type === 'ai') {
-            await internalProcessAiTurns(gameId, t, Object.assign(Object.assign({}, game), { players }));
+            const updatedPlayers = await internalProcessAiTurns(gameId, t, Object.assign(Object.assign({}, game), { players })) || players;
+            // Check if this AI turn completes the round
+            const calculationPerformed = await checkAndPerformCalculation(gameId, t, Object.assign(Object.assign({}, game), { players: updatedPlayers }));
+            if (!calculationPerformed) {
+                t.update(gameRef, {
+                    players: updatedPlayers,
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+            }
         }
-        // 3. WRITES
-        t.update(gameRef, { players });
+        else {
+            // 3. WRITES
+            t.update(gameRef, {
+                players,
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+        }
     });
     return { success: true };
 });
@@ -831,6 +854,74 @@ exports.triggerAiTurn = (0, https_1.onCall)(async (request) => {
     const roundsSnap = await roundsRef.orderBy('number', 'desc').limit(1).get();
     const lastRound = (_a = roundsSnap.docs[0]) === null || _a === void 0 ? void 0 : _a.data();
     return ai_agent_1.AiAgent.makeDecision(level, lastRound);
+});
+exports.updateRoundDeadline = (0, https_1.onCall)(async (request) => {
+    var _a, _b;
+    if (!request.auth)
+        throw new https_1.HttpsError('unauthenticated', 'Must be logged in');
+    const { gameId, roundNumber, deadline } = request.data;
+    if (!gameId || roundNumber === undefined)
+        throw new https_1.HttpsError('invalid-argument', 'Missing gameId or roundNumber');
+    const gameRef = db.collection('games').doc(gameId);
+    const gameSnap = await gameRef.get();
+    if (!gameSnap.exists)
+        throw new https_1.HttpsError('not-found', 'Game not found');
+    if (((_a = gameSnap.data()) === null || _a === void 0 ? void 0 : _a.hostUid) !== request.auth.uid)
+        throw new https_1.HttpsError('permission-denied', 'Not your game');
+    const deadlines = ((_b = gameSnap.data()) === null || _b === void 0 ? void 0 : _b.roundDeadlines) || {};
+    if (deadline) {
+        deadlines[roundNumber] = admin.firestore.Timestamp.fromDate(new Date(deadline));
+    }
+    else {
+        delete deadlines[roundNumber];
+    }
+    await gameRef.update({ roundDeadlines: deadlines });
+    return { success: true };
+});
+exports.processDeadlines = (0, scheduler_1.onSchedule)("every 1 minutes", async (event) => {
+    var _a;
+    const now = admin.firestore.Timestamp.now();
+    // Find games in progress
+    const activeGames = await db.collection('games')
+        .where('status', '==', 'in_progress')
+        .get();
+    for (const gameDoc of activeGames.docs) {
+        const game = gameDoc.data();
+        const currentRound = game.currentRoundNumber;
+        const deadline = (_a = game.roundDeadlines) === null || _a === void 0 ? void 0 : _a[currentRound];
+        if (deadline && deadline.toMillis() < now.toMillis()) {
+            console.log(`Deadline passed for game ${game.id} round ${currentRound}. Forcing AI turns.`);
+            await db.runTransaction(async (transaction) => {
+                const refreshedGameDoc = await transaction.get(gameDoc.ref);
+                const refreshedGame = refreshedGameDoc.data();
+                if (!refreshedGame || refreshedGame.status !== 'in_progress')
+                    return;
+                const players = refreshedGame.players || {};
+                let logicNeedsCalc = false;
+                for (const uid in players) {
+                    const p = players[uid];
+                    if (p.submittedRound === undefined || p.submittedRound < currentRound) {
+                        // FORCE AI decision
+                        const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
+                        const aiLevel = p.isAi ? (p.aiLevel || 'middle') : 'middle';
+                        const decision = ai_agent_1.AiAgent.makeDecision(aiLevel, lastRound);
+                        p.submittedRound = currentRound;
+                        p.pendingDecisions = decision;
+                        logicNeedsCalc = true;
+                    }
+                }
+                if (logicNeedsCalc) {
+                    const allSubmitted = Object.values(players).every((p) => p.submittedRound === currentRound);
+                    if (allSubmitted) {
+                        await performCalculation(game.id, null, transaction, Object.assign(Object.assign({}, refreshedGame), { players }));
+                    }
+                    else {
+                        transaction.update(gameDoc.ref, { players });
+                    }
+                }
+            });
+        }
+    }
 });
 exports.saveDraft = (0, https_1.onCall)(async (request) => {
     if (!request.auth) {

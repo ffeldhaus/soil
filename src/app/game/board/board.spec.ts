@@ -32,7 +32,21 @@ describe('Board', () => {
       updateDisplayName: vi.fn().mockResolvedValue(undefined)
     };
     const gameSpy = {
-      state$: of({ currentRound: 0 }),
+      state$: of({
+        game: {
+          id: 'test-game',
+          name: 'Test Game',
+          currentRoundNumber: 0,
+          status: 'in_progress',
+          roundDeadlines: {}
+        },
+        playerState: {
+          uid: 'test-user',
+          isAi: false,
+          history: [],
+          submittedRound: -1
+        }
+      }),
       getParcels: () => of(Array(40).fill(null).map((_, i) => ({
         index: i,
         crop: 'Fallow',
@@ -40,9 +54,19 @@ describe('Board', () => {
         nutrition: 80,
         yield: 0
       }))),
+      getParcelsValue: () => Array(40).fill(null).map((_, i) => ({
+        index: i,
+        crop: 'Fallow',
+        soil: 80,
+        nutrition: 80,
+        yield: 0
+      })),
       updateParcelDecision: () => { },
       submitRound: (gameId: string) => Promise.resolve(),
-      loadGame: (gameId: string) => Promise.resolve({ success: true })
+      loadGame: (gameId: string) => Promise.resolve({
+        game: { currentRoundNumber: 0 },
+        playerState: { history: [], submittedRound: -1 }
+      })
     };
     const functionsSpy = { httpsCallable: () => (() => Promise.resolve({ data: {} })) };
     const routerSpy = { navigate: () => Promise.resolve(true) };
@@ -93,7 +117,26 @@ describe('Board', () => {
   });
 
   it('should open planting modal on selection', async () => {
+    fixture.detectChanges();
+    await sleep(50);
+
+    // Ensure parcels are populated for selection logic
+    if (component.parcels.length === 0) {
+      component.parcels = Array(40).fill(null).map((_, i) => ({
+        index: i,
+        crop: 'Fallow',
+        soil: 80,
+        nutrition: 80,
+        yield: 0
+      })) as any;
+    }
+
     component.isReadOnly = false;
+    component.isSubmitted = false;
+    component.viewingRound = 0;
+    component.maxRoundNumber = 0;
+    component.cols = 8;
+    component.rows = 5;
 
     // Simulate selection
     const mockEvent = new MouseEvent('mousedown');

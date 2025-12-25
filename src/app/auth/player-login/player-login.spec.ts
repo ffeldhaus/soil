@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PlayerLoginComponent } from './player-login';
 import { AuthService } from '../auth.service';
-import { of, throwError } from 'rxjs';
+import { LanguageService } from '../../services/language.service';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 describe('PlayerLoginComponent', () => {
@@ -16,11 +17,14 @@ describe('PlayerLoginComponent', () => {
             loginAsPlayer: vi.fn().mockResolvedValue(undefined),
             user$: of(null)
         };
+        const languageServiceMock = { currentLang: 'en' };
 
         await TestBed.configureTestingModule({
-            imports: [PlayerLoginComponent, RouterTestingModule, ReactiveFormsModule],
+            imports: [PlayerLoginComponent, ReactiveFormsModule],
             providers: [
-                { provide: AuthService, useValue: authServiceMock }
+                provideRouter([]),
+                { provide: AuthService, useValue: authServiceMock },
+                { provide: LanguageService, useValue: languageServiceMock }
             ]
         })
             .compileComponents();

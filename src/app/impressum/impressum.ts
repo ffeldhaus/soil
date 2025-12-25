@@ -29,7 +29,7 @@ import { RouterLink } from '@angular/router';
                 <p class="font-bold text-white">Florian Feldhaus</p>
                 <p>Kanonikerweg 2</p>
                 <p>59494 Soest</p>
-                <p>Email: <a href="mailto:florian.feldhaus@gmail.com" class="text-emerald-400 hover:underline">florian.feldhaus@gmail.com</a></p>
+                <p>Email: <a href="mailto:florian.feldhaus&#64;gmail.com" class="text-emerald-400 hover:underline">florian.feldhaus&#64;gmail.com</a></p>
             </div>
         </section>
 
@@ -40,7 +40,7 @@ import { RouterLink } from '@angular/router';
                 <p class="font-bold text-white">Nina Wolf</p>
                 <p>Kanonikerweg 2</p>
                 <p>59494 Soest</p>
-                <p>Email: <a href="mailto:nina.vanessa.wolf@gmail.com" class="text-emerald-400 hover:underline">nina.vanessa.wolf@gmail.com</a></p>
+                <p>Email: <a href="mailto:nina.vanessa.wolf&#64;gmail.com" class="text-emerald-400 hover:underline">nina.vanessa.wolf&#64;gmail.com</a></p>
             </div>
         </section>
 

@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminLoginComponent } from './admin-login';
 import { AuthService } from '../auth.service';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
+
+import { vi } from 'vitest';
 
 describe('AdminLoginComponent', () => {
   let component: AdminLoginComponent;
@@ -13,25 +14,27 @@ describe('AdminLoginComponent', () => {
 
   beforeEach(async () => {
     authServiceMock = {
-      loginWithEmail: jasmine.createSpy('loginWithEmail').and.returnValue(Promise.resolve()),
-      loginWithGoogle: jasmine.createSpy('loginWithGoogle').and.returnValue(Promise.resolve())
+      loginWithEmail: vi.fn().mockResolvedValue(undefined),
+      loginWithGoogle: vi.fn().mockResolvedValue(undefined)
     };
 
     routerMock = {
-      navigate: jasmine.createSpy('navigate')
+      navigate: vi.fn()
     };
 
     await TestBed.configureTestingModule({
-      imports: [AdminLoginComponent, ReactiveFormsModule, RouterTestingModule],
+      imports: [AdminLoginComponent, ReactiveFormsModule],
       providers: [
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: Router, useValue: routerMock }
+        provideRouter([]),
+        { provide: AuthService, useValue: authServiceMock }
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(AdminLoginComponent);
     component = fixture.componentInstance;
+    routerMock = TestBed.inject(Router);
+    vi.spyOn(routerMock, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
   });
 
@@ -47,13 +50,13 @@ describe('AdminLoginComponent', () => {
   });
 
   it('should show error modal on failure', async () => {
-    authServiceMock.loginWithEmail.and.returnValue(Promise.reject(new Error('Auth Failed')));
+    authServiceMock.loginWithEmail.mockRejectedValue(new Error('Auth Failed'));
     component.loginForm.setValue({ email: 'test@test.com', password: 'password' });
 
     await component.onSubmit();
     fixture.detectChanges();
 
-    expect(component.showErrorModal).toBeTrue();
+    expect(component.showErrorModal).toBe(true);
     expect(component.errorMessage).toContain('Login failed');
   });
 });

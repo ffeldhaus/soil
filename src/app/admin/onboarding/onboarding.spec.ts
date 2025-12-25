@@ -1,16 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Onboarding } from './onboarding';
+import { AuthService } from '../../auth/auth.service';
+import { GameService } from '../../game/game.service';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
+import { vi } from 'vitest';
 
 describe('Onboarding', () => {
   let component: Onboarding;
   let fixture: ComponentFixture<Onboarding>;
+  let authServiceMock: any;
+  let gameServiceMock: any;
 
   beforeEach(async () => {
+    authServiceMock = {
+      user$: of({ uid: 'admin', displayName: 'Admin' }),
+      logout: vi.fn().mockResolvedValue(undefined)
+    };
+    gameServiceMock = {
+      submitOnboarding: vi.fn().mockResolvedValue(true)
+    };
+
     await TestBed.configureTestingModule({
-      imports: [Onboarding]
+      imports: [Onboarding],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: GameService, useValue: gameServiceMock }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(Onboarding);
     component = fixture.componentInstance;

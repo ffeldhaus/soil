@@ -6,6 +6,7 @@ describe('Finance Component Logic', () => {
 
     const mockGame: Game = {
         id: 'test-game',
+        name: 'Test Game',
         hostUid: 'admin',
         status: 'in_progress',
         currentRoundNumber: 2,

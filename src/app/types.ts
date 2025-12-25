@@ -50,7 +50,7 @@ export interface PlayerState {
     uid: string;
     displayName: string;
     isAi: boolean;
-    aiLevel?: 'random' | 'rotation' | 'optimizer';
+    aiLevel?: 'elementary' | 'middle' | 'high';
     capital: number;
     currentRound: number;
     submittedRound?: number; // Last round submitted by this player
@@ -66,12 +66,14 @@ export interface GameSettings {
 
 export interface Game {
     id: string;
+    name: string;
     hostUid: string;
     status: 'waiting' | 'in_progress' | 'finished';
     settings: GameSettings;
     players: Record<string, PlayerState>; // Keyed by UID
     currentRoundNumber: number;
     createdAt: number; // Timestamp
+    roundDeadlines?: Record<number, any>;
 }
 
 export interface UserStatus {

@@ -29,6 +29,8 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/soil",
+            "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js",
@@ -36,6 +38,7 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "i18nMissingTranslation": "error",
             "assets": [
               {
                 "glob": "**/*",
@@ -44,7 +47,8 @@
             ],
             "styles": [
               "src/styles.scss"
-            ]
+            ],
+            "serviceWorker": "src/ngsw-config.json"
           },
           "configurations": {
             "production": {

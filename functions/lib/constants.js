@@ -1,28 +1,64 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PRICES = exports.EXPENSES = exports.CROP_SEQUENCE_MATRIX = exports.HARVEST_NUTRITION_SENSITIVITY = exports.HARVEST_SOIL_SENSITIVITY = exports.HARVEST_YIELD = exports.NUTRITION = exports.SOIL = void 0;
+exports.PRICES = exports.EXPENSES = exports.CROP_SEQUENCE_MATRIX = exports.HARVEST_NUTRITION_SENSITIVITY = exports.HARVEST_SOIL_SENSITIVITY = exports.HARVEST_YIELD = exports.VERMIN_EFFECTS = exports.WEATHER_EFFECTS = exports.MACHINE_FACTORS = exports.NUTRITION = exports.SOIL = void 0;
 exports.SOIL = {
     START: 80,
-    FALLOW: 0.1,
-    CROPSEQUENCE: 0.03,
-    PLANTATION: 0.02,
-    FERTILIZE: 0.05,
-    ANIMALS: 0.02,
-    PESTICIDE: 0.04,
-    MACHINE: 0.05,
-    MONOCULTURE: 0.02,
-    FLOOD: 0.05,
-    DROUGHT: 0.03,
+    FALLOW_RECOVERY: 0.05,
+    CROP_ROTATION_BONUS: 0.04,
+    CROP_ROTATION_PENALTY: -0.05,
+    PLANTATION_GAINS: {
+        Fieldbean: 0.02,
+        Oat: 0.01,
+        Rye: 0.01,
+        Beet: 0.01,
+        Grass: 0.03,
+    },
+    PLANTATION_LOSSES: {
+        Barley: -0.01,
+        Potato: -0.02,
+        Corn: -0.02,
+        Wheat: -0.01,
+        Beet: -0.01,
+    },
+    FERTILIZER_SYNTHETIC_IMPACT: -0.06,
+    PESTICIDE_IMPACT: -0.04,
+    MACHINE_IMPACT: [0, -0.01, -0.03, -0.06, -0.10],
+    MONOCULTURE_PENALTY: -0.04,
+    WEATHER_IMPACT: {
+        Normal: 0,
+        Drought: -0.03,
+        Flood: -0.05,
+    },
 };
 exports.NUTRITION = {
     START: 80,
-    DECLINE: 0.15,
-    FERTILIZE: 0.5,
-    ANIMALS: 0.3,
-    FIELDBEAN: 0.1,
+    MAX: 200,
+    BASE_DECLINE: 0.1,
+    FERTILIZER_SYNTHETIC: 60,
+    FERTILIZER_ORGANIC: 40,
+    FIELDBEAN_BONUS: 20,
+    ANIMALS_REQUIRED_RATIO: 0.2, // 20% of parcels should be animals for organic nutrition
+};
+exports.MACHINE_FACTORS = {
+    YIELD_BONUS: [0, 0.05, 0.12, 0.20, 0.30],
+    LABOR_COST_REDUCTION: [1, 0.9, 0.75, 0.6, 0.5],
+    BASE_LABOR_COST: 1000,
+    INVESTMENT_COST: [0, 500, 1500, 4000, 10000],
+};
+exports.WEATHER_EFFECTS = {
+    'Normal': { yield: 1.0, soil: 0 },
+    'Drought': { yield: 0.7, soil: -0.03 },
+    'Flood': { yield: 0.6, soil: -0.05 },
+    'Storm': { yield: 0.8, soil: -0.02 },
+};
+exports.VERMIN_EFFECTS = {
+    'None': { yield: 1.0, organic_multiplier: 1.0 },
+    'Pests': { yield: 0.7, organic_multiplier: 1.2 }, // Pests hit conventional harder if no pesticide? 
+    // Wait, organic beneficial organisms are 100 costs.
 };
 exports.HARVEST_YIELD = {
     Animals: 0,
+    Grass: 0,
     Fallow: 0,
     Fieldbean: 60,
     Barley: 95,
@@ -34,41 +70,39 @@ exports.HARVEST_YIELD = {
     Beet: 570,
 };
 exports.HARVEST_SOIL_SENSITIVITY = {
-    Fieldbean: 1.0,
-    Barley: 1.2,
-    Oat: 1.0,
-    Potato: 1.2,
-    Corn: 1.0,
-    Rye: 1.0,
+    Fieldbean: 0.8,
+    Barley: 1.1,
+    Oat: 0.9,
+    Potato: 1.3,
+    Corn: 1.2,
+    Rye: 0.9,
     Wheat: 1.2,
-    Beet: 1.0,
+    Beet: 1.1,
+    Grass: 0.5,
 };
 exports.HARVEST_NUTRITION_SENSITIVITY = {
-    Fieldbean: 0.8,
-    Barley: 0.8,
-    Oat: 1.0,
-    Potato: 1.2,
-    Corn: 1.0,
+    Fieldbean: 0.5,
+    Barley: 0.9,
+    Oat: 0.8,
+    Potato: 1.4,
+    Corn: 1.2,
     Rye: 0.8,
-    Wheat: 1.2,
-    Beet: 1.2,
+    Wheat: 1.3,
+    Beet: 1.3,
+    Grass: 0.4,
 };
 exports.CROP_SEQUENCE_MATRIX = {
-    // Mapping logic from 'CROPSEQUENCE' in Ruby
-    // Using English keys: Fieldbean, Barley, Oat, Potato, Corn, Rye, Wheat, Beet, Fallow, Animals
-    // Simplified for brevity, will implement full matrix in logic or here
-    Fieldbean: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
-    Barley: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'ok', Oat: 'bad', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'ok' },
-    Oat: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'bad', Potato: 'ok', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'ok' },
-    Potato: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'ok', Oat: 'ok', Potato: 'bad', Corn: 'ok', Rye: 'ok', Wheat: 'ok', Beet: 'ok' },
-    Corn: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'ok', Potato: 'good', Corn: 'good', Rye: 'bad', Wheat: 'bad', Beet: 'good' },
-    Rye: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'ok', Rye: 'good', Wheat: 'ok', Beet: 'ok' },
-    Wheat: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'ok', Potato: 'good', Corn: 'good', Rye: 'bad', Wheat: 'bad', Beet: 'good' },
-    Beet: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'ok', Oat: 'ok', Potato: 'good', Corn: 'ok', Rye: 'ok', Wheat: 'ok', Beet: 'bad' },
-    Fallow: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
-    Animals: { Animals: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
+    Fieldbean: { Grass: 'good', Fallow: 'good', Fieldbean: 'bad', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
+    Barley: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'bad', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'ok' },
+    Oat: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'bad', Potato: 'ok', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'ok' },
+    Potato: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'ok', Oat: 'ok', Potato: 'bad', Corn: 'ok', Rye: 'ok', Wheat: 'ok', Beet: 'ok' },
+    Corn: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'ok', Potato: 'good', Corn: 'bad', Rye: 'bad', Wheat: 'bad', Beet: 'good' },
+    Rye: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'ok', Rye: 'bad', Wheat: 'ok', Beet: 'ok' },
+    Wheat: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'ok', Potato: 'good', Corn: 'good', Rye: 'bad', Wheat: 'bad', Beet: 'good' },
+    Beet: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'ok', Oat: 'ok', Potato: 'good', Corn: 'ok', Rye: 'ok', Wheat: 'ok', Beet: 'bad' },
+    Fallow: { Grass: 'good', Fallow: 'good', Fieldbean: 'ok', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
+    Grass: { Grass: 'bad', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
 };
-// ... EXPENSES, SEEDS, etc. to be added.
 exports.EXPENSES = {
     SEEDS: {
         Fieldbean: { organic: 144, conventional: 120 },
@@ -85,7 +119,7 @@ exports.EXPENSES = {
         FERTILIZE: 50,
         PESTICIDE: 50,
         ORGANISMS: 100,
-        ANIMALS: 200,
+        ANIMALS: 150,
         BASE_CONVENTIONAL: 500,
         BASE_ORGANIC: 700,
     }

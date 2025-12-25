@@ -43,11 +43,12 @@
                         <div class="flex gap-0.5 items-end justify-center w-full h-full pb-1">
                             <div *ngFor="let cap of p.capitalHistory; let i = index"
                                 class="w-full max-w-[12px] rounded-t-sm transition-all duration-500 ease-out"
-                                [style.height]="getChartHeight(cap, getMaxCapital())"
-                                [class.bg-emerald-500/40]="p.uid === playerUid && i === p.capitalHistory.length - 1"
-                                [class.bg-emerald-600]="p.uid === playerUid && i < p.capitalHistory.length - 1"
-                                [class.bg-blue-500/40]="p.uid !== playerUid && i === p.capitalHistory.length - 1"
-                                [class.bg-blue-600]="p.uid !== playerUid && i < p.capitalHistory.length - 1">
+                                [style.height]="getChartHeight(cap, getMaxCapital())" [ngClass]="{
+                                    'bg-emerald-500/40': p.uid === playerUid && i === p.capitalHistory.length - 1,
+                                    'bg-emerald-600': p.uid === playerUid && i < p.capitalHistory.length - 1,
+                                    'bg-blue-500/40': p.uid !== playerUid && i === p.capitalHistory.length - 1,
+                                    'bg-blue-600': p.uid !== playerUid && i < p.capitalHistory.length - 1
+                                }">
                             </div>
                         </div>
                         <span

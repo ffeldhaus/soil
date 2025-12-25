@@ -89,24 +89,10 @@ export const submitDecision = onCall(async (request) => {
             // Process AI turns immediately (passes preloaded data to avoid internal reads)
             const updatedPlayers = await internalProcessAiTurns(gameId, transaction, { ...game, players }) || players;
 
-            const allPlayersArr = Object.values(updatedPlayers);
-            const allSubmitted = allPlayersArr.every((p: any) => p.submittedRound === currentRound);
-
-            console.log(`Debug submitDecision: gameId=${gameId}, currentRound=${currentRound}, playerCount=${allPlayersArr.length}, allSubmitted=${allSubmitted}`);
-            if (!allSubmitted) {
-                allPlayersArr.forEach((p: any) => {
-                    console.log(`Player ${p.uid}: submittedRound=${p.submittedRound}, isAi=${p.isAi}`);
-                });
-            }
-
-            if (allSubmitted) {
-                // Pass preloaded game with updated players to avoid internal read in performCalculation
-                await performCalculation(gameId, decision, transaction, { ...game, players: updatedPlayers });
-
-                // Retrieve the new round for THIS player
+            const calculationPerformed = await checkAndPerformCalculation(gameId, transaction, { ...game, players: updatedPlayers }, uid, decision);
+            if (calculationPerformed) {
                 const myState = updatedPlayers[uid];
                 const myNewRound = myState.history[myState.history.length - 1];
-
                 return { status: 'calculated', nextRound: myNewRound };
             }
 
@@ -123,6 +109,23 @@ export const submitDecision = onCall(async (request) => {
         throw new HttpsError('internal', error.message || 'Internal Error');
     }
 });
+
+async function checkAndPerformCalculation(gameId: string, transaction: admin.firestore.Transaction, game: any, triggerUid?: string, fallbackDecision?: any) {
+    const players = game.players || {};
+    const currentRound = game.currentRoundNumber || 0;
+    const allPlayersArr = Object.values(players);
+    const allSubmitted = allPlayersArr.every((p: any) => p.submittedRound === currentRound);
+
+    console.log(`Debug checkAndPerformCalculation: gameId=${gameId}, currentRound=${currentRound}, playerCount=${allPlayersArr.length}, allSubmitted=${allSubmitted}`);
+
+    if (allSubmitted) {
+        // We use the provided decision if available, or an empty object.
+        // performCalculation prioritizes player.pendingDecisions anyway.
+        await performCalculation(gameId, fallbackDecision || {}, transaction, game);
+        return true;
+    }
+    return false;
+}
 
 async function performCalculation(gameId: string, decision: any, transaction: admin.firestore.Transaction, preloadedGame?: any) {
     const gameRef = db.collection('games').doc(gameId);
@@ -258,9 +261,15 @@ export const createGame = onCall(async (request) => {
         name,
         // password, // Unused
         settings = { length: 10, difficulty: 'normal', playerLabel: 'Player' },
-        config = { numPlayers: 1, numRounds: 10, numAi: 0 }, // Default config
+        config = { numPlayers: 1, numRounds: 12, numAi: 0 }, // Default config to 12 as requested
         retentionDays = 90
     } = request.data;
+
+    // Rounds range check: 10-12 minimum, 20-50 maximum. 
+    // We'll allow 10 to 100 for now but defaults should be better.
+    const numRounds = Math.min(100, Math.max(10, config.numRounds || 12));
+    config.numRounds = numRounds;
+    settings.length = numRounds;
 
     // Authorization & Quota Check
     const uid = request.auth.uid;
@@ -421,7 +430,7 @@ async function internalProcessAiTurns(gameId: string, transaction: admin.firesto
         if (p.isAi && (p.submittedRound === undefined || p.submittedRound < currentRound)) {
             // Use player's own history for decision context
             const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
-            const decision = AiAgent.makeDecision(p.aiLevel || 'rotation', lastRound);
+            const decision = AiAgent.makeDecision((p.aiLevel || 'middle') as any, lastRound);
             p.submittedRound = currentRound;
             p.pendingDecisions = decision;
         }
@@ -723,7 +732,7 @@ export const updatePlayerType = onCall(async (request) => {
         throw new HttpsError('unauthenticated', 'User must be logged in');
     }
 
-    const { gameId, playerNumber, type } = request.data;
+    const { gameId, playerNumber, type, aiLevel } = request.data;
 
     if (!gameId || !playerNumber || !type) {
         throw new HttpsError('invalid-argument', 'Missing arguments');
@@ -752,6 +761,7 @@ export const updatePlayerType = onCall(async (request) => {
                 uid: uid,
                 displayName: existingPlayer?.displayName || `AI Player ${playerNumber}`,
                 isAi: true,
+                aiLevel: aiLevel || 'middle',
                 capital: existingPlayer?.capital ?? 1000,
                 currentRound: existingPlayer?.currentRound ?? 0,
                 history: existingPlayer?.history ?? []
@@ -760,6 +770,7 @@ export const updatePlayerType = onCall(async (request) => {
             // Convert to Human
             if (existingPlayer) {
                 players[uid].isAi = false;
+                delete players[uid].aiLevel;
                 players[uid].displayName = `Player ${playerNumber}`;
             } else {
                 players[uid] = {
@@ -775,11 +786,23 @@ export const updatePlayerType = onCall(async (request) => {
 
         // If changed to AI, auto-process turn (modifies players object)
         if (type === 'ai') {
-            await internalProcessAiTurns(gameId, t, { ...game, players });
-        }
+            const updatedPlayers = await internalProcessAiTurns(gameId, t, { ...game, players }) || players;
+            // Check if this AI turn completes the round
+            const calculationPerformed = await checkAndPerformCalculation(gameId, t, { ...game, players: updatedPlayers });
 
-        // 3. WRITES
-        t.update(gameRef, { players });
+            if (!calculationPerformed) {
+                t.update(gameRef, {
+                    players: updatedPlayers,
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        } else {
+            // 3. WRITES
+            t.update(gameRef, {
+                players,
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+        }
     });
 
     return { success: true };
@@ -979,8 +1002,81 @@ export const triggerAiTurn = onCall(async (request) => {
     const roundsSnap = await roundsRef.orderBy('number', 'desc').limit(1).get();
     const lastRound = roundsSnap.docs[0]?.data() as Round | undefined;
 
-    return AiAgent.makeDecision(level, lastRound);
+    return AiAgent.makeDecision(level as any, lastRound);
 });
+
+export const updateRoundDeadline = onCall(async (request) => {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+    const { gameId, roundNumber, deadline } = request.data;
+    if (!gameId || roundNumber === undefined) throw new HttpsError('invalid-argument', 'Missing gameId or roundNumber');
+
+    const gameRef = db.collection('games').doc(gameId);
+    const gameSnap = await gameRef.get();
+    if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
+    if (gameSnap.data()?.hostUid !== request.auth.uid) throw new HttpsError('permission-denied', 'Not your game');
+
+    const deadlines = gameSnap.data()?.roundDeadlines || {};
+    if (deadline) {
+        deadlines[roundNumber] = admin.firestore.Timestamp.fromDate(new Date(deadline));
+    } else {
+        delete deadlines[roundNumber];
+    }
+
+    await gameRef.update({ roundDeadlines: deadlines });
+    return { success: true };
+});
+
+export const processDeadlines = onSchedule("every 1 minutes", async (event) => {
+    const now = admin.firestore.Timestamp.now();
+
+    // Find games in progress
+    const activeGames = await db.collection('games')
+        .where('status', '==', 'in_progress')
+        .get();
+
+    for (const gameDoc of activeGames.docs) {
+        const game = gameDoc.data();
+        const currentRound = game.currentRoundNumber;
+        const deadline = game.roundDeadlines?.[currentRound];
+
+        if (deadline && deadline.toMillis() < now.toMillis()) {
+            console.log(`Deadline passed for game ${game.id} round ${currentRound}. Forcing AI turns.`);
+
+            await db.runTransaction(async (transaction) => {
+                const refreshedGameDoc = await transaction.get(gameDoc.ref);
+                const refreshedGame = refreshedGameDoc.data();
+                if (!refreshedGame || refreshedGame.status !== 'in_progress') return;
+
+                const players = refreshedGame.players || {};
+                let logicNeedsCalc = false;
+
+                for (const uid in players) {
+                    const p = players[uid];
+                    if (p.submittedRound === undefined || p.submittedRound < currentRound) {
+                        // FORCE AI decision
+                        const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
+                        const aiLevel = p.isAi ? (p.aiLevel || 'middle') : 'middle';
+                        const decision = AiAgent.makeDecision(aiLevel as any, lastRound);
+
+                        p.submittedRound = currentRound;
+                        p.pendingDecisions = decision;
+                        logicNeedsCalc = true;
+                    }
+                }
+
+                if (logicNeedsCalc) {
+                    const allSubmitted = Object.values(players).every((p: any) => p.submittedRound === currentRound);
+                    if (allSubmitted) {
+                        await performCalculation(game.id, null, transaction, { ...refreshedGame, players });
+                    } else {
+                        transaction.update(gameDoc.ref, { players });
+                    }
+                }
+            });
+        }
+    }
+});
+
 
 export const saveDraft = onCall(async (request) => {
     if (!request.auth) {

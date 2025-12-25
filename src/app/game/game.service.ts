@@ -253,12 +253,22 @@ export class GameService {
         }
     }
 
-    async updatePlayerType(gameId: string, playerNumber: number, type: 'human' | 'ai') {
+    async updatePlayerType(gameId: string, playerNumber: number, type: 'human' | 'ai', aiLevel?: string) {
         const updatePlayerTypeFn = httpsCallable(this.functions, 'updatePlayerType');
         try {
-            await updatePlayerTypeFn({ gameId, playerNumber, type });
+            await updatePlayerTypeFn({ gameId, playerNumber, type, aiLevel });
         } catch (error) {
             console.error('Failed to update player type', error);
+            throw error;
+        }
+    }
+
+    async updateRoundDeadline(gameId: string, roundNumber: number, deadline: string) {
+        const fn = httpsCallable(this.functions, 'updateRoundDeadline');
+        try {
+            await fn({ gameId, roundNumber, deadline });
+        } catch (error) {
+            console.error('Failed to update deadline', error);
             throw error;
         }
     }

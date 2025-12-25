@@ -75,6 +75,10 @@ export class Board {
   playerLabel = 'Player';
   playerNumber: string | undefined;
 
+  // Timer
+  countdownText = '';
+  private timerInterval: any;
+
   // Game End Logic
   showGameEndModal = false;
   financialWinner: { name: string, capital: number } | null = null;
@@ -110,6 +114,9 @@ export class Board {
                 this.viewingRound = this.maxRoundNumber;
                 this.playerLabel = state.game.settings?.playerLabel || 'Player';
                 this.playerNumber = state.playerState?.playerNumber;
+
+                // Timer Logic
+                this.updateTimer(state.game);
 
                 // Detect Game Finished
                 if (state.game.status === 'finished' && !this.showGameEndModal) {
@@ -149,6 +156,36 @@ export class Board {
     });
 
     this.checkOrientation();
+    this.timerInterval = setInterval(() => {
+      this.gameService.state$.pipe(take(1)).subscribe(state => {
+        if (state && state.game) this.updateTimer(state.game);
+      });
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+  }
+
+  private updateTimer(game: any) {
+    const deadline = game.roundDeadlines?.[game.currentRoundNumber];
+    if (!deadline) {
+      this.countdownText = '';
+      return;
+    }
+
+    const target = deadline.seconds ? deadline.seconds * 1000 : new Date(deadline).getTime();
+    const now = Date.now();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      this.countdownText = '00:00';
+    } else {
+      const mins = Math.floor(diff / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      this.countdownText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    this.cdr.detectChanges();
   }
 
   login() {

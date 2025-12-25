@@ -1,3 +1,5 @@
+@use "sass:math";
+
 .board-container {
     background-image: url('../../../assets/bauernhof.jpg');
     background-size: cover;
@@ -54,9 +56,9 @@
 
     @for $i from 1 through 20 {
         &:nth-child(#{$i}) {
-            left: (100% * ($i / 20)); // Distribute across width
-            background-color: hsl(calc(360 * ($i / 20)), 70%, 60%);
-            animation-duration: calc(2s + (1s * ($i / 20)));
+            left: (100% * math.div($i, 20)); // Distribute across width
+            background-color: hsl(calc(360 * math.div($i, 20)), 70%, 60%);
+            animation-duration: calc(2s + (1s * math.div($i, 20)));
             animation-delay: calc(0.1s * $i);
             transform: rotate(calc(1deg * (18 * $i)));
         }

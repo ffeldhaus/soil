@@ -50,7 +50,7 @@ export interface PlayerState {
     uid: string;
     displayName: string;
     isAi: boolean;
-    aiLevel?: 'random' | 'rotation' | 'optimizer';
+    aiLevel?: 'elementary' | 'middle' | 'high';
     capital: number;
     currentRound: number;
     submittedRound?: number; // Tracks last round submitted
@@ -87,6 +87,7 @@ export interface Game {
     retentionDays?: number; // Default 90, Max 365
     deletedAt?: admin.firestore.Timestamp | null; // Soft delete timestamp
     playerSecrets?: Record<string, { password: string }>; // Key is playerNumber (1, 2...), Value is secret
+    roundDeadlines?: Record<number, admin.firestore.Timestamp>;
 }
 
 export interface UserData {

@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import { BehaviorSubject, of } from 'rxjs';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 
 describe('AuthService', () => {
     let service: AuthService;

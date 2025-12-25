@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const readline = require('readline');
 const { execSync } = require('child_process');
 
@@ -42,6 +43,36 @@ rl.question(`Enter new version (default ${nextPatch}): `, (answer) => {
     try {
         console.log('Building with localization...');
         execSync(`${nodePath} ${ngPath} build --localize`, { stdio: 'inherit' });
+
+        // Copy public assets to root (dist/soil/browser) to ensure they are served correctly
+        // despite localized subfolders.
+        const publicDir = 'public';
+        const outputDir = 'dist/soil/browser';
+        if (fs.existsSync(publicDir)) {
+            console.log('Copying public assets to root...');
+            const files = fs.readdirSync(publicDir);
+            for (const file of files) {
+                const srcPath = path.join(publicDir, file);
+                const destPath = path.join(outputDir, file);
+                if (fs.lstatSync(srcPath).isFile()) {
+                    fs.copyFileSync(srcPath, destPath);
+                }
+            }
+        }
+
+        // Copy service worker files from default locale (en-US) to root
+        const enUsDir = 'dist/soil/browser/en-US';
+        const swFiles = ['ngsw-worker.js', 'ngsw.json'];
+        if (fs.existsSync(enUsDir)) {
+            console.log('Copying service worker files to root...');
+            for (const file of swFiles) {
+                const srcPath = path.join(enUsDir, file);
+                const destPath = path.join(outputDir, file);
+                if (fs.existsSync(srcPath)) {
+                    fs.copyFileSync(srcPath, destPath);
+                }
+            }
+        }
 
         console.log('Deploying to Firebase...');
         const binDir = '/Users/florianfeldhaus/.nvm/versions/node/v24.12.0/bin';
