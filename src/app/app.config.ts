@@ -9,7 +9,7 @@ import { provideFirestore } from '@angular/fire/firestore';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { provideFunctions } from '@angular/fire/functions';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-import { registerLocaleData } from '@angular/common';
+import { registerLocaleData, formatDate } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 
 import { routes } from './app.routes';
@@ -36,24 +36,28 @@ export const appConfig: ApplicationConfig = {
     }),
     {
       provide: APP_INITIALIZER,
-      useFactory: () => () => {
-        // Robust I18n Fix v1.0.12: Debugging & Registration
+      useFactory: (localeId: string) => () => {
+        // Robust I18n Fix v1.0.13: Verification
         try {
-          console.log('[v1.0.12 DEBUG] typeof localeDe:', typeof localeDe);
-          console.log('[v1.0.12 DEBUG] isArray:', Array.isArray(localeDe));
-          console.log('[v1.0.12 DEBUG] localeDe[0]:', (localeDe as any)?.[0]);
+          console.log(`[v1.0.13 DEBUG] Current LOCALE_ID: "${localeId}"`);
 
           registerLocaleData(localeDe, 'de');
           registerLocaleData(localeDe, 'de-DE');
-          console.log('Locale "de" and "de-DE" registered via APP_INITIALIZER (v1.0.12)');
+          console.log('Locale "de" and "de-DE" registered via APP_INITIALIZER (v1.0.13)');
+
+          // Verify immediately
+          const testDate = new Date();
+          const formatted = formatDate(testDate, 'short', 'de');
+          console.log(`[v1.0.13 DEBUG] Verification SUCCESS: formatDate('de') result: ${formatted}`);
         } catch (e) {
-          console.error('Error registering locales in APP_INITIALIZER:', e);
+          console.error('[v1.0.13 DEBUG] Verification FAILED:', e);
         }
       },
+      deps: [LOCALE_ID],
       multi: true
     },
     // Explicitly provide LOCALE_ID to ensure it matches the registered data
-    { provide: LOCALE_ID, useValue: 'de' },
+    // { provide: LOCALE_ID, useValue: 'de' }, // Removed in v1.0.13 to see if "de" is inferred correctly or if hardcoding caused issues
     provideFirebaseApp(() => app),
     provideAuth(() => {
       const auth = getAuth(app);
