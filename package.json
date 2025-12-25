@@ -42,7 +42,7 @@
     "@types/node": "^18.18.0",
     "@types/qrcode": "^1.5.5",
     "autoprefixer": "^10.4.19",
-    "firebase-tools": "^15.1.0",
+    "firebase-tools": "^13.0.0",
     "jsdom": "^22.1.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^4.0.0",
