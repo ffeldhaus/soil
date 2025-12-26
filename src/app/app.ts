@@ -17,7 +17,7 @@ export class App {
   version = packageJson.version;
 
   constructor(updates: SwUpdate) {
-    console.log(`Soil Version ${this.version} (app.ts - i18n fix v4 - sw debug)`);
+    console.log(`Soil Version ${this.version} (app.ts - i18n fix v5 - v1.0.16)`);
 
     if (updates.isEnabled) {
       console.log('Service Worker is enabled');

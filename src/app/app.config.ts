@@ -44,7 +44,9 @@ export const appConfig: ApplicationConfig = {
           registerLocaleData(localeDe, 'de-DE');
 
           const baseHref = document.querySelector('base')?.getAttribute('href') || 'not found';
-          console.log(`[v1.0.15] Bootstrapped with LOCALE_ID: "${localeId}", base href: "${baseHref}", path: "${window.location.pathname}"`);
+          // raw lookup to see which bundle is actually running
+          const bundleLang = $localize`:@@dashboard.logout: Logout `.trim() === 'Abmelden' ? 'DE Bundle' : 'EN Bundle';
+          console.log(`[v1.0.16] Bootstrapped with LOCALE_ID: "${localeId}", Base: "${baseHref}", Bundle: "${bundleLang}", Path: "${window.location.pathname}"`);
 
           // 2. Verify availability
           const formatted = formatDate(new Date(), 'short', 'de');
