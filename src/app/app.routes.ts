@@ -10,6 +10,7 @@ import { PlayerLoginComponent } from './auth/player-login/player-login';
 import { ImpressumComponent } from './impressum/impressum';
 
 export const routes: Routes = [
+    { path: 'de', redirectTo: '' },
     { path: '', component: Landing },
     { path: 'game', component: Board },
     { path: 'admin/login', component: AdminLoginComponent },

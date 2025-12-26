@@ -37,19 +37,20 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: (localeId: string) => () => {
-        // Robust I18n Fix v1.0.14: Force-Fix & Cleanup
+        // Robust I18n Fix v1.0.15: Force-Fix & Cleanup
         try {
           // 1. Always register the data (harmless if redundant)
           registerLocaleData(localeDe, 'de');
           registerLocaleData(localeDe, 'de-DE');
 
-          console.log(`[v1.0.14] Bootstrapped with LOCALE_ID: "${localeId}"`);
+          const baseHref = document.querySelector('base')?.getAttribute('href') || 'not found';
+          console.log(`[v1.0.15] Bootstrapped with LOCALE_ID: "${localeId}", base href: "${baseHref}", path: "${window.location.pathname}"`);
 
           // 2. Verify availability
           const formatted = formatDate(new Date(), 'short', 'de');
-          console.log(`[v1.0.14] Verification: formatDate('de') = ${formatted}`);
+          console.log(`[v1.0.15] Verification: formatDate('de') = ${formatted}`);
         } catch (e) {
-          console.error('[v1.0.14] Initialization Error:', e);
+          console.error('[v1.0.15] Initialization Error:', e);
         }
       },
       deps: [LOCALE_ID],
