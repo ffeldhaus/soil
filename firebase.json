@@ -44,6 +44,24 @@
                         "value": "no-cache"
                     }
                 ]
+            },
+            {
+                "source": "/de/index.html",
+                "headers": [
+                    {
+                        "key": "X-Bundle-Locale",
+                        "value": "de"
+                    }
+                ]
+            },
+            {
+                "source": "/en-US/index.html",
+                "headers": [
+                    {
+                        "key": "X-Bundle-Locale",
+                        "value": "en-US"
+                    }
+                ]
             }
         ],
         "rewrites": [

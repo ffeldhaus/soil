@@ -17,15 +17,18 @@ export class LanguageService {
     init() {
         const savedLang = localStorage.getItem(this.STORAGE_KEY);
         const browserLang = navigator.language.split('-')[0];
-
-        // Determine target language: saved -> browser -> default (en)
-        let targetLang = savedLang || (browserLang === 'de' ? 'de' : 'en');
         const currentIsDe = this.document.location.href.includes('/de/');
 
-        // If specific override is set, force it
-        if (savedLang) {
-            targetLang = savedLang;
+        // 1. If we are ALREADY on a /de/ path, respect it and save it
+        if (currentIsDe) {
+            if (savedLang !== 'de') {
+                localStorage.setItem(this.STORAGE_KEY, 'de');
+            }
+            return;
         }
+
+        // 2. Determine target language: saved -> browser -> default (en)
+        let targetLang = savedLang || (browserLang === 'de' ? 'de' : 'en');
 
         if (targetLang === 'de' && !currentIsDe) {
             this.redirectTo('de');

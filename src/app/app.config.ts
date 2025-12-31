@@ -46,13 +46,14 @@ export const appConfig: ApplicationConfig = {
           const baseHref = document.querySelector('base')?.getAttribute('href') || 'not found';
           // raw lookup to see which bundle is actually running
           const bundleLang = $localize`:@@dashboard.logout: Logout `.trim() === 'Abmelden' ? 'DE Bundle' : 'EN Bundle';
-          console.log(`[v1.0.16] Bootstrapped with LOCALE_ID: "${localeId}", Base: "${baseHref}", Bundle: "${bundleLang}", Path: "${window.location.pathname}"`);
+          const swActive = !!navigator.serviceWorker.controller;
+          console.log(`[v1.0.17] Bootstrapped with LOCALE_ID: "${localeId}", Base: "${baseHref}", Bundle: "${bundleLang}", SW: ${swActive}, Path: "${window.location.pathname}"`);
 
           // 2. Verify availability
           const formatted = formatDate(new Date(), 'short', 'de');
-          console.log(`[v1.0.15] Verification: formatDate('de') = ${formatted}`);
+          console.log(`[v1.0.17] Verification: formatDate('de') = ${formatted}`);
         } catch (e) {
-          console.error('[v1.0.15] Initialization Error:', e);
+          console.error('[v1.0.17] Initialization Error:', e);
         }
       },
       deps: [LOCALE_ID],
