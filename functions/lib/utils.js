@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateRandomPassword = void 0;
+exports.generateRandomPassword = generateRandomPassword;
 /**
  * Generates a random alphanumeric password of the specified length.
  * Excludes ambiguous characters (I, 1, O, 0).
@@ -14,5 +14,4 @@ function generateRandomPassword(length = 6) {
     }
     return password;
 }
-exports.generateRandomPassword = generateRandomPassword;
 //# sourceMappingURL=utils.js.map

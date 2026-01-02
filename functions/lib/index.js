@@ -297,8 +297,8 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
         // password: finalPassword, // Removed global password
         hostUid: request.auth.uid,
         status: 'waiting',
-        settings,
-        config,
+        settings, // Keep old settings structure for compatibility if needed, or merge
+        config, // New explicit config
         players: Object.assign({}, Array(config.numPlayers || 1).fill(0).reduce((acc, _, i) => {
             const playerNumber = i + 1;
             const playerId = `player-${gameId}-${playerNumber}`;
@@ -601,8 +601,8 @@ exports.getAdminGames = (0, https_1.onCall)(async (request) => {
             return {
                 id: d.id,
                 name: d.name,
-                password: d.password,
-                playerSecrets: d.playerSecrets,
+                password: d.password, // Legacy support
+                playerSecrets: d.playerSecrets, // New per-player secrets
                 config: d.config,
                 status: d.status,
                 createdAt: (_a = d.createdAt) === null || _a === void 0 ? void 0 : _a.toDate().toISOString(),

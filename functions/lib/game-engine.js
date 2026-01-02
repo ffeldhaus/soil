@@ -124,7 +124,7 @@ class GameEngine {
             parcelupdates.push({
                 index: index,
                 crop: newCrop,
-                soil: Math.round(Math.max(0, Math.min(300, newSoil))),
+                soil: Math.round(Math.max(0, Math.min(300, newSoil))), // Allow some over-improvement
                 nutrition: Math.round(Math.max(0, Math.min(constants_1.NUTRITION.MAX, newNutrition))),
                 yield: Math.round(yieldAmount)
             });

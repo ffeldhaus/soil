@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PRICES = exports.EXPENSES = exports.CROP_SEQUENCE_MATRIX = exports.HARVEST_NUTRITION_SENSITIVITY = exports.HARVEST_SOIL_SENSITIVITY = exports.HARVEST_YIELD = exports.VERMIN_EFFECTS = exports.WEATHER_EFFECTS = exports.MACHINE_FACTORS = exports.NUTRITION = exports.SOIL = void 0;
 exports.SOIL = {
     START: 80,
-    FALLOW_RECOVERY: 0.05,
+    FALLOW_RECOVERY: 0.05, // How much soil recovers if fallow
     CROP_ROTATION_BONUS: 0.04,
     CROP_ROTATION_PENALTY: -0.05,
     PLANTATION_GAINS: {
@@ -20,9 +20,9 @@ exports.SOIL = {
         Wheat: -0.01,
         Beet: -0.01,
     },
-    FERTILIZER_SYNTHETIC_IMPACT: -0.06,
+    FERTILIZER_SYNTHETIC_IMPACT: -0.06, // Long term negative impact of synthetic fertilizer
     PESTICIDE_IMPACT: -0.04,
-    MACHINE_IMPACT: [0, -0.01, -0.03, -0.06, -0.10],
+    MACHINE_IMPACT: [0, -0.01, -0.03, -0.06, -0.10], // Impact per machine level 0-4
     MONOCULTURE_PENALTY: -0.04,
     WEATHER_IMPACT: {
         Normal: 0,
@@ -34,14 +34,14 @@ exports.NUTRITION = {
     START: 80,
     MAX: 200,
     BASE_DECLINE: 0.1,
-    FERTILIZER_SYNTHETIC: 60,
-    FERTILIZER_ORGANIC: 40,
-    FIELDBEAN_BONUS: 20,
+    FERTILIZER_SYNTHETIC: 60, // Flat gain
+    FERTILIZER_ORGANIC: 40, // Gain from animals/manure
+    FIELDBEAN_BONUS: 20, // Nitrogen fixation
     ANIMALS_REQUIRED_RATIO: 0.2, // 20% of parcels should be animals for organic nutrition
 };
 exports.MACHINE_FACTORS = {
-    YIELD_BONUS: [0, 0.05, 0.12, 0.20, 0.30],
-    LABOR_COST_REDUCTION: [1, 0.9, 0.75, 0.6, 0.5],
+    YIELD_BONUS: [0, 0.05, 0.12, 0.20, 0.30], // More machines = more yield
+    LABOR_COST_REDUCTION: [1, 0.9, 0.75, 0.6, 0.5], // More machines = less labor cost
     BASE_LABOR_COST: 1000,
     INVESTMENT_COST: [0, 500, 1500, 4000, 10000],
 };

@@ -23,7 +23,7 @@ describe('GameEngine', () => {
     });
     it('should decrease soil quality with machines', () => {
         const decision = {
-            machines: 4,
+            machines: 4, // Max machines
             organic: false,
             fertilizer: false,
             pesticide: false,
