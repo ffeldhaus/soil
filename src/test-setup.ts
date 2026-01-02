@@ -1,4 +1,5 @@
-(window as any).global = window;
+window.global = window;
+
 import 'zone.js';
 import 'zone.js/testing';
 import '@angular/localize/init';
@@ -7,6 +8,11 @@ import {
     BrowserDynamicTestingModule,
     platformBrowserDynamicTesting,
 } from '@angular/platform-browser-dynamic/testing';
+
+// Polyfill ReadableStream for undici/firebase in jsdom
+if (typeof ReadableStream === 'undefined') {
+    globalThis.ReadableStream = require('stream/web').ReadableStream;
+}
 
 getTestBed().initTestEnvironment(
     BrowserDynamicTestingModule,

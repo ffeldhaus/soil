@@ -7,6 +7,7 @@ import { Functions } from '@angular/fire/functions';
 import { Router, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+import { ChangeDetectorRef } from '@angular/core';
 
 describe('Board', () => {
   let component: Board;
@@ -70,6 +71,7 @@ describe('Board', () => {
     };
     const functionsSpy = { httpsCallable: () => (() => Promise.resolve({ data: {} })) };
     const routerSpy = { navigate: () => Promise.resolve(true) };
+    const cdrSpy = { detectChanges: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [Board],
@@ -78,7 +80,8 @@ describe('Board', () => {
         { provide: GameService, useValue: gameSpy },
         { provide: Functions, useValue: functionsSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: ActivatedRoute, useValue: { queryParams: of({}) } }
+        { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
+        { provide: ChangeDetectorRef, useValue: cdrSpy }
       ]
     })
       .compileComponents();
@@ -95,10 +98,7 @@ describe('Board', () => {
   });
 
   it('should identify player correctly', async () => {
-    // Audit: ngOnInit is async. Wait for promise resolution.
-    // combineLatest emits -> subscribe callback is async -> awaits getIdTokenResult -> sets isPlayer
-    fixture.detectChanges();
-    await sleep(50); // wait for async subscribe callback
+    await fixture.whenStable();
     expect(component.isPlayer).toBe(true);
   });
 
@@ -117,8 +117,7 @@ describe('Board', () => {
   });
 
   it('should open planting modal on selection', async () => {
-    fixture.detectChanges();
-    await sleep(50);
+    await fixture.whenStable();
 
     // Ensure parcels are populated for selection logic
     if (component.parcels.length === 0) {
@@ -137,11 +136,14 @@ describe('Board', () => {
     component.maxRoundNumber = 0;
     component.cols = 8;
     component.rows = 5;
-
+    
     // Simulate selection
     const mockEvent = new MouseEvent('mousedown');
     component.onMouseDown(0, mockEvent); // Select index 0
     component.onMouseUp(); // Trigger mouseup logic
+    
+    await fixture.whenStable(); // Wait for async update in onMouseUp
+    // fixture.detectChanges(); // Check if this is needed, or if accessing property triggers check
 
     expect(component.selectedIndices.size).toBeGreaterThan(0);
     expect(component.showPlantingModal).toBe(true);

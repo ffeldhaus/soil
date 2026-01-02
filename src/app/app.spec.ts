@@ -1,22 +1,41 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
-import { provideRouter } from '@angular/router';
+import { provideRouter, ActivatedRoute } from '@angular/router';
 import { LanguageService } from './services/language.service';
+import { SwUpdate } from '@angular/service-worker';
+import { EMPTY, of } from 'rxjs';
 
 describe('App', () => {
   let languageServiceMock: any;
+  let swUpdateMock: any;
 
   beforeEach(async () => {
     languageServiceMock = {
-      currentLang: 'en'
+      init: vi.fn(),
+      getLanguage: vi.fn().mockReturnValue('en-US')
+    };
+    
+    swUpdateMock = {
+      versionUpdates: EMPTY,
+      checkForUpdate: vi.fn().mockResolvedValue(false),
+      activateUpdate: vi.fn().mockResolvedValue(true)
     };
 
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
         provideRouter([]),
-        { provide: LanguageService, useValue: languageServiceMock }
-      ]
+        { 
+            provide: ActivatedRoute, 
+            useValue: {
+                snapshot: { paramMap: { get: () => null } },
+                params: of({}),
+                queryParams: of({})
+            }
+        },
+        { provide: LanguageService, useValue: languageServiceMock },
+        { provide: SwUpdate, useValue: swUpdateMock }
+      ],
     }).compileComponents();
   });
 

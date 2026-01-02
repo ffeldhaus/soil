@@ -19,7 +19,7 @@
 
             <app-language-switcher></app-language-switcher>
 
-            <button (click)="logout()"
+            <button (click)="logout()" data-testid="logout-admin"
                 class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition" title="Logout">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -104,7 +104,7 @@
         <!-- Active Dashboard -->
         <div *ngIf="!isLoading && !isPendingApproval && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin'"
             class="p-6 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-fade-in">
-            <h2 class="text-2xl font-bold mb-4 text-emerald-400" i18n="@@dashboard.controls.title">Admin Controls</h2>
+            <h2 class="text-2xl font-bold mb-4 text-emerald-400" i18n="@@dashboard.controls.title" data-testid="admin-controls">Admin Controls</h2>
             <p class="mb-4 text-gray-300" i18n="@@dashboard.welcome">Welcome, <span class="font-bold text-white">{{
                     user.displayName }}</span>!</p>
 
@@ -115,7 +115,7 @@
                     <div class="col-span-1 md:col-span-2">
                         <label class="block text-xs text-gray-400 mb-1" i18n="@@dashboard.createGame.name">Game
                             Name</label>
-                        <input [(ngModel)]="newGameConfig.name" placeholder="Game Name"
+                        <input [(ngModel)]="newGameConfig.name" placeholder="Game Name" data-testid="game-name-input"
                             i18n-placeholder="@@dashboard.createGame.phName"
                             class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none mb-3">
                         <label class="block text-xs text-gray-400 mb-1" i18n="@@dashboard.createGame.playerLabel">Player
@@ -169,7 +169,7 @@
                     </div>
                 </div>
 
-                <button (click)="createNewGame()" [disabled]="isCreatingGame"
+                <button (click)="createNewGame()" [disabled]="isCreatingGame" data-testid="create-game-submit"
                     class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2">
                     <span *ngIf="!isCreatingGame" i18n="@@dashboard.createGame.submit">+ Create New Game</span>
                     <span *ngIf="isCreatingGame" class="flex items-center gap-2">
@@ -193,7 +193,7 @@
                 <div class="grid grid-cols-1 gap-4 text-sm">
                     <div>
                         <span class="text-gray-400 block" i18n="@@dashboard.created.id">Game ID</span>
-                        <span class="font-mono text-white select-all text-lg">{{ createdGame.id }}</span>
+                        <span class="font-mono text-white select-all text-lg" data-testid="created-game-id">{{ createdGame.id }}</span>
                     </div>
                 </div>
             </div>

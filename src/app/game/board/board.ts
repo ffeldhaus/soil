@@ -139,14 +139,16 @@ export class Board {
         }
 
         if (claims['role'] === 'player' || user.uid.startsWith('player-') || isImpersonating) {
-          this.isPlayer = true;
-          if (isImpersonating) {
-            this.isReadOnly = true;
-            this.showReadOnlyBanner = true;
-            setTimeout(() => {
-              this.showReadOnlyBanner = false;
-            }, 3000);
-          }
+          Promise.resolve().then(() => {
+            this.isPlayer = true;
+            if (isImpersonating) {
+              this.isReadOnly = true;
+              this.showReadOnlyBanner = true;
+              setTimeout(() => {
+                this.showReadOnlyBanner = false;
+              }, 3000);
+            }
+          });
         } else {
           if (claims['role'] !== 'player' && !user.uid.startsWith('player-')) {
             this.router.navigate(['/admin']);
@@ -342,7 +344,7 @@ export class Board {
     this.isDragging = false;
     this.dragStartIndex = null;
     if (this.selectedIndices.size > 0 && !this.isReadOnly) {
-      this.showPlantingModal = true;
+      Promise.resolve().then(() => this.showPlantingModal = true);
     }
   }
 
@@ -388,7 +390,7 @@ export class Board {
 
     // Auto-open modal if we have a selection and are not read-only
     if (this.selectedIndices.size > 0 && !this.isReadOnly) {
-      this.showPlantingModal = true;
+      Promise.resolve().then(() => this.showPlantingModal = true);
     }
   }
 

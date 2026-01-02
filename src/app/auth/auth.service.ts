@@ -134,7 +134,7 @@ export class AuthService {
 
     private getMockUser(): User {
         return {
-            uid: 'test-user-uid',
+            uid: 'player-test-game-id-1',
             displayName: 'Test User',
             email: 'test@example.com',
             isAnonymous: false,

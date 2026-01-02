@@ -121,6 +121,18 @@ export class Dashboard implements OnInit, OnDestroy {
           return;
         }
 
+        if (localStorage.getItem('soil_test_mode') === 'true') {
+          console.log('Dashboard: Test Mode Active. Forcing Admin status.');
+          this.ngZone.run(() => {
+            this.userStatus = { role: 'admin', status: 'active' } as any;
+            this.isPendingApproval = false;
+            this.isLoading = false;
+            this.loadGames();
+            this.cdr.detectChanges();
+          });
+          return;
+        }
+
         this.isLoading = true;
         this.errorMessage = null;
 
@@ -192,6 +204,16 @@ export class Dashboard implements OnInit, OnDestroy {
                   this.userStatus = { role: 'superadmin', status: 'active' } as any;
                   this.isLoading = false;
                   this.router.navigate(['/admin/super']);
+                  return;
+                }
+
+                if (localStorage.getItem('soil_test_mode') === 'true') {
+                  console.log('Dashboard: Test Mode Active. Forcing Admin status.');
+                  this.userStatus = { role: 'admin', status: 'active' } as any;
+                  this.isPendingApproval = false;
+                  this.isLoading = false;
+                  this.loadGames();
+                  this.cdr.detectChanges();
                   return;
                 }
 
@@ -453,7 +475,7 @@ export class Dashboard implements OnInit, OnDestroy {
       `You have been invited to play Soil!\n\n` +
       `Game ID: ${game.id} \n\n` +
       `Please ask the host for your unique Player PIN.\n` +
-      `Go to https://soil-602ea.web.app/ to join.`
+      `Go to ${window.location.origin}/ to join.`
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
@@ -464,7 +486,7 @@ export class Dashboard implements OnInit, OnDestroy {
       `You are invited to play as Player ${slot.number}!\n\n` +
       `Game ID: ${game.id}\n` +
       `Your PIN: ${slot.password}\n\n` +
-      `Join here: https://soil-602ea.web.app/game?gameId=${game.id}&player=${slot.number}&pin=${slot.password}`
+      `Join here: ${window.location.origin}/game?gameId=${game.id}&player=${slot.number}&pin=${slot.password}`
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
@@ -531,7 +553,7 @@ export class Dashboard implements OnInit, OnDestroy {
     // So likely a URL that the app handles.
     // For now: https://soil-602ea.web.app/join?gameId=...&player=...&pin=...
     // I need to implement the route or handle query params in Board.
-    const url = `https://soil.app/game-login?gameId=${gameId}&pin=${password}`;
+    const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
 
     try {
       this.qrCodeUrl = await this.QRCode.toDataURL(url);

@@ -14,7 +14,7 @@ import { CropType } from '../../types';
         
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
           <button *ngFor="let crop of crops" 
-            (click)="select(crop)"
+            (click)="select(crop)" [attr.data-testid]="'crop-' + crop.toLowerCase()"
             class="group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700/50 bg-gray-800/80 hover:z-10 hover:shadow-[0_0_20px_5px_rgba(52,211,153,0.7)] hover:border-emerald-400/50 transition-all duration-200">
             
             <img [src]="'assets/images/' + getConfig(crop).image" 

@@ -36,21 +36,21 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </h1>
             
             <p class="text-xl md:text-3xl text-gray-200 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              <ng-container i18n="@@landing.intro">An interactive simulation about</ng-container>&nbsp;<span class="text-emerald-300 font-normal" i18n="@@landing.agriculture">Agriculture</span>, <span class="text-blue-300 font-normal" i18n="@@landing.economics">Economics</span>, <ng-container i18n="@@landing.and">and</ng-container>&nbsp;<span class="text-yellow-200 font-normal" i18n="@@landing.sustainability">Sustainability</span>.
+              <span i18n="@@landing.intro" data-testid="landing-intro">An interactive simulation about</span>&nbsp;<span class="text-emerald-300 font-normal" i18n="@@landing.agriculture" data-testid="landing-agriculture">Agriculture</span>, <span class="text-blue-300 font-normal" i18n="@@landing.economics" data-testid="landing-economics">Economics</span>, <span i18n="@@landing.and">and</span>&nbsp;<span class="text-yellow-200 font-normal" i18n="@@landing.sustainability" data-testid="landing-sustainability">Sustainability</span>.
             </p>
 
             <div class="flex flex-col sm:flex-row gap-6 justify-center mt-12 w-full max-w-lg mx-auto">
-              <a routerLink="/game-login" class="group relative px-8 py-5 bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] overflow-hidden">
+              <a routerLink="/game-login" data-testid="landing-enter-game" class="group relative px-8 py-5 bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] overflow-hidden">
                 <span class="relative z-10 flex items-center justify-center gap-2" i18n="@@landing.enterGame">
                     Enter Game
                 </span>
               </a>
               
-              <a routerLink="/admin/login" class="flex items-center justify-center px-8 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/30 transform hover:-translate-y-1" i18n="@@landing.teacherAdmin">
+              <a routerLink="/admin/login" data-testid="landing-admin-login" class="flex items-center justify-center px-8 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/30 transform hover:-translate-y-1" i18n="@@landing.teacherAdmin">
                 Teacher / Admin
               </a>
 
-              <a routerLink="/admin/register" class="flex items-center justify-center px-8 py-5 bg-emerald-900/40 hover:bg-emerald-800/60 backdrop-blur-md border border-emerald-500/30 text-emerald-200 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/50 transform hover:-translate-y-1" i18n="@@landing.register">
+              <a routerLink="/admin/register" data-testid="landing-register" class="flex items-center justify-center px-8 py-5 bg-emerald-900/40 hover:bg-emerald-800/60 backdrop-blur-md border border-emerald-500/30 text-emerald-200 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/50 transform hover:-translate-y-1" i18n="@@landing.register">
                 Register
               </a>
             </div>

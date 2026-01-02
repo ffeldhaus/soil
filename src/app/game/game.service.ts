@@ -139,42 +139,12 @@ export class GameService {
     }
 
     /**
-     * Fetches the current game state (or starts a new one).
-     * For simplicity, we are triggering a new round calculation or just returning defaults.
+     * Returns an observable of the current parcels.
      */
     getParcels(): Observable<Parcel[]> {
         return this.parcels$;
     }
 
-    async startNewGame() {
-        // Call the backend to calculate round 1 (or 0 -> 1)
-        const calculateNextRound = httpsCallable(this.functions, 'calculateNextRound');
-
-        // Initial decision (all fallow)
-        const decision: RoundDecision = {
-            machines: 0,
-            organic: false,
-            fertilizer: false,
-            pesticide: false,
-            organisms: false,
-            parcels: {}
-        };
-        for (let i = 0; i < 40; i++) decision.parcels[i] = 'Fallow';
-
-        try {
-            const result = await calculateNextRound({
-                gameId: 'test-game', // TODO: Use real Game ID
-                decision
-            });
-            const round = result.data as Round;
-            this.currentRound = round;
-            this.parcelsSubject.next(round.parcelsSnapshot); // Update BehaviorSubject
-            return round.parcelsSnapshot;
-        } catch (error) {
-            console.error("Failed to start game:", error);
-            throw error;
-        }
-    }
 
     async createGame(name: string, config: any) {
         const createGameFn = httpsCallable(this.functions, 'createGame');

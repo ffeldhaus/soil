@@ -30,15 +30,15 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
           
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@playerLogin.gameId">Game ID</label>
-            <input formControlName="gameId" type="text" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Game ID" i18n-placeholder="@@playerLogin.placeholder.gameId">
+            <input formControlName="gameId" type="text" data-testid="player-login-gameid" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Game ID" i18n-placeholder="@@playerLogin.placeholder.gameId">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@playerLogin.pin">Player PIN (Code)</label>
-            <input formControlName="password" type="password" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Unique Player PIN" i18n-placeholder="@@playerLogin.placeholder.pin">
+            <input formControlName="password" type="password" data-testid="player-login-pin" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Unique Player PIN" i18n-placeholder="@@playerLogin.placeholder.pin">
           </div>
 
-          <button type="submit" [disabled]="loginForm.invalid || isLoading" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg">
+          <button type="submit" [disabled]="loginForm.invalid || isLoading" data-testid="player-login-submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg">
             <ng-container *ngIf="isLoading" i18n="@@playerLogin.enteringGame">Entering Game...</ng-container>
             <ng-container *ngIf="!isLoading" i18n="@@playerLogin.startGame">Start Game</ng-container>
           </button>
