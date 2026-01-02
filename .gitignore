@@ -60,3 +60,6 @@ soil-old-reference/
 
 # Backup files
 *.bak
+
+# Cypress
+.cypress-cache

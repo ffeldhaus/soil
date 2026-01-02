@@ -36,13 +36,12 @@ rl.question(`Enter new version (default ${nextPatch}): `, (answer) => {
 
     rl.close();
 
-    const nodePath = '/Users/florianfeldhaus/.nvm/versions/node/v24.12.0/bin/node';
-    const ngPath = './node_modules/@angular/cli/bin/ng.js';
-    const firebasePath = './node_modules/firebase-tools/lib/bin/firebase.js';
+    const ngPath = './node_modules/.bin/ng';
+    const firebasePath = './node_modules/.bin/firebase';
 
     try {
         console.log('Building with localization...');
-        execSync(`${nodePath} ${ngPath} build --localize`, { stdio: 'inherit' });
+        execSync(`${ngPath} build --localize`, { stdio: 'inherit' });
 
         // Copy public assets to root (dist/soil/browser) to ensure they are served correctly
         // despite localized subfolders.
@@ -75,10 +74,8 @@ rl.question(`Enter new version (default ${nextPatch}): `, (answer) => {
         }
 
         console.log('Deploying to Firebase...');
-        const binDir = '/Users/florianfeldhaus/.nvm/versions/node/v24.12.0/bin';
-        execSync(`${nodePath} ${firebasePath} deploy`, {
-            stdio: 'inherit',
-            env: { ...process.env, PATH: `${binDir}:${process.env.PATH}` }
+        execSync(`${firebasePath} deploy`, {
+            stdio: 'inherit'
         });
 
         console.log('Deployment complete!');

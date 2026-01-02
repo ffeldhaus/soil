@@ -128,6 +128,13 @@ const translations = {
     'dashboard.error.close': 'Schließen',
     'dashboard.login.msg': 'Bitte melde dich an, um auf das Admin-Dashboard zuzugreifen.',
     'dashboard.login.btn': 'Anmelden mit Google',
+    'dashboard.welcome': 'Willkommen',
+    'dashboard.pending.welcome': 'Danke für die Registrierung',
+    'dashboard.delete.typeConfirm': 'Löschen bestätigen',
+    'dashboard.delete.questionPermanent': 'Dauerhaft löschen?',
+    'dashboard.delete.questionBatchPermanent': 'Ausgewählte dauerhaft löschen?',
+    'dashboard.delete.question': 'Löschen?',
+    'dashboard.delete.questionBatch': 'Ausgewählte löschen?',
 };
 
 // Complex translations with placeholders replacement logic
@@ -160,19 +167,20 @@ let newContent = content.replace(/<trans-unit id="([^"]+)" datatype="html">([\s\
             // We want `Willkommen, <x.../> <x.../>!`
 
             if (id === 'dashboard.welcome') {
-                target = source.replace('Welcome, ', 'Willkommen, ');
+                target = source.replace(/Welcome,[\s\r\n]*/, 'Willkommen, ');
             } else if (id === 'dashboard.pending.welcome') {
-                target = source.replace('Thank you for registering, ', 'Danke für die Registrierung, ');
+                target = source.replace(/Thank you for registering,[\s\r\n]*/, 'Danke für die Registrierung, ');
             } else if (id === 'impressum.backToHome') {
-                target = source.replace(' Back to Home ', ' Zurück zur Startseite ');
+                target = source.replace(/[\s\r\n]*Back to Home[\s\r\n]*/, ' Zurück zur Startseite ');
             } else if (id === 'dashboard.delete.typeConfirm') {
-                target = source.replace('Type ', 'Tippe ').replace(' to confirm:', ' zur Bestätigung:');
+                target = source.replace(/Type[\s\r\n]*/, 'Tippe ').replace(/[\s\r\n]*to confirm:/, ' zur Bestätigung:');
             } else if (id === 'dashboard.delete.questionPermanent' || id === 'dashboard.delete.questionBatchPermanent') {
-                target = source.replace('Are you sure you want to permanently delete', 'Möchtest du wirklich dauerhaft löschen');
+                target = source.replace(/Are you sure you want to permanently delete[\s\r\n]*/, 'Möchtest du wirklich dauerhaft löschen ');
             } else if (id === 'dashboard.delete.question' || id === 'dashboard.delete.questionBatch') {
-                target = source.replace('Are you sure you want to delete', 'Möchtest du wirklich löschen');
+                target = source.replace(/Are you sure you want to delete[\s\r\n]*/, 'Möchtest du wirklich löschen ');
+            } else if (id === 'board.nextRound') {
+                target = source.replace(/Next Round[\s\r\n]*/, 'Nächste Runde ');
             } else {
-                // Fallback: Copy source if we don't know how to handle placeholders for this specific ID
                 target = source;
             }
         } else {

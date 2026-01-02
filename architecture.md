@@ -20,7 +20,7 @@ Soil is a web-based agricultural simulation game built on the Firebase platform.
 - **`GameService`**: Handles game state synchronization with Firestore.
 
 ### Backend (Serverless)
-- **Runtime**: Firebase Cloud Functions (2nd Gen, Node.js 20)
+- **Runtime**: Firebase Cloud Functions (2nd Gen, Node.js 24)
 - **Language**: TypeScript
 - **Database**: Cloud Firestore
 

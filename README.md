@@ -13,7 +13,7 @@ Soil is a web-based agricultural simulation game built on the Firebase platform.
 ## 🚀 Tech Stack
 
 - **Frontend**: Angular (v21), TailwindCSS (v4), RxJS
-- **Backend**: Firebase Cloud Functions (v2, Node.js 20)
+- **Backend**: Firebase Cloud Functions (v2, Node.js 24)
 - **Database**: Cloud Firestore
 - **Authentication**: Firebase Auth (Anonymous & Google Sign-In)
 - **Testing**: Jasmine + Vitest (Unit), Cypress (E2E)
@@ -22,7 +22,7 @@ Soil is a web-based agricultural simulation game built on the Firebase platform.
 
 ### Prerequisites
 
-- Node.js (Latest LTS recommended)
+- Node.js (v24 LTS)
 - Firebase CLI (`npm install -g firebase-tools`)
 - Angular CLI (`npm install -g @angular/cli`)
 
