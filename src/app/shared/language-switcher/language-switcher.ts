@@ -1,7 +1,3 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { LanguageService } from '../../services/language.service';
-
 import { Component, inject, signal, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LanguageService } from '../../services/language.service';
@@ -36,21 +32,19 @@ import { LanguageService } from '../../services/language.service';
         <div class="py-1">
           <button
             (click)="setLang('de')"
-            class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors"
+            class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-emerald-500/20 hover:text-white"
             [class.text-emerald-400]="languageService.currentLang === 'de'"
             [class.text-gray-300]="languageService.currentLang !== 'de'"
             [class.bg-emerald-500/10]="languageService.currentLang === 'de'"
-            class="hover:bg-emerald-500/20 hover:text-white"
           >
             Deutsch
           </button>
           <button
             (click)="setLang('en')"
-            class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors"
+            class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-emerald-500/20 hover:text-white"
             [class.text-emerald-400]="languageService.currentLang === 'en'"
             [class.text-gray-300]="languageService.currentLang !== 'en'"
             [class.bg-emerald-500/10]="languageService.currentLang === 'en'"
-            class="hover:bg-emerald-500/20 hover:text-white"
           >
             English
           </button>
