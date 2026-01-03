@@ -1,4 +1,4 @@
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -130,6 +130,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
   `
 })
 export class AdminRegisterComponent {
+  private transloco = inject(TranslocoService);
   private fb = inject(FormBuilder);
   authentication = inject(AuthService);
   gameService = inject(GameService);
@@ -219,7 +220,7 @@ export class AdminRegisterComponent {
       this.router.navigate(['/admin']);
     } catch (err: any) {
       console.error(err);
-      this.errorMessage = err.message || 'Registration failed.';
+      this.errorMessage = err.message || this.transloco.translate('adminRegister.error.failed');
     } finally {
       this.isLoading = false;
     }

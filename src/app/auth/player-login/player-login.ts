@@ -1,4 +1,4 @@
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Component, inject, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -60,11 +60,11 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold text-white mb-2">Game Access Failed</h3>
+                    <h3 class="text-xl font-bold text-white mb-2">{{ 'playerLogin.error.title' | transloco }}</h3>
                     <p class="text-gray-300">{{ errorMessage }}</p>
                 </div>
                 <button (click)="closeModal()" class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition">
-                    Try Again
+                    {{ 'playerLogin.error.retry' | transloco }}
                 </button>
             </div>
         </div>
@@ -73,6 +73,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
   `
 })
 export class PlayerLoginComponent implements OnInit {
+  private transloco = inject(TranslocoService);
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -169,7 +170,7 @@ export class PlayerLoginComponent implements OnInit {
       console.log('Navigation resolved. Success:', success);
     } catch (err: any) {
       console.error('Login failed:', err);
-      this.errorMessage = err.message || 'Login failed.';
+      this.errorMessage = err.message || this.transloco.translate('playerLogin.error.msg');
       this.showErrorModal = true;
     } finally {
       this.isLoading = false;

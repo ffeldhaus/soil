@@ -1,4 +1,4 @@
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -72,11 +72,11 @@ import { AuthService } from '../auth.service';
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold text-white mb-2">Login Failed</h3>
+                    <h3 class="text-xl font-bold text-white mb-2">{{ 'adminLogin.error.title' | transloco }}</h3>
                     <p class="text-gray-300">{{ errorMessage }}</p>
                 </div>
                 <button (click)="closeModal()" class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition">
-                    Try Again
+                    {{ 'adminLogin.error.retry' | transloco }}
                 </button>
             </div>
         </div>
@@ -85,6 +85,7 @@ import { AuthService } from '../auth.service';
   `
 })
 export class AdminLoginComponent {
+  private transloco = inject(TranslocoService);
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -110,7 +111,7 @@ export class AdminLoginComponent {
       this.router.navigate(['/admin']);
     } catch (err: any) {
       console.error(err);
-      this.errorMessage = 'Login failed. The account may differ specific or has been deleted.';
+      this.errorMessage = this.transloco.translate('adminLogin.error.msg');
       this.showErrorModal = true;
     } finally {
       this.isLoading = false;
@@ -123,7 +124,7 @@ export class AdminLoginComponent {
       this.router.navigate(['/admin']);
     } catch (err: any) {
       console.error(err);
-      this.errorMessage = 'Google Login failed.';
+      this.errorMessage = this.transloco.translate('adminLogin.error.google');
       this.showErrorModal = true;
     }
   }

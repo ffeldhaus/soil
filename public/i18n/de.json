@@ -137,92 +137,101 @@
   "superadmin": {
     "title": "SOIL SUPER ADMIN",
     "badge": "SUPER",
-    "logout": "Logout",
-    "loading": "Loading Data...",
+    "logout": "Abmelden",
+    "loading": "Daten werden geladen...",
     "dashboard": {
       "title": "Dashboard",
-      "subtitle": "Manage pending approvals and system administrators.",
-      "refresh": "Refresh Data"
+      "subtitle": "Ausstehende Genehmigungen und System-Administratoren verwalten.",
+      "refresh": "Daten aktualisieren"
     },
     "stats": {
-      "totalGames": "Total Games",
-      "created": "created",
-      "active": "Active"
+      "totalGames": "Spiele insgesamt",
+      "created": "erstellt",
+      "active": "Aktiv"
     }
   },
   "footer": {
     "impressum": "Impressum"
   },
   "adminLogin": {
-    "title": "Admin Login",
-    "subtitle": "Access the Soil control center",
-    "email": "Email",
+    "title": "Admin-Anmeldung",
+    "subtitle": "Zugang zur Soil-Steuerzentrale",
+    "email": "E-Mail",
     "placeholder": {
-      "email": "admin@school.edu"
+      "email": "admin@schule.de"
     },
-    "password": "Password",
-    "loggingIn": "Logging in...",
-    "loginButton": "Login",
-    "googleSignIn": "Sign in with Google",
-    "noAccount": "Don&apos;t have an account?",
-    "registerLink": "Register here",
-    "backToHome": "← Back to Home"
+    "password": "Passwort",
+    "loggingIn": "Anmeldung läuft...",
+    "loginButton": "Anmelden",
+    "googleSignIn": "Mit Google anmelden",
+    "noAccount": "Noch kein Konto?",
+    "registerLink": "Hier registrieren",
+    "backToHome": "← Zurück zur Startseite",
+    "error": {
+      "title": "Anmeldung fehlgeschlagen",
+      "retry": "Erneut versuchen"
+    }
   },
   "adminRegister": {
-    "title": "Admin Registration",
-    "subtitle": "Join the Soil community as an educator or administrator",
-    "completeTitle": "Complete Registration",
-    "signedInAs": "Signed in as",
+    "title": "Admin-Registrierung",
+    "subtitle": "Werden Sie Teil der Soil-Community als Lehrkraft oder Administrator",
+    "completeTitle": "Registrierung abschließen",
+    "signedInAs": "Angemeldet als",
     "viaGoogle": "via Google",
-    "completeApp": "Please complete your application.",
-    "email": "Email",
+    "completeApp": "Bitte vervollständigen Sie Ihre Bewerbung.",
+    "email": "E-Mail",
     "placeholder": {
-      "email": "admin@school.edu",
-      "password": "Minimum 6 characters",
-      "confirmPassword": "Confirm Password",
-      "firstName": "John",
-      "lastName": "Doe",
-      "institution": "e.g. University of Berlin",
+      "email": "admin@schule.de",
+      "password": "Mindestens 6 Zeichen",
+      "confirmPassword": "Passwort bestätigen",
+      "firstName": "Max",
+      "lastName": "Mustermann",
+      "institution": "z.B. Universität Berlin",
       "institutionLink": "https://...",
-      "explanation": "Brief explanation (min 10 chars)..."
+      "explanation": "Kurze Erklärung (min. 10 Zeichen)..."
     },
     "error": {
-      "email": "Valid email is required.",
-      "password": "Password must be at least 6 characters.",
-      "mismatch": "Passwords do not match.",
-      "required": "Required.",
-      "url": "Valid URL starting with http:// or https:// is required.",
-      "explanation": "Explanation is required (min 10 characters)."
+      "email": "Gültige E-Mail erforderlich.",
+      "password": "Passwort muss mindestens 6 Zeichen lang sein.",
+      "mismatch": "Passwörter stimmen nicht überein.",
+      "required": "Erforderlich.",
+      "url": "Gültige URL beginnend mit http:// oder https:// erforderlich.",
+      "explanation": "Erklärung erforderlich (min. 10 Zeichen).",
+      "failed": "Registrierung fehlgeschlagen."
     },
-    "password": "Password",
-    "confirmPassword": "Confirm Password",
-    "personalDetails": "Personal Details",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "appDetails": "Application Details",
-    "institution": "Institution / School",
-    "institutionLink": "Institution Website",
-    "explanation": "Why do you want to use Soil?",
-    "creatingAccount": "Creating Account...",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "personalDetails": "Persönliche Details",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "appDetails": "Bewerbungsdetails",
+    "institution": "Institution / Schule",
+    "institutionLink": "Website der Institution",
+    "explanation": "Warum möchten Sie Soil nutzen?",
+    "creatingAccount": "Konto wird erstellt...",
     "btn": {
-      "complete": "Complete Registration",
-      "register": "Register"
+      "complete": "Registrierung abschließen",
+      "register": "Registrieren"
     },
-    "alreadyAccount": "Already have an account?",
-    "loginLink": "Login here",
-    "backToHome": "← Back to Home"
+    "alreadyAccount": "Schon ein Konto?",
+    "loginLink": "Hier anmelden",
+    "backToHome": "← Zurück zur Startseite"
   },
   "playerLogin": {
-    "title": "Player Login",
-    "gameId": "Game ID",
+    "title": "Spieler-Anmeldung",
+    "gameId": "Spiel-ID",
     "placeholder": {
-      "gameId": "Game ID",
-      "pin": "Unique Player PIN"
+      "gameId": "Spiel-ID",
+      "pin": "Eindeutiger Spieler-PIN"
     },
-    "pin": "Player PIN (Code)",
-    "enteringGame": "Entering Game...",
-    "startGame": "Start Game",
-    "backToHome": "← Back to Home"
+    "pin": "Spieler-PIN (Code)",
+    "enteringGame": "Spiel wird betreten...",
+    "startGame": "Spiel starten",
+    "backToHome": "← Zurück zur Startseite",
+    "error": {
+      "title": "Spielzugang fehlgeschlagen",
+      "retry": "Erneut versuchen"
+    }
   },
   "board": {
     "login": {
@@ -237,31 +246,31 @@
       "btnLogin": "Anmelden"
     },
     "nav": {
-      "names": "NAMES",
-      "nutrition": "NUTRITION",
-      "harvest": "HARVEST",
-      "soil": "SOIL QUALITY",
-      "finance": "FINANCE",
-      "options": "OPTIONS",
-      "waiting": "WAITING...",
-      "nextRound": "NEXT ROUND",
-      "endGame": "END GAME"
+      "names": "NAMEN",
+      "nutrition": "NÄHRSTOFFE",
+      "harvest": "ERNTE",
+      "soil": "BODENQUALITÄT",
+      "finance": "FINANZEN",
+      "options": "OPTIONEN",
+      "waiting": "WARTEN...",
+      "nextRound": "NÄCHSTE RUNDE",
+      "endGame": "SPIEL BEENDEN"
     },
-    "logout": "Logout",
+    "logout": "Abmelden",
     "mobile": {
-      "overlays": "Visual Overlays",
-      "names": "Names Overlay",
-      "nutrition": "Nutrition Overlay",
-      "harvest": "Harvest Overlay",
-      "soil": "Soil quality Overlay",
-      "finance": "Finance View",
-      "actions": "Game Actions",
-      "roundOptions": "ROUND OPTIONS",
-      "waiting": "WAITING FOR OTHERS...",
-      "nextRound": "NEXT ROUND",
-      "endGame": "END GAME"
+      "overlays": "Visuelle Overlays",
+      "names": "Namen anzeigen",
+      "nutrition": "Nährstoffe anzeigen",
+      "harvest": "Ernte anzeigen",
+      "soil": "Bodenqualität anzeigen",
+      "finance": "Finanzansicht",
+      "actions": "Spiel-Aktionen",
+      "roundOptions": "RUNDEN-OPTIONEN",
+      "waiting": "WARTE AUF ANDERE...",
+      "nextRound": "NÄCHSTE RUNDE",
+      "endGame": "SPIEL BEENDEN"
     },
-    "activePlayer": "Active Player",
+    "activePlayer": "Aktiver Spieler",
     "banner": {
       "readOnly": "SCHREIBGESCHÜTZTER MODUS"
     },
@@ -269,56 +278,56 @@
       "title": "Fehler",
       "close": "Schließen"
     },
-    "round": "Round",
+    "round": "Runde",
     "gameEnd": {
-      "title": "Game Finished!",
-      "subtitle": "Congratulations to our pioneers!",
-      "financialTitle": "Financial Champion",
-      "soilTitle": "Soil Guardian",
-      "viewResults": "VIEW RESULTS",
-      "backToDashboard": "BACK TO DASHBOARD"
+      "title": "Spiel beendet!",
+      "subtitle": "Herzlichen Glückwunsch an unsere Pioniere!",
+      "financialTitle": "Finanz-Champion",
+      "soilTitle": "Boden-Wächter",
+      "viewResults": "ERGEBNISSE ANSEHEN",
+      "backToDashboard": "ZURÜCK ZUM DASHBOARD"
     }
   },
   "finance": {
-    "title": "Financial Report",
-    "subtitle": "Across-player comparison and history",
-    "noRounds": "No rounds yet",
+    "title": "Finanzbericht",
+    "subtitle": "Spielervergleich und Historie",
+    "noRounds": "Noch keine Runden",
     "charts": {
-      "capital": "Capital Growth"
+      "capital": "Kapitalentwicklung"
     },
-    "you": "YOU",
+    "you": "DU",
     "group": {
-      "decisions": "Decisions (From Prev. Round)",
-      "expenses": "Expenses Detail",
-      "income": "Income Detail"
+      "decisions": "Entscheidungen (vorherige Runde)",
+      "expenses": "Ausgabendetails",
+      "income": "Einnahmedetails"
     },
-    "fertilizer": "Conventional Fertilizer",
-    "pesticide": "Pesticides",
-    "organisms": "Beneficial Organisms",
-    "organic": "Organic Farming Seal",
+    "fertilizer": "Konventioneller Dünger",
+    "pesticide": "Pestizide",
+    "organisms": "Nützlinge",
+    "organic": "Bio-Siegel",
     "header": {
-      "seeds": "Seeds (detailed)",
-      "investments": "Investments (detailed)",
-      "running": "Running Costs (detailed)",
-      "harvest": "Total Harvest Income"
+      "seeds": "Saatgut (detailliert)",
+      "investments": "Investitionen (detailliert)",
+      "running": "Laufende Kosten (detailliert)",
+      "harvest": "Gesamte Ernteeinnahmen"
     },
     "sub": {
-      "machines": "Machines",
-      "animalsInvest": "Animals (Initial)",
-      "base": "Base Operation",
-      "organicControl": "Eco Seal Control",
-      "pesticide": "Pesticide Application",
-      "organisms": "Beneficial Organisms",
-      "animalsRunning": "Animals (Running)"
+      "machines": "Maschinen",
+      "animalsInvest": "Tiere (Initial)",
+      "base": "Basisbetrieb",
+      "organicControl": "Bio-Siegel Kontrolle",
+      "pesticide": "Pestizidausbringung",
+      "organisms": "Nützlinge",
+      "animalsRunning": "Tiere (Laufend)"
     },
     "result": {
-      "profit": "NET PROFIT / LOSS",
-      "capital": "CLOSING CAPITAL"
+      "profit": "NETTOGEWINN / VERLUST",
+      "capital": "ENDKAPITAL"
     },
-    "playerStatus": "Farmer Status",
+    "playerStatus": "Farmer-Status",
     "event": {
-      "weather": "Regional Weather",
-      "vermin": "Pest Report"
+      "weather": "Regionales Wetter",
+      "vermin": "Schädlingsbericht"
     }
   },
   "crop": {
@@ -338,15 +347,15 @@
     "cancel": "Abbrechen"
   },
   "roundResult": {
-    "title": "Round Report",
-    "profit": "Profit",
-    "bioSiegel": "Bio Seal",
-    "bioSiegelFail": "Requirements not met",
-    "bioSiegelSuccess": "awarded!",
-    "conditions": "Conditions",
-    "weather": "Weather",
-    "vermin": "Pests",
-    "continue": "Continue to Round {{ roundnumber1 }}"
+    "title": "Rundenbericht",
+    "profit": "Gewinn",
+    "bioSiegel": "Bio-Siegel",
+    "bioSiegelFail": "Anforderungen nicht erfüllt",
+    "bioSiegelSuccess": "verliehen!",
+    "conditions": "Bedingungen",
+    "weather": "Wetter",
+    "vermin": "Schädlinge",
+    "continue": "Weiter zu Runde {{ roundnumber1 }}"
   },
   "impressum": {
     "title": "Impressum",
@@ -373,20 +382,20 @@
     }
   },
   "landing": {
-    "intro": "An interactive simulation about",
+    "intro": "Eine interaktive Simulation über",
     "agriculture": "Landwirtschaft",
-    "economics": "Economics",
-    "and": "and",
-    "sustainability": "Sustainability",
-    "enterGame": "Enter Game",
-    "teacherAdmin": "Teacher / Admin",
-    "register": "Register",
-    "aboutTitle": "About the Game",
-    "aboutText1": "Soil is an interactive simulation game where players make ecological and economic decisions and experience their immediate impact. In groups, students build an agricultural business over ten rounds.",
-    "aboutText2": "The goal is to run a profitable business sustainably. Strategies like crop selection, fertilization, and pest control must be balanced. After each round, groups receive feedback on the ecological and economic consequences of their actions.",
-    "backgroundTitle": "Background",
-    "backgroundText1": "At the UN Conference in 1992, \"sustainability\" was declared a global development goal. This goal is to be achieved by integrating economic, ecological, and social perspectives.",
-    "backgroundText2": "The simulation game \"Soil\" was developed to make this concept of sustainability understandable. It allows learners to discover the centrality of ecological variables as natural limits to economic activities through hands-on experience.",
-    "footer": "© {{ year }} Soil Project. Developed for educational purposes."
+    "economics": "Ökonomie",
+    "and": "und",
+    "sustainability": "Nachhaltigkeit",
+    "enterGame": "Spiel beitreten",
+    "teacherAdmin": "Lehrkraft / Admin",
+    "register": "Registrieren",
+    "aboutTitle": "Über das Spiel",
+    "aboutText1": "Soil ist ein interaktives Simulationsspiel, in dem Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf.",
+    "aboutText2": "Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.",
+    "backgroundTitle": "Hintergrund",
+    "backgroundText1": "Auf der UN-Konferenz 1992 wurde \"Nachhaltigkeit\" zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.",
+    "backgroundText2": "Das Simulationsspiel „Soil“ wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken.",
+    "footer": "© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke."
   }
 }
