@@ -4,13 +4,19 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [TranslocoPipe, CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen relative flex items-center justify-center bg-cover bg-center" style="background-image: url('assets/bauernhof.jpg');">
+      <!-- Language Switcher -->
+      <div class="absolute top-6 right-6 z-[100]">
+        <app-language-switcher></app-language-switcher>
+      </div>
+
       <!-- Background Image with Overlay -->
       <div class="absolute inset-0 z-0">
         <img src="assets/bauernhof.jpg" alt="Farm Background" class="w-full h-full object-cover object-center opacity-30">

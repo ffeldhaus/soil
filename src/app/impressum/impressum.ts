@@ -2,13 +2,19 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 
 @Component({
     selector: 'app-impressum',
     standalone: true,
-    imports: [TranslocoPipe, CommonModule, RouterLink],
+    imports: [TranslocoPipe, CommonModule, RouterLink, LanguageSwitcherComponent],
     template: `
-    <div class="min-h-screen bg-gray-900 text-gray-300 font-sans p-6 md:p-12">
+    <div class="min-h-screen bg-gray-900 text-gray-300 font-sans p-6 md:p-12 relative">
+      <!-- Language Switcher -->
+      <div class="absolute top-6 right-6 z-[100]">
+        <app-language-switcher></app-language-switcher>
+      </div>
+
       <div class="max-w-3xl mx-auto space-y-12 animate-fade-in">
         
         <!-- Header -->
