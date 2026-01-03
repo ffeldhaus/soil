@@ -1,4 +1,4 @@
-import { ApplicationConfig, isDevMode, APP_INITIALIZER, LOCALE_ID } from '@angular/core';
+import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideFirebaseApp } from '@angular/fire/app';
@@ -9,10 +9,11 @@ import { provideFirestore } from '@angular/fire/firestore';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { provideFunctions } from '@angular/fire/functions';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-import { registerLocaleData, formatDate } from '@angular/common';
-import localeDe from '@angular/common/locales/de';
 
 import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
+import { TranslocoHttpLoader } from './transloco-loader';
+import { provideTransloco } from '@jsverse/transloco';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU",
@@ -34,40 +35,6 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (localeId: string) => () => {
-        // Robust I18n Fix v1.0.15: Force-Fix & Cleanup
-        try {
-          // 1. Always register the data (harmless if redundant)
-          registerLocaleData(localeDe, 'de');
-          registerLocaleData(localeDe, 'de-DE');
-
-          const baseHref = document.querySelector('base')?.getAttribute('href') || 'not found';
-          // raw lookup to see which bundle is actually running
-          const bundleLang = $localize`:@@dashboard.logout: Logout `.trim() === 'Abmelden' ? 'DE Bundle' : 'EN Bundle';
-          const swActive = !!navigator.serviceWorker.controller;
-          console.log(`[v1.0.17] Bootstrapped with LOCALE_ID: "${localeId}", Base: "${baseHref}", Bundle: "${bundleLang}", SW: ${swActive}, Path: "${window.location.pathname}"`);
-
-          // 2. Verify availability
-          const formatted = formatDate(new Date(), 'short', 'de');
-          console.log(`[v1.0.17] Verification: formatDate('de') = ${formatted}`);
-        } catch (e) {
-          console.error('[v1.0.17] Initialization Error:', e);
-        }
-      },
-      deps: [LOCALE_ID],
-      multi: true
-    },
-    // Dynamically set LOCALE_ID based on path to match the manual registration
-    // This prevents specific pipes from failing if the bundle served is English but the path is German
-    {
-      provide: LOCALE_ID,
-      useFactory: () => {
-        const isGerman = typeof window !== 'undefined' && (window.location.pathname.startsWith('/de/') || window.location.pathname === '/de');
-        return isGerman ? 'de' : 'en-US';
-      }
-    },
     provideFirebaseApp(() => app),
     provideAuth(() => {
       const auth = getAuth(app);
@@ -89,6 +56,16 @@ export const appConfig: ApplicationConfig = {
         connectFunctionsEmulator(functions, 'localhost', 5001);
       }
       return functions;
-    })
+    }), 
+    provideHttpClient(), 
+    provideTransloco({
+        config: { 
+          availableLangs: ['en', 'de'],
+          defaultLang: 'en',
+          reRenderOnLangChange: true,
+          prodMode: !isDevMode(),
+        },
+        loader: TranslocoHttpLoader
+      })
   ]
 };

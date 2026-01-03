@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SuperAdminComponent } from './super-admin';
 import { AuthService } from '../../auth/auth.service';
@@ -28,6 +29,7 @@ describe('SuperAdminComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SuperAdminComponent],
       providers: [
+        provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },

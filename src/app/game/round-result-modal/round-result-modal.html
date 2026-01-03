@@ -1,13 +1,12 @@
 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
     <div class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-md w-full relative">
 
-        <h2 class="text-2xl font-bold text-white mb-6 font-serif text-center" i18n="@@roundResult.title">Round Report
-        </h2>
+        <h2 class="text-2xl font-bold text-white mb-6 font-serif text-center" >{{ 'roundResult.title' | transloco }}</h2>
 
         <div class="space-y-6">
             <!-- Profit -->
             <div class="flex justify-between items-center border-b border-gray-700 pb-4">
-                <span class="text-gray-400" i18n="@@roundResult.profit">Profit</span>
+                <span class="text-gray-400" >{{ 'roundResult.profit' | transloco }}</span>
                 <span class="text-xl font-bold" [class.text-emerald-400]="profit >= 0"
                     [class.text-red-400]="profit < 0">
                     {{ profit | currency:'EUR':'symbol':'1.0-0' }}
@@ -17,11 +16,10 @@
             <!-- Bio Siegel -->
             <div class="flex justify-between items-center border-b border-gray-700 pb-4">
                 <div class="flex flex-col">
-                    <span class="text-gray-400" i18n="@@roundResult.bioSiegel">Bio Seal</span>
+                    <span class="text-gray-400" >{{ 'roundResult.bioSiegel' | transloco }}</span>
                     <span class="text-xs text-gray-500" *ngIf="!bioSiegel"
-                        i18n="@@roundResult.bioSiegelFail">Requirements not met</span>
-                    <span class="text-xs text-emerald-500" *ngIf="bioSiegel" i18n="@@roundResult.bioSiegelSuccess">
-                        awarded!</span>
+                        >{{ 'roundResult.bioSiegelFail' | transloco }}</span>
+                    <span class="text-xs text-emerald-500" *ngIf="bioSiegel" >{{ 'roundResult.bioSiegelSuccess' | transloco }}</span>
                 </div>
 
                 <div [class.bg-emerald-500]="bioSiegel" [class.bg-gray-700]="!bioSiegel" class="p-2 rounded-full">
@@ -39,13 +37,13 @@
 
             <!-- Weather / Events -->
             <div class="bg-gray-800/50 rounded-lg p-4">
-                <h3 class="text-sm font-bold text-gray-300 mb-2" i18n="@@roundResult.conditions">Conditions</h3>
+                <h3 class="text-sm font-bold text-gray-300 mb-2" >{{ 'roundResult.conditions' | transloco }}</h3>
                 <div class="flex justify-between mb-1">
-                    <span class="text-gray-400" i18n="@@roundResult.weather">Weather</span>
+                    <span class="text-gray-400" >{{ 'roundResult.weather' | transloco }}</span>
                     <span class="text-white">{{ events?.weather || 'Normal' }}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-gray-400" i18n="@@roundResult.vermin">Pests</span>
+                    <span class="text-gray-400" >{{ 'roundResult.vermin' | transloco }}</span>
                     <span class="text-white">{{ events?.vermin || 'None' }}</span>
                 </div>
             </div>
@@ -54,9 +52,7 @@
         <div class="mt-8 flex justify-center">
             <button (click)="onClose()"
                 class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-8 rounded-full transition-all shadow-lg shadow-emerald-900/20"
-                i18n="@@roundResult.continue">
-                Continue to Round {{ round.number + 1 }}
-            </button>
+                >{{ 'roundResult.continue' | transloco:{ roundnumber1: round.number + 1 } }}</button>
         </div>
 
     </div>

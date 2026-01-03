@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../transloco-testing.module';
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { Auth } from '@angular/fire/auth';
@@ -43,6 +44,7 @@ describe('AuthService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+        provideTranslocoTest(),
                 AuthService,
                 { provide: Auth, useValue: authSpy },
                 { provide: Functions, useValue: functionsSpy },

@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Board } from './board';
@@ -76,6 +77,7 @@ describe('Board', () => {
     await TestBed.configureTestingModule({
       imports: [Board],
       providers: [
+        provideTranslocoTest(),
         { provide: AuthService, useValue: authSpy },
         { provide: GameService, useValue: gameSpy },
         { provide: Functions, useValue: functionsSpy },

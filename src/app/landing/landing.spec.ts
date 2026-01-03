@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Landing } from './landing';
@@ -14,6 +15,7 @@ describe('Landing', () => {
     await TestBed.configureTestingModule({
       imports: [Landing],
       providers: [
+        provideTranslocoTest(),
         provideRouter([]),
         { provide: LanguageService, useValue: languageServiceMock }
       ]

@@ -44,46 +44,12 @@
                         "value": "no-cache"
                     }
                 ]
-            },
-            {
-                "source": "/de/index.html",
-                "headers": [
-                    {
-                        "key": "X-Bundle-Locale",
-                        "value": "de"
-                    }
-                ]
-            },
-            {
-                "source": "/en-US/index.html",
-                "headers": [
-                    {
-                        "key": "X-Bundle-Locale",
-                        "value": "en-US"
-                    }
-                ]
             }
         ],
         "rewrites": [
             {
-                "source": "/de",
-                "destination": "/de/index.html"
-            },
-            {
-                "source": "/de/",
-                "destination": "/de/index.html"
-            },
-            {
-                "source": "/de/**",
-                "destination": "/de/index.html"
-            },
-            {
-                "source": "/en-US/**",
-                "destination": "/en-US/index.html"
-            },
-            {
                 "source": "**",
-                "destination": "/en-US/index.html"
+                "destination": "/index.html"
             }
         ]
     },

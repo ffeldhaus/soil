@@ -24,7 +24,7 @@ describe('Authentication & Roles', () => {
             body: { result: { gameId: 'e2e-test-game-id-long-validator', password: 'test-password' } }
         }).as('createGame');
 
-        cy.visit('/de/admin', {
+        cy.visit('/admin', {
             onBeforeLoad: (win) => {
                 win.localStorage.setItem('soil_test_mode', 'true');
             }
@@ -56,7 +56,7 @@ describe('Authentication & Roles', () => {
 
         // 5. Player Login
         cy.wrap(null).then(() => {
-            cy.visit('/de/game-login');
+            cy.visit('/game-login');
 
             // Verify inputs exist
             cy.get('[data-testid="player-login-gameid"]').should('be.visible');
@@ -74,7 +74,7 @@ describe('Authentication & Roles', () => {
 
             // Set test mode and navigate to game board directly to bypass real token check
             cy.window().then(win => win.localStorage.setItem('soil_test_mode', 'true'));
-            cy.visit(`/de/game?gameId=${gameId || 'e2e-test-game-id-long-validator'}`);
+            cy.visit(`/game?gameId=${gameId || 'e2e-test-game-id-long-validator'}`);
 
             // 6. Verify Player Board
             cy.get('[data-testid="round-indicator"]', { timeout: 10000 }).should('be.visible');

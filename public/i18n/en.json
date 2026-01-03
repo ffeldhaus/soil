@@ -1,0 +1,392 @@
+{
+  "dashboard": {
+    "pending": {
+      "title": "Account Pending Approval",
+      "welcome": "Thank you for registering, <span class=\"font-bold text-white\">{{ userdisplayName }}</span>!",
+      "message": "Your account is currently under review by a Super Admin. You will receive an email once your account has been approved."
+    },
+    "logout": "Logout",
+    "loading": {
+      "verifying": "Verifying Account Status...",
+      "games": "Loading games..."
+    },
+    "super": {
+      "title": "Super Admin Access",
+      "redirect": "Redirecting you to the Super Admin Console...",
+      "btnGo": "Go to Console"
+    },
+    "controls": {
+      "title": "Admin Controls"
+    },
+    "welcome": "Welcome, <span class=\"font-bold text-white\">{{ userdisplayName }}</span>!",
+    "createGame": {
+      "title": "Create New Game",
+      "name": "Game Name",
+      "phName": "Game Name",
+      "playerLabel": "Player Label (e.g. Team, Farmers)",
+      "phPlayer": "Player",
+      "players": "Players",
+      "rounds": "Rounds",
+      "bots": "AI Players",
+      "aiLevel": "AI Level",
+      "submit": "+ Create New Game",
+      "creating": "Creating..."
+    },
+    "created": {
+      "title": "Game Created!",
+      "id": "Game ID"
+    },
+    "list": {
+      "trash": "Trash (Deleted Games)",
+      "active": "Active Games",
+      "refresh": "Refresh List"
+    },
+    "filter": {
+      "active": "Active",
+      "trash": "Trash"
+    },
+    "actions": {
+      "restoreSelected": "Restore Selected",
+      "deleteSelected": "Delete Selected"
+    },
+    "error": {
+      "retry": "Retry",
+      "title": "Error",
+      "close": "Close"
+    },
+    "table": {
+      "name": "Name",
+      "details": "Details",
+      "round": "Round",
+      "deletedAt": "Deleted At",
+      "created": "Created",
+      "actions": "Actions",
+      "id": "ID:",
+      "email": "Email Game Details",
+      "restore": "Restore Game"
+    },
+    "details": {
+      "players": "Players",
+      "noPlayers": "No players joined yet."
+    },
+    "deadline": {
+      "title": "Round Deadline Manager",
+      "round": "Current Round ({{ gamecurrentRoundNumber }})",
+      "set": "Set Deadline",
+      "hint": "* If a deadline is set, AI will automatically take over for any player who hasn&apos;t submitted by then."
+    },
+    "player": {
+      "label": "Player",
+      "capital": "Capital",
+      "round": "Round",
+      "soil": "Avg. Soil",
+      "nutrition": "Avg. Nutr.",
+      "submitted": "Submitted?",
+      "toHuman": "TO HUMAN",
+      "toAi": "TO AI ({{ newGameConfigaiLeveluppercase }})"
+    },
+    "empty": {
+      "title": "No games found.",
+      "subtitle": "Create a new game to get started!"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "prev": "Previous",
+      "page": "Page",
+      "next": "Next"
+    },
+    "qr": {
+      "access": "Access",
+      "scan": "Scan to login automatically.",
+      "print": "Print",
+      "close": "Close"
+    },
+    "delete": {
+      "permanent": "Permanent Deletion",
+      "confirm": "Confirm Deletion",
+      "questionPermanent": "Are you sure you want to permanently delete",
+      "question": "Are you sure you want to delete",
+      "questionBatchPermanent": "Are you sure you want to permanently delete",
+      "questionBatch": "Are you sure you want to delete",
+      "games": "game(s)",
+      "soft": {
+        "title": "Soft Delete:",
+        "desc": "Games will be moved to the Trash. You can restore them anytime within"
+      },
+      "days": "days",
+      "warning": "WARNING:",
+      "permanentDesc": "This action cannot be undone. All game data will be destroyed immediately.",
+      "typeConfirm": "Type <x id=\"START_TAG_SPAN\" ctype=\"x-span\" equiv-text=\"<span\n                                class=\"font-mono font-bold text-red-400\">\"/>DELETE</span> to confirm:",
+      "cancel": "Cancel",
+      "btnPermanent": "Permanently Delete",
+      "btnGame": "Delete Game"
+    },
+    "login": {
+      "msg": "Please log in to access the admin dashboard.",
+      "btn": "Login with Google"
+    }
+  },
+  "ai": {
+    "level": {
+      "elementary": "Elementary School",
+      "middle": "Middle School",
+      "high": "High School"
+    }
+  },
+  "superadmin": {
+    "title": "SOIL SUPER ADMIN",
+    "badge": "SUPER",
+    "logout": "Logout",
+    "loading": "Loading Data...",
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Manage pending approvals and system administrators.",
+      "refresh": "Refresh Data"
+    },
+    "stats": {
+      "totalGames": "Total Games",
+      "created": "created",
+      "active": "Active"
+    }
+  },
+  "footer": {
+    "impressum": "Impressum"
+  },
+  "adminLogin": {
+    "title": "Admin Login",
+    "subtitle": "Access the Soil control center",
+    "email": "Email",
+    "placeholder": {
+      "email": "admin@school.edu"
+    },
+    "password": "Password",
+    "loggingIn": "Logging in...",
+    "loginButton": "Login",
+    "googleSignIn": "Sign in with Google",
+    "noAccount": "Don&apos;t have an account?",
+    "registerLink": "Register here",
+    "backToHome": "← Back to Home"
+  },
+  "adminRegister": {
+    "title": "Admin Registration",
+    "subtitle": "Join the Soil community as an educator or administrator",
+    "completeTitle": "Complete Registration",
+    "signedInAs": "Signed in as",
+    "viaGoogle": "via Google",
+    "completeApp": "Please complete your application.",
+    "email": "Email",
+    "placeholder": {
+      "email": "admin@school.edu",
+      "password": "Minimum 6 characters",
+      "confirmPassword": "Confirm Password",
+      "firstName": "John",
+      "lastName": "Doe",
+      "institution": "e.g. University of Berlin",
+      "institutionLink": "https://...",
+      "explanation": "Brief explanation (min 10 chars)..."
+    },
+    "error": {
+      "email": "Valid email is required.",
+      "password": "Password must be at least 6 characters.",
+      "mismatch": "Passwords do not match.",
+      "required": "Required.",
+      "url": "Valid URL starting with http:// or https:// is required.",
+      "explanation": "Explanation is required (min 10 characters)."
+    },
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "personalDetails": "Personal Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "appDetails": "Application Details",
+    "institution": "Institution / School",
+    "institutionLink": "Institution Website",
+    "explanation": "Why do you want to use Soil?",
+    "creatingAccount": "Creating Account...",
+    "btn": {
+      "complete": "Complete Registration",
+      "register": "Register"
+    },
+    "alreadyAccount": "Already have an account?",
+    "loginLink": "Login here",
+    "backToHome": "← Back to Home"
+  },
+  "playerLogin": {
+    "title": "Player Login",
+    "gameId": "Game ID",
+    "placeholder": {
+      "gameId": "Game ID",
+      "pin": "Unique Player PIN"
+    },
+    "pin": "Player PIN (Code)",
+    "enteringGame": "Entering Game...",
+    "startGame": "Start Game",
+    "backToHome": "← Back to Home"
+  },
+  "board": {
+    "login": {
+      "adminTitle": "Admin Access",
+      "adminDesc": "Manage games and orchestrate the simulation.",
+      "btnGoogle": "Login with Google",
+      "playerTitle": "Player Access",
+      "playerDesc": "Enter Game ID and credentials.",
+      "phGameId": "Game ID",
+      "phPlayerNum": "Player # (e.g. 1)",
+      "phPin": "Game Password",
+      "btnLogin": "Login"
+    },
+    "nav": {
+      "names": "NAMES",
+      "nutrition": "NUTRITION",
+      "harvest": "HARVEST",
+      "soil": "SOIL QUALITY",
+      "finance": "FINANCE",
+      "options": "OPTIONS",
+      "waiting": "WAITING...",
+      "nextRound": "NEXT ROUND",
+      "endGame": "END GAME"
+    },
+    "logout": "Logout",
+    "mobile": {
+      "overlays": "Visual Overlays",
+      "names": "Names Overlay",
+      "nutrition": "Nutrition Overlay",
+      "harvest": "Harvest Overlay",
+      "soil": "Soil quality Overlay",
+      "finance": "Finance View",
+      "actions": "Game Actions",
+      "roundOptions": "ROUND OPTIONS",
+      "waiting": "WAITING FOR OTHERS...",
+      "nextRound": "NEXT ROUND",
+      "endGame": "END GAME"
+    },
+    "activePlayer": "Active Player",
+    "banner": {
+      "readOnly": "READ ONLY MODE"
+    },
+    "error": {
+      "title": "Error",
+      "close": "Close"
+    },
+    "round": "Round",
+    "gameEnd": {
+      "title": "Game Finished!",
+      "subtitle": "Congratulations to our pioneers!",
+      "financialTitle": "Financial Champion",
+      "soilTitle": "Soil Guardian",
+      "viewResults": "VIEW RESULTS",
+      "backToDashboard": "BACK TO DASHBOARD"
+    }
+  },
+  "finance": {
+    "title": "Financial Report",
+    "subtitle": "Across-player comparison and history",
+    "noRounds": "No rounds yet",
+    "charts": {
+      "capital": "Capital Growth"
+    },
+    "you": "YOU",
+    "group": {
+      "decisions": "Decisions (From Prev. Round)",
+      "expenses": "Expenses Detail",
+      "income": "Income Detail"
+    },
+    "fertilizer": "Conventional Fertilizer",
+    "pesticide": "Pesticides",
+    "organisms": "Beneficial Organisms",
+    "organic": "Organic Farming Seal",
+    "header": {
+      "seeds": "Seeds (detailed)",
+      "investments": "Investments (detailed)",
+      "running": "Running Costs (detailed)",
+      "harvest": "Total Harvest Income"
+    },
+    "sub": {
+      "machines": "Machines",
+      "animalsInvest": "Animals (Initial)",
+      "base": "Base Operation",
+      "organicControl": "Eco Seal Control",
+      "pesticide": "Pesticide Application",
+      "organisms": "Beneficial Organisms",
+      "animalsRunning": "Animals (Running)"
+    },
+    "result": {
+      "profit": "NET PROFIT / LOSS",
+      "capital": "CLOSING CAPITAL"
+    },
+    "playerStatus": "Farmer Status",
+    "event": {
+      "weather": "Regional Weather",
+      "vermin": "Pest Report"
+    }
+  },
+  "crop": {
+    "wheat": "Wheat",
+    "corn": "Corn",
+    "potato": "Potato",
+    "beet": "Beet",
+    "barley": "Barley",
+    "oat": "Oat",
+    "rye": "Rye",
+    "fieldbean": "Fieldbean",
+    "animals": "Animals",
+    "fallow": "Fallow"
+  },
+  "planting": {
+    "title": "Select Crop to Plant",
+    "cancel": "Cancel"
+  },
+  "roundResult": {
+    "title": "Round Report",
+    "profit": "Profit",
+    "bioSiegel": "Bio Seal",
+    "bioSiegelFail": "Requirements not met",
+    "bioSiegelSuccess": "awarded!",
+    "conditions": "Conditions",
+    "weather": "Weather",
+    "vermin": "Pests",
+    "continue": "Continue to Round {{ roundnumber1 }}"
+  },
+  "impressum": {
+    "title": "Legal Notice",
+    "subtitle": "Legal Notice &amp; Credits",
+    "backToHome": "<x id=\"START_TAG__SVG_SVG\" ctype=\"x-_svg_svg\" equiv-text=\"<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\"/><x id=\"START_TAG__SVG_PATH\" ctype=\"x-_svg_path\" equiv-text=\"<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18\" />\"/><x id=\"CLOSE_TAG__SVG_PATH\" ctype=\"x-_svg_path\" equiv-text=\"<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18\" />\"/><x id=\"CLOSE_TAG__SVG_SVG\" ctype=\"x-_svg_svg\" equiv-text=\"</svg>\"/> Back to Home",
+    "contact": "Contact",
+    "responsible": "Responsible for Content",
+    "imageSources": "Image Sources",
+    "source": {
+      "farmstead": "Background image Farmstead, Windsor Township, Berks County",
+      "drought": "Drought",
+      "borer": "European Corn Borer",
+      "ladybug": "Ladybug",
+      "oekolandbau": "Ökolandbau - The Information Portal",
+      "logo": "Logo \"Euro-Leaf\"",
+      "chamber": "Chamber of Agriculture North Rhine-Westphalia",
+      "bioSiegel": "Bio-Siegel"
+    },
+    "disclaimer": {
+      "title": "Disclaimer",
+      "p1": "No guarantee is assumed for the correctness and completeness of the contents of this website. The contents of this page are subject to German copyright law. Any duplication or distribution requires written consent. Downloads and copies are permitted only for non-commercial use.",
+      "p2": "No responsibility is assumed for content of external sites linked to. For external sites, the respective providers are exclusively responsible.",
+      "p3": "The use of the website is generally possible without providing personal data. Personal data required for registration as game management, as well as game data, will not be passed on to third parties."
+    }
+  },
+  "landing": {
+    "intro": "An interactive simulation about",
+    "agriculture": "Agriculture",
+    "economics": "Economics",
+    "and": "and",
+    "sustainability": "Sustainability",
+    "enterGame": "Enter Game",
+    "teacherAdmin": "Teacher / Admin",
+    "register": "Register",
+    "aboutTitle": "About the Game",
+    "aboutText1": "Soil is an interactive simulation game where players make ecological and economic decisions and experience their immediate impact. In groups, students build an agricultural business over ten rounds.",
+    "aboutText2": "The goal is to run a profitable business sustainably. Strategies like crop selection, fertilization, and pest control must be balanced. After each round, groups receive feedback on the ecological and economic consequences of their actions.",
+    "backgroundTitle": "Background",
+    "backgroundText1": "At the UN Conference in 1992, \"sustainability\" was declared a global development goal. This goal is to be achieved by integrating economic, ecological, and social perspectives.",
+    "backgroundText2": "The simulation game \"Soil\" was developed to make this concept of sustainability understandable. It allows learners to discover the centrality of ecological variables as natural limits to economic activities through hands-on experience.",
+    "footer": "© {{ year }} Soil Project. Developed for educational purposes."
+  }
+}

@@ -1,5 +1,6 @@
-/// <reference types="@angular/localize" />
-import { Component, Input, HostBinding } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
+
+import { Component, Input, HostBinding, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Parcel as ParcelType, CropType } from '../../types';
 
@@ -11,6 +12,7 @@ import { Parcel as ParcelType, CropType } from '../../types';
   styleUrl: './parcel.scss',
 })
 export class Parcel {
+  private transloco = inject(TranslocoService);
   @Input() parcel!: ParcelType;
   @Input() @HostBinding('class.selected') selected: boolean = false;
   @Input() showLabels: boolean = true;
@@ -19,16 +21,16 @@ export class Parcel {
   @Input() showSoil: boolean = false;
 
   private cropConfig: Record<string, { label: string, image: string }> = {
-    'Wheat': { label: $localize`:@@crop.wheat:Wheat`, image: 'weizen.jpg' },
-    'Corn': { label: $localize`:@@crop.corn:Corn`, image: 'mais.jpg' },
-    'Potato': { label: $localize`:@@crop.potato:Potato`, image: 'kartoffel.jpg' },
-    'Beet': { label: $localize`:@@crop.beet:Beet`, image: 'zuckerruebe.jpg' },
-    'Barley': { label: $localize`:@@crop.barley:Barley`, image: 'gerste.jpg' },
-    'Oat': { label: $localize`:@@crop.oat:Oat`, image: 'hafer.jpg' },
-    'Rye': { label: $localize`:@@crop.rye:Rye`, image: 'roggen.jpg' },
-    'Fieldbean': { label: $localize`:@@crop.fieldbean:Fieldbean`, image: 'ackerbohne.jpg' },
-    'Grass': { label: $localize`:@@crop.animals:Animals`, image: 'tiere.jpg' },
-    'Fallow': { label: $localize`:@@crop.fallow:Fallow`, image: 'brachland.jpg' }
+    'Wheat': { label: this.transloco.translate('crop.wheat'), image: 'weizen.jpg' },
+    'Corn': { label: this.transloco.translate('crop.corn'), image: 'mais.jpg' },
+    'Potato': { label: this.transloco.translate('crop.potato'), image: 'kartoffel.jpg' },
+    'Beet': { label: this.transloco.translate('crop.beet'), image: 'zuckerruebe.jpg' },
+    'Barley': { label: this.transloco.translate('crop.barley'), image: 'gerste.jpg' },
+    'Oat': { label: this.transloco.translate('crop.oat'), image: 'hafer.jpg' },
+    'Rye': { label: this.transloco.translate('crop.rye'), image: 'roggen.jpg' },
+    'Fieldbean': { label: this.transloco.translate('crop.fieldbean'), image: 'ackerbohne.jpg' },
+    'Grass': { label: this.transloco.translate('crop.animals'), image: 'tiere.jpg' },
+    'Fallow': { label: this.transloco.translate('crop.fallow'), image: 'brachland.jpg' }
   };
 
   getConfig(crop: CropType) {

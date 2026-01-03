@@ -1,3 +1,4 @@
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -6,7 +7,7 @@ import { Round } from '../../types';
 @Component({
     selector: 'app-round-result-modal',
     standalone: true,
-    imports: [CommonModule],
+    imports: [TranslocoPipe, CommonModule],
     templateUrl: './round-result-modal.html',
     styleUrl: './round-result-modal.scss'
 })

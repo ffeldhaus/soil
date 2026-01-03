@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../transloco-testing.module';
 import { TestBed } from '@angular/core/testing';
 import { GameService } from './game.service';
 import { Functions } from '@angular/fire/functions';
@@ -23,6 +24,7 @@ describe('GameService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+        provideTranslocoTest(),
                 GameService,
                 { provide: Functions, useValue: functionsInstance }
             ]

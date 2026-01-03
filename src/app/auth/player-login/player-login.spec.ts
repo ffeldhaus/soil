@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PlayerLoginComponent } from './player-login';
@@ -22,6 +23,7 @@ describe('PlayerLoginComponent', () => {
         await TestBed.configureTestingModule({
             imports: [PlayerLoginComponent, ReactiveFormsModule],
             providers: [
+        provideTranslocoTest(),
                 provideRouter([]),
                 { provide: AuthService, useValue: authServiceMock },
                 { provide: LanguageService, useValue: languageServiceMock }

@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlantingModal } from './planting-modal';
 
@@ -8,7 +9,9 @@ describe('PlantingModal', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PlantingModal]
-        })
+        ,
+      providers: [provideTranslocoTest()]
+    })
             .compileComponents();
 
         fixture = TestBed.createComponent(PlantingModal);

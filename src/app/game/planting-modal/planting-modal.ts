@@ -1,16 +1,18 @@
-/// <reference types="@angular/localize" />
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoService } from '@jsverse/transloco';
+
+import { Component, EventEmitter, Output, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CropType } from '../../types';
 
 @Component({
   selector: 'app-planting-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [TranslocoPipe, CommonModule],
   template: `
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" (click)="cancel.emit()">
       <div class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-2xl w-full" (click)="$event.stopPropagation()">
-        <h2 class="text-2xl font-bold text-white mb-6 font-serif" i18n="@@planting.title">Select Crop to Plant</h2>
+        <h2 class="text-2xl font-bold text-white mb-6 font-serif" >{{ 'planting.title' | transloco }}</h2>
         
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
           <button *ngFor="let crop of crops" 
@@ -30,28 +32,29 @@ import { CropType } from '../../types';
         </div>
 
         <div class="flex justify-end gap-3 mt-8">
-            <button (click)="cancel.emit()" class="px-4 py-2 text-gray-400 hover:text-white transition" i18n="@@planting.cancel">Cancel</button>
+            <button (click)="cancel.emit()" class="px-4 py-2 text-gray-400 hover:text-white transition" >{{ 'planting.cancel' | transloco }}</button>
         </div>
       </div>
     </div>
   `
 })
 export class PlantingModal {
+  private transloco = inject(TranslocoService);
   @Input() crops: CropType[] = [];
   @Output() selected = new EventEmitter<CropType>();
   @Output() cancel = new EventEmitter<void>();
 
   private cropConfig: Record<string, { label: string, image: string }> = {
-    'Wheat': { label: $localize`:@@crop.wheat:Wheat`, image: 'weizen.jpg' },
-    'Corn': { label: $localize`:@@crop.corn:Corn`, image: 'mais.jpg' },
-    'Potato': { label: $localize`:@@crop.potato:Potato`, image: 'kartoffel.jpg' },
-    'Beet': { label: $localize`:@@crop.beet:Beet`, image: 'zuckerruebe.jpg' },
-    'Barley': { label: $localize`:@@crop.barley:Barley`, image: 'gerste.jpg' },
-    'Oat': { label: $localize`:@@crop.oat:Oat`, image: 'hafer.jpg' },
-    'Rye': { label: $localize`:@@crop.rye:Rye`, image: 'roggen.jpg' },
-    'Fieldbean': { label: $localize`:@@crop.fieldbean:Fieldbean`, image: 'ackerbohne.jpg' },
-    'Grass': { label: $localize`:@@crop.animals:Animals`, image: 'tiere.jpg' },
-    'Fallow': { label: $localize`:@@crop.fallow:Fallow`, image: 'brachland.jpg' }
+    'Wheat': { label: this.transloco.translate('crop.wheat'), image: 'weizen.jpg' },
+    'Corn': { label: this.transloco.translate('crop.corn'), image: 'mais.jpg' },
+    'Potato': { label: this.transloco.translate('crop.potato'), image: 'kartoffel.jpg' },
+    'Beet': { label: this.transloco.translate('crop.beet'), image: 'zuckerruebe.jpg' },
+    'Barley': { label: this.transloco.translate('crop.barley'), image: 'gerste.jpg' },
+    'Oat': { label: this.transloco.translate('crop.oat'), image: 'hafer.jpg' },
+    'Rye': { label: this.transloco.translate('crop.rye'), image: 'roggen.jpg' },
+    'Fieldbean': { label: this.transloco.translate('crop.fieldbean'), image: 'ackerbohne.jpg' },
+    'Grass': { label: this.transloco.translate('crop.animals'), image: 'tiere.jpg' },
+    'Fallow': { label: this.transloco.translate('crop.fallow'), image: 'brachland.jpg' }
   };
 
   getConfig(crop: CropType) {

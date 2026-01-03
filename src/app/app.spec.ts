@@ -4,6 +4,7 @@ import { provideRouter, ActivatedRoute } from '@angular/router';
 import { LanguageService } from './services/language.service';
 import { SwUpdate } from '@angular/service-worker';
 import { EMPTY, of } from 'rxjs';
+import { provideTranslocoTest } from './transloco-testing.module';
 
 describe('App', () => {
   let languageServiceMock: any;
@@ -24,6 +25,7 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        provideTranslocoTest(),
         provideRouter([]),
         { 
             provide: ActivatedRoute, 

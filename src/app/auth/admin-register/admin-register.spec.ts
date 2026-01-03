@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminRegisterComponent } from './admin-register';
 import { provideRouter } from '@angular/router';
@@ -24,6 +25,7 @@ describe('AdminRegisterComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AdminRegisterComponent],
       providers: [
+        provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock }

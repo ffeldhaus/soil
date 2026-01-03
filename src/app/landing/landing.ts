@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -7,7 +8,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink, LanguageSwitcherComponent],
+  imports: [TranslocoPipe, CommonModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen relative font-sans text-gray-100 overflow-hidden">
       
@@ -36,23 +37,17 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </h1>
             
             <p class="text-xl md:text-3xl text-gray-200 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              <span i18n="@@landing.intro" data-testid="landing-intro">An interactive simulation about</span>&nbsp;<span class="text-emerald-300 font-normal" i18n="@@landing.agriculture" data-testid="landing-agriculture">Agriculture</span>, <span class="text-blue-300 font-normal" i18n="@@landing.economics" data-testid="landing-economics">Economics</span>, <span i18n="@@landing.and">and</span>&nbsp;<span class="text-yellow-200 font-normal" i18n="@@landing.sustainability" data-testid="landing-sustainability">Sustainability</span>.
+              <span  data-testid="landing-intro">{{ 'landing.intro' | transloco }}</span>&nbsp;<span class="text-emerald-300 font-normal"  data-testid="landing-agriculture">{{ 'landing.agriculture' | transloco }}</span>, <span class="text-blue-300 font-normal"  data-testid="landing-economics">{{ 'landing.economics' | transloco }}</span>, <span >{{ 'landing.and' | transloco }}</span>&nbsp;<span class="text-yellow-200 font-normal"  data-testid="landing-sustainability">{{ 'landing.sustainability' | transloco }}</span>.
             </p>
 
             <div class="flex flex-col sm:flex-row gap-6 justify-center mt-12 w-full max-w-lg mx-auto">
               <a routerLink="/game-login" data-testid="landing-enter-game" class="group relative px-8 py-5 bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] overflow-hidden">
-                <span class="relative z-10 flex items-center justify-center gap-2" i18n="@@landing.enterGame">
-                    Enter Game
-                </span>
+                <span class="relative z-10 flex items-center justify-center gap-2" >{{ 'landing.enterGame' | transloco }}</span>
               </a>
               
-              <a routerLink="/admin/login" data-testid="landing-admin-login" class="flex items-center justify-center px-8 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/30 transform hover:-translate-y-1" i18n="@@landing.teacherAdmin">
-                Teacher / Admin
-              </a>
+              <a routerLink="/admin/login" data-testid="landing-admin-login" class="flex items-center justify-center px-8 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/30 transform hover:-translate-y-1" >{{ 'landing.teacherAdmin' | transloco }}</a>
 
-              <a routerLink="/admin/register" data-testid="landing-register" class="flex items-center justify-center px-8 py-5 bg-emerald-900/40 hover:bg-emerald-800/60 backdrop-blur-md border border-emerald-500/30 text-emerald-200 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/50 transform hover:-translate-y-1" i18n="@@landing.register">
-                Register
-              </a>
+              <a routerLink="/admin/register" data-testid="landing-register" class="flex items-center justify-center px-8 py-5 bg-emerald-900/40 hover:bg-emerald-800/60 backdrop-blur-md border border-emerald-500/30 text-emerald-200 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/50 transform hover:-translate-y-1" >{{ 'landing.register' | transloco }}</a>
             </div>
         </div>
 
@@ -67,33 +62,25 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
             
             <section class="space-y-6">
-                <h2 class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4" i18n="@@landing.aboutTitle">About the Game</h2>
+                <h2 class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4" >{{ 'landing.aboutTitle' | transloco }}</h2>
                 <div class="space-y-4 text-lg leading-relaxed text-gray-400">
-                    <p i18n="@@landing.aboutText1">
-                        Soil is an interactive simulation game where players make ecological and economic decisions and experience their immediate impact. In groups, students build an agricultural business over ten rounds.
-                    </p>
-                    <p i18n="@@landing.aboutText2">
-                        The goal is to run a profitable business sustainably. Strategies like crop selection, fertilization, and pest control must be balanced. After each round, groups receive feedback on the ecological and economic consequences of their actions.
-                    </p>
+                    <p >{{ 'landing.aboutText1' | transloco }}</p>
+                    <p >{{ 'landing.aboutText2' | transloco }}</p>
                 </div>
             </section>
 
             <section class="space-y-6">
-                <h2 class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4" i18n="@@landing.backgroundTitle">Background</h2>
+                <h2 class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4" >{{ 'landing.backgroundTitle' | transloco }}</h2>
                 <div class="space-y-4 text-lg leading-relaxed text-gray-400">
-                    <p i18n="@@landing.backgroundText1">
-                        At the UN Conference in 1992, "sustainability" was declared a global development goal. This goal is to be achieved by integrating economic, ecological, and social perspectives.
-                    </p>
-                    <p i18n="@@landing.backgroundText2">
-                        The simulation game "Soil" was developed to make this concept of sustainability understandable. It allows learners to discover the centrality of ecological variables as natural limits to economic activities through hands-on experience.
-                    </p>
+                    <p >{{ 'landing.backgroundText1' | transloco }}</p>
+                    <p >{{ 'landing.backgroundText2' | transloco }}</p>
                 </div>
             </section>
 
         </div>
 
         <footer class="mt-24 text-center text-gray-600 text-sm">
-            <p i18n="@@landing.footer">&copy; {{ year }} Soil Project. Developed for educational purposes.</p>
+            <p >{{ 'landing.footer' | transloco:{ year: year } }}</p>
         </footer>
       </div>
 

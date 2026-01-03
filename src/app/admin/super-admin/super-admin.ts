@@ -1,3 +1,4 @@
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Component, inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,27 +10,27 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 @Component({
   selector: 'app-super-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, LanguageSwitcherComponent],
+  imports: [TranslocoPipe, CommonModule, FormsModule, LanguageSwitcherComponent],
   template: `
     <div class="bg-gray-900 text-white font-sans min-h-screen">
       <!-- Top HUD Bar -->
       <div
           class="fixed top-0 left-0 right-0 z-50 bg-gray-900/90 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-3 flex items-center justify-between">
           <div class="flex items-center gap-4">
-              <h1 class="text-2xl font-bold font-serif text-purple-500 tracking-wider" i18n="@@superadmin.title">SOIL SUPER ADMIN</h1>
+              <h1 class="text-2xl font-bold font-serif text-purple-500 tracking-wider" >{{ 'superadmin.title' | transloco }}</h1>
           </div>
 
           <div class="flex items-center gap-3">
               <div *ngIf="authService.user$ | async as user" class="flex items-center gap-3">
                   <img [src]="user.photoURL" class="w-8 h-8 rounded-full border border-gray-600">
                   <span class="text-sm font-medium text-gray-300 hidden md:block">{{ user.displayName }}</span>
-                  <span class="px-2 py-0.5 rounded text-[10px] bg-purple-900 text-purple-300 font-bold uppercase tracking-wider border border-purple-700" i18n="@@superadmin.badge">SUPER</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] bg-purple-900 text-purple-300 font-bold uppercase tracking-wider border border-purple-700" >{{ 'superadmin.badge' | transloco }}</span>
               </div>
 
               <app-language-switcher></app-language-switcher>
 
               <button (click)="logout()"
-                  class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition" title="Logout" i18n-title="@@superadmin.logout">
+                  class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition" title="Logout" [title]="'superadmin.logout' | transloco">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                       stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -49,18 +50,18 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span class="text-emerald-400 font-bold animate-pulse" i18n="@@superadmin.loading">Loading Data...</span>
+                <span class="text-emerald-400 font-bold animate-pulse" >{{ 'superadmin.loading' | transloco }}</span>
             </div>
         </div>
         
         <header class="flex justify-between items-center">
           <div class="space-y-1">
-             <h2 class="text-3xl font-bold text-white" i18n="@@superadmin.dashboard.title">Dashboard</h2>
-             <p class="text-gray-400 text-sm" i18n="@@superadmin.dashboard.subtitle">Manage pending approvals and system administrators.</p>
+             <h2 class="text-3xl font-bold text-white" >{{ 'superadmin.dashboard.title' | transloco }}</h2>
+             <p class="text-gray-400 text-sm" >{{ 'superadmin.dashboard.subtitle' | transloco }}</p>
           </div>
           <button (click)="loadData()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg text-sm font-bold transition flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            <ng-container i18n="@@superadmin.dashboard.refresh">Refresh Data</ng-container>
+            <ng-container >{{ 'superadmin.dashboard.refresh' | transloco }}</ng-container>
           </button>
         </header>
 
@@ -71,13 +72,13 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
                 <div class="absolute top-0 right-0 p-4 opacity-10">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2" i18n="@@superadmin.stats.totalGames">Total Games</h3>
+                <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2" >{{ 'superadmin.stats.totalGames' | transloco }}</h3>
                 <div class="flex items-end gap-2">
                      <span class="text-4xl font-bold text-white">{{ stats.games.total }}</span>
-                     <span class="text-sm text-gray-400 mb-1" i18n="@@superadmin.stats.created">created</span>
+                     <span class="text-sm text-gray-400 mb-1" >{{ 'superadmin.stats.created' | transloco }}</span>
                 </div>
                 <div class="mt-4 flex gap-4 text-xs font-mono">
-                    <span class="text-emerald-400"><ng-container i18n="@@superadmin.stats.active">Active</ng-container></span>
+                    <span class="text-emerald-400"><ng-container >{{ 'superadmin.stats.active' | transloco }}</ng-container></span>
                     <span class="text-red-400">{{ stats.games.deleted }} Trash</span>
                 </div>
             </div>

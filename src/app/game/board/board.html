@@ -14,16 +14,15 @@
                 <div class="absolute inset-0 bg-emerald-900/10 group-hover:bg-emerald-900/20 transition duration-500">
                 </div>
                 <h2 class="text-3xl font-bold text-emerald-400 mb-4 font-serif relative z-10"
-                    i18n="@@board.login.adminTitle">Admin Access</h2>
-                <p class="text-gray-400 mb-8 relative z-10" i18n="@@board.login.adminDesc">Manage games and orchestrate
-                    the simulation.</p>
+                    >{{ 'board.login.adminTitle' | transloco }}</h2>
+                <p class="text-gray-400 mb-8 relative z-10" >{{ 'board.login.adminDesc' | transloco }}</p>
                 <button (click)="login()" data-testid="login-google"
                     class="relative z-10 px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-full transition transform hover:scale-105 shadow-lg flex items-center gap-3">
                     <svg class="w-5 h-5" viewBox="0 0 24 24">
                         <path fill="currentColor"
                             d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10c5.35 0 9.25-3.67 9.25-9.09c0-1.15-.15-1.81-.15-1.81Z" />
                     </svg>
-                    <span i18n="@@board.login.btnGoogle">Login with Google</span>
+                    <span >{{ 'board.login.btnGoogle' | transloco }}</span>
                 </button>
             </div>
 
@@ -32,27 +31,26 @@
                 class="flex-1 bg-gray-900 border border-blue-900/50 p-8 rounded-2xl shadow-2xl flex flex-col items-center justify-center relative overflow-hidden group">
                 <div class="absolute inset-0 bg-blue-900/10 group-hover:bg-blue-900/20 transition duration-500"></div>
                 <h2 class="text-3xl font-bold text-blue-400 mb-4 font-serif relative z-10"
-                    i18n="@@board.login.playerTitle">Player Access</h2>
-                <p class="text-gray-400 mb-6 relative z-10" i18n="@@board.login.playerDesc">Enter Game ID and
-                    credentials.</p>
+                    >{{ 'board.login.playerTitle' | transloco }}</h2>
+                <p class="text-gray-400 mb-6 relative z-10" >{{ 'board.login.playerDesc' | transloco }}</p>
 
                 <div class="w-full max-w-xs relative z-10 flex flex-col gap-4">
                     <input [(ngModel)]="gameId" type="text" placeholder="Game ID"
                         data-testid="board-login-gameid"
-                        i18n-placeholder="@@board.login.phGameId"
+                        [placeholder]="'board.login.phGameId' | transloco"
                         class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition">
                     <input [(ngModel)]="playerNumber" type="text" placeholder="Player # (e.g. 1)"
                         data-testid="board-login-playernum"
-                        i18n-placeholder="@@board.login.phPlayerNum"
+                        [placeholder]="'board.login.phPlayerNum' | transloco"
                         class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition">
                     <input [(ngModel)]="pin" type="password" placeholder="Game Password"
                         data-testid="board-login-pin"
-                        i18n-placeholder="@@board.login.phPin"
+                        [placeholder]="'board.login.phPin' | transloco"
                         class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition">
 
                     <button (click)="playerLogin()" data-testid="login-player-submit"
                         class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition transform hover:scale-105 shadow-lg">
-                        <ng-container i18n="@@board.login.btnLogin">Login</ng-container>
+                        <ng-container >{{ 'board.login.btnLogin' | transloco }}</ng-container>
                     </button>
 
                     <p *ngIf="authError" class="text-red-400 text-sm mt-2 text-center">{{ authError }}</p>
@@ -105,58 +103,45 @@
                 <button (click)="toggleLabels()" class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
                     [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels"
                     [class.border-emerald-500]="showLabels" [class.bg-gray-800]="!showLabels"
-                    [class.text-gray-400]="!showLabels" [class.border-gray-700]="!showLabels" i18n="@@board.nav.names">
-                    NAMES
-                </button>
+                    [class.text-gray-400]="!showLabels" [class.border-gray-700]="!showLabels" >{{ 'board.nav.names' | transloco }}</button>
                 <button (click)="toggleNutrition()" class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
                     [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay"
                     [class.border-blue-500]="showNutritionOverlay" [class.bg-gray-800]="!showNutritionOverlay"
                     [class.text-gray-400]="!showNutritionOverlay" [class.border-gray-700]="!showNutritionOverlay"
-                    i18n="@@board.nav.nutrition">
-                    NUTRITION
-                </button>
+                    >{{ 'board.nav.nutrition' | transloco }}</button>
                 <button (click)="toggleHarvest()" class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
                     [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay"
                     [class.border-yellow-500]="showHarvestOverlay" [class.bg-gray-800]="!showHarvestOverlay"
                     [class.text-gray-400]="!showHarvestOverlay" [class.border-gray-700]="!showHarvestOverlay"
-                    i18n="@@board.nav.harvest">
-                    HARVEST
-                </button>
+                    >{{ 'board.nav.harvest' | transloco }}</button>
                 <button (click)="toggleSoil()" class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
                     [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay"
                     [class.border-emerald-600]="showSoilOverlay" [class.bg-gray-800]="!showSoilOverlay"
                     [class.text-gray-400]="!showSoilOverlay" [class.border-gray-700]="!showSoilOverlay"
-                    i18n="@@board.nav.soil">
-                    SOIL QUALITY
-                </button>
+                    >{{ 'board.nav.soil' | transloco }}</button>
                 <button (click)="toggleFinance()" [disabled]="maxRoundNumber === 0"
                     class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
                     [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance"
                     [class.border-emerald-500]="showFinance" [class.bg-gray-800]="!showFinance"
                     [class.text-gray-400]="!showFinance" [class.border-gray-700]="!showFinance"
-                    [class.opacity-50]="maxRoundNumber === 0" i18n="@@board.nav.finance">
-                    FINANCE
-                </button>
+                    [class.opacity-50]="maxRoundNumber === 0" >{{ 'board.nav.finance' | transloco }}</button>
 
                 <div class="h-6 w-px bg-gray-700 mx-1"></div>
 
                 <!-- Action Buttons -->
                 <button (click)="openRoundSettings()" [disabled]="isReadOnly"
                     class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-lg border border-gray-600 transition text-[10px] flex items-center gap-1 disabled:opacity-50"
-                    i18n="@@board.nav.options">
-                    OPTIONS
-                </button>
+                    >{{ 'board.nav.options' | transloco }}</button>
                 <button *ngIf="(gameState$ | async)?.game?.status !== 'finished'" (click)="nextRound()" data-testid="next-round-button"
                     [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
                     class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500">
                     <ng-container *ngIf="isSubmitted || pendingNextRound"
-                        i18n="@@board.nav.waiting">WAITING...</ng-container>
-                    <ng-container *ngIf="!isSubmitted && !pendingNextRound" i18n="@@board.nav.nextRound">NEXT
-                        ROUND</ng-container>
+                        >{{ 'board.nav.waiting' | transloco }}</ng-container>
+                    <ng-container *ngIf="!isSubmitted && !pendingNextRound" >{{ 'board.nav.nextRound' | transloco }}</ng-container>
                 </button>
                 <button *ngIf="(gameState$ | async)?.game?.status === 'finished'" (click)="showGameEndModal = true"
                     class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg border border-amber-500 transition text-[10px] shadow-lg shadow-amber-900/40">
-                    <ng-container i18n="@@board.nav.endGame">END GAME</ng-container>
+                    <ng-container >{{ 'board.nav.endGame' | transloco }}</ng-container>
                 </button>
             </div>
 
@@ -165,7 +150,7 @@
                 <app-language-switcher></app-language-switcher>
                 <button (click)="logout()" data-testid="logout-button"
                     class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition" title="Logout"
-                    i18n-title="@@board.logout">
+                    [title]="'board.logout' | transloco">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -201,13 +186,13 @@
                         </div>
                         <div class="h-px bg-gray-800 mx-2 my-2"></div>
                         <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest"
-                            i18n="@@board.mobile.overlays">Visual Overlays</label>
+                            >{{ 'board.mobile.overlays' | transloco }}</label>
                         <div class="grid grid-cols-1 gap-2">
                             <button (click)="toggleLabels(); toggleMobileMenu()"
                                 class="w-full text-left px-4 py-3 rounded-xl border transition"
                                 [class.bg-emerald-600]="showLabels" [class.border-emerald-500]="showLabels"
                                 [class.bg-gray-800]="!showLabels" [class.border-gray-700]="!showLabels">
-                                <ng-container i18n="@@board.mobile.names">Names Overlay</ng-container>
+                                <ng-container >{{ 'board.mobile.names' | transloco }}</ng-container>
                             </button>
                             <button (click)="toggleNutrition(); toggleMobileMenu()"
                                 class="w-full text-left px-4 py-3 rounded-xl border transition"
@@ -216,7 +201,7 @@
                                 [class.bg-gray-800]="!showNutritionOverlay"
                                 [class.text-gray-400]="!showNutritionOverlay"
                                 [class.border-gray-700]="!showNutritionOverlay">
-                                <ng-container i18n="@@board.mobile.nutrition">Nutrition Overlay</ng-container>
+                                <ng-container >{{ 'board.mobile.nutrition' | transloco }}</ng-container>
                             </button>
                             <button (click)="toggleHarvest(); toggleMobileMenu()"
                                 class="w-full text-left px-4 py-3 rounded-xl border transition"
@@ -224,21 +209,21 @@
                                 [class.border-yellow-500]="showHarvestOverlay" [class.bg-gray-800]="!showHarvestOverlay"
                                 [class.text-gray-400]="!showHarvestOverlay"
                                 [class.border-gray-700]="!showHarvestOverlay">
-                                <ng-container i18n="@@board.mobile.harvest">Harvest Overlay</ng-container>
+                                <ng-container >{{ 'board.mobile.harvest' | transloco }}</ng-container>
                             </button>
                             <button (click)="toggleSoil(); toggleMobileMenu()"
                                 class="w-full text-left px-4 py-3 rounded-xl border transition"
                                 [class.bg-emerald-700]="showSoilOverlay" [class.border-emerald-600]="showSoilOverlay"
                                 [class.bg-gray-800]="!showSoilOverlay" [class.text-gray-400]="!showSoilOverlay"
                                 [class.border-gray-700]="!showSoilOverlay">
-                                <ng-container i18n="@@board.mobile.soil">Soil quality Overlay</ng-container>
+                                <ng-container >{{ 'board.mobile.soil' | transloco }}</ng-container>
                             </button>
                             <button (click)="toggleFinance(); toggleMobileMenu()" [disabled]="maxRoundNumber === 0"
                                 class="w-full text-left px-4 py-3 rounded-xl border transition"
                                 [class.bg-emerald-600]="showFinance" [class.border-emerald-500]="showFinance"
                                 [class.bg-gray-800]="!showFinance" [class.border-gray-700]="!showFinance"
                                 [class.opacity-50]="maxRoundNumber === 0">
-                                <ng-container i18n="@@board.mobile.finance">Finance View</ng-container>
+                                <ng-container >{{ 'board.mobile.finance' | transloco }}</ng-container>
                             </button>
                         </div>
                     </nav>
@@ -246,23 +231,22 @@
                     <!-- Game Actions Section -->
                     <div class="space-y-3">
                         <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest"
-                            i18n="@@board.mobile.actions">Game Actions</label>
+                            >{{ 'board.mobile.actions' | transloco }}</label>
                         <button (click)="openRoundSettings(); toggleMobileMenu()" [disabled]="isReadOnly"
                             class="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl border border-gray-700 transition flex items-center justify-center gap-2">
-                            <ng-container i18n="@@board.mobile.roundOptions">ROUND OPTIONS</ng-container>
+                            <ng-container >{{ 'board.mobile.roundOptions' | transloco }}</ng-container>
                         </button>
                         <button *ngIf="(gameState$ | async)?.game?.status !== 'finished'"
                             (click)="nextRound(); toggleMobileMenu()"
                             [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
                             class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl border border-emerald-500 transition shadow-lg flex items-center justify-center">
-                            <ng-container *ngIf="isSubmitted" i18n="@@board.mobile.waiting">WAITING FOR
-                                OTHERS...</ng-container>
-                            <ng-container *ngIf="!isSubmitted" i18n="@@board.mobile.nextRound">NEXT ROUND</ng-container>
+                            <ng-container *ngIf="isSubmitted" >{{ 'board.mobile.waiting' | transloco }}</ng-container>
+                            <ng-container *ngIf="!isSubmitted" >{{ 'board.mobile.nextRound' | transloco }}</ng-container>
                         </button>
                         <button *ngIf="(gameState$ | async)?.game?.status === 'finished'"
                             (click)="showGameEndModal = true; toggleMobileMenu()"
                             class="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl border border-amber-500 transition shadow-lg flex items-center justify-center">
-                            <ng-container i18n="@@board.mobile.endGame">END GAME</ng-container>
+                            <ng-container >{{ 'board.mobile.endGame' | transloco }}</ng-container>
                         </button>
                     </div>
                 </div>
@@ -285,7 +269,7 @@
                                     class="bg-gray-900 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1"
                                     autoFocus>
                             </ng-template>
-                            <span class="text-[10px] text-gray-500" i18n="@@board.activePlayer">Active Player</span>
+                            <span class="text-[10px] text-gray-500" >{{ 'board.activePlayer' | transloco }}</span>
                         </div>
                     </div>
                 </div>
@@ -300,7 +284,7 @@
             <div *ngIf="showReadOnlyBanner" class="absolute top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
                 <div
                     class="bg-amber-500/90 text-black px-6 py-2 rounded-full font-bold shadow-lg border-2 border-amber-300 backdrop-blur-sm animate-pulse">
-                    <ng-container i18n="@@board.banner.readOnly">READ ONLY MODE</ng-container>
+                    <ng-container >{{ 'board.banner.readOnly' | transloco }}</ng-container>
                 </div>
             </div>
 
@@ -317,13 +301,11 @@
                                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2" i18n="@@board.error.title">Error</h3>
+                    <h3 class="text-xl font-bold text-white mb-2" >{{ 'board.error.title' | transloco }}</h3>
                     <p class="text-red-100 mb-6">{{ errorMessage }}</p>
                     <button (click)="errorMessage = ''"
                         class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors"
-                        i18n="@@board.error.close">
-                        Close
-                    </button>
+                        >{{ 'board.error.close' | transloco }}</button>
                 </div>
             </div>
 
@@ -355,7 +337,7 @@
                     <span class="text-xs font-mono px-2 min-w-[100px] text-center transition-colors"
                         [class.text-emerald-400]="viewingRound === maxRoundNumber"
                         [class.text-gray-400]="viewingRound < maxRoundNumber">
-                        <ng-container i18n="@@board.round">Round</ng-container> {{viewingRound}}
+                        <ng-container >{{ 'board.round' | transloco }}</ng-container> {{viewingRound}}
                     </span>
                     <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
                         class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
@@ -423,9 +405,8 @@
                 class="relative bg-gray-900 border border-gray-700 shadow-2xl rounded-3xl max-w-2xl w-full p-8 text-center transform transition-all animate-modal-entrance">
                 <div class="mb-6">
                     <h2 class="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight"
-                        i18n="@@board.gameEnd.title">Game Finished!</h2>
-                    <p class="text-gray-400 text-lg sm:text-xl" i18n="@@board.gameEnd.subtitle">Congratulations to our
-                        pioneers!</p>
+                        >{{ 'board.gameEnd.title' | transloco }}</h2>
+                    <p class="text-gray-400 text-lg sm:text-xl" >{{ 'board.gameEnd.subtitle' | transloco }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8">
@@ -434,7 +415,7 @@
                         class="bg-gradient-to-br from-amber-500/20 to-yellow-600/10 border border-amber-500/30 p-6 rounded-2xl shadow-lg transform hover:scale-105 transition-transform group">
                         <div class="text-4xl mb-3 group-hover:animate-bounce">💰</div>
                         <h3 class="text-amber-400 font-bold uppercase text-xs tracking-widest mb-1"
-                            i18n="@@board.gameEnd.financialTitle">Financial Champion</h3>
+                            >{{ 'board.gameEnd.financialTitle' | transloco }}</h3>
                         <div class="text-white text-xl font-black mb-1">{{ financialWinner?.name }}</div>
                         <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | number }} €</div>
                     </div>
@@ -444,7 +425,7 @@
                         class="bg-gradient-to-br from-emerald-500/20 to-teal-600/10 border border-emerald-500/30 p-6 rounded-2xl shadow-lg transform hover:scale-105 transition-transform group">
                         <div class="text-4xl mb-3 group-hover:animate-bounce">🌿</div>
                         <h3 class="text-emerald-400 font-bold uppercase text-xs tracking-widest mb-1"
-                            i18n="@@board.gameEnd.soilTitle">Soil Guardian</h3>
+                            >{{ 'board.gameEnd.soilTitle' | transloco }}</h3>
                         <div class="text-white text-xl font-black mb-1">{{ soilWinner?.name }}</div>
                         <div class="text-emerald-200/70 text-sm font-mono">{{ soilWinner?.avgSoil }} / 200</div>
                     </div>
@@ -453,14 +434,10 @@
                 <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
                     <button (click)="closeGameEndModal()"
                         class="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition border border-gray-600 shadow-lg"
-                        i18n="@@board.gameEnd.viewResults">
-                        VIEW RESULTS
-                    </button>
+                        >{{ 'board.gameEnd.viewResults' | transloco }}</button>
                     <button routerLink="/admin"
                         class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-900/40"
-                        i18n="@@board.gameEnd.backToDashboard">
-                        BACK TO DASHBOARD
-                    </button>
+                        >{{ 'board.gameEnd.backToDashboard' | transloco }}</button>
                 </div>
             </div>
         </div>

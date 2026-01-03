@@ -1,3 +1,4 @@
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,7 +8,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [TranslocoPipe, CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="min-h-screen relative flex items-center justify-center bg-cover bg-center" style="background-image: url('assets/bauernhof.jpg');">
       <!-- Background Image with Overlay -->
@@ -18,25 +19,25 @@ import { AuthService } from '../auth.service';
 
       <div class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700">
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Admin Login</h1>
-          <p class="text-gray-400" i18n="@@adminLogin.subtitle">Access the Soil control center</p>
+          <h1 class="text-3xl font-bold text-emerald-400 mb-2" >{{ 'adminLogin.title' | transloco }}</h1>
+          <p class="text-gray-400" >{{ 'adminLogin.subtitle' | transloco }}</p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
           
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.email">Email</label>
-            <input formControlName="email" type="email" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="admin@school.edu" i18n-placeholder="@@adminLogin.placeholder.email">
+            <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'adminLogin.email' | transloco }}</label>
+            <input formControlName="email" type="email" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="admin@school.edu" [placeholder]="'adminLogin.placeholder.email' | transloco">
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.password">Password</label>
+            <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'adminLogin.password' | transloco }}</label>
             <input formControlName="password" type="password" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="••••••••">
           </div>
 
           <button type="submit" [disabled]="loginForm.invalid || isLoading" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg">
-            <ng-container *ngIf="isLoading" i18n="@@adminLogin.loggingIn">Logging in...</ng-container>
-            <ng-container *ngIf="!isLoading" i18n="@@adminLogin.loginButton">Login</ng-container>
+            <ng-container *ngIf="isLoading" >{{ 'adminLogin.loggingIn' | transloco }}</ng-container>
+            <ng-container *ngIf="!isLoading" >{{ 'adminLogin.loginButton' | transloco }}</ng-container>
           </button>
         </form>
 
@@ -49,15 +50,13 @@ import { AuthService } from '../auth.service';
                     <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
                     <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
                 </svg>
-                <span i18n="@@adminLogin.googleSignIn">Sign in with Google</span>
+                <span >{{ 'adminLogin.googleSignIn' | transloco }}</span>
             </button>
             <p class="text-sm text-gray-500">
-                <ng-container i18n="@@adminLogin.noAccount">Don't have an account?</ng-container>&nbsp;<a routerLink="/admin/register" class="text-emerald-400 hover:underline" i18n="@@adminLogin.registerLink">Register here</a>
+                <ng-container >{{ 'adminLogin.noAccount' | transloco }}</ng-container>&nbsp;<a routerLink="/admin/register" class="text-emerald-400 hover:underline" >{{ 'adminLogin.registerLink' | transloco }}</a>
             </p>
             <div class="pt-2">
-                 <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition flex items-center justify-center gap-2" i18n="@@adminLogin.backToHome">
-                    &larr; Back to Home
-                 </a>
+                 <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition flex items-center justify-center gap-2" >{{ 'adminLogin.backToHome' | transloco }}</a>
             </div>
         </div>
       </div>

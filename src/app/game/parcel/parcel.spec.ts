@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Parcel } from './parcel';
 
@@ -8,6 +9,8 @@ describe('Parcel', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Parcel]
+    ,
+      providers: [provideTranslocoTest()]
     })
       .compileComponents();
 

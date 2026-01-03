@@ -1,3 +1,4 @@
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Component, inject, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,7 +10,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 @Component({
   selector: 'app-player-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [TranslocoPipe, CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden">
       <!-- Language Switcher -->
@@ -24,28 +25,28 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
       </div>
 
       <div class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700">
-        <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400" i18n="@@playerLogin.title">Player Login</h2>
+        <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400" >{{ 'playerLogin.title' | transloco }}</h2>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
           
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@playerLogin.gameId">Game ID</label>
-            <input formControlName="gameId" type="text" data-testid="player-login-gameid" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Game ID" i18n-placeholder="@@playerLogin.placeholder.gameId">
+            <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'playerLogin.gameId' | transloco }}</label>
+            <input formControlName="gameId" type="text" data-testid="player-login-gameid" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Game ID" [placeholder]="'playerLogin.placeholder.gameId' | transloco">
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@playerLogin.pin">Player PIN (Code)</label>
-            <input formControlName="password" type="password" data-testid="player-login-pin" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Unique Player PIN" i18n-placeholder="@@playerLogin.placeholder.pin">
+            <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'playerLogin.pin' | transloco }}</label>
+            <input formControlName="password" type="password" data-testid="player-login-pin" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Unique Player PIN" [placeholder]="'playerLogin.placeholder.pin' | transloco">
           </div>
 
           <button type="submit" [disabled]="loginForm.invalid || isLoading" data-testid="player-login-submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg">
-            <ng-container *ngIf="isLoading" i18n="@@playerLogin.enteringGame">Entering Game...</ng-container>
-            <ng-container *ngIf="!isLoading" i18n="@@playerLogin.startGame">Start Game</ng-container>
+            <ng-container *ngIf="isLoading" >{{ 'playerLogin.enteringGame' | transloco }}</ng-container>
+            <ng-container *ngIf="!isLoading" >{{ 'playerLogin.startGame' | transloco }}</ng-container>
           </button>
         </form>
 
         <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
-            <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition" i18n="@@playerLogin.backToHome">&larr; Back to Home</a>
+            <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition" >{{ 'playerLogin.backToHome' | transloco }}</a>
         </div>
       </div>
 

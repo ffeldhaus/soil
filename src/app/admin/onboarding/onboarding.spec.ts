@@ -1,3 +1,4 @@
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Onboarding } from './onboarding';
 import { AuthService } from '../../auth/auth.service';
@@ -24,6 +25,7 @@ describe('Onboarding', () => {
     await TestBed.configureTestingModule({
       imports: [Onboarding],
       providers: [
+        provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock }

@@ -73,7 +73,7 @@ describe('SOIL Game E2E', () => {
             }
         }).as('getGameState');
 
-        cy.visit('/de/game?gameId=test-game-id', {
+        cy.visit('/game?gameId=test-game-id', {
             onBeforeLoad: (win) => {
                 win.localStorage.setItem('soil_test_mode', 'true');
             }

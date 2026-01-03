@@ -1,3 +1,4 @@
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Component, inject, OnDestroy, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -15,7 +16,7 @@ import { Finance } from '../../game/finance/finance';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
+  imports: [TranslocoPipe, CommonModule, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

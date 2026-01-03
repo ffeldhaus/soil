@@ -55,11 +55,8 @@ serve.log
 test_output.txt
 debug_de.html
 
-# Reference files
-soil-old-reference/
-
 # Backup files
 *.bak
 
 # Cypress
-.cypress-cache
+.cypress-cache/

@@ -1,6 +1,6 @@
 describe('Access Control', () => {
     it('should show login options on game page when not logged in', () => {
-        cy.visit('/de/game');
+        cy.visit('/game');
         cy.get('[data-testid="login-google"]').should('be.visible');
         cy.get('[data-testid="login-player-submit"]').should('be.visible');
     });

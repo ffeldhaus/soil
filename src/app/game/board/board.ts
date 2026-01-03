@@ -1,3 +1,4 @@
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Component, OnInit, HostListener, inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +20,7 @@ import { Finance } from '../finance/finance';
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, Parcel, PlantingModal, RoundSettingsModal, RoundResultModal, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
+  imports: [TranslocoPipe, CommonModule, Parcel, PlantingModal, RoundSettingsModal, RoundResultModal, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
