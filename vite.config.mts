@@ -7,7 +7,7 @@ import { execSync } from 'child_process';
 const getVersion = () => {
   try {
     const gitVersion = execSync('git describe --tags --always').toString().trim();
-    const buildId = process.env['CD_BUILD_ID'] || process.env['BUILD_NUMBER'] || '';
+    const buildId = process.env['CD_BUILD_ID'] || process.env['BUILD_NUMBER'] || process.env['BUILD_ID'] || '';
     return buildId ? `${gitVersion}+${buildId}` : gitVersion;
   } catch {
     return '1.1.0';
