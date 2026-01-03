@@ -7,17 +7,17 @@ import { LanguageService } from '../../services/language.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="relative inline-block">
+    <div class="relative inline-block group">
       <select 
         (change)="onLangChange($event)"
-        class="appearance-none bg-gray-800/50 backdrop-blur-md border border-gray-600/50 text-gray-300 text-[10px] font-bold tracking-widest uppercase py-1.5 pl-3 pr-8 rounded-lg hover:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 transition-all cursor-pointer"
+        class="appearance-none bg-gray-900/60 backdrop-blur-xl border border-emerald-500/20 text-emerald-100 text-[10px] font-bold tracking-widest uppercase py-1.5 pl-4 pr-10 rounded-xl hover:border-emerald-500/50 hover:bg-emerald-900/20 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all cursor-pointer shadow-lg shadow-black/20"
         [value]="languageService.currentLang">
-        <option value="de">Deutsch</option>
-        <option value="en">English</option>
+        <option value="de" class="bg-gray-900 text-white">Deutsch</option>
+        <option value="en" class="bg-gray-900 text-white">English</option>
       </select>
-      <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none text-gray-500">
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-emerald-400 group-hover:text-emerald-300 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
         </svg>
       </div>
     </div>
@@ -28,9 +28,15 @@ import { LanguageService } from '../../services/language.service';
       vertical-align: middle;
     }
     select {
-      /* Reset default appearance for cleaner styling */
       -webkit-appearance: none;
       -moz-appearance: none;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    /* Style the dropdown options (limited browser support but helpful where available) */
+    option {
+      padding: 12px;
+      font-weight: bold;
+      background-color: #111827; /* gray-900 */
     }
   `]
 })
