@@ -15,10 +15,10 @@ import packageJson from '../../package.json';
 export class App {
   protected languageService = inject(LanguageService);
   protected readonly title = signal('soil');
-  version = packageJson.version;
+  version = import.meta.env.APP_VERSION || packageJson.version;
 
   constructor(updates: SwUpdate) {
-    console.log(`Soil Version ${this.version} (app.ts - i18n fix v6 - v1.0.17)`);
+    console.log(`Soil Version ${this.version} (app.ts)`);
 
     if (updates.isEnabled) {
       console.log('Service Worker is enabled');
