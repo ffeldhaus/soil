@@ -7,4 +7,4 @@ runConfig:
   cpu: 1
   memoryMiB: 512
 scripts:
-  build: npm run build -- --localize
+  build: npm run build
