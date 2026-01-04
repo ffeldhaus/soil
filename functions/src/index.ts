@@ -2,7 +2,10 @@ import * as admin from "firebase-admin";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
 
-setGlobalOptions({ region: "europe-west4" });
+setGlobalOptions({ 
+    region: "europe-west4",
+    serviceAccount: "firebase-app-hosting-compute@soil-602ea.iam.gserviceaccount.com"
+});
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { GameEngine } from './game-engine';
 import { AiAgent } from './ai-agent';
@@ -894,6 +897,7 @@ export const undeleteGames = onCall(async (request) => {
     return { success: true };
 });
 
+// europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
 export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: 'europe-west3' }, async (event) => {
     const now = admin.firestore.Timestamp.now();
     const nowMillis = now.toMillis();
@@ -1026,6 +1030,7 @@ export const updateRoundDeadline = onCall(async (request) => {
     return { success: true };
 });
 
+// europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
 export const processDeadlines = onSchedule({ schedule: "every 1 minutes", region: "europe-west3" }, async (event) => {
     const now = admin.firestore.Timestamp.now();
 
