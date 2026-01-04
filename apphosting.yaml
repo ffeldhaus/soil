@@ -7,6 +7,4 @@ runConfig:
   cpu: 1
   memoryMiB: 512
 scripts:
-  build: |
-    npm run build
-    npx firebase deploy --only functions,firestore,storage --non-interactive --project soil-602ea
+  build: npm run build
