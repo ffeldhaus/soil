@@ -7,10 +7,14 @@
         "sourceMap": true,
         "strict": true,
         "target": "es2017",
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": ["node", "mocha"]
     },
     "compileOnSave": true,
     "include": [
         "src"
+    ],
+    "exclude": [
+        "src/**/*.test.ts"
     ]
 }
