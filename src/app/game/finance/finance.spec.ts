@@ -96,10 +96,10 @@ describe('Finance Component Logic', () => {
         component.currentViewingRound = 1;
         (component as any).processPlayerData();
         const player = component.players.find(p => p.uid === 'player1');
-        // Wheat: 100 * 15 (Conv) = 1500
-        // Corn: 200 * 15 (Conv) = 3000
-        expect(player?.detailedIncome?.harvest['Wheat']).toBe(1500);
-        expect(player?.detailedIncome?.harvest['Corn']).toBe(3000);
+        // Wheat: 100 * 17 (Conv) = 1700
+        // Corn: 200 * 17 (Conv) = 3400
+        expect(player?.detailedIncome?.harvest['Wheat']).toBe(1700);
+        expect(player?.detailedIncome?.harvest['Corn']).toBe(3400);
     });
 
     it('should calculate detailed investments correctly', () => {

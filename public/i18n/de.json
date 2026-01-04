@@ -3,7 +3,7 @@
     "pending": {
       "title": "Konto wartet auf Genehmigung",
       "welcome": "Danke für die Registrierung, <span class=\"font-bold text-white\">{{ userdisplayName }}</span>!",
-      "message": "Your account is currently under review by a Super Admin. You will receive an email once your account has been approved."
+      "message": "Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde."
     },
     "logout": "Abmelden",
     "loading": {
@@ -11,9 +11,9 @@
       "games": "Spiele werden geladen..."
     },
     "super": {
-      "title": "Super Admin Access",
-      "redirect": "Redirecting you to the Super Admin Console...",
-      "btnGo": "Go to Console"
+      "title": "Super-Admin-Zugriff",
+      "redirect": "Weiterleitung zur Super-Admin-Konsole...",
+      "btnGo": "Zur Konsole"
     },
     "controls": {
       "title": "Admin-Steuerung"
@@ -22,13 +22,13 @@
     "createGame": {
       "title": "Neues Spiel erstellen",
       "name": "Spielname",
-      "phName": "Game Name",
-      "playerLabel": "Player Label (e.g. Team, Farmers)",
-      "phPlayer": "Player",
+      "phName": "Spielname",
+      "playerLabel": "Spieler-Bezeichnung (z. B. Team, Farmer)",
+      "phPlayer": "Spieler",
       "players": "Spieler (1-8)",
       "rounds": "Runden",
       "bots": "KI-Bots",
-      "aiLevel": "AI Level",
+      "aiLevel": "KI-Niveau",
       "submit": "+ Neues Spiel erstellen",
       "creating": "Wird erstellt..."
     },
@@ -39,7 +39,7 @@
     "list": {
       "trash": "Papierkorb (Gelöschte Spiele)",
       "active": "Aktive Spiele",
-      "refresh": "Refresh List"
+      "refresh": "Liste aktualisieren"
     },
     "filter": {
       "active": "Aktiv",
@@ -62,28 +62,28 @@
       "created": "Erstellt",
       "actions": "Aktionen",
       "id": "ID:",
-      "email": "Email Game Details",
-      "restore": "Restore Game"
+      "email": "Spieldetails senden",
+      "restore": "Spiel wiederherstellen"
     },
     "details": {
-      "players": "Players",
+      "players": "Spieler",
       "noPlayers": "Noch keine Spieler beigetreten."
     },
     "deadline": {
-      "title": "Round Deadline Manager",
-      "round": "Current Round ({{ gamecurrentRoundNumber }})",
-      "set": "Set Deadline",
-      "hint": "* If a deadline is set, AI will automatically take over for any player who hasn&apos;t submitted by then."
+      "title": "Runden-Frist-Manager",
+      "round": "Aktuelle Runde ({{ gamecurrentRoundNumber }})",
+      "set": "Frist setzen",
+      "hint": "* Wenn eine Frist gesetzt ist, übernimmt die KI automatisch für alle Spieler, die bis dahin nicht abgegeben haben."
     },
     "player": {
       "label": "Spieler",
       "capital": "Kapital",
       "round": "Runde",
-      "soil": "Avg. Soil",
-      "nutrition": "Avg. Nutr.",
+      "soil": "Bodenqualität (ø)",
+      "nutrition": "Nährstoffe (ø)",
       "submitted": "Abgegeben?",
-      "toHuman": "TO HUMAN",
-      "toAi": "TO AI ({{ newGameConfigaiLeveluppercase }})"
+      "toHuman": "ZU MENSCH",
+      "toAi": "ZU KI ({{ newGameConfigaiLeveluppercase }})"
     },
     "empty": {
       "title": "Keine Spiele gefunden.",
@@ -117,7 +117,7 @@
       "days": "Tagen",
       "warning": "WARNUNG:",
       "permanentDesc": "Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.",
-      "typeConfirm": "Tippe <x id=\"START_TAG_SPAN\" ctype=\"x-span\" equiv-text=\"<span\n                                class=\"font-mono font-bold text-red-400\">\"/>DELETE</span> zur Bestätigung:",
+      "typeConfirm": "Tippe <span class=\"font-mono font-bold text-red-400\">DELETE</span> zur Bestätigung:",
       "cancel": "Abbrechen",
       "btnPermanent": "Dauerhaft löschen",
       "btnGame": "Spiel löschen"
@@ -129,9 +129,9 @@
   },
   "ai": {
     "level": {
-      "elementary": "Elementary School",
-      "middle": "Middle School",
-      "high": "High School"
+      "elementary": "Grundschule",
+      "middle": "Mittelstufe",
+      "high": "Oberstufe"
     }
   },
   "superadmin": {
@@ -405,7 +405,7 @@
   "impressum": {
     "title": "Impressum",
     "subtitle": "Impressum & Credits",
-    "backToHome": "<x id=\"START_TAG__SVG_SVG\" ctype=\"x-_svg_svg\" equiv-text=\"<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\"/><x id=\"START_TAG__SVG_PATH\" ctype=\"x-_svg_path\" equiv-text=\"<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18\" />\"/><x id=\"CLOSE_TAG__SVG_PATH\" ctype=\"x-_svg_path\" equiv-text=\"<path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18\" />\"/><x id=\"CLOSE_TAG__SVG_SVG\" ctype=\"x-_svg_svg\" equiv-text=\"</svg>\"/> Zurück zur Startseite",
+    "backToHome": "Zurück zur Startseite",
     "contact": "Kontakt",
     "responsible": "Verantwortlich für den Inhalt",
     "imageSources": "Bildnachweise",
@@ -440,7 +440,7 @@
     "aboutText2": "Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.",
     "backgroundTitle": "Hintergrund",
     "backgroundText1": "Auf der UN-Konferenz 1992 wurde \"Nachhaltigkeit\" zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.",
-    "backgroundText2": "Das Simulationsspiel „Soil“ wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken.",
+    "backgroundText2": "Das Simulationsspiel \"Soil\" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken.",
     "footer": "© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke."
   }
 }

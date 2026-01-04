@@ -23,7 +23,12 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 <h1 class="text-4xl font-serif font-bold text-emerald-500 mb-2" >{{ 'impressum.title' | transloco }}</h1>
                 <p class="text-gray-400" >{{ 'impressum.subtitle' | transloco }}</p>
              </div>
-             <a routerLink="/" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition flex items-center gap-2" >{{ 'impressum.backToHome' | transloco }}</a>
+             <a routerLink="/" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition flex items-center gap-2" >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                {{ 'impressum.backToHome' | transloco }}
+             </a>
         </header>
 
         <!-- Kontakt -->
