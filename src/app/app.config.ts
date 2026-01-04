@@ -17,9 +17,7 @@ import { provideTransloco } from '@jsverse/transloco';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU",
-  authDomain: typeof window !== 'undefined' && window.location.hostname.includes('soil.app') 
-    ? "soil.app" 
-    : "soil-602ea.firebaseapp.com",
+  authDomain: "soil-602ea.firebaseapp.com",
   projectId: "soil-602ea",
   storageBucket: "soil-602ea.firebasestorage.app",
   messagingSenderId: "167590574128",
@@ -58,16 +56,16 @@ export const appConfig: ApplicationConfig = {
         connectFunctionsEmulator(functions, 'localhost', 5001);
       }
       return functions;
-    }), 
-    provideHttpClient(), 
+    }),
+    provideHttpClient(),
     provideTransloco({
-        config: { 
-          availableLangs: ['en', 'de'],
-          defaultLang: 'de',
-          reRenderOnLangChange: true,
-          prodMode: !isDevMode(),
-        },
-        loader: TranslocoHttpLoader
-      })
+      config: {
+        availableLangs: ['en', 'de'],
+        defaultLang: 'de',
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader
+    })
   ]
 };
