@@ -1,0 +1,158 @@
+import { CropType } from './types';
+
+export const GAME_CONSTANTS = {
+  SOIL: {
+    START: 80,
+    FALLOW_RECOVERY: 0.05,
+    CROP_ROTATION_BONUS: 0.04,
+    CROP_ROTATION_PENALTY: -0.05,
+    PLANTATION_GAINS: {
+      Fieldbean: 0.02,
+      Oat: 0.01,
+      Rye: 0.01,
+      Beet: 0.01,
+      Grass: 0.03,
+    } as Partial<Record<CropType, number>>,
+    PLANTATION_LOSSES: {
+      Barley: -0.01,
+      Potato: -0.02,
+      Corn: -0.02,
+      Wheat: -0.01,
+      Beet: -0.01,
+    } as Partial<Record<CropType, number>>,
+  },
+  NUTRITION: {
+    START: 80,
+    MAX: 200,
+    BASE_DECLINE: 0.1,
+    FERTILIZER_SYNTHETIC: 60,
+    FERTILIZER_ORGANIC: 40,
+    FIELDBEAN_BONUS: 20,
+    ANIMALS_REQUIRED_RATIO: 0.2,
+  },
+  CROPS: {
+    Fieldbean: {
+      id: 'Fieldbean',
+      image: 'ackerbohne.jpg',
+      pest: 'Blattlaus',
+      yields: { veryHigh: '≥ 48', high: '36-47', moderate: '24-35', low: '13-23', veryLow: '< 13' },
+      baseYield: 60,
+      soilSensitivity: 0.8,
+      nutritionSensitivity: 0.5,
+      weatherSensitivity: { drought: 'Stark', cold: 'Mäßig', flood: 'Stark' },
+      seedPrice: { conventional: 120, organic: 144 },
+      marketValue: { conventional: 18, organic: 21 },
+      special: 'Ackerbohnen erhöhen den Mineralstoffgehalt und die Bodenqualität.'
+    },
+    Barley: {
+      id: 'Barley',
+      image: 'gerste.jpg',
+      pest: 'Fritfliege',
+      yields: { veryHigh: '≥ 76', high: '57-75', moderate: '38-56', low: '20-37', veryLow: '< 20' },
+      baseYield: 95,
+      soilSensitivity: 1.1,
+      nutritionSensitivity: 0.9,
+      weatherSensitivity: { drought: 'Stark', cold: 'Stark', flood: 'Stark' },
+      seedPrice: { conventional: 68, organic: 85 },
+      marketValue: { conventional: 13, organic: 14.5 }
+    },
+    Oat: {
+      id: 'Oat',
+      image: 'hafer.jpg',
+      pest: 'Fritfliege',
+      yields: { veryHigh: '≥ 56', high: '42-55', moderate: '28-41', low: '15-27', veryLow: '< 15' },
+      baseYield: 70,
+      soilSensitivity: 0.9,
+      nutritionSensitivity: 0.8,
+      weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
+      seedPrice: { conventional: 60, organic: 75 },
+      marketValue: { conventional: 12, organic: 14 },
+      special: 'Hafer verbessert die Bodenqualität.'
+    },
+    Potato: {
+      id: 'Potato',
+      image: 'kartoffel.jpg',
+      pest: 'Kartoffelkäfer',
+      yields: { veryHigh: '≥ 296', high: '222-295', moderate: '148-221', low: '75-147', veryLow: '< 75' },
+      baseYield: 370,
+      soilSensitivity: 1.3,
+      nutritionSensitivity: 1.4,
+      weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
+      seedPrice: { conventional: 110, organic: 133 },
+      marketValue: { conventional: 4, organic: 5 }
+    },
+    Corn: {
+      id: 'Corn',
+      image: 'mais.jpg',
+      pest: 'Maiszünsler',
+      yields: { veryHigh: '≥ 88', high: '66-87', moderate: '44-65', low: '23-43', veryLow: '< 23' },
+      baseYield: 110,
+      soilSensitivity: 1.2,
+      nutritionSensitivity: 1.2,
+      weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
+      seedPrice: { conventional: 70, organic: 84 },
+      marketValue: { conventional: 17, organic: 15 }
+    },
+    Rye: {
+      id: 'Rye',
+      image: 'roggen.jpg',
+      pest: 'Blattlaus',
+      yields: { veryHigh: '≥ 80', high: '60-79', moderate: '40-59', low: '20-39', veryLow: '< 20' },
+      baseYield: 100,
+      soilSensitivity: 0.9,
+      nutritionSensitivity: 0.8,
+      weatherSensitivity: { drought: 'Mäßig', cold: 'Mäßig', flood: 'Stark' },
+      seedPrice: { conventional: 76, organic: 95 },
+      marketValue: { conventional: 13, organic: 14.5 },
+      special: 'Roggen verbessert die Bodenqualität.'
+    },
+    Wheat: {
+      id: 'Wheat',
+      image: 'weizen.jpg',
+      pest: 'Blattlaus',
+      yields: { veryHigh: '≥ 92', high: '69-91', moderate: '46-68', low: '24-45', veryLow: '< 24' },
+      baseYield: 115,
+      soilSensitivity: 1.2,
+      nutritionSensitivity: 1.3,
+      weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
+      seedPrice: { conventional: 72, organic: 90 },
+      marketValue: { conventional: 17, organic: 15 }
+    },
+    Beet: {
+      id: 'Beet',
+      image: 'zuckerruebe.jpg',
+      pest: 'Drahtwurm',
+      yields: { veryHigh: '≥ 456', high: '342-455', moderate: '228-341', low: '115-227', veryLow: '< 115' },
+      baseYield: 570,
+      soilSensitivity: 1.1,
+      nutritionSensitivity: 1.3,
+      weatherSensitivity: { drought: 'Stark', cold: 'Stark', flood: 'Stark' },
+      seedPrice: { conventional: 120, organic: 144 },
+      marketValue: { conventional: 2.5, organic: 2 },
+      special: 'Zuckerrüben verbessern die Bodenqualität.'
+    }
+  } as Record<string, any>,
+  EXPENSES: {
+    RUNNING: {
+      ORGANIC_CONTROL: 200,
+      FERTILIZE: 50,
+      PESTICIDE: 50,
+      ORGANISMS: 100,
+      ANIMALS: 150,
+      BASE_CONVENTIONAL: 500,
+      BASE_ORGANIC: 700,
+    }
+  },
+  ROTATION_MATRIX: {
+    Fieldbean: { Grass: 'good', Fallow: 'good', Fieldbean: 'bad', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
+    Barley: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'bad', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'ok' },
+    Oat: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'bad', Potato: 'ok', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'ok' },
+    Potato: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'ok', Oat: 'ok', Potato: 'bad', Corn: 'ok', Rye: 'ok', Wheat: 'ok', Beet: 'ok' },
+    Corn: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'ok', Potato: 'good', Corn: 'bad', Rye: 'bad', Wheat: 'bad', Beet: 'good' },
+    Rye: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'ok', Rye: 'bad', Wheat: 'ok', Beet: 'ok' },
+    Wheat: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'bad', Oat: 'ok', Potato: 'good', Corn: 'good', Rye: 'bad', Wheat: 'bad', Beet: 'good' },
+    Beet: { Grass: 'good', Fallow: 'good', Fieldbean: 'good', Barley: 'ok', Oat: 'ok', Potato: 'good', Corn: 'ok', Rye: 'ok', Wheat: 'ok', Beet: 'bad' },
+    Fallow: { Grass: 'good', Fallow: 'good', Fieldbean: 'ok', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
+    Grass: { Grass: 'bad', Fallow: 'good', Fieldbean: 'good', Barley: 'good', Oat: 'good', Potato: 'good', Corn: 'good', Rye: 'good', Wheat: 'good', Beet: 'good' },
+  } as Record<CropType, Record<CropType, 'good' | 'ok' | 'bad'>>
+};

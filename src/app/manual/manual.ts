@@ -1,36 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { RouterLink } from '@angular/router';
-
-interface CropDetail {
-  id: string;
-  name: string;
-  image: string;
-  rotationGood: string[];
-  rotationOkay?: string[];
-  rotationBad?: string[];
-  minSoil: string;
-  minMinerals: string;
-  weatherDrought: string;
-  weatherCold: string;
-  weatherFlood: string;
-  yields: {
-    veryHigh: string;
-    high: string;
-    moderate: string;
-    low: string;
-    veryLow: string;
-  };
-  prices: {
-    seedConv: number;
-    seedOrg: number;
-    salesConv: number;
-    salesOrg: number;
-  };
-  pest: string;
-  special?: string;
-}
+import { GAME_CONSTANTS } from '../game-constants';
+import { CropType } from '../types';
 
 @Component({
   selector: 'app-manual',
@@ -93,9 +66,9 @@ interface CropDetail {
                 <!-- Crop Image & Title -->
                 <div class="w-full md:w-1/3">
                   <div class="aspect-square rounded-2xl overflow-hidden shadow-lg mb-6 border-4 border-white group-hover:border-emerald-200 transition-colors">
-                    <img [src]="'assets/images/' + crop.image" [alt]="crop.name" class="w-full h-full object-cover">
+                    <img [src]="'assets/images/' + crop.image" [alt]="'crop.' + crop.id.toLowerCase() | transloco" class="w-full h-full object-cover">
                   </div>
-                  <h3 class="text-3xl font-black text-gray-900 mb-2">{{ crop.name }}</h3>
+                  <h3 class="text-3xl font-black text-gray-900 mb-2">{{ 'crop.' + crop.id.toLowerCase() | transloco }}</h3>
                   <div class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm font-bold border border-emerald-100">
                     {{ crop.pest }}
                   </div>
@@ -108,14 +81,14 @@ interface CropDetail {
                   <div class="sm:col-span-2">
                     <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{{ 'manual.crops.rotation' | transloco }}</h4>
                     <div class="flex flex-wrap gap-2">
-                      <span *ngFor="let c of crop.rotationGood" class="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm font-medium border border-green-200">
-                        {{ c }}
+                      <span *ngFor="let rot of getRotation(crop.id, 'good')" class="px-3 py-1 bg-green-100 text-green-800 rounded-lg text-sm font-medium border border-green-200">
+                        {{ 'crop.' + rot.toLowerCase() | transloco }}
                       </span>
-                      <span *ngFor="let c of crop.rotationOkay" class="px-3 py-1 bg-blue-50 text-blue-800 rounded-lg text-sm font-medium border border-blue-100">
-                        {{ c }}
+                      <span *ngFor="let rot of getRotation(crop.id, 'ok')" class="px-3 py-1 bg-blue-50 text-blue-800 rounded-lg text-sm font-medium border border-blue-100">
+                        {{ 'crop.' + rot.toLowerCase() | transloco }}
                       </span>
-                      <span *ngFor="let c of crop.rotationBad" class="px-3 py-1 bg-red-50 text-red-800 rounded-lg text-sm font-medium border border-red-100">
-                        {{ c }}
+                      <span *ngFor="let rot of getRotation(crop.id, 'bad')" class="px-3 py-1 bg-red-50 text-red-800 rounded-lg text-sm font-medium border border-red-100">
+                        {{ 'crop.' + rot.toLowerCase() | transloco }}
                       </span>
                     </div>
                   </div>
@@ -126,11 +99,11 @@ interface CropDetail {
                     <ul class="space-y-3">
                       <li class="flex justify-between items-center border-b border-gray-200 pb-2">
                         <span class="text-gray-600">{{ 'manual.crops.soil' | transloco }}</span>
-                        <span class="font-bold text-gray-900">{{ crop.minSoil }}</span>
+                        <span class="font-bold text-gray-900">{{ crop.yields.veryHigh ? 'Hoch' : 'Mäßig' }}</span> <!-- Fallback or map based on sensitivity -->
                       </li>
                       <li class="flex justify-between items-center border-b border-gray-200 pb-2">
                         <span class="text-gray-600">{{ 'manual.crops.minerals' | transloco }}</span>
-                        <span class="font-bold text-gray-900">{{ crop.minMinerals }}</span>
+                        <span class="font-bold text-gray-900">{{ crop.id === 'Wheat' || crop.id === 'Potato' || crop.id === 'Beet' ? 'Hoch' : 'Niedrig' }}</span>
                       </li>
                     </ul>
                   </div>
@@ -141,15 +114,15 @@ interface CropDetail {
                     <ul class="space-y-3">
                       <li class="flex justify-between items-center border-b border-gray-200 pb-2">
                         <span class="text-gray-600">{{ 'manual.crops.drought' | transloco }}</span>
-                        <span class="font-bold" [ngClass]="getWeatherClass(crop.weatherDrought)">{{ crop.weatherDrought }}</span>
+                        <span class="font-bold" [ngClass]="getWeatherClass(crop.weatherSensitivity.drought)">{{ crop.weatherSensitivity.drought }}</span>
                       </li>
                       <li class="flex justify-between items-center border-b border-gray-200 pb-2">
                         <span class="text-gray-600">{{ 'manual.crops.cold' | transloco }}</span>
-                        <span class="font-bold" [ngClass]="getWeatherClass(crop.weatherCold)">{{ crop.weatherCold }}</span>
+                        <span class="font-bold" [ngClass]="getWeatherClass(crop.weatherSensitivity.cold)">{{ crop.weatherSensitivity.cold }}</span>
                       </li>
                       <li class="flex justify-between items-center border-b border-gray-200 pb-2">
                         <span class="text-gray-600">{{ 'manual.crops.flood' | transloco }}</span>
-                        <span class="font-bold" [ngClass]="getWeatherClass(crop.weatherFlood)">{{ crop.weatherFlood }}</span>
+                        <span class="font-bold" [ngClass]="getWeatherClass(crop.weatherSensitivity.flood)">{{ crop.weatherSensitivity.flood }}</span>
                       </li>
                     </ul>
                   </div>
@@ -190,11 +163,11 @@ interface CropDetail {
                         <div class="space-y-2">
                           <div class="flex justify-between">
                             <span class="text-gray-500 text-sm">{{ 'manual.prices.seed' | transloco }}</span>
-                            <span class="font-bold">{{ crop.prices.seedConv }}€</span>
+                            <span class="font-bold">{{ crop.seedPrice.conventional }}€</span>
                           </div>
                           <div class="flex justify-between">
                             <span class="text-gray-500 text-sm">{{ 'manual.prices.sale' | transloco }}</span>
-                            <span class="font-bold">{{ crop.prices.salesConv }}€</span>
+                            <span class="font-bold">{{ crop.marketValue.conventional }}€</span>
                           </div>
                         </div>
                       </div>
@@ -203,11 +176,11 @@ interface CropDetail {
                         <div class="space-y-2">
                           <div class="flex justify-between">
                             <span class="text-gray-500 text-sm">{{ 'manual.prices.seed' | transloco }}</span>
-                            <span class="font-bold">{{ crop.prices.seedOrg }}€</span>
+                            <span class="font-bold">{{ crop.seedPrice.organic }}€</span>
                           </div>
                           <div class="flex justify-between">
                             <span class="text-gray-500 text-sm">{{ 'manual.prices.sale' | transloco }}</span>
-                            <span class="font-bold">{{ crop.prices.salesOrg }}€</span>
+                            <span class="font-bold">{{ crop.marketValue.organic }}€</span>
                           </div>
                         </div>
                       </div>
@@ -249,137 +222,16 @@ interface CropDetail {
 export class ManualComponent {
   private transloco = inject(TranslocoService);
 
-  crops: CropDetail[] = [
-    {
-      id: 'fieldbean',
-      name: 'Ackerbohne',
-      image: 'ackerbohne.jpg',
-      rotationGood: ['Ackerbohne', 'Gerste', 'Hafer', 'Kartoffeln', 'Mais', 'Roggen', 'Weizen', 'Zuckerrübe'],
-      minSoil: 'Mäßig',
-      minMinerals: 'Niedrig',
-      weatherDrought: 'Stark',
-      weatherCold: 'Mäßig',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 48', high: '36-47', moderate: '24-35', low: '13-23', veryLow: '< 13' },
-      prices: { seedConv: 120, seedOrg: 144, salesConv: 18, salesOrg: 21 },
-      pest: 'Blattlaus',
-      special: 'Ackerbohnen erhöhen den Mineralstoffgehalt und die Bodenqualität.'
-    },
-    {
-      id: 'barley',
-      name: 'Gerste',
-      image: 'gerste.jpg',
-      rotationGood: ['Ackerbohne', 'Kartoffeln', 'Mais', 'Roggen', 'Weizen'],
-      rotationOkay: ['Gerste', 'Zuckerrübe'],
-      rotationBad: ['Hafer'],
-      minSoil: 'Hoch',
-      minMinerals: 'Niedrig',
-      weatherDrought: 'Stark',
-      weatherCold: 'Stark',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 76', high: '57-75', moderate: '38-56', low: '20-37', veryLow: '< 20' },
-      prices: { seedConv: 68, seedOrg: 85, salesConv: 13, salesOrg: 14.5 },
-      pest: 'Fritfliege'
-    },
-    {
-      id: 'oat',
-      name: 'Hafer',
-      image: 'hafer.jpg',
-      rotationGood: ['Ackerbohne', 'Gerste', 'Mais', 'Roggen', 'Weizen'],
-      rotationOkay: ['Kartoffeln', 'Zuckerrübe'],
-      rotationBad: ['Hafer'],
-      minSoil: 'Mäßig',
-      minMinerals: 'Mäßig',
-      weatherDrought: 'Mäßig',
-      weatherCold: 'Stark',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 56', high: '42-55', moderate: '28-41', low: '15-27', veryLow: '< 15' },
-      prices: { seedConv: 60, seedOrg: 75, salesConv: 12, salesOrg: 14 },
-      pest: 'Fritfliege',
-      special: 'Hafer verbessert die Bodenqualität.'
-    },
-    {
-      id: 'potato',
-      name: 'Kartoffel',
-      image: 'kartoffel.jpg',
-      rotationGood: ['Ackerbohne'],
-      rotationOkay: ['Gerste', 'Hafer', 'Mais', 'Roggen', 'Weizen', 'Zuckerrübe'],
-      rotationBad: ['Kartoffeln'],
-      minSoil: 'Hoch',
-      minMinerals: 'Hoch',
-      weatherDrought: 'Mäßig',
-      weatherCold: 'Stark',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 296', high: '222-295', moderate: '148-221', low: '75-147', veryLow: '< 75' },
-      prices: { seedConv: 110, seedOrg: 133, salesConv: 4, salesOrg: 5 },
-      pest: 'Kartoffelkäfer'
-    },
-    {
-      id: 'corn',
-      name: 'Mais',
-      image: 'mais.jpg',
-      rotationGood: ['Ackerbohne', 'Kartoffeln', 'Mais', 'Zuckerrübe'],
-      rotationOkay: ['Hafer'],
-      rotationBad: ['Gerste', 'Roggen', 'Weizen'],
-      minSoil: 'Mäßig',
-      minMinerals: 'Mäßig',
-      weatherDrought: 'Mäßig',
-      weatherCold: 'Stark',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 88', high: '66-87', moderate: '44-65', low: '23-43', veryLow: '< 23' },
-      prices: { seedConv: 70, seedOrg: 84, salesConv: 15, salesOrg: 18 },
-      pest: 'Maiszünsler'
-    },
-    {
-      id: 'rye',
-      name: 'Roggen',
-      image: 'roggen.jpg',
-      rotationGood: ['Ackerbohne', 'Gerste', 'Hafer', 'Kartoffeln', 'Roggen'],
-      rotationOkay: ['Mais', 'Weizen', 'Zuckerrübe'],
-      minSoil: 'Mäßig',
-      minMinerals: 'Niedrig',
-      weatherDrought: 'Mäßig',
-      weatherCold: 'Mäßig',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 80', high: '60-79', moderate: '40-59', low: '20-39', veryLow: '< 20' },
-      prices: { seedConv: 76, seedOrg: 95, salesConv: 13, salesOrg: 14.5 },
-      pest: 'Blattlaus',
-      special: 'Roggen verbessert die Bodenqualität.'
-    },
-    {
-      id: 'wheat',
-      name: 'Weizen',
-      image: 'weizen.jpg',
-      rotationGood: ['Ackerbohne', 'Kartoffeln', 'Mais', 'Zuckerrübe'],
-      rotationOkay: ['Hafer'],
-      rotationBad: ['Gerste', 'Roggen', 'Weizen'],
-      minSoil: 'Hoch',
-      minMinerals: 'Hoch',
-      weatherDrought: 'Mäßig',
-      weatherCold: 'Stark',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 92', high: '69-91', moderate: '46-68', low: '24-45', veryLow: '< 24' },
-      prices: { seedConv: 72, seedOrg: 90, salesConv: 15, salesOrg: 18 },
-      pest: 'Blattlaus'
-    },
-    {
-      id: 'beet',
-      name: 'Zuckerrübe',
-      image: 'zuckerruebe.jpg',
-      rotationGood: ['Ackerbohne', 'Kartoffeln'],
-      rotationOkay: ['Gerste', 'Hafer', 'Mais', 'Roggen', 'Weizen'],
-      rotationBad: ['Zuckerrübe'],
-      minSoil: 'Mäßig',
-      minMinerals: 'Hoch',
-      weatherDrought: 'Stark',
-      weatherCold: 'Stark',
-      weatherFlood: 'Stark',
-      yields: { veryHigh: '≥ 456', high: '342-455', moderate: '228-341', low: '115-227', veryLow: '< 115' },
-      prices: { seedConv: 120, seedOrg: 144, salesConv: 3, salesOrg: 4 },
-      pest: 'Drahtwurm',
-      special: 'Zuckerrüben verbessern die Bodenqualität.'
-    }
-  ];
+  crops = Object.values(GAME_CONSTANTS.CROPS);
+
+  getRotation(cropId: string, type: 'good' | 'ok' | 'bad'): string[] {
+    const matrix = GAME_CONSTANTS.ROTATION_MATRIX;
+    const cropType = cropId as CropType;
+    
+    // Invert search: we want to know what can be planted BEFORE this crop
+    // The matrix is [PREVIOUS][NEXT]. So we check all PREVIOUS where NEXT is cropType.
+    return Object.keys(matrix).filter(prev => matrix[prev as CropType][cropType] === type);
+  }
 
   getWeatherClass(level: string) {
     if (level === 'Stark') return 'text-red-600';
@@ -391,3 +243,4 @@ export class ManualComponent {
     window.print();
   }
 }
+

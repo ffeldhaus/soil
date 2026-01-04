@@ -2,38 +2,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Game, PlayerState, Round, RoundResult, CropType, RoundDecision } from '../../types';
-
-const EXPENSES = {
-    SEEDS: {
-        Fieldbean: { organic: 144, conventional: 120 },
-        Barley: { organic: 85, conventional: 68 },
-        Oat: { organic: 75, conventional: 60 },
-        Potato: { organic: 133, conventional: 110 },
-        Corn: { organic: 84, conventional: 70 },
-        Rye: { organic: 95, conventional: 76 },
-        Wheat: { organic: 90, conventional: 72 },
-        Beet: { organic: 144, conventional: 120 },
-    } as Record<string, { organic: number, conventional: number }>,
-    RUNNING: {
-        ORGANIC_CONTROL: 200,
-        FERTILIZE: 50,
-        PESTICIDE: 50,
-        ORGANISMS: 100,
-        BASE_CONVENTIONAL: 500,
-        BASE_ORGANIC: 700,
-    }
-};
-
-const PRICES = {
-    Fieldbean: { organic: 21, conventional: 18 },
-    Barley: { organic: 14.5, conventional: 13 },
-    Oat: { organic: 14, conventional: 12 },
-    Potato: { organic: 5, conventional: 4 },
-    Corn: { organic: 17, conventional: 15 },
-    Rye: { organic: 14.5, conventional: 13 },
-    Wheat: { organic: 17, conventional: 15 },
-    Beet: { organic: 2.5, conventional: 2 },
-} as Record<string, { organic: number, conventional: number }>;
+import { GAME_CONSTANTS } from '../../game-constants';
 
 interface DetailedExpenses {
     seeds: Record<string, number>;
@@ -154,8 +123,8 @@ export class Finance implements OnChanges {
         // Calculate detailed seeds
         const seeds: Record<string, number> = {};
         Object.entries(decision.parcels).forEach(([_, crop]) => {
-            if (crop !== 'Fallow' && crop !== 'Grass' && EXPENSES.SEEDS[crop]) {
-                const cost = decision.organic ? EXPENSES.SEEDS[crop].organic : EXPENSES.SEEDS[crop].conventional;
+            if (crop !== 'Fallow' && crop !== 'Grass' && GAME_CONSTANTS.CROPS[crop]) {
+                const cost = decision.organic ? GAME_CONSTANTS.CROPS[crop].seedPrice.organic : GAME_CONSTANTS.CROPS[crop].seedPrice.conventional;
                 seeds[crop] = (seeds[crop] || 0) + cost;
             }
         });
@@ -163,8 +132,8 @@ export class Finance implements OnChanges {
         // Calculate detailed income
         const harvestIncome: Record<string, number> = {};
         Object.entries(result.harvestSummary).forEach(([crop, amount]) => {
-            if (crop !== 'Fallow' && crop !== 'Grass' && PRICES[crop]) {
-                const price = decision.organic ? PRICES[crop].organic : PRICES[crop].conventional;
+            if (crop !== 'Fallow' && crop !== 'Grass' && GAME_CONSTANTS.CROPS[crop]) {
+                const price = decision.organic ? GAME_CONSTANTS.CROPS[crop].marketValue.organic : GAME_CONSTANTS.CROPS[crop].marketValue.conventional;
                 harvestIncome[crop] = (harvestIncome[crop] || 0) + (amount * price);
             }
         });
@@ -176,12 +145,12 @@ export class Finance implements OnChanges {
                 animals: 0 // Placeholder if animals are added later
             },
             running: {
-                organic_control: decision.organic ? EXPENSES.RUNNING.ORGANIC_CONTROL : 0,
-                fertilize: decision.fertilizer ? 40 * EXPENSES.RUNNING.FERTILIZE : 0,
-                pesticide: decision.pesticide ? 40 * EXPENSES.RUNNING.PESTICIDE : 0,
-                organisms: decision.organisms ? 40 * EXPENSES.RUNNING.ORGANISMS : 0,
+                organic_control: decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0,
+                fertilize: decision.fertilizer ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0,
+                pesticide: decision.pesticide ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0,
+                organisms: decision.organisms ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0,
                 animals: 0,
-                base: decision.organic ? EXPENSES.RUNNING.BASE_ORGANIC : EXPENSES.RUNNING.BASE_CONVENTIONAL
+                base: decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL
             },
             total: result.expenses.total
         };

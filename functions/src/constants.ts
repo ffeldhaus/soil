@@ -54,8 +54,7 @@ export const WEATHER_EFFECTS: Record<string, { yield: number, soil: number }> = 
 
 export const VERMIN_EFFECTS: Record<string, { yield: number, organic_multiplier: number }> = {
     'None': { yield: 1.0, organic_multiplier: 1.0 },
-    'Pests': { yield: 0.7, organic_multiplier: 1.2 }, // Pests hit conventional harder if no pesticide? 
-    // Wait, organic beneficial organisms are 100 costs.
+    'Pests': { yield: 0.7, organic_multiplier: 1.2 },
 };
 
 export const HARVEST_YIELD = {
