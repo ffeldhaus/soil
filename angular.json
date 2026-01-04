@@ -28,8 +28,12 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "allowedCommonJsDependencies": [
+              "qrcode",
+              "dijkstrajs"
+            ],
             "define": {
-              "import.meta.env.APP_VERSION": "\"1.1.2\""
+              "import.meta.env.APP_VERSION": "\"1.1.4\""
             },
             "assets": [
               {
