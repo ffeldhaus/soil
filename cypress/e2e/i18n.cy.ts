@@ -22,7 +22,8 @@ describe('Internationalization (i18n)', () => {
   it('should persist language choice in localStorage', () => {
     cy.visit('/');
     // Switch to DE
-    cy.contains('button', 'DE').click();
+    cy.get('app-language-switcher button').first().click(); // Open dropdown
+    cy.contains('button', 'Deutsch').click(); // Select Deutsch
     cy.window().then((win) => {
         expect(win.localStorage.getItem('soil_user_language')).to.eq('de');
     });

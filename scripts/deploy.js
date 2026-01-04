@@ -25,60 +25,18 @@ rl.question(`Enter new version (default ${nextPatch}): `, (answer) => {
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
     console.log(`Updated package.json to version ${newVersion}`);
 
-    // Update src/index.html
-    const indexHtmlPath = 'src/index.html';
-    if (fs.existsSync(indexHtmlPath)) {
-        let indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
-        indexHtml = indexHtml.replace(/(<meta name="app-version" content=")[^"]+(")/, `$1${newVersion}$2`);
-        fs.writeFileSync(indexHtmlPath, indexHtml);
-        console.log(`Updated src/index.html to version ${newVersion}`);
-    }
-
     rl.close();
 
-    const ngPath = './node_modules/.bin/ng';
     const firebasePath = './node_modules/.bin/firebase';
 
     try {
-        console.log('Building with localization...');
-        execSync(`${ngPath} build --localize`, { stdio: 'inherit' });
-
-        // Copy public assets to root (dist/soil/browser) to ensure they are served correctly
-        // despite localized subfolders.
-        const publicDir = 'public';
-        const outputDir = 'dist/soil/browser';
-        if (fs.existsSync(publicDir)) {
-            console.log('Copying public assets to root...');
-            const files = fs.readdirSync(publicDir);
-            for (const file of files) {
-                const srcPath = path.join(publicDir, file);
-                const destPath = path.join(outputDir, file);
-                if (fs.lstatSync(srcPath).isFile()) {
-                    fs.copyFileSync(srcPath, destPath);
-                }
-            }
-        }
-
-        // Copy service worker files from default locale (en-US) to root
-        const enUsDir = 'dist/soil/browser/en-US';
-        const swFiles = ['ngsw-worker.js', 'ngsw.json'];
-        if (fs.existsSync(enUsDir)) {
-            console.log('Copying service worker files to root...');
-            for (const file of swFiles) {
-                const srcPath = path.join(enUsDir, file);
-                const destPath = path.join(outputDir, file);
-                if (fs.existsSync(srcPath)) {
-                    fs.copyFileSync(srcPath, destPath);
-                }
-            }
-        }
-
-        console.log('Deploying to Firebase...');
-        execSync(`${firebasePath} deploy`, {
+        console.log('Deploying backend and rules to Firebase (App Hosting handles frontend)...');
+        execSync(`${firebasePath} deploy --only functions,firestore,storage`, {
             stdio: 'inherit'
         });
 
         console.log('Deployment complete!');
+        console.log('Note: Frontend deployment is handled automatically by App Hosting upon push to main.');
     } catch (error) {
         console.error('Deployment failed:', error.message);
         process.exit(1);

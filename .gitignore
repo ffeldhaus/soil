@@ -43,6 +43,7 @@ __screenshots__/
 firebug.log
 firebase-debug.log*
 ui-debug.log*
+/functions/lib
 
 # System files
 .DS_Store

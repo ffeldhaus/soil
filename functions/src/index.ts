@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
 
-setGlobalOptions({ region: "europe-west1" });
+setGlobalOptions({ region: "europe-west4" });
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import { GameEngine } from './game-engine';
 import { AiAgent } from './ai-agent';

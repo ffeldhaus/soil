@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
       return firestore;
     }),
     provideFunctions(() => {
-      const functions = getFunctions(app, 'europe-west1');
+      const functions = getFunctions(app, 'europe-west4');
       if (isDevMode()) {
         connectFunctionsEmulator(functions, 'localhost', 5001);
       }
