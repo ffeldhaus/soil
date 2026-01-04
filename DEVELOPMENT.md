@@ -79,7 +79,35 @@ npm run test:ci
 ```
 This runs all unit tests and E2E tests.
 
+## Release Process
+
+We use semantic versioning. The version is managed in `package.json` and automatically tagged in Git.
+
+To create a new release:
+
+1.  Ensure you are on the `main` branch and it is up to date.
+2.  Run the version command:
+    ```bash
+    npm version [patch | minor | major]
+    ```
+    This will:
+    - Update the version in `package.json`.
+    - Create a git commit.
+    - Create a git tag (e.g., `v1.2.0`).
+
+3.  Push the changes and the tag:
+    ```bash
+    git push origin main --tags
+    ```
+
+### Dynamic Versioning
+
+The application picks up the version automatically during the build process:
+- It uses `git describe` to get the current tag.
+- If a build ID is available (e.g., in Google Cloud Build), it is appended to the version.
+- The version is injected into the application and displayed in the console and metadata.
+
 ## Deployment
 
-Deployments are handled automatically via CI/CD (Firebase App Hosting) when merging to `main`.
+Deployments are handled automatically via CI/CD (Firebase App Hosting) when merging to `main` or pushing tags.
 **Do not deploy manually** unless fixing a critical production outage that CI/CD cannot handle.
