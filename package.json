@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --define \"import.meta.env.APP_VERSION='$(node scripts/get-version.js)'\"",
     "watch": "ng build --watch --configuration development",
     "start:emulators": "firebase emulators:start",
     "test:unit": "vitest run",

@@ -31,12 +31,12 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
           
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'playerLogin.gameId' | transloco }}</label>
-            <input formControlName="gameId" type="text" data-testid="player-login-gameid" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Game ID" [placeholder]="'playerLogin.placeholder.gameId' | transloco">
+            <input formControlName="gameId" type="text" autocomplete="username" data-testid="player-login-gameid" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Game ID" [placeholder]="'playerLogin.placeholder.gameId' | transloco">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'playerLogin.pin' | transloco }}</label>
-            <input formControlName="password" type="password" data-testid="player-login-pin" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Unique Player PIN" [placeholder]="'playerLogin.placeholder.pin' | transloco">
+            <input formControlName="password" type="password" autocomplete="current-password" data-testid="player-login-pin" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase" placeholder="Unique Player PIN" [placeholder]="'playerLogin.placeholder.pin' | transloco">
           </div>
 
           <button type="submit" [disabled]="loginForm.invalid || isLoading" data-testid="player-login-submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg">

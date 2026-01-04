@@ -51,19 +51,19 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
           <div *ngIf="!isGoogleUser" class="space-y-6">
             <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'adminRegister.email' | transloco }}</label>
-                <input formControlName="email" type="email" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="admin@school.edu" [placeholder]="'adminRegister.placeholder.email' | transloco">
+                <input formControlName="email" type="email" autocomplete="email" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="admin@school.edu" [placeholder]="'adminRegister.placeholder.email' | transloco">
                 <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-red-400 text-xs mt-1" >{{ 'adminRegister.error.email' | transloco }}</div>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'adminRegister.password' | transloco }}</label>
-                <input formControlName="password" type="password" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="Minimum 6 characters" [placeholder]="'adminRegister.placeholder.password' | transloco">
+                <input formControlName="password" type="password" autocomplete="new-password" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="Minimum 6 characters" [placeholder]="'adminRegister.placeholder.password' | transloco">
                 <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="text-red-400 text-xs mt-1" >{{ 'adminRegister.error.password' | transloco }}</div>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'adminRegister.confirmPassword' | transloco }}</label>
-                <input formControlName="confirmPassword" type="password" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="Confirm Password" [placeholder]="'adminRegister.placeholder.confirmPassword' | transloco">
+                <input formControlName="confirmPassword" type="password" autocomplete="new-password" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="Confirm Password" [placeholder]="'adminRegister.placeholder.confirmPassword' | transloco">
                 <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched" class="text-red-400 text-xs mt-1" >{{ 'adminRegister.error.mismatch' | transloco }}</div>
             </div>
           </div>
@@ -74,12 +74,12 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
              <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-400 mb-2"><ng-container >{{ 'adminRegister.firstName' | transloco }}</ng-container> <span class="text-red-400">*</span></label>
-                    <input formControlName="firstName" type="text" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="John" [placeholder]="'adminRegister.placeholder.firstName' | transloco">
+                    <input formControlName="firstName" type="text" autocomplete="given-name" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="John" [placeholder]="'adminRegister.placeholder.firstName' | transloco">
                      <div *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid" class="text-red-400 text-xs mt-1" >{{ 'adminRegister.error.required' | transloco }}</div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-400 mb-2"><ng-container >{{ 'adminRegister.lastName' | transloco }}</ng-container> <span class="text-red-400">*</span></label>
-                    <input formControlName="lastName" type="text" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="Doe" [placeholder]="'adminRegister.placeholder.lastName' | transloco">
+                    <input formControlName="lastName" type="text" autocomplete="family-name" class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="Doe" [placeholder]="'adminRegister.placeholder.lastName' | transloco">
                      <div *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid" class="text-red-400 text-xs mt-1" >{{ 'adminRegister.error.required' | transloco }}</div>
                 </div>
              </div>

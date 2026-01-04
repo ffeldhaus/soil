@@ -28,6 +28,9 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "define": {
+              "import.meta.env.APP_VERSION": "\"1.1.2\""
+            },
             "assets": [
               {
                 "glob": "**/*",

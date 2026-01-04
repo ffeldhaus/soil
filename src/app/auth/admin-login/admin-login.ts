@@ -33,12 +33,12 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
           
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'adminLogin.email' | transloco }}</label>
-            <input formControlName="email" type="email" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="admin@school.edu" [placeholder]="'adminLogin.placeholder.email' | transloco">
+            <input formControlName="email" type="email" autocomplete="email" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="admin@school.edu" [placeholder]="'adminLogin.placeholder.email' | transloco">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2" >{{ 'adminLogin.password' | transloco }}</label>
-            <input formControlName="password" type="password" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="••••••••">
+            <input formControlName="password" type="password" autocomplete="current-password" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white" placeholder="••••••••">
           </div>
 
           <button type="submit" [disabled]="loginForm.invalid || isLoading" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg">

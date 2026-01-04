@@ -13,7 +13,7 @@ import { LanguageService } from './services/language.service';
 export class App {
   protected languageService = inject(LanguageService);
   protected readonly title = signal('soil');
-  version = import.meta.env?.APP_VERSION || 'dev';
+  version = (import.meta as any).env.APP_VERSION || 'dev';
 
   constructor(updates: SwUpdate) {
     console.log(`Soil Version ${this.version} (app.ts)`);
