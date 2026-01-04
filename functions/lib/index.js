@@ -4,7 +4,7 @@ exports.saveDraft = exports.processDeadlines = exports.updateRoundDeadline = exp
 const admin = require("firebase-admin");
 const https_1 = require("firebase-functions/v2/https");
 const v2_1 = require("firebase-functions/v2");
-(0, v2_1.setGlobalOptions)({ region: "europe-west1" });
+(0, v2_1.setGlobalOptions)({ region: "europe-west4" });
 const scheduler_1 = require("firebase-functions/v2/scheduler");
 const game_engine_1 = require("./game-engine");
 const ai_agent_1 = require("./ai-agent");
@@ -763,7 +763,7 @@ exports.undeleteGames = (0, https_1.onCall)(async (request) => {
     }
     return { success: true };
 });
-exports.dailyGamePurge = (0, scheduler_1.onSchedule)('every 24 hours', async (event) => {
+exports.dailyGamePurge = (0, scheduler_1.onSchedule)({ schedule: 'every 24 hours', region: 'europe-west3' }, async (event) => {
     const now = admin.firestore.Timestamp.now();
     const nowMillis = now.toMillis();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -878,7 +878,7 @@ exports.updateRoundDeadline = (0, https_1.onCall)(async (request) => {
     await gameRef.update({ roundDeadlines: deadlines });
     return { success: true };
 });
-exports.processDeadlines = (0, scheduler_1.onSchedule)("every 1 minutes", async (event) => {
+exports.processDeadlines = (0, scheduler_1.onSchedule)({ schedule: "every 1 minutes", region: "europe-west3" }, async (event) => {
     var _a;
     const now = admin.firestore.Timestamp.now();
     // Find games in progress

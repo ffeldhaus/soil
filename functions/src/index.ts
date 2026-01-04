@@ -894,7 +894,7 @@ export const undeleteGames = onCall(async (request) => {
     return { success: true };
 });
 
-export const dailyGamePurge = onSchedule('every 24 hours', async (event) => {
+export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: 'europe-west3' }, async (event) => {
     const now = admin.firestore.Timestamp.now();
     const nowMillis = now.toMillis();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -1026,7 +1026,7 @@ export const updateRoundDeadline = onCall(async (request) => {
     return { success: true };
 });
 
-export const processDeadlines = onSchedule("every 1 minutes", async (event) => {
+export const processDeadlines = onSchedule({ schedule: "every 1 minutes", region: "europe-west3" }, async (event) => {
     const now = admin.firestore.Timestamp.now();
 
     // Find games in progress

@@ -3,12 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const ai_agent_1 = require("./ai-agent");
 describe('AiAgent', () => {
-    it('should create an elementary decision', () => {
+    it('elementary agent should make minimal decisions', () => {
         const decision = ai_agent_1.AiAgent.makeDecision('elementary', undefined);
         (0, chai_1.expect)(decision.machines).to.equal(0);
         (0, chai_1.expect)(Object.keys(decision.parcels)).to.have.length(40);
+        // Elementary can be true/false for fertilizer/pesticide due to random, but organic is always false in code
+        (0, chai_1.expect)(decision.organic).to.be.false;
     });
-    it('should create a middle decision following rotation', () => {
+    it('middle agent should follow rotation', () => {
         const prevParcels = Array(40).fill(null).map((_, i) => ({
             index: i,
             crop: 'Potato',
@@ -22,16 +24,12 @@ describe('AiAgent', () => {
             parcelsSnapshot: prevParcels
         };
         const decision = ai_agent_1.AiAgent.makeDecision('middle', prevRound);
-        // Middle strategy avoids bad rotations (Potato -> Potato is bad)
+        (0, chai_1.expect)(decision.machines).to.equal(1);
         (0, chai_1.expect)(decision.parcels[0]).to.not.equal('Potato');
     });
-    it('should create a high level decision and go organic if soil is high', () => {
+    it('high level agent should go organic if soil is excellent', () => {
         const prevParcels = Array(40).fill(null).map((_, i) => ({
-            index: i,
-            crop: 'Wheat',
-            soil: 121,
-            nutrition: 100,
-            yield: 0
+            index: i, crop: 'Fallow', soil: 130, nutrition: 100, yield: 0
         }));
         const prevRound = {
             number: 1,
@@ -40,6 +38,8 @@ describe('AiAgent', () => {
         };
         const decision = ai_agent_1.AiAgent.makeDecision('high', prevRound);
         (0, chai_1.expect)(decision.organic).to.be.true;
+        (0, chai_1.expect)(decision.fertilizer).to.be.false;
+        (0, chai_1.expect)(decision.organisms).to.be.true;
     });
 });
 //# sourceMappingURL=ai-agent.test.js.map
