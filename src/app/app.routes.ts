@@ -8,6 +8,7 @@ import { SuperAdminComponent } from './admin/super-admin/super-admin';
 import { PlayerLoginComponent } from './auth/player-login/player-login';
 
 import { ImpressumComponent } from './impressum/impressum';
+import { ManualComponent } from './manual/manual';
 
 export const routes: Routes = [
     { path: 'de', redirectTo: '' },
@@ -19,4 +20,5 @@ export const routes: Routes = [
     { path: 'admin', component: Dashboard },
     { path: 'game-login', component: PlayerLoginComponent },
     { path: 'impressum', component: ImpressumComponent },
+    { path: 'manual', component: ManualComponent },
 ];

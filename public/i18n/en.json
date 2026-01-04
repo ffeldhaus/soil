@@ -151,7 +151,52 @@
     }
   },
   "footer": {
-    "impressum": "Impressum"
+    "impressum": "Impressum",
+    "manual": "Manual"
+  },
+  "manual": {
+    "title": "Soil User Manual",
+    "subtitle": "The guide for successful farmers",
+    "print": "Save as PDF",
+    "back": "Back to Game",
+    "footer": "Good luck with your simulation! Always keep an eye on the balance between yield and sustainability.",
+    "intro": {
+      "title": "Introduction",
+      "goal": {
+        "title": "Game Objective",
+        "text": "In Soil, you lead an agricultural operation over several rounds. The goal is to generate high closing capital while maintaining soil quality for future generations. Sustainable actions are rewarded with the Organic Seal, which enables higher selling prices."
+      },
+      "mechanics": {
+        "title": "Game Mechanics",
+        "text": "Each round, you decide what to plant on your fields. Pay attention to crop rotation: certain plants grow better after others. Fertilizers and pesticides increase yield but can strain the soil in the long term. Beneficial organisms and organic methods promote soil health."
+      }
+    },
+    "crops": {
+      "title": "Crop Pass",
+      "rotation": "Rotation (Good previous crops)",
+      "requirements": "Requirements",
+      "soil": "Soil Quality",
+      "minerals": "Minerals",
+      "weather": "Weather Sensitivity",
+      "drought": "Drought",
+      "cold": "Cold",
+      "flood": "Flood",
+      "yields": "Yield Heights",
+      "prices": "Prices & Market Values"
+    },
+    "yields": {
+      "veryHigh": "Very high",
+      "high": "High",
+      "moderate": "Moderate",
+      "low": "Low",
+      "veryLow": "Very low"
+    },
+    "prices": {
+      "conv": "Conventional",
+      "org": "Ecological (Bio)",
+      "seed": "Seed / ha",
+      "sale": "Sales / dt"
+    }
   },
   "adminLogin": {
     "title": "Admin Login",

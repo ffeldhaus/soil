@@ -151,7 +151,52 @@
     }
   },
   "footer": {
-    "impressum": "Impressum"
+    "impressum": "Impressum",
+    "manual": "Handbuch"
+  },
+  "manual": {
+    "title": "Soil Handbuch",
+    "subtitle": "Der Leitfaden für erfolgreiche Farmer",
+    "print": "Als PDF speichern",
+    "back": "Zurück zum Spiel",
+    "footer": "Viel Erfolg bei Ihrer Simulation! Achten Sie stets auf das Gleichgewicht zwischen Ertrag und Nachhaltigkeit.",
+    "intro": {
+      "title": "Einführung",
+      "goal": {
+        "title": "Das Spielziel",
+        "text": "In Soil führen Sie einen landwirtschaftlichen Betrieb über mehrere Runden. Ziel ist es, ein hohes Endkapital zu erwirtschaften und gleichzeitig die Bodenqualität für zukünftige Generationen zu erhalten. Ein nachhaltiges Handeln wird durch das Bio-Siegel belohnt, das höhere Verkaufspreise ermöglicht."
+      },
+      "mechanics": {
+        "title": "Spielmechanik",
+        "text": "Jede Runde entscheiden Sie, was auf Ihren Feldern gepflanzt wird. Beachten Sie dabei die Fruchtfolge: Bestimmte Pflanzen wachsen besser nach anderen. Dünger und Pestizide steigern den Ertrag, können aber langfristig den Boden belasten. Nützlinge und biologische Methoden fördern die Bodengesundheit."
+      }
+    },
+    "crops": {
+      "title": "Sortenpass",
+      "rotation": "Fruchtfolge (Gute Vorfrüchte)",
+      "requirements": "Anforderungen",
+      "soil": "Bodenqualität",
+      "minerals": "Mineralstoffe",
+      "weather": "Wetterempfindlichkeit",
+      "drought": "Dürre",
+      "cold": "Kälte",
+      "flood": "Überschwemmung",
+      "yields": "Ertragshöhen",
+      "prices": "Preise & Marktwerte"
+    },
+    "yields": {
+      "veryHigh": "Sehr hoch",
+      "high": "Hoch",
+      "moderate": "Mäßig",
+      "low": "Niedrig",
+      "veryLow": "Sehr niedrig"
+    },
+    "prices": {
+      "conv": "Konventionell",
+      "org": "Ökologisch (Bio)",
+      "seed": "Saatgut / ha",
+      "sale": "Verkauf / dt"
+    }
   },
   "adminLogin": {
     "title": "Admin-Anmeldung",

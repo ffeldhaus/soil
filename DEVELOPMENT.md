@@ -14,6 +14,7 @@ This document outlines the local development strategy, testing procedures, and c
 - **Comments**: Add comments sparingly, focusing on *why* something is done rather than *what*.
 - **Dependencies**: Verify established usage in `package.json` before employing new libraries. Prefer stable versions.
 - **Modals**: Consistently use HTML/CSS modals instead of native browser dialogs (alert/confirm/prompt).
+- **Manual**: Ensure the User Manual (`src/app/manual/manual.ts`) is kept up to date whenever game logic or crop properties change.
 - **Compliance**: All public pages and views must include a link to the Impressum page.
 
 ## Prerequisites
