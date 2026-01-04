@@ -1,5 +1,4 @@
-import packageJson from '../package.json';
-const version = import.meta.env.APP_VERSION || packageJson.version;
+const version = import.meta.env?.APP_VERSION || 'dev';
 console.log(`Soil Version ${version} (main.ts)`);
 document.querySelector('meta[name="app-version"]')?.setAttribute('content', version);
 import { bootstrapApplication } from '@angular/platform-browser';

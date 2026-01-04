@@ -16,7 +16,7 @@ describe('I18n Coverage Check', () => {
         provideTransloco({
           config: {
             availableLangs: ['en', 'de'],
-            defaultLang: 'en',
+            defaultLang: 'de',
           },
           loader: TranslocoHttpLoader
         })

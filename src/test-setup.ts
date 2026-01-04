@@ -1,5 +1,12 @@
 window.global = window;
 
+// @ts-ignore
+globalThis.importMeta = {
+  env: {
+    APP_VERSION: 'test-version'
+  }
+};
+
 import "zone.js";
 import "zone.js/testing";
 import { getTestBed } from "@angular/core/testing";

@@ -18,7 +18,7 @@ describe('PlayerLoginComponent', () => {
             loginAsPlayer: vi.fn().mockResolvedValue(undefined),
             user$: of(null)
         };
-        const languageServiceMock = { currentLang: 'en' };
+        const languageServiceMock = { currentLang: 'de' };
 
         await TestBed.configureTestingModule({
             imports: [PlayerLoginComponent, ReactiveFormsModule],

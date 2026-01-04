@@ -24,7 +24,7 @@ describe('SuperAdminComponent', () => {
       getAllAdmins: vi.fn().mockResolvedValue([]),
       getSystemStats: vi.fn().mockResolvedValue({ games: { total: 0, deleted: 0 }, users: { total: 0, admins: 0, pending: 0 } })
     };
-    const languageServiceMock = { currentLang: 'en' };
+    const languageServiceMock = { currentLang: 'de' };
 
     await TestBed.configureTestingModule({
       imports: [SuperAdminComponent],

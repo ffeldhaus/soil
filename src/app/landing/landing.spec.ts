@@ -11,7 +11,7 @@ describe('Landing', () => {
   let languageServiceMock: any;
 
   beforeEach(async () => {
-    languageServiceMock = { currentLang: 'en' };
+    languageServiceMock = { currentLang: 'de' };
     await TestBed.configureTestingModule({
       imports: [Landing],
       providers: [

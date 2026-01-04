@@ -5,6 +5,7 @@ export function provideTranslocoTest() {
   const serviceMock = {
     translate: (key: string, params?: any) => {
         // Handle specific test assertions for crops
+        if (key === 'adminLogin.error.msg') return 'Login failed';
         if (key === 'crop.animals') return 'Animals';
         if (key === 'crop.wheat') return 'Wheat';
         if (key === 'crop.corn') return 'Corn';
@@ -26,12 +27,12 @@ export function provideTranslocoTest() {
         return key;
     },
     selectTranslate: (key: string) => of(key),
-    getActiveLang: () => 'en',
+    getActiveLang: () => 'de',
     setActiveLang: (lang: string) => {},
-    langChanges$: of('en'),
+    langChanges$: of('de'),
     config: {
         reRenderOnLangChange: true,
-        defaultLang: 'en',
+        defaultLang: 'de',
         availableLangs: ['en', 'de']
     },
     // Internal methods needed by TranslocoPipe
@@ -44,7 +45,7 @@ export function provideTranslocoTest() {
       provide: TRANSLOCO_CONFIG,
       useValue: {
         availableLangs: ['en', 'de'],
-        defaultLang: 'en',
+        defaultLang: 'de',
         reRenderOnLangChange: true
       }
     },

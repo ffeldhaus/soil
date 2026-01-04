@@ -3,14 +3,17 @@ import { defineConfig } from 'vite';
 import angular from '@analogjs/vite-plugin-angular';
 import { resolve } from 'path';
 import { execSync } from 'child_process';
+import { readFileSync } from 'fs';
 
 const getVersion = () => {
+  const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'));
+  const pkgVersion = pkg.version;
   try {
     const gitVersion = execSync('git describe --tags --always').toString().trim();
     const buildId = process.env['CD_BUILD_ID'] || process.env['BUILD_NUMBER'] || process.env['BUILD_ID'] || '';
     return buildId ? `${gitVersion}+${buildId}` : gitVersion;
   } catch {
-    return '1.1.0';
+    return pkgVersion;
   }
 };
 
@@ -22,6 +25,9 @@ export default defineConfig(({ mode }) => ({
     'import.meta.env.APP_VERSION': JSON.stringify(appVersion),
   },
   test: {
+    define: {
+      'import.meta.env.APP_VERSION': JSON.stringify(appVersion),
+    },
     server: {
       deps: {
         inline: ['rxfire', '@angular/fire'],

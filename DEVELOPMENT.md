@@ -1,17 +1,31 @@
-# Development Guide
+---
+trigger: always_on
+---
 
-This document outlines the local development and testing strategy for the project.
+# Development Guide & Rules
+
+This document outlines the local development strategy, testing procedures, and core mandates for both human and AI programmers.
+
+## Core Mandates
+
+- **Conventions**: Rigorously adhere to existing project conventions. Analyze surrounding code, tests, and configuration before modifying.
+- **Style & Structure**: Mimic the style (formatting, naming), structure, and architectural patterns of existing code.
+- **Idiomatic Changes**: Ensure changes integrate naturally and idiomatically within the local context.
+- **Comments**: Add comments sparingly, focusing on *why* something is done rather than *what*.
+- **Dependencies**: Verify established usage in `package.json` before employing new libraries. Prefer stable versions.
+- **Modals**: Consistently use HTML/CSS modals instead of native browser dialogs (alert/confirm/prompt).
+- **Compliance**: All public pages and views must include a link to the Impressum page.
 
 ## Prerequisites
 
--   Node.js (v24 recommended)
--   npm
--   Firebase CLI (`npm install -g firebase-tools`)
--   Java (required for Firebase Emulators)
+- Node.js (v24 recommended)
+- npm
+- Firebase CLI (`npm install -g firebase-tools`)
+- Java (required for Firebase Emulators)
 
 ## Local Development Environment
 
-We use the **Firebase Emulator Suite** to mirror the production environment locally. This ensures that our local testing is accurate and safe (no risk of affecting production data).
+We use the **Firebase Emulator Suite** to mirror the production environment locally. This ensures that our local testing is accurate and safe.
 
 ### Starting the Environment
 
@@ -22,92 +36,82 @@ npm run start:emulators
 ```
 
 This will:
-1.  Build the Angular application in watch mode.
-2.  Start the Firebase Emulators (Auth, Firestore, Functions, Hosting, Storage).
-3.  Serve the application at `http://localhost:5005` (Hosting Emulator port).
+1. Build the Angular application in watch mode.
+2. Start the Firebase Emulators (Auth, Firestore, Functions, Hosting, Storage).
+3. Serve the application at `http://localhost:5005` (Hosting Emulator port).
 
 _Note: You can also use `ng serve` for rapid UI-only development, but it will not have full backend emulation unless configured to connect to emulators._
 
+## Development Workflow
+
+1. **Understand**: Thoroughly understand the codebase context before proposing changes.
+2. **Plan**: Formulate a clear, grounded plan and share a concise summary before implementation.
+3. **Implement**: Follow the plan iteratively. Write unit tests alongside feature code.
+4. **Verify**: Run tests and linting as described in the Testing Strategy.
+5. **Finalize**: Only after all verifications pass should the task be considered complete.
+
 ## Testing Strategy
 
-We follow a rigorous testing strategy to ensure high code quality and reliability.
+All changes must include relevant unit tests and, for critical flows, E2E tests.
 
 ### 1. Unit Tests
 
 Unit tests are fast and isolate specific logic.
 
-*   **Frontend (Angular):**
-    Run unit tests for the Angular application (using Vitest):
-    ```bash
-    npm run test:unit
-    ```
-    This ensures that components, services, and logic in the frontend work as expected.
-
-*   **Backend (Firebase Functions):**
-    Run unit tests for Cloud Functions:
-    ```bash
-    npm run test:functions
-    ```
-    This verifies the logic of your backend functions.
+- **Frontend (Angular)**: `npm run test:unit`
+- **Backend (Firebase Functions)**: `npm run test:functions`
 
 ### 2. End-to-End (E2E) Tests
 
-E2E tests verify the complete flow of the application from the user's perspective, running against the local emulators.
+E2E tests verify the complete flow of the application from the user's perspective.
 
-*   **Run E2E Tests:**
-    ```bash
-    npm run test:e2e
-    ```
-    This command will:
-    1.  Build the Angular app.
-    2.  Start the Firebase Emulators.
-    3.  Run Cypress tests against the emulated environment.
-    4.  Shut down the environment.
+- **Run E2E Tests**: `npm run test:e2e`
+- **Interactive Mode**: `npm run test:e2e:open`
 
-    **Interactive Mode:**
-    To run Cypress interactively (with the GUI):
-    ```bash
-    npm run test:e2e:open
-    ```
+### 3. Continuous Integration (CI) & Standards
 
-### 3. Continuous Integration (CI)
+Before committing code, ensure all tests pass and linting is clean.
 
-Before committing code, ensure all tests pass. Our CI pipeline mirrors the `npm run test:ci` command:
+- **Full Test Suite**: `npm run test:ci`
+- **Linting (Functions)**: `npm run lint --prefix functions`
 
-```bash
-npm run test:ci
-```
-This runs all unit tests and E2E tests.
+## Performance, SEO & Accessibility
+
+- **Performance**: Ensure fast load times and smooth interactions.
+- **Accessibility**: Adhere to WCAG standards using semantic HTML and ARIA labels.
+- **SEO**: Optimize metadata and semantic structure following Google Search best practices.
+- **Lighthouse**: Regularly run audits. Aim for high scores in Performance, Accessibility, Best Practices, and SEO.
+
+## Versioning & Diagnostics
+
+- **Manual Versioning**: Increment the version in `package.json` for significant changes.
+- **Consistency**: Ensure the `app-version` meta tag in `src/index.html` matches `package.json`.
+- **Diagnostics**: Print the current application version to the developer console on first load.
+- **Dynamic Versioning**: The application picks up the version automatically during the build process using `git describe` and build IDs.
+
+## Git & Commits
+
+- **Review**: Always run `git status` and `git diff` before committing.
+- **Messages**: Propose clear, concise commit messages focusing on "why". Match existing project style.
+- **Success**: Confirm successful commits with `git status`. Never push without explicit instruction.
 
 ## Release Process
 
-We use semantic versioning. The version is managed in `package.json` and automatically tagged in Git.
+We use semantic versioning managed in `package.json` and tagged in Git.
 
-To create a new release:
+1. Ensure `main` is up to date.
+2. Run `npm version [patch | minor | major]`.
+3. Push changes and tags: `git push origin main --tags`.
 
-1.  Ensure you are on the `main` branch and it is up to date.
-2.  Run the version command:
-    ```bash
-    npm version [patch | minor | major]
-    ```
-    This will:
-    - Update the version in `package.json`.
-    - Create a git commit.
-    - Create a git tag (e.g., `v1.2.0`).
+## CI/CD & Deployment
 
-3.  Push the changes and the tag:
-    ```bash
-    git push origin main --tags
-    ```
+- **Firebase App Hosting**: Deployment is automated via GitHub merges to `main`.
+- **Localization**: Builds are automatically performed with localization as per `apphosting.yaml`.
+- **Regional Constraints**: Use Firebase services exclusively in **EU (europe-west4)**.
+- **Cloud Build**: Monitor CI/CD builds for success; fix errors and address warnings promptly.
+- **Post-Deployment**: Verify the live version matches the intended `package.json` version.
+- **Manual Deployment**: Do not deploy manually unless fixing a critical production outage that CI/CD cannot handle.
 
-### Dynamic Versioning
+## Localization Check
 
-The application picks up the version automatically during the build process:
-- It uses `git describe` to get the current tag.
-- If a build ID is available (e.g., in Google Cloud Build), it is appended to the version.
-- The version is injected into the application and displayed in the console and metadata.
-
-## Deployment
-
-Deployments are handled automatically via CI/CD (Firebase App Hosting) when merging to `main` or pushing tags.
-**Do not deploy manually** unless fixing a critical production outage that CI/CD cannot handle.
+Periodically run `ng extract-i18n` to update `messages.xlf` and `messages.de.xlf`.

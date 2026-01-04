@@ -4,8 +4,6 @@ import { RouterOutlet, RouterLink } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { LanguageService } from './services/language.service';
 
-import packageJson from '../../package.json';
-
 @Component({
   selector: 'app-root',
   imports: [TranslocoPipe, RouterOutlet, RouterLink],
@@ -15,7 +13,7 @@ import packageJson from '../../package.json';
 export class App {
   protected languageService = inject(LanguageService);
   protected readonly title = signal('soil');
-  version = import.meta.env.APP_VERSION || packageJson.version;
+  version = import.meta.env?.APP_VERSION || 'dev';
 
   constructor(updates: SwUpdate) {
     console.log(`Soil Version ${this.version} (app.ts)`);

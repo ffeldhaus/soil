@@ -18,9 +18,18 @@ export class LanguageService {
     init() {
         const savedLang = localStorage.getItem(this.STORAGE_KEY);
         const browserLang = navigator.language.split('-')[0];
+        const availableLangs = ['en', 'de'];
         
-        // Determine target language: saved -> browser -> default (en)
-        let targetLang = savedLang || (browserLang === 'de' ? 'de' : 'en');
+        // Determine target language: saved -> browser (if supported) -> default (de)
+        let targetLang = savedLang;
+        
+        if (!targetLang && availableLangs.includes(browserLang)) {
+            targetLang = browserLang;
+        }
+        
+        if (!targetLang) {
+            targetLang = 'de';
+        }
         
         this.setLanguage(targetLang);
     }
