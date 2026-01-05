@@ -16,6 +16,29 @@ app.use(compression());
 const angularApp = new AngularNodeAppEngine();
 
 /**
+ * Serve static files from the root (robots.txt, sitemap.xml, etc.)
+ */
+const ROOT_STATIC_FILES = [
+  '/robots.txt',
+  '/sitemap.xml',
+  '/favicon.ico',
+  '/favicon.svg',
+  '/apple-touch-icon.png',
+  '/site.webmanifest',
+  '/favicon-96x96.png',
+  '/web-app-manifest-192x192.png',
+  '/web-app-manifest-512x512.png',
+];
+
+app.use((req, res, next) => {
+  if (ROOT_STATIC_FILES.includes(req.path)) {
+    res.sendFile(join(browserDistFolder, 'de', req.path));
+    return;
+  }
+  next();
+});
+
+/**
  * Detect language and redirect from root
  */
 app.get('/', (req, res, next) => {
