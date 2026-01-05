@@ -132,7 +132,6 @@ export class Board implements OnInit, OnDestroy {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
         const claims = idTokenResult.claims;
-        const isImpersonating = localStorage.getItem('soil_admin_impersonating') === 'true';
 
         // Extract Game ID
         let activeGameId = params['gameId'] || (claims['gameId'] as string);
@@ -177,16 +176,9 @@ export class Board implements OnInit, OnDestroy {
           }
         }
 
-        if (claims['role'] === 'player' || user.uid.startsWith('player-') || isImpersonating) {
+        if (claims['role'] === 'player' || user.uid.startsWith('player-')) {
           Promise.resolve().then(() => {
             this.isPlayer = true;
-            if (isImpersonating) {
-              this.isReadOnly = true;
-              this.showReadOnlyBanner = true;
-              setTimeout(() => {
-                this.showReadOnlyBanner = false;
-              }, 3000);
-            }
           });
         } else {
           if (claims['role'] !== 'player' && !user.uid.startsWith('player-')) {
@@ -255,9 +247,8 @@ export class Board implements OnInit, OnDestroy {
   }
 
   updateReadOnly() {
-    const isImpersonating = localStorage.getItem('soil_admin_impersonating') === 'true';
     const isHistory = this.viewingRound < this.maxRoundNumber;
-    this.isReadOnly = isImpersonating || this.isSubmitted || isHistory;
+    this.isReadOnly = this.isSubmitted || isHistory;
   }
 
   goToRound(roundNum: number) {
@@ -304,13 +295,6 @@ export class Board implements OnInit, OnDestroy {
   }
 
   async logout() {
-    if (this.isReadOnly) {
-      const restored = await this.authService.stopImpersonation();
-      if (restored) {
-        this.router.navigate(['/admin']);
-        return;
-      }
-    }
     await this.authService.logout();
     this.router.navigate(['/']);
   }
