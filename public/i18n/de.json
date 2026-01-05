@@ -173,7 +173,9 @@
     },
     "crops": {
       "title": "Sortenpass",
-      "rotation": "Fruchtfolge (Gute Vorfrüchte)",
+      "rotation": "Fruchtfolge-Graph",
+      "rotationPrev": "Gute Vorfrüchte",
+      "rotationNext": "Gute Nachfrüchte",
       "requirements": "Anforderungen",
       "soil": "Bodenqualität",
       "minerals": "Mineralstoffe",
@@ -386,6 +388,27 @@
     "fieldbean": "Ackerbohne",
     "animals": "Tiere",
     "fallow": "Brachland"
+  },
+  "pest": {
+    "label": "Schädling",
+    "aphid": "Blattlaus",
+    "fritfly": "Fritfliege",
+    "potato-beetle": "Kartoffelkäfer",
+    "corn-borer": "Maiszünsler",
+    "wireworm": "Drahtwurm"
+  },
+  "sensitivity": {
+    "strong": "Stark",
+    "moderate": "Mäßig",
+    "low": "Gering",
+    "high": "Hoch",
+    "none": "Keine"
+  },
+  "special": {
+    "fieldbean": "Ackerbohnen erhöhen den Mineralstoffgehalt und die Bodenqualität.",
+    "oat": "Hafer verbessert die Bodenqualität.",
+    "rye": "Roggen verbessert die Bodenqualität.",
+    "beet": "Zuckerrüben verbessern die Bodenqualität."
   },
   "planting": {
     "title": "Fruchtart wählen",

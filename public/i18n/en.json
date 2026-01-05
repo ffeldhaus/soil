@@ -173,7 +173,9 @@
     },
     "crops": {
       "title": "Crop Pass",
-      "rotation": "Rotation (Good previous crops)",
+      "rotation": "Crop Rotation Graph",
+      "rotationPrev": "Suitable Previous Crops",
+      "rotationNext": "Suitable Next Crops",
       "requirements": "Requirements",
       "soil": "Soil Quality",
       "minerals": "Minerals",
@@ -377,6 +379,27 @@
     "fieldbean": "Fieldbean",
     "animals": "Animals",
     "fallow": "Fallow"
+  },
+  "pest": {
+    "label": "Pest",
+    "aphid": "Aphid",
+    "fritfly": "Frit Fly",
+    "potato-beetle": "Colorado Potato Beetle",
+    "corn-borer": "European Corn Borer",
+    "wireworm": "Wireworm"
+  },
+  "sensitivity": {
+    "strong": "High",
+    "moderate": "Moderate",
+    "low": "Low",
+    "high": "High",
+    "none": "None"
+  },
+  "special": {
+    "fieldbean": "Field beans increase mineral content and soil quality.",
+    "oat": "Oats improve soil quality.",
+    "rye": "Rye improves soil quality.",
+    "beet": "Sugar beets improve soil quality."
   },
   "planting": {
     "title": "Select Crop to Plant",
