@@ -35,10 +35,6 @@
               "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
-            "localize": [
-              "de",
-              "en"
-            ],
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
               "qrcode",
@@ -63,31 +59,41 @@
               "entry": "src/server.ts"
             }
           },
-                      "configurations": {
-                      "production": {
-                        "budgets": [
-                          {
-                            "type": "initial",
-                            "maximumWarning": "1.5MB",
-                            "maximumError": "2.5MB"
-                          },
-                          {
-                            "type": "anyComponentStyle",
-                            "maximumWarning": "4kB",
-                            "maximumError": "8kB"
-                          }
-                        ],
-                        "outputHashing": "all",
-                        "sourceMap": true
-                      },
-                      "development": {
-          
+          "configurations": {
+            "production": {
+              "localize": [
+                "de",
+                "en"
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2.5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "sourceMap": true
+            },
+            "development": {
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "de": {
+              "localize": ["de"],
+              "baseHref": "/"
+            },
+            "en": {
+              "localize": ["en"],
+              "baseHref": "/"
             }
-          },
-          "defaultConfiguration": "production"
+          }
         },
         "serve": {
           "builder": "@angular/build:dev-server",
@@ -97,6 +103,12 @@
             },
             "development": {
               "buildTarget": "soil:build:development"
+            },
+            "de": {
+              "buildTarget": "soil:build:de"
+            },
+            "en": {
+              "buildTarget": "soil:build:en"
             }
           },
           "defaultConfiguration": "development"
