@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
 import { GAME_CONSTANTS } from '../game-constants';
@@ -10,7 +10,7 @@ import { CropType } from '../types';
 @Component({
   selector: 'app-manual',
   standalone: true,
-  imports: [CommonModule, RouterLink, LanguageSwitcherComponent],
+  imports: [CommonModule, LanguageSwitcherComponent],
   template: `
     <div
       class="min-h-screen bg-gray-900 text-white font-sans relative flex flex-col overflow-x-hidden"
