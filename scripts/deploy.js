@@ -104,13 +104,12 @@ const monitorCloudBuild = async (version) => {
     console.log(`Monitoring Cloud Build for commit ${commitHash}...`);
 
     while (Date.now() - startTime < timeoutMs) {
-      const buildsJson = execSync(
-        `gcloud builds list --region=${region} --limit=10 --format="json"`,
-        { stdio: ['pipe', 'pipe', 'ignore'] }
-      ).toString();
+      const buildsJson = execSync(`gcloud builds list --region=${region} --limit=10 --format="json"`, {
+        stdio: ['pipe', 'pipe', 'ignore'],
+      }).toString();
 
       const builds = JSON.parse(buildsJson);
-      const build = builds.find(b => b.source?.developerConnectConfig?.revision === commitHash);
+      const build = builds.find((b) => b.source?.developerConnectConfig?.revision === commitHash);
 
       if (build) {
         console.log(`\x1b[32mBuild found! ID: ${build.id}\x1b[0m`);
@@ -127,7 +126,7 @@ const monitorCloudBuild = async (version) => {
 
       const elapsed = Math.round((Date.now() - startTime) / 1000);
       process.stdout.write(`\rWaiting for build to start... (${elapsed}s)`);
-      await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
+      await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
     }
 
     console.log('\n\x1b[31mTimeout: No new Cloud Build started within 2 minutes.\x1b[0m');

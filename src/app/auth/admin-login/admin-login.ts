@@ -48,9 +48,7 @@ import { AuthService } from '../auth.service';
               type="email"
               autocomplete="email"
               class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-              placeholder="admin@school.edu"
-              i18n-placeholder="@@adminLogin.placeholder.email"
-              placeholder="admin@schule.de"
+              [placeholder]="t('adminLogin.placeholder.email')"
             />
           </div>
 
@@ -169,7 +167,7 @@ import { AuthService } from '../auth.service';
 export class AdminLoginComponent {
   t(key: string): string {
     const translations: Record<string, string> = {
-      'adminLogin.placeholder.email': $localize`:@@adminLogin.placeholder.email:admin@school.edu`,
+      'adminLogin.placeholder.email': $localize`:@@adminLogin.placeholder.email:admin@schule.de`,
     };
     return translations[key] || key;
   }

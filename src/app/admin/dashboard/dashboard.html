@@ -65,7 +65,10 @@
         </svg>
       </div>
       <h2 class="text-3xl font-bold text-yellow-400 font-serif">{{ t('dashboard.pending.title') }}</h2>
-      <p class="text-xl text-gray-300 max-w-lg mx-auto leading-relaxed" [innerHTML]="'dashboard.pending.welcome'"></p>
+      <p class="text-xl text-gray-300 max-w-lg mx-auto leading-relaxed" i18n="@@dashboard.pending.welcome">
+        Danke für die Registrierung, <span class="font-bold text-white">{{ user.displayName }}</span
+        >!
+      </p>
       <p class="text-gray-400 max-w-md mx-auto">{{ t('dashboard.pending.message') }}</p>
       <div class="pt-6">
         <button
@@ -138,7 +141,10 @@
       <h2 class="text-2xl font-bold mb-4 text-emerald-400" data-testid="admin-controls">
         {{ t('dashboard.controls.title') }}
       </h2>
-      <p class="mb-4 text-gray-300" [innerHTML]="'dashboard.welcome'"></p>
+      <p class="mb-4 text-gray-300" i18n="@@dashboard.welcome">
+        Willkommen, <span class="font-bold text-white">{{ user.displayName }}</span
+        >!
+      </p>
 
       <!-- Game Creation Form -->
       <div class="mb-8 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
@@ -633,7 +639,7 @@
                           <div class="grid grid-cols-2 gap-4 text-xs bg-black/20 p-3 rounded-xl border border-white/5">
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.capital'
+                                t('dashboard.player.capital')
                               }}</span>
                               <span class="font-mono text-yellow-500 font-bold text-sm">{{
                                 slot.player?.capital ?? 1000 | currency: 'EUR' : 'symbol' : '1.0-0'
@@ -641,13 +647,13 @@
                             </div>
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.round'
+                                t('dashboard.player.round')
                               }}</span>
                               <span class="font-mono text-white text-sm">{{ slot.player?.currentRound ?? 0 }}</span>
                             </div>
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.soil'
+                                t('dashboard.player.soil')
                               }}</span>
                               <!-- Metrics -->
                               <div
@@ -663,7 +669,7 @@
                             </div>
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.nutrition'
+                                t('dashboard.player.nutrition')
                               }}</span>
                               <div
                                 class="text-xs font-mono"
@@ -679,7 +685,7 @@
                             <div class="col-span-2 pt-1 border-t border-white/5">
                               <div class="flex justify-between items-center">
                                 <span class="text-gray-400 text-[10px] uppercase font-bold">{{
-                                  'dashboard.player.submitted'
+                                  t('dashboard.player.submitted')
                                 }}</span>
                                 <span
                                   class="font-bold text-[10px] px-2 py-0.5 rounded-full"
@@ -970,7 +976,7 @@
 
           <!-- Type Confirmation -->
           <div *ngIf="showTrash">
-            <label class="text-xs text-gray-400 block mb-1" [innerHTML]="'dashboard.delete.typeConfirm'"></label>
+            <label class="text-xs text-gray-400 block mb-1" [innerHTML]="t('dashboard.delete.typeConfirm')"></label>
             <input
               [(ngModel)]="deleteConfirmInput"
               placeholder="DELETE"

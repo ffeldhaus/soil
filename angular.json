@@ -3,9 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -32,18 +30,10 @@
             "outputPath": "dist/soil",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "allowedCommonJsDependencies": [
-              "dijkstrajs",
-              "@grpc/grpc-js",
-              "@grpc/proto-loader",
-              "undici"
-            ],
+            "allowedCommonJsDependencies": ["dijkstrajs", "@grpc/grpc-js", "@grpc/proto-loader", "undici"],
             "define": {
               "import.meta.env.APP_VERSION": "\"1.1.4\""
             },
@@ -53,9 +43,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "serviceWorker": "src/ngsw-config.json",
             "server": "src/main.server.ts",
             "outputMode": "server",
@@ -66,10 +54,7 @@
           "defaultConfiguration": "production",
           "configurations": {
             "production": {
-              "localize": [
-                "de",
-                "en"
-              ],
+              "localize": ["de", "en"],
               "budgets": [
                 {
                   "type": "initial",
@@ -91,16 +76,12 @@
               "sourceMap": true
             },
             "de": {
-              "localize": [
-                "de"
-              ],
+              "localize": ["de"],
               "baseHref": "/de/",
               "outputHashing": "all"
             },
             "en": {
-              "localize": [
-                "en"
-              ],
+              "localize": ["en"],
               "baseHref": "/en/",
               "outputHashing": "all"
             }
@@ -127,10 +108,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }

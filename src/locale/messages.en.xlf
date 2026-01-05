@@ -672,9 +672,11 @@
       </trans-unit>
       <trans-unit id="adminLogin.error.title" datatype="html">
         <source>Anmeldung fehlgeschlagen</source>
+        <target>Login failed</target>
       </trans-unit>
       <trans-unit id="adminLogin.error.retry" datatype="html">
         <source>Erneut versuchen</source>
+        <target>Retry</target>
       </trans-unit>
       <trans-unit id="adminRegister.title" datatype="html">
         <source>Admin-Registrierung</source>
@@ -762,6 +764,7 @@
       </trans-unit>
       <trans-unit id="adminRegister.error.failed" datatype="html">
         <source>Registrierung fehlgeschlagen.</source>
+        <target>Registration failed.</target>
       </trans-unit>
       <trans-unit id="adminRegister.password" datatype="html">
         <source>Passwort</source>
@@ -857,9 +860,11 @@
       </trans-unit>
       <trans-unit id="playerLogin.error.title" datatype="html">
         <source>Spielzugang fehlgeschlagen</source>
+        <target>Game access failed</target>
       </trans-unit>
       <trans-unit id="playerLogin.error.retry" datatype="html">
         <source>Erneut versuchen</source>
+        <target>Retry</target>
       </trans-unit>
       <trans-unit id="board.login.adminTitle" datatype="html">
         <source>Admin-Zugang</source>
@@ -1412,6 +1417,58 @@
       <trans-unit id="landing.footer" datatype="html">
         <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
         <target>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.title" datatype="html">
+        <source>Lehrkraft-Dashboard</source>
+        <target>Teacher Dashboard</target>
+      </trans-unit>
+      <trans-unit id="user.photoURL" datatype="html">
+        <source>assets/images/ok.jpg</source>
+        <target>assets/images/ok.jpg</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.error.failed" datatype="html">
+        <source>Anmeldung fehlgeschlagen</source>
+        <target>Login failed</target>
+      </trans-unit>
+      <trans-unit id="finance.header.category" datatype="html">
+        <source> Kategorie </source>
+        <target> Category </target>
+      </trans-unit>
+      <trans-unit id="parcel.crop" datatype="html">
+        <source>Feldpflanze</source>
+        <target>Crop</target>
+      </trans-unit>
+      <trans-unit id="settings.organic" datatype="html">
+        <source>Ökologischer Anbau</source>
+        <target>Organic Farming</target>
+      </trans-unit>
+      <trans-unit id="special.wheat" datatype="html">
+        <source>Standardkultur mit ausgeglichenen Werten.</source>
+        <target>Standard crop with balanced values.</target>
+      </trans-unit>
+      <trans-unit id="special.corn" datatype="html">
+        <source>Hoher Ertrag, aber anspruchsvoll für den Boden.</source>
+        <target>High yield but demanding on the soil.</target>
+      </trans-unit>
+      <trans-unit id="special.potato" datatype="html">
+        <source>Sehr profitabel, aber extrem schädlingsanfällig.</source>
+        <target>Very profitable but extremely susceptible to pests.</target>
+      </trans-unit>
+      <trans-unit id="special.barley" datatype="html">
+        <source>Robuste Getreideart für verschiedene Standorte.</source>
+        <target>Robust cereal for various locations.</target>
+      </trans-unit>
+      <trans-unit id="special.animals" datatype="html">
+        <source>Dauerkultur zur Viehhaltung.</source>
+        <target>Permanent crop for livestock farming.</target>
+      </trans-unit>
+      <trans-unit id="special.fallow" datatype="html">
+        <source>Regeneration für den Boden.</source>
+        <target>Soil regeneration.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.table.delete" datatype="html">
+        <source>Spiel löschen</source>
+        <target>Delete Game</target>
       </trans-unit>
     </body>
   </file>

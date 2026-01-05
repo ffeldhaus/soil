@@ -254,11 +254,11 @@ import { AuthService } from '../auth.service';
           <p class="text-sm text-gray-500">
             <ng-container>{{ t('adminRegister.alreadyAccount') }}</ng-container
             >&nbsp;<a routerLink="/admin/login" class="text-emerald-400 hover:underline">{{
-              'adminRegister.loginLink'
+              t('adminRegister.loginLink')
             }}</a>
           </p>
           <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition block">{{
-            'adminRegister.backToHome'
+            t('adminRegister.backToHome')
           }}</a>
         </div>
       </div>
@@ -304,6 +304,8 @@ export class AdminRegisterComponent {
       'adminRegister.btn.complete': $localize`:@@adminRegister.btn.complete:Registrierung abschließen`,
       'adminRegister.btn.register': $localize`:@@adminRegister.btn.register:Registrieren`,
       'adminRegister.alreadyAccount': $localize`:@@adminRegister.alreadyAccount:Bereits ein Konto?`,
+      'adminRegister.loginLink': $localize`:@@adminRegister.loginLink:Anmelden`,
+      'adminRegister.backToHome': $localize`:@@adminRegister.backToHome:← Zurück zur Startseite`,
     };
     return translations[key] || key;
   }
