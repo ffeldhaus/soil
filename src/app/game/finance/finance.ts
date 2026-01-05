@@ -50,6 +50,9 @@ interface PlayerFinanceData {
   templateUrl: './finance.html',
 })
 export class Finance implements OnChanges {
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
   @Input() game!: Game;
   @Input() viewingRound = 0;
   @Input() playerUid = '';

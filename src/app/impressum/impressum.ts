@@ -19,8 +19,8 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         <!-- Header -->
         <header class="border-b border-gray-700 pb-8 flex justify-between items-center">
           <div>
-            <h1 class="text-4xl font-serif font-bold text-emerald-500 mb-2">{{ 'impressum.title' }}</h1>
-            <p class="text-gray-400">{{ 'impressum.subtitle' }}</p>
+            <h1 i18n="@@impressum.title" class="text-4xl font-serif font-bold text-emerald-500 mb-2">Impressum</h1>
+            <p i18n="@@impressum.subtitle" class="text-gray-400">Rechtliche Informationen & Kontakt</p>
           </div>
           <a
             routerLink="/"
@@ -40,13 +40,13 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
               />
             </svg>
-            {{ 'impressum.backToHome' }}
+            <ng-container i18n="@@impressum.backToHome">Zurück zur Startseite</ng-container>
           </a>
         </header>
 
         <!-- Kontakt -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.contact' }}</h2>
+          <h2 i18n="@@impressum.contact" class="text-2xl font-bold text-white">Kontakt</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <p class="font-bold text-white">Florian Feldhaus</p>
             <p>Kanonikerweg 2</p>
@@ -62,7 +62,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Verantwortlich -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.responsible' }}</h2>
+          <h2 i18n="@@impressum.responsible" class="text-2xl font-bold text-white">Verantwortlich</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <p class="font-bold text-white">Nina Wolf</p>
             <p>Kanonikerweg 2</p>
@@ -78,70 +78,94 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Bilder -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.imageSources' }}</h2>
+          <h2 i18n="@@impressum.imageSources" class="text-2xl font-bold text-white">Bildnachweise</h2>
           <ul
             class="space-y-2 list-disc list-inside text-gray-400 bg-gray-800/30 p-6 rounded-xl border border-gray-800"
           >
             <li>
               <a
+                i18n="@@impressum.source.farmstead"
                 href="https://commons.wikimedia.org/wiki/File:Farmstead_in_winter,_Windsor_Township,_Berks_County,_Pennsylvania.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.farmstead' }}</a
+                >Farmstead by Smallbones (Public Domain)</a
               >
             </li>
             <li>
               <a
+                i18n="@@impressum.source.drought"
                 href="https://commons.wikimedia.org/wiki/File:Drought.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.drought' }}</a
+                >Drought by USDA (Public Domain)</a
               >
             </li>
             <li>
               <a
+                i18n="@@impressum.source.borer"
                 href="https://commons.wikimedia.org/wiki/File:Ostrinia.nubilalis.7771.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.borer' }}</a
+                >Maiszünsler by Keith Weller (Public Domain)</a
               >
             </li>
             <li>
               <a
+                i18n="@@impressum.source.ladybug"
                 href="https://commons.wikimedia.org/wiki/File:Marienk%C3%A4fer_0241.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.ladybug' }}</a
+                >Marienkäfer by Olei (CC BY-SA 3.0)</a
               >
-            </li>
-            <li>
-              <a href="http://www.oekolandbau.de" class="hover:text-emerald-400 transition underline">{{
-                'impressum.source.oekolandbau'
-              }}</a>
             </li>
             <li>
               <a
-                href="https://commons.wikimedia.org/wiki/File:Organic-Logo.svg"
+                i18n="@@impressum.source.oekolandbau"
+                href="http://www.oekolandbau.de"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.logo' }}</a
+                >Oekolandbau.de</a
               >
             </li>
             <li>
-              <a href="https://www.landwirtschaftskammer.de" class="hover:text-emerald-400 transition underline">{{
-                'impressum.source.chamber'
-              }}</a>
+              <a
+                i18n="@@impressum.source.logo"
+                href="https://commons.wikimedia.org/wiki/File:Organic-Logo.svg"
+                class="hover:text-emerald-400 transition underline"
+                >Organic Logo (Public Domain)</a
+              >
             </li>
             <li>
-              <a href="https://www.bio-siegel.de/" class="hover:text-emerald-400 transition underline">{{
-                'impressum.source.bioSiegel'
-              }}</a>
+              <a
+                i18n="@@impressum.source.chamber"
+                href="https://www.landwirtschaftskammer.de"
+                class="hover:text-emerald-400 transition underline"
+                >Landwirtschaftskammer NRW</a
+              >
+            </li>
+            <li>
+              <a
+                i18n="@@impressum.source.bioSiegel"
+                href="https://www.bio-siegel.de/"
+                class="hover:text-emerald-400 transition underline"
+                >Bio-Siegel.de</a
+              >
             </li>
           </ul>
         </section>
 
         <!-- Disclaimer -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.disclaimer.title' }}</h2>
+          <h2 i18n="@@impressum.disclaimer.title" class="text-2xl font-bold text-white">Haftungsausschluss</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 text-sm leading-relaxed space-y-4">
-            <p>{{ 'impressum.disclaimer.p1' }}</p>
-            <p>{{ 'impressum.disclaimer.p2' }}</p>
-            <p>{{ 'impressum.disclaimer.p3' }}</p>
+            <p i18n="@@impressum.disclaimer.p1">
+              Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für
+              den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
+            </p>
+            <p i18n="@@impressum.disclaimer.p2">
+              Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem
+              pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung
+              dar.
+            </p>
+            <p i18n="@@impressum.disclaimer.p3">
+              Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe
+              Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt.
+            </p>
           </div>
         </section>
       </div>

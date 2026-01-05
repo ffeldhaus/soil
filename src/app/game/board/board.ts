@@ -34,6 +34,9 @@ import { RoundSettings, RoundSettingsModal } from '../round-settings-modal/round
   styleUrl: './board.scss',
 })
 export class Board implements OnInit, OnDestroy {
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
   private gameService = inject(GameService);
   gameServicePublic = this.gameService; // Expose for template if needed, or just specific streams
   gameState$ = this.gameService.state$;

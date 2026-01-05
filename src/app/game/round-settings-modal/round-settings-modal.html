@@ -45,7 +45,7 @@
           <input
             type="checkbox"
             [(ngModel)]="settings.fertilizer"
-            [disabled]="settings.organic"
+            [disabled]="t('settings.organic')"
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
@@ -59,7 +59,7 @@
           <input
             type="checkbox"
             [(ngModel)]="settings.pesticide"
-            [disabled]="settings.organic"
+            [disabled]="t('settings.organic')"
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>

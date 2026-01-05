@@ -19,17 +19,17 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
       >
         <div class="flex items-center gap-4">
           <h1 class="text-2xl font-bold font-serif text-purple-500 tracking-wider">
-            {{ 'superadmin.title' }}
+            {{ t('superadmin.title') }}
           </h1>
         </div>
 
         <div class="flex items-center gap-3">
           <div *ngIf="authService.user$ | async as user" class="flex items-center gap-3">
-            <img [src]="user.photoURL" class="w-8 h-8 rounded-full border border-gray-600" />
+            <img [src]="t('user.photoURL')" class="w-8 h-8 rounded-full border border-gray-600" />
             <span class="text-sm font-medium text-gray-300 hidden md:block">{{ user.displayName }}</span>
             <span
               class="px-2 py-0.5 rounded text-[10px] bg-purple-900 text-purple-300 font-bold uppercase tracking-wider border border-purple-700"
-              >{{ 'superadmin.badge' }}</span
+              >{{ t('superadmin.badge') }}</span
             >
           </div>
 
@@ -80,14 +80,14 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span class="text-emerald-400 font-bold animate-pulse">{{ 'superadmin.loading' }}</span>
+            <span class="text-emerald-400 font-bold animate-pulse">{{ t('superadmin.loading') }}</span>
           </div>
         </div>
 
         <header class="flex justify-between items-center">
           <div class="space-y-1">
-            <h2 class="text-3xl font-bold text-white">{{ 'superadmin.dashboard.title' }}</h2>
-            <p class="text-gray-400 text-sm">{{ 'superadmin.dashboard.subtitle' }}</p>
+            <h2 class="text-3xl font-bold text-white">{{ t('superadmin.dashboard.title') }}</h2>
+            <p class="text-gray-400 text-sm">{{ t('superadmin.dashboard.subtitle') }}</p>
           </div>
           <button
             (click)="loadData()"
@@ -107,7 +107,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            <ng-container>{{ 'superadmin.dashboard.refresh' }}</ng-container>
+            {{ t('superadmin.dashboard.refresh') }}
           </button>
         </header>
 
@@ -138,16 +138,14 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
               </svg>
             </div>
             <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2">
-              {{ 'superadmin.stats.totalGames' }}
+              {{ t('superadmin.stats.totalGames') }}
             </h3>
             <div class="flex items-end gap-2">
               <span class="text-4xl font-bold text-white">{{ stats.games.total }}</span>
-              <span class="text-sm text-gray-400 mb-1">{{ 'superadmin.stats.created' }}</span>
+              <span class="text-sm text-gray-400 mb-1">{{ t('superadmin.stats.created') }}</span>
             </div>
             <div class="mt-4 flex gap-4 text-xs font-mono">
-              <span class="text-emerald-400"
-                ><ng-container>{{ 'superadmin.stats.active' }}</ng-container></span
-              >
+              <span class="text-emerald-400">{{ t('superadmin.stats.active') }}</span>
               <span class="text-red-400">{{ stats.games.deleted }} Trash</span>
             </div>
           </div>

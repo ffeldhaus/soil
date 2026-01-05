@@ -35,11 +35,15 @@ import { AuthService } from '../auth.service';
       <div
         class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700"
       >
-        <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">{{ 'playerLogin.title' }}</h2>
+        <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
+          <ng-container i18n="@@playerLogin.title">Spiel beitreten</ng-container>
+        </h2>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'playerLogin.gameId' }}</label>
+            <label class="block text-sm font-medium text-gray-400 mb-2"
+              ><ng-container i18n="@@playerLogin.gameId">Spiel-ID</ng-container></label
+            >
             <input
               formControlName="gameId"
               type="text"
@@ -47,12 +51,14 @@ import { AuthService } from '../auth.service';
               data-testid="player-login-gameid"
               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
               placeholder="Game ID"
-              [placeholder]="'playerLogin.placeholder.gameId'"
+              [placeholder]="t('playerLogin.placeholder.gameId')"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'playerLogin.pin' }}</label>
+            <label class="block text-sm font-medium text-gray-400 mb-2"
+              ><ng-container i18n="@@playerLogin.pin">PIN</ng-container></label
+            >
             <input
               formControlName="password"
               type="password"
@@ -60,7 +66,7 @@ import { AuthService } from '../auth.service';
               data-testid="player-login-pin"
               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
               placeholder="Unique Player PIN"
-              [placeholder]="'playerLogin.placeholder.pin'"
+              [placeholder]="t('playerLogin.placeholder.pin')"
             />
           </div>
 
@@ -70,13 +76,17 @@ import { AuthService } from '../auth.service';
             data-testid="player-login-submit"
             class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
           >
-            <ng-container *ngIf="isLoading">{{ 'playerLogin.enteringGame' }}</ng-container>
-            <ng-container *ngIf="!isLoading">{{ 'playerLogin.startGame' }}</ng-container>
+            <ng-container *ngIf="isLoading">{{ t('playerLogin.enteringGame') }}</ng-container>
+            <ng-container *ngIf="!isLoading"
+              ><ng-container i18n="@@playerLogin.startGame">Spiel starten</ng-container></ng-container
+            >
           </button>
         </form>
 
         <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
-          <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition">{{ 'playerLogin.backToHome' }}</a>
+          <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition">{{
+            t('playerLogin.backToHome')
+          }}</a>
         </div>
       </div>
 
@@ -108,14 +118,14 @@ import { AuthService } from '../auth.service';
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-bold text-white mb-2">{{ 'playerLogin.error.title' }}</h3>
+              <h3 class="text-xl font-bold text-white mb-2">{{ t('playerLogin.error.title') }}</h3>
               <p class="text-gray-300">{{ errorMessage }}</p>
             </div>
             <button
               (click)="closeModal()"
               class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition"
             >
-              {{ 'playerLogin.error.retry' }}
+              {{ t('playerLogin.error.retry') }}
             </button>
           </div>
         </div>

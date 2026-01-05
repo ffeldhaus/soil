@@ -20,6 +20,9 @@ import { Game, UserStatus } from '../../types';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit, OnDestroy {
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
   private authService = inject(AuthService);
   private gameService = inject(GameService);
   private router = inject(Router);

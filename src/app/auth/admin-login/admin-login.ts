@@ -167,6 +167,9 @@ import { AuthService } from '../auth.service';
   `,
 })
 export class AdminLoginComponent {
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);

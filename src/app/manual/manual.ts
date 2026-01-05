@@ -656,7 +656,7 @@ export class ManualComponent {
   private router = inject(Router);
 
   t(key: string): string {
-    return key;
+    return $localize`:@@${key}:${key}`;
   }
 
   crops = Object.values(GAME_CONSTANTS.CROPS);

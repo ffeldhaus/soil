@@ -36,12 +36,16 @@ import { AuthService } from '../auth.service';
         class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 my-8"
       >
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-emerald-400 mb-2">{{ 'adminRegister.title' }}</h1>
-          <p class="text-gray-400">{{ 'adminRegister.subtitle' }}</p>
+          <h1 class="text-3xl font-bold text-emerald-400 mb-2">
+            <ng-container i18n="@@adminRegister.title">Admin-Registrierung</ng-container>
+          </h1>
+          <p class="text-gray-400">
+            <ng-container i18n="@@adminRegister.subtitle">Treten Sie der SOIL-Community bei</ng-container>
+          </p>
         </div>
 
         <h2 class="text-xl font-bold text-center mb-6 text-white" *ngIf="isGoogleUser">
-          <ng-container>{{ 'adminRegister.completeTitle' }}</ng-container>
+          <ng-container i18n="@@adminRegister.completeTitle">Registrierung abschließen</ng-container>
         </h2>
 
         <div
@@ -49,12 +53,12 @@ import { AuthService } from '../auth.service';
           class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-lg text-center text-gray-100"
         >
           <p class="text-blue-200 text-sm">
-            <ng-container>{{ 'adminRegister.signedInAs' }}</ng-container>
+            {{ t('adminRegister.signedInAs') }}
             <span class="font-bold text-white">{{ currentUser?.email }}</span>
-            <ng-container>{{ 'adminRegister.viaGoogle' }}</ng-container
+            <ng-container>{{ t('adminRegister.viaGoogle') }}</ng-container
             >.
           </p>
-          <p class="text-xs text-gray-400 mt-1">{{ 'adminRegister.completeApp' }}</p>
+          <p class="text-xs text-gray-400 mt-1">{{ t('adminRegister.completeApp') }}</p>
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
@@ -68,7 +72,7 @@ import { AuthService } from '../auth.service';
           <!-- Email/Password Section (Hidden for Google Users) -->
           <div *ngIf="!isGoogleUser" class="space-y-6">
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminRegister.email' }}</label>
+              <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('adminRegister.email') }}</label>
               <input
                 formControlName="email"
                 type="email"
@@ -81,12 +85,12 @@ import { AuthService } from '../auth.service';
                 *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
                 class="text-red-400 text-xs mt-1"
               >
-                {{ 'adminRegister.error.email' }}
+                {{ t('adminRegister.error.email') }}
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminRegister.password' }}</label>
+              <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('adminRegister.password') }}</label>
               <input
                 formControlName="password"
                 type="password"
@@ -99,12 +103,14 @@ import { AuthService } from '../auth.service';
                 *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
                 class="text-red-400 text-xs mt-1"
               >
-                {{ 'adminRegister.error.password' }}
+                {{ t('adminRegister.error.password') }}
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminRegister.confirmPassword' }}</label>
+              <label class="block text-sm font-medium text-gray-400 mb-2">{{
+                t('adminRegister.confirmPassword')
+              }}</label>
               <input
                 formControlName="confirmPassword"
                 type="password"
@@ -117,19 +123,18 @@ import { AuthService } from '../auth.service';
                 *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched"
                 class="text-red-400 text-xs mt-1"
               >
-                {{ 'adminRegister.error.mismatch' }}
+                {{ t('adminRegister.error.mismatch') }}
               </div>
             </div>
           </div>
 
           <!-- Personal Details -->
           <div class="pt-4 border-t border-gray-700">
-            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ 'adminRegister.personalDetails' }}</h3>
+            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ t('adminRegister.personalDetails') }}</h3>
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.firstName' }}</ng-container>
-                  <span class="text-red-400">*</span></label
+                  >{{ t('adminRegister.firstName') }} <span class="text-red-400">*</span></label
                 >
                 <input
                   formControlName="firstName"
@@ -143,13 +148,12 @@ import { AuthService } from '../auth.service';
                   *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.required' }}
+                  {{ t('adminRegister.error.required') }}
                 </div>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.lastName' }}</ng-container>
-                  <span class="text-red-400">*</span></label
+                  >{{ t('adminRegister.lastName') }} <span class="text-red-400">*</span></label
                 >
                 <input
                   formControlName="lastName"
@@ -163,7 +167,7 @@ import { AuthService } from '../auth.service';
                   *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.required' }}
+                  {{ t('adminRegister.error.required') }}
                 </div>
               </div>
             </div>
@@ -171,13 +175,12 @@ import { AuthService } from '../auth.service';
 
           <!-- Application Details -->
           <div class="pt-4 border-t border-gray-700">
-            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ 'adminRegister.appDetails' }}</h3>
+            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ t('adminRegister.appDetails') }}</h3>
 
             <div class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.institution' }}</ng-container>
-                  <span class="text-red-400">*</span></label
+                  >{{ t('adminRegister.institution') }} <span class="text-red-400">*</span></label
                 >
                 <input
                   formControlName="institution"
@@ -190,14 +193,13 @@ import { AuthService } from '../auth.service';
                   *ngIf="registerForm.get('institution')?.touched && registerForm.get('institution')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.required' }}
+                  {{ t('adminRegister.error.required') }}
                 </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.institutionLink' }}</ng-container>
-                  <span class="text-red-400">*</span></label
+                  >{{ t('adminRegister.institutionLink') }} <span class="text-red-400">*</span></label
                 >
                 <input
                   formControlName="institutionLink"
@@ -210,14 +212,13 @@ import { AuthService } from '../auth.service';
                   *ngIf="registerForm.get('institutionLink')?.touched && registerForm.get('institutionLink')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.url' }}
+                  {{ t('adminRegister.error.url') }}
                 </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.explanation' }}</ng-container>
-                  <span class="text-red-400">*</span></label
+                  >{{ t('adminRegister.explanation') }} <span class="text-red-400">*</span></label
                 >
                 <textarea
                   formControlName="explanation"
@@ -230,7 +231,7 @@ import { AuthService } from '../auth.service';
                   *ngIf="registerForm.get('explanation')?.touched && registerForm.get('explanation')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.explanation' }}
+                  {{ t('adminRegister.error.explanation') }}
                 </div>
               </div>
             </div>
@@ -241,17 +242,17 @@ import { AuthService } from '../auth.service';
             [disabled]="registerForm.invalid || isLoading"
             class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
           >
-            <ng-container *ngIf="isLoading">{{ 'adminRegister.creatingAccount' }}</ng-container>
+            <ng-container *ngIf="isLoading">{{ t('adminRegister.creatingAccount') }}</ng-container>
             <ng-container *ngIf="!isLoading">
-              <ng-container *ngIf="isGoogleUser">{{ 'adminRegister.btn.complete' }}</ng-container>
-              <ng-container *ngIf="!isGoogleUser">{{ 'adminRegister.btn.register' }}</ng-container>
+              <ng-container *ngIf="isGoogleUser">{{ t('adminRegister.btn.complete') }}</ng-container>
+              <ng-container *ngIf="!isGoogleUser">{{ t('adminRegister.btn.register') }}</ng-container>
             </ng-container>
           </button>
         </form>
 
         <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
           <p class="text-sm text-gray-500">
-            <ng-container>{{ 'adminRegister.alreadyAccount' }}</ng-container
+            <ng-container>{{ t('adminRegister.alreadyAccount') }}</ng-container
             >&nbsp;<a routerLink="/admin/login" class="text-emerald-400 hover:underline">{{
               'adminRegister.loginLink'
             }}</a>
@@ -265,6 +266,12 @@ import { AuthService } from '../auth.service';
   `,
 })
 export class AdminRegisterComponent {
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
   private fb = inject(FormBuilder);
   authentication = inject(AuthService);
   gameService = inject(GameService);

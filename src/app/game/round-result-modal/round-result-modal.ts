@@ -11,6 +11,9 @@ import { Round } from '../../types';
   styleUrl: './round-result-modal.scss',
 })
 export class RoundResultModal {
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
   @Input() round!: Round;
   @Output() resultClosed = new EventEmitter<void>();
 

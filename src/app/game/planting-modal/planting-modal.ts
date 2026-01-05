@@ -16,7 +16,7 @@ import { CropType } from '../../types';
         class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-2xl w-full"
         (click)="$event.stopPropagation()"
       >
-        <h2 class="text-2xl font-bold text-white mb-6 font-serif">{{ 'planting.title' }}</h2>
+        <h2 i18n="@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
 
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
           <button
@@ -35,15 +35,19 @@ import { CropType } from '../../types';
                 class="text-[10px] sm:text-xs font-serif font-bold text-white tracking-wide"
                 style="-webkit-text-stroke: 0.5px black; paint-order: stroke fill; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
               >
-                {{ getConfig(crop).label }}
+                {{ t(getConfig(crop).label) }}
               </span>
             </div>
           </button>
         </div>
 
         <div class="flex justify-end gap-3 mt-8">
-          <button (click)="plantingCancelled.emit()" class="px-4 py-2 text-gray-400 hover:text-white transition">
-            {{ 'planting.cancel' }}
+          <button
+            (click)="plantingCancelled.emit()"
+            i18n="@@planting.cancel"
+            class="px-4 py-2 text-gray-400 hover:text-white transition"
+          >
+            Abbrechen
           </button>
         </div>
       </div>
@@ -54,6 +58,10 @@ export class PlantingModal {
   @Input() crops: CropType[] = [];
   @Output() cropSelected = new EventEmitter<CropType>();
   @Output() plantingCancelled = new EventEmitter<void>();
+
+  t(key: string): string {
+    return $localize`:@@${key}:${key}`;
+  }
 
   private cropConfig: Record<string, { label: string; image: string }> = {
     Wheat: { label: 'crop.wheat', image: 'weizen.jpg' },

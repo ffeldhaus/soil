@@ -2,13 +2,17 @@
 <div
   class="fixed bottom-0 right-0 p-1 bg-white/50 backdrop-blur z-[100] flex items-center gap-3 rounded-tl-lg text-xs font-mono"
 >
-  <a routerLink="/impressum" class="text-gray-600 hover:text-black hover:underline transition">{{
-    'footer.impressum'
-  }}</a>
+  <a i18n="@@footer.impressum" routerLink="/impressum" class="text-gray-600 hover:text-black hover:underline transition"
+    >Impressum</a
+  >
   <span class="text-gray-400">|</span>
-  <a routerLink="/manual" target="_blank" class="text-gray-600 hover:text-black hover:underline transition">{{
-    'footer.manual'
-  }}</a>
+  <a
+    i18n="@@footer.manual"
+    routerLink="/manual"
+    target="_blank"
+    class="text-gray-600 hover:text-black hover:underline transition"
+    >Handbuch</a
+  >
   <span class="text-gray-400">|</span>
   <span class="text-gray-500">v{{ version }}</span>
 </div>
