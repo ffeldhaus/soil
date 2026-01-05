@@ -24,6 +24,17 @@ export class LanguageService {
 
     const currentLang = this.currentLang;
     if (currentLang !== lang) {
+      // Skip path-based redirect during local development with ng serve
+      // as it doesn't support localized paths by default
+      if (
+        typeof window !== 'undefined' &&
+        window.location.hostname === 'localhost' &&
+        window.location.port === '4200'
+      ) {
+        window.location.reload();
+        return;
+      }
+
       // Redirect to the new locale
       const url = this.document.location.pathname;
       const newUrl = url.replace(`/${currentLang}/`, `/${lang}/`);

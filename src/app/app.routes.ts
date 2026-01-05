@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [
+const baseRoutes: Routes = [
   {
     path: '',
     loadComponent: () => import('./landing/landing').then((m) => m.Landing),
@@ -36,5 +36,17 @@ export const routes: Routes = [
   {
     path: 'manual',
     loadComponent: () => import('./manual/manual').then((m) => m.ManualComponent),
+  },
+];
+
+export const routes: Routes = [
+  ...baseRoutes,
+  {
+    path: 'de',
+    children: baseRoutes,
+  },
+  {
+    path: 'en',
+    children: baseRoutes,
   },
 ];
