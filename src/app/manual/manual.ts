@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { AuthService } from '../auth/auth.service';
 import { GAME_CONSTANTS } from '../game-constants';
@@ -11,10 +10,9 @@ import { CropType } from '../types';
 @Component({
   selector: 'app-manual',
   standalone: true,
-  imports: [CommonModule, TranslocoModule, RouterLink, LanguageSwitcherComponent],
+  imports: [CommonModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div
-      *transloco="let t"
       class="min-h-screen bg-gray-900 text-white font-sans relative flex flex-col overflow-x-hidden"
       [ngClass]="{
         'print-a4': printSize === 'A4',
@@ -546,14 +544,14 @@ import { CropType } from '../types';
         }
 
         .bg-gray-900,
-        .bg-gray-900\/80,
-        .bg-gray-900\/90,
-        .bg-black\/40,
-        .bg-black\/30,
-        .bg-white\/5,
-        .bg-emerald-500\/10,
-        .bg-red-900\/20,
-        .bg-blue-500\/10 {
+        .bg-gray-900\\/80,
+        .bg-gray-900\\/90,
+        .bg-black\\/40,
+        .bg-black\\/30,
+        .bg-white\\/5,
+        .bg-emerald-500\\/10,
+        .bg-red-900\\/20,
+        .bg-blue-500\\/10 {
           background-color: white !important;
           background: white !important;
           backdrop-filter: none !important;
@@ -562,11 +560,11 @@ import { CropType } from '../types';
         .border,
         .border-gray-700,
         .border-gray-800,
-        .border-white\/5,
-        .border-white\/10,
-        .border-emerald-500\/20,
-        .border-red-500\/30,
-        .border-blue-500\/20 {
+        .border-white\\/5,
+        .border-white\\/10,
+        .border-emerald-500\\/20,
+        .border-red-500\\/30,
+        .border-blue-500\\/20 {
           border-color: #eee !important;
         }
 
@@ -654,9 +652,12 @@ import { CropType } from '../types';
   ],
 })
 export class ManualComponent {
-  private transloco = inject(TranslocoService);
   private authService = inject(AuthService);
   private router = inject(Router);
+
+  t(key: string): string {
+    return key;
+  }
 
   crops = Object.values(GAME_CONSTANTS.CROPS);
 

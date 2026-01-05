@@ -3,7 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { provideRouter, Router } from '@angular/router';
 import { vi } from 'vitest';
 
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { AuthService } from '../auth.service';
 import { AdminLoginComponent } from './admin-login';
 
@@ -25,7 +24,7 @@ describe('AdminLoginComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [AdminLoginComponent, ReactiveFormsModule],
-      providers: [provideTranslocoTest(), provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminLoginComponent);
@@ -54,6 +53,6 @@ describe('AdminLoginComponent', () => {
     fixture.detectChanges();
 
     expect(component.showErrorModal).toBe(true);
-    expect(component.errorMessage).toContain('Login failed');
+    expect(component.errorMessage).toContain('Anmeldung fehlgeschlagen');
   });
 });

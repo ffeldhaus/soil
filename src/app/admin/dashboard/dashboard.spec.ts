@@ -8,7 +8,6 @@ import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
-import { provideTranslocoTest } from '../../transloco-testing.module';
 
 @Component({
   selector: 'app-dashboard-test',
@@ -71,7 +70,6 @@ describe('Dashboard Component Logic (Simplified Isolation)', () => {
     await TestBed.configureTestingModule({
       imports: [TestDashboard],
       providers: [
-        provideTranslocoTest(),
         { provide: AuthService, useValue: { user$: of({ uid: 't1' }) } },
         { provide: GameService, useValue: gameServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },

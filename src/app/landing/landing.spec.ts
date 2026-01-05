@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { LanguageService } from '../services/language.service';
-import { provideTranslocoTest } from '../transloco-testing.module';
 import { Landing } from './landing';
 
 describe('Landing', () => {
@@ -14,11 +13,7 @@ describe('Landing', () => {
     languageServiceMock = { currentLang: 'de' };
     await TestBed.configureTestingModule({
       imports: [Landing],
-      providers: [
-        provideTranslocoTest(),
-        provideRouter([]),
-        { provide: LanguageService, useValue: languageServiceMock },
-      ],
+      providers: [provideRouter([]), { provide: LanguageService, useValue: languageServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Landing);

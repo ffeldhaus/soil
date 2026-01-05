@@ -26,17 +26,18 @@ export class AuthService {
   user$ = this.userSubject.asObservable();
 
   constructor() {
+    const isBrowser = typeof localStorage !== 'undefined';
     // Subscribe to real auth state using native SDK
     onAuthStateChanged(this.auth, (u) => {
       this.ngZone.run(() => {
-        if (!localStorage.getItem('soil_test_mode')) {
+        if (!isBrowser || !localStorage.getItem('soil_test_mode')) {
           this.userSubject.next(u);
         }
       });
     });
 
     // Check for test mode immediate override
-    if (localStorage.getItem('soil_test_mode') === 'true') {
+    if (isBrowser && localStorage.getItem('soil_test_mode') === 'true') {
       console.log('AuthService: Running in Test Mode');
       this.userSubject.next(this.getMockUser());
     }

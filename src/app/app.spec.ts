@@ -5,7 +5,6 @@ import { EMPTY, of } from 'rxjs';
 
 import { App } from './app';
 import { LanguageService } from './services/language.service';
-import { provideTranslocoTest } from './transloco-testing.module';
 
 describe('App', () => {
   let languageServiceMock: any;
@@ -26,7 +25,6 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
-        provideTranslocoTest(),
         provideRouter([]),
         {
           provide: ActivatedRoute,

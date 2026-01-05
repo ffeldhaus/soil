@@ -6,7 +6,6 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { GameService } from '../game.service';
 import { Board } from './board';
 
@@ -86,7 +85,6 @@ describe('Board', () => {
     await TestBed.configureTestingModule({
       imports: [Board],
       providers: [
-        provideTranslocoTest(),
         { provide: AuthService, useValue: authSpy },
         { provide: GameService, useValue: gameSpy },
         { provide: Functions, useValue: functionsSpy },

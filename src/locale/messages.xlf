@@ -1,0 +1,1069 @@
+<?xml version="1.0" ?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="de" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="dashboard.pending.title" datatype="html">
+        <source>Konto wartet auf Genehmigung</source>
+      </trans-unit>
+      <trans-unit id="dashboard.pending.welcome" datatype="html">
+        <source>Danke für die Registrierung, &lt;span class="font-bold text-white"&gt;{{ userdisplayName }}&lt;/span&gt;!</source>
+      </trans-unit>
+      <trans-unit id="dashboard.pending.message" datatype="html">
+        <source>Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.logout" datatype="html">
+        <source>Abmelden</source>
+      </trans-unit>
+      <trans-unit id="dashboard.loading.verifying" datatype="html">
+        <source>Konto-Status wird geprüft...</source>
+      </trans-unit>
+      <trans-unit id="dashboard.loading.games" datatype="html">
+        <source>Spiele werden geladen...</source>
+      </trans-unit>
+      <trans-unit id="dashboard.super.title" datatype="html">
+        <source>Super-Admin-Zugriff</source>
+      </trans-unit>
+      <trans-unit id="dashboard.super.redirect" datatype="html">
+        <source>Weiterleitung zur Super-Admin-Konsole...</source>
+      </trans-unit>
+      <trans-unit id="dashboard.super.btnGo" datatype="html">
+        <source>Zur Konsole</source>
+      </trans-unit>
+      <trans-unit id="dashboard.controls.title" datatype="html">
+        <source>Admin-Steuerung</source>
+      </trans-unit>
+      <trans-unit id="dashboard.welcome" datatype="html">
+        <source>Willkommen, &lt;span class="font-bold text-white"&gt;{{ userdisplayName }}&lt;/span&gt;!</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.title" datatype="html">
+        <source>Neues Spiel erstellen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.name" datatype="html">
+        <source>Spielname</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.phName" datatype="html">
+        <source>Spielname</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.playerLabel" datatype="html">
+        <source>Spieler-Bezeichnung (z. B. Team, Farmer)</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.phPlayer" datatype="html">
+        <source>Spieler</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.players" datatype="html">
+        <source>Spieler (1-8)</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.rounds" datatype="html">
+        <source>Runden</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.bots" datatype="html">
+        <source>KI-Bots</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.aiLevel" datatype="html">
+        <source>KI-Niveau</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.submit" datatype="html">
+        <source>+ Neues Spiel erstellen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.creating" datatype="html">
+        <source>Wird erstellt...</source>
+      </trans-unit>
+      <trans-unit id="dashboard.created.title" datatype="html">
+        <source>Spiel erstellt!</source>
+      </trans-unit>
+      <trans-unit id="dashboard.created.id" datatype="html">
+        <source>Spiel-ID</source>
+      </trans-unit>
+      <trans-unit id="dashboard.list.trash" datatype="html">
+        <source>Papierkorb (Gelöschte Spiele)</source>
+      </trans-unit>
+      <trans-unit id="dashboard.list.active" datatype="html">
+        <source>Aktive Spiele</source>
+      </trans-unit>
+      <trans-unit id="dashboard.list.refresh" datatype="html">
+        <source>Liste aktualisieren</source>
+      </trans-unit>
+      <trans-unit id="dashboard.filter.active" datatype="html">
+        <source>Aktiv</source>
+      </trans-unit>
+      <trans-unit id="dashboard.filter.trash" datatype="html">
+        <source>Papierkorb</source>
+      </trans-unit>
+      <trans-unit id="dashboard.actions.restoreSelected" datatype="html">
+        <source>Ausgewählte wiederherstellen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.actions.deleteSelected" datatype="html">
+        <source>Ausgewählte löschen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.error.retry" datatype="html">
+        <source>Erneut versuchen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.error.title" datatype="html">
+        <source>Fehler</source>
+      </trans-unit>
+      <trans-unit id="dashboard.error.close" datatype="html">
+        <source>Schließen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.name" datatype="html">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.details" datatype="html">
+        <source>Details</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.round" datatype="html">
+        <source>Runde</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.deletedAt" datatype="html">
+        <source>Gelöscht am</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.created" datatype="html">
+        <source>Erstellt</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.actions" datatype="html">
+        <source>Aktionen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.id" datatype="html">
+        <source>ID:</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.email" datatype="html">
+        <source>Spieldetails senden</source>
+      </trans-unit>
+      <trans-unit id="dashboard.table.restore" datatype="html">
+        <source>Spiel wiederherstellen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.details.players" datatype="html">
+        <source>Spieler</source>
+      </trans-unit>
+      <trans-unit id="dashboard.details.noPlayers" datatype="html">
+        <source>Noch keine Spieler beigetreten.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.title" datatype="html">
+        <source>Runden-Frist-Manager</source>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.round" datatype="html">
+        <source>Aktuelle Runde ({{ gamecurrentRoundNumber }})</source>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.set" datatype="html">
+        <source>Frist setzen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.deadline.hint" datatype="html">
+        <source>* Wenn eine Frist gesetzt ist, übernimmt die KI automatisch für alle Spieler, die bis dahin nicht abgegeben haben.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.label" datatype="html">
+        <source>Spieler</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.capital" datatype="html">
+        <source>Kapital</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.round" datatype="html">
+        <source>Runde</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.soil" datatype="html">
+        <source>Bodenqualität (ø)</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.nutrition" datatype="html">
+        <source>Nährstoffe (ø)</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.submitted" datatype="html">
+        <source>Abgegeben?</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.toHuman" datatype="html">
+        <source>ZU MENSCH</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.toAi" datatype="html">
+        <source>ZU KI ({{ newGameConfigaiLeveluppercase }})</source>
+      </trans-unit>
+      <trans-unit id="dashboard.empty.title" datatype="html">
+        <source>Keine Spiele gefunden.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.empty.subtitle" datatype="html">
+        <source>Erstelle ein neues Spiel, um zu beginnen!</source>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.showing" datatype="html">
+        <source>Zeige</source>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.of" datatype="html">
+        <source>von</source>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.prev" datatype="html">
+        <source>Zurück</source>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.page" datatype="html">
+        <source>Seite</source>
+      </trans-unit>
+      <trans-unit id="dashboard.pagination.next" datatype="html">
+        <source>Weiter</source>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.access" datatype="html">
+        <source>Zugang</source>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.scan" datatype="html">
+        <source>Scannen zum automatischen Anmelden.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.print" datatype="html">
+        <source>Drucken</source>
+      </trans-unit>
+      <trans-unit id="dashboard.qr.close" datatype="html">
+        <source>Schließen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.permanent" datatype="html">
+        <source>Dauerhaftes Löschen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.confirm" datatype="html">
+        <source>Löschen bestätigen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.questionPermanent" datatype="html">
+        <source>Dauerhaft löschen?</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.question" datatype="html">
+        <source>Löschen?</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.questionBatchPermanent" datatype="html">
+        <source>Ausgewählte dauerhaft löschen?</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.questionBatch" datatype="html">
+        <source>Ausgewählte löschen?</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.games" datatype="html">
+        <source>Spiel(e)</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.soft.title" datatype="html">
+        <source>Papierkorb:</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.soft.desc" datatype="html">
+        <source>Spiele werden in den Papierkorb verschoben. Du kannst sie jederzeit wiederherstellen innerhalb von</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.days" datatype="html">
+        <source>Tagen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.warning" datatype="html">
+        <source>WARNUNG:</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.permanentDesc" datatype="html">
+        <source>Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.typeConfirm" datatype="html">
+        <source>Tippe &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.cancel" datatype="html">
+        <source>Abbrechen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.btnPermanent" datatype="html">
+        <source>Dauerhaft löschen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.delete.btnGame" datatype="html">
+        <source>Spiel löschen</source>
+      </trans-unit>
+      <trans-unit id="dashboard.login.msg" datatype="html">
+        <source>Bitte melde dich an, um auf das Admin-Dashboard zuzugreifen.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.login.btn" datatype="html">
+        <source>Anmelden mit Google</source>
+      </trans-unit>
+      <trans-unit id="ai.level.elementary" datatype="html">
+        <source>Grundschule</source>
+      </trans-unit>
+      <trans-unit id="ai.level.middle" datatype="html">
+        <source>Mittelstufe</source>
+      </trans-unit>
+      <trans-unit id="ai.level.high" datatype="html">
+        <source>Oberstufe</source>
+      </trans-unit>
+      <trans-unit id="superadmin.title" datatype="html">
+        <source>SOIL SUPER ADMIN</source>
+      </trans-unit>
+      <trans-unit id="superadmin.badge" datatype="html">
+        <source>SUPER</source>
+      </trans-unit>
+      <trans-unit id="superadmin.logout" datatype="html">
+        <source>Abmelden</source>
+      </trans-unit>
+      <trans-unit id="superadmin.loading" datatype="html">
+        <source>Daten werden geladen...</source>
+      </trans-unit>
+      <trans-unit id="superadmin.dashboard.title" datatype="html">
+        <source>Dashboard</source>
+      </trans-unit>
+      <trans-unit id="superadmin.dashboard.subtitle" datatype="html">
+        <source>Ausstehende Genehmigungen und System-Administratoren verwalten.</source>
+      </trans-unit>
+      <trans-unit id="superadmin.dashboard.refresh" datatype="html">
+        <source>Daten aktualisieren</source>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.totalGames" datatype="html">
+        <source>Spiele insgesamt</source>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.created" datatype="html">
+        <source>erstellt</source>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.active" datatype="html">
+        <source>Aktiv</source>
+      </trans-unit>
+      <trans-unit id="footer.impressum" datatype="html">
+        <source>Impressum</source>
+      </trans-unit>
+      <trans-unit id="footer.manual" datatype="html">
+        <source>Handbuch</source>
+      </trans-unit>
+      <trans-unit id="manual.title" datatype="html">
+        <source>Soil Handbuch</source>
+      </trans-unit>
+      <trans-unit id="manual.subtitle" datatype="html">
+        <source>Der Leitfaden für erfolgreiche Farmer</source>
+      </trans-unit>
+      <trans-unit id="manual.print" datatype="html">
+        <source>Als PDF speichern</source>
+      </trans-unit>
+      <trans-unit id="manual.back" datatype="html">
+        <source>Zurück zum Spiel</source>
+      </trans-unit>
+      <trans-unit id="manual.printModal.title" datatype="html">
+        <source>Druckeinstellungen</source>
+      </trans-unit>
+      <trans-unit id="manual.printModal.size" datatype="html">
+        <source>Papierformat</source>
+      </trans-unit>
+      <trans-unit id="manual.printModal.orientation" datatype="html">
+        <source>Ausrichtung</source>
+      </trans-unit>
+      <trans-unit id="manual.printModal.portrait" datatype="html">
+        <source>Hochformat</source>
+      </trans-unit>
+      <trans-unit id="manual.printModal.landscape" datatype="html">
+        <source>Querformat</source>
+      </trans-unit>
+      <trans-unit id="manual.printModal.print" datatype="html">
+        <source>Drucken</source>
+      </trans-unit>
+      <trans-unit id="manual.printModal.cancel" datatype="html">
+        <source>Abbrechen</source>
+      </trans-unit>
+      <trans-unit id="manual.footer" datatype="html">
+        <source>Viel Erfolg bei Ihrer Simulation! Achten Sie stets auf das Gleichgewicht zwischen Ertrag und Nachhaltigkeit.</source>
+      </trans-unit>
+      <trans-unit id="manual.intro.title" datatype="html">
+        <source>Einführung</source>
+      </trans-unit>
+      <trans-unit id="manual.intro.goal.title" datatype="html">
+        <source>Das Spielziel</source>
+      </trans-unit>
+      <trans-unit id="manual.intro.goal.text" datatype="html">
+        <source>In Soil führen Sie einen landwirtschaftlichen Betrieb über mehrere Runden. Ziel ist es, ein hohes Endkapital zu erwirtschaften und gleichzeitig die Bodenqualität für zukünftige Generationen zu erhalten. Ein nachhaltiges Handeln wird durch das Bio-Siegel belohnt, das höhere Verkaufspreise ermöglicht.</source>
+      </trans-unit>
+      <trans-unit id="manual.intro.mechanics.title" datatype="html">
+        <source>Spielmechanik</source>
+      </trans-unit>
+      <trans-unit id="manual.intro.mechanics.text" datatype="html">
+        <source>Jede Runde entscheiden Sie, was auf Ihren Feldern gepflanzt wird. Beachten Sie dabei die Fruchtfolge: Bestimmte Pflanzen wachsen besser nach anderen. Dünger und Pestizide steigern den Ertrag, können aber langfristig den Boden belasten. Nützlinge und biologische Methoden fördern die Bodengesundheit.</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.title" datatype="html">
+        <source>Konzepte &amp; Einheiten</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.units.title" datatype="html">
+        <source>Maßeinheiten</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.units.text" datatype="html">
+        <source>In der Landwirtschaft nutzen wir spezifische Einheiten: &lt;b&gt;ha&lt;/b&gt; (Hektar) beschreibt die Fläche (1 ha = 10.000 m²). &lt;b&gt;dt&lt;/b&gt; (Dezitonne) beschreibt das Gewicht (1 dt = 100 kg). Erträge werden oft in &lt;b&gt;dt/ha&lt;/b&gt; (Dezitonnen pro Hektar) angegeben.</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.pest.title" datatype="html">
+        <source>Schädlinge</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.pest.text" datatype="html">
+        <source>Jede Fruchtart hat spezifische Schädlinge, die den Ertrag mindern können. Der Befall variiert je nach Wetter und Fruchtfolge.</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.rotation.title" datatype="html">
+        <source>Fruchtfolge</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.rotation.text" datatype="html">
+        <source>Die Fruchtfolge beschreibt die zeitliche Abfolge von Kulturen auf einem Feld. Eine gute Folge erhält die Bodenfruchtbarkeit und mindert Krankheitsdruck.</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.requirements.title" datatype="html">
+        <source>Anforderungen</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.requirements.text" datatype="html">
+        <source>Pflanzen haben unterschiedliche Ansprüche an die Bodenqualität und die Nährstoffversorgung (Minerale).</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.weather.title" datatype="html">
+        <source>Wetterempfindlichkeit</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.weather.text" datatype="html">
+        <source>Extremwetter wie Dürre, Kälte oder Überschwemmungen wirken sich je nach Sorte unterschiedlich stark auf den Ertrag aus.</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.yield.title" datatype="html">
+        <source>Ertragshöhen</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.yield.text" datatype="html">
+        <source>Der Ertrag gibt an, wie viel Erntegut pro Fläche geerntet wird. Er hängt von der Sorte, der Pflege und den Umweltbedingungen ab.</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.price.title" datatype="html">
+        <source>Preise &amp; Marktwerte</source>
+      </trans-unit>
+      <trans-unit id="manual.concepts.price.text" datatype="html">
+        <source>Die Saatgutpreise sind fix, während die Verkaufspreise (Marktwerte) je nach Anbaumethode (Konventionell vs. Bio) variieren.</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.title" datatype="html">
+        <source>Sortenpass</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.rotation" datatype="html">
+        <source>Fruchtfolge-Graph</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.rotationPrev" datatype="html">
+        <source>Gute Vorfrüchte</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.rotationNext" datatype="html">
+        <source>Gute Nachfrüchte</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.current" datatype="html">
+        <source>Aktuelle Frucht</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.requirements" datatype="html">
+        <source>Anforderungen</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.soil" datatype="html">
+        <source>Bodenqualität</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.minerals" datatype="html">
+        <source>Mineralstoffe</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.weather" datatype="html">
+        <source>Wetterempfindlichkeit</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.drought" datatype="html">
+        <source>Dürre</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.cold" datatype="html">
+        <source>Kälte</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.flood" datatype="html">
+        <source>Überschwemmung</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.yields" datatype="html">
+        <source>Ertragshöhen</source>
+      </trans-unit>
+      <trans-unit id="manual.crops.prices" datatype="html">
+        <source>Preise &amp; Marktwerte</source>
+      </trans-unit>
+      <trans-unit id="manual.yields.veryHigh" datatype="html">
+        <source>Sehr hoch</source>
+      </trans-unit>
+      <trans-unit id="manual.yields.high" datatype="html">
+        <source>Hoch</source>
+      </trans-unit>
+      <trans-unit id="manual.yields.moderate" datatype="html">
+        <source>Mäßig</source>
+      </trans-unit>
+      <trans-unit id="manual.yields.low" datatype="html">
+        <source>Niedrig</source>
+      </trans-unit>
+      <trans-unit id="manual.yields.veryLow" datatype="html">
+        <source>Sehr niedrig</source>
+      </trans-unit>
+      <trans-unit id="manual.prices.conv" datatype="html">
+        <source>Konventionell</source>
+      </trans-unit>
+      <trans-unit id="manual.prices.org" datatype="html">
+        <source>Ökologisch (Bio)</source>
+      </trans-unit>
+      <trans-unit id="manual.prices.seed" datatype="html">
+        <source>Saatgut / ha</source>
+      </trans-unit>
+      <trans-unit id="manual.prices.sale" datatype="html">
+        <source>Verkauf / dt</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.title" datatype="html">
+        <source>Admin-Anmeldung</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.subtitle" datatype="html">
+        <source>Zugang zur Soil-Steuerzentrale</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.email" datatype="html">
+        <source>E-Mail</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.placeholder.email" datatype="html">
+        <source>admin@schule.de</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.password" datatype="html">
+        <source>Passwort</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.loggingIn" datatype="html">
+        <source>Anmeldung läuft...</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.loginButton" datatype="html">
+        <source>Anmelden</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.googleSignIn" datatype="html">
+        <source>Mit Google anmelden</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.noAccount" datatype="html">
+        <source>Noch kein Konto?</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.registerLink" datatype="html">
+        <source>Hier registrieren</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.backToHome" datatype="html">
+        <source>← Zurück zur Startseite</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.error.title" datatype="html">
+        <source>Anmeldung fehlgeschlagen</source>
+      </trans-unit>
+      <trans-unit id="adminLogin.error.retry" datatype="html">
+        <source>Erneut versuchen</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.title" datatype="html">
+        <source>Admin-Registrierung</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.subtitle" datatype="html">
+        <source>Werden Sie Teil der Soil-Community als Lehrkraft oder Administrator</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.completeTitle" datatype="html">
+        <source>Registrierung abschließen</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.signedInAs" datatype="html">
+        <source>Angemeldet als</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.viaGoogle" datatype="html">
+        <source>via Google</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.completeApp" datatype="html">
+        <source>Bitte vervollständigen Sie Ihre Bewerbung.</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.email" datatype="html">
+        <source>E-Mail</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.email" datatype="html">
+        <source>admin@schule.de</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.password" datatype="html">
+        <source>Mindestens 6 Zeichen</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.confirmPassword" datatype="html">
+        <source>Passwort bestätigen</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.firstName" datatype="html">
+        <source>Max</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.lastName" datatype="html">
+        <source>Mustermann</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.institution" datatype="html">
+        <source>z.B. Universität Berlin</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.institutionLink" datatype="html">
+        <source>https://...</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.explanation" datatype="html">
+        <source>Kurze Erklärung (min. 10 Zeichen)...</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.email" datatype="html">
+        <source>Gültige E-Mail erforderlich.</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.password" datatype="html">
+        <source>Passwort muss mindestens 6 Zeichen lang sein.</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.mismatch" datatype="html">
+        <source>Passwörter stimmen nicht überein.</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.required" datatype="html">
+        <source>Erforderlich.</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.url" datatype="html">
+        <source>Gültige URL beginnend mit http:// oder https:// erforderlich.</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.explanation" datatype="html">
+        <source>Erklärung erforderlich (min. 10 Zeichen).</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.error.failed" datatype="html">
+        <source>Registrierung fehlgeschlagen.</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.password" datatype="html">
+        <source>Passwort</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.confirmPassword" datatype="html">
+        <source>Passwort bestätigen</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.personalDetails" datatype="html">
+        <source>Persönliche Details</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.firstName" datatype="html">
+        <source>Vorname</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.lastName" datatype="html">
+        <source>Nachname</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.appDetails" datatype="html">
+        <source>Bewerbungsdetails</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.institution" datatype="html">
+        <source>Institution / Schule</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.institutionLink" datatype="html">
+        <source>Website der Institution</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.explanation" datatype="html">
+        <source>Warum möchten Sie Soil nutzen?</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.creatingAccount" datatype="html">
+        <source>Konto wird erstellt...</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.btn.complete" datatype="html">
+        <source>Registrierung abschließen</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.btn.register" datatype="html">
+        <source>Registrieren</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.alreadyAccount" datatype="html">
+        <source>Schon ein Konto?</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.loginLink" datatype="html">
+        <source>Hier anmelden</source>
+      </trans-unit>
+      <trans-unit id="adminRegister.backToHome" datatype="html">
+        <source>← Zurück zur Startseite</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.title" datatype="html">
+        <source>Spieler-Anmeldung</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.gameId" datatype="html">
+        <source>Spiel-ID</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.placeholder.gameId" datatype="html">
+        <source>Spiel-ID</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.placeholder.pin" datatype="html">
+        <source>Eindeutiger Spieler-PIN</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.pin" datatype="html">
+        <source>Spieler-PIN (Code)</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.enteringGame" datatype="html">
+        <source>Spiel wird betreten...</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.startGame" datatype="html">
+        <source>Spiel starten</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.backToHome" datatype="html">
+        <source>← Zurück zur Startseite</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.error.title" datatype="html">
+        <source>Spielzugang fehlgeschlagen</source>
+      </trans-unit>
+      <trans-unit id="playerLogin.error.retry" datatype="html">
+        <source>Erneut versuchen</source>
+      </trans-unit>
+      <trans-unit id="board.login.adminTitle" datatype="html">
+        <source>Admin-Zugang</source>
+      </trans-unit>
+      <trans-unit id="board.login.adminDesc" datatype="html">
+        <source>Spiele verwalten und die Simulation steuern.</source>
+      </trans-unit>
+      <trans-unit id="board.login.btnGoogle" datatype="html">
+        <source>Anmelden mit Google</source>
+      </trans-unit>
+      <trans-unit id="board.login.playerTitle" datatype="html">
+        <source>Spieler-Zugang</source>
+      </trans-unit>
+      <trans-unit id="board.login.playerDesc" datatype="html">
+        <source>Spiel-ID und Zugangsdaten eingeben.</source>
+      </trans-unit>
+      <trans-unit id="board.login.phGameId" datatype="html">
+        <source>Spiel-ID</source>
+      </trans-unit>
+      <trans-unit id="board.login.phPlayerNum" datatype="html">
+        <source>Spieler # (z.B. 1)</source>
+      </trans-unit>
+      <trans-unit id="board.login.phPin" datatype="html">
+        <source>Spiel-Passwort</source>
+      </trans-unit>
+      <trans-unit id="board.login.btnLogin" datatype="html">
+        <source>Anmelden</source>
+      </trans-unit>
+      <trans-unit id="board.nav.names" datatype="html">
+        <source>NAMEN</source>
+      </trans-unit>
+      <trans-unit id="board.nav.nutrition" datatype="html">
+        <source>NÄHRSTOFFE</source>
+      </trans-unit>
+      <trans-unit id="board.nav.harvest" datatype="html">
+        <source>ERNTE</source>
+      </trans-unit>
+      <trans-unit id="board.nav.soil" datatype="html">
+        <source>BODENQUALITÄT</source>
+      </trans-unit>
+      <trans-unit id="board.nav.finance" datatype="html">
+        <source>FINANZEN</source>
+      </trans-unit>
+      <trans-unit id="board.nav.options" datatype="html">
+        <source>OPTIONEN</source>
+      </trans-unit>
+      <trans-unit id="board.nav.waiting" datatype="html">
+        <source>WARTEN...</source>
+      </trans-unit>
+      <trans-unit id="board.nav.nextRound" datatype="html">
+        <source>NÄCHSTE RUNDE</source>
+      </trans-unit>
+      <trans-unit id="board.nav.endGame" datatype="html">
+        <source>SPIEL BEENDEN</source>
+      </trans-unit>
+      <trans-unit id="board.logout" datatype="html">
+        <source>Abmelden</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.overlays" datatype="html">
+        <source>Visuelle Overlays</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.names" datatype="html">
+        <source>Namen anzeigen</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.nutrition" datatype="html">
+        <source>Nährstoffe anzeigen</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.harvest" datatype="html">
+        <source>Ernte anzeigen</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.soil" datatype="html">
+        <source>Bodenqualität anzeigen</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.finance" datatype="html">
+        <source>Finanzansicht</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.actions" datatype="html">
+        <source>Spiel-Aktionen</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.roundOptions" datatype="html">
+        <source>RUNDEN-OPTIONEN</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.waiting" datatype="html">
+        <source>WARTE AUF ANDERE...</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.nextRound" datatype="html">
+        <source>NÄCHSTE RUNDE</source>
+      </trans-unit>
+      <trans-unit id="board.mobile.endGame" datatype="html">
+        <source>SPIEL BEENDEN</source>
+      </trans-unit>
+      <trans-unit id="board.activePlayer" datatype="html">
+        <source>Aktiver Spieler</source>
+      </trans-unit>
+      <trans-unit id="board.banner.readOnly" datatype="html">
+        <source>SCHREIBGESCHÜTZTER MODUS</source>
+      </trans-unit>
+      <trans-unit id="board.error.title" datatype="html">
+        <source>Fehler</source>
+      </trans-unit>
+      <trans-unit id="board.error.close" datatype="html">
+        <source>Schließen</source>
+      </trans-unit>
+      <trans-unit id="board.round" datatype="html">
+        <source>Runde</source>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.title" datatype="html">
+        <source>Spiel beendet!</source>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.subtitle" datatype="html">
+        <source>Herzlichen Glückwunsch an unsere Pioniere!</source>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.financialTitle" datatype="html">
+        <source>Finanz-Champion</source>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.soilTitle" datatype="html">
+        <source>Boden-Wächter</source>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.viewResults" datatype="html">
+        <source>ERGEBNISSE ANSEHEN</source>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.backToDashboard" datatype="html">
+        <source>ZURÜCK ZUM DASHBOARD</source>
+      </trans-unit>
+      <trans-unit id="finance.title" datatype="html">
+        <source>Finanzbericht</source>
+      </trans-unit>
+      <trans-unit id="finance.subtitle" datatype="html">
+        <source>Spielervergleich und Historie</source>
+      </trans-unit>
+      <trans-unit id="finance.noRounds" datatype="html">
+        <source>Noch keine Runden</source>
+      </trans-unit>
+      <trans-unit id="finance.charts.capital" datatype="html">
+        <source>Kapitalentwicklung</source>
+      </trans-unit>
+      <trans-unit id="finance.you" datatype="html">
+        <source>DU</source>
+      </trans-unit>
+      <trans-unit id="finance.group.decisions" datatype="html">
+        <source>Entscheidungen (vorherige Runde)</source>
+      </trans-unit>
+      <trans-unit id="finance.group.expenses" datatype="html">
+        <source>Ausgabendetails</source>
+      </trans-unit>
+      <trans-unit id="finance.group.income" datatype="html">
+        <source>Einnahmedetails</source>
+      </trans-unit>
+      <trans-unit id="finance.fertilizer" datatype="html">
+        <source>Konventioneller Dünger</source>
+      </trans-unit>
+      <trans-unit id="finance.pesticide" datatype="html">
+        <source>Pestizide</source>
+      </trans-unit>
+      <trans-unit id="finance.organisms" datatype="html">
+        <source>Nützlinge</source>
+      </trans-unit>
+      <trans-unit id="finance.organic" datatype="html">
+        <source>Bio-Siegel</source>
+      </trans-unit>
+      <trans-unit id="finance.header.seeds" datatype="html">
+        <source>Saatgut (detailliert)</source>
+      </trans-unit>
+      <trans-unit id="finance.header.investments" datatype="html">
+        <source>Investitionen (detailliert)</source>
+      </trans-unit>
+      <trans-unit id="finance.header.running" datatype="html">
+        <source>Laufende Kosten (detailliert)</source>
+      </trans-unit>
+      <trans-unit id="finance.header.harvest" datatype="html">
+        <source>Gesamte Ernteeinnahmen</source>
+      </trans-unit>
+      <trans-unit id="finance.sub.machines" datatype="html">
+        <source>Maschinen</source>
+      </trans-unit>
+      <trans-unit id="finance.sub.animalsInvest" datatype="html">
+        <source>Tiere (Initial)</source>
+      </trans-unit>
+      <trans-unit id="finance.sub.base" datatype="html">
+        <source>Basisbetrieb</source>
+      </trans-unit>
+      <trans-unit id="finance.sub.organicControl" datatype="html">
+        <source>Bio-Siegel Kontrolle</source>
+      </trans-unit>
+      <trans-unit id="finance.sub.pesticide" datatype="html">
+        <source>Pestizidausbringung</source>
+      </trans-unit>
+      <trans-unit id="finance.sub.organisms" datatype="html">
+        <source>Nützlinge</source>
+      </trans-unit>
+      <trans-unit id="finance.sub.animalsRunning" datatype="html">
+        <source>Tiere (Laufend)</source>
+      </trans-unit>
+      <trans-unit id="finance.result.profit" datatype="html">
+        <source>NETTOGEWINN / VERLUST</source>
+      </trans-unit>
+      <trans-unit id="finance.result.capital" datatype="html">
+        <source>ENDKAPITAL</source>
+      </trans-unit>
+      <trans-unit id="finance.playerStatus" datatype="html">
+        <source>Farmer-Status</source>
+      </trans-unit>
+      <trans-unit id="finance.event.weather" datatype="html">
+        <source>Regionales Wetter</source>
+      </trans-unit>
+      <trans-unit id="finance.event.vermin" datatype="html">
+        <source>Schädlingsbericht</source>
+      </trans-unit>
+      <trans-unit id="crop.wheat" datatype="html">
+        <source>Weizen</source>
+      </trans-unit>
+      <trans-unit id="crop.corn" datatype="html">
+        <source>Mais</source>
+      </trans-unit>
+      <trans-unit id="crop.potato" datatype="html">
+        <source>Kartoffel</source>
+      </trans-unit>
+      <trans-unit id="crop.beet" datatype="html">
+        <source>Zuckerrübe</source>
+      </trans-unit>
+      <trans-unit id="crop.barley" datatype="html">
+        <source>Gerste</source>
+      </trans-unit>
+      <trans-unit id="crop.oat" datatype="html">
+        <source>Hafer</source>
+      </trans-unit>
+      <trans-unit id="crop.rye" datatype="html">
+        <source>Roggen</source>
+      </trans-unit>
+      <trans-unit id="crop.fieldbean" datatype="html">
+        <source>Ackerbohne</source>
+      </trans-unit>
+      <trans-unit id="crop.animals" datatype="html">
+        <source>Tiere</source>
+      </trans-unit>
+      <trans-unit id="crop.fallow" datatype="html">
+        <source>Brachland</source>
+      </trans-unit>
+      <trans-unit id="pest.label" datatype="html">
+        <source>Schädling</source>
+      </trans-unit>
+      <trans-unit id="pest.aphid" datatype="html">
+        <source>Blattlaus</source>
+      </trans-unit>
+      <trans-unit id="pest.fritfly" datatype="html">
+        <source>Fritfliege</source>
+      </trans-unit>
+      <trans-unit id="pest.potato-beetle" datatype="html">
+        <source>Kartoffelkäfer</source>
+      </trans-unit>
+      <trans-unit id="pest.corn-borer" datatype="html">
+        <source>Maiszünsler</source>
+      </trans-unit>
+      <trans-unit id="pest.wireworm" datatype="html">
+        <source>Drahtwurm</source>
+      </trans-unit>
+      <trans-unit id="sensitivity.strong" datatype="html">
+        <source>Stark</source>
+      </trans-unit>
+      <trans-unit id="sensitivity.moderate" datatype="html">
+        <source>Mäßig</source>
+      </trans-unit>
+      <trans-unit id="sensitivity.low" datatype="html">
+        <source>Gering</source>
+      </trans-unit>
+      <trans-unit id="sensitivity.high" datatype="html">
+        <source>Hoch</source>
+      </trans-unit>
+      <trans-unit id="sensitivity.none" datatype="html">
+        <source>Keine</source>
+      </trans-unit>
+      <trans-unit id="special.fieldbean" datatype="html">
+        <source>Ackerbohnen erhöhen den Mineralstoffgehalt und die Bodenqualität.</source>
+      </trans-unit>
+      <trans-unit id="special.oat" datatype="html">
+        <source>Hafer verbessert die Bodenqualität.</source>
+      </trans-unit>
+      <trans-unit id="special.rye" datatype="html">
+        <source>Roggen verbessert die Bodenqualität.</source>
+      </trans-unit>
+      <trans-unit id="special.beet" datatype="html">
+        <source>Zuckerrüben verbessern die Bodenqualität.</source>
+      </trans-unit>
+      <trans-unit id="planting.title" datatype="html">
+        <source>Fruchtart wählen</source>
+      </trans-unit>
+      <trans-unit id="planting.cancel" datatype="html">
+        <source>Abbrechen</source>
+      </trans-unit>
+      <trans-unit id="roundResult.title" datatype="html">
+        <source>Rundenbericht</source>
+      </trans-unit>
+      <trans-unit id="roundResult.profit" datatype="html">
+        <source>Gewinn</source>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegel" datatype="html">
+        <source>Bio-Siegel</source>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegelFail" datatype="html">
+        <source>Anforderungen nicht erfüllt</source>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegelSuccess" datatype="html">
+        <source>verliehen!</source>
+      </trans-unit>
+      <trans-unit id="roundResult.conditions" datatype="html">
+        <source>Bedingungen</source>
+      </trans-unit>
+      <trans-unit id="roundResult.weather" datatype="html">
+        <source>Wetter</source>
+      </trans-unit>
+      <trans-unit id="roundResult.vermin" datatype="html">
+        <source>Schädlinge</source>
+      </trans-unit>
+      <trans-unit id="roundResult.continue" datatype="html">
+        <source>Weiter zu Runde {{ roundnumber1 }}</source>
+      </trans-unit>
+      <trans-unit id="impressum.title" datatype="html">
+        <source>Impressum</source>
+      </trans-unit>
+      <trans-unit id="impressum.subtitle" datatype="html">
+        <source>Impressum &amp; Credits</source>
+      </trans-unit>
+      <trans-unit id="impressum.backToHome" datatype="html">
+        <source>Zurück zur Startseite</source>
+      </trans-unit>
+      <trans-unit id="impressum.contact" datatype="html">
+        <source>Kontakt</source>
+      </trans-unit>
+      <trans-unit id="impressum.responsible" datatype="html">
+        <source>Verantwortlich für den Inhalt</source>
+      </trans-unit>
+      <trans-unit id="impressum.imageSources" datatype="html">
+        <source>Bildnachweise</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.farmstead" datatype="html">
+        <source>Hintergrundbild Farmstead, Windsor Township, Berks County</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.drought" datatype="html">
+        <source>Dürre</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.borer" datatype="html">
+        <source>Maiszünsler</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.ladybug" datatype="html">
+        <source>Marienkäfer</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.oekolandbau" datatype="html">
+        <source>Ökolandbau.de</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.logo" datatype="html">
+        <source>Logo "Euro-Blatt"</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.chamber" datatype="html">
+        <source>Landwirtschaftskammer Nordrhein-Westfalen</source>
+      </trans-unit>
+      <trans-unit id="impressum.source.bioSiegel" datatype="html">
+        <source>Bio-Siegel</source>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.title" datatype="html">
+        <source>Haftungsausschluss (Disclaimer)</source>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.p1" datatype="html">
+        <source>Für die Richtigkeit und Vollständigkeit der Inhalte dieser Website wird keine Gewähr übernommen. Die Inhalte dieser Seite unterliegen dem deutschen Urheberrecht. Jede Vervielfältigung oder Verbreitung bedarf der schriftlichen Zustimmung. Downloads und Kopien sind nur für den nicht-kommerziellen Gebrauch gestattet.</source>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.p2" datatype="html">
+        <source>Für die Inhalte externer Links wird keine Haftung übernommen. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</source>
+      </trans-unit>
+      <trans-unit id="impressum.disclaimer.p3" datatype="html">
+        <source>Die Nutzung der Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Personenbezogene Daten, die für die Registrierung als Spielleitung erforderlich sind, sowie Spieldaten werden nicht an Dritte weitergegeben.</source>
+      </trans-unit>
+      <trans-unit id="landing.intro" datatype="html">
+        <source>Eine interaktive Simulation über</source>
+      </trans-unit>
+      <trans-unit id="landing.agriculture" datatype="html">
+        <source>Landwirtschaft</source>
+      </trans-unit>
+      <trans-unit id="landing.economics" datatype="html">
+        <source>Ökonomie</source>
+      </trans-unit>
+      <trans-unit id="landing.and" datatype="html">
+        <source>und</source>
+      </trans-unit>
+      <trans-unit id="landing.sustainability" datatype="html">
+        <source>Nachhaltigkeit</source>
+      </trans-unit>
+      <trans-unit id="landing.enterGame" datatype="html">
+        <source>Spiel beitreten</source>
+      </trans-unit>
+      <trans-unit id="landing.teacherAdmin" datatype="html">
+        <source>Lehrkraft / Admin</source>
+      </trans-unit>
+      <trans-unit id="landing.register" datatype="html">
+        <source>Registrieren</source>
+      </trans-unit>
+      <trans-unit id="landing.aboutTitle" datatype="html">
+        <source>Über das Spiel</source>
+      </trans-unit>
+      <trans-unit id="landing.aboutText1" datatype="html">
+        <source>Soil ist ein interaktives Simulationsspiel, in dem Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf.</source>
+      </trans-unit>
+      <trans-unit id="landing.aboutText2" datatype="html">
+        <source>Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.</source>
+      </trans-unit>
+      <trans-unit id="landing.backgroundTitle" datatype="html">
+        <source>Hintergrund</source>
+      </trans-unit>
+      <trans-unit id="landing.backgroundText1" datatype="html">
+        <source>Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.</source>
+      </trans-unit>
+      <trans-unit id="landing.backgroundText2" datatype="html">
+        <source>Das Simulationsspiel "Soil" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken.</source>
+      </trans-unit>
+      <trans-unit id="landing.footer" datatype="html">
+        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

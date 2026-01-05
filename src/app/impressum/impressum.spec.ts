@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { provideTranslocoTest } from '../transloco-testing.module';
 import { ImpressumComponent } from './impressum';
 
 describe('ImpressumComponent', () => {
@@ -11,7 +10,7 @@ describe('ImpressumComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ImpressumComponent, RouterTestingModule],
-      providers: [provideTranslocoTest()],
+      providers: [],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImpressumComponent);

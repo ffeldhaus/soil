@@ -3,7 +3,6 @@ import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from 
 import { Firestore } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Observable, Subscription } from 'rxjs';
 
@@ -16,7 +15,7 @@ import { Game, UserStatus } from '../../types';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
+  imports: [CommonModule, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-impressum',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, RouterLink, LanguageSwitcherComponent],
+  imports: [CommonModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen bg-gray-900 text-gray-300 font-sans p-6 md:p-12 relative">
       <!-- Language Switcher -->
@@ -20,8 +19,8 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         <!-- Header -->
         <header class="border-b border-gray-700 pb-8 flex justify-between items-center">
           <div>
-            <h1 class="text-4xl font-serif font-bold text-emerald-500 mb-2">{{ 'impressum.title' | transloco }}</h1>
-            <p class="text-gray-400">{{ 'impressum.subtitle' | transloco }}</p>
+            <h1 class="text-4xl font-serif font-bold text-emerald-500 mb-2">{{ 'impressum.title' }}</h1>
+            <p class="text-gray-400">{{ 'impressum.subtitle' }}</p>
           </div>
           <a
             routerLink="/"
@@ -41,13 +40,13 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
               />
             </svg>
-            {{ 'impressum.backToHome' | transloco }}
+            {{ 'impressum.backToHome' }}
           </a>
         </header>
 
         <!-- Kontakt -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.contact' | transloco }}</h2>
+          <h2 class="text-2xl font-bold text-white">{{ 'impressum.contact' }}</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <p class="font-bold text-white">Florian Feldhaus</p>
             <p>Kanonikerweg 2</p>
@@ -63,7 +62,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Verantwortlich -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.responsible' | transloco }}</h2>
+          <h2 class="text-2xl font-bold text-white">{{ 'impressum.responsible' }}</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <p class="font-bold text-white">Nina Wolf</p>
             <p>Kanonikerweg 2</p>
@@ -79,7 +78,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Bilder -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.imageSources' | transloco }}</h2>
+          <h2 class="text-2xl font-bold text-white">{{ 'impressum.imageSources' }}</h2>
           <ul
             class="space-y-2 list-disc list-inside text-gray-400 bg-gray-800/30 p-6 rounded-xl border border-gray-800"
           >
@@ -87,50 +86,50 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               <a
                 href="https://commons.wikimedia.org/wiki/File:Farmstead_in_winter,_Windsor_Township,_Berks_County,_Pennsylvania.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.farmstead' | transloco }}</a
+                >{{ 'impressum.source.farmstead' }}</a
               >
             </li>
             <li>
               <a
                 href="https://commons.wikimedia.org/wiki/File:Drought.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.drought' | transloco }}</a
+                >{{ 'impressum.source.drought' }}</a
               >
             </li>
             <li>
               <a
                 href="https://commons.wikimedia.org/wiki/File:Ostrinia.nubilalis.7771.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.borer' | transloco }}</a
+                >{{ 'impressum.source.borer' }}</a
               >
             </li>
             <li>
               <a
                 href="https://commons.wikimedia.org/wiki/File:Marienk%C3%A4fer_0241.jpg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.ladybug' | transloco }}</a
+                >{{ 'impressum.source.ladybug' }}</a
               >
             </li>
             <li>
               <a href="http://www.oekolandbau.de" class="hover:text-emerald-400 transition underline">{{
-                'impressum.source.oekolandbau' | transloco
+                'impressum.source.oekolandbau'
               }}</a>
             </li>
             <li>
               <a
                 href="https://commons.wikimedia.org/wiki/File:Organic-Logo.svg"
                 class="hover:text-emerald-400 transition underline"
-                >{{ 'impressum.source.logo' | transloco }}</a
+                >{{ 'impressum.source.logo' }}</a
               >
             </li>
             <li>
               <a href="https://www.landwirtschaftskammer.de" class="hover:text-emerald-400 transition underline">{{
-                'impressum.source.chamber' | transloco
+                'impressum.source.chamber'
               }}</a>
             </li>
             <li>
               <a href="https://www.bio-siegel.de/" class="hover:text-emerald-400 transition underline">{{
-                'impressum.source.bioSiegel' | transloco
+                'impressum.source.bioSiegel'
               }}</a>
             </li>
           </ul>
@@ -138,11 +137,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Disclaimer -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-white">{{ 'impressum.disclaimer.title' | transloco }}</h2>
+          <h2 class="text-2xl font-bold text-white">{{ 'impressum.disclaimer.title' }}</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 text-sm leading-relaxed space-y-4">
-            <p>{{ 'impressum.disclaimer.p1' | transloco }}</p>
-            <p>{{ 'impressum.disclaimer.p2' | transloco }}</p>
-            <p>{{ 'impressum.disclaimer.p3' | transloco }}</p>
+            <p>{{ 'impressum.disclaimer.p1' }}</p>
+            <p>{{ 'impressum.disclaimer.p2' }}</p>
+            <p>{{ 'impressum.disclaimer.p3' }}</p>
           </div>
         </section>
       </div>

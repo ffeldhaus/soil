@@ -14,9 +14,9 @@
       >
         <div class="absolute inset-0 bg-emerald-900/10 group-hover:bg-emerald-900/20 transition duration-500"></div>
         <h2 class="text-3xl font-bold text-emerald-400 mb-4 font-serif relative z-10">
-          {{ 'board.login.adminTitle' | transloco }}
+          {{ 'board.login.adminTitle' }}
         </h2>
-        <p class="text-gray-400 mb-8 relative z-10">{{ 'board.login.adminDesc' | transloco }}</p>
+        <p class="text-gray-400 mb-8 relative z-10">{{ 'board.login.adminDesc' }}</p>
         <button
           (click)="login()"
           data-testid="login-google"
@@ -28,7 +28,7 @@
               d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10c5.35 0 9.25-3.67 9.25-9.09c0-1.15-.15-1.81-.15-1.81Z"
             />
           </svg>
-          <span>{{ 'board.login.btnGoogle' | transloco }}</span>
+          <span>{{ 'board.login.btnGoogle' }}</span>
         </button>
       </div>
 
@@ -38,9 +38,9 @@
       >
         <div class="absolute inset-0 bg-blue-900/10 group-hover:bg-blue-900/20 transition duration-500"></div>
         <h2 class="text-3xl font-bold text-blue-400 mb-4 font-serif relative z-10">
-          {{ 'board.login.playerTitle' | transloco }}
+          {{ 'board.login.playerTitle' }}
         </h2>
-        <p class="text-gray-400 mb-6 relative z-10">{{ 'board.login.playerDesc' | transloco }}</p>
+        <p class="text-gray-400 mb-6 relative z-10">{{ 'board.login.playerDesc' }}</p>
 
         <div class="w-full max-w-xs relative z-10 flex flex-col gap-4">
           <input
@@ -48,7 +48,7 @@
             type="text"
             placeholder="Game ID"
             data-testid="board-login-gameid"
-            [placeholder]="'board.login.phGameId' | transloco"
+            [placeholder]="'board.login.phGameId'"
             class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
           />
           <input
@@ -56,7 +56,7 @@
             type="text"
             placeholder="Player # (e.g. 1)"
             data-testid="board-login-playernum"
-            [placeholder]="'board.login.phPlayerNum' | transloco"
+            [placeholder]="'board.login.phPlayerNum'"
             class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
           />
           <input
@@ -64,7 +64,7 @@
             type="password"
             placeholder="Game Password"
             data-testid="board-login-pin"
-            [placeholder]="'board.login.phPin' | transloco"
+            [placeholder]="'board.login.phPin'"
             class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
           />
 
@@ -73,7 +73,7 @@
             data-testid="login-player-submit"
             class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition transform hover:scale-105 shadow-lg"
           >
-            <ng-container>{{ 'board.login.btnLogin' | transloco }}</ng-container>
+            <ng-container>{{ 'board.login.btnLogin' }}</ng-container>
           </button>
 
           <p *ngIf="authError" class="text-red-400 text-sm mt-2 text-center">{{ authError }}</p>
@@ -145,7 +145,7 @@
           [class.text-gray-400]="!showLabels"
           [class.border-gray-700]="!showLabels"
         >
-          {{ 'board.nav.names' | transloco }}
+          {{ 'board.nav.names' }}
         </button>
         <button
           (click)="toggleNutrition()"
@@ -157,7 +157,7 @@
           [class.text-gray-400]="!showNutritionOverlay"
           [class.border-gray-700]="!showNutritionOverlay"
         >
-          {{ 'board.nav.nutrition' | transloco }}
+          {{ 'board.nav.nutrition' }}
         </button>
         <button
           (click)="toggleHarvest()"
@@ -169,7 +169,7 @@
           [class.text-gray-400]="!showHarvestOverlay"
           [class.border-gray-700]="!showHarvestOverlay"
         >
-          {{ 'board.nav.harvest' | transloco }}
+          {{ 'board.nav.harvest' }}
         </button>
         <button
           (click)="toggleSoil()"
@@ -181,7 +181,7 @@
           [class.text-gray-400]="!showSoilOverlay"
           [class.border-gray-700]="!showSoilOverlay"
         >
-          {{ 'board.nav.soil' | transloco }}
+          {{ 'board.nav.soil' }}
         </button>
         <button
           (click)="toggleFinance()"
@@ -195,7 +195,7 @@
           [class.border-gray-700]="!showFinance"
           [class.opacity-50]="maxRoundNumber === 0"
         >
-          {{ 'board.nav.finance' | transloco }}
+          {{ 'board.nav.finance' }}
         </button>
 
         <div class="h-6 w-px bg-gray-700 mx-1"></div>
@@ -206,7 +206,7 @@
           [disabled]="isReadOnly"
           class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-lg border border-gray-600 transition text-[10px] flex items-center gap-1 disabled:opacity-50"
         >
-          {{ 'board.nav.options' | transloco }}
+          {{ 'board.nav.options' }}
         </button>
         <button
           *ngIf="(gameState$ | async)?.game?.status !== 'finished'"
@@ -215,15 +215,15 @@
           [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
           class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500"
         >
-          <ng-container *ngIf="isSubmitted || pendingNextRound">{{ 'board.nav.waiting' | transloco }}</ng-container>
-          <ng-container *ngIf="!isSubmitted && !pendingNextRound">{{ 'board.nav.nextRound' | transloco }}</ng-container>
+          <ng-container *ngIf="isSubmitted || pendingNextRound">{{ 'board.nav.waiting' }}</ng-container>
+          <ng-container *ngIf="!isSubmitted && !pendingNextRound">{{ 'board.nav.nextRound' }}</ng-container>
         </button>
         <button
           *ngIf="(gameState$ | async)?.game?.status === 'finished'"
           (click)="showGameEndModal = true"
           class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg border border-amber-500 transition text-[10px] shadow-lg shadow-amber-900/40"
         >
-          <ng-container>{{ 'board.nav.endGame' | transloco }}</ng-container>
+          <ng-container>{{ 'board.nav.endGame' }}</ng-container>
         </button>
       </div>
 
@@ -235,7 +235,7 @@
           data-testid="logout-button"
           class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition"
           title="Logout"
-          [title]="'board.logout' | transloco"
+          [title]="'board.logout'"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
@@ -280,7 +280,7 @@
             </div>
             <div class="h-px bg-gray-800 mx-2 my-2"></div>
             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{{
-              'board.mobile.overlays' | transloco
+              'board.mobile.overlays'
             }}</label>
             <div class="grid grid-cols-1 gap-2">
               <button
@@ -291,7 +291,7 @@
                 [class.bg-gray-800]="!showLabels"
                 [class.border-gray-700]="!showLabels"
               >
-                <ng-container>{{ 'board.mobile.names' | transloco }}</ng-container>
+                <ng-container>{{ 'board.mobile.names' }}</ng-container>
               </button>
               <button
                 (click)="toggleNutrition(); toggleMobileMenu()"
@@ -302,7 +302,7 @@
                 [class.text-gray-400]="!showNutritionOverlay"
                 [class.border-gray-700]="!showNutritionOverlay"
               >
-                <ng-container>{{ 'board.mobile.nutrition' | transloco }}</ng-container>
+                <ng-container>{{ 'board.mobile.nutrition' }}</ng-container>
               </button>
               <button
                 (click)="toggleHarvest(); toggleMobileMenu()"
@@ -313,7 +313,7 @@
                 [class.text-gray-400]="!showHarvestOverlay"
                 [class.border-gray-700]="!showHarvestOverlay"
               >
-                <ng-container>{{ 'board.mobile.harvest' | transloco }}</ng-container>
+                <ng-container>{{ 'board.mobile.harvest' }}</ng-container>
               </button>
               <button
                 (click)="toggleSoil(); toggleMobileMenu()"
@@ -324,7 +324,7 @@
                 [class.text-gray-400]="!showSoilOverlay"
                 [class.border-gray-700]="!showSoilOverlay"
               >
-                <ng-container>{{ 'board.mobile.soil' | transloco }}</ng-container>
+                <ng-container>{{ 'board.mobile.soil' }}</ng-container>
               </button>
               <button
                 (click)="toggleFinance(); toggleMobileMenu()"
@@ -336,7 +336,7 @@
                 [class.border-gray-700]="!showFinance"
                 [class.opacity-50]="maxRoundNumber === 0"
               >
-                <ng-container>{{ 'board.mobile.finance' | transloco }}</ng-container>
+                <ng-container>{{ 'board.mobile.finance' }}</ng-container>
               </button>
             </div>
           </nav>
@@ -344,14 +344,14 @@
           <!-- Game Actions Section -->
           <div class="space-y-3">
             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{{
-              'board.mobile.actions' | transloco
+              'board.mobile.actions'
             }}</label>
             <button
               (click)="openRoundSettings(); toggleMobileMenu()"
               [disabled]="isReadOnly"
               class="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl border border-gray-700 transition flex items-center justify-center gap-2"
             >
-              <ng-container>{{ 'board.mobile.roundOptions' | transloco }}</ng-container>
+              <ng-container>{{ 'board.mobile.roundOptions' }}</ng-container>
             </button>
             <button
               *ngIf="(gameState$ | async)?.game?.status !== 'finished'"
@@ -359,15 +359,15 @@
               [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
               class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl border border-emerald-500 transition shadow-lg flex items-center justify-center"
             >
-              <ng-container *ngIf="isSubmitted">{{ 'board.mobile.waiting' | transloco }}</ng-container>
-              <ng-container *ngIf="!isSubmitted">{{ 'board.mobile.nextRound' | transloco }}</ng-container>
+              <ng-container *ngIf="isSubmitted">{{ 'board.mobile.waiting' }}</ng-container>
+              <ng-container *ngIf="!isSubmitted">{{ 'board.mobile.nextRound' }}</ng-container>
             </button>
             <button
               *ngIf="(gameState$ | async)?.game?.status === 'finished'"
               (click)="showGameEndModal = true; toggleMobileMenu()"
               class="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl border border-amber-500 transition shadow-lg flex items-center justify-center"
             >
-              <ng-container>{{ 'board.mobile.endGame' | transloco }}</ng-container>
+              <ng-container>{{ 'board.mobile.endGame' }}</ng-container>
             </button>
           </div>
         </div>
@@ -396,7 +396,7 @@
                   class="bg-gray-900 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1"
                 />
               </ng-template>
-              <span class="text-[10px] text-gray-500">{{ 'board.activePlayer' | transloco }}</span>
+              <span class="text-[10px] text-gray-500">{{ 'board.activePlayer' }}</span>
             </div>
           </div>
         </div>
@@ -413,7 +413,7 @@
         <div
           class="bg-amber-500/90 text-black px-6 py-2 rounded-full font-bold shadow-lg border-2 border-amber-300 backdrop-blur-sm animate-pulse"
         >
-          <ng-container>{{ 'board.banner.readOnly' | transloco }}</ng-container>
+          <ng-container>{{ 'board.banner.readOnly' }}</ng-container>
         </div>
       </div>
 
@@ -443,13 +443,13 @@
               />
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-2">{{ 'board.error.title' | transloco }}</h3>
+          <h3 class="text-xl font-bold text-white mb-2">{{ 'board.error.title' }}</h3>
           <p class="text-red-100 mb-6">{{ errorMessage }}</p>
           <button
             (click)="errorMessage = ''"
             class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors"
           >
-            {{ 'board.error.close' | transloco }}
+            {{ 'board.error.close' }}
           </button>
         </div>
       </div>
@@ -503,7 +503,7 @@
             [class.text-emerald-400]="viewingRound === maxRoundNumber"
             [class.text-gray-400]="viewingRound < maxRoundNumber"
           >
-            <ng-container>{{ 'board.round' | transloco }}</ng-container> {{ viewingRound }}
+            <ng-container>{{ 'board.round' }}</ng-container> {{ viewingRound }}
           </span>
           <button
             (click)="goToRound(viewingRound + 1)"
@@ -612,9 +612,9 @@
       >
         <div class="mb-6">
           <h2 class="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight">
-            {{ 'board.gameEnd.title' | transloco }}
+            {{ 'board.gameEnd.title' }}
           </h2>
-          <p class="text-gray-400 text-lg sm:text-xl">{{ 'board.gameEnd.subtitle' | transloco }}</p>
+          <p class="text-gray-400 text-lg sm:text-xl">{{ 'board.gameEnd.subtitle' }}</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8">
@@ -624,7 +624,7 @@
           >
             <div class="text-4xl mb-3 group-hover:animate-bounce">💰</div>
             <h3 class="text-amber-400 font-bold uppercase text-xs tracking-widest mb-1">
-              {{ 'board.gameEnd.financialTitle' | transloco }}
+              {{ 'board.gameEnd.financialTitle' }}
             </h3>
             <div class="text-white text-xl font-black mb-1">{{ financialWinner?.name }}</div>
             <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | number }} €</div>
@@ -636,7 +636,7 @@
           >
             <div class="text-4xl mb-3 group-hover:animate-bounce">🌿</div>
             <h3 class="text-emerald-400 font-bold uppercase text-xs tracking-widest mb-1">
-              {{ 'board.gameEnd.soilTitle' | transloco }}
+              {{ 'board.gameEnd.soilTitle' }}
             </h3>
             <div class="text-white text-xl font-black mb-1">{{ soilWinner?.name }}</div>
             <div class="text-emerald-200/70 text-sm font-mono">{{ soilWinner?.avgSoil }} / 200</div>
@@ -648,13 +648,13 @@
             (click)="closeGameEndModal()"
             class="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition border border-gray-600 shadow-lg"
           >
-            {{ 'board.gameEnd.viewResults' | transloco }}
+            {{ 'board.gameEnd.viewResults' }}
           </button>
           <button
             routerLink="/admin"
             class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-900/40"
           >
-            {{ 'board.gameEnd.backToDashboard' | transloco }}
+            {{ 'board.gameEnd.backToDashboard' }}
           </button>
         </div>
       </div>

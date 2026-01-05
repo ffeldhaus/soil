@@ -1,13 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LanguageService } from './services/language.service';
 
 @Component({
   selector: 'app-root',
-  imports: [TranslocoPipe, RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

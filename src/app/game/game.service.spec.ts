@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { Functions } from '@angular/fire/functions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { provideTranslocoTest } from '../transloco-testing.module';
 import { GameService } from './game.service';
 
 // Mock @angular/fire/functions
@@ -24,7 +23,7 @@ describe('GameService', () => {
     functionsInstance = {};
 
     TestBed.configureTestingModule({
-      providers: [provideTranslocoTest(), GameService, { provide: Functions, useValue: functionsInstance }],
+      providers: [GameService, { provide: Functions, useValue: functionsInstance }],
     });
     service = TestBed.inject(GameService);
     vi.clearAllMocks();

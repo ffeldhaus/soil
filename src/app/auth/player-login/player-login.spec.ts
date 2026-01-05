@@ -5,7 +5,6 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { LanguageService } from '../../services/language.service';
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { AuthService } from '../auth.service';
 import { PlayerLoginComponent } from './player-login';
 
@@ -24,7 +23,6 @@ describe('PlayerLoginComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PlayerLoginComponent, ReactiveFormsModule],
       providers: [
-        provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: LanguageService, useValue: languageServiceMock },

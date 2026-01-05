@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, HostListener, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { User } from 'firebase/auth';
 import { combineLatest, firstValueFrom, take } from 'rxjs';
 
@@ -21,7 +20,6 @@ import { RoundSettings, RoundSettingsModal } from '../round-settings-modal/round
   selector: 'app-board',
   standalone: true,
   imports: [
-    TranslocoPipe,
     CommonModule,
     Parcel,
     PlantingModal,

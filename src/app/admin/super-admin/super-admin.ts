@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
@@ -11,7 +10,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 @Component({
   selector: 'app-super-admin',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, FormsModule, LanguageSwitcherComponent],
+  imports: [CommonModule, FormsModule, LanguageSwitcherComponent],
   template: `
     <div class="bg-gray-900 text-white font-sans min-h-screen">
       <!-- Top HUD Bar -->
@@ -20,7 +19,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
       >
         <div class="flex items-center gap-4">
           <h1 class="text-2xl font-bold font-serif text-purple-500 tracking-wider">
-            {{ 'superadmin.title' | transloco }}
+            {{ 'superadmin.title' }}
           </h1>
         </div>
 
@@ -30,7 +29,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
             <span class="text-sm font-medium text-gray-300 hidden md:block">{{ user.displayName }}</span>
             <span
               class="px-2 py-0.5 rounded text-[10px] bg-purple-900 text-purple-300 font-bold uppercase tracking-wider border border-purple-700"
-              >{{ 'superadmin.badge' | transloco }}</span
+              >{{ 'superadmin.badge' }}</span
             >
           </div>
 
@@ -40,7 +39,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
             (click)="logout()"
             class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition"
             title="Logout"
-            [title]="'superadmin.logout' | transloco"
+            [title]="'superadmin.logout'"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -81,14 +80,14 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span class="text-emerald-400 font-bold animate-pulse">{{ 'superadmin.loading' | transloco }}</span>
+            <span class="text-emerald-400 font-bold animate-pulse">{{ 'superadmin.loading' }}</span>
           </div>
         </div>
 
         <header class="flex justify-between items-center">
           <div class="space-y-1">
-            <h2 class="text-3xl font-bold text-white">{{ 'superadmin.dashboard.title' | transloco }}</h2>
-            <p class="text-gray-400 text-sm">{{ 'superadmin.dashboard.subtitle' | transloco }}</p>
+            <h2 class="text-3xl font-bold text-white">{{ 'superadmin.dashboard.title' }}</h2>
+            <p class="text-gray-400 text-sm">{{ 'superadmin.dashboard.subtitle' }}</p>
           </div>
           <button
             (click)="loadData()"
@@ -108,7 +107,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            <ng-container>{{ 'superadmin.dashboard.refresh' | transloco }}</ng-container>
+            <ng-container>{{ 'superadmin.dashboard.refresh' }}</ng-container>
           </button>
         </header>
 
@@ -139,15 +138,15 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
               </svg>
             </div>
             <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2">
-              {{ 'superadmin.stats.totalGames' | transloco }}
+              {{ 'superadmin.stats.totalGames' }}
             </h3>
             <div class="flex items-end gap-2">
               <span class="text-4xl font-bold text-white">{{ stats.games.total }}</span>
-              <span class="text-sm text-gray-400 mb-1">{{ 'superadmin.stats.created' | transloco }}</span>
+              <span class="text-sm text-gray-400 mb-1">{{ 'superadmin.stats.created' }}</span>
             </div>
             <div class="mt-4 flex gap-4 text-xs font-mono">
               <span class="text-emerald-400"
-                ><ng-container>{{ 'superadmin.stats.active' | transloco }}</ng-container></span
+                ><ng-container>{{ 'superadmin.stats.active' }}</ng-container></span
               >
               <span class="text-red-400">{{ stats.games.deleted }} Trash</span>
             </div>

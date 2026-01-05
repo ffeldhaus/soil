@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { Parcel } from './parcel';
 
 describe('Parcel', () => {
@@ -10,7 +9,7 @@ describe('Parcel', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Parcel],
-      providers: [provideTranslocoTest()],
+      providers: [],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Parcel);
@@ -30,13 +29,13 @@ describe('Parcel', () => {
 
   it('should map Grass to Animals and tiere.jpg', () => {
     const config = component.getConfig('Grass');
-    expect(config.label).toBe('Animals');
+    expect(config.label).toBe('crop.animals');
     expect(config.image).toBe('tiere.jpg');
   });
 
   it('should map Wheat to Wheat and weizen.jpg', () => {
     const config = component.getConfig('Wheat');
-    expect(config.label).toBe('Wheat');
+    expect(config.label).toBe('crop.wheat');
     expect(config.image).toBe('weizen.jpg');
   });
 });

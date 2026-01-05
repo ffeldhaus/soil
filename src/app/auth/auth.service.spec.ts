@@ -4,7 +4,6 @@ import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { provideTranslocoTest } from '../transloco-testing.module';
 import { AuthService } from './auth.service';
 
 // Mock the firebase/auth module
@@ -45,7 +44,6 @@ describe('AuthService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideTranslocoTest(),
         AuthService,
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },

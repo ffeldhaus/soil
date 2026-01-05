@@ -83,7 +83,7 @@ module.exports = tseslint.config(
     },
   },
   {
-    files: ['**/*.spec.ts', '**/*.test.ts', 'src/test-setup.ts', 'src/app/transloco-testing.module.ts'],
+    files: ['**/*.spec.ts', '**/*.test.ts', 'src/test-setup.ts'],
     rules: {
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',

@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { first } from 'rxjs/operators';
 
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
@@ -11,7 +10,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-player-login',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div
       class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden"
@@ -36,11 +35,11 @@ import { AuthService } from '../auth.service';
       <div
         class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700"
       >
-        <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">{{ 'playerLogin.title' | transloco }}</h2>
+        <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">{{ 'playerLogin.title' }}</h2>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'playerLogin.gameId' | transloco }}</label>
+            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'playerLogin.gameId' }}</label>
             <input
               formControlName="gameId"
               type="text"
@@ -48,12 +47,12 @@ import { AuthService } from '../auth.service';
               data-testid="player-login-gameid"
               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
               placeholder="Game ID"
-              [placeholder]="'playerLogin.placeholder.gameId' | transloco"
+              [placeholder]="'playerLogin.placeholder.gameId'"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'playerLogin.pin' | transloco }}</label>
+            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'playerLogin.pin' }}</label>
             <input
               formControlName="password"
               type="password"
@@ -61,7 +60,7 @@ import { AuthService } from '../auth.service';
               data-testid="player-login-pin"
               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
               placeholder="Unique Player PIN"
-              [placeholder]="'playerLogin.placeholder.pin' | transloco"
+              [placeholder]="'playerLogin.placeholder.pin'"
             />
           </div>
 
@@ -71,15 +70,13 @@ import { AuthService } from '../auth.service';
             data-testid="player-login-submit"
             class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
           >
-            <ng-container *ngIf="isLoading">{{ 'playerLogin.enteringGame' | transloco }}</ng-container>
-            <ng-container *ngIf="!isLoading">{{ 'playerLogin.startGame' | transloco }}</ng-container>
+            <ng-container *ngIf="isLoading">{{ 'playerLogin.enteringGame' }}</ng-container>
+            <ng-container *ngIf="!isLoading">{{ 'playerLogin.startGame' }}</ng-container>
           </button>
         </form>
 
         <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
-          <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition">{{
-            'playerLogin.backToHome' | transloco
-          }}</a>
+          <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition">{{ 'playerLogin.backToHome' }}</a>
         </div>
       </div>
 
@@ -111,14 +108,14 @@ import { AuthService } from '../auth.service';
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-bold text-white mb-2">{{ 'playerLogin.error.title' | transloco }}</h3>
+              <h3 class="text-xl font-bold text-white mb-2">{{ 'playerLogin.error.title' }}</h3>
               <p class="text-gray-300">{{ errorMessage }}</p>
             </div>
             <button
               (click)="closeModal()"
               class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition"
             >
-              {{ 'playerLogin.error.retry' | transloco }}
+              {{ 'playerLogin.error.retry' }}
             </button>
           </div>
         </div>
@@ -127,8 +124,6 @@ import { AuthService } from '../auth.service';
   `,
 })
 export class PlayerLoginComponent implements OnInit {
-  private transloco = inject(TranslocoService);
-
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -225,7 +220,7 @@ export class PlayerLoginComponent implements OnInit {
       console.log('Navigation resolved. Success:', success);
     } catch (err: any) {
       console.error('Login failed:', err);
-      this.errorMessage = err.message || this.transloco.translate('playerLogin.error.msg');
+      this.errorMessage = err.message || 'playerLogin.error.msg';
       this.showErrorModal = true;
     } finally {
       this.isLoading = false;

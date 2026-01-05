@@ -1,14 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
-import { TranslocoService } from '@jsverse/transloco';
 
 import { CropType } from '../../types';
 
 @Component({
   selector: 'app-planting-modal',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule],
+  imports: [CommonModule],
   template: `
     <div
       class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
@@ -18,7 +16,7 @@ import { CropType } from '../../types';
         class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-2xl w-full"
         (click)="$event.stopPropagation()"
       >
-        <h2 class="text-2xl font-bold text-white mb-6 font-serif">{{ 'planting.title' | transloco }}</h2>
+        <h2 class="text-2xl font-bold text-white mb-6 font-serif">{{ 'planting.title' }}</h2>
 
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
           <button
@@ -45,7 +43,7 @@ import { CropType } from '../../types';
 
         <div class="flex justify-end gap-3 mt-8">
           <button (click)="plantingCancelled.emit()" class="px-4 py-2 text-gray-400 hover:text-white transition">
-            {{ 'planting.cancel' | transloco }}
+            {{ 'planting.cancel' }}
           </button>
         </div>
       </div>
@@ -53,22 +51,21 @@ import { CropType } from '../../types';
   `,
 })
 export class PlantingModal {
-  private transloco = inject(TranslocoService);
   @Input() crops: CropType[] = [];
   @Output() cropSelected = new EventEmitter<CropType>();
   @Output() plantingCancelled = new EventEmitter<void>();
 
   private cropConfig: Record<string, { label: string; image: string }> = {
-    Wheat: { label: this.transloco.translate('crop.wheat'), image: 'weizen.jpg' },
-    Corn: { label: this.transloco.translate('crop.corn'), image: 'mais.jpg' },
-    Potato: { label: this.transloco.translate('crop.potato'), image: 'kartoffel.jpg' },
-    Beet: { label: this.transloco.translate('crop.beet'), image: 'zuckerruebe.jpg' },
-    Barley: { label: this.transloco.translate('crop.barley'), image: 'gerste.jpg' },
-    Oat: { label: this.transloco.translate('crop.oat'), image: 'hafer.jpg' },
-    Rye: { label: this.transloco.translate('crop.rye'), image: 'roggen.jpg' },
-    Fieldbean: { label: this.transloco.translate('crop.fieldbean'), image: 'ackerbohne.jpg' },
-    Grass: { label: this.transloco.translate('crop.animals'), image: 'tiere.jpg' },
-    Fallow: { label: this.transloco.translate('crop.fallow'), image: 'brachland.jpg' },
+    Wheat: { label: 'crop.wheat', image: 'weizen.jpg' },
+    Corn: { label: 'crop.corn', image: 'mais.jpg' },
+    Potato: { label: 'crop.potato', image: 'kartoffel.jpg' },
+    Beet: { label: 'crop.beet', image: 'zuckerruebe.jpg' },
+    Barley: { label: 'crop.barley', image: 'gerste.jpg' },
+    Oat: { label: 'crop.oat', image: 'hafer.jpg' },
+    Rye: { label: 'crop.rye', image: 'roggen.jpg' },
+    Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.jpg' },
+    Grass: { label: 'crop.animals', image: 'tiere.jpg' },
+    Fallow: { label: 'crop.fallow', image: 'brachland.jpg' },
   };
 
   getConfig(crop: CropType) {

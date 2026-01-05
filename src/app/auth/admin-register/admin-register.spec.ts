@@ -4,7 +4,6 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { GameService } from '../../game/game.service';
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { AuthService } from '../auth.service';
 import { AdminRegisterComponent } from './admin-register';
 
@@ -26,7 +25,6 @@ describe('AdminRegisterComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AdminRegisterComponent],
       providers: [
-        provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },

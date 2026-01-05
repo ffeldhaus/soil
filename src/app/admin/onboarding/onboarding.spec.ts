@@ -5,7 +5,6 @@ import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { Onboarding } from './onboarding';
 
 describe('Onboarding', () => {
@@ -26,7 +25,6 @@ describe('Onboarding', () => {
     await TestBed.configureTestingModule({
       imports: [Onboarding],
       providers: [
-        provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },

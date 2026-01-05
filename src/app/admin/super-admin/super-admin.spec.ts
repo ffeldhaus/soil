@@ -6,7 +6,6 @@ import { vi } from 'vitest';
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import { LanguageService } from '../../services/language.service';
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { SuperAdminComponent } from './super-admin';
 
 describe('SuperAdminComponent', () => {
@@ -32,7 +31,6 @@ describe('SuperAdminComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SuperAdminComponent],
       providers: [
-        provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },

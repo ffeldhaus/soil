@@ -4,8 +4,8 @@
       <!-- Header & Round Switcher -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-800 pb-8">
         <div>
-          <h2 class="text-4xl font-bold text-white font-serif tracking-tight">{{ 'finance.title' | transloco }}</h2>
-          <p class="text-gray-500 mt-2 text-sm">{{ 'finance.subtitle' | transloco }}</p>
+          <h2 class="text-4xl font-bold text-white font-serif tracking-tight">{{ 'finance.title' }}</h2>
+          <p class="text-gray-500 mt-2 text-sm">{{ 'finance.subtitle' }}</p>
         </div>
 
         <div class="flex items-center gap-1 bg-gray-900/80 p-1.5 rounded-xl border border-gray-800 shadow-inner">
@@ -23,7 +23,7 @@
             {{ r }}
           </button>
           <span *ngIf="availableRounds.length === 0" class="px-4 py-2 text-sm text-gray-500 font-mono">{{
-            'finance.noRounds' | transloco
+            'finance.noRounds'
           }}</span>
         </div>
       </div>
@@ -31,7 +31,7 @@
       <!-- Capital History Chart -->
       <div *ngIf="availableRounds.length > 0" class="space-y-4">
         <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">
-          {{ 'finance.charts.capital' | transloco }}
+          {{ 'finance.charts.capital' }}
         </h3>
         <div
           class="bg-gray-900/30 border border-gray-800 rounded-2xl p-6 h-48 flex items-end gap-2 relative overflow-hidden group"
@@ -84,7 +84,7 @@
                   <span
                     *ngIf="p.uid === playerUid"
                     class="text-[9px] bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter"
-                    >{{ 'finance.you' | transloco }}</span
+                    >{{ 'finance.you' }}</span
                   >
                 </div>
               </th>
@@ -97,12 +97,12 @@
                 colspan="100%"
                 class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-widest border-b border-gray-800/50"
               >
-                {{ 'finance.group.decisions' | transloco }}
+                {{ 'finance.group.decisions' }}
               </td>
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                {{ 'finance.fertilizer' | transloco }}
+                {{ 'finance.fertilizer' }}
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
                 <span *ngIf="p.decision?.fertilizer" class="text-emerald-500 text-base">●</span>
@@ -111,7 +111,7 @@
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                {{ 'finance.pesticide' | transloco }}
+                {{ 'finance.pesticide' }}
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
                 <span *ngIf="p.decision?.pesticide" class="text-red-500 text-base">●</span>
@@ -120,7 +120,7 @@
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                {{ 'finance.organisms' | transloco }}
+                {{ 'finance.organisms' }}
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
                 <span *ngIf="p.decision?.organisms" class="text-emerald-500 text-base">●</span>
@@ -129,7 +129,7 @@
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                {{ 'finance.organic' | transloco }}
+                {{ 'finance.organic' }}
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
                 <span *ngIf="p.decision?.organic" class="text-emerald-500 text-base">●</span>
@@ -142,7 +142,7 @@
               <td colspan="100%" class="p-0 border-b border-gray-800/50">
                 <div class="px-6 py-3 flex items-center justify-between">
                   <span class="text-[10px] font-black text-gray-600 uppercase tracking-widest">{{
-                    'finance.group.expenses' | transloco
+                    'finance.group.expenses'
                   }}</span>
                 </div>
               </td>
@@ -151,7 +151,7 @@
             <!-- Seeds Breakdown -->
             <tr class="group hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50">
-                {{ 'finance.header.seeds' | transloco }}
+                {{ 'finance.header.seeds' }}
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
                 {{ p.result?.expenses?.seeds | currency: 'EUR' : 'symbol' : '1.0-0' }}
@@ -170,21 +170,21 @@
             <!-- Investments Breakdown -->
             <tr class="group hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50">
-                {{ 'finance.header.investments' | transloco }}
+                {{ 'finance.header.investments' }}
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
                 {{ p.result?.expenses?.investments | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.machines' | transloco }}</td>
+              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.machines' }}</td>
               <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
                 {{ p.detailedExpenses?.investments?.machines || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td class="p-2 pl-12 border-b border-gray-800/30 italic">
-                {{ 'finance.sub.animalsInvest' | transloco }}
+                {{ 'finance.sub.animalsInvest' }}
               </td>
               <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
                 {{ p.detailedExpenses?.investments?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
@@ -194,41 +194,41 @@
             <!-- Running Costs Breakdown -->
             <tr class="group hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50">
-                {{ 'finance.header.running' | transloco }}
+                {{ 'finance.header.running' }}
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
                 {{ p.result?.expenses?.running | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.base' | transloco }}</td>
+              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.base' }}</td>
               <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
                 {{ p.detailedExpenses?.running?.base || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td class="p-2 pl-12 border-b border-gray-800/30 italic">
-                {{ 'finance.sub.organicControl' | transloco }}
+                {{ 'finance.sub.organicControl' }}
               </td>
               <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
                 {{ p.detailedExpenses?.running?.organic_control || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.pesticide' | transloco }}</td>
+              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.pesticide' }}</td>
               <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
                 {{ p.detailedExpenses?.running?.pesticide || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.organisms' | transloco }}</td>
+              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ 'finance.sub.organisms' }}</td>
               <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
                 {{ p.detailedExpenses?.running?.organisms || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td class="p-2 pl-12 border-b border-gray-800/30 italic">
-                {{ 'finance.sub.animalsRunning' | transloco }}
+                {{ 'finance.sub.animalsRunning' }}
               </td>
               <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
                 {{ p.detailedExpenses?.running?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
@@ -241,12 +241,12 @@
                 colspan="100%"
                 class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-widest border-b border-gray-800/50"
               >
-                {{ 'finance.group.income' | transloco }}
+                {{ 'finance.group.income' }}
               </td>
             </tr>
             <tr class="group hover:bg-gray-800/20 transition-colors">
               <td class="p-4 pl-8 text-sm font-bold text-emerald-400 border-b border-gray-800/50">
-                {{ 'finance.header.harvest' | transloco }}
+                {{ 'finance.header.harvest' }}
               </td>
               <td
                 *ngFor="let p of players"
@@ -267,7 +267,7 @@
 
             <!-- Global Totals -->
             <tr class="bg-gray-900 border-t-2 border-gray-700">
-              <td class="p-6 text-base font-black text-white">{{ 'finance.result.profit' | transloco }}</td>
+              <td class="p-6 text-base font-black text-white">{{ 'finance.result.profit' }}</td>
               <td
                 *ngFor="let p of players"
                 class="p-6 text-center text-xl font-black font-mono"
@@ -279,7 +279,7 @@
               </td>
             </tr>
             <tr class="bg-gray-950">
-              <td class="p-6 text-base font-black text-white">{{ 'finance.result.capital' | transloco }}</td>
+              <td class="p-6 text-base font-black text-white">{{ 'finance.result.capital' }}</td>
               <td
                 *ngFor="let p of players"
                 class="p-6 text-center text-2xl font-black text-yellow-400 font-mono scale-110"
@@ -310,7 +310,7 @@
             <div>
               <h4 class="font-black text-white group-hover:text-emerald-400 transition-colors">{{ p.name }}</h4>
               <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest">
-                {{ 'finance.playerStatus' | transloco }}
+                {{ 'finance.playerStatus' }}
               </p>
             </div>
           </div>
@@ -318,7 +318,7 @@
           <div class="space-y-6">
             <div *ngIf="p.result?.events?.weather" class="space-y-2">
               <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                {{ 'finance.event.weather' | transloco }}
+                {{ 'finance.event.weather' }}
               </p>
               <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
                 "{{ p.result?.events?.weather }}"
@@ -326,7 +326,7 @@
             </div>
             <div *ngIf="p.result?.events?.vermin" class="space-y-2">
               <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                {{ 'finance.event.vermin' | transloco }}
+                {{ 'finance.event.vermin' }}
               </p>
               <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
                 "{{ p.result?.events?.vermin }}"

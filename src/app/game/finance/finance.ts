@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
 
 import { GAME_CONSTANTS } from '../../game-constants';
 import { CropType, Game, PlayerState, Round, RoundDecision, RoundResult } from '../../types';
@@ -47,7 +46,7 @@ interface PlayerFinanceData {
 @Component({
   selector: 'app-finance',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule],
+  imports: [CommonModule],
   templateUrl: './finance.html',
 })
 export class Finance implements OnChanges {

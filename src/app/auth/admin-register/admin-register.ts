@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameService } from '../../game/game.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
@@ -11,7 +10,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-admin-register',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div
       class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden"
@@ -37,12 +36,12 @@ import { AuthService } from '../auth.service';
         class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 my-8"
       >
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-emerald-400 mb-2">{{ 'adminRegister.title' | transloco }}</h1>
-          <p class="text-gray-400">{{ 'adminRegister.subtitle' | transloco }}</p>
+          <h1 class="text-3xl font-bold text-emerald-400 mb-2">{{ 'adminRegister.title' }}</h1>
+          <p class="text-gray-400">{{ 'adminRegister.subtitle' }}</p>
         </div>
 
         <h2 class="text-xl font-bold text-center mb-6 text-white" *ngIf="isGoogleUser">
-          <ng-container>{{ 'adminRegister.completeTitle' | transloco }}</ng-container>
+          <ng-container>{{ 'adminRegister.completeTitle' }}</ng-container>
         </h2>
 
         <div
@@ -50,12 +49,12 @@ import { AuthService } from '../auth.service';
           class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-lg text-center text-gray-100"
         >
           <p class="text-blue-200 text-sm">
-            <ng-container>{{ 'adminRegister.signedInAs' | transloco }}</ng-container>
+            <ng-container>{{ 'adminRegister.signedInAs' }}</ng-container>
             <span class="font-bold text-white">{{ currentUser?.email }}</span>
-            <ng-container>{{ 'adminRegister.viaGoogle' | transloco }}</ng-container
+            <ng-container>{{ 'adminRegister.viaGoogle' }}</ng-container
             >.
           </p>
-          <p class="text-xs text-gray-400 mt-1">{{ 'adminRegister.completeApp' | transloco }}</p>
+          <p class="text-xs text-gray-400 mt-1">{{ 'adminRegister.completeApp' }}</p>
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
@@ -69,73 +68,67 @@ import { AuthService } from '../auth.service';
           <!-- Email/Password Section (Hidden for Google Users) -->
           <div *ngIf="!isGoogleUser" class="space-y-6">
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{
-                'adminRegister.email' | transloco
-              }}</label>
+              <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminRegister.email' }}</label>
               <input
                 formControlName="email"
                 type="email"
                 autocomplete="email"
                 class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                 placeholder="admin@school.edu"
-                [placeholder]="'adminRegister.placeholder.email' | transloco"
+                [placeholder]="'adminRegister.placeholder.email'"
               />
               <div
                 *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
                 class="text-red-400 text-xs mt-1"
               >
-                {{ 'adminRegister.error.email' | transloco }}
+                {{ 'adminRegister.error.email' }}
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{
-                'adminRegister.password' | transloco
-              }}</label>
+              <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminRegister.password' }}</label>
               <input
                 formControlName="password"
                 type="password"
                 autocomplete="new-password"
                 class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                 placeholder="Minimum 6 characters"
-                [placeholder]="'adminRegister.placeholder.password' | transloco"
+                [placeholder]="'adminRegister.placeholder.password'"
               />
               <div
                 *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
                 class="text-red-400 text-xs mt-1"
               >
-                {{ 'adminRegister.error.password' | transloco }}
+                {{ 'adminRegister.error.password' }}
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{
-                'adminRegister.confirmPassword' | transloco
-              }}</label>
+              <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminRegister.confirmPassword' }}</label>
               <input
                 formControlName="confirmPassword"
                 type="password"
                 autocomplete="new-password"
                 class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                 placeholder="Confirm Password"
-                [placeholder]="'adminRegister.placeholder.confirmPassword' | transloco"
+                [placeholder]="'adminRegister.placeholder.confirmPassword'"
               />
               <div
                 *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched"
                 class="text-red-400 text-xs mt-1"
               >
-                {{ 'adminRegister.error.mismatch' | transloco }}
+                {{ 'adminRegister.error.mismatch' }}
               </div>
             </div>
           </div>
 
           <!-- Personal Details -->
           <div class="pt-4 border-t border-gray-700">
-            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ 'adminRegister.personalDetails' | transloco }}</h3>
+            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ 'adminRegister.personalDetails' }}</h3>
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.firstName' | transloco }}</ng-container>
+                  ><ng-container>{{ 'adminRegister.firstName' }}</ng-container>
                   <span class="text-red-400">*</span></label
                 >
                 <input
@@ -144,18 +137,18 @@ import { AuthService } from '../auth.service';
                   autocomplete="given-name"
                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                   placeholder="John"
-                  [placeholder]="'adminRegister.placeholder.firstName' | transloco"
+                  [placeholder]="'adminRegister.placeholder.firstName'"
                 />
                 <div
                   *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.required' | transloco }}
+                  {{ 'adminRegister.error.required' }}
                 </div>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.lastName' | transloco }}</ng-container>
+                  ><ng-container>{{ 'adminRegister.lastName' }}</ng-container>
                   <span class="text-red-400">*</span></label
                 >
                 <input
@@ -164,13 +157,13 @@ import { AuthService } from '../auth.service';
                   autocomplete="family-name"
                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                   placeholder="Doe"
-                  [placeholder]="'adminRegister.placeholder.lastName' | transloco"
+                  [placeholder]="'adminRegister.placeholder.lastName'"
                 />
                 <div
                   *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.required' | transloco }}
+                  {{ 'adminRegister.error.required' }}
                 </div>
               </div>
             </div>
@@ -178,12 +171,12 @@ import { AuthService } from '../auth.service';
 
           <!-- Application Details -->
           <div class="pt-4 border-t border-gray-700">
-            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ 'adminRegister.appDetails' | transloco }}</h3>
+            <h3 class="text-lg font-bold text-emerald-400 mb-4">{{ 'adminRegister.appDetails' }}</h3>
 
             <div class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.institution' | transloco }}</ng-container>
+                  ><ng-container>{{ 'adminRegister.institution' }}</ng-container>
                   <span class="text-red-400">*</span></label
                 >
                 <input
@@ -191,19 +184,19 @@ import { AuthService } from '../auth.service';
                   type="text"
                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                   placeholder="e.g. University of Berlin"
-                  [placeholder]="'adminRegister.placeholder.institution' | transloco"
+                  [placeholder]="'adminRegister.placeholder.institution'"
                 />
                 <div
                   *ngIf="registerForm.get('institution')?.touched && registerForm.get('institution')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.required' | transloco }}
+                  {{ 'adminRegister.error.required' }}
                 </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.institutionLink' | transloco }}</ng-container>
+                  ><ng-container>{{ 'adminRegister.institutionLink' }}</ng-container>
                   <span class="text-red-400">*</span></label
                 >
                 <input
@@ -211,19 +204,19 @@ import { AuthService } from '../auth.service';
                   type="url"
                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                   placeholder="https://..."
-                  [placeholder]="'adminRegister.placeholder.institutionLink' | transloco"
+                  [placeholder]="'adminRegister.placeholder.institutionLink'"
                 />
                 <div
                   *ngIf="registerForm.get('institutionLink')?.touched && registerForm.get('institutionLink')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.url' | transloco }}
+                  {{ 'adminRegister.error.url' }}
                 </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
-                  ><ng-container>{{ 'adminRegister.explanation' | transloco }}</ng-container>
+                  ><ng-container>{{ 'adminRegister.explanation' }}</ng-container>
                   <span class="text-red-400">*</span></label
                 >
                 <textarea
@@ -231,13 +224,13 @@ import { AuthService } from '../auth.service';
                   rows="3"
                   class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
                   placeholder="Brief explanation (min 10 chars)..."
-                  [placeholder]="'adminRegister.placeholder.explanation' | transloco"
+                  [placeholder]="'adminRegister.placeholder.explanation'"
                 ></textarea>
                 <div
                   *ngIf="registerForm.get('explanation')?.touched && registerForm.get('explanation')?.invalid"
                   class="text-red-400 text-xs mt-1"
                 >
-                  {{ 'adminRegister.error.explanation' | transloco }}
+                  {{ 'adminRegister.error.explanation' }}
                 </div>
               </div>
             </div>
@@ -248,23 +241,23 @@ import { AuthService } from '../auth.service';
             [disabled]="registerForm.invalid || isLoading"
             class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
           >
-            <ng-container *ngIf="isLoading">{{ 'adminRegister.creatingAccount' | transloco }}</ng-container>
+            <ng-container *ngIf="isLoading">{{ 'adminRegister.creatingAccount' }}</ng-container>
             <ng-container *ngIf="!isLoading">
-              <ng-container *ngIf="isGoogleUser">{{ 'adminRegister.btn.complete' | transloco }}</ng-container>
-              <ng-container *ngIf="!isGoogleUser">{{ 'adminRegister.btn.register' | transloco }}</ng-container>
+              <ng-container *ngIf="isGoogleUser">{{ 'adminRegister.btn.complete' }}</ng-container>
+              <ng-container *ngIf="!isGoogleUser">{{ 'adminRegister.btn.register' }}</ng-container>
             </ng-container>
           </button>
         </form>
 
         <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
           <p class="text-sm text-gray-500">
-            <ng-container>{{ 'adminRegister.alreadyAccount' | transloco }}</ng-container
+            <ng-container>{{ 'adminRegister.alreadyAccount' }}</ng-container
             >&nbsp;<a routerLink="/admin/login" class="text-emerald-400 hover:underline">{{
-              'adminRegister.loginLink' | transloco
+              'adminRegister.loginLink'
             }}</a>
           </p>
           <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition block">{{
-            'adminRegister.backToHome' | transloco
+            'adminRegister.backToHome'
           }}</a>
         </div>
       </div>
@@ -272,7 +265,6 @@ import { AuthService } from '../auth.service';
   `,
 })
 export class AdminRegisterComponent {
-  private transloco = inject(TranslocoService);
   private fb = inject(FormBuilder);
   authentication = inject(AuthService);
   gameService = inject(GameService);
@@ -364,7 +356,7 @@ export class AdminRegisterComponent {
       this.router.navigate(['/admin']);
     } catch (err: any) {
       console.error(err);
-      this.errorMessage = err.message || this.transloco.translate('adminRegister.error.failed');
+      this.errorMessage = err.message || 'adminRegister.error.failed';
     } finally {
       this.isLoading = false;
     }

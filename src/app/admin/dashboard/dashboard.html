@@ -64,18 +64,15 @@
           />
         </svg>
       </div>
-      <h2 class="text-3xl font-bold text-yellow-400 font-serif">{{ 'dashboard.pending.title' | transloco }}</h2>
-      <p
-        class="text-xl text-gray-300 max-w-lg mx-auto leading-relaxed"
-        [innerHTML]="'dashboard.pending.welcome' | transloco: { userdisplayName: user.displayName }"
-      ></p>
-      <p class="text-gray-400 max-w-md mx-auto">{{ 'dashboard.pending.message' | transloco }}</p>
+      <h2 class="text-3xl font-bold text-yellow-400 font-serif">{{ 'dashboard.pending.title' }}</h2>
+      <p class="text-xl text-gray-300 max-w-lg mx-auto leading-relaxed" [innerHTML]="'dashboard.pending.welcome'"></p>
+      <p class="text-gray-400 max-w-md mx-auto">{{ 'dashboard.pending.message' }}</p>
       <div class="pt-6">
         <button
           (click)="logout()"
           class="px-6 py-2 border border-gray-600 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
         >
-          {{ 'dashboard.logout' | transloco }}
+          {{ 'dashboard.logout' }}
         </button>
       </div>
     </div>
@@ -95,7 +92,7 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
-      <span class="animate-pulse">{{ 'dashboard.loading.verifying' | transloco }}</span>
+      <span class="animate-pulse">{{ 'dashboard.loading.verifying' }}</span>
     </div>
 
     <!-- Super Admin Redirect Fallback -->
@@ -119,14 +116,14 @@
           />
         </svg>
       </div>
-      <h2 class="text-3xl font-bold text-purple-400">{{ 'dashboard.super.title' | transloco }}</h2>
-      <p class="text-gray-400 max-w-md">{{ 'dashboard.super.redirect' | transloco }}</p>
+      <h2 class="text-3xl font-bold text-purple-400">{{ 'dashboard.super.title' }}</h2>
+      <p class="text-gray-400 max-w-md">{{ 'dashboard.super.redirect' }}</p>
 
       <a
         routerLink="/admin/super"
         class="px-8 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition shadow-lg hover:shadow-purple-500/20 flex items-center gap-2"
       >
-        <ng-container>{{ 'dashboard.super.btnGo' | transloco }}</ng-container>
+        <ng-container>{{ 'dashboard.super.btnGo' }}</ng-container>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
         </svg>
@@ -139,37 +136,34 @@
       class="p-6 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-fade-in"
     >
       <h2 class="text-2xl font-bold mb-4 text-emerald-400" data-testid="admin-controls">
-        {{ 'dashboard.controls.title' | transloco }}
+        {{ 'dashboard.controls.title' }}
       </h2>
-      <p
-        class="mb-4 text-gray-300"
-        [innerHTML]="'dashboard.welcome' | transloco: { userdisplayName: user.displayName }"
-      ></p>
+      <p class="mb-4 text-gray-300" [innerHTML]="'dashboard.welcome'"></p>
 
       <!-- Game Creation Form -->
       <div class="mb-8 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
-        <h3 class="text-lg font-bold text-white mb-4">{{ 'dashboard.createGame.title' | transloco }}</h3>
+        <h3 class="text-lg font-bold text-white mb-4">{{ 'dashboard.createGame.title' }}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div class="col-span-1 md:col-span-2">
-            <label class="block text-xs text-gray-400 mb-1">{{ 'dashboard.createGame.name' | transloco }}</label>
+            <label class="block text-xs text-gray-400 mb-1">{{ 'dashboard.createGame.name' }}</label>
             <input
               [(ngModel)]="newGameConfig.name"
               placeholder="Game Name"
               data-testid="game-name-input"
-              [placeholder]="'dashboard.createGame.phName' | transloco"
+              [placeholder]="'dashboard.createGame.phName'"
               class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none mb-3"
             />
-            <label class="block text-xs text-gray-400 mb-1">{{ 'dashboard.createGame.playerLabel' | transloco }}</label>
+            <label class="block text-xs text-gray-400 mb-1">{{ 'dashboard.createGame.playerLabel' }}</label>
             <input
               [(ngModel)]="newGameConfig.playerLabel"
               placeholder="Player"
-              [placeholder]="'dashboard.createGame.phPlayer' | transloco"
+              [placeholder]="'dashboard.createGame.phPlayer'"
               class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none"
             />
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="block text-xs text-gray-400">{{ 'dashboard.createGame.players' | transloco }}</label>
+              <label class="block text-xs text-gray-400">{{ 'dashboard.createGame.players' }}</label>
               <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numPlayers }}</span>
             </div>
             <input
@@ -183,7 +177,7 @@
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="block text-xs text-gray-400">{{ 'dashboard.createGame.rounds' | transloco }}</label>
+              <label class="block text-xs text-gray-400">{{ 'dashboard.createGame.rounds' }}</label>
               <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numRounds }}</span>
             </div>
             <input
@@ -196,7 +190,7 @@
           </div>
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="block text-xs text-gray-400">{{ 'dashboard.createGame.bots' | transloco }}</label>
+              <label class="block text-xs text-gray-400">{{ 'dashboard.createGame.bots' }}</label>
               <span class="text-xs font-bold text-blue-400 font-mono">{{ newGameConfig.numAi }}</span>
             </div>
             <input
@@ -211,14 +205,14 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="block text-xs text-gray-400 mb-1">{{ 'dashboard.createGame.aiLevel' | transloco }}</label>
+            <label class="block text-xs text-gray-400 mb-1">{{ 'dashboard.createGame.aiLevel' }}</label>
             <select
               [(ngModel)]="newGameConfig.aiLevel"
               class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white font-bold focus:border-blue-500 focus:outline-none"
             >
-              <option value="elementary">{{ 'ai.level.elementary' | transloco }}</option>
-              <option value="middle">{{ 'ai.level.middle' | transloco }}</option>
-              <option value="high">{{ 'ai.level.high' | transloco }}</option>
+              <option value="elementary">{{ 'ai.level.elementary' }}</option>
+              <option value="middle">{{ 'ai.level.middle' }}</option>
+              <option value="high">{{ 'ai.level.high' }}</option>
             </select>
           </div>
         </div>
@@ -229,7 +223,7 @@
           data-testid="create-game-submit"
           class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
         >
-          <span *ngIf="!isCreatingGame">{{ 'dashboard.createGame.submit' | transloco }}</span>
+          <span *ngIf="!isCreatingGame">{{ 'dashboard.createGame.submit' }}</span>
           <span *ngIf="isCreatingGame" class="flex items-center gap-2">
             <svg
               class="animate-spin h-5 w-5 text-white"
@@ -244,7 +238,7 @@
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <span>{{ 'dashboard.createGame.creating' | transloco }}</span>
+            <span>{{ 'dashboard.createGame.creating' }}</span>
           </span>
         </button>
       </div>
@@ -254,10 +248,10 @@
         *ngIf="createdGame"
         class="mb-8 p-4 bg-emerald-900/40 border border-emerald-500/50 rounded-lg animate-pulse-once"
       >
-        <h3 class="text-lg font-bold text-emerald-400 mb-2">{{ 'dashboard.created.title' | transloco }}</h3>
+        <h3 class="text-lg font-bold text-emerald-400 mb-2">{{ 'dashboard.created.title' }}</h3>
         <div class="grid grid-cols-1 gap-4 text-sm">
           <div>
-            <span class="text-gray-400 block">{{ 'dashboard.created.id' | transloco }}</span>
+            <span class="text-gray-400 block">{{ 'dashboard.created.id' }}</span>
             <span class="font-mono text-white select-all text-lg" data-testid="created-game-id">{{
               createdGame.id
             }}</span>
@@ -270,8 +264,8 @@
         <div class="flex justify-between items-center mb-4">
           <div class="flex items-center gap-3">
             <h3 class="text-xl font-bold text-white">
-              <ng-container *ngIf="showTrash">{{ 'dashboard.list.trash' | transloco }}</ng-container>
-              <ng-container *ngIf="!showTrash">{{ 'dashboard.list.active' | transloco }}</ng-container>
+              <ng-container *ngIf="showTrash">{{ 'dashboard.list.trash' }}</ng-container>
+              <ng-container *ngIf="!showTrash">{{ 'dashboard.list.active' }}</ng-container>
             </h3>
             <div class="flex items-center gap-2 ml-4 bg-gray-800 rounded-lg p-1 border border-gray-700">
               <button
@@ -282,7 +276,7 @@
                 [class.hover:text-white]="showTrash"
                 class="px-3 py-1 rounded text-xs font-bold transition"
               >
-                {{ 'dashboard.filter.active' | transloco }}
+                {{ 'dashboard.filter.active' }}
               </button>
               <button
                 (click)="showTrash ? null : toggleTrashView()"
@@ -292,14 +286,14 @@
                 [class.hover:text-white]="!showTrash"
                 class="px-3 py-1 rounded text-xs font-bold transition"
               >
-                {{ 'dashboard.filter.trash' | transloco }}
+                {{ 'dashboard.filter.trash' }}
               </button>
             </div>
             <button
               (click)="loadGames()"
               class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white transition"
               title="Refresh List"
-              [title]="'dashboard.list.refresh' | transloco"
+              [title]="'dashboard.list.refresh'"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -329,7 +323,7 @@
                 *ngIf="isRestoring"
                 class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"
               ></span>
-              <span>{{ 'dashboard.actions.restoreSelected' | transloco }}</span> ({{ selectedGameIds.size }})
+              <span>{{ 'dashboard.actions.restoreSelected' }}</span> ({{ selectedGameIds.size }})
             </button>
 
             <button
@@ -352,7 +346,7 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              <span>{{ 'dashboard.actions.deleteSelected' | transloco }}</span> ({{ selectedGameIds.size }})
+              <span>{{ 'dashboard.actions.deleteSelected' }}</span> ({{ selectedGameIds.size }})
             </button>
           </div>
         </div>
@@ -383,7 +377,7 @@
             (click)="loadGames()"
             class="px-3 py-1 bg-red-800 hover:bg-red-700 text-white text-sm font-medium rounded transition"
           >
-            {{ 'dashboard.error.retry' | transloco }}
+            {{ 'dashboard.error.retry' }}
           </button>
         </div>
 
@@ -402,7 +396,7 @@
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <span class="animate-pulse">{{ 'dashboard.loading.games' | transloco }}</span>
+          <span class="animate-pulse">{{ 'dashboard.loading.games' }}</span>
         </div>
 
         <div
@@ -422,12 +416,12 @@
                 </th>
                 <th class="px-4 py-3 w-8"></th>
                 <!-- Expand Token -->
-                <th class="px-4 py-3">{{ 'dashboard.table.name' | transloco }}</th>
-                <th class="px-4 py-3">{{ 'dashboard.table.details' | transloco }}</th>
-                <th class="px-4 py-3">{{ 'dashboard.table.round' | transloco }}</th>
-                <th class="px-4 py-3" *ngIf="showTrash">{{ 'dashboard.table.deletedAt' | transloco }}</th>
-                <th class="px-4 py-3" *ngIf="!showTrash">{{ 'dashboard.table.created' | transloco }}</th>
-                <th class="px-4 py-3">{{ 'dashboard.table.actions' | transloco }}</th>
+                <th class="px-4 py-3">{{ 'dashboard.table.name' }}</th>
+                <th class="px-4 py-3">{{ 'dashboard.table.details' }}</th>
+                <th class="px-4 py-3">{{ 'dashboard.table.round' }}</th>
+                <th class="px-4 py-3" *ngIf="showTrash">{{ 'dashboard.table.deletedAt' }}</th>
+                <th class="px-4 py-3" *ngIf="!showTrash">{{ 'dashboard.table.created' }}</th>
+                <th class="px-4 py-3">{{ 'dashboard.table.actions' }}</th>
               </tr>
             </thead>
             <tbody>
@@ -461,7 +455,7 @@
                   <td class="px-4 py-3 font-medium text-white">{{ game.name }}</td>
                   <td class="px-4 py-3 font-mono text-xs">
                     <div>
-                      <ng-container>{{ 'dashboard.table.id' | transloco }}</ng-container>
+                      <ng-container>{{ 'dashboard.table.id' }}</ng-container>
                       <span class="text-blue-300 select-all">{{ game.id }}</span>
                     </div>
                   </td>
@@ -476,7 +470,7 @@
                       (click)="shareGame(game)"
                       class="p-1.5 text-blue-400 hover:text-white hover:bg-blue-600 rounded-lg transition"
                       title="Email Game Details"
-                      [title]="'dashboard.table.email' | transloco"
+                      [title]="'dashboard.table.email'"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -499,7 +493,7 @@
                       (click)="restoreGame(game)"
                       class="p-1.5 text-emerald-400 hover:text-white hover:bg-emerald-600 rounded-lg transition"
                       title="Restore Game"
-                      [title]="'dashboard.table.restore' | transloco"
+                      [title]="'dashboard.table.restore'"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -521,7 +515,7 @@
                       (click)="deleteGame(game)"
                       class="p-1.5 text-red-400 hover:text-white hover:bg-red-600 rounded-lg transition"
                       [title]="showTrash ? 'Delete Permanently' : 'Delete Game'"
-                      [title]="'dashboard.table.delete' | transloco"
+                      [title]="'dashboard.table.delete'"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -545,20 +539,17 @@
                   <td colspan="8" class="px-4 py-4">
                     <div class="ml-12">
                       <h4 class="text-sm font-bold text-gray-400 mb-2 uppercase tracking-wide">
-                        {{ 'dashboard.details.players' | transloco }}
+                        {{ 'dashboard.details.players' }}
                       </h4>
 
                       <!-- Deadline Manager -->
                       <div class="mb-6 p-4 bg-gray-900/60 rounded-xl border border-blue-500/20">
                         <h5 class="text-xs font-bold text-blue-400 mb-3 uppercase tracking-widest">
-                          {{ 'dashboard.deadline.title' | transloco }}
+                          {{ 'dashboard.deadline.title' }}
                         </h5>
                         <div class="flex items-center gap-4">
                           <div>
-                            <label class="block text-[10px] text-gray-500 mb-1">{{
-                              'dashboard.deadline.round'
-                                | transloco: { gamecurrentRoundNumber: game.currentRoundNumber }
-                            }}</label>
+                            <label class="block text-[10px] text-gray-500 mb-1">{{ 'dashboard.deadline.round' }}</label>
                             <input
                               #deadlineInput
                               type="datetime-local"
@@ -570,17 +561,17 @@
                             (click)="updateDeadline(game.id, game.currentRoundNumber, deadlineInput.value)"
                             class="mt-4 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded transition shadow-lg"
                           >
-                            <ng-container>{{ 'dashboard.deadline.set' | transloco }}</ng-container>
+                            <ng-container>{{ 'dashboard.deadline.set' }}</ng-container>
                           </button>
                         </div>
-                        <p class="text-[10px] text-gray-500 mt-2 italic">{{ 'dashboard.deadline.hint' | transloco }}</p>
+                        <p class="text-[10px] text-gray-500 mt-2 italic">{{ 'dashboard.deadline.hint' }}</p>
                       </div>
 
                       <div
                         *ngIf="!game.players || getPlayerKeys(game.players).length === 0"
                         class="text-gray-500 italic text-sm"
                       >
-                        {{ 'dashboard.details.noPlayers' | transloco }}
+                        {{ 'dashboard.details.noPlayers' }}
                       </div>
 
                       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -605,8 +596,7 @@
                                   slot.player?.displayName
                                 }}</span>
                                 <span *ngIf="!slot.isAi && !slot.isJoined" class="text-gray-500"
-                                  ><ng-container>{{ 'dashboard.player.label' | transloco }}</ng-container>
-                                  {{ slot.number }}</span
+                                  ><ng-container>{{ 'dashboard.player.label' }}</ng-container> {{ slot.number }}</span
                                 >
                               </div>
                               <div class="text-xs text-gray-500 font-mono mt-0.5" *ngIf="slot.isJoined">
@@ -641,7 +631,7 @@
                           <div class="grid grid-cols-2 gap-4 text-xs bg-black/20 p-3 rounded-xl border border-white/5">
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.capital' | transloco
+                                'dashboard.player.capital'
                               }}</span>
                               <span class="font-mono text-yellow-500 font-bold text-sm">{{
                                 slot.player?.capital ?? 1000 | currency: 'EUR' : 'symbol' : '1.0-0'
@@ -649,13 +639,13 @@
                             </div>
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.round' | transloco
+                                'dashboard.player.round'
                               }}</span>
                               <span class="font-mono text-white text-sm">{{ slot.player?.currentRound ?? 0 }}</span>
                             </div>
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.soil' | transloco
+                                'dashboard.player.soil'
                               }}</span>
                               <!-- Metrics -->
                               <div
@@ -671,7 +661,7 @@
                             </div>
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
-                                'dashboard.player.nutrition' | transloco
+                                'dashboard.player.nutrition'
                               }}</span>
                               <div
                                 class="text-xs font-mono"
@@ -687,7 +677,7 @@
                             <div class="col-span-2 pt-1 border-t border-white/5">
                               <div class="flex justify-between items-center">
                                 <span class="text-gray-400 text-[10px] uppercase font-bold">{{
-                                  'dashboard.player.submitted' | transloco
+                                  'dashboard.player.submitted'
                                 }}</span>
                                 <span
                                   class="font-bold text-[10px] px-2 py-0.5 rounded-full"
@@ -716,13 +706,8 @@
                                   : 'bg-blue-800/30 text-blue-300 hover:bg-blue-800/50'
                               "
                             >
-                              <ng-container *ngIf="slot.isAi">{{
-                                'dashboard.player.toHuman' | transloco
-                              }}</ng-container>
-                              <ng-container *ngIf="!slot.isAi">{{
-                                'dashboard.player.toAi'
-                                  | transloco: { newGameConfigaiLeveluppercase: newGameConfig.aiLevel | uppercase }
-                              }}</ng-container>
+                              <ng-container *ngIf="slot.isAi">{{ 'dashboard.player.toHuman' }}</ng-container>
+                              <ng-container *ngIf="!slot.isAi">{{ 'dashboard.player.toAi' }}</ng-container>
                             </button>
 
                             <!-- Access / Impersonate -->
@@ -813,8 +798,8 @@
 
               <tr *ngIf="games.length === 0">
                 <td colspan="8" class="px-4 py-8 text-center text-gray-500">
-                  <p class="text-lg mb-2">{{ 'dashboard.empty.title' | transloco }}</p>
-                  <p class="text-sm">{{ 'dashboard.empty.subtitle' | transloco }}</p>
+                  <p class="text-lg mb-2">{{ 'dashboard.empty.title' }}</p>
+                  <p class="text-sm">{{ 'dashboard.empty.subtitle' }}</p>
                 </td>
               </tr>
             </tbody>
@@ -827,10 +812,10 @@
           class="flex flex-col sm:flex-row justify-between items-center mt-4 text-sm text-gray-400 gap-4"
         >
           <div>
-            <ng-container>{{ 'dashboard.pagination.showing' | transloco }}</ng-container
+            <ng-container>{{ 'dashboard.pagination.showing' }}</ng-container
             ><span class="text-white">{{ (currentPage - 1) * pageSize + 1 }}</span> -
             <span class="text-white">{{ (currentPage - 1) * pageSize + games.length }}</span>
-            <ng-container>{{ 'dashboard.pagination.of' | transloco }}</ng-container
+            <ng-container>{{ 'dashboard.pagination.of' }}</ng-container
             ><span class="text-white">{{ totalGames }}</span>
           </div>
           <div class="flex gap-2">
@@ -839,19 +824,18 @@
               [disabled]="currentPage === 1"
               class="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              {{ 'dashboard.pagination.prev' | transloco }}
+              {{ 'dashboard.pagination.prev' }}
             </button>
             <span class="px-3 py-1 bg-gray-800/50 rounded border border-gray-700"
-              ><ng-container>{{ 'dashboard.pagination.page' | transloco }}</ng-container
-              >{{ currentPage }} <ng-container>{{ 'dashboard.pagination.of' | transloco }}</ng-container>
-              {{ totalPages }}</span
+              ><ng-container>{{ 'dashboard.pagination.page' }}</ng-container
+              >{{ currentPage }} <ng-container>{{ 'dashboard.pagination.of' }}</ng-container> {{ totalPages }}</span
             >
             <button
               (click)="nextPage()"
               [disabled]="currentPage === totalPages"
               class="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              {{ 'dashboard.pagination.next' | transloco }}
+              {{ 'dashboard.pagination.next' }}
             </button>
           </div>
         </div>
@@ -865,22 +849,22 @@
       >
         <div class="bg-white p-6 rounded-xl flex flex-col items-center gap-4" (click)="$event.stopPropagation()">
           <h3 class="text-black font-bold text-xl">
-            {{ qrCodePlayer }} <ng-container>{{ 'dashboard.qr.access' | transloco }}</ng-container>
+            {{ qrCodePlayer }} <ng-container>{{ 'dashboard.qr.access' }}</ng-container>
           </h3>
           <img [src]="qrCodeUrl" class="w-64 h-64" />
-          <p class="text-black text-sm text-center max-w-xs">{{ 'dashboard.qr.scan' | transloco }}</p>
+          <p class="text-black text-sm text-center max-w-xs">{{ 'dashboard.qr.scan' }}</p>
           <div class="flex gap-2 w-full">
             <button
               onclick="window.print()"
               class="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-black rounded font-medium"
             >
-              {{ 'dashboard.qr.print' | transloco }}
+              {{ 'dashboard.qr.print' }}
             </button>
             <button
               (click)="closeQr()"
               class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium"
             >
-              {{ 'dashboard.qr.close' | transloco }}
+              {{ 'dashboard.qr.close' }}
             </button>
           </div>
         </div>
@@ -915,22 +899,22 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <ng-container *ngIf="showTrash">{{ 'dashboard.delete.permanent' | transloco }}</ng-container>
-            <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.confirm' | transloco }}</ng-container>
+            <ng-container *ngIf="showTrash">{{ 'dashboard.delete.permanent' }}</ng-container>
+            <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.confirm' }}</ng-container>
           </h3>
 
           <p class="text-gray-300">
             <span *ngIf="gameToDelete">
-              <ng-container *ngIf="showTrash">{{ 'dashboard.delete.questionPermanent' | transloco }}</ng-container>
-              <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.question' | transloco }}</ng-container>
+              <ng-container *ngIf="showTrash">{{ 'dashboard.delete.questionPermanent' }}</ng-container>
+              <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.question' }}</ng-container>
               <span class="font-bold text-white"> {{ gameToDelete.name }}</span
               >?
             </span>
             <span *ngIf="isDeletingSelected">
-              <ng-container *ngIf="showTrash">{{ 'dashboard.delete.questionBatchPermanent' | transloco }}</ng-container>
-              <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.questionBatch' | transloco }}</ng-container>
+              <ng-container *ngIf="showTrash">{{ 'dashboard.delete.questionBatchPermanent' }}</ng-container>
+              <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.questionBatch' }}</ng-container>
               <span class="font-bold text-white"> {{ selectedGameIds.size }}</span>
-              <ng-container>{{ 'dashboard.delete.games' | transloco }}</ng-container
+              <ng-container>{{ 'dashboard.delete.games' }}</ng-container
               >?</span
             >
           </p>
@@ -952,10 +936,10 @@
               />
             </svg>
             <div class="text-sm text-red-200/80">
-              <strong>{{ 'dashboard.delete.soft.title' | transloco }}</strong
-              ><ng-container>{{ 'dashboard.delete.soft.desc' | transloco }}</ng-container
+              <strong>{{ 'dashboard.delete.soft.title' }}</strong
+              ><ng-container>{{ 'dashboard.delete.soft.desc' }}</ng-container
               ><strong
-                >30 <ng-container>{{ 'dashboard.delete.days' | transloco }}</ng-container></strong
+                >30 <ng-container>{{ 'dashboard.delete.days' }}</ng-container></strong
               >.
             </div>
           </div>
@@ -980,17 +964,14 @@
               />
             </svg>
             <div class="text-sm text-red-200">
-              <strong>{{ 'dashboard.delete.warning' | transloco }}</strong>
-              <ng-container>{{ 'dashboard.delete.permanentDesc' | transloco }}</ng-container>
+              <strong>{{ 'dashboard.delete.warning' }}</strong>
+              <ng-container>{{ 'dashboard.delete.permanentDesc' }}</ng-container>
             </div>
           </div>
 
           <!-- Type Confirmation -->
           <div *ngIf="showTrash">
-            <label
-              class="text-xs text-gray-400 block mb-1"
-              [innerHTML]="'dashboard.delete.typeConfirm' | transloco"
-            ></label>
+            <label class="text-xs text-gray-400 block mb-1" [innerHTML]="'dashboard.delete.typeConfirm'"></label>
             <input
               [(ngModel)]="deleteConfirmInput"
               placeholder="DELETE"
@@ -1003,7 +984,7 @@
               (click)="cancelDelete()"
               class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
             >
-              {{ 'dashboard.delete.cancel' | transloco }}
+              {{ 'dashboard.delete.cancel' }}
             </button>
             <button
               (click)="confirmDelete()"
@@ -1011,8 +992,8 @@
               class="flex-1 py-3 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2"
             >
               <span *ngIf="!isDeleting">
-                <ng-container *ngIf="showTrash">{{ 'dashboard.delete.btnPermanent' | transloco }}</ng-container>
-                <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.btnGame' | transloco }}</ng-container>
+                <ng-container *ngIf="showTrash">{{ 'dashboard.delete.btnPermanent' }}</ng-container>
+                <ng-container *ngIf="!showTrash">{{ 'dashboard.delete.btnGame' }}</ng-container>
               </span>
               <span
                 *ngIf="isDeleting"
@@ -1048,7 +1029,7 @@
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>{{ 'dashboard.error.title' | transloco }}</span>
+            <span>{{ 'dashboard.error.title' }}</span>
           </h3>
 
           <p class="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed">{{ errorMessage }}</p>
@@ -1057,7 +1038,7 @@
             (click)="closeError()"
             class="mt-2 w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded font-medium transition shadow-lg"
           >
-            {{ 'dashboard.error.close' | transloco }}
+            {{ 'dashboard.error.close' }}
           </button>
         </div>
       </div>
@@ -1086,12 +1067,12 @@
 
     <!-- Login State (If no user) -->
     <div *ngIf="(user$ | async) === null" class="flex flex-col items-start gap-4">
-      <p>{{ 'dashboard.login.msg' | transloco }}</p>
+      <p>{{ 'dashboard.login.msg' }}</p>
       <button
         (click)="login()"
         class="px-6 py-2 bg-blue-600 rounded flex items-center gap-2 hover:bg-blue-700 transition"
       >
-        {{ 'dashboard.login.btn' | transloco }}
+        {{ 'dashboard.login.btn' }}
       </button>
     </div>
   </div>

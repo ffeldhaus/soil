@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding, inject, Input } from '@angular/core';
-import { TranslocoService } from '@jsverse/transloco';
 
 import { CropType, Parcel as ParcelType } from '../../types';
 
@@ -12,7 +11,6 @@ import { CropType, Parcel as ParcelType } from '../../types';
   styleUrl: './parcel.scss',
 })
 export class Parcel {
-  private transloco = inject(TranslocoService);
   @Input() parcel!: ParcelType;
   @Input() @HostBinding('class.selected') selected = false;
   @Input() showLabels = true;
@@ -21,16 +19,16 @@ export class Parcel {
   @Input() showSoil = false;
 
   private cropConfig: Record<string, { label: string; image: string }> = {
-    Wheat: { label: this.transloco.translate('crop.wheat'), image: 'weizen.jpg' },
-    Corn: { label: this.transloco.translate('crop.corn'), image: 'mais.jpg' },
-    Potato: { label: this.transloco.translate('crop.potato'), image: 'kartoffel.jpg' },
-    Beet: { label: this.transloco.translate('crop.beet'), image: 'zuckerruebe.jpg' },
-    Barley: { label: this.transloco.translate('crop.barley'), image: 'gerste.jpg' },
-    Oat: { label: this.transloco.translate('crop.oat'), image: 'hafer.jpg' },
-    Rye: { label: this.transloco.translate('crop.rye'), image: 'roggen.jpg' },
-    Fieldbean: { label: this.transloco.translate('crop.fieldbean'), image: 'ackerbohne.jpg' },
-    Grass: { label: this.transloco.translate('crop.animals'), image: 'tiere.jpg' },
-    Fallow: { label: this.transloco.translate('crop.fallow'), image: 'brachland.jpg' },
+    Wheat: { label: 'crop.wheat', image: 'weizen.jpg' },
+    Corn: { label: 'crop.corn', image: 'mais.jpg' },
+    Potato: { label: 'crop.potato', image: 'kartoffel.jpg' },
+    Beet: { label: 'crop.beet', image: 'zuckerruebe.jpg' },
+    Barley: { label: 'crop.barley', image: 'gerste.jpg' },
+    Oat: { label: 'crop.oat', image: 'hafer.jpg' },
+    Rye: { label: 'crop.rye', image: 'roggen.jpg' },
+    Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.jpg' },
+    Grass: { label: 'crop.animals', image: 'tiere.jpg' },
+    Fallow: { label: 'crop.fallow', image: 'brachland.jpg' },
   };
 
   getConfig(crop: CropType) {

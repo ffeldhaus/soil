@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { AuthService } from '../auth.service';
@@ -10,7 +9,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div
       class="min-h-screen relative flex items-center justify-center bg-cover bg-center"
@@ -37,25 +36,26 @@ import { AuthService } from '../auth.service';
         class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700"
       >
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-emerald-400 mb-2">{{ 'adminLogin.title' | transloco }}</h1>
-          <p class="text-gray-400">{{ 'adminLogin.subtitle' | transloco }}</p>
+          <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Admin-Anmeldung</h1>
+          <p class="text-gray-400" i18n="@@adminLogin.subtitle">Zugang zur Soil-Steuerzentrale</p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminLogin.email' | transloco }}</label>
+            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.email">E-Mail</label>
             <input
               formControlName="email"
               type="email"
               autocomplete="email"
               class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
               placeholder="admin@school.edu"
-              [placeholder]="'adminLogin.placeholder.email' | transloco"
+              i18n-placeholder="@@adminLogin.placeholder.email"
+              placeholder="admin@schule.de"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">{{ 'adminLogin.password' | transloco }}</label>
+            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.password">Passwort</label>
             <input
               formControlName="password"
               type="password"
@@ -70,8 +70,8 @@ import { AuthService } from '../auth.service';
             [disabled]="loginForm.invalid || isLoading"
             class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
           >
-            <ng-container *ngIf="isLoading">{{ 'adminLogin.loggingIn' | transloco }}</ng-container>
-            <ng-container *ngIf="!isLoading">{{ 'adminLogin.loginButton' | transloco }}</ng-container>
+            <ng-container *ngIf="isLoading" i18n="@@adminLogin.loggingIn">Anmeldung läuft...</ng-container>
+            <ng-container *ngIf="!isLoading" i18n="@@adminLogin.loginButton">Anmelden</ng-container>
           </button>
         </form>
 
@@ -99,19 +99,22 @@ import { AuthService } from '../auth.service';
                 d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
               ></path>
             </svg>
-            <span>{{ 'adminLogin.googleSignIn' | transloco }}</span>
+            <span i18n="@@adminLogin.googleSignIn">Mit Google anmelden</span>
           </button>
           <p class="text-sm text-gray-500">
-            <ng-container>{{ 'adminLogin.noAccount' | transloco }}</ng-container
-            >&nbsp;<a routerLink="/admin/register" class="text-emerald-400 hover:underline">{{
-              'adminLogin.registerLink' | transloco
-            }}</a>
+            <ng-container i18n="@@adminLogin.noAccount">Noch kein Konto?</ng-container>&nbsp;<a
+              routerLink="/admin/register"
+              class="text-emerald-400 hover:underline"
+              i18n="@@adminLogin.registerLink"
+              >Hier registrieren</a
+            >
           </p>
           <div class="pt-2">
             <a
               routerLink="/"
               class="text-gray-400 hover:text-white text-sm transition flex items-center justify-center gap-2"
-              >{{ 'adminLogin.backToHome' | transloco }}</a
+              i18n="@@adminLogin.backToHome"
+              >← Zurück zur Startseite</a
             >
           </div>
         </div>
@@ -145,14 +148,17 @@ import { AuthService } from '../auth.service';
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-bold text-white mb-2">{{ 'adminLogin.error.title' | transloco }}</h3>
+              <h3 class="text-xl font-bold text-white mb-2" i18n="@@adminLogin.error.title">
+                Anmeldung fehlgeschlagen
+              </h3>
               <p class="text-gray-300">{{ errorMessage }}</p>
             </div>
             <button
               (click)="closeModal()"
               class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition"
+              i18n="@@adminLogin.error.retry"
             >
-              {{ 'adminLogin.error.retry' | transloco }}
+              Erneut versuchen
             </button>
           </div>
         </div>
@@ -161,7 +167,6 @@ import { AuthService } from '../auth.service';
   `,
 })
 export class AdminLoginComponent {
-  private transloco = inject(TranslocoService);
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -187,7 +192,7 @@ export class AdminLoginComponent {
       this.router.navigate(['/admin']);
     } catch (err: any) {
       console.error(err);
-      this.errorMessage = this.transloco.translate('adminLogin.error.msg');
+      this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
       this.showErrorModal = true;
     } finally {
       this.isLoading = false;
@@ -200,7 +205,7 @@ export class AdminLoginComponent {
       this.router.navigate(['/admin']);
     } catch (err: any) {
       console.error(err);
-      this.errorMessage = this.transloco.translate('adminLogin.error.google');
+      this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
       this.showErrorModal = true;
     }
   }

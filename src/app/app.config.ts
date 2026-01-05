@@ -4,16 +4,15 @@ import { provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth } from '@angular/fire/auth';
 import { provideFirestore } from '@angular/fire/firestore';
 import { provideFunctions } from '@angular/fire/functions';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { provideTransloco } from '@jsverse/transloco';
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
-import { TranslocoHttpLoader } from './transloco-loader';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
@@ -58,14 +57,6 @@ export const appConfig: ApplicationConfig = {
       return functions;
     }),
     provideHttpClient(),
-    provideTransloco({
-      config: {
-        availableLangs: ['en', 'de'],
-        defaultLang: 'de',
-        reRenderOnLangChange: true,
-        prodMode: !isDevMode(),
-      },
-      loader: TranslocoHttpLoader,
-    }),
+    provideClientHydration(withEventReplay()),
   ],
 };
