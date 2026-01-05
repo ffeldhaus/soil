@@ -1,76 +1,99 @@
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-    (click)="cancel.emit()">
-    <div class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-lg w-full"
-        (click)="$event.stopPropagation()">
-        <h2 class="text-2xl font-bold text-white mb-6 font-serif">Round Settings</h2>
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+  (click)="settingsCancelled.emit()"
+>
+  <div
+    class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-lg w-full"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 class="text-2xl font-bold text-white mb-6 font-serif">Round Settings</h2>
 
-        <div class="space-y-6">
-            <!-- Machines Slider -->
-            <div class="space-y-2">
-                <div class="flex justify-between">
-                    <label class="text-gray-300 font-medium">Machines</label>
-                    <span class="text-emerald-400 font-bold">{{ settings.machines }}</span>
-                </div>
-                <input type="range" min="0" max="100" [(ngModel)]="settings.machines"
-                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
-                <p class="text-xs text-gray-400">Higher machine usage increases efficiency but degrades soil over time.
-                </p>
-            </div>
-
-            <!-- Toggles Grid -->
-            <div class="grid grid-cols-1 gap-4">
-                <!-- Organic -->
-                <label class="flex items-center space-x-3 cursor-pointer group">
-                    <input type="checkbox" [(ngModel)]="settings.organic"
-                        class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900">
-                    <div>
-                        <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Organic
-                            Farming</span>
-                        <p class="text-xs text-gray-500">Disables chemicals. Higher prices, lower yields.</p>
-                    </div>
-                </label>
-
-                <!-- Fertilizer -->
-                <label class="flex items-center space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
-                    <input type="checkbox" [(ngModel)]="settings.fertilizer" [disabled]="settings.organic"
-                        class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900">
-                    <div>
-                        <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Synthetic
-                            Fertilizer</span>
-                        <p class="text-xs text-gray-500">Boosts nutrition. Decreases soil quality long-term.</p>
-                    </div>
-                </label>
-
-                <!-- Pesticide -->
-                <label class="flex items-center space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
-                    <input type="checkbox" [(ngModel)]="settings.pesticide" [disabled]="settings.organic"
-                        class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900">
-                    <div>
-                        <span
-                            class="text-gray-300 font-medium group-hover:text-white transition-colors">Pesticides</span>
-                        <p class="text-xs text-gray-500">Protects against vermin. Harms soil organisms.</p>
-                    </div>
-                </label>
-
-                <!-- Organisms (Beneficial) -->
-                <label class="flex items-center space-x-3 cursor-pointer group">
-                    <input type="checkbox" [(ngModel)]="settings.organisms"
-                        class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900">
-                    <div>
-                        <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Beneficial
-                            Organisms</span>
-                        <p class="text-xs text-gray-500">Natural pest control. Expensive but sustainable.</p>
-                    </div>
-                </label>
-            </div>
+    <div class="space-y-6">
+      <!-- Machines Slider -->
+      <div class="space-y-2">
+        <div class="flex justify-between">
+          <label class="text-gray-300 font-medium">Machines</label>
+          <span class="text-emerald-400 font-bold">{{ settings.machines }}</span>
         </div>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          [(ngModel)]="settings.machines"
+          class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        />
+        <p class="text-xs text-gray-400">Higher machine usage increases efficiency but degrades soil over time.</p>
+      </div>
 
-        <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-800">
-            <button (click)="cancel.emit()" class="px-4 py-2 text-gray-400 hover:text-white transition">Cancel</button>
-            <button (click)="submit()" data-testid="confirm-round-settings"
-                class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition shadow-lg shadow-emerald-900/20">
-                Confirm Settings
-            </button>
-        </div>
+      <!-- Toggles Grid -->
+      <div class="grid grid-cols-1 gap-4">
+        <!-- Organic -->
+        <label class="flex items-center space-x-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            [(ngModel)]="settings.organic"
+            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+          />
+          <div>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Organic Farming</span>
+            <p class="text-xs text-gray-500">Disables chemicals. Higher prices, lower yields.</p>
+          </div>
+        </label>
+
+        <!-- Fertilizer -->
+        <label class="flex items-center space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
+          <input
+            type="checkbox"
+            [(ngModel)]="settings.fertilizer"
+            [disabled]="settings.organic"
+            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+          />
+          <div>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Synthetic Fertilizer</span>
+            <p class="text-xs text-gray-500">Boosts nutrition. Decreases soil quality long-term.</p>
+          </div>
+        </label>
+
+        <!-- Pesticide -->
+        <label class="flex items-center space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
+          <input
+            type="checkbox"
+            [(ngModel)]="settings.pesticide"
+            [disabled]="settings.organic"
+            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+          />
+          <div>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Pesticides</span>
+            <p class="text-xs text-gray-500">Protects against vermin. Harms soil organisms.</p>
+          </div>
+        </label>
+
+        <!-- Organisms (Beneficial) -->
+        <label class="flex items-center space-x-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            [(ngModel)]="settings.organisms"
+            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+          />
+          <div>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Beneficial Organisms</span>
+            <p class="text-xs text-gray-500">Natural pest control. Expensive but sustainable.</p>
+          </div>
+        </label>
+      </div>
     </div>
+
+    <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-800">
+      <button (click)="settingsCancelled.emit()" class="px-4 py-2 text-gray-400 hover:text-white transition">
+        Cancel
+      </button>
+      <button
+        (click)="submit()"
+        data-testid="confirm-round-settings"
+        class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition shadow-lg shadow-emerald-900/20"
+      >
+        Confirm Settings
+      </button>
+    </div>
+  </div>
 </div>

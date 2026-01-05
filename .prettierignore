@@ -1,0 +1,14 @@
+# Ignore artifacts:
+dist
+node_modules
+package-lock.json
+
+# Ignore firebase files:
+.firebase
+.firebaserc
+firestore.indexes.json
+storage.rules
+firestore.rules
+
+# Ignore angular artifacts:
+.angular

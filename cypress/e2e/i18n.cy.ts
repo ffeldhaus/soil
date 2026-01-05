@@ -1,9 +1,9 @@
 describe('Internationalization (i18n)', () => {
   it('should display English content by default', () => {
     cy.visit('/', {
-        onBeforeLoad: (win) => {
-            win.localStorage.setItem('soil_user_language', 'en');
-        }
+      onBeforeLoad: (win) => {
+        win.localStorage.setItem('soil_user_language', 'en');
+      },
     });
     cy.get('[data-testid="landing-agriculture"]').should('contain.text', 'Agriculture');
     cy.get('html').should('have.attr', 'lang', 'en');
@@ -11,9 +11,9 @@ describe('Internationalization (i18n)', () => {
 
   it('should display German content when choosing DE', () => {
     cy.visit('/', {
-        onBeforeLoad: (win) => {
-            win.localStorage.setItem('soil_user_language', 'de');
-        }
+      onBeforeLoad: (win) => {
+        win.localStorage.setItem('soil_user_language', 'de');
+      },
     });
     cy.get('[data-testid="landing-agriculture"]').should('contain.text', 'Landwirtschaft');
     cy.get('html').should('have.attr', 'lang', 'de');
@@ -25,7 +25,7 @@ describe('Internationalization (i18n)', () => {
     cy.get('app-language-switcher button').first().click(); // Open dropdown
     cy.contains('button', 'Deutsch').click(); // Select Deutsch
     cy.window().then((win) => {
-        expect(win.localStorage.getItem('soil_user_language')).to.eq('de');
+      expect(win.localStorage.getItem('soil_user_language')).to.eq('de');
     });
     cy.get('html').should('have.attr', 'lang', 'de');
   });

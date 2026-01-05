@@ -1,10 +1,11 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoService } from '@jsverse/transloco';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { TranslocoHttpLoader } from './transloco-loader';
-import en from '../../public/i18n/en.json';
+
 import de from '../../public/i18n/de.json';
+import en from '../../public/i18n/en.json';
+import { TranslocoHttpLoader } from './transloco-loader';
 
 describe('I18n Coverage Check', () => {
   let service: TranslocoService;
@@ -18,9 +19,9 @@ describe('I18n Coverage Check', () => {
             availableLangs: ['en', 'de'],
             defaultLang: 'de',
           },
-          loader: TranslocoHttpLoader
-        })
-      ]
+          loader: TranslocoHttpLoader,
+        }),
+      ],
     });
     service = TestBed.inject(TranslocoService);
     // Manually set translations to avoid HTTP calls in this test
@@ -31,25 +32,25 @@ describe('I18n Coverage Check', () => {
   it('should have all keys in German that exist in English', () => {
     const enKeys = getAllKeys(en);
     const deKeys = getAllKeys(de);
-    
-    const missingInDe = enKeys.filter(k => !deKeys.includes(k));
+
+    const missingInDe = enKeys.filter((k) => !deKeys.includes(k));
     expect(missingInDe).withContext('Keys present in en.json but missing in de.json').toEqual([]);
   });
 
   it('should not have English values in German translation for critical UI keys', () => {
     // List of keys that MUST be translated and not just copied from English
     const criticalKeys = [
-        'landing.intro',
-        'landing.aboutTitle',
-        'landing.backgroundTitle',
-        'adminLogin.title',
-        'playerLogin.title'
+      'landing.intro',
+      'landing.aboutTitle',
+      'landing.backgroundTitle',
+      'adminLogin.title',
+      'playerLogin.title',
     ];
 
-    criticalKeys.forEach(key => {
-        const enValue = service.translate(key, {}, 'en');
-        const deValue = service.translate(key, {}, 'de');
-        expect(deValue).withContext(`Key "${key}" is still in English in de.json`).not.toEqual(enValue);
+    criticalKeys.forEach((key) => {
+      const enValue = service.translate(key, {}, 'en');
+      const deValue = service.translate(key, {}, 'de');
+      expect(deValue).withContext(`Key "${key}" is still in English in de.json`).not.toEqual(enValue);
     });
   });
 

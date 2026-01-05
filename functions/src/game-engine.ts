@@ -1,233 +1,246 @@
-import { Round, RoundDecision, Parcel, RoundResult, CropType } from './types';
 import {
-    SOIL, NUTRITION, HARVEST_YIELD, HARVEST_SOIL_SENSITIVITY,
-    HARVEST_NUTRITION_SENSITIVITY, CROP_SEQUENCE_MATRIX, EXPENSES, PRICES,
-    MACHINE_FACTORS, WEATHER_EFFECTS, VERMIN_EFFECTS
+  CROP_SEQUENCE_MATRIX,
+  EXPENSES,
+  HARVEST_NUTRITION_SENSITIVITY,
+  HARVEST_SOIL_SENSITIVITY,
+  HARVEST_YIELD,
+  MACHINE_FACTORS,
+  NUTRITION,
+  PRICES,
+  SOIL,
+  VERMIN_EFFECTS,
+  WEATHER_EFFECTS,
 } from './constants';
+import { CropType, Parcel, Round, RoundDecision, RoundResult } from './types';
 
 export class GameEngine {
+  static calculateRound(
+    currentRoundNumber: number,
+    previousRound: Round | undefined,
+    decision: RoundDecision,
+    events: { weather: string; vermin: string },
+    currentCapital: number,
+  ): Round {
+    const previousParcels = previousRound ? previousRound.parcelsSnapshot : this.createInitialParcels();
+    const parcelupdates: Parcel[] = [];
+    const harvestSummary: Record<string, number> = {};
+    Object.keys(HARVEST_YIELD).forEach((k) => (harvestSummary[k] = 0));
 
-    static calculateRound(
-        currentRoundNumber: number,
-        previousRound: Round | undefined,
-        decision: RoundDecision,
-        events: { weather: string, vermin: string },
-        currentCapital: number
-    ): Round {
+    // -- 1. Pre-calculate global factors --
+    const numParcels = previousParcels.length;
+    const animalParcels = Object.values(decision.parcels).filter((c) => c === 'Grass').length;
+    const machineLevel = Math.min(4, Math.max(0, decision.machines || 0));
 
-        const previousParcels = previousRound ? previousRound.parcelsSnapshot : this.createInitialParcels();
-        const parcelupdates: Parcel[] = [];
-        const harvestSummary: Record<string, number> = {};
-        Object.keys(HARVEST_YIELD).forEach(k => harvestSummary[k] = 0);
+    // Organic status: Bio-Siegel is lost if synthetic fertilizer or pesticide is used
+    const bioSiegel = decision.organic && !decision.fertilizer && !decision.pesticide;
 
-        // -- 1. Pre-calculate global factors --
-        const numParcels = previousParcels.length;
-        const animalParcels = Object.values(decision.parcels).filter(c => c === 'Grass').length;
-        const machineLevel = Math.min(4, Math.max(0, decision.machines || 0));
+    // Weather and Vermin factors
+    const weather = WEATHER_EFFECTS[events.weather] || WEATHER_EFFECTS['Normal'];
+    const vermin = VERMIN_EFFECTS[events.vermin] || VERMIN_EFFECTS['None'];
 
-        // Organic status: Bio-Siegel is lost if synthetic fertilizer or pesticide is used
-        const bioSiegel = decision.organic && !decision.fertilizer && !decision.pesticide;
+    // Machine factors
+    const machineYieldBonus = MACHINE_FACTORS.YIELD_BONUS[machineLevel];
+    const machineSoilImpact = SOIL.MACHINE_IMPACT[machineLevel];
 
-        // Weather and Vermin factors
-        const weather = WEATHER_EFFECTS[events.weather] || WEATHER_EFFECTS['Normal'];
-        const vermin = VERMIN_EFFECTS[events.vermin] || VERMIN_EFFECTS['None'];
+    // -- 2. Calculate Parcel Updates --
+    previousParcels.forEach((prevParcel, index) => {
+      const newCrop = decision.parcels[index] || 'Fallow';
+      const cropKey = newCrop as CropType;
 
-        // Machine factors
-        const machineYieldBonus = MACHINE_FACTORS.YIELD_BONUS[machineLevel];
-        const machineSoilImpact = SOIL.MACHINE_IMPACT[machineLevel];
+      let newSoil = prevParcel.soil;
+      let newNutrition = prevParcel.nutrition;
 
-        // -- 2. Calculate Parcel Updates --
-        previousParcels.forEach((prevParcel, index) => {
-            const newCrop = decision.parcels[index] || 'Fallow';
-            const cropKey = newCrop as CropType;
+      // A. SOIL CALCULATION
+      let soilFactor = 0;
 
-            let newSoil = prevParcel.soil;
-            let newNutrition = prevParcel.nutrition;
+      // Base crop impact
+      if (SOIL.PLANTATION_GAINS[cropKey]) soilFactor += SOIL.PLANTATION_GAINS[cropKey];
+      if (SOIL.PLANTATION_LOSSES[cropKey]) soilFactor += SOIL.PLANTATION_LOSSES[cropKey];
 
-            // A. SOIL CALCULATION
-            let soilFactor = 0;
+      // Fallow recovery
+      if (cropKey === 'Fallow') {
+        const diff = Math.max(SOIL.START - prevParcel.soil, 0);
+        soilFactor += (diff / SOIL.START) * SOIL.FALLOW_RECOVERY;
+      }
 
-            // Base crop impact
-            if (SOIL.PLANTATION_GAINS[cropKey]) soilFactor += SOIL.PLANTATION_GAINS[cropKey];
-            if (SOIL.PLANTATION_LOSSES[cropKey]) soilFactor += SOIL.PLANTATION_LOSSES[cropKey];
+      // Crop Sequence
+      const prevCrop = prevParcel.crop;
+      const sequenceQuality = CROP_SEQUENCE_MATRIX[prevCrop]?.[newCrop] || 'ok';
+      if (sequenceQuality === 'good') soilFactor += SOIL.CROP_ROTATION_BONUS;
+      if (sequenceQuality === 'bad') soilFactor += SOIL.CROP_ROTATION_PENALTY;
 
-            // Fallow recovery
-            if (cropKey === 'Fallow') {
-                const diff = Math.max(SOIL.START - prevParcel.soil, 0);
-                soilFactor += (diff / SOIL.START) * SOIL.FALLOW_RECOVERY;
-            }
+      // Monoculture penalty (same crop twice)
+      if (prevCrop === newCrop && newCrop !== 'Fallow' && newCrop !== 'Grass') {
+        soilFactor += SOIL.MONOCULTURE_PENALTY;
+      }
 
-            // Crop Sequence
-            const prevCrop = prevParcel.crop;
-            const sequenceQuality = CROP_SEQUENCE_MATRIX[prevCrop]?.[newCrop] || 'ok';
-            if (sequenceQuality === 'good') soilFactor += SOIL.CROP_ROTATION_BONUS;
-            if (sequenceQuality === 'bad') soilFactor += SOIL.CROP_ROTATION_PENALTY;
+      // Inputs impact
+      if (decision.fertilizer) soilFactor += SOIL.FERTILIZER_SYNTHETIC_IMPACT;
+      if (decision.pesticide) soilFactor += SOIL.PESTICIDE_IMPACT;
 
-            // Monoculture penalty (same crop twice)
-            if (prevCrop === newCrop && newCrop !== 'Fallow' && newCrop !== 'Grass') {
-                soilFactor += SOIL.MONOCULTURE_PENALTY;
-            }
+      // Machines impact
+      soilFactor += machineSoilImpact;
 
-            // Inputs impact
-            if (decision.fertilizer) soilFactor += SOIL.FERTILIZER_SYNTHETIC_IMPACT;
-            if (decision.pesticide) soilFactor += SOIL.PESTICIDE_IMPACT;
+      // Weather impact on soil
+      soilFactor += weather.soil;
 
-            // Machines impact
-            soilFactor += machineSoilImpact;
+      // Apply soil change (compounding factor)
+      newSoil = prevParcel.soil * (1 + soilFactor);
 
-            // Weather impact on soil
-            soilFactor += weather.soil;
+      // B. NUTRITION CALCULATION
+      let nutritionGain = 0;
+      if (decision.fertilizer) {
+        nutritionGain += NUTRITION.FERTILIZER_SYNTHETIC;
+      }
 
-            // Apply soil change (compounding factor)
-            newSoil = prevParcel.soil * (1 + soilFactor);
+      // Organic nutrition from animals
+      if (decision.organic) {
+        // Manure contribution scaled by number of animal parcels
+        const animalRatio = animalParcels / numParcels;
+        const organicGain = NUTRITION.FERTILIZER_ORGANIC * (animalRatio / NUTRITION.ANIMALS_REQUIRED_RATIO);
+        nutritionGain += organicGain;
+      }
 
-            // B. NUTRITION CALCULATION
-            let nutritionGain = 0;
-            if (decision.fertilizer) {
-                nutritionGain += NUTRITION.FERTILIZER_SYNTHETIC;
-            }
+      if (cropKey === 'Fieldbean') {
+        nutritionGain += NUTRITION.FIELDBEAN_BONUS;
+      }
 
-            // Organic nutrition from animals
-            if (decision.organic) {
-                // Manure contribution scaled by number of animal parcels
-                const animalRatio = animalParcels / numParcels;
-                const organicGain = NUTRITION.FERTILIZER_ORGANIC * (animalRatio / NUTRITION.ANIMALS_REQUIRED_RATIO);
-                nutritionGain += organicGain;
-            }
+      // Base nutrition uptake/loss
+      if (cropKey === 'Fallow' || cropKey === 'Grass') {
+        // Natural stabilization
+        if (newNutrition > NUTRITION.START) {
+          newNutrition = newNutrition * 0.9 + NUTRITION.START * 0.1;
+        } else {
+          newNutrition += 5; // Slight recovery
+        }
+      } else {
+        // Scale gain by soil quality (better soil = better nutrient uptake)
+        const uptakeEfficiency = Math.max(0.2, Math.min(1.2, newSoil / SOIL.START));
+        newNutrition += nutritionGain * uptakeEfficiency;
+      }
 
-            if (cropKey === 'Fieldbean') {
-                nutritionGain += NUTRITION.FIELDBEAN_BONUS;
-            }
+      // C. HARVEST CALCULATION
+      let yieldAmount = 0;
+      if (cropKey !== 'Fallow' && cropKey !== 'Grass') {
+        const base = HARVEST_YIELD[cropKey];
 
-            // Base nutrition uptake/loss
-            if (cropKey === 'Fallow' || cropKey === 'Grass') {
-                // Natural stabilization
-                if (newNutrition > NUTRITION.START) {
-                    newNutrition = newNutrition * 0.9 + NUTRITION.START * 0.1;
-                } else {
-                    newNutrition += 5; // Slight recovery
-                }
-            } else {
-                // Scale gain by soil quality (better soil = better nutrient uptake)
-                const uptakeEfficiency = Math.max(0.2, Math.min(1.2, newSoil / SOIL.START));
-                newNutrition += nutritionGain * uptakeEfficiency;
-            }
+        // Yield depends on Soil and Nutrition
+        const soilEffect = Math.pow(Math.max(0, newSoil) / SOIL.START, HARVEST_SOIL_SENSITIVITY[cropKey] || 1);
+        const nutritionEffect = Math.pow(
+          Math.max(0, newNutrition) / NUTRITION.START,
+          HARVEST_NUTRITION_SENSITIVITY[cropKey] || 1,
+        );
 
-            // C. HARVEST CALCULATION
-            let yieldAmount = 0;
-            if (cropKey !== 'Fallow' && cropKey !== 'Grass') {
-                const base = HARVEST_YIELD[cropKey];
+        // Weather & Vermin
+        let pestImpact = 1.0;
+        if (events.vermin === 'Pests') {
+          if (decision.pesticide) {
+            pestImpact = 0.95; // Small loss even with pesticide
+          } else if (decision.organisms) {
+            pestImpact = 0.85; // Organic protection is less effective
+          } else {
+            pestImpact = vermin.yield;
+          }
+        }
 
-                // Yield depends on Soil and Nutrition
-                const soilEffect = Math.pow(Math.max(0, newSoil) / SOIL.START, HARVEST_SOIL_SENSITIVITY[cropKey] || 1);
-                const nutritionEffect = Math.pow(Math.max(0, newNutrition) / NUTRITION.START, HARVEST_NUTRITION_SENSITIVITY[cropKey] || 1);
+        yieldAmount = base * soilEffect * nutritionEffect * weather.yield * pestImpact * (1 + machineYieldBonus);
 
-                // Weather & Vermin
-                let pestImpact = 1.0;
-                if (events.vermin === 'Pests') {
-                    if (decision.pesticide) {
-                        pestImpact = 0.95; // Small loss even with pesticide
-                    } else if (decision.organisms) {
-                        pestImpact = 0.85; // Organic protection is less effective
-                    } else {
-                        pestImpact = vermin.yield;
-                    }
-                }
+        // Organic yields are generally lower but higher quality/price
+        if (decision.organic) {
+          yieldAmount *= 0.8;
+        }
 
-                yieldAmount = base * soilEffect * nutritionEffect * weather.yield * pestImpact * (1 + machineYieldBonus);
+        // Nutrition decline due to harvest
+        const harvestIntensity = yieldAmount / base;
+        newNutrition -= harvestIntensity * NUTRITION.BASE_DECLINE * NUTRITION.START;
 
-                // Organic yields are generally lower but higher quality/price
-                if (decision.organic) {
-                    yieldAmount *= 0.8;
-                }
+        harvestSummary[cropKey] += Math.round(yieldAmount);
+      }
 
-                // Nutrition decline due to harvest
-                const harvestIntensity = yieldAmount / base;
-                newNutrition -= harvestIntensity * NUTRITION.BASE_DECLINE * NUTRITION.START;
+      parcelupdates.push({
+        index: index,
+        crop: newCrop,
+        soil: Math.round(Math.max(0, Math.min(300, newSoil))), // Allow some over-improvement
+        nutrition: Math.round(Math.max(0, Math.min(NUTRITION.MAX, newNutrition))),
+        yield: Math.round(yieldAmount),
+      });
+    });
 
-                harvestSummary[cropKey] += Math.round(yieldAmount);
-            }
+    // -- 3. Financials --
+    let seedCost = 0;
+    parcelupdates.forEach((p) => {
+      if (p.crop && p.crop !== 'Fallow' && p.crop !== 'Grass') {
+        const crop = p.crop as keyof typeof EXPENSES.SEEDS;
+        if (EXPENSES.SEEDS[crop]) {
+          const cost = decision.organic ? EXPENSES.SEEDS[crop].organic : EXPENSES.SEEDS[crop].conventional;
+          seedCost += cost;
+        }
+      }
+    });
 
-            parcelupdates.push({
-                index: index,
-                crop: newCrop,
-                soil: Math.round(Math.max(0, Math.min(300, newSoil))), // Allow some over-improvement
-                nutrition: Math.round(Math.max(0, Math.min(NUTRITION.MAX, newNutrition))),
-                yield: Math.round(yieldAmount)
-            });
-        });
+    // Labor cost: Base - reduction by machines
+    const laborCost = MACHINE_FACTORS.BASE_LABOR_COST * MACHINE_FACTORS.LABOR_COST_REDUCTION[machineLevel];
 
-        // -- 3. Financials --
-        let seedCost = 0;
-        parcelupdates.forEach(p => {
-            if (p.crop && p.crop !== 'Fallow' && p.crop !== 'Grass') {
-                const crop = p.crop as keyof typeof EXPENSES.SEEDS;
-                if (EXPENSES.SEEDS[crop]) {
-                    const cost = decision.organic ? EXPENSES.SEEDS[crop].organic : EXPENSES.SEEDS[crop].conventional;
-                    seedCost += cost;
-                }
-            }
-        });
+    // Machine investment/running costs
+    const machineInvestment = MACHINE_FACTORS.INVESTMENT_COST[machineLevel];
 
-        // Labor cost: Base - reduction by machines
-        const laborCost = MACHINE_FACTORS.BASE_LABOR_COST * MACHINE_FACTORS.LABOR_COST_REDUCTION[machineLevel];
+    const runningCost =
+      (decision.organic ? EXPENSES.RUNNING.BASE_ORGANIC : EXPENSES.RUNNING.BASE_CONVENTIONAL) +
+      (decision.organic ? EXPENSES.RUNNING.ORGANIC_CONTROL : 0);
 
-        // Machine investment/running costs
-        const machineInvestment = MACHINE_FACTORS.INVESTMENT_COST[machineLevel];
+    const animalMaintenance = animalParcels * EXPENSES.RUNNING.ANIMALS;
 
-        const runningCost = (decision.organic ? EXPENSES.RUNNING.BASE_ORGANIC : EXPENSES.RUNNING.BASE_CONVENTIONAL) +
-            (decision.organic ? EXPENSES.RUNNING.ORGANIC_CONTROL : 0);
+    const suppliesCost =
+      (decision.fertilizer ? numParcels * EXPENSES.RUNNING.FERTILIZE : 0) +
+      (decision.pesticide ? numParcels * EXPENSES.RUNNING.PESTICIDE : 0) +
+      (decision.organisms ? numParcels * EXPENSES.RUNNING.ORGANISMS : 0);
 
-        const animalMaintenance = animalParcels * EXPENSES.RUNNING.ANIMALS;
+    const totalExpenses = seedCost + laborCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
 
-        const suppliesCost = (decision.fertilizer ? numParcels * EXPENSES.RUNNING.FERTILIZE : 0) +
-            (decision.pesticide ? numParcels * EXPENSES.RUNNING.PESTICIDE : 0) +
-            (decision.organisms ? numParcels * EXPENSES.RUNNING.ORGANISMS : 0);
+    // Income
+    let income = 0;
+    Object.entries(harvestSummary).forEach(([cropKey, amount]) => {
+      const crop = cropKey as keyof typeof PRICES;
+      if (PRICES[crop]) {
+        const price = decision.organic ? PRICES[crop].organic : PRICES[crop].conventional;
+        income += amount * price;
+      }
+    });
 
-        const totalExpenses = seedCost + laborCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
+    const profit = income - totalExpenses;
+    const result: RoundResult = {
+      profit,
+      capital: currentCapital + profit,
+      harvestSummary: harvestSummary as Record<CropType, number>,
+      expenses: {
+        seeds: seedCost,
+        labor: laborCost,
+        running: runningCost + animalMaintenance,
+        investments: machineInvestment + suppliesCost,
+        total: totalExpenses,
+      },
+      income,
+      events,
+      bioSiegel,
+    };
 
-        // Income
-        let income = 0;
-        Object.entries(harvestSummary).forEach(([cropKey, amount]) => {
-            const crop = cropKey as keyof typeof PRICES;
-            if (PRICES[crop]) {
-                const price = decision.organic ? PRICES[crop].organic : PRICES[crop].conventional;
-                income += amount * price;
-            }
-        });
+    return {
+      number: currentRoundNumber,
+      decision,
+      result,
+      parcelsSnapshot: parcelupdates,
+    };
+  }
 
-        const profit = income - totalExpenses;
-        const result: RoundResult = {
-            profit,
-            capital: currentCapital + profit,
-            harvestSummary: harvestSummary as Record<CropType, number>,
-            expenses: {
-                seeds: seedCost,
-                labor: laborCost,
-                running: runningCost + animalMaintenance,
-                investments: machineInvestment + suppliesCost,
-                total: totalExpenses
-            },
-            income,
-            events,
-            bioSiegel
-        };
-
-        return {
-            number: currentRoundNumber,
-            decision,
-            result,
-            parcelsSnapshot: parcelupdates
-        };
-    }
-
-    static createInitialParcels(): Parcel[] {
-        return Array(40).fill(null).map((_, i) => ({
-            index: i,
-            crop: 'Fallow',
-            soil: SOIL.START,
-            nutrition: NUTRITION.START,
-            yield: 0
-        }));
-    }
+  static createInitialParcels(): Parcel[] {
+    return Array(40)
+      .fill(null)
+      .map((_, i) => ({
+        index: i,
+        crop: 'Fallow',
+        soil: SOIL.START,
+        nutrition: NUTRITION.START,
+        yield: 0,
+      }));
+  }
 }

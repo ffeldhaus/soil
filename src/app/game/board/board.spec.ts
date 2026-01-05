@@ -1,14 +1,14 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
+import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { Board } from './board';
-import { AuthService } from '../../auth/auth.service';
-import { GameService } from '../game.service';
 import { Functions } from '@angular/fire/functions';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { ChangeDetectorRef } from '@angular/core';
+
+import { AuthService } from '../../auth/auth.service';
+import { provideTranslocoTest } from '../../transloco-testing.module';
+import { GameService } from '../game.service';
+import { Board } from './board';
 
 describe('Board', () => {
   let component: Board;
@@ -19,19 +19,19 @@ describe('Board', () => {
     Object.defineProperty(window, 'localStorage', {
       value: {
         getItem: () => null,
-        setItem: () => { },
-        removeItem: () => { }
-      }
+        setItem: () => {},
+        removeItem: () => {},
+      },
     });
 
     const authSpy = {
       user$: of({
         uid: 'test-user',
         displayName: 'Test User',
-        getIdTokenResult: () => Promise.resolve({ claims: { role: 'player' } })
+        getIdTokenResult: () => Promise.resolve({ claims: { role: 'player' } }),
       }),
       logout: () => Promise.resolve(),
-      updateDisplayName: vi.fn().mockResolvedValue(undefined)
+      updateDisplayName: vi.fn().mockResolvedValue(undefined),
     };
     const gameSpy = {
       state$: of({
@@ -40,37 +40,46 @@ describe('Board', () => {
           name: 'Test Game',
           currentRoundNumber: 0,
           status: 'in_progress',
-          roundDeadlines: {}
+          roundDeadlines: {},
         },
         playerState: {
           uid: 'test-user',
           isAi: false,
           history: [],
-          submittedRound: -1
-        }
+          submittedRound: -1,
+        },
       }),
-      getParcels: () => of(Array(40).fill(null).map((_, i) => ({
-        index: i,
-        crop: 'Fallow',
-        soil: 80,
-        nutrition: 80,
-        yield: 0
-      }))),
-      getParcelsValue: () => Array(40).fill(null).map((_, i) => ({
-        index: i,
-        crop: 'Fallow',
-        soil: 80,
-        nutrition: 80,
-        yield: 0
-      })),
-      updateParcelDecision: () => { },
+      getParcels: () =>
+        of(
+          Array(40)
+            .fill(null)
+            .map((_, i) => ({
+              index: i,
+              crop: 'Fallow',
+              soil: 80,
+              nutrition: 80,
+              yield: 0,
+            })),
+        ),
+      getParcelsValue: () =>
+        Array(40)
+          .fill(null)
+          .map((_, i) => ({
+            index: i,
+            crop: 'Fallow',
+            soil: 80,
+            nutrition: 80,
+            yield: 0,
+          })),
+      updateParcelDecision: () => {},
       submitRound: (gameId: string) => Promise.resolve(),
-      loadGame: (gameId: string) => Promise.resolve({
-        game: { currentRoundNumber: 0 },
-        playerState: { history: [], submittedRound: -1 }
-      })
+      loadGame: (gameId: string) =>
+        Promise.resolve({
+          game: { currentRoundNumber: 0 },
+          playerState: { history: [], submittedRound: -1 },
+        }),
     };
-    const functionsSpy = { httpsCallable: () => (() => Promise.resolve({ data: {} })) };
+    const functionsSpy = { httpsCallable: () => () => Promise.resolve({ data: {} }) };
     const routerSpy = { navigate: () => Promise.resolve(true) };
     const cdrSpy = { detectChanges: vi.fn() };
 
@@ -83,17 +92,16 @@ describe('Board', () => {
         { provide: Functions, useValue: functionsSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
-        { provide: ChangeDetectorRef, useValue: cdrSpy }
-      ]
-    })
-      .compileComponents();
+        { provide: ChangeDetectorRef, useValue: cdrSpy },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Board);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -123,13 +131,15 @@ describe('Board', () => {
 
     // Ensure parcels are populated for selection logic
     if (component.parcels.length === 0) {
-      component.parcels = Array(40).fill(null).map((_, i) => ({
-        index: i,
-        crop: 'Fallow',
-        soil: 80,
-        nutrition: 80,
-        yield: 0
-      })) as any;
+      component.parcels = Array(40)
+        .fill(null)
+        .map((_, i) => ({
+          index: i,
+          crop: 'Fallow',
+          soil: 80,
+          nutrition: 80,
+          yield: 0,
+        })) as any;
     }
 
     component.isReadOnly = false;
@@ -138,12 +148,12 @@ describe('Board', () => {
     component.maxRoundNumber = 0;
     component.cols = 8;
     component.rows = 5;
-    
+
     // Simulate selection
     const mockEvent = new MouseEvent('mousedown');
     component.onMouseDown(0, mockEvent); // Select index 0
     component.onMouseUp(); // Trigger mouseup logic
-    
+
     await fixture.whenStable(); // Wait for async update in onMouseUp
     // fixture.detectChanges(); // Check if this is needed, or if accessing property triggers check
 

@@ -1,67 +1,67 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { PlayerLoginComponent } from './player-login';
-import { AuthService } from '../auth.service';
-import { LanguageService } from '../../services/language.service';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { LanguageService } from '../../services/language.service';
+import { provideTranslocoTest } from '../../transloco-testing.module';
+import { AuthService } from '../auth.service';
+import { PlayerLoginComponent } from './player-login';
+
 describe('PlayerLoginComponent', () => {
-    let component: PlayerLoginComponent;
-    let fixture: ComponentFixture<PlayerLoginComponent>;
-    let authServiceMock: any;
+  let component: PlayerLoginComponent;
+  let fixture: ComponentFixture<PlayerLoginComponent>;
+  let authServiceMock: any;
 
-    beforeEach(async () => {
-        authServiceMock = {
-            loginAsPlayer: vi.fn().mockResolvedValue(undefined),
-            user$: of(null)
-        };
-        const languageServiceMock = { currentLang: 'de' };
+  beforeEach(async () => {
+    authServiceMock = {
+      loginAsPlayer: vi.fn().mockResolvedValue(undefined),
+      user$: of(null),
+    };
+    const languageServiceMock = { currentLang: 'de' };
 
-        await TestBed.configureTestingModule({
-            imports: [PlayerLoginComponent, ReactiveFormsModule],
-            providers: [
+    await TestBed.configureTestingModule({
+      imports: [PlayerLoginComponent, ReactiveFormsModule],
+      providers: [
         provideTranslocoTest(),
-                provideRouter([]),
-                { provide: AuthService, useValue: authServiceMock },
-                { provide: LanguageService, useValue: languageServiceMock }
-            ]
-        })
-            .compileComponents();
+        provideRouter([]),
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: LanguageService, useValue: languageServiceMock },
+      ],
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(PlayerLoginComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    fixture = TestBed.createComponent(PlayerLoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should call loginAsPlayer on valid submit', async () => {
+    component.loginForm.patchValue({
+      gameId: 'TestGameId12345678901234567890',
+      password: 'PIN123',
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    await component.onSubmit();
+    expect(authServiceMock.loginAsPlayer).toHaveBeenCalledWith('TestGameId12345678901234567890', 'PIN123');
+  });
+
+  it('should show error modal on login failure', async () => {
+    authServiceMock.loginAsPlayer.mockRejectedValue(new Error('Invalid PIN'));
+
+    component.loginForm.patchValue({
+      gameId: 'TestGameId12345678901234567890',
+      password: 'PIN123',
     });
 
-    it('should call loginAsPlayer on valid submit', async () => {
-        component.loginForm.patchValue({
-            gameId: 'TestGameId12345678901234567890',
-            password: 'PIN123'
-        });
+    await component.onSubmit();
+    fixture.detectChanges();
 
-        await component.onSubmit();
-        expect(authServiceMock.loginAsPlayer).toHaveBeenCalledWith('TestGameId12345678901234567890', 'PIN123');
-    });
-
-    it('should show error modal on login failure', async () => {
-        authServiceMock.loginAsPlayer.mockRejectedValue(new Error('Invalid PIN'));
-
-        component.loginForm.patchValue({
-            gameId: 'TestGameId12345678901234567890',
-            password: 'PIN123'
-        });
-
-        await component.onSubmit();
-        fixture.detectChanges();
-
-        expect(component.showErrorModal).toBe(true);
-        expect(component.errorMessage).toBe('Invalid PIN');
-    });
+    expect(component.showErrorModal).toBe(true);
+    expect(component.errorMessage).toBe('Invalid PIN');
+  });
 });

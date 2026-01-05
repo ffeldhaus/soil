@@ -11,8 +11,23 @@
     "test:functions": "npm run test --prefix functions",
     "test:e2e": "ng build && firebase emulators:exec --project demo-soil --ui \"cypress run --config baseUrl=http://localhost:5005\"",
     "test:e2e:open": "ng build && firebase emulators:exec --project demo-soil --ui \"cypress open --config baseUrl=http://localhost:5005\"",
-    "test:ci": "npm run test:unit && npm run test:functions && npm run test:e2e",
-    "deploy": "node scripts/deploy.js"
+    "test:ci": "npm run lint && npm run prettier:check && npm run test:unit && npm run test:functions && npm run test:e2e",
+    "deploy": "node scripts/deploy.js",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "format": "prettier --write .",
+    "prettier:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,html,scss,css}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "functions/src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "private": true,
   "engines": {
@@ -46,13 +61,23 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^24.0.0",
     "@types/qrcode": "^1.5.5",
+    "angular-eslint": "21.1.0",
     "autoprefixer": "^10.4.19",
     "cypress": "^15.8.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "firebase-tools": "^14.0.0",
+    "globals": "^17.0.0",
+    "husky": "^9.1.7",
     "jsdom": "^25.0.1",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.4.38",
+    "prettier": "^3.7.4",
     "tailwindcss": "^4.0.0",
     "typescript": "~5.9.3",
+    "typescript-eslint": "8.47.0",
     "vitest": "^4.0.16"
   }
 }

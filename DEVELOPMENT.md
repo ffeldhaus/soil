@@ -11,7 +11,7 @@ This document outlines the local development strategy, testing procedures, and c
 - **Conventions**: Rigorously adhere to existing project conventions. Analyze surrounding code, tests, and configuration before modifying.
 - **Style & Structure**: Mimic the style (formatting, naming), structure, and architectural patterns of existing code.
 - **Idiomatic Changes**: Ensure changes integrate naturally and idiomatically within the local context.
-- **Comments**: Add comments sparingly, focusing on *why* something is done rather than *what*.
+- **Comments**: Add comments sparingly, focusing on _why_ something is done rather than _what_.
 - **Dependencies**: Verify established usage in `package.json` before employing new libraries. Prefer stable versions.
 - **Modals**: Consistently use HTML/CSS modals instead of native browser dialogs (alert/confirm/prompt).
 - **Manual**: Ensure the User Manual (`src/app/manual/manual.ts`) is kept up to date whenever game logic or crop properties change.
@@ -37,6 +37,7 @@ npm run start:emulators
 ```
 
 This will:
+
 1. Build the Angular application in watch mode.
 2. Start the Firebase Emulators (Auth, Firestore, Functions, Hosting, Storage).
 3. Serve the application at `http://localhost:5005` (Hosting Emulator port).

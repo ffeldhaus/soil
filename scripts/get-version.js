@@ -5,7 +5,7 @@ const { resolve } = require('path');
 const getVersion = () => {
   const pkg = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'));
   const pkgVersion = pkg.version.replace(/^v/, '');
-  
+
   let hash = '';
   try {
     hash = execSync('git rev-parse --short HEAD').toString().trim();

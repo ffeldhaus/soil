@@ -1,11 +1,12 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminRegisterComponent } from './admin-register';
 import { provideRouter } from '@angular/router';
-import { AuthService } from '../auth.service';
-import { GameService } from '../../game/game.service';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { GameService } from '../../game/game.service';
+import { provideTranslocoTest } from '../../transloco-testing.module';
+import { AuthService } from '../auth.service';
+import { AdminRegisterComponent } from './admin-register';
 
 describe('AdminRegisterComponent', () => {
   let component: AdminRegisterComponent;
@@ -16,10 +17,10 @@ describe('AdminRegisterComponent', () => {
   beforeEach(async () => {
     authServiceMock = {
       user$: of(null),
-      registerAdmin: vi.fn().mockResolvedValue(undefined)
+      registerAdmin: vi.fn().mockResolvedValue(undefined),
     };
     gameServiceMock = {
-      submitOnboarding: vi.fn().mockResolvedValue({ success: true })
+      submitOnboarding: vi.fn().mockResolvedValue({ success: true }),
     };
 
     await TestBed.configureTestingModule({
@@ -28,10 +29,9 @@ describe('AdminRegisterComponent', () => {
         provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
-        { provide: GameService, useValue: gameServiceMock }
-      ]
-    })
-      .compileComponents();
+        { provide: GameService, useValue: gameServiceMock },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AdminRegisterComponent);
     component = fixture.componentInstance;

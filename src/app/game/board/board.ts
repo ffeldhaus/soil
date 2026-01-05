@@ -1,30 +1,41 @@
-import { TranslocoPipe } from '@jsverse/transloco';
-import { Component, OnInit, HostListener, inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, HostListener, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LanguageService } from '../../services/language.service';
-import { GameService } from '../game.service';
-import { Parcel as ParcelType, CropType, Round } from '../../types';
-import { AuthService } from '../../auth/auth.service';
-import { PlantingModal } from '../planting-modal/planting-modal';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
-import { firstValueFrom, combineLatest, take } from 'rxjs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { User } from 'firebase/auth';
-import { Parcel } from '../parcel/parcel';
+import { combineLatest, firstValueFrom, take } from 'rxjs';
 
-import { RoundSettingsModal, RoundSettings } from '../round-settings-modal/round-settings-modal';
-import { RoundResultModal } from '../round-result-modal/round-result-modal';
+import { AuthService } from '../../auth/auth.service';
+import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
+import { CropType, Parcel as ParcelType, Round } from '../../types';
 import { Finance } from '../finance/finance';
+import { GameService } from '../game.service';
+import { Parcel } from '../parcel/parcel';
+import { PlantingModal } from '../planting-modal/planting-modal';
+import { RoundResultModal } from '../round-result-modal/round-result-modal';
+import { RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [TranslocoPipe, CommonModule, Parcel, PlantingModal, RoundSettingsModal, RoundResultModal, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
+  imports: [
+    TranslocoPipe,
+    CommonModule,
+    Parcel,
+    PlantingModal,
+    RoundSettingsModal,
+    RoundResultModal,
+    RouterLink,
+    FormsModule,
+    LanguageSwitcherComponent,
+    Finance,
+  ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
-export class Board {
+export class Board implements OnInit, OnDestroy {
   private gameService = inject(GameService);
   gameServicePublic = this.gameService; // Expose for template if needed, or just specific streams
   gameState$ = this.gameService.state$;
@@ -34,7 +45,7 @@ export class Board {
   private route = inject(ActivatedRoute);
 
   parcels: ParcelType[] = []; // populated via subscription
-  selectedIndices: Set<number> = new Set(); // Selection
+  selectedIndices = new Set<number>(); // Selection
   isDragging = false;
   selectionStart: number | null = null;
   private cdr = inject(ChangeDetectorRef);
@@ -54,10 +65,21 @@ export class Board {
     organic: false,
     fertilizer: false,
     pesticide: false,
-    organisms: false
+    organisms: false,
   };
 
-  availableCrops: CropType[] = ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean', 'Grass', 'Fallow'];
+  availableCrops: CropType[] = [
+    'Wheat',
+    'Corn',
+    'Potato',
+    'Beet',
+    'Barley',
+    'Oat',
+    'Rye',
+    'Fieldbean',
+    'Grass',
+    'Fallow',
+  ];
 
   isReadOnly = false;
   showReadOnlyBanner = false;
@@ -82,8 +104,8 @@ export class Board {
 
   // Game End Logic
   showGameEndModal = false;
-  financialWinner: { name: string, capital: number } | null = null;
-  soilWinner: { name: string, avgSoil: number } | null = null;
+  financialWinner: { name: string; capital: number } | null = null;
+  soilWinner: { name: string; avgSoil: number } | null = null;
 
   // Inline Name Editing
   isEditingName = false;
@@ -109,7 +131,7 @@ export class Board {
           this.gameId = activeGameId;
           const gameState = await this.gameService.loadGame(activeGameId);
           if (gameState) {
-            this.gameService.state$.subscribe(state => {
+            this.gameService.state$.subscribe((state) => {
               if (state && state.game) {
                 this.maxRoundNumber = state.game.currentRoundNumber;
                 this.viewingRound = this.maxRoundNumber;
@@ -127,7 +149,7 @@ export class Board {
               }
             });
 
-            this.gameService.getParcels().subscribe(parcels => {
+            this.gameService.getParcels().subscribe((parcels) => {
               if (this.viewingRound === this.maxRoundNumber) {
                 this.parcels = parcels;
                 this.checkOrientation();
@@ -160,7 +182,7 @@ export class Board {
 
     this.checkOrientation();
     this.timerInterval = setInterval(() => {
-      this.gameService.state$.pipe(take(1)).subscribe(state => {
+      this.gameService.state$.pipe(take(1)).subscribe((state) => {
         if (state && state.game) this.updateTimer(state.game);
       });
     }, 1000);
@@ -231,7 +253,7 @@ export class Board {
       this.parcels = this.gameService.getParcelsValue();
       this.updateReadOnly();
     } else {
-      const round = this.history.find(r => r.number === roundNum);
+      const round = this.history.find((r) => r.number === roundNum);
       if (round) {
         this.parcels = round.parcelsSnapshot;
         this.updateReadOnly();
@@ -239,10 +261,18 @@ export class Board {
     }
   }
 
-  toggleNutrition() { this.showNutritionOverlay = !this.showNutritionOverlay; }
-  toggleHarvest() { this.showHarvestOverlay = !this.showHarvestOverlay; }
-  toggleSoil() { this.showSoilOverlay = !this.showSoilOverlay; }
-  toggleMobileMenu() { this.showMobileMenu = !this.showMobileMenu; }
+  toggleNutrition() {
+    this.showNutritionOverlay = !this.showNutritionOverlay;
+  }
+  toggleHarvest() {
+    this.showHarvestOverlay = !this.showHarvestOverlay;
+  }
+  toggleSoil() {
+    this.showSoilOverlay = !this.showSoilOverlay;
+  }
+  toggleMobileMenu() {
+    this.showMobileMenu = !this.showMobileMenu;
+  }
   toggleFinance() {
     if (this.maxRoundNumber === 0) return;
     this.showFinance = !this.showFinance;
@@ -271,8 +301,8 @@ export class Board {
 
   startEditName() {
     if (!this.isPlayer) return;
-    this.authService.user$.pipe(take(1)).subscribe(user => {
-      this.tempName = user?.displayName || (this.playerLabel + ' ' + (this.playerNumber || ''));
+    this.authService.user$.pipe(take(1)).subscribe((user) => {
+      this.tempName = user?.displayName || this.playerLabel + ' ' + (this.playerNumber || '');
       this.isEditingName = true;
     });
   }
@@ -314,7 +344,7 @@ export class Board {
   // Prevent default scroll when touching the grid
   onTouchStart(event: TouchEvent) {
     if (this.isReadOnly) return;
-    // Don't prevent default immediately if we want to allow scrolling elsewhere? 
+    // Don't prevent default immediately if we want to allow scrolling elsewhere?
     // But user requested "Selection of multiple parcels should also be possible on mobile"
     // and "prevent overscroll".
     // If we are touching the GRID, we probably want to select.
@@ -323,7 +353,8 @@ export class Board {
     this.isDragging = true;
     const index = this.getParcelIndexFromTouch(event.touches[0]);
     if (index !== -1) {
-      if (!event.metaKey && !event.shiftKey) { // Meta/Shift unlikely on mobile but good practice
+      if (!event.metaKey && !event.shiftKey) {
+        // Meta/Shift unlikely on mobile but good practice
         this.selectedIndices.clear();
       }
       this.dragStartIndex = index;
@@ -345,7 +376,7 @@ export class Board {
     this.isDragging = false;
     this.dragStartIndex = null;
     if (this.selectedIndices.size > 0 && !this.isReadOnly) {
-      Promise.resolve().then(() => this.showPlantingModal = true);
+      Promise.resolve().then(() => (this.showPlantingModal = true));
     }
   }
 
@@ -358,14 +389,13 @@ export class Board {
     const parcelElement = element?.closest('app-parcel');
     if (!parcelElement) return -1;
 
-    // We need to associate the element with an index. 
+    // We need to associate the element with an index.
     // We can extract it from DOM if we bind it, or...
     // Let's verify how app-parcel is rendered. It's in an *ngFor with index.
     // We can bind [attr.data-index]="i" to app-parcel in HTML.
     const indexStr = parcelElement.getAttribute('data-index');
     return indexStr ? parseInt(indexStr, 10) : -1;
   }
-
 
   onMouseDown(index: number, event: MouseEvent) {
     if (this.isReadOnly) return;
@@ -391,7 +421,7 @@ export class Board {
 
     // Auto-open modal if we have a selection and are not read-only
     if (this.selectedIndices.size > 0 && !this.isReadOnly) {
-      Promise.resolve().then(() => this.showPlantingModal = true);
+      Promise.resolve().then(() => (this.showPlantingModal = true));
     }
   }
 
@@ -428,7 +458,6 @@ export class Board {
 
   // --- Game Actions ---
 
-
   openPlantingModal() {
     if (this.selectedIndices.size === 0) return;
     this.showPlantingModal = true;
@@ -436,7 +465,7 @@ export class Board {
 
   onCropSelected(crop: CropType) {
     // Update planned decision in service
-    this.selectedIndices.forEach(index => {
+    this.selectedIndices.forEach((index) => {
       this.gameService.updateParcelDecision(index, crop, this.gameId);
     });
     this.showPlantingModal = false;
@@ -473,8 +502,6 @@ export class Board {
     this.pendingNextRound = false;
     this.showRoundSettingsModal = false;
   }
-
-
 
   async executeNextRound() {
     try {
@@ -521,25 +548,26 @@ export class Board {
     const playerList = Object.values(game.players) as any[];
     if (playerList.length === 0) return;
 
-    const getPlayerName = (p: any) => p.displayName || `${this.playerLabel} ${p.uid.startsWith('player-') ? p.uid.split('-')[2] : ''}`;
+    const getPlayerName = (p: any) =>
+      p.displayName || `${this.playerLabel} ${p.uid.startsWith('player-') ? p.uid.split('-')[2] : ''}`;
 
     // Financial Winner
     let bestFinancial = playerList[0];
-    playerList.forEach(p => {
+    playerList.forEach((p) => {
       if ((p.capital || 0) > (bestFinancial.capital || 0)) {
         bestFinancial = p;
       }
     });
     this.financialWinner = {
       name: getPlayerName(bestFinancial),
-      capital: bestFinancial.capital || 0
+      capital: bestFinancial.capital || 0,
     };
 
     // Soil Winner
     let bestSoilPlayer = playerList[0];
     let bestAvgSoil = this.calculateAvgSoil(bestSoilPlayer);
 
-    playerList.forEach(p => {
+    playerList.forEach((p) => {
       const avg = this.calculateAvgSoil(p);
       if (avg > bestAvgSoil) {
         bestAvgSoil = avg;
@@ -549,7 +577,7 @@ export class Board {
 
     this.soilWinner = {
       name: getPlayerName(bestSoilPlayer),
-      avgSoil: Math.round(bestAvgSoil)
+      avgSoil: Math.round(bestAvgSoil),
     };
   }
 

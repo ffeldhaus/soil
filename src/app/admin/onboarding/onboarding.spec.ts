@@ -1,11 +1,12 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Onboarding } from './onboarding';
-import { AuthService } from '../../auth/auth.service';
-import { GameService } from '../../game/game.service';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { AuthService } from '../../auth/auth.service';
+import { GameService } from '../../game/game.service';
+import { provideTranslocoTest } from '../../transloco-testing.module';
+import { Onboarding } from './onboarding';
 
 describe('Onboarding', () => {
   let component: Onboarding;
@@ -16,10 +17,10 @@ describe('Onboarding', () => {
   beforeEach(async () => {
     authServiceMock = {
       user$: of({ uid: 'admin', displayName: 'Admin' }),
-      logout: vi.fn().mockResolvedValue(undefined)
+      logout: vi.fn().mockResolvedValue(undefined),
     };
     gameServiceMock = {
-      submitOnboarding: vi.fn().mockResolvedValue(true)
+      submitOnboarding: vi.fn().mockResolvedValue(true),
     };
 
     await TestBed.configureTestingModule({
@@ -28,10 +29,9 @@ describe('Onboarding', () => {
         provideTranslocoTest(),
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
-        { provide: GameService, useValue: gameServiceMock }
-      ]
-    })
-      .compileComponents();
+        { provide: GameService, useValue: gameServiceMock },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Onboarding);
     component = fixture.componentInstance;

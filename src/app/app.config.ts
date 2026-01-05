@@ -1,28 +1,28 @@
+import { provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig, isDevMode } from '@angular/core';
+import { provideFirebaseApp } from '@angular/fire/app';
+import { provideAuth } from '@angular/fire/auth';
+import { provideFirestore } from '@angular/fire/firestore';
+import { provideFunctions } from '@angular/fire/functions';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { provideFirebaseApp } from '@angular/fire/app';
+import { provideTransloco } from '@jsverse/transloco';
 import { initializeApp } from 'firebase/app';
-import { provideAuth } from '@angular/fire/auth';
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
-import { provideFirestore } from '@angular/fire/firestore';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
-import { provideFunctions } from '@angular/fire/functions';
-import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { connectAuthEmulator, getAuth } from 'firebase/auth';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideTransloco } from '@jsverse/transloco';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU",
-  authDomain: "soil-602ea.firebaseapp.com",
-  projectId: "soil-602ea",
-  storageBucket: "soil-602ea.firebasestorage.app",
-  messagingSenderId: "167590574128",
-  appId: "1:167590574128:web:38c2ffb37bcbc5164f95f5",
-  measurementId: "G-6WGVY5SL49"
+  apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
+  authDomain: 'soil-602ea.firebaseapp.com',
+  projectId: 'soil-602ea',
+  storageBucket: 'soil-602ea.firebasestorage.app',
+  messagingSenderId: '167590574128',
+  appId: '1:167590574128:web:38c2ffb37bcbc5164f95f5',
+  measurementId: 'G-6WGVY5SL49',
 };
 
 // Initialize Firebase strictly once
@@ -33,7 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerWhenStable:30000',
     }),
     provideFirebaseApp(() => app),
     provideAuth(() => {
@@ -65,7 +65,7 @@ export const appConfig: ApplicationConfig = {
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },
-      loader: TranslocoHttpLoader
-    })
-  ]
+      loader: TranslocoHttpLoader,
+    }),
+  ],
 };

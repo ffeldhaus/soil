@@ -1,19 +1,20 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
+import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Firestore } from '@angular/fire/firestore';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
-import { Component, ChangeDetectorRef, NgZone, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
-import { Router } from '@angular/router';
-import { Firestore } from '@angular/fire/firestore';
+import { provideTranslocoTest } from '../../transloco-testing.module';
 
 @Component({
   selector: 'app-dashboard-test',
   standalone: true,
   imports: [FormsModule],
-  template: '<div></div>'
+  template: '<div></div>',
 })
 class TestDashboard {
   showTrash = false;
@@ -28,13 +29,18 @@ class TestDashboard {
   cdr!: ChangeDetectorRef;
   ngZone!: NgZone;
 
-  deleteGame(game: any) { this.gameToDelete = game; this.deleteConfirmInput = ''; }
+  deleteGame(game: any) {
+    this.gameToDelete = game;
+    this.deleteConfirmInput = '';
+  }
   async confirmDelete() {
     if (this.showTrash && this.deleteConfirmInput !== 'DELETE') return;
     this.isDeleting = true;
     try {
       if (this.gameToDelete) await this.gameService.deleteGames([this.gameToDelete.id], this.showTrash);
-    } finally { this.isDeleting = false; }
+    } finally {
+      this.isDeleting = false;
+    }
   }
 
   // Finance Modal
@@ -69,8 +75,8 @@ describe('Dashboard Component Logic (Simplified Isolation)', () => {
         { provide: AuthService, useValue: { user$: of({ uid: 't1' }) } },
         { provide: GameService, useValue: gameServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: Firestore, useValue: {} }
-      ]
+        { provide: Firestore, useValue: {} },
+      ],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(TestDashboard);

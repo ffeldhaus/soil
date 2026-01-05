@@ -1,17 +1,17 @@
-import { TranslocoPipe } from '@jsverse/transloco';
-import { Component, inject, OnDestroy, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../auth/auth.service';
-import { GameService } from '../../game/game.service';
-import { Game, UserStatus } from '../../types';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { Subscription, Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
-import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
+import { AuthService } from '../../auth/auth.service';
 import { Finance } from '../../game/finance/finance';
+import { GameService } from '../../game/game.service';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
+import { Game, UserStatus } from '../../types';
 
 @Component({
   selector: 'app-dashboard',
@@ -45,7 +45,7 @@ export class Dashboard implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
-  createdGame: { id: string, password?: string } | null = null;
+  createdGame: { id: string; password?: string } | null = null;
   games: any[] = [];
 
   // Pagination
@@ -62,7 +62,7 @@ export class Dashboard implements OnInit, OnDestroy {
     numRounds: 12,
     numAi: 0,
     playerLabel: 'Player',
-    aiLevel: 'middle' as 'elementary' | 'middle' | 'high'
+    aiLevel: 'middle' as 'elementary' | 'middle' | 'high',
   };
 
   onPlayersChange() {
@@ -114,7 +114,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.newGameConfig.name = this.getRandomName();
-    this.authService.user$.subscribe(async user => {
+    this.authService.user$.subscribe(async (user) => {
       console.log('Dashboard: Auth User emitted:', user?.uid);
       if (user) {
         // Prevent redirect loop if we are just starting to impersonate
@@ -156,83 +156,93 @@ export class Dashboard implements OnInit, OnDestroy {
           const userRef = doc(this.db as any, 'users', user.uid);
 
           const statusObservable = new Observable<any>((observer) => {
-            const unsubscribe = onSnapshot(userRef, { includeMetadataChanges: true }, (snapshot) => {
-              observer.next(snapshot.data());
-            }, (error) => {
-              observer.error(error);
-            });
+            const unsubscribe = onSnapshot(
+              userRef,
+              { includeMetadataChanges: true },
+              (snapshot) => {
+                observer.next(snapshot.data());
+              },
+              (error) => {
+                observer.error(error);
+              },
+            );
             return () => unsubscribe();
           });
 
-          this.userStatusSub = statusObservable.subscribe((userData: any) => {
-            clearTimeout(timeoutId); // Clear timeout on first response
-            this.ngZone.run(() => {
-              if (userData) {
-                this.userStatus = userData;
-                console.log('Dashboard: User Status Updated:', this.userStatus);
+          this.userStatusSub = statusObservable.subscribe(
+            (userData: any) => {
+              clearTimeout(timeoutId); // Clear timeout on first response
+              this.ngZone.run(() => {
+                if (userData) {
+                  this.userStatus = userData;
+                  console.log('Dashboard: User Status Updated:', this.userStatus);
 
-                if (userData.role === 'new') {
-                  this.isLoading = false;
-                  this.router.navigate(['/admin/register']);
-                  return;
-                }
+                  if (userData.role === 'new') {
+                    this.isLoading = false;
+                    this.router.navigate(['/admin/register']);
+                    return;
+                  }
 
-                if (userData.role === 'superadmin') {
-                  this.isLoading = false;
-                  this.router.navigate(['/admin/super']).then(success => {
-                    console.log('Dashboard: Navigation result:', success);
-                    if (!success) {
-                      console.error('Dashboard: Navigation failed!');
-                    }
-                  }).catch(err => console.error('Dashboard: Navigation error:', err));
-                  return;
-                }
+                  if (userData.role === 'superadmin') {
+                    this.isLoading = false;
+                    this.router
+                      .navigate(['/admin/super'])
+                      .then((success) => {
+                        console.log('Dashboard: Navigation result:', success);
+                        if (!success) {
+                          console.error('Dashboard: Navigation failed!');
+                        }
+                      })
+                      .catch((err) => console.error('Dashboard: Navigation error:', err));
+                    return;
+                  }
 
-                if (userData.role === 'pending' || userData.status === 'pending') {
+                  if (userData.role === 'pending' || userData.status === 'pending') {
+                    this.isPendingApproval = true;
+                    this.isLoading = false;
+                  } else {
+                    this.isPendingApproval = false;
+                    this.isLoading = false;
+                    this.loadGames();
+                  }
+                } else {
+                  console.warn('Dashboard: User document not found for UID:', user.uid);
+
+                  // Fallback for bootstrap Super Admin (matches backend logic)
+                  if (user.email === 'florian.feldhaus@gmail.com') {
+                    console.log('Dashboard: Detected Bootstrap Super Admin email. Forcing Super Admin status.');
+                    this.userStatus = { role: 'superadmin', status: 'active' } as any;
+                    this.isLoading = false;
+                    this.router.navigate(['/admin/super']);
+                    return;
+                  }
+
+                  if (localStorage.getItem('soil_test_mode') === 'true') {
+                    console.log('Dashboard: Test Mode Active. Forcing Admin status.');
+                    this.userStatus = { role: 'admin', status: 'active' } as any;
+                    this.isPendingApproval = false;
+                    this.isLoading = false;
+                    this.loadGames();
+                    this.cdr.detectChanges();
+                    return;
+                  }
+
                   this.isPendingApproval = true;
                   this.isLoading = false;
-                } else {
-                  this.isPendingApproval = false;
-                  this.isLoading = false;
-                  this.loadGames();
                 }
-              } else {
-                console.warn('Dashboard: User document not found for UID:', user.uid);
-
-                // Fallback for bootstrap Super Admin (matches backend logic)
-                if (user.email === 'florian.feldhaus@gmail.com') {
-                  console.log('Dashboard: Detected Bootstrap Super Admin email. Forcing Super Admin status.');
-                  this.userStatus = { role: 'superadmin', status: 'active' } as any;
-                  this.isLoading = false;
-                  this.router.navigate(['/admin/super']);
-                  return;
-                }
-
-                if (localStorage.getItem('soil_test_mode') === 'true') {
-                  console.log('Dashboard: Test Mode Active. Forcing Admin status.');
-                  this.userStatus = { role: 'admin', status: 'active' } as any;
-                  this.isPendingApproval = false;
-                  this.isLoading = false;
-                  this.loadGames();
-                  this.cdr.detectChanges();
-                  return;
-                }
-
-                this.isPendingApproval = true;
+                this.cdr.detectChanges();
+              });
+            },
+            (error) => {
+              clearTimeout(timeoutId);
+              this.ngZone.run(() => {
+                console.error('Dashboard: Subscription error:', error);
+                this.errorMessage = 'Error loading account status: ' + (error.message || error);
                 this.isLoading = false;
-              }
-              this.cdr.detectChanges();
-            });
-          }, error => {
-            clearTimeout(timeoutId);
-            this.ngZone.run(() => {
-              console.error('Dashboard: Subscription error:', error);
-              this.errorMessage = 'Error loading account status: ' + (error.message || error);
-              this.isLoading = false;
-              this.cdr.detectChanges();
-            });
-          });
-
+                this.cdr.detectChanges();
+              });
+            },
+          );
         } catch (e: any) {
           clearTimeout(timeoutId);
           console.error('Dashboard: Sync Error:', e);
@@ -250,7 +260,7 @@ export class Dashboard implements OnInit, OnDestroy {
     });
 
     // Handle query params for notifications (e.g., from email links)
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       // Example: if a gameId is passed, maybe auto-expand it or highlight
       const gameId = params['gameId'];
       if (gameId) {
@@ -348,7 +358,7 @@ export class Dashboard implements OnInit, OnDestroy {
       numPlayers: this.newGameConfig.numPlayers,
       numRounds: this.newGameConfig.numRounds,
       numAi: this.newGameConfig.numAi,
-      playerLabel: this.newGameConfig.playerLabel
+      playerLabel: this.newGameConfig.playerLabel,
     };
 
     try {
@@ -381,7 +391,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   toggleSelectAll(event: any) {
     if (event.target.checked) {
-      this.games.forEach(g => this.selectedGameIds.add(g.id));
+      this.games.forEach((g) => this.selectedGameIds.add(g.id));
     } else {
       this.selectedGameIds.clear();
     }
@@ -469,14 +479,13 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-
   shareGame(game: any) {
     const subject = encodeURIComponent(`Join my Soil Game: ${game.name} `);
     const body = encodeURIComponent(
       `You have been invited to play Soil!\n\n` +
-      `Game ID: ${game.id} \n\n` +
-      `Please ask the host for your unique Player PIN.\n` +
-      `Go to ${window.location.origin}/ to join.`
+        `Game ID: ${game.id} \n\n` +
+        `Please ask the host for your unique Player PIN.\n` +
+        `Go to ${window.location.origin}/ to join.`,
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
@@ -485,9 +494,9 @@ export class Dashboard implements OnInit, OnDestroy {
     const subject = encodeURIComponent(`Join Soil Game: ${game.name} (Player ${slot.number})`);
     const body = encodeURIComponent(
       `You are invited to play as Player ${slot.number}!\n\n` +
-      `Game ID: ${game.id}\n` +
-      `Your PIN: ${slot.password}\n\n` +
-      `Join here: ${window.location.origin}/game?gameId=${game.id}&player=${slot.number}&pin=${slot.password}`
+        `Game ID: ${game.id}\n` +
+        `Your PIN: ${slot.password}\n\n` +
+        `Join here: ${window.location.origin}/game?gameId=${game.id}&player=${slot.number}&pin=${slot.password}`,
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
@@ -497,7 +506,7 @@ export class Dashboard implements OnInit, OnDestroy {
     const slots = [];
     for (let i = 1; i <= count; i++) {
       const uid = `player-${game.id}-${i}`;
-      const player = game.players ? (game.players[uid]) : null;
+      const player = game.players ? game.players[uid] : null;
 
       // Get Password
       let password = '???';
@@ -513,7 +522,7 @@ export class Dashboard implements OnInit, OnDestroy {
         player: player,
         isJoined: !!player,
         isAi: player?.isAi || false,
-        password: password
+        password: password,
       });
     }
     return slots;
@@ -590,8 +599,18 @@ export class Dashboard implements OnInit, OnDestroy {
     const date = d.seconds ? new Date(d.seconds * 1000) : new Date(d);
 
     // Format to YYYY-MM-DDTHH:mm
-    const pad = (n: number) => n < 10 ? '0' + n : n;
-    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+    const pad = (n: number) => (n < 10 ? '0' + n : n);
+    return (
+      date.getFullYear() +
+      '-' +
+      pad(date.getMonth() + 1) +
+      '-' +
+      pad(date.getDate()) +
+      'T' +
+      pad(date.getHours()) +
+      ':' +
+      pad(date.getMinutes())
+    );
   }
 
   // Random Names

@@ -1,8 +1,9 @@
-import { TestBed } from '@angular/core/testing';
-import { LanguageService } from './language.service';
-import { TranslocoService } from '@jsverse/transloco';
 import { DOCUMENT } from '@angular/common';
+import { TestBed } from '@angular/core/testing';
+import { TranslocoService } from '@jsverse/transloco';
 import { vi } from 'vitest';
+
+import { LanguageService } from './language.service';
 
 describe('LanguageService', () => {
   let service: LanguageService;
@@ -11,17 +12,17 @@ describe('LanguageService', () => {
   beforeEach(() => {
     translocoService = {
       setActiveLang: vi.fn(),
-      getActiveLang: vi.fn().mockReturnValue('en')
+      getActiveLang: vi.fn().mockReturnValue('en'),
     };
-    
+
     TestBed.configureTestingModule({
       providers: [
         LanguageService,
         { provide: TranslocoService, useValue: translocoService },
-        { provide: DOCUMENT, useValue: document }
-      ]
+        { provide: DOCUMENT, useValue: document },
+      ],
     });
-    
+
     localStorage.clear();
   });
 

@@ -1,26 +1,28 @@
-import { TranslocoPipe } from '@jsverse/transloco';
-import { Component, signal, inject } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
+import { TranslocoPipe } from '@jsverse/transloco';
+
 import { LanguageService } from './services/language.service';
 
 @Component({
   selector: 'app-root',
   imports: [TranslocoPipe, RouterOutlet, RouterLink],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
   protected languageService = inject(LanguageService);
+  private updates = inject(SwUpdate);
   protected readonly title = signal('soil');
   version = (import.meta as any).env.APP_VERSION || 'dev';
 
-  constructor(updates: SwUpdate) {
+  constructor() {
     console.log(`Soil Version ${this.version} (app.ts)`);
 
-    if (updates.isEnabled) {
+    if (this.updates.isEnabled) {
       console.log('Service Worker is enabled');
-      updates.versionUpdates.subscribe(evt => {
+      this.updates.versionUpdates.subscribe((evt) => {
         switch (evt.type) {
           case 'VERSION_DETECTED':
             console.log(`Downloading new app version: ${evt.version.hash}`);
@@ -37,7 +39,7 @@ export class App {
         }
       });
       // Force check for updates
-      updates.checkForUpdate();
+      this.updates.checkForUpdate();
     }
   }
 }

@@ -1,12 +1,13 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SuperAdminComponent } from './super-admin';
-import { AuthService } from '../../auth/auth.service';
-import { GameService } from '../../game/game.service';
 import { provideRouter } from '@angular/router';
-import { LanguageService } from '../../services/language.service';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
+
+import { AuthService } from '../../auth/auth.service';
+import { GameService } from '../../game/game.service';
+import { LanguageService } from '../../services/language.service';
+import { provideTranslocoTest } from '../../transloco-testing.module';
+import { SuperAdminComponent } from './super-admin';
 
 describe('SuperAdminComponent', () => {
   let component: SuperAdminComponent;
@@ -17,12 +18,14 @@ describe('SuperAdminComponent', () => {
   beforeEach(async () => {
     authServiceMock = {
       user$: of({ uid: 'admin', displayName: 'Admin' }),
-      logout: vi.fn().mockResolvedValue(undefined)
+      logout: vi.fn().mockResolvedValue(undefined),
     };
     gameServiceMock = {
       getPendingUsers: vi.fn().mockResolvedValue([]),
       getAllAdmins: vi.fn().mockResolvedValue([]),
-      getSystemStats: vi.fn().mockResolvedValue({ games: { total: 0, deleted: 0 }, users: { total: 0, admins: 0, pending: 0 } })
+      getSystemStats: vi
+        .fn()
+        .mockResolvedValue({ games: { total: 0, deleted: 0 }, users: { total: 0, admins: 0, pending: 0 } }),
     };
     const languageServiceMock = { currentLang: 'de' };
 
@@ -33,10 +36,9 @@ describe('SuperAdminComponent', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },
-        { provide: LanguageService, useValue: languageServiceMock }
-      ]
-    })
-      .compileComponents();
+        { provide: LanguageService, useValue: languageServiceMock },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SuperAdminComponent);
     component = fixture.componentInstance;

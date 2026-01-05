@@ -1,20 +1,16 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "outDir": "lib",
-        "sourceMap": true,
-        "strict": true,
-        "target": "es2017",
-        "skipLibCheck": true,
-        "types": ["node", "mocha"]
-    },
-    "compileOnSave": true,
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "src/**/*.test.ts"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017",
+    "skipLibCheck": true,
+    "types": ["node", "mocha"]
+  },
+  "compileOnSave": true,
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
 }

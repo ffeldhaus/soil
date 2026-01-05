@@ -1,8 +1,8 @@
+import { CommonModule } from '@angular/common';
+import { Component, HostBinding, inject, Input } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 
-import { Component, Input, HostBinding, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Parcel as ParcelType, CropType } from '../../types';
+import { CropType, Parcel as ParcelType } from '../../types';
 
 @Component({
   selector: 'app-parcel',
@@ -14,23 +14,23 @@ import { Parcel as ParcelType, CropType } from '../../types';
 export class Parcel {
   private transloco = inject(TranslocoService);
   @Input() parcel!: ParcelType;
-  @Input() @HostBinding('class.selected') selected: boolean = false;
-  @Input() showLabels: boolean = true;
-  @Input() showNutrition: boolean = false;
-  @Input() showHarvest: boolean = false;
-  @Input() showSoil: boolean = false;
+  @Input() @HostBinding('class.selected') selected = false;
+  @Input() showLabels = true;
+  @Input() showNutrition = false;
+  @Input() showHarvest = false;
+  @Input() showSoil = false;
 
-  private cropConfig: Record<string, { label: string, image: string }> = {
-    'Wheat': { label: this.transloco.translate('crop.wheat'), image: 'weizen.jpg' },
-    'Corn': { label: this.transloco.translate('crop.corn'), image: 'mais.jpg' },
-    'Potato': { label: this.transloco.translate('crop.potato'), image: 'kartoffel.jpg' },
-    'Beet': { label: this.transloco.translate('crop.beet'), image: 'zuckerruebe.jpg' },
-    'Barley': { label: this.transloco.translate('crop.barley'), image: 'gerste.jpg' },
-    'Oat': { label: this.transloco.translate('crop.oat'), image: 'hafer.jpg' },
-    'Rye': { label: this.transloco.translate('crop.rye'), image: 'roggen.jpg' },
-    'Fieldbean': { label: this.transloco.translate('crop.fieldbean'), image: 'ackerbohne.jpg' },
-    'Grass': { label: this.transloco.translate('crop.animals'), image: 'tiere.jpg' },
-    'Fallow': { label: this.transloco.translate('crop.fallow'), image: 'brachland.jpg' }
+  private cropConfig: Record<string, { label: string; image: string }> = {
+    Wheat: { label: this.transloco.translate('crop.wheat'), image: 'weizen.jpg' },
+    Corn: { label: this.transloco.translate('crop.corn'), image: 'mais.jpg' },
+    Potato: { label: this.transloco.translate('crop.potato'), image: 'kartoffel.jpg' },
+    Beet: { label: this.transloco.translate('crop.beet'), image: 'zuckerruebe.jpg' },
+    Barley: { label: this.transloco.translate('crop.barley'), image: 'gerste.jpg' },
+    Oat: { label: this.transloco.translate('crop.oat'), image: 'hafer.jpg' },
+    Rye: { label: this.transloco.translate('crop.rye'), image: 'roggen.jpg' },
+    Fieldbean: { label: this.transloco.translate('crop.fieldbean'), image: 'ackerbohne.jpg' },
+    Grass: { label: this.transloco.translate('crop.animals'), image: 'tiere.jpg' },
+    Fallow: { label: this.transloco.translate('crop.fallow'), image: 'brachland.jpg' },
   };
 
   getConfig(crop: CropType) {

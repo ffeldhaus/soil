@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { App } from './app';
-import { provideRouter, ActivatedRoute } from '@angular/router';
-import { LanguageService } from './services/language.service';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { EMPTY, of } from 'rxjs';
+
+import { App } from './app';
+import { LanguageService } from './services/language.service';
 import { provideTranslocoTest } from './transloco-testing.module';
 
 describe('App', () => {
@@ -13,13 +14,13 @@ describe('App', () => {
   beforeEach(async () => {
     languageServiceMock = {
       init: vi.fn(),
-      getLanguage: vi.fn().mockReturnValue('en-US')
+      getLanguage: vi.fn().mockReturnValue('en-US'),
     };
-    
+
     swUpdateMock = {
       versionUpdates: EMPTY,
       checkForUpdate: vi.fn().mockResolvedValue(false),
-      activateUpdate: vi.fn().mockResolvedValue(true)
+      activateUpdate: vi.fn().mockResolvedValue(true),
     };
 
     await TestBed.configureTestingModule({
@@ -27,16 +28,16 @@ describe('App', () => {
       providers: [
         provideTranslocoTest(),
         provideRouter([]),
-        { 
-            provide: ActivatedRoute, 
-            useValue: {
-                snapshot: { paramMap: { get: () => null } },
-                params: of({}),
-                queryParams: of({})
-            }
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { paramMap: { get: () => null } },
+            params: of({}),
+            queryParams: of({}),
+          },
         },
         { provide: LanguageService, useValue: languageServiceMock },
-        { provide: SwUpdate, useValue: swUpdateMock }
+        { provide: SwUpdate, useValue: swUpdateMock },
       ],
     }).compileComponents();
   });

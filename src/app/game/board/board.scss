@@ -1,78 +1,78 @@
-@use "sass:math";
+@use 'sass:math';
 
 .board-container {
-    background-image: url('../../../assets/bauernhof.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  background-image: url('../../../assets/bauernhof.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .game-grid {
-    grid-template-columns: repeat(var(--cols), 1fr);
-    grid-template-rows: repeat(var(--rows), 1fr);
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
 
-    // Reduced overhead: Header (64px) + Round HUD (~40px) + minimal padding
-    $overhead: 160px;
+  // Reduced overhead: Header (64px) + Round HUD (~40px) + minimal padding
+  $overhead: 160px;
 
-    // Ensure the grid maintains an aspect ratio based on its elements
-    aspect-ratio: var(--cols) / var(--rows);
+  // Ensure the grid maintains an aspect ratio based on its elements
+  aspect-ratio: var(--cols) / var(--rows);
 
-    width: min(calc(100vw - 32px), calc((100vh - 180px) * (var(--cols) / var(--rows))));
-    max-height: calc(100vh - 180px);
-    max-width: calc(100vw - 32px);
+  width: min(calc(100vw - 32px), calc((100vh - 180px) * (var(--cols) / var(--rows))));
+  max-height: calc(100vh - 180px);
+  max-width: calc(100vw - 32px);
 
-    margin: auto;
+  margin: auto;
 }
 
 @keyframes modal-entrance {
-    0% {
-        transform: scale(0.9) translateY(20px);
-        opacity: 0;
-    }
+  0% {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
 
-    100% {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 .animate-modal-entrance {
-    animation: modal-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: modal-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .celebration-container {
-    perspective: 1000px;
+  perspective: 1000px;
 }
 
 .confetti {
-    position: absolute;
-    top: -10%;
-    width: 10px;
-    height: 10px;
-    background-color: #f00;
-    opacity: 0.7;
-    border-radius: 2px;
-    animation: fall 3s linear infinite;
+  position: absolute;
+  top: -10%;
+  width: 10px;
+  height: 10px;
+  background-color: #f00;
+  opacity: 0.7;
+  border-radius: 2px;
+  animation: fall 3s linear infinite;
 
-    @for $i from 1 through 20 {
-        &:nth-child(#{$i}) {
-            left: (100% * math.div($i, 20)); // Distribute across width
-            background-color: hsl(calc(360 * math.div($i, 20)), 70%, 60%);
-            animation-duration: calc(2s + (1s * math.div($i, 20)));
-            animation-delay: calc(0.1s * $i);
-            transform: rotate(calc(1deg * (18 * $i)));
-        }
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      left: (100% * math.div($i, 20)); // Distribute across width
+      background-color: hsl(calc(360 * math.div($i, 20)), 70%, 60%);
+      animation-duration: calc(2s + (1s * math.div($i, 20)));
+      animation-delay: calc(0.1s * $i);
+      transform: rotate(calc(1deg * (18 * $i)));
     }
+  }
 }
 
 @keyframes fall {
-    0% {
-        top: -10%;
-        transform: translateX(0) rotate(0);
-    }
+  0% {
+    top: -10%;
+    transform: translateX(0) rotate(0);
+  }
 
-    100% {
-        top: 110%;
-        transform: translateX(20px) rotate(720deg);
-    }
+  100% {
+    top: 110%;
+    transform: translateX(20px) rotate(720deg);
+  }
 }

@@ -29,6 +29,7 @@ Soil is a web-based agricultural simulation game built on the Firebase platform.
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    cd soil
@@ -43,9 +44,11 @@ Soil is a web-based agricultural simulation game built on the Firebase platform.
 ### Local Development
 
 1. Start the Angular development server:
+
    ```bash
    npm start
    ```
+
    Open `http://localhost:4200/` in your browser.
 
 2. Run Firebase emulators for backend development:
@@ -56,19 +59,23 @@ Soil is a web-based agricultural simulation game built on the Firebase platform.
 ### Building
 
 To build the project for production:
+
 ```bash
 npm run build
 ```
+
 This will compile the Angular app and store the artifacts in the `dist/` directory.
 
 ### Testing
 
 #### Unit Tests (Frontend)
+
 ```bash
 npm test
 ```
 
 #### E2E Tests (Cypress)
+
 ```bash
 ng e2e
 ```
@@ -76,9 +83,11 @@ ng e2e
 ## 🏗️ Deployment
 
 The project is configured for deployment to Firebase:
+
 ```bash
 npm run deploy
 ```
+
 This script handles the build process and deployment to Firebase Hosting and Functions.
 
 ## 📄 License

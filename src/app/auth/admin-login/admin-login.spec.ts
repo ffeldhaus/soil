@@ -1,11 +1,11 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminLoginComponent } from './admin-login';
-import { AuthService } from '../auth.service';
-import { Router, provideRouter } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { provideRouter, Router } from '@angular/router';
 import { vi } from 'vitest';
+
+import { provideTranslocoTest } from '../../transloco-testing.module';
+import { AuthService } from '../auth.service';
+import { AdminLoginComponent } from './admin-login';
 
 describe('AdminLoginComponent', () => {
   let component: AdminLoginComponent;
@@ -16,22 +16,17 @@ describe('AdminLoginComponent', () => {
   beforeEach(async () => {
     authServiceMock = {
       loginWithEmail: vi.fn().mockResolvedValue(undefined),
-      loginWithGoogle: vi.fn().mockResolvedValue(undefined)
+      loginWithGoogle: vi.fn().mockResolvedValue(undefined),
     };
 
     routerMock = {
-      navigate: vi.fn()
+      navigate: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [AdminLoginComponent, ReactiveFormsModule],
-      providers: [
-        provideTranslocoTest(),
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock }
-      ]
-    })
-      .compileComponents();
+      providers: [provideTranslocoTest(), provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AdminLoginComponent);
     component = fixture.componentInstance;

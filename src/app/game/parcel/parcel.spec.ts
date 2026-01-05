@@ -1,5 +1,6 @@
-import { provideTranslocoTest } from '../../transloco-testing.module';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { provideTranslocoTest } from '../../transloco-testing.module';
 import { Parcel } from './parcel';
 
 describe('Parcel', () => {
@@ -8,11 +9,9 @@ describe('Parcel', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Parcel]
-    ,
-      providers: [provideTranslocoTest()]
-    })
-      .compileComponents();
+      imports: [Parcel],
+      providers: [provideTranslocoTest()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Parcel);
     component = fixture.componentInstance;
@@ -20,7 +19,7 @@ describe('Parcel', () => {
       index: 0,
       crop: 'Grass',
       soil: 100,
-      nutrition: 100
+      nutrition: 100,
     };
     fixture.detectChanges();
   });
