@@ -78,6 +78,8 @@ const performDeployment = async (newVersion) => {
       console.log('Pushing to GitHub...');
       execSync('git push origin main --tags', { stdio: 'inherit' });
       console.log('Successfully pushed to GitHub.');
+
+      await monitorCloudBuild(newVersion);
     } else {
       console.log(`IMPORTANT: Remember to push the new commit and tag to GitHub:`);
       console.log(`git push origin main --tags`);
@@ -88,6 +90,50 @@ const performDeployment = async (newVersion) => {
   } catch (error) {
     console.error('Deployment or Git operation failed:', error.message);
     process.exit(1);
+  }
+};
+
+const monitorCloudBuild = async (version) => {
+  const region = 'europe-west4';
+  const timeoutMs = 2 * 60 * 1000; // 2 minutes
+  const pollIntervalMs = 5000; // 5 seconds
+  const startTime = Date.now();
+
+  try {
+    const commitHash = execSync('git rev-parse HEAD').toString().trim();
+    console.log(`Monitoring Cloud Build for commit ${commitHash}...`);
+
+    while (Date.now() - startTime < timeoutMs) {
+      const buildsJson = execSync(
+        `gcloud builds list --region=${region} --limit=10 --format="json"`,
+        { stdio: ['pipe', 'pipe', 'ignore'] }
+      ).toString();
+
+      const builds = JSON.parse(buildsJson);
+      const build = builds.find(b => b.source?.developerConnectConfig?.revision === commitHash);
+
+      if (build) {
+        console.log(`\x1b[32mBuild found! ID: ${build.id}\x1b[0m`);
+        console.log('Streaming logs from Cloud Build...');
+
+        try {
+          execSync(`gcloud builds log ${build.id} --region=${region}`, { stdio: 'inherit' });
+          console.log('\x1b[32mCloud Build completed successfully!\x1b[0m');
+        } catch (e) {
+          console.error('\x1b[31mCloud Build failed or was interrupted.\x1b[0m');
+        }
+        return;
+      }
+
+      const elapsed = Math.round((Date.now() - startTime) / 1000);
+      process.stdout.write(`\rWaiting for build to start... (${elapsed}s)`);
+      await new Promise(resolve => setTimeout(resolve, pollIntervalMs));
+    }
+
+    console.log('\n\x1b[31mTimeout: No new Cloud Build started within 2 minutes.\x1b[0m');
+    console.log('Please check the Google Cloud Console manually.');
+  } catch (error) {
+    console.error('Error monitoring Cloud Build:', error.message);
   }
 };
 
