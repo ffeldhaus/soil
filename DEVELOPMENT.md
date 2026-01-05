@@ -15,6 +15,7 @@ This document outlines the local development strategy, testing procedures, and c
 - **Dependencies**: Verify established usage in `package.json` before employing new libraries. Prefer stable versions.
 - **Modals**: Consistently use HTML/CSS modals instead of native browser dialogs (alert/confirm/prompt).
 - **Manual**: Ensure the User Manual (`src/app/manual/manual.ts`) is kept up to date whenever game logic or crop properties change.
+- **Sitemap**: Ensure the Sitemap (`public/sitemap.xml`) is kept up to date whenever public routes are added or changed.
 - **Compliance**: All public pages and views must include a link to the Impressum page.
 
 ## Prerequisites
