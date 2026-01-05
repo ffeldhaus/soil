@@ -100,20 +100,26 @@ Before committing code, ensure all tests pass and linting is clean.
 
 ## Release Process
 
-We use semantic versioning managed in `package.json` and tagged in Git.
+We use semantic versioning managed in `package.json` and tagged in Git. For a full release including backend components:
 
 1. Ensure `main` is up to date.
-2. Run `npm version [patch | minor | major]`.
-3. Push changes and tags: `git push origin main --tags`.
+2. Run `npm run deploy [patch | minor | major | <version>]`. This script will:
+   - Use the provided increment type or version, or prompt if no argument is given.
+   - Update `package.json`.
+   - Deploy backend components (Functions, Firestore, Storage) to Firebase.
+3. The script will automatically commit the `package.json` change and create a git tag.
+4. The script will prompt to push the changes and tags to GitHub.
+
+> [!NOTE]
+> The frontend deployment is triggered automatically by the push to `main`.
 
 ## CI/CD & Deployment
 
-- **Firebase App Hosting**: Deployment is automated via GitHub merges to `main`.
-- **Localization**: Builds are automatically performed with localization as per `apphosting.yaml`.
+- **Firebase App Hosting**: Deployment of the frontend is automated via GitHub merges to `main`.
+- **Backend Deployment**: Use `npm run deploy:backend` to manually deploy Functions, Firestore, and Storage components.
 - **Regional Constraints**: Use Firebase services exclusively in **EU (europe-west4)**.
 - **Cloud Build**: Monitor CI/CD builds for success; fix errors and address warnings promptly.
 - **Post-Deployment**: Verify the live version matches the intended `package.json` version.
-- **Manual Deployment**: Do not deploy manually unless fixing a critical production outage that CI/CD cannot handle.
 
 ## Localization Check
 

@@ -39,14 +39,4 @@ const baseRoutes: Routes = [
   },
 ];
 
-export const routes: Routes = [
-  ...baseRoutes,
-  {
-    path: 'de',
-    children: baseRoutes,
-  },
-  {
-    path: 'en',
-    children: baseRoutes,
-  },
-];
+export const routes: Routes = [...baseRoutes];
