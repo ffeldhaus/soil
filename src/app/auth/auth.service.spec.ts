@@ -66,10 +66,4 @@ describe('AuthService', () => {
     await service.logout();
     expect(signOut).toHaveBeenCalled();
   });
-
-  it('should clear impersonation flags on logout', async () => {
-    mockLocalStorage['soil_admin_impersonating'] = 'true';
-    await service.logout();
-    expect(localStorage.removeItem).toHaveBeenCalledWith('soil_admin_impersonating');
-  });
 });

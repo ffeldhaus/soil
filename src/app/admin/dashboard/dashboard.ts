@@ -79,6 +79,9 @@ export class Dashboard implements OnInit, OnDestroy {
       'dashboard.player.submitted': $localize`:@@dashboard.player.submitted:Abgegeben?`,
       'dashboard.player.toHuman': $localize`:@@dashboard.player.toHuman:ZU MENSCH`,
       'dashboard.player.toAi': $localize`:@@dashboard.player.toAi:ZU KI`,
+      'dashboard.player.login': $localize`:@@dashboard.player.login:LOGIN`,
+      'dashboard.player.copyUrl': $localize`:@@dashboard.player.copyUrl:URL KOPIEREN`,
+      'dashboard.player.printAll': $localize`:@@dashboard.player.printAll:ALLE QR-CODES DRUCKEN`,
       'dashboard.empty.title': $localize`:@@dashboard.empty.title:Keine Spiele gefunden.`,
       'dashboard.empty.subtitle': $localize`:@@dashboard.empty.subtitle:Erstelle ein neues Spiel, um zu beginnen!`,
       'dashboard.pagination.showing': $localize`:@@dashboard.pagination.showing:Zeige`,
@@ -211,11 +214,6 @@ export class Dashboard implements OnInit, OnDestroy {
     this.authService.user$.subscribe(async (user) => {
       console.log('Dashboard: Auth User emitted:', user?.uid);
       if (user) {
-        // Prevent redirect loop if we are just starting to impersonate
-        if (localStorage.getItem('soil_admin_impersonating')) {
-          return;
-        }
-
         if (localStorage.getItem('soil_test_mode') === 'true') {
           console.log('Dashboard: Test Mode Active. Forcing Admin status.');
           this.ngZone.run(() => {
@@ -374,15 +372,21 @@ export class Dashboard implements OnInit, OnDestroy {
   loadingError: string | null = null;
   errorMessage: string | null = null;
 
-  async impersonate(uid: string) {
-    if (!uid) return;
-    try {
-      await this.authService.impersonate(uid);
-      this.router.navigate(['/game']);
-    } catch (e: any) {
-      console.error(e);
-      this.errorMessage = 'Impersonation failed: ' + e.message;
-    }
+  loginAsPlayer(gameId: string, password: string) {
+    const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
+    window.open(url, '_blank');
+  }
+
+  copyLoginUrl(gameId: string, password: string) {
+    const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        // Maybe show a temporary toast or change button text
+      })
+      .catch((err) => {
+        console.error('Could not copy text: ', err);
+      });
   }
 
   closeError() {
@@ -645,6 +649,7 @@ export class Dashboard implements OnInit, OnDestroy {
   // QR Code Logic
   qrCodeUrl = '';
   qrCodePlayer = '';
+  allQrCodes: { name: string; url: string; qrData: string }[] = [];
   QRCode: any;
 
   async generateQrCode(gameId: string, playerNumber: number, password: string) {
@@ -665,6 +670,39 @@ export class Dashboard implements OnInit, OnDestroy {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  async printAllQrCodes(game: any) {
+    if (!this.QRCode) {
+      const module = await import('qrcode-generator');
+      this.QRCode = module.default || module;
+    }
+
+    const slots = this.getSlots(game).filter((s) => !s.isAi);
+    this.allQrCodes = [];
+
+    for (const slot of slots) {
+      const url = `${window.location.origin}/game-login?gameId=${game.id}&pin=${slot.password}`;
+      const typeNumber = 0;
+      const errorCorrectionLevel = 'L';
+      const qr = this.QRCode(typeNumber, errorCorrectionLevel);
+      qr.addData(url);
+      qr.make();
+      this.allQrCodes.push({
+        name: `${game.config?.playerLabel || 'Player'} ${slot.number}`,
+        url: url,
+        qrData: qr.createDataURL(4),
+      });
+    }
+
+    // Small delay to let the DOM render before printing
+    setTimeout(() => {
+      window.print();
+    }, 500);
+  }
+
+  closeAllQr() {
+    this.allQrCodes = [];
   }
 
   closeQr() {

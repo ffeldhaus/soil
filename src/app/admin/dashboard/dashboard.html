@@ -1,4 +1,4 @@
-<div class="bg-gray-900 text-white font-sans">
+<div class="bg-gray-900 text-white font-sans no-print">
   <!-- Top HUD Bar -->
   <div
     class="fixed top-0 left-0 right-0 z-50 bg-gray-900/90 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-3 flex items-center justify-between"
@@ -544,9 +544,31 @@
                 <tr *ngIf="expandedGameId === game.id" class="bg-gray-800/40 border-b border-gray-700">
                   <td colspan="8" class="px-4 py-4">
                     <div class="ml-12">
-                      <h4 class="text-sm font-bold text-gray-400 mb-2 uppercase tracking-wide">
-                        {{ t('dashboard.details.players') }}
-                      </h4>
+                      <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wide">
+                          {{ t('dashboard.details.players') }}
+                        </h4>
+                        <button
+                          (click)="printAllQrCodes(game)"
+                          class="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold rounded border border-gray-600 transition flex items-center gap-2"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                            />
+                          </svg>
+                          {{ t('dashboard.player.printAll') }}
+                        </button>
+                      </div>
 
                       <!-- Deadline Manager -->
                       <div class="mb-6 p-4 bg-gray-900/60 rounded-xl border border-blue-500/20">
@@ -718,14 +740,23 @@
                               <ng-container *ngIf="!slot.isAi">{{ t('dashboard.player.toAi') }}</ng-container>
                             </button>
 
-                            <!-- Access / Impersonate -->
+                            <!-- Login / URL -->
                             <button
                               *ngIf="slot.isJoined && !slot.isAi"
-                              (click)="impersonate(slot.player.uid)"
+                              (click)="loginAsPlayer(game.id, slot.password)"
                               class="px-2 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded text-[10px] font-bold uppercase transition flex items-center justify-center gap-1.5"
-                              title="Impersonate Player"
+                              title="Login as Player"
                             >
-                              ACCESS
+                              {{ t('dashboard.player.login') }}
+                            </button>
+
+                            <button
+                              *ngIf="slot.isJoined && !slot.isAi"
+                              (click)="copyLoginUrl(game.id, slot.password)"
+                              class="px-2 py-1.5 bg-gray-700 hover:bg-white hover:text-black text-gray-300 rounded text-[10px] font-bold uppercase transition"
+                              title="Copy Login URL"
+                            >
+                              {{ t('dashboard.player.copyUrl') }}
                             </button>
 
                             <!-- Finance (Only if joined) -->
@@ -1076,9 +1107,26 @@
       <button
         (click)="login()"
         class="px-6 py-2 bg-blue-600 rounded flex items-center gap-2 hover:bg-blue-700 transition"
-      >
-        {{ t('dashboard.login.btn') }}
-      </button>
+      ></button>
+    </div>
+  </div>
+</div>
+
+<!-- Print Only: All QR Codes Grid -->
+<div class="print-only p-8 bg-white min-h-screen">
+  <div class="grid grid-cols-2 gap-8">
+    <div
+      *ngFor="let item of allQrCodes"
+      class="border-2 border-dashed border-gray-300 p-8 flex flex-col items-center gap-4 break-inside-avoid"
+    >
+      <h2 class="text-3xl font-bold text-black border-b-2 border-black pb-2 mb-2 w-full text-center">
+        {{ item.name }}
+      </h2>
+      <img [src]="item.qrData" class="w-64 h-64" />
+      <div class="mt-4 p-2 bg-gray-100 rounded text-[10px] text-gray-800 font-mono text-center w-full break-all">
+        {{ item.url }}
+      </div>
+      <p class="text-[10px] text-gray-500 mt-2 uppercase tracking-widest">SOIL GAME ACCESS</p>
     </div>
   </div>
 </div>

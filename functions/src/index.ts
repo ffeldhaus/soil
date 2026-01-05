@@ -240,43 +240,6 @@ export const calculateNextRound = onCall(async (request) => {
   }
 });
 
-// --- Admin / Roles ---
-
-export const impersonatePlayer = onCall(async (request) => {
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'User must be authenticated to create a game.');
-  }
-
-  if (request.auth.token['role'] !== 'admin') {
-    // Fallback for development: allow specific UID or email?
-    // throw new HttpsError('permission-denied', 'Only admins can impersonate.');
-  }
-
-  const { targetUid } = request.data;
-  if (!targetUid) {
-    throw new HttpsError('invalid-argument', 'Target UID required.');
-  }
-
-  try {
-    // Token for the target player
-    const customToken = await admin.auth().createCustomToken(targetUid, {
-      role: 'player',
-      impersonator: true,
-    });
-
-    // Token for the admin to re-authenticate later
-    // We give it a claim so client knows it's a re-auth
-    const adminToken = await admin.auth().createCustomToken(request.auth.uid, {
-      role: 'admin',
-    });
-
-    return { customToken, adminToken };
-  } catch (error: any) {
-    console.error('Token creation error:', error);
-    throw new HttpsError('internal', `Failed to create token: ${error.message}`);
-  }
-});
-
 export const setAdminRole = onCall(async (request) => {
   // Development helper: promote self to admin
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');

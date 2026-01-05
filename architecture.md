@@ -59,8 +59,8 @@ Stores historical and current round data.
 
 - **Admins**: Identified by `role: admin` custom claim.
 - **Players**: Identified by `role: player` custom claim, scoped to a specific `gameId`.
-- **Impersonation**: Admins can generate tokens to impersonate players for debugging support.
-- **Firestore Rules**: Strict access control ensuring players can only read/write their own game's data.
+- **Role-based Access Control (RBAC)**: Firestore rules ensure players can only access their game and admins can manage their own games.
+- **Player Access**: Admins can generate and share login URLs/QR codes for players.
 
 ## Game Logic / Engine
 

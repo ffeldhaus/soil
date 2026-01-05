@@ -60,24 +60,6 @@ export class AuthService {
     return await createUserWithEmailAndPassword(this.auth, email, pass);
   }
 
-  async impersonate(targetUid: string) {
-    // Call backend to get custom token
-    const impersonateFn = httpsCallable(this.functions, 'impersonatePlayer');
-
-    try {
-      const result = await impersonateFn({ targetUid });
-      const { customToken, adminToken } = result.data as { customToken: string; adminToken?: string };
-      localStorage.setItem('soil_admin_impersonating', 'true');
-      if (adminToken) {
-        localStorage.setItem('soil_admin_reauth_token', adminToken);
-      }
-      return await signInWithCustomToken(this.auth, customToken);
-    } catch (error) {
-      console.error('Impersonation failed:', error);
-      throw error;
-    }
-  }
-
   async loginAsPlayer(gameId: string, pin: string) {
     // Call backend to get custom token for player login
     // Note: Function name is 'playerLogin' in backend
@@ -93,23 +75,6 @@ export class AuthService {
     }
   }
 
-  async stopImpersonation(): Promise<boolean> {
-    const adminToken = localStorage.getItem('soil_admin_reauth_token');
-    if (adminToken) {
-      try {
-        await signInWithCustomToken(this.auth, adminToken);
-        localStorage.removeItem('soil_admin_impersonating');
-        localStorage.removeItem('soil_admin_reauth_token');
-        return true;
-      } catch (e) {
-        console.error('Re-auth failed', e);
-        // Fallthrough to logout
-      }
-    }
-    await this.logout();
-    return false;
-  }
-
   async logout() {
     if (localStorage.getItem('soil_test_mode')) {
       localStorage.removeItem('soil_test_mode');
@@ -117,8 +82,6 @@ export class AuthService {
       return Promise.resolve();
     }
 
-    localStorage.removeItem('soil_admin_impersonating');
-    localStorage.removeItem('soil_admin_reauth_token');
     return await signOut(this.auth);
   }
 
