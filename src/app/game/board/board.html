@@ -586,7 +586,7 @@
       </div>
       <app-finance
         *ngIf="gameState$ | async as state"
-        [game]="t('state.game')"
+        [game]="state.game"
         [viewingRound]="viewingRound"
         [playerUid]="(user$ | async)?.uid || ''"
         class="flex-1"

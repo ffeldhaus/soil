@@ -60,7 +60,19 @@ export class PlantingModal {
   @Output() plantingCancelled = new EventEmitter<void>();
 
   t(key: string): string {
-    return $localize`:@@${key}:${key}`;
+    const translations: Record<string, string> = {
+      'crop.wheat': $localize`:@@crop.wheat:Weizen`,
+      'crop.corn': $localize`:@@crop.corn:Mais`,
+      'crop.potato': $localize`:@@crop.potato:Kartoffel`,
+      'crop.beet': $localize`:@@crop.beet:Zuckerrübe`,
+      'crop.barley': $localize`:@@crop.barley:Gerste`,
+      'crop.oat': $localize`:@@crop.oat:Hafer`,
+      'crop.rye': $localize`:@@crop.rye:Roggen`,
+      'crop.fieldbean': $localize`:@@crop.fieldbean:Ackerbohne`,
+      'crop.animals': $localize`:@@crop.animals:Tiere`,
+      'crop.fallow': $localize`:@@crop.fallow:Brachland`,
+    };
+    return translations[key] || key;
   }
 
   private cropConfig: Record<string, { label: string; image: string }> = {

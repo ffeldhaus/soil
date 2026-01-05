@@ -54,7 +54,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <a
               routerLink="/game-login"
               data-testid="landing-enter-game"
-              class="group relative px-8 py-5 bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] overflow-hidden"
+              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
             >
               <span class="relative z-10 flex items-center justify-center gap-2" i18n="@@landing.enterGame"
                 >Spiel beitreten</span
@@ -64,7 +64,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <a
               routerLink="/admin/login"
               data-testid="landing-admin-login"
-              class="flex items-center justify-center px-8 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/30 transform hover:-translate-y-1"
+              class="flex items-center justify-center px-8 py-5 bg-gray-800/80 hover:bg-gray-700/90 backdrop-blur-md border border-white/20 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/40 transform hover:-translate-y-1"
               i18n="@@landing.teacherAdmin"
               >Lehrkraft / Admin</a
             >
@@ -72,7 +72,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <a
               routerLink="/admin/register"
               data-testid="landing-register"
-              class="flex items-center justify-center px-8 py-5 bg-emerald-900/40 hover:bg-emerald-800/60 backdrop-blur-md border border-emerald-500/30 text-emerald-200 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/50 transform hover:-translate-y-1"
+              class="flex items-center justify-center px-8 py-5 bg-emerald-900/80 hover:bg-emerald-800/90 backdrop-blur-md border border-emerald-500/40 text-emerald-100 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/60 transform hover:-translate-y-1"
               i18n="@@landing.register"
               >Registrieren</a
             >

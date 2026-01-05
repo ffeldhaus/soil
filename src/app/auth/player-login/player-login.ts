@@ -141,6 +141,18 @@ export class PlayerLoginComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
+  t(key: string): string {
+    const translations: Record<string, string> = {
+      'playerLogin.placeholder.gameId': $localize`:@@playerLogin.placeholder.gameId:Game ID`,
+      'playerLogin.placeholder.pin': $localize`:@@playerLogin.placeholder.pin:Unique Player PIN`,
+      'playerLogin.enteringGame': $localize`:@@playerLogin.enteringGame:Betrete Spiel...`,
+      'playerLogin.backToHome': $localize`:@@playerLogin.backToHome:Zurück zur Startseite`,
+      'playerLogin.error.title': $localize`:@@playerLogin.error.title:Anmeldung fehlgeschlagen`,
+      'playerLogin.error.retry': $localize`:@@playerLogin.error.retry:Erneut versuchen`,
+    };
+    return translations[key] || key;
+  }
+
   loginForm = this.fb.group({
     gameId: ['', [Validators.required, Validators.minLength(20)]], // Game IDs are long Firestore IDs
     password: ['', [Validators.required, Validators.minLength(4)]], // PINs usually 6

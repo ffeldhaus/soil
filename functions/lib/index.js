@@ -2,12 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.saveDraft = exports.processDeadlines = exports.updateRoundDeadline = exports.triggerAiTurn = exports.playerLogin = exports.dailyGamePurge = exports.undeleteGames = exports.deleteGames = exports.updatePlayerType = exports.getAdminGames = exports.getAllAdmins = exports.getPendingUsers = exports.getSystemStats = exports.getUserStatus = exports.manageAdmin = exports.submitOnboarding = exports.createGame = exports.setAdminRole = exports.impersonatePlayer = exports.calculateNextRound = exports.submitDecision = exports.getGameState = void 0;
 const admin = require("firebase-admin");
-const https_1 = require("firebase-functions/v2/https");
 const v2_1 = require("firebase-functions/v2");
-(0, v2_1.setGlobalOptions)({ region: "europe-west4" });
+const https_1 = require("firebase-functions/v2/https");
+(0, v2_1.setGlobalOptions)({
+    region: 'europe-west4',
+    serviceAccount: 'firebase-app-hosting-compute@soil-602ea.iam.gserviceaccount.com',
+});
 const scheduler_1 = require("firebase-functions/v2/scheduler");
-const game_engine_1 = require("./game-engine");
 const ai_agent_1 = require("./ai-agent");
+const game_engine_1 = require("./game-engine");
 const utils_1 = require("./utils");
 admin.initializeApp();
 const db = admin.firestore();
@@ -30,17 +33,17 @@ exports.getGameState = (0, https_1.onCall)(async (request) => {
     // Fetch rounds for history
     const roundsRef = gameRef.collection('rounds');
     const roundsSnap = await roundsRef.orderBy('number', 'asc').get();
-    const rounds = roundsSnap.docs.map(doc => doc.data());
+    const rounds = roundsSnap.docs.map((doc) => doc.data());
     return {
         game: {
             id: game.id,
             status: game.status,
             currentRoundNumber: game.currentRoundNumber,
             settings: game.settings,
-            players: game.players // Include for Finance view
+            players: game.players, // Include for Finance view
         },
         playerState: Object.assign(Object.assign({}, playerState), { playerNumber: uid.startsWith('player-') ? uid.split('-')[2] : undefined, history: rounds }),
-        lastRound: rounds[rounds.length - 1]
+        lastRound: rounds[rounds.length - 1],
     };
 });
 exports.submitDecision = (0, https_1.onCall)(async (request) => {
@@ -74,7 +77,7 @@ exports.submitDecision = (0, https_1.onCall)(async (request) => {
             players[uid].submittedRound = currentRound;
             players[uid].pendingDecisions = decision;
             // Process AI turns immediately (passes preloaded data to avoid internal reads)
-            const updatedPlayers = await internalProcessAiTurns(gameId, transaction, Object.assign(Object.assign({}, game), { players })) || players;
+            const updatedPlayers = (await internalProcessAiTurns(gameId, transaction, Object.assign(Object.assign({}, game), { players }))) || players;
             const calculationPerformed = await checkAndPerformCalculation(gameId, transaction, Object.assign(Object.assign({}, game), { players: updatedPlayers }), uid, decision);
             if (calculationPerformed) {
                 const myState = updatedPlayers[uid];
@@ -84,7 +87,7 @@ exports.submitDecision = (0, https_1.onCall)(async (request) => {
             // 3. WRITES (only if not calculating, since calculation does its own update)
             transaction.update(gameRef, {
                 players: updatedPlayers,
-                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
             });
             return { status: 'submitted' };
         });
@@ -109,7 +112,7 @@ async function checkAndPerformCalculation(gameId, transaction, game, triggerUid,
     return false;
 }
 async function performCalculation(gameId, decision, transaction, preloadedGame) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     const gameRef = db.collection('games').doc(gameId);
     const game = preloadedGame || (await transaction.get(gameRef)).data();
     if (!game)
@@ -118,19 +121,18 @@ async function performCalculation(gameId, decision, transaction, preloadedGame) 
     const nextRoundNumber = (game.currentRoundNumber || 0) + 1;
     console.log(`Calculating round ${nextRoundNumber} for all players in game ${gameId}`);
     const events = {
-        weather: Math.random() > 0.8 ? 'Drought' : (Math.random() < 0.2 ? 'Flood' : 'Normal'),
-        vermin: Math.random() > 0.9 ? 'Beetle' : 'None'
+        weather: Math.random() > 0.8 ? 'Drought' : Math.random() < 0.2 ? 'Flood' : 'Normal',
+        vermin: Math.random() > 0.9 ? 'Beetle' : 'None',
     };
     // Calculate next round for EACH player
     for (const uid of Object.keys(players)) {
         const player = players[uid];
         const playerDecision = player.pendingDecisions || decision; // Fallback to provided decision
         // Get last round from player history
-        const lastRound = player.history && player.history.length > 0
-            ? player.history[player.history.length - 1]
-            : undefined;
+        const lastRound = player.history && player.history.length > 0 ? player.history[player.history.length - 1] : undefined;
         const currentCapital = (_c = (_b = (_a = lastRound === null || lastRound === void 0 ? void 0 : lastRound.result) === null || _a === void 0 ? void 0 : _a.capital) !== null && _b !== void 0 ? _b : player.capital) !== null && _c !== void 0 ? _c : 1000;
-        const nextRound = game_engine_1.GameEngine.calculateRound(nextRoundNumber, lastRound, playerDecision, events, currentCapital);
+        const roundLimit = ((_d = game.settings) === null || _d === void 0 ? void 0 : _d.length) || 20;
+        const nextRound = game_engine_1.GameEngine.calculateRound(nextRoundNumber, lastRound, playerDecision, events, currentCapital, roundLimit);
         // Calculate player-specific averages
         const pAvgSoil = nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.soil, 0) / nextRound.parcelsSnapshot.length;
         const pAvgNutrition = nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.nutrition, 0) / nextRound.parcelsSnapshot.length;
@@ -145,13 +147,13 @@ async function performCalculation(gameId, decision, transaction, preloadedGame) 
         delete player.pendingDecisions;
     }
     // Update game state (current round pointer and all players)
-    const roundLimit = ((_d = game.settings) === null || _d === void 0 ? void 0 : _d.length) || 10;
+    const roundLimit = ((_e = game.settings) === null || _e === void 0 ? void 0 : _e.length) || 10;
     const isFinished = nextRoundNumber >= roundLimit;
     transaction.update(gameRef, {
         currentRoundNumber: nextRoundNumber,
         status: isFinished ? 'finished' : game.status,
         players,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     console.log(`Round ${nextRoundNumber} finalized for ${Object.keys(players).length} players`);
     return { number: nextRoundNumber };
@@ -191,12 +193,12 @@ exports.impersonatePlayer = (0, https_1.onCall)(async (request) => {
         // Token for the target player
         const customToken = await admin.auth().createCustomToken(targetUid, {
             role: 'player',
-            impersonator: true
+            impersonator: true,
         });
         // Token for the admin to re-authenticate later
         // We give it a claim so client knows it's a re-auth
         const adminToken = await admin.auth().createCustomToken(request.auth.uid, {
-            role: 'admin'
+            role: 'admin',
         });
         return { customToken, adminToken };
     }
@@ -219,18 +221,17 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
     }
     const { name, 
     // password, // Unused
-    settings = { length: 10, difficulty: 'normal', playerLabel: 'Player' }, config = { numPlayers: 1, numRounds: 12, numAi: 0 }, // Default config to 12 as requested
-    retentionDays = 90 } = request.data;
-    // Rounds range check: 10-12 minimum, 20-50 maximum. 
-    // We'll allow 10 to 100 for now but defaults should be better.
-    const numRounds = Math.min(100, Math.max(10, config.numRounds || 12));
+    settings = { length: 20, difficulty: 'normal', playerLabel: 'Player' }, config = { numPlayers: 1, numRounds: 20, numAi: 0 }, // Default config to 20 as requested
+    retentionDays = 90, } = request.data;
+    // Rounds range check: 10 minimum, 50 maximum.
+    const numRounds = Math.min(50, Math.max(10, config.numRounds || 20));
     config.numRounds = numRounds;
     settings.length = numRounds;
     // Authorization & Quota Check
     const uid = request.auth.uid;
     const userRef = db.collection('users').doc(uid);
     const userSnap = await userRef.get();
-    // For now, if user doc doesn't exist, we might allow creation if legacy? 
+    // For now, if user doc doesn't exist, we might allow creation if legacy?
     // No, strictly enforce new rules.
     // BUT checking for superadmin override in code for 'florian.feldhaus@gmail.com' not needed if data is correct.
     // However, for bootstrap, we need to handle the first user.
@@ -257,7 +258,7 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
                 status: 'active',
                 quota: 999,
                 gameCount: 0,
-                createdAt: admin.firestore.FieldValue.serverTimestamp()
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
             });
         }
     }
@@ -267,11 +268,12 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
     // Dynamic Quota Check
     // Count games where hostUid == uid AND status != 'deleted' AND status != 'expired'
     // Since we don't have a composite index for everything, and status can be multiple values,
-    // let's just count games where hostUid == uid and deletedAt == null. 
+    // let's just count games where hostUid == uid and deletedAt == null.
     // This assumes 'status' is kept in sync with 'deletedAt' for soft checking.
     // Ideally we filter status 'in' ['waiting', 'in_progress', 'finished'] but that requires an index.
     // 'deletedAt == null' is a good proxy for active games.
-    const activeGamesCountSnap = await db.collection('games')
+    const activeGamesCountSnap = await db
+        .collection('games')
         .where('hostUid', '==', uid)
         .where('deletedAt', '==', null)
         .count()
@@ -288,7 +290,7 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
     const playerSecrets = {};
     for (let i = 1; i <= numPlayers; i++) {
         playerSecrets[String(i)] = {
-            password: (0, utils_1.generateRandomPassword)(6)
+            password: (0, utils_1.generateRandomPassword)(6),
         };
     }
     const newGame = {
@@ -299,7 +301,9 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
         status: 'waiting',
         settings, // Keep old settings structure for compatibility if needed, or merge
         config, // New explicit config
-        players: Object.assign({}, Array(config.numPlayers || 1).fill(0).reduce((acc, _, i) => {
+        players: Object.assign({}, Array(config.numPlayers || 1)
+            .fill(0)
+            .reduce((acc, _, i) => {
             const playerNumber = i + 1;
             const playerId = `player-${gameId}-${playerNumber}`;
             acc[playerId] = {
@@ -308,7 +312,7 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
                 isAi: playerNumber <= (config.numAi || 0),
                 capital: 1000,
                 currentRound: 0,
-                history: []
+                history: [],
             };
             return acc;
         }, {})),
@@ -316,7 +320,7 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         retentionDays: validRetention,
         deletedAt: null,
-        playerSecrets
+        playerSecrets,
     };
     await db.runTransaction(async (t) => {
         // Initialize Round 0 Metrics for all players
@@ -327,7 +331,7 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
             number: 0,
             parcelsSnapshot: initialParcels,
             avgSoil: startSoil,
-            avgNutrition: startNutrition
+            avgNutrition: startNutrition,
         };
         for (const uid of Object.keys(newGame.players)) {
             newGame.players[uid].avgSoil = startSoil;
@@ -339,13 +343,14 @@ exports.createGame = (0, https_1.onCall)(async (request) => {
         // Initialize Round 0 Doc (Global reference if needed)
         await t.set(db.collection('games').doc(gameId).collection('rounds').doc('round_0'), round0);
         // Increment User Game Count
-        if (userSnap.exists) { // Only increment if user doc exists (which it should for admins)
+        if (userSnap.exists) {
+            // Only increment if user doc exists (which it should for admins)
             t.update(userRef, { gameCount: admin.firestore.FieldValue.increment(1) });
         }
     });
     return {
         gameId,
-        password: (_a = playerSecrets['1']) === null || _a === void 0 ? void 0 : _a.password
+        password: (_a = playerSecrets['1']) === null || _a === void 0 ? void 0 : _a.password,
     };
 });
 // --- Helper for AI Automation ---
@@ -398,9 +403,9 @@ exports.submitOnboarding = (0, https_1.onCall)(async (request) => {
             explanation,
             institution,
             institutionLink: institutionLink || '',
-            submittedAt: admin.firestore.FieldValue.serverTimestamp()
+            submittedAt: admin.firestore.FieldValue.serverTimestamp(),
         },
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
     return { success: true };
 });
@@ -412,7 +417,8 @@ exports.manageAdmin = (0, https_1.onCall)(async (request) => {
     const callerRef = db.collection('users').doc(request.auth.uid);
     const callerSnap = await callerRef.get();
     // Allow hardcoded superadmin for bootstrap
-    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') || request.auth.token.email === 'florian.feldhaus@gmail.com';
+    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') ||
+        request.auth.token.email === 'florian.feldhaus@gmail.com';
     if (!isSuper) {
         throw new https_1.HttpsError('permission-denied', 'Super Admins only');
     }
@@ -435,7 +441,7 @@ exports.manageAdmin = (0, https_1.onCall)(async (request) => {
                 await db.collection('banned_emails').doc(targetEmail).set({
                     bannedAt: admin.firestore.FieldValue.serverTimestamp(),
                     bannedBy: request.auth.uid,
-                    reason: 'Rejected by Super Admin'
+                    reason: 'Rejected by Super Admin',
                 });
             }
         }
@@ -453,7 +459,7 @@ exports.manageAdmin = (0, https_1.onCall)(async (request) => {
             await db.collection('banned_emails').doc(targetEmail).set({
                 bannedAt: admin.firestore.FieldValue.serverTimestamp(),
                 bannedBy: request.auth.uid,
-                reason: 'Banned by Super Admin'
+                reason: 'Banned by Super Admin',
             });
         }
     }
@@ -495,7 +501,8 @@ exports.getUserStatus = (0, https_1.onCall)(async (request) => {
     }
     const userData = doc.data();
     // Dynamic Count
-    const activeGamesCountSnap = await db.collection('games')
+    const activeGamesCountSnap = await db
+        .collection('games')
         .where('hostUid', '==', request.auth.uid)
         .where('deletedAt', '==', null)
         .count()
@@ -509,7 +516,8 @@ exports.getSystemStats = (0, https_1.onCall)(async (request) => {
     // Super Check
     const callerRef = db.collection('users').doc(request.auth.uid);
     const callerSnap = await callerRef.get();
-    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') || request.auth.token.email === 'florian.feldhaus@gmail.com';
+    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') ||
+        request.auth.token.email === 'florian.feldhaus@gmail.com';
     if (!isSuper)
         throw new https_1.HttpsError('permission-denied', 'Super Admins only');
     // Aggregations
@@ -525,13 +533,13 @@ exports.getSystemStats = (0, https_1.onCall)(async (request) => {
         games: {
             total: totalGamesSnap.data().count,
             deleted: deletedGamesSnap.data().count,
-            active: totalGamesSnap.data().count - deletedGamesSnap.data().count
+            active: totalGamesSnap.data().count - deletedGamesSnap.data().count,
         },
         users: {
             total: totalUsersSnap.data().count,
             pending: pendingUsersSnap.data().count,
-            admins: adminUsersSnap.data().count
-        }
+            admins: adminUsersSnap.data().count,
+        },
     };
 });
 exports.getPendingUsers = (0, https_1.onCall)(async (request) => {
@@ -541,11 +549,12 @@ exports.getPendingUsers = (0, https_1.onCall)(async (request) => {
     // Super Check
     const callerRef = db.collection('users').doc(request.auth.uid);
     const callerSnap = await callerRef.get();
-    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') || request.auth.token.email === 'florian.feldhaus@gmail.com';
+    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') ||
+        request.auth.token.email === 'florian.feldhaus@gmail.com';
     if (!isSuper)
         throw new https_1.HttpsError('permission-denied', 'Super Admins only');
     const snap = await db.collection('users').where('role', '==', 'pending').get();
-    return snap.docs.map(d => d.data());
+    return snap.docs.map((d) => d.data());
 });
 exports.getAllAdmins = (0, https_1.onCall)(async (request) => {
     var _a;
@@ -554,11 +563,12 @@ exports.getAllAdmins = (0, https_1.onCall)(async (request) => {
     // Super Check
     const callerRef = db.collection('users').doc(request.auth.uid);
     const callerSnap = await callerRef.get();
-    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') || request.auth.token.email === 'florian.feldhaus@gmail.com';
+    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') ||
+        request.auth.token.email === 'florian.feldhaus@gmail.com';
     if (!isSuper)
         throw new https_1.HttpsError('permission-denied', 'Super Admins only');
     const snap = await db.collection('users').where('role', 'in', ['admin', 'superadmin']).get();
-    return snap.docs.map(d => d.data());
+    return snap.docs.map((d) => d.data());
 });
 exports.getAdminGames = (0, https_1.onCall)(async (request) => {
     var _a;
@@ -572,15 +582,15 @@ exports.getAdminGames = (0, https_1.onCall)(async (request) => {
     if (targetUid && targetUid !== request.auth.uid) {
         const callerRef = db.collection('users').doc(request.auth.uid);
         const callerSnap = await callerRef.get();
-        const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') || request.auth.token.email === 'florian.feldhaus@gmail.com';
+        const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') ||
+            request.auth.token.email === 'florian.feldhaus@gmail.com';
         if (!isSuper) {
             throw new https_1.HttpsError('permission-denied', 'Only Super Admins can view other users games.');
         }
         searchUid = targetUid;
     }
     // Return games hosted by the target user
-    let query = db.collection('games')
-        .where('hostUid', '==', searchUid);
+    let query = db.collection('games').where('hostUid', '==', searchUid);
     if (showDeleted) {
         query = query.where('deletedAt', '!=', null).orderBy('deletedAt', 'desc');
     }
@@ -588,14 +598,11 @@ exports.getAdminGames = (0, https_1.onCall)(async (request) => {
         query = query.where('deletedAt', '==', null).orderBy('createdAt', 'desc');
     }
     try {
-        const snapshot = await query
-            .limit(pageSize)
-            .offset(offset)
-            .get();
+        const snapshot = await query.limit(pageSize).offset(offset).get();
         // Get total count for pagination UI
         const countSnapshot = await query.count().get();
         const total = countSnapshot.data().count;
-        const games = snapshot.docs.map(doc => {
+        const games = snapshot.docs.map((doc) => {
             var _a;
             const d = doc.data();
             return {
@@ -609,7 +616,7 @@ exports.getAdminGames = (0, https_1.onCall)(async (request) => {
                 players: d.players,
                 currentRoundNumber: d.currentRoundNumber,
                 retentionDays: d.retentionDays,
-                deletedAt: d.deletedAt ? d.deletedAt.toDate().toISOString() : null
+                deletedAt: d.deletedAt ? d.deletedAt.toDate().toISOString() : null,
             };
         });
         return { games, total };
@@ -663,19 +670,19 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
                     isAi: false,
                     capital: 1000,
                     currentRound: 0,
-                    history: []
+                    history: [],
                 };
             }
         }
         // If changed to AI, auto-process turn (modifies players object)
         if (type === 'ai') {
-            const updatedPlayers = await internalProcessAiTurns(gameId, t, Object.assign(Object.assign({}, game), { players })) || players;
+            const updatedPlayers = (await internalProcessAiTurns(gameId, t, Object.assign(Object.assign({}, game), { players }))) || players;
             // Check if this AI turn completes the round
             const calculationPerformed = await checkAndPerformCalculation(gameId, t, Object.assign(Object.assign({}, game), { players: updatedPlayers }));
             if (!calculationPerformed) {
                 t.update(gameRef, {
                     players: updatedPlayers,
-                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
                 });
             }
         }
@@ -683,7 +690,7 @@ exports.updatePlayerType = (0, https_1.onCall)(async (request) => {
             // 3. WRITES
             t.update(gameRef, {
                 players,
-                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
             });
         }
     });
@@ -701,7 +708,8 @@ exports.deleteGames = (0, https_1.onCall)(async (request) => {
     // Check if Super Admin
     const callerRef = db.collection('users').doc(request.auth.uid);
     const callerSnap = await callerRef.get();
-    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') || request.auth.token.email === 'florian.feldhaus@gmail.com';
+    const isSuper = (callerSnap.exists && ((_a = callerSnap.data()) === null || _a === void 0 ? void 0 : _a.role) === 'superadmin') ||
+        request.auth.token.email === 'florian.feldhaus@gmail.com';
     // Process deletions
     const batch = db.batch();
     let batchCount = 0;
@@ -720,7 +728,7 @@ exports.deleteGames = (0, https_1.onCall)(async (request) => {
                     // Soft Delete
                     batch.update(gameRef, {
                         deletedAt: admin.firestore.FieldValue.serverTimestamp(),
-                        status: 'deleted'
+                        status: 'deleted',
                     });
                     batchCount++;
                     if (batchCount >= MAX_BATCH) {
@@ -763,6 +771,7 @@ exports.undeleteGames = (0, https_1.onCall)(async (request) => {
     }
     return { success: true };
 });
+// europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
 exports.dailyGamePurge = (0, scheduler_1.onSchedule)({ schedule: 'every 24 hours', region: 'europe-west3' }, async (event) => {
     const now = admin.firestore.Timestamp.now();
     const nowMillis = now.toMillis();
@@ -775,8 +784,8 @@ exports.dailyGamePurge = (0, scheduler_1.onSchedule)({ schedule: 'every 24 hours
     // Efficient Approach: Query ALL Active games (deletedAt == null) and check locally (if dataset small) OR
     // Better: We SHOULD verify if we can query strictly.
     // For this implementation, let's iterate active games. If scale is huge, we'd need 'expiresAt' field.
-    // OPTIMIZATION for V2: Add 'expiresAt' field to Game. 
-    // Current: Iterate "active" games. Limit to chunks if needed. 
+    // OPTIMIZATION for V2: Add 'expiresAt' field to Game.
+    // Current: Iterate "active" games. Limit to chunks if needed.
     // Assuming < 10k games for now.
     // Actually, let's fetch 'games' where 'deletedAt' == null.
     // This might be large.
@@ -785,15 +794,15 @@ exports.dailyGamePurge = (0, scheduler_1.onSchedule)({ schedule: 'every 24 hours
     const activeGamesSnap = await db.collection('games').where('deletedAt', '==', null).get();
     const softDeleteBatch = db.batch();
     let softDelCount = 0;
-    activeGamesSnap.forEach(doc => {
+    activeGamesSnap.forEach((doc) => {
         const data = doc.data();
         const retentionDays = data.retentionDays || 90;
         const createdAt = data.createdAt.toMillis();
-        const expiresAt = createdAt + (retentionDays * ONE_DAY_MS);
+        const expiresAt = createdAt + retentionDays * ONE_DAY_MS;
         if (nowMillis > expiresAt) {
             softDeleteBatch.update(doc.ref, {
                 deletedAt: now,
-                status: 'expired'
+                status: 'expired',
             });
             softDelCount++;
         }
@@ -805,9 +814,7 @@ exports.dailyGamePurge = (0, scheduler_1.onSchedule)({ schedule: 'every 24 hours
     // 2. Hard delete old soft-deleted games
     // deletedAt < now - 30 days
     const purgeThreshold = admin.firestore.Timestamp.fromMillis(nowMillis - THIRTY_DAYS_MS);
-    const trashSnap = await db.collection('games')
-        .where('deletedAt', '<', purgeThreshold)
-        .get();
+    const trashSnap = await db.collection('games').where('deletedAt', '<', purgeThreshold).get();
     console.log(`Found ${trashSnap.size} games to permanently purge.`);
     for (const doc of trashSnap.docs) {
         await db.recursiveDelete(doc.ref);
@@ -825,7 +832,7 @@ exports.playerLogin = (0, https_1.onCall)(async (request) => {
     const game = gameDoc.data();
     const playerSecrets = (game === null || game === void 0 ? void 0 : game['playerSecrets']) || {};
     // playerSecrets is { "1": { password: "PIN1" }, "2": { password: "PIN2" }, ... }
-    const playerNumber = Object.keys(playerSecrets).find(key => { var _a; return ((_a = playerSecrets[key]) === null || _a === void 0 ? void 0 : _a.password) === password; });
+    const playerNumber = Object.keys(playerSecrets).find((key) => { var _a; return ((_a = playerSecrets[key]) === null || _a === void 0 ? void 0 : _a.password) === password; });
     if (!playerNumber) {
         throw new https_1.HttpsError('permission-denied', 'Incorrect PIN');
     }
@@ -835,7 +842,7 @@ exports.playerLogin = (0, https_1.onCall)(async (request) => {
         const customToken = await admin.auth().createCustomToken(uid, {
             gameId,
             role: 'player',
-            playerNumber
+            playerNumber,
         });
         return { customToken };
     }
@@ -878,13 +885,12 @@ exports.updateRoundDeadline = (0, https_1.onCall)(async (request) => {
     await gameRef.update({ roundDeadlines: deadlines });
     return { success: true };
 });
-exports.processDeadlines = (0, scheduler_1.onSchedule)({ schedule: "every 1 minutes", region: "europe-west3" }, async (event) => {
+// europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
+exports.processDeadlines = (0, scheduler_1.onSchedule)({ schedule: 'every 1 minutes', region: 'europe-west3' }, async (event) => {
     var _a;
     const now = admin.firestore.Timestamp.now();
     // Find games in progress
-    const activeGames = await db.collection('games')
-        .where('status', '==', 'in_progress')
-        .get();
+    const activeGames = await db.collection('games').where('status', '==', 'in_progress').get();
     for (const gameDoc of activeGames.docs) {
         const game = gameDoc.data();
         const currentRound = game.currentRoundNumber;
@@ -903,7 +909,7 @@ exports.processDeadlines = (0, scheduler_1.onSchedule)({ schedule: "every 1 minu
                     if (p.submittedRound === undefined || p.submittedRound < currentRound) {
                         // FORCE AI decision
                         const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
-                        const aiLevel = p.isAi ? (p.aiLevel || 'middle') : 'middle';
+                        const aiLevel = p.isAi ? p.aiLevel || 'middle' : 'middle';
                         const decision = ai_agent_1.AiAgent.makeDecision(aiLevel, lastRound);
                         p.submittedRound = currentRound;
                         p.pendingDecisions = decision;
@@ -932,7 +938,7 @@ exports.saveDraft = (0, https_1.onCall)(async (request) => {
         throw new https_1.HttpsError('invalid-argument', 'Missing gameId or decision');
     }
     const gameRef = db.collection('games').doc(gameId);
-    // We update the specific player's state. 
+    // We update the specific player's state.
     // We assume the player fields map is keyed by UID as per data model.
     // We need to know WHICH player key to update.
     // In createGame, we keyed by UID. In playerLogin, we key by 'player-gameId-number'.
@@ -941,7 +947,7 @@ exports.saveDraft = (0, https_1.onCall)(async (request) => {
     // Firestore dot notation allows updating a specific key.
     const uid = request.auth.uid;
     const fieldPath = `players.${uid}.pendingDecisions`;
-    // Verify game exists? Or just blind update? 
+    // Verify game exists? Or just blind update?
     // Blind update is faster/cheaper, but risky if game deleted.
     // Let's allow blind update for draft saving efficiency, but catch "not found".
     // Actually, we should check if user is part of the game to be safe?
@@ -949,7 +955,7 @@ exports.saveDraft = (0, https_1.onCall)(async (request) => {
     try {
         await gameRef.update({
             [fieldPath]: decision,
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
     }
     catch (error) {

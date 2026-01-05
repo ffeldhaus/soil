@@ -2,12 +2,12 @@
   "name": "Soil - Multiplayer Resource Management",
   "short_name": "SOIL",
   "description": "A multiplayer game about resource management and soil quality.",
-  "start_url": "/en-US/",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#10b981",
-  "lang": "en-US",
+  "theme_color": "#065f46",
+  "lang": "de",
   "icons": [
     {
       "src": "/favicon-96x96.png",

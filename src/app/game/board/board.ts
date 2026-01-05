@@ -35,7 +35,22 @@ import { RoundSettings, RoundSettingsModal } from '../round-settings-modal/round
 })
 export class Board implements OnInit, OnDestroy {
   t(key: string): string {
-    return $localize`:@@${key}:${key}`;
+    const translations: Record<string, string> = {
+      'board.login.phGameId': $localize`:@@board.login.phGameId:Game ID`,
+      'board.login.phPlayerNum': $localize`:@@board.login.phPlayerNum:Player Number`,
+      'board.login.phPin': $localize`:@@board.login.phPin:PIN`,
+      'user.photoURL': $localize`:@@user.photoURL:assets/images/ok.jpg`,
+      'board.nav.names': $localize`:@@board.nav.names:Namen`,
+      'board.nav.nutrition': $localize`:@@board.nav.nutrition:Mineralstoffe`,
+      'board.nav.harvest': $localize`:@@board.nav.harvest:Ernte`,
+      'board.nav.soil': $localize`:@@board.nav.soil:Bodenqualität`,
+      'board.nav.finance': $localize`:@@board.nav.finance:Finanzen`,
+      'board.nav.options': $localize`:@@board.nav.options:Optionen`,
+      'board.nav.waiting': $localize`:@@board.nav.waiting:Warten...`,
+      'board.nav.nextRound': $localize`:@@board.nav.nextRound:Nächste Runde`,
+      'board.logout': $localize`:@@board.logout:Abmelden`,
+    };
+    return translations[key] || key;
   }
   private gameService = inject(GameService);
   gameServicePublic = this.gameService; // Expose for template if needed, or just specific streams

@@ -3,15 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameEngine = void 0;
 const constants_1 = require("./constants");
 class GameEngine {
-    static calculateRound(currentRoundNumber, previousRound, decision, events, currentCapital) {
+    static calculateRound(currentRoundNumber, previousRound, decision, events, currentCapital, totalRounds = 20) {
         const previousParcels = previousRound ? previousRound.parcelsSnapshot : this.createInitialParcels();
         const parcelupdates = [];
         const harvestSummary = {};
-        Object.keys(constants_1.HARVEST_YIELD).forEach(k => harvestSummary[k] = 0);
+        Object.keys(constants_1.HARVEST_YIELD).forEach((k) => (harvestSummary[k] = 0));
         // -- 1. Pre-calculate global factors --
         const numParcels = previousParcels.length;
-        const animalParcels = Object.values(decision.parcels).filter(c => c === 'Grass').length;
+        const animalParcels = Object.values(decision.parcels).filter((c) => c === 'Grass').length;
         const machineLevel = Math.min(4, Math.max(0, decision.machines || 0));
+        // Dynamic Scaling: Balance the speed of change based on game length
+        // Baseline is 20 rounds.
+        // In 10 rounds, things happen twice as fast. In 100 rounds, five times slower.
+        const timeScale = 20 / totalRounds;
+        const costScale = totalRounds / 20;
         // Organic status: Bio-Siegel is lost if synthetic fertilizer or pesticide is used
         const bioSiegel = decision.organic && !decision.fertilizer && !decision.pesticide;
         // Weather and Vermin factors
@@ -19,7 +24,8 @@ class GameEngine {
         const vermin = constants_1.VERMIN_EFFECTS[events.vermin] || constants_1.VERMIN_EFFECTS['None'];
         // Machine factors
         const machineYieldBonus = constants_1.MACHINE_FACTORS.YIELD_BONUS[machineLevel];
-        const machineSoilImpact = constants_1.SOIL.MACHINE_IMPACT[machineLevel];
+        // Soil impact: scaling should be moderate. High tech should always be risky.
+        const machineSoilImpact = constants_1.SOIL.MACHINE_IMPACT[machineLevel] * Math.pow(timeScale, 0.5);
         // -- 2. Calculate Parcel Updates --
         previousParcels.forEach((prevParcel, index) => {
             var _a;
@@ -29,36 +35,51 @@ class GameEngine {
             let newNutrition = prevParcel.nutrition;
             // A. SOIL CALCULATION
             let soilFactor = 0;
-            // Base crop impact
+            // Base crop impact (scaled)
             if (constants_1.SOIL.PLANTATION_GAINS[cropKey])
-                soilFactor += constants_1.SOIL.PLANTATION_GAINS[cropKey];
+                soilFactor += constants_1.SOIL.PLANTATION_GAINS[cropKey] * timeScale;
             if (constants_1.SOIL.PLANTATION_LOSSES[cropKey])
-                soilFactor += constants_1.SOIL.PLANTATION_LOSSES[cropKey];
-            // Fallow recovery
+                soilFactor += constants_1.SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
+            // Fallow recovery (scaled)
             if (cropKey === 'Fallow') {
                 const diff = Math.max(constants_1.SOIL.START - prevParcel.soil, 0);
-                soilFactor += (diff / constants_1.SOIL.START) * constants_1.SOIL.FALLOW_RECOVERY;
+                soilFactor += (diff / constants_1.SOIL.START) * constants_1.SOIL.FALLOW_RECOVERY * timeScale;
             }
-            // Crop Sequence
+            // Crop Sequence (scaled)
             const prevCrop = prevParcel.crop;
             const sequenceQuality = ((_a = constants_1.CROP_SEQUENCE_MATRIX[prevCrop]) === null || _a === void 0 ? void 0 : _a[newCrop]) || 'ok';
             if (sequenceQuality === 'good')
-                soilFactor += constants_1.SOIL.CROP_ROTATION_BONUS;
+                soilFactor += constants_1.SOIL.CROP_ROTATION_BONUS * timeScale;
             if (sequenceQuality === 'bad')
-                soilFactor += constants_1.SOIL.CROP_ROTATION_PENALTY;
-            // Monoculture penalty (same crop twice)
+                soilFactor += constants_1.SOIL.CROP_ROTATION_PENALTY * timeScale;
+            // Monoculture penalty (scaled)
             if (prevCrop === newCrop && newCrop !== 'Fallow' && newCrop !== 'Grass') {
-                soilFactor += constants_1.SOIL.MONOCULTURE_PENALTY;
+                soilFactor += constants_1.SOIL.MONOCULTURE_PENALTY * timeScale;
             }
-            // Inputs impact
+            // Inputs impact (scaled moderately)
             if (decision.fertilizer)
-                soilFactor += constants_1.SOIL.FERTILIZER_SYNTHETIC_IMPACT;
+                soilFactor += constants_1.SOIL.FERTILIZER_SYNTHETIC_IMPACT * Math.pow(timeScale, 0.7);
             if (decision.pesticide)
-                soilFactor += constants_1.SOIL.PESTICIDE_IMPACT;
+                soilFactor += constants_1.SOIL.PESTICIDE_IMPACT * Math.pow(timeScale, 0.7);
             // Machines impact
             soilFactor += machineSoilImpact;
             // Weather impact on soil
-            soilFactor += weather.soil;
+            soilFactor += weather.soil * timeScale;
+            // Over-fertilization penalties (Nutrition Burn - scaled)
+            if (prevParcel.nutrition > constants_1.SOIL.NUTRITION_OVER_PENALTY_START) {
+                soilFactor +=
+                    (prevParcel.nutrition - constants_1.SOIL.NUTRITION_OVER_PENALTY_START) *
+                        constants_1.SOIL.NUTRITION_OVER_PENALTY_FACTOR *
+                        timeScale;
+            }
+            // Chemical burn from synthetic fertilizer
+            if (decision.fertilizer && prevParcel.nutrition > constants_1.SOIL.SYNTHETIC_BURN_THRESHOLD) {
+                soilFactor += constants_1.SOIL.SYNTHETIC_BURN_PENALTY * timeScale;
+            }
+            // Organisms soil bonus
+            if (decision.organisms) {
+                soilFactor += constants_1.SOIL.ORGANISMS_SOIL_BONUS * timeScale;
+            }
             // Apply soil change (compounding factor)
             newSoil = prevParcel.soil * (1 + soilFactor);
             // B. NUTRITION CALCULATION
@@ -126,12 +147,12 @@ class GameEngine {
                 crop: newCrop,
                 soil: Math.round(Math.max(0, Math.min(300, newSoil))), // Allow some over-improvement
                 nutrition: Math.round(Math.max(0, Math.min(constants_1.NUTRITION.MAX, newNutrition))),
-                yield: Math.round(yieldAmount)
+                yield: Math.round(yieldAmount),
             });
         });
         // -- 3. Financials --
         let seedCost = 0;
-        parcelupdates.forEach(p => {
+        parcelupdates.forEach((p) => {
             if (p.crop && p.crop !== 'Fallow' && p.crop !== 'Grass') {
                 const crop = p.crop;
                 if (constants_1.EXPENSES.SEEDS[crop]) {
@@ -142,8 +163,8 @@ class GameEngine {
         });
         // Labor cost: Base - reduction by machines
         const laborCost = constants_1.MACHINE_FACTORS.BASE_LABOR_COST * constants_1.MACHINE_FACTORS.LABOR_COST_REDUCTION[machineLevel];
-        // Machine investment/running costs
-        const machineInvestment = constants_1.MACHINE_FACTORS.INVESTMENT_COST[machineLevel];
+        // Machine investment/running costs (Investment scaled by game length)
+        const machineInvestment = constants_1.MACHINE_FACTORS.INVESTMENT_COST[machineLevel] * costScale;
         const runningCost = (decision.organic ? constants_1.EXPENSES.RUNNING.BASE_ORGANIC : constants_1.EXPENSES.RUNNING.BASE_CONVENTIONAL) +
             (decision.organic ? constants_1.EXPENSES.RUNNING.ORGANIC_CONTROL : 0);
         const animalMaintenance = animalParcels * constants_1.EXPENSES.RUNNING.ANIMALS;
@@ -170,26 +191,28 @@ class GameEngine {
                 labor: laborCost,
                 running: runningCost + animalMaintenance,
                 investments: machineInvestment + suppliesCost,
-                total: totalExpenses
+                total: totalExpenses,
             },
             income,
             events,
-            bioSiegel
+            bioSiegel,
         };
         return {
             number: currentRoundNumber,
             decision,
             result,
-            parcelsSnapshot: parcelupdates
+            parcelsSnapshot: parcelupdates,
         };
     }
     static createInitialParcels() {
-        return Array(40).fill(null).map((_, i) => ({
+        return Array(40)
+            .fill(null)
+            .map((_, i) => ({
             index: i,
             crop: 'Fallow',
             soil: constants_1.SOIL.START,
             nutrition: constants_1.NUTRITION.START,
-            yield: 0
+            yield: 0,
         }));
     }
 }

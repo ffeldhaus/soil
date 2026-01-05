@@ -28,6 +28,13 @@ export class RoundSettingsModal {
   @Output() save = new EventEmitter<RoundSettings>();
   @Output() settingsCancelled = new EventEmitter<void>();
 
+  t(key: string): string {
+    const translations: Record<string, string> = {
+      'settings.organic': $localize`:@@settings.organic:Ökologischer Anbau`,
+    };
+    return translations[key] || key;
+  }
+
   submit() {
     this.save.emit(this.settings);
   }

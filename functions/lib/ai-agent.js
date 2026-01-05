@@ -10,9 +10,20 @@ class AiAgent {
             fertilizer: false,
             pesticide: false,
             organisms: false,
-            parcels: {}
+            parcels: {},
         };
-        const crops = ['Fieldbean', 'Barley', 'Oat', 'Potato', 'Corn', 'Rye', 'Wheat', 'Beet', 'Fallow', 'Grass'];
+        const crops = [
+            'Fieldbean',
+            'Barley',
+            'Oat',
+            'Potato',
+            'Corn',
+            'Rye',
+            'Wheat',
+            'Beet',
+            'Fallow',
+            'Grass',
+        ];
         const mainCrops = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet'];
         // 1. Level Specific Strategy
         if (level === 'elementary') {
@@ -35,16 +46,14 @@ class AiAgent {
                 }
                 else {
                     const prevCrop = previousRound.parcelsSnapshot[i].crop;
-                    const goodNext = crops.filter(c => { var _a; return ((_a = constants_1.CROP_SEQUENCE_MATRIX[prevCrop]) === null || _a === void 0 ? void 0 : _a[c]) === 'good' && c !== 'Fallow' && c !== 'Grass'; });
+                    const goodNext = crops.filter((c) => { var _a; return ((_a = constants_1.CROP_SEQUENCE_MATRIX[prevCrop]) === null || _a === void 0 ? void 0 : _a[c]) === 'good' && c !== 'Fallow' && c !== 'Grass'; });
                     decision.parcels[i] = goodNext.length > 0 ? goodNext[0] : 'Wheat';
                 }
             }
         }
         else if (level === 'high') {
             // High: Strategic. Uses rotation, optimizes machines, considers organic if soil allows.
-            const averageSoil = previousRound
-                ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40
-                : 80;
+            const averageSoil = previousRound ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
             decision.organic = averageSoil > 100; // Go organic if soil is excellent
             decision.machines = averageSoil > 90 ? 2 : 1;
             if (!decision.organic) {
@@ -55,7 +64,9 @@ class AiAgent {
                 decision.organisms = true;
             }
             for (let i = 0; i < 40; i++) {
-                const prevParcel = previousRound ? previousRound.parcelsSnapshot[i] : { soil: 80, nutrition: 80, crop: 'Fallow' };
+                const prevParcel = previousRound
+                    ? previousRound.parcelsSnapshot[i]
+                    : { soil: 80, nutrition: 80, crop: 'Fallow' };
                 const prevCrop = prevParcel.crop;
                 if (prevParcel.soil < 70 || prevParcel.nutrition < 60) {
                     decision.parcels[i] = 'Fieldbean'; // Recovery
@@ -64,7 +75,7 @@ class AiAgent {
                     decision.parcels[i] = 'Grass'; // Needed for organic nutrition
                 }
                 else {
-                    const goodNext = mainCrops.filter(c => { var _a; return ((_a = constants_1.CROP_SEQUENCE_MATRIX[prevCrop]) === null || _a === void 0 ? void 0 : _a[c]) === 'good'; });
+                    const goodNext = mainCrops.filter((c) => { var _a; return ((_a = constants_1.CROP_SEQUENCE_MATRIX[prevCrop]) === null || _a === void 0 ? void 0 : _a[c]) === 'good'; });
                     if (goodNext.length > 0) {
                         decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
                     }

@@ -266,16 +266,47 @@ import { AuthService } from '../auth.service';
   `,
 })
 export class AdminRegisterComponent {
-  t(key: string): string {
-    return $localize`:@@${key}:${key}`;
-  }
-  t(key: string): string {
-    return $localize`:@@${key}:${key}`;
-  }
   private fb = inject(FormBuilder);
   authentication = inject(AuthService);
   gameService = inject(GameService);
   router = inject(Router);
+
+  t(key: string): string {
+    const translations: Record<string, string> = {
+      'adminRegister.signedInAs': $localize`:@@adminRegister.signedInAs:Angemeldet als`,
+      'adminRegister.viaGoogle': $localize`:@@adminRegister.viaGoogle:via Google`,
+      'adminRegister.completeApp': $localize`:@@adminRegister.completeApp:Bitte vervollständigen Sie Ihre Daten.`,
+      'adminRegister.email': $localize`:@@adminRegister.email:E-Mail`,
+      'adminRegister.placeholder.email': $localize`:@@adminRegister.placeholder.email:admin@school.edu`,
+      'adminRegister.error.email': $localize`:@@adminRegister.error.email:Gültige E-Mail erforderlich`,
+      'adminRegister.password': $localize`:@@adminRegister.password:Passwort`,
+      'adminRegister.placeholder.password': $localize`:@@adminRegister.placeholder.password:Minimum 6 Zeichen`,
+      'adminRegister.error.password': $localize`:@@adminRegister.error.password:Min. 6 Zeichen`,
+      'adminRegister.confirmPassword': $localize`:@@adminRegister.confirmPassword:Passwort bestätigen`,
+      'adminRegister.placeholder.confirmPassword': $localize`:@@adminRegister.placeholder.confirmPassword:Passwort bestätigen`,
+      'adminRegister.error.mismatch': $localize`:@@adminRegister.error.mismatch:Passwörter stimmen nicht überein`,
+      'adminRegister.personalDetails': $localize`:@@adminRegister.personalDetails:Persönliche Daten`,
+      'adminRegister.firstName': $localize`:@@adminRegister.firstName:Vorname`,
+      'adminRegister.placeholder.firstName': $localize`:@@adminRegister.placeholder.firstName:Vorname`,
+      'adminRegister.error.required': $localize`:@@adminRegister.error.required:Erforderlich`,
+      'adminRegister.lastName': $localize`:@@adminRegister.lastName:Nachname`,
+      'adminRegister.placeholder.lastName': $localize`:@@adminRegister.placeholder.lastName:Nachname`,
+      'adminRegister.appDetails': $localize`:@@adminRegister.appDetails:Antragsdetails`,
+      'adminRegister.institution': $localize`:@@adminRegister.institution:Institution / Schule`,
+      'adminRegister.placeholder.institution': $localize`:@@adminRegister.placeholder.institution:z.B. Universität Berlin`,
+      'adminRegister.institutionLink': $localize`:@@adminRegister.institutionLink:Link zur Institution`,
+      'adminRegister.placeholder.institutionLink': $localize`:@@adminRegister.placeholder.institutionLink:https://...`,
+      'adminRegister.error.url': $localize`:@@adminRegister.error.url:Gültige URL erforderlich (https://)`,
+      'adminRegister.explanation': $localize`:@@adminRegister.explanation:Warum möchten Sie Soil nutzen?`,
+      'adminRegister.placeholder.explanation': $localize`:@@adminRegister.placeholder.explanation:Kurze Erklärung (min. 10 Zeichen)...`,
+      'adminRegister.error.explanation': $localize`:@@adminRegister.error.explanation:Min. 10 Zeichen erforderlich`,
+      'adminRegister.creatingAccount': $localize`:@@adminRegister.creatingAccount:Konto wird erstellt...`,
+      'adminRegister.btn.complete': $localize`:@@adminRegister.btn.complete:Registrierung abschließen`,
+      'adminRegister.btn.register': $localize`:@@adminRegister.btn.register:Registrieren`,
+      'adminRegister.alreadyAccount': $localize`:@@adminRegister.alreadyAccount:Bereits ein Konto?`,
+    };
+    return translations[key] || key;
+  }
 
   registerForm = this.fb.group(
     {

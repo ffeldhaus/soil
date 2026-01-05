@@ -783,6 +783,23 @@ export class SuperAdminComponent implements OnInit {
   cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
+  t(key: string): string {
+    const translations: Record<string, string> = {
+      'superadmin.title': $localize`:@@superadmin.title:Super Admin`,
+      'user.photoURL': $localize`:@@user.photoURL:assets/images/ok.jpg`,
+      'superadmin.badge': $localize`:@@superadmin.badge:System`,
+      'superadmin.logout': $localize`:@@superadmin.logout:Abmelden`,
+      'superadmin.loading': $localize`:@@superadmin.loading:Daten werden geladen...`,
+      'superadmin.dashboard.title': $localize`:@@superadmin.dashboard.title:System Dashboard`,
+      'superadmin.dashboard.subtitle': $localize`:@@superadmin.dashboard.subtitle:Übersicht und Benutzerverwaltung`,
+      'superadmin.dashboard.refresh': $localize`:@@superadmin.dashboard.refresh:Aktualisieren`,
+      'superadmin.stats.totalGames': $localize`:@@superadmin.stats.totalGames:Gesamt Spiele`,
+      'superadmin.stats.created': $localize`:@@superadmin.stats.created:erstellt`,
+      'superadmin.stats.active': $localize`:@@superadmin.stats.active:Aktiv`,
+    };
+    return translations[key] || key;
+  }
+
   pendingUsers: any[] = [];
   admins: any[] = [];
 

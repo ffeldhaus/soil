@@ -168,7 +168,10 @@ import { AuthService } from '../auth.service';
 })
 export class AdminLoginComponent {
   t(key: string): string {
-    return $localize`:@@${key}:${key}`;
+    const translations: Record<string, string> = {
+      'adminLogin.placeholder.email': $localize`:@@adminLogin.placeholder.email:admin@school.edu`,
+    };
+    return translations[key] || key;
   }
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);

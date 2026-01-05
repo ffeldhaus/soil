@@ -21,7 +21,10 @@ import { Game, UserStatus } from '../../types';
 })
 export class Dashboard implements OnInit, OnDestroy {
   t(key: string): string {
-    return $localize`:@@${key}:${key}`;
+    const translations: Record<string, string> = {
+      'dashboard.title': $localize`:@@dashboard.title:Lehrkraft-Dashboard`,
+    };
+    return translations[key] || key;
   }
   private authService = inject(AuthService);
   private gameService = inject(GameService);
