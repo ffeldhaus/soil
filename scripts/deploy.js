@@ -117,7 +117,7 @@ const monitorCloudBuild = async (version) => {
         console.log('Streaming logs from Cloud Build...');
 
         try {
-          execSync(`gcloud builds log ${build.id} --region=${region}`, { stdio: 'inherit' });
+          execSync(`gcloud builds log ${build.id} --region=${region} --stream`, { stdio: 'inherit' });
           console.log('\x1b[32mCloud Build completed successfully!\x1b[0m');
         } catch (e) {
           console.error('\x1b[31mCloud Build failed or was interrupted.\x1b[0m');
