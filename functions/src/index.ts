@@ -177,8 +177,16 @@ async function performCalculation(
       player.history && player.history.length > 0 ? player.history[player.history.length - 1] : undefined;
 
     const currentCapital = lastRound?.result?.capital ?? player.capital ?? 1000;
+    const roundLimit = game.settings?.length || 20;
 
-    const nextRound = GameEngine.calculateRound(nextRoundNumber, lastRound, playerDecision, events, currentCapital);
+    const nextRound = GameEngine.calculateRound(
+      nextRoundNumber,
+      lastRound,
+      playerDecision,
+      events,
+      currentCapital,
+      roundLimit,
+    );
 
     // Calculate player-specific averages
     const pAvgSoil = nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.soil, 0) / nextRound.parcelsSnapshot.length;
@@ -285,14 +293,13 @@ export const createGame = onCall(async (request) => {
   const {
     name,
     // password, // Unused
-    settings = { length: 10, difficulty: 'normal', playerLabel: 'Player' },
-    config = { numPlayers: 1, numRounds: 12, numAi: 0 }, // Default config to 12 as requested
+    settings = { length: 20, difficulty: 'normal', playerLabel: 'Player' },
+    config = { numPlayers: 1, numRounds: 20, numAi: 0 }, // Default config to 20 as requested
     retentionDays = 90,
   } = request.data;
 
-  // Rounds range check: 10-12 minimum, 20-50 maximum.
-  // We'll allow 10 to 100 for now but defaults should be better.
-  const numRounds = Math.min(100, Math.max(10, config.numRounds || 12));
+  // Rounds range check: 10 minimum, 50 maximum.
+  const numRounds = Math.min(50, Math.max(10, config.numRounds || 20));
   config.numRounds = numRounds;
   settings.length = numRounds;
 

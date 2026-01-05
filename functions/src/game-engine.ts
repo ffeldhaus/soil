@@ -20,6 +20,7 @@ export class GameEngine {
     decision: RoundDecision,
     events: { weather: string; vermin: string },
     currentCapital: number,
+    totalRounds = 20, // Default to 20
   ): Round {
     const previousParcels = previousRound ? previousRound.parcelsSnapshot : this.createInitialParcels();
     const parcelupdates: Parcel[] = [];
@@ -31,6 +32,12 @@ export class GameEngine {
     const animalParcels = Object.values(decision.parcels).filter((c) => c === 'Grass').length;
     const machineLevel = Math.min(4, Math.max(0, decision.machines || 0));
 
+    // Dynamic Scaling: Balance the speed of change based on game length
+    // Baseline is 20 rounds.
+    // In 10 rounds, things happen twice as fast. In 100 rounds, five times slower.
+    const timeScale = 20 / totalRounds;
+    const costScale = totalRounds / 20;
+
     // Organic status: Bio-Siegel is lost if synthetic fertilizer or pesticide is used
     const bioSiegel = decision.organic && !decision.fertilizer && !decision.pesticide;
 
@@ -40,7 +47,8 @@ export class GameEngine {
 
     // Machine factors
     const machineYieldBonus = MACHINE_FACTORS.YIELD_BONUS[machineLevel];
-    const machineSoilImpact = SOIL.MACHINE_IMPACT[machineLevel];
+    // Soil impact: scaling should be moderate. High tech should always be risky.
+    const machineSoilImpact = SOIL.MACHINE_IMPACT[machineLevel] * Math.pow(timeScale, 0.5);
 
     // -- 2. Calculate Parcel Updates --
     previousParcels.forEach((prevParcel, index) => {
@@ -53,36 +61,54 @@ export class GameEngine {
       // A. SOIL CALCULATION
       let soilFactor = 0;
 
-      // Base crop impact
-      if (SOIL.PLANTATION_GAINS[cropKey]) soilFactor += SOIL.PLANTATION_GAINS[cropKey];
-      if (SOIL.PLANTATION_LOSSES[cropKey]) soilFactor += SOIL.PLANTATION_LOSSES[cropKey];
+      // Base crop impact (scaled)
+      if (SOIL.PLANTATION_GAINS[cropKey]) soilFactor += SOIL.PLANTATION_GAINS[cropKey] * timeScale;
+      if (SOIL.PLANTATION_LOSSES[cropKey]) soilFactor += SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
 
-      // Fallow recovery
+      // Fallow recovery (scaled)
       if (cropKey === 'Fallow') {
         const diff = Math.max(SOIL.START - prevParcel.soil, 0);
-        soilFactor += (diff / SOIL.START) * SOIL.FALLOW_RECOVERY;
+        soilFactor += (diff / SOIL.START) * SOIL.FALLOW_RECOVERY * timeScale;
       }
 
-      // Crop Sequence
+      // Crop Sequence (scaled)
       const prevCrop = prevParcel.crop;
       const sequenceQuality = CROP_SEQUENCE_MATRIX[prevCrop]?.[newCrop] || 'ok';
-      if (sequenceQuality === 'good') soilFactor += SOIL.CROP_ROTATION_BONUS;
-      if (sequenceQuality === 'bad') soilFactor += SOIL.CROP_ROTATION_PENALTY;
+      if (sequenceQuality === 'good') soilFactor += SOIL.CROP_ROTATION_BONUS * timeScale;
+      if (sequenceQuality === 'bad') soilFactor += SOIL.CROP_ROTATION_PENALTY * timeScale;
 
-      // Monoculture penalty (same crop twice)
+      // Monoculture penalty (scaled)
       if (prevCrop === newCrop && newCrop !== 'Fallow' && newCrop !== 'Grass') {
-        soilFactor += SOIL.MONOCULTURE_PENALTY;
+        soilFactor += SOIL.MONOCULTURE_PENALTY * timeScale;
       }
 
-      // Inputs impact
-      if (decision.fertilizer) soilFactor += SOIL.FERTILIZER_SYNTHETIC_IMPACT;
-      if (decision.pesticide) soilFactor += SOIL.PESTICIDE_IMPACT;
+      // Inputs impact (scaled moderately)
+      if (decision.fertilizer) soilFactor += SOIL.FERTILIZER_SYNTHETIC_IMPACT * Math.pow(timeScale, 0.7);
+      if (decision.pesticide) soilFactor += SOIL.PESTICIDE_IMPACT * Math.pow(timeScale, 0.7);
 
       // Machines impact
       soilFactor += machineSoilImpact;
 
       // Weather impact on soil
-      soilFactor += weather.soil;
+      soilFactor += weather.soil * timeScale;
+
+      // Over-fertilization penalties (Nutrition Burn - scaled)
+      if (prevParcel.nutrition > (SOIL as any).NUTRITION_OVER_PENALTY_START) {
+        soilFactor +=
+          (prevParcel.nutrition - (SOIL as any).NUTRITION_OVER_PENALTY_START) *
+          (SOIL as any).NUTRITION_OVER_PENALTY_FACTOR *
+          timeScale;
+      }
+
+      // Chemical burn from synthetic fertilizer
+      if (decision.fertilizer && prevParcel.nutrition > (SOIL as any).SYNTHETIC_BURN_THRESHOLD) {
+        soilFactor += (SOIL as any).SYNTHETIC_BURN_PENALTY * timeScale;
+      }
+
+      // Organisms soil bonus
+      if (decision.organisms) {
+        soilFactor += (SOIL as any).ORGANISMS_SOIL_BONUS * timeScale;
+      }
 
       // Apply soil change (compounding factor)
       newSoil = prevParcel.soil * (1 + soilFactor);
@@ -181,8 +207,8 @@ export class GameEngine {
     // Labor cost: Base - reduction by machines
     const laborCost = MACHINE_FACTORS.BASE_LABOR_COST * MACHINE_FACTORS.LABOR_COST_REDUCTION[machineLevel];
 
-    // Machine investment/running costs
-    const machineInvestment = MACHINE_FACTORS.INVESTMENT_COST[machineLevel];
+    // Machine investment/running costs (Investment scaled by game length)
+    const machineInvestment = MACHINE_FACTORS.INVESTMENT_COST[machineLevel] * costScale;
 
     const runningCost =
       (decision.organic ? EXPENSES.RUNNING.BASE_ORGANIC : EXPENSES.RUNNING.BASE_CONVENTIONAL) +

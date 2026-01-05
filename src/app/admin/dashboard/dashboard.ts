@@ -59,7 +59,7 @@ export class Dashboard implements OnInit, OnDestroy {
   newGameConfig = {
     name: '',
     numPlayers: 1,
-    numRounds: 12,
+    numRounds: 20,
     numAi: 0,
     playerLabel: 'Player',
     aiLevel: 'middle' as 'elementary' | 'middle' | 'high',

@@ -20,13 +20,12 @@ describe('GameEngine', () => {
 
     expect(round.number).to.equal(1);
     expect(round.parcelsSnapshot).to.have.length(40);
-    // Fallow -> Fallow is 'good' (+0.04). 80 * 1.04 = 83.2 -> 83
-    expect(round.parcelsSnapshot[0].soil).to.equal(83);
+    expect(round.parcelsSnapshot[0].soil).to.equal(82);
   });
 
   it('should decrease soil quality with machines', () => {
     const decision: RoundDecision = {
-      machines: 4, // Impact -0.10
+      machines: 4,
       organic: false,
       fertilizer: false,
       pesticide: false,
@@ -50,10 +49,11 @@ describe('GameEngine', () => {
       parcelsSnapshot: prevParcels,
     };
 
-    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: 'None' }, 1000);
-    // Fallow -> Wheat is 'good' (+0.04). Machines level 4 (-0.10). Wheat loss (-0.01).
-    // Net: 1 + 0.04 - 0.10 - 0.01 = 0.93. 100 * 0.93 = 93.
-    expect(round.parcelsSnapshot[0].soil).to.equal(93);
+    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: 'None' }, 1000, 20);
+    // Fallow -> Wheat is 'good' (+0.02). Machines level 4 (-0.10). Wheat loss (-0.005).
+    // TotalRounds=20, timeScale=1.0.
+    // Net: 1 + 0.02 - 0.10 - 0.005 = 0.915. 100 * 0.915 = 91.5 -> 92.
+    expect(round.parcelsSnapshot[0].soil).to.equal(92);
   });
 
   it('organic farming should benefit from animals', () => {
@@ -120,11 +120,10 @@ describe('GameEngine', () => {
       { weather: 'Drought', vermin: 'None' },
       1000,
     );
-    // Wheat base yield is 115. Drought multiplier is 0.7. Soil/Nutr are 80 (multiplier 1.0).
-    // 115 * 0.7 = 80.5 -> 81
+    // Wheat base yield is 115. Drought multiplier is 0.7.
     expect(roundDrought.parcelsSnapshot[0].yield).to.equal(81);
-    // Drought soil impact is -0.03. Wheat is -0.01. Fallow->Wheat is 'good' (+0.04). Net 0.
-    // 80 * (1 + 0) = 80.
+    // Drought soil impact: Fallow->Wheat (+0.02), Wheat (-0.005), Drought (-0.01). TotalRounds=20, timeScale=1.0.
+    // Net +0.005. 80 * 1.005 = 80.4 -> 80.
     expect(roundDrought.parcelsSnapshot[0].soil).to.equal(80);
   });
 

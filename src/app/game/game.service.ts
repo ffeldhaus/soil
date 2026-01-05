@@ -156,7 +156,7 @@ export class GameService {
     const createGameFn = httpsCallable(this.functions, 'createGame');
     try {
       const settings = {
-        length: config.numRounds || 10,
+        length: config.numRounds || 20,
         difficulty: 'normal',
         playerLabel: config.playerLabel || 'Player',
       };
