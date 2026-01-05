@@ -560,18 +560,18 @@ export class Dashboard implements OnInit, OnDestroy {
 
   async generateQrCode(gameId: string, playerNumber: number, password: string) {
     if (!this.QRCode) {
-      const module = await import('qrcode');
+      const module = await import('qrcode-generator');
       this.QRCode = module.default || module;
     }
-    // URL format: https://domain/game?id=...&player=...&pin=... ??
-    // Or just a JSON blob? User said "automatically log in the player".
-    // So likely a URL that the app handles.
-    // For now: https://soil-602ea.web.app/join?gameId=...&player=...&pin=...
-    // I need to implement the route or handle query params in Board.
     const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
 
     try {
-      this.qrCodeUrl = await this.QRCode.toDataURL(url);
+      const typeNumber = 0; // auto detect
+      const errorCorrectionLevel = 'L';
+      const qr = this.QRCode(typeNumber, errorCorrectionLevel);
+      qr.addData(url);
+      qr.make();
+      this.qrCodeUrl = qr.createDataURL(4);
       this.qrCodePlayer = `Player ${playerNumber}`;
     } catch (err) {
       console.error(err);

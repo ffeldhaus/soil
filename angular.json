@@ -37,8 +37,10 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
-              "qrcode",
-              "dijkstrajs"
+              "dijkstrajs",
+              "@grpc/grpc-js",
+              "@grpc/proto-loader",
+              "undici"
             ],
             "define": {
               "import.meta.env.APP_VERSION": "\"1.1.4\""
