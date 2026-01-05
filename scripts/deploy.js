@@ -55,6 +55,25 @@ const performDeployment = async (newVersion) => {
     execSync(`git tag -a v${newVersion} -m "v${newVersion}"`, { stdio: 'inherit' });
     console.log(`Successfully committed and tagged v${newVersion}`);
 
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    const push = await new Promise((resolve) => {
+      rl.question('Push to GitHub now to start the background build? (Y/n): ', (answer) => {
+        resolve(answer.trim().toLowerCase() !== 'n');
+      });
+    });
+
+    if (push) {
+      console.log('Pushing to GitHub...');
+      execSync('git push origin main --tags', { stdio: 'inherit' });
+      console.log('Successfully pushed to GitHub. Background build should start soon.');
+    }
+
+    rl.close();
+
     const firebasePath = './node_modules/.bin/firebase';
     console.log('Deploying backend and rules to Firebase (App Hosting handles frontend)...');
     execSync(`${firebasePath} deploy --only functions,firestore,storage`, {
@@ -63,29 +82,13 @@ const performDeployment = async (newVersion) => {
 
     console.log('Deployment complete!');
 
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-
-    const push = await new Promise((resolve) => {
-      rl.question('Push to GitHub? (Y/n): ', (answer) => {
-        resolve(answer.trim().toLowerCase() !== 'n');
-      });
-    });
-
     if (push) {
-      console.log('Pushing to GitHub...');
-      execSync('git push origin main --tags', { stdio: 'inherit' });
-      console.log('Successfully pushed to GitHub.');
-
       await monitorCloudBuild(newVersion);
     } else {
       console.log(`IMPORTANT: Remember to push the new commit and tag to GitHub:`);
       console.log(`git push origin main --tags`);
     }
 
-    rl.close();
     console.log('Note: Frontend deployment is handled automatically by App Hosting upon push to main.');
   } catch (error) {
     console.error('Deployment or Git operation failed:', error.message);
