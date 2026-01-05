@@ -19,8 +19,16 @@ const angularApp = new AngularNodeAppEngine();
  * Detect language and redirect from root
  */
 app.get('/', (req, res, next) => {
+  // Skip redirect during local development with ng serve
+  if (req.headers.host?.includes('localhost:4200')) {
+    next();
+    return;
+  }
+
   // If request is exactly root, redirect to best language
-  if (req.path === '/') {
+  // Using req.originalUrl to be safe with mounted paths
+  const url = req.originalUrl || req.url;
+  if (url === '/' || url === '') {
     const lang = req.acceptsLanguages('de', 'en') || 'de';
     res.redirect(302, `/${lang}/`);
     return;
