@@ -159,6 +159,15 @@
     "subtitle": "The guide for successful farmers",
     "print": "Save as PDF",
     "back": "Back to Game",
+    "printModal": {
+      "title": "Print Settings",
+      "size": "Paper Size",
+      "orientation": "Orientation",
+      "portrait": "Portrait",
+      "landscape": "Landscape",
+      "print": "Print",
+      "cancel": "Cancel"
+    },
     "footer": "Good luck with your simulation! Always keep an eye on the balance between yield and sustainability.",
     "intro": {
       "title": "Introduction",
@@ -171,11 +180,43 @@
         "text": "Each round, you decide what to plant on your fields. Pay attention to crop rotation: certain plants grow better after others. Fertilizers and pesticides increase yield but can strain the soil in the long term. Beneficial organisms and organic methods promote soil health."
       }
     },
+    "concepts": {
+      "title": "Concepts & Units",
+      "units": {
+        "title": "Units of Measure",
+        "text": "In agriculture, we use specific units: <b>ha</b> (hectare) describes the area (1 ha = 10,000 m²). <b>dt</b> (decitonne) describes the weight (1 dt = 100 kg). Yields are often given in <b>dt/ha</b> (decitonnes per hectare)."
+      },
+      "pest": {
+        "title": "Pests",
+        "text": "Each type of crop has specific pests that can reduce yield. Infestation varies depending on weather and crop rotation."
+      },
+      "rotation": {
+        "title": "Crop Rotation",
+        "text": "Crop rotation describes the temporal sequence of crops on a field. A good sequence maintains soil fertility and reduces disease pressure."
+      },
+      "requirements": {
+        "title": "Requirements",
+        "text": "Plants have different demands on soil quality and nutrient supply (minerals)."
+      },
+      "weather": {
+        "title": "Weather Sensitivity",
+        "text": "Extreme weather such as drought, cold, or flooding has different effects on yield depending on the variety."
+      },
+      "yield": {
+        "title": "Yield Heights",
+        "text": "Yield indicates how much crop is harvested per area. It depends on the variety, care, and environmental conditions."
+      },
+      "price": {
+        "title": "Prices & Market Values",
+        "text": "Seed prices are fixed, while selling prices (market values) vary depending on the cultivation method (Conventional vs. Organic)."
+      }
+    },
     "crops": {
       "title": "Crop Pass",
       "rotation": "Crop Rotation Graph",
       "rotationPrev": "Suitable Previous Crops",
       "rotationNext": "Suitable Next Crops",
+      "current": "Current Crop",
       "requirements": "Requirements",
       "soil": "Soil Quality",
       "minerals": "Minerals",

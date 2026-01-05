@@ -159,6 +159,15 @@
     "subtitle": "Der Leitfaden für erfolgreiche Farmer",
     "print": "Als PDF speichern",
     "back": "Zurück zum Spiel",
+    "printModal": {
+      "title": "Druckeinstellungen",
+      "size": "Papierformat",
+      "orientation": "Ausrichtung",
+      "portrait": "Hochformat",
+      "landscape": "Querformat",
+      "print": "Drucken",
+      "cancel": "Abbrechen"
+    },
     "footer": "Viel Erfolg bei Ihrer Simulation! Achten Sie stets auf das Gleichgewicht zwischen Ertrag und Nachhaltigkeit.",
     "intro": {
       "title": "Einführung",
@@ -171,11 +180,43 @@
         "text": "Jede Runde entscheiden Sie, was auf Ihren Feldern gepflanzt wird. Beachten Sie dabei die Fruchtfolge: Bestimmte Pflanzen wachsen besser nach anderen. Dünger und Pestizide steigern den Ertrag, können aber langfristig den Boden belasten. Nützlinge und biologische Methoden fördern die Bodengesundheit."
       }
     },
+    "concepts": {
+      "title": "Konzepte & Einheiten",
+      "units": {
+        "title": "Maßeinheiten",
+        "text": "In der Landwirtschaft nutzen wir spezifische Einheiten: <b>ha</b> (Hektar) beschreibt die Fläche (1 ha = 10.000 m²). <b>dt</b> (Dezitonne) beschreibt das Gewicht (1 dt = 100 kg). Erträge werden oft in <b>dt/ha</b> (Dezitonnen pro Hektar) angegeben."
+      },
+      "pest": {
+        "title": "Schädlinge",
+        "text": "Jede Fruchtart hat spezifische Schädlinge, die den Ertrag mindern können. Der Befall variiert je nach Wetter und Fruchtfolge."
+      },
+      "rotation": {
+        "title": "Fruchtfolge",
+        "text": "Die Fruchtfolge beschreibt die zeitliche Abfolge von Kulturen auf einem Feld. Eine gute Folge erhält die Bodenfruchtbarkeit und mindert Krankheitsdruck."
+      },
+      "requirements": {
+        "title": "Anforderungen",
+        "text": "Pflanzen haben unterschiedliche Ansprüche an die Bodenqualität und die Nährstoffversorgung (Minerale)."
+      },
+      "weather": {
+        "title": "Wetterempfindlichkeit",
+        "text": "Extremwetter wie Dürre, Kälte oder Überschwemmungen wirken sich je nach Sorte unterschiedlich stark auf den Ertrag aus."
+      },
+      "yield": {
+        "title": "Ertragshöhen",
+        "text": "Der Ertrag gibt an, wie viel Erntegut pro Fläche geerntet wird. Er hängt von der Sorte, der Pflege und den Umweltbedingungen ab."
+      },
+      "price": {
+        "title": "Preise & Marktwerte",
+        "text": "Die Saatgutpreise sind fix, während die Verkaufspreise (Marktwerte) je nach Anbaumethode (Konventionell vs. Bio) variieren."
+      }
+    },
     "crops": {
       "title": "Sortenpass",
       "rotation": "Fruchtfolge-Graph",
       "rotationPrev": "Gute Vorfrüchte",
       "rotationNext": "Gute Nachfrüchte",
+      "current": "Aktuelle Frucht",
       "requirements": "Anforderungen",
       "soil": "Bodenqualität",
       "minerals": "Mineralstoffe",
