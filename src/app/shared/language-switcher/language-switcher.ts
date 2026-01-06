@@ -28,31 +28,32 @@ import { LanguageService } from '../../services/language.service';
       </button>
 
       <!-- Dropdown Menu -->
-      <div
-        *ngIf="isOpen()"
-        class="absolute right-0 mt-2 w-32 origin-top-right rounded-xl bg-gray-900/90 backdrop-blur-2xl border border-emerald-500/20 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none z-[110] animate-fade-in"
-      >
-        <div class="py-1">
-          <button
-            (click)="setLang('de')"
-            class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-emerald-500/20 hover:text-white"
-            [class.text-emerald-400]="languageService.currentLang === 'de'"
-            [class.text-gray-300]="languageService.currentLang !== 'de'"
-            [class.bg-emerald-500/10]="languageService.currentLang === 'de'"
-          >
-            Deutsch
-          </button>
-          <button
-            (click)="setLang('en')"
-            class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-emerald-500/20 hover:text-white"
-            [class.text-emerald-400]="languageService.currentLang === 'en'"
-            [class.text-gray-300]="languageService.currentLang !== 'en'"
-            [class.bg-emerald-500/10]="languageService.currentLang === 'en'"
-          >
-            English
-          </button>
+      @if (isOpen()) {
+        <div
+          class="absolute right-0 mt-2 w-32 origin-top-right rounded-xl bg-gray-900/90 backdrop-blur-2xl border border-emerald-500/20 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none z-[110] animate-fade-in"
+        >
+          <div class="py-1">
+            <button
+              (click)="setLang('de')"
+              class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-emerald-500/20 hover:text-white"
+              [class.text-emerald-400]="languageService.currentLang === 'de'"
+              [class.text-gray-300]="languageService.currentLang !== 'de'"
+              [class.bg-emerald-500/10]="languageService.currentLang === 'de'"
+            >
+              Deutsch
+            </button>
+            <button
+              (click)="setLang('en')"
+              class="w-full text-left px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-colors hover:bg-emerald-500/20 hover:text-white"
+              [class.text-emerald-400]="languageService.currentLang === 'en'"
+              [class.text-gray-300]="languageService.currentLang !== 'en'"
+              [class.bg-emerald-500/10]="languageService.currentLang === 'en'"
+            >
+              English
+            </button>
+          </div>
         </div>
-      </div>
+      }
     </div>
   `,
   styles: [

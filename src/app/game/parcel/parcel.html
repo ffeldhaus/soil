@@ -9,22 +9,25 @@
   ></div>
 
   <!-- Background Image -->
-  <img
-    *ngIf="parcel.crop"
-    [src]="'assets/images/' + getConfig(parcel.crop).image"
-    [alt]="t('parcel.crop')"
-    class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-    onerror="this.style.display = 'none'"
-  />
+  @if (parcel.crop) {
+    <img
+      [src]="'assets/images/' + getConfig(parcel.crop).image"
+      [alt]="t('parcel.crop')"
+      class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+      onerror="this.style.display = 'none'"
+    />
+  }
 
   <!-- Text Overlay (Top Center) -->
-  <div *ngIf="showLabels" class="absolute top-1 left-0 right-0 flex justify-center pointer-events-none z-20">
-    <div
-      class="bg-gray-300/90 text-gray-900 text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-gray-400/50"
-    >
-      {{ getConfig(parcel.crop).label }}
+  @if (showLabels) {
+    <div class="absolute top-1 left-0 right-0 flex justify-center pointer-events-none z-20">
+      <div
+        class="bg-gray-300/90 text-gray-900 text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-gray-400/50"
+      >
+        {{ getConfig(parcel.crop).label }}
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Bottom Stats with Yield -->
   <div
@@ -34,29 +37,35 @@
   </div>
 
   <!-- Nutrition Overlay -->
-  <div *ngIf="showNutrition" class="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none z-30">
-    <div
-      class="bg-blue-600/90 text-white text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-blue-400/50"
-    >
-      {{ parcel.nutrition | number: '1.0-0' }}
+  @if (showNutrition) {
+    <div class="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none z-30">
+      <div
+        class="bg-blue-600/90 text-white text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-blue-400/50"
+      >
+        {{ parcel.nutrition | number: '1.0-0' }}
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Harvest Overlay -->
-  <div *ngIf="showHarvest" class="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-    <div
-      class="bg-yellow-500/90 text-black text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-yellow-300"
-    >
-      {{ parcel.yield || 0 | number: '1.0-0' }}
+  @if (showHarvest) {
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+      <div
+        class="bg-yellow-500/90 text-black text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-yellow-300"
+      >
+        {{ parcel.yield || 0 | number: '1.0-0' }}
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Soil Overlay -->
-  <div *ngIf="showSoil" class="absolute inset-x-0 top-6 flex justify-center pointer-events-none z-30">
-    <div
-      class="bg-emerald-700/90 text-white text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-emerald-400/50"
-    >
-      {{ parcel.soil | number: '1.0-0' }}
+  @if (showSoil) {
+    <div class="absolute inset-x-0 top-6 flex justify-center pointer-events-none z-30">
+      <div
+        class="bg-emerald-700/90 text-white text-[10px] sm:text-xs font-bold px-1.5 rounded shadow-sm border border-emerald-400/50"
+      >
+        {{ parcel.soil | number: '1.0-0' }}
+      </div>
     </div>
-  </div>
+  }
 </div>

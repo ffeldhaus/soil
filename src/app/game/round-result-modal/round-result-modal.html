@@ -15,35 +15,37 @@
       <div class="flex justify-between items-center border-b border-gray-700 pb-4">
         <div class="flex flex-col">
           <span i18n="@@roundResult.bioSiegel" class="text-gray-400">EU-Bio-Siegel</span>
-          <span i18n="@@roundResult.bioSiegelFail" class="text-xs text-gray-500" *ngIf="!bioSiegel"
-            >Kriterien nicht erfüllt</span
-          >
-          <span i18n="@@roundResult.bioSiegelSuccess" class="text-xs text-emerald-500" *ngIf="bioSiegel"
-            >Kriterien erfüllt!</span
-          >
+          @if (!bioSiegel) {
+            <span i18n="@@roundResult.bioSiegelFail" class="text-xs text-gray-500">Kriterien nicht erfüllt</span>
+          }
+          @if (bioSiegel) {
+            <span i18n="@@roundResult.bioSiegelSuccess" class="text-xs text-emerald-500">Kriterien erfüllt!</span>
+          }
         </div>
 
         <div [class.bg-emerald-500]="bioSiegel" [class.bg-gray-700]="!bioSiegel" class="p-2 rounded-full">
-          <svg
-            *ngIf="bioSiegel"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-          <svg
-            *ngIf="!bioSiegel"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          @if (bioSiegel) {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          }
+          @if (!bioSiegel) {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          }
         </div>
       </div>
 

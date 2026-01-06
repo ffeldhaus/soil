@@ -24,52 +24,53 @@
           >
             {{ r }}
           </button>
-          <span
-            *ngIf="availableRounds.length === 0"
-            i18n="@@finance.noRounds"
-            class="px-4 py-2 text-sm text-gray-500 font-mono"
-            >Keine Runden verfügbar</span
-          >
+          @if (availableRounds.length === 0) {
+            <span i18n="@@finance.noRounds" class="px-4 py-2 text-sm text-gray-500 font-mono"
+              >Keine Runden verfügbar</span
+            >
+          }
         </div>
       </div>
 
       <!-- Capital History Chart -->
-      <div *ngIf="availableRounds.length > 0" class="space-y-4">
-        <h3 i18n="@@finance.charts.capital" class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">
-          Kapitalverlauf
-        </h3>
-        <div
-          class="bg-gray-900/30 border border-gray-800 rounded-2xl p-6 h-48 flex items-end gap-2 relative overflow-hidden group"
-        >
-          <!-- Grid Lines -->
-          <div class="absolute inset-x-0 bottom-6 border-t border-gray-800/50"></div>
-          <div class="absolute inset-x-0 bottom-24 border-t border-gray-800/30"></div>
-          <div class="absolute inset-x-0 top-12 border-t border-gray-800/10"></div>
-
+      @if (availableRounds.length > 0) {
+        <div class="space-y-4">
+          <h3 i18n="@@finance.charts.capital" class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">
+            Kapitalverlauf
+          </h3>
           <div
-            *ngFor="let p of players"
-            class="flex-1 flex flex-col items-center group/bar relative h-full justify-end"
+            class="bg-gray-900/30 border border-gray-800 rounded-2xl p-6 h-48 flex items-end gap-2 relative overflow-hidden group"
           >
-            <div class="flex gap-0.5 items-end justify-center w-full h-full pb-1">
-              <div
-                *ngFor="let cap of p.capitalHistory; let i = index"
-                class="w-full max-w-[12px] rounded-t-sm transition-all duration-500 ease-out"
-                [style.height]="getChartHeight(cap, getMaxCapital())"
-                [ngClass]="{
-                  'bg-emerald-500/40': p.uid === playerUid && i === p.capitalHistory.length - 1,
-                  'bg-emerald-600': p.uid === playerUid && i < p.capitalHistory.length - 1,
-                  'bg-blue-500/40': p.uid !== playerUid && i === p.capitalHistory.length - 1,
-                  'bg-blue-600': p.uid !== playerUid && i < p.capitalHistory.length - 1,
-                }"
-              ></div>
-            </div>
-            <span
-              class="text-[9px] font-bold text-gray-600 mt-2 truncate max-w-full group-hover/bar:text-gray-300 transition-colors"
-              >{{ p.name }}</span
+            <!-- Grid Lines -->
+            <div class="absolute inset-x-0 bottom-6 border-t border-gray-800/50"></div>
+            <div class="absolute inset-x-0 bottom-24 border-t border-gray-800/30"></div>
+            <div class="absolute inset-x-0 top-12 border-t border-gray-800/10"></div>
+
+            <div
+              *ngFor="let p of players"
+              class="flex-1 flex flex-col items-center group/bar relative h-full justify-end"
             >
+              <div class="flex gap-0.5 items-end justify-center w-full h-full pb-1">
+                <div
+                  *ngFor="let cap of p.capitalHistory; let i = index"
+                  class="w-full max-w-[12px] rounded-t-sm transition-all duration-500 ease-out"
+                  [style.height]="getChartHeight(cap, getMaxCapital())"
+                  [ngClass]="{
+                    'bg-emerald-500/40': p.uid === playerUid && i === p.capitalHistory.length - 1,
+                    'bg-emerald-600': p.uid === playerUid && i < p.capitalHistory.length - 1,
+                    'bg-blue-500/40': p.uid !== playerUid && i === p.capitalHistory.length - 1,
+                    'bg-blue-600': p.uid !== playerUid && i < p.capitalHistory.length - 1,
+                  }"
+                ></div>
+              </div>
+              <span
+                class="text-[9px] font-bold text-gray-600 mt-2 truncate max-w-full group-hover/bar:text-gray-300 transition-colors"
+                >{{ p.name }}</span
+              >
+            </div>
           </div>
         </div>
-      </div>
+      }
 
       <div class="overflow-x-auto rounded-3xl border border-gray-800 bg-gray-900/40 shadow-2xl backdrop-blur-sm">
         <table class="w-full text-left border-collapse">
@@ -89,12 +90,13 @@
                   <span [class.text-emerald-400]="p.uid === playerUid" [class.text-blue-400]="p.uid !== playerUid">{{
                     p.name
                   }}</span>
-                  <span
-                    *ngIf="p.uid === playerUid"
-                    i18n="@@finance.you"
-                    class="text-[9px] bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter"
-                    >DU</span
-                  >
+                  @if (p.uid === playerUid) {
+                    <span
+                      i18n="@@finance.you"
+                      class="text-[9px] bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter"
+                      >DU</span
+                    >
+                  }
                 </div>
               </th>
             </tr>
@@ -115,8 +117,11 @@
                 Mineraldünger
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                <span *ngIf="p.decision?.fertilizer" class="text-emerald-500 text-base">●</span>
-                <span *ngIf="!p.decision?.fertilizer" class="text-gray-800 text-base">○</span>
+                @if (p.decision?.fertilizer) {
+                  <span class="text-emerald-500 text-base">●</span>
+                } @else {
+                  <span class="text-gray-800 text-base">○</span>
+                }
               </td>
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
@@ -124,8 +129,11 @@
                 Pflanzenschutz
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                <span *ngIf="p.decision?.pesticide" class="text-red-500 text-base">●</span>
-                <span *ngIf="!p.decision?.pesticide" class="text-gray-800 text-base">○</span>
+                @if (p.decision?.pesticide) {
+                  <span class="text-red-500 text-base">●</span>
+                } @else {
+                  <span class="text-gray-800 text-base">○</span>
+                }
               </td>
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
@@ -133,8 +141,11 @@
                 Nützlinge
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                <span *ngIf="p.decision?.organisms" class="text-emerald-500 text-base">●</span>
-                <span *ngIf="!p.decision?.organisms" class="text-gray-800 text-base">○</span>
+                @if (p.decision?.organisms) {
+                  <span class="text-emerald-500 text-base">●</span>
+                } @else {
+                  <span class="text-gray-800 text-base">○</span>
+                }
               </td>
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
@@ -142,8 +153,11 @@
                 Ökologischer Landbau
               </td>
               <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                <span *ngIf="p.decision?.organic" class="text-emerald-500 text-base">●</span>
-                <span *ngIf="!p.decision?.organic" class="text-gray-800 text-base">○</span>
+                @if (p.decision?.organic) {
+                  <span class="text-emerald-500 text-base">●</span>
+                } @else {
+                  <span class="text-gray-800 text-base">○</span>
+                }
               </td>
             </tr>
 
@@ -303,7 +317,9 @@
                 [class.text-emerald-500]="(p.result?.profit || 0) >= 0"
                 [class.text-red-500]="(p.result?.profit || 0) < 0"
               >
-                <span *ngIf="(p.result?.profit || 0) > 0">+</span>
+                @if ((p.result?.profit || 0) > 0) {
+                  <span>+</span>
+                }
                 {{ p.result?.profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
               </td>
             </tr>
@@ -345,22 +361,29 @@
           </div>
 
           <div class="space-y-6">
-            <div *ngIf="p.result?.events?.weather" class="space-y-2">
-              <p i18n="@@finance.event.weather" class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                Wetter-Einfluss
-              </p>
-              <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
-                "{{ p.result?.events?.weather }}"
+            @if (p.result?.events?.weather) {
+              <div class="space-y-2">
+                <p
+                  i18n="@@finance.event.weather"
+                  class="text-[10px] font-black text-gray-500 uppercase tracking-widest"
+                >
+                  Wetter-Einfluss
+                </p>
+                <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
+                  "{{ p.result?.events?.weather }}"
+                </div>
               </div>
-            </div>
-            <div *ngIf="p.result?.events?.vermin" class="space-y-2">
-              <p i18n="@@finance.event.vermin" class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                Schädlings-Einfluss
-              </p>
-              <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
-                "{{ p.result?.events?.vermin }}"
+            }
+            @if (p.result?.events?.vermin) {
+              <div class="space-y-2">
+                <p i18n="@@finance.event.vermin" class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                  Schädlings-Einfluss
+                </p>
+                <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
+                  "{{ p.result?.events?.vermin }}"
+                </div>
               </div>
-            </div>
+            }
           </div>
         </div>
       </div>

@@ -76,10 +76,11 @@ import { AuthService } from '../auth.service';
             data-testid="player-login-submit"
             class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
           >
-            <ng-container *ngIf="isLoading">{{ t('playerLogin.enteringGame') }}</ng-container>
-            <ng-container *ngIf="!isLoading"
-              ><ng-container i18n="@@playerLogin.startGame">Spiel starten</ng-container></ng-container
-            >
+            @if (isLoading) {
+              <ng-container>{{ t('playerLogin.enteringGame') }}</ng-container>
+            } @else {
+              <ng-container i18n="@@playerLogin.startGame">Spiel starten</ng-container>
+            }
           </button>
         </form>
 
@@ -91,45 +92,46 @@ import { AuthService } from '../auth.service';
       </div>
 
       <!-- Error Modal -->
-      <div
-        *ngIf="showErrorModal"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-        (click)="closeModal()"
-      >
+      @if (showErrorModal) {
         <div
-          class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative"
-          (click)="$event.stopPropagation()"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+          (click)="closeModal()"
         >
-          <div class="flex flex-col items-center text-center gap-4">
-            <div class="p-3 bg-red-900/30 rounded-full text-red-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          <div
+            class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="flex flex-col items-center text-center gap-4">
+              <div class="p-3 bg-red-900/30 rounded-full text-red-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-white mb-2">{{ t('playerLogin.error.title') }}</h3>
+                <p class="text-gray-300">{{ errorMessage }}</p>
+              </div>
+              <button
+                (click)="closeModal()"
+                class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
+                {{ t('playerLogin.error.retry') }}
+              </button>
             </div>
-            <div>
-              <h3 class="text-xl font-bold text-white mb-2">{{ t('playerLogin.error.title') }}</h3>
-              <p class="text-gray-300">{{ errorMessage }}</p>
-            </div>
-            <button
-              (click)="closeModal()"
-              class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition"
-            >
-              {{ t('playerLogin.error.retry') }}
-            </button>
           </div>
         </div>
-      </div>
+      }
     </div>
   `,
 })

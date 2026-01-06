@@ -44,89 +44,86 @@ import { AuthService } from '../auth.service';
           </p>
         </div>
 
-        <h2 class="text-xl font-bold text-center mb-6 text-white" *ngIf="isGoogleUser">
-          <ng-container i18n="@@adminRegister.completeTitle">Registrierung abschließen</ng-container>
-        </h2>
+        @if (isGoogleUser) {
+          <h2 class="text-xl font-bold text-center mb-6 text-white">
+            <ng-container i18n="@@adminRegister.completeTitle">Registrierung abschließen</ng-container>
+          </h2>
 
-        <div
-          *ngIf="isGoogleUser"
-          class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-lg text-center text-gray-100"
-        >
-          <p class="text-blue-200 text-sm">
-            {{ t('adminRegister.signedInAs') }}
-            <span class="font-bold text-white">{{ currentUser?.email }}</span>
-            <ng-container>{{ t('adminRegister.viaGoogle') }}</ng-container
-            >.
-          </p>
-          <p class="text-xs text-gray-400 mt-1">{{ t('adminRegister.completeApp') }}</p>
-        </div>
+          <div class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-lg text-center text-gray-100">
+            <p class="text-blue-200 text-sm">
+              {{ t('adminRegister.signedInAs') }}
+              <span class="font-bold text-white">{{ currentUser?.email }}</span>
+              <ng-container>{{ t('adminRegister.viaGoogle') }}</ng-container
+              >.
+            </p>
+            <p class="text-xs text-gray-400 mt-1">{{ t('adminRegister.completeApp') }}</p>
+          </div>
+        }
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
-          <div
-            *ngIf="errorMessage"
-            class="p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm text-center"
-          >
-            {{ errorMessage }}
-          </div>
+          @if (errorMessage) {
+            <div class="p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm text-center">
+              {{ errorMessage }}
+            </div>
+          }
 
           <!-- Email/Password Section (Hidden for Google Users) -->
-          <div *ngIf="!isGoogleUser" class="space-y-6">
-            <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('adminRegister.email') }}</label>
-              <input
-                formControlName="email"
-                type="email"
-                autocomplete="email"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-                placeholder="admin@school.edu"
-                [placeholder]="'adminRegister.placeholder.email'"
-              />
-              <div
-                *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
-                class="text-red-400 text-xs mt-1"
-              >
-                {{ t('adminRegister.error.email') }}
+          @if (!isGoogleUser) {
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('adminRegister.email') }}</label>
+                <input
+                  formControlName="email"
+                  type="email"
+                  autocomplete="email"
+                  class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+                  placeholder="admin@school.edu"
+                  [placeholder]="'adminRegister.placeholder.email'"
+                />
+                @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.email') }}
+                  </div>
+                }
               </div>
-            </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('adminRegister.password') }}</label>
-              <input
-                formControlName="password"
-                type="password"
-                autocomplete="new-password"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-                placeholder="Minimum 6 characters"
-                [placeholder]="'adminRegister.placeholder.password'"
-              />
-              <div
-                *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
-                class="text-red-400 text-xs mt-1"
-              >
-                {{ t('adminRegister.error.password') }}
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('adminRegister.password') }}</label>
+                <input
+                  formControlName="password"
+                  type="password"
+                  autocomplete="new-password"
+                  class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+                  placeholder="Minimum 6 characters"
+                  [placeholder]="'adminRegister.placeholder.password'"
+                />
+                @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.password') }}
+                  </div>
+                }
               </div>
-            </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2">{{
-                t('adminRegister.confirmPassword')
-              }}</label>
-              <input
-                formControlName="confirmPassword"
-                type="password"
-                autocomplete="new-password"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-                placeholder="Confirm Password"
-                [placeholder]="'adminRegister.placeholder.confirmPassword'"
-              />
-              <div
-                *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched"
-                class="text-red-400 text-xs mt-1"
-              >
-                {{ t('adminRegister.error.mismatch') }}
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">{{
+                  t('adminRegister.confirmPassword')
+                }}</label>
+                <input
+                  formControlName="confirmPassword"
+                  type="password"
+                  autocomplete="new-password"
+                  class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+                  placeholder="Confirm Password"
+                  [placeholder]="'adminRegister.placeholder.confirmPassword'"
+                />
+                @if (registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.mismatch') }}
+                  </div>
+                }
               </div>
             </div>
-          </div>
+          }
 
           <!-- Personal Details -->
           <div class="pt-4 border-t border-gray-700">
@@ -144,12 +141,11 @@ import { AuthService } from '../auth.service';
                   placeholder="John"
                   [placeholder]="'adminRegister.placeholder.firstName'"
                 />
-                <div
-                  *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid"
-                  class="text-red-400 text-xs mt-1"
-                >
-                  {{ t('adminRegister.error.required') }}
-                </div>
+                @if (registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.required') }}
+                  </div>
+                }
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-2"
@@ -163,12 +159,11 @@ import { AuthService } from '../auth.service';
                   placeholder="Doe"
                   [placeholder]="'adminRegister.placeholder.lastName'"
                 />
-                <div
-                  *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid"
-                  class="text-red-400 text-xs mt-1"
-                >
-                  {{ t('adminRegister.error.required') }}
-                </div>
+                @if (registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.required') }}
+                  </div>
+                }
               </div>
             </div>
           </div>
@@ -189,12 +184,11 @@ import { AuthService } from '../auth.service';
                   placeholder="e.g. University of Berlin"
                   [placeholder]="'adminRegister.placeholder.institution'"
                 />
-                <div
-                  *ngIf="registerForm.get('institution')?.touched && registerForm.get('institution')?.invalid"
-                  class="text-red-400 text-xs mt-1"
-                >
-                  {{ t('adminRegister.error.required') }}
-                </div>
+                @if (registerForm.get('institution')?.touched && registerForm.get('institution')?.invalid) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.required') }}
+                  </div>
+                }
               </div>
 
               <div>
@@ -208,12 +202,11 @@ import { AuthService } from '../auth.service';
                   placeholder="https://..."
                   [placeholder]="'adminRegister.placeholder.institutionLink'"
                 />
-                <div
-                  *ngIf="registerForm.get('institutionLink')?.touched && registerForm.get('institutionLink')?.invalid"
-                  class="text-red-400 text-xs mt-1"
-                >
-                  {{ t('adminRegister.error.url') }}
-                </div>
+                @if (registerForm.get('institutionLink')?.touched && registerForm.get('institutionLink')?.invalid) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.url') }}
+                  </div>
+                }
               </div>
 
               <div>
@@ -227,12 +220,11 @@ import { AuthService } from '../auth.service';
                   placeholder="Brief explanation (min 10 chars)..."
                   [placeholder]="'adminRegister.placeholder.explanation'"
                 ></textarea>
-                <div
-                  *ngIf="registerForm.get('explanation')?.touched && registerForm.get('explanation')?.invalid"
-                  class="text-red-400 text-xs mt-1"
-                >
-                  {{ t('adminRegister.error.explanation') }}
-                </div>
+                @if (registerForm.get('explanation')?.touched && registerForm.get('explanation')?.invalid) {
+                  <div class="text-red-400 text-xs mt-1">
+                    {{ t('adminRegister.error.explanation') }}
+                  </div>
+                }
               </div>
             </div>
           </div>
@@ -242,11 +234,15 @@ import { AuthService } from '../auth.service';
             [disabled]="registerForm.invalid || isLoading"
             class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
           >
-            <ng-container *ngIf="isLoading">{{ t('adminRegister.creatingAccount') }}</ng-container>
-            <ng-container *ngIf="!isLoading">
-              <ng-container *ngIf="isGoogleUser">{{ t('adminRegister.btn.complete') }}</ng-container>
-              <ng-container *ngIf="!isGoogleUser">{{ t('adminRegister.btn.register') }}</ng-container>
-            </ng-container>
+            @if (isLoading) {
+              <ng-container>{{ t('adminRegister.creatingAccount') }}</ng-container>
+            } @else {
+              @if (isGoogleUser) {
+                <ng-container>{{ t('adminRegister.btn.complete') }}</ng-container>
+              } @else {
+                <ng-container>{{ t('adminRegister.btn.register') }}</ng-container>
+              }
+            }
           </button>
         </form>
 

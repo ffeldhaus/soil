@@ -419,15 +419,16 @@ import { CropType } from '../types';
                   </div>
 
                   <!-- Special -->
-                  <div
-                    *ngIf="crop.special"
-                    class="sm:col-span-2 bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20 flex gap-4 items-center print:bg-blue-50 print:border-blue-100 print:p-4 portrait:rounded-none portrait:border-0"
-                  >
-                    <span class="text-2xl print:text-xl">💡</span>
-                    <p class="text-sm text-blue-100 italic print:text-blue-800 print:text-xs">
-                      {{ t('special.' + crop.id.toLowerCase()) }}
-                    </p>
-                  </div>
+                  @if (crop.special) {
+                    <div
+                      class="sm:col-span-2 bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20 flex gap-4 items-center print:bg-blue-50 print:border-blue-100 print:p-4 portrait:rounded-none portrait:border-0"
+                    >
+                      <span class="text-2xl print:text-xl">💡</span>
+                      <p class="text-sm text-blue-100 italic print:text-blue-800 print:text-xs">
+                        {{ t('special.' + crop.id.toLowerCase()) }}
+                      </p>
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -440,75 +441,76 @@ import { CropType } from '../types';
       </div>
 
       <!-- Print Settings Modal -->
-      <div
-        *ngIf="showPrintModal"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden portrait:p-0"
-        (click)="showPrintModal = false"
-      >
+      @if (showPrintModal) {
         <div
-          class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-md w-full portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
-          (click)="$event.stopPropagation()"
+          class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden portrait:p-0"
+          (click)="showPrintModal = false"
         >
-          <h2 class="text-2xl font-bold text-white mb-6">{{ t('manual.printModal.title') }}</h2>
+          <div
+            class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-md w-full portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
+            (click)="$event.stopPropagation()"
+          >
+            <h2 class="text-2xl font-bold text-white mb-6">{{ t('manual.printModal.title') }}</h2>
 
-          <div class="space-y-6">
-            <!-- Paper Size -->
-            <div>
-              <label class="block text-sm font-medium text-gray-400 mb-3">{{ t('manual.printModal.size') }}</label>
-              <div class="grid grid-cols-2 gap-3">
-                <button
-                  *ngFor="let size of ['A4', 'Letter']"
-                  (click)="printSize = size"
-                  class="px-4 py-2 rounded-xl border font-bold transition-all"
-                  [ngClass]="
-                    printSize === size
-                      ? 'bg-emerald-600 border-emerald-500 text-white'
-                      : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                  "
-                >
-                  {{ size }}
-                </button>
+            <div class="space-y-6">
+              <!-- Paper Size -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-3">{{ t('manual.printModal.size') }}</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <button
+                    *ngFor="let size of ['A4', 'Letter']"
+                    (click)="printSize = size"
+                    class="px-4 py-2 rounded-xl border font-bold transition-all"
+                    [ngClass]="
+                      printSize === size
+                        ? 'bg-emerald-600 border-emerald-500 text-white'
+                        : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                    "
+                  >
+                    {{ size }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Orientation -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-3">{{
+                  t('manual.printModal.orientation')
+                }}</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <button
+                    *ngFor="let orient of ['portrait', 'landscape']"
+                    (click)="printOrientation = orient"
+                    class="px-4 py-2 rounded-xl border font-bold transition-all"
+                    [ngClass]="
+                      printOrientation === orient
+                        ? 'bg-emerald-600 border-emerald-500 text-white'
+                        : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                    "
+                  >
+                    {{ t('manual.printModal.' + orient) }}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Orientation -->
-            <div>
-              <label class="block text-sm font-medium text-gray-400 mb-3">{{
-                t('manual.printModal.orientation')
-              }}</label>
-              <div class="grid grid-cols-2 gap-3">
-                <button
-                  *ngFor="let orient of ['portrait', 'landscape']"
-                  (click)="printOrientation = orient"
-                  class="px-4 py-2 rounded-xl border font-bold transition-all"
-                  [ngClass]="
-                    printOrientation === orient
-                      ? 'bg-emerald-600 border-emerald-500 text-white'
-                      : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-                  "
-                >
-                  {{ t('manual.printModal.' + orient) }}
-                </button>
-              </div>
+            <div class="flex justify-end gap-3 mt-10">
+              <button
+                (click)="showPrintModal = false"
+                class="px-6 py-2 text-gray-400 hover:text-white transition font-medium"
+              >
+                {{ t('manual.printModal.cancel') }}
+              </button>
+              <button
+                (click)="print()"
+                class="px-8 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition"
+              >
+                {{ t('manual.printModal.print') }}
+              </button>
             </div>
-          </div>
-
-          <div class="flex justify-end gap-3 mt-10">
-            <button
-              (click)="showPrintModal = false"
-              class="px-6 py-2 text-gray-400 hover:text-white transition font-medium"
-            >
-              {{ t('manual.printModal.cancel') }}
-            </button>
-            <button
-              (click)="print()"
-              class="px-8 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition"
-            >
-              {{ t('manual.printModal.print') }}
-            </button>
           </div>
         </div>
-      </div>
+      }
     </div>
   `,
   styles: [
