@@ -39,24 +39,42 @@ app.use((req, res, next) => {
 });
 
 /**
- * Detect language and redirect from root
+ * Detect language and redirect to localized path
  */
-app.get('/', (req, res, next) => {
+app.use((req, res, next) => {
   // Skip redirect during local development with ng serve
   if (req.headers.host?.includes('localhost:4200')) {
     next();
     return;
   }
 
-  // If request is exactly root, redirect to best language
-  // Using req.originalUrl to be safe with mounted paths
-  const url = req.originalUrl || req.url;
-  if (url === '/' || url === '') {
-    const lang = req.acceptsLanguages('de', 'en') || 'de';
-    res.redirect(302, `/${lang}/`);
+  const path = req.path;
+
+  // Skip if it's a root static file
+  if (ROOT_STATIC_FILES.includes(path)) {
+    next();
     return;
   }
-  next();
+
+  // Skip Firebase reserved paths
+  if (path.startsWith('/__')) {
+    next();
+    return;
+  }
+
+  // Check if it already has a locale prefix
+  if (path.startsWith('/de/') || path === '/de' || path.startsWith('/en/') || path === '/en') {
+    next();
+    return;
+  }
+
+  // Detect language and redirect
+  const lang = req.acceptsLanguages('de', 'en') || 'de';
+  const url = req.originalUrl || req.url;
+
+  // Construct new URL with locale
+  const localizedUrl = `/${lang}${url.startsWith('/') ? '' : '/'}${url}`;
+  res.redirect(302, localizedUrl);
 });
 
 /**
