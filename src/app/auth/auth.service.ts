@@ -5,6 +5,8 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithCustomToken,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -26,18 +28,18 @@ export class AuthService {
   user$ = this.userSubject.asObservable();
 
   constructor() {
-    const isBrowser = typeof localStorage !== 'undefined';
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     // Subscribe to real auth state using native SDK
     onAuthStateChanged(this.auth, (u) => {
       this.ngZone.run(() => {
-        if (!isBrowser || !localStorage.getItem('soil_test_mode')) {
+        if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
           this.userSubject.next(u);
         }
       });
     });
 
     // Check for test mode immediate override
-    if (isBrowser && localStorage.getItem('soil_test_mode') === 'true') {
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
       console.log('AuthService: Running in Test Mode');
       this.userSubject.next(this.getMockUser());
     }
@@ -50,6 +52,16 @@ export class AuthService {
 
   async registerWithEmail(email: string, pass: string) {
     return await createUserWithEmailAndPassword(this.auth, email, pass);
+  }
+
+  async sendVerificationEmail() {
+    if (this.auth.currentUser) {
+      await sendEmailVerification(this.auth.currentUser);
+    }
+  }
+
+  async sendPasswordResetEmail(email: string) {
+    await sendPasswordResetEmail(this.auth, email);
   }
 
   async loginWithEmail(email: string, pass: string) {
@@ -76,8 +88,9 @@ export class AuthService {
   }
 
   async logout() {
-    if (localStorage.getItem('soil_test_mode')) {
-      localStorage.removeItem('soil_test_mode');
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode')) {
+      window.localStorage.removeItem('soil_test_mode');
       this.userSubject.next(null);
       return Promise.resolve();
     }

@@ -49,6 +49,12 @@
         </div>
       }
 
+      @if (successMessage) {
+        <div class="p-3 bg-emerald-900/50 border border-emerald-500 rounded text-emerald-200 text-sm text-center">
+          {{ successMessage }}
+        </div>
+      }
+
       <!-- Name Section -->
       <div class="grid grid-cols-2 gap-4">
         <div>
@@ -175,11 +181,11 @@
 
       <div class="text-center">
         <a
-          routerLink="/admin/login"
+          routerLink="/"
           class="text-sm text-gray-400 hover:text-emerald-400 transition"
-          i18n="@@adminRegister.backToLogin"
+          i18n="@@adminRegister.backToHome"
         >
-          Zurück zur Anmeldung
+          Zurück zur Startseite
         </a>
       </div>
     </form>

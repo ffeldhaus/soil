@@ -662,6 +662,22 @@
         <source>admin@schule.de</source>
         <target>admin@school.edu</target>
       </trans-unit>
+      <trans-unit id="adminLogin.forgotPassword" datatype="html">
+        <source>Passwort vergessen?</source>
+        <target>Forgot password?</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.resetEmailSent" datatype="html">
+        <source>E-Mail zum Zurücksetzen des Passworts wurde gesendet.</source>
+        <target>Password reset email has been sent.</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.resetEmailError" datatype="html">
+        <source>Fehler beim Senden der E-Mail zum Zurücksetzen des Passworts.</source>
+        <target>Error sending password reset email.</target>
+      </trans-unit>
+      <trans-unit id="adminLogin.error.emailRequired" datatype="html">
+        <source>Bitte geben Sie Ihre E-Mail-Adresse ein.</source>
+        <target>Please enter your email address.</target>
+      </trans-unit>
       <trans-unit id="adminLogin.password" datatype="html">
         <source>Passwort</source>
         <target>Password</target>
@@ -821,6 +837,10 @@
       <trans-unit id="adminRegister.explanation" datatype="html">
         <source>Warum möchten Sie Soil nutzen?</source>
         <target>Why do you want to use Soil?</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.success.verificationSent" datatype="html">
+        <source>Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.</source>
+        <target>Registration successful! Please check your emails to verify your account.</target>
       </trans-unit>
       <trans-unit id="adminRegister.creatingAccount" datatype="html">
         <source>Konto wird erstellt...</source>

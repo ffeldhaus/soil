@@ -1162,88 +1162,116 @@
         <source>E-Mail</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">42,44</context>
+          <context context-type="linenumber">50,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.password" datatype="html">
         <source>Passwort</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">53,55</context>
+          <context context-type="linenumber">62,64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.loggingIn" datatype="html">
         <source>Anmeldung läuft...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">69,70</context>
+          <context context-type="linenumber">86,87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.loginButton" datatype="html">
         <source>Anmelden</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">71,73</context>
+          <context context-type="linenumber">88,90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.googleSignIn" datatype="html">
         <source>Mit Google anmelden</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">100,102</context>
+          <context context-type="linenumber">117,119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.noAccount" datatype="html">
         <source>Noch kein Konto?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">103,104</context>
+          <context context-type="linenumber">120,121</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.registerLink" datatype="html">
         <source>Hier registrieren</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">107,110</context>
+          <context context-type="linenumber">124,127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.backToHome" datatype="html">
         <source>← Zurück zur Startseite</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">115,118</context>
+          <context context-type="linenumber">132,135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.error.title" datatype="html">
         <source> Anmeldung fehlgeschlagen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">150,151</context>
+          <context context-type="linenumber">167,168</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.error.retry" datatype="html">
         <source> Erneut versuchen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">159,160</context>
+          <context context-type="linenumber">176,177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.placeholder.email" datatype="html">
         <source>admin@schule.de</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">188</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="adminLogin.forgotPassword" datatype="html">
+        <source>Passwort vergessen?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
+          <context context-type="linenumber">189</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="adminLogin.resetEmailSent" datatype="html">
+        <source>E-Mail zum Zurücksetzen des Passworts wurde gesendet.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
+          <context context-type="linenumber">190</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="adminLogin.resetEmailError" datatype="html">
+        <source>Fehler beim Senden der E-Mail zum Zurücksetzen des Passworts.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
+          <context context-type="linenumber">191</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.error.failed" datatype="html">
         <source>Anmeldung fehlgeschlagen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">200</context>
+          <context context-type="linenumber">222</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">213</context>
+          <context context-type="linenumber">235</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="adminLogin.error.emailRequired" datatype="html">
+        <source>Bitte geben Sie Ihre E-Mail-Adresse ein.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
+          <context context-type="linenumber">243</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.title" datatype="html">
@@ -1271,154 +1299,161 @@
         <source>Wird verarbeitet...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">169,171</context>
+          <context context-type="linenumber">175,177</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.btnSubmit" datatype="html">
         <source>Registrierung beantragen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">171,173</context>
+          <context context-type="linenumber">177,179</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="adminRegister.backToLogin" datatype="html">
-        <source> Zurück zur Anmeldung </source>
+      <trans-unit id="adminRegister.backToHome" datatype="html">
+        <source> Zurück zur Startseite </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">182,185</context>
+          <context context-type="linenumber">188,191</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.signedInAs" datatype="html">
         <source>Angemeldet als</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.viaGoogle" datatype="html">
         <source>über Google</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.completeApp" datatype="html">
         <source>Bitte vervollständigen Sie Ihren Antrag</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.firstName" datatype="html">
         <source>Vorname</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.placeholder.firstName" datatype="html">
         <source>Max</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.lastName" datatype="html">
         <source>Nachname</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.placeholder.lastName" datatype="html">
         <source>Mustermann</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.email" datatype="html">
         <source>E-Mail-Adresse</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.placeholder.email" datatype="html">
         <source>admin@schule.de</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.error.email" datatype="html">
         <source>Bitte geben Sie eine gültige E-Mail-Adresse ein</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.password" datatype="html">
         <source>Passwort</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.placeholder.password" datatype="html">
         <source>Mindestens 6 Zeichen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.error.password" datatype="html">
         <source>Das Passwort muss mindestens 6 Zeichen lang sein</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.institution" datatype="html">
         <source>Institution / Schule</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.placeholder.institution" datatype="html">
         <source>z.B. Humboldt Gymnasium</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.website" datatype="html">
         <source>Website der Institution</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.placeholder.website" datatype="html">
         <source>https://schule.de</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.explanation" datatype="html">
         <source>Warum möchten Sie SOIL nutzen?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.placeholder.explanation" datatype="html">
         <source>Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="adminRegister.success.verificationSent" datatype="html">
+        <source>Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/admin-register/admin-register.ts</context>
+          <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="playerLogin.title" datatype="html">
@@ -2769,6 +2804,20 @@
           <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="manual.concepts.machines.title" datatype="html">
+        <source>Maschinen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="manual.concepts.machines.text" datatype="html">
+        <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="pest.label" datatype="html">
         <source>Hauptschädling</source>
         <context-group purpose="location">
@@ -3173,20 +3222,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manual/manual.ts</context>
           <context context-type="linenumber">41</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="manual.concepts.machines.title" datatype="html">
-        <source>Maschinen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
-          <context context-type="linenumber">36</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="manual.concepts.machines.text" datatype="html">
-        <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
-          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
     </body>

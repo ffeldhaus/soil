@@ -16,6 +16,7 @@ describe('AdminLoginComponent', () => {
     authServiceMock = {
       loginWithEmail: vi.fn().mockResolvedValue(undefined),
       loginWithGoogle: vi.fn().mockResolvedValue(undefined),
+      sendPasswordResetEmail: vi.fn().mockResolvedValue(undefined),
     };
 
     routerMock = {
@@ -54,5 +55,12 @@ describe('AdminLoginComponent', () => {
 
     expect(component.showErrorModal).toBe(true);
     expect(component.errorMessage).toContain('Anmeldung fehlgeschlagen');
+  });
+
+  it('should call sendPasswordResetEmail on forgotPassword', async () => {
+    component.loginForm.get('email')?.setValue('test@test.com');
+    await component.forgotPassword();
+    expect(authServiceMock.sendPasswordResetEmail).toHaveBeenCalledWith('test@test.com');
+    expect(component.successMessage).toBeTruthy();
   });
 });

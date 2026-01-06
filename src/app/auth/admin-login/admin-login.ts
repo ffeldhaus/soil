@@ -37,6 +37,14 @@ import { AuthService } from '../auth.service';
           <p class="text-gray-400" i18n="@@adminLogin.subtitle">Zugang zur Soil-Steuerzentrale</p>
         </div>
 
+        @if (successMessage) {
+          <div
+            class="mb-6 p-3 bg-emerald-900/50 border border-emerald-500 rounded text-emerald-200 text-sm text-center"
+          >
+            {{ successMessage }}
+          </div>
+        }
+
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.email">E-Mail</label>
@@ -50,7 +58,16 @@ import { AuthService } from '../auth.service';
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.password">Passwort</label>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-sm font-medium text-gray-400" i18n="@@adminLogin.password">Passwort</label>
+              <button
+                type="button"
+                (click)="forgotPassword()"
+                class="text-xs text-emerald-400 hover:text-emerald-300 transition"
+              >
+                {{ t('adminLogin.forgotPassword') }}
+              </button>
+            </div>
             <input
               formControlName="password"
               type="password"
@@ -169,6 +186,9 @@ export class AdminLoginComponent {
   t(key: string): string {
     const translations: Record<string, string> = {
       'adminLogin.placeholder.email': $localize`:@@adminLogin.placeholder.email:admin@schule.de`,
+      'adminLogin.forgotPassword': $localize`:@@adminLogin.forgotPassword:Passwort vergessen?`,
+      'adminLogin.resetEmailSent': $localize`:@@adminLogin.resetEmailSent:E-Mail zum Zurücksetzen des Passworts wurde gesendet.`,
+      'adminLogin.resetEmailError': $localize`:@@adminLogin.resetEmailError:Fehler beim Senden der E-Mail zum Zurücksetzen des Passworts.`,
     };
     return translations[key] || key;
   }
@@ -184,11 +204,13 @@ export class AdminLoginComponent {
   isLoading = false;
   showErrorModal = false;
   errorMessage = '';
+  successMessage = '';
 
   async onSubmit() {
     if (this.loginForm.invalid) return;
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
     this.showErrorModal = false;
 
     const { email, password } = this.loginForm.value;
@@ -211,6 +233,24 @@ export class AdminLoginComponent {
     } catch (err: any) {
       console.error(err);
       this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
+      this.showErrorModal = true;
+    }
+  }
+
+  async forgotPassword() {
+    const email = this.loginForm.get('email')?.value;
+    if (!email) {
+      this.errorMessage = $localize`:@@adminLogin.error.emailRequired:Bitte geben Sie Ihre E-Mail-Adresse ein.`;
+      this.showErrorModal = true;
+      return;
+    }
+
+    try {
+      await this.auth.sendPasswordResetEmail(email);
+      this.successMessage = this.t('adminLogin.resetEmailSent');
+    } catch (err: any) {
+      console.error(err);
+      this.errorMessage = this.t('adminLogin.resetEmailError');
       this.showErrorModal = true;
     }
   }

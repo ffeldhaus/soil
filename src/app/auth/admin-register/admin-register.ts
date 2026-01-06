@@ -31,6 +31,7 @@ export class AdminRegisterComponent implements OnInit {
 
   isLoading = false;
   errorMessage: string | null = null;
+  successMessage: string | null = null;
   isGoogleUser = false;
   currentUser: any = null;
 
@@ -55,6 +56,7 @@ export class AdminRegisterComponent implements OnInit {
       'adminRegister.placeholder.website': $localize`:@@adminRegister.placeholder.website:https://schule.de`,
       'adminRegister.explanation': $localize`:@@adminRegister.explanation:Warum möchten Sie SOIL nutzen?`,
       'adminRegister.placeholder.explanation': $localize`:@@adminRegister.placeholder.explanation:Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht`,
+      'adminRegister.success.verificationSent': $localize`:@@adminRegister.success.verificationSent:Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.`,
     };
     return translations[key] || key;
   }
@@ -83,12 +85,15 @@ export class AdminRegisterComponent implements OnInit {
 
     this.isLoading = true;
     this.errorMessage = null;
+    this.successMessage = null;
 
     try {
       const formData = this.registerForm.getRawValue();
 
       if (!this.isGoogleUser) {
         await this.authService.registerWithEmail(formData.email!, formData.password!);
+        await this.authService.sendVerificationEmail();
+        this.successMessage = this.t('adminRegister.success.verificationSent');
       }
 
       await this.gameService.submitOnboarding({
@@ -98,6 +103,12 @@ export class AdminRegisterComponent implements OnInit {
         institutionLink: formData.institutionLink!,
         explanation: formData.explanation!,
       });
+
+      if (!this.isGoogleUser) {
+        // Stay on page to show success message if email verification is needed
+        this.isLoading = false;
+        return;
+      }
 
       this.router.navigate(['/admin/dashboard']);
     } catch (error: any) {
