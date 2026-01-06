@@ -60,13 +60,15 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
       </div>
 
       <!-- Main Content -->
-      <div class="pt-24 px-4 max-w-7xl mx-auto space-y-12 pb-12 relative">
+      <div class="pt-24 px-4 max-w-7xl mx-auto space-y-12 pb-12 relative portrait:px-0 portrait:max-w-none">
         <!-- Loading Overlay -->
         <div
           *ngIf="isLoadingData"
-          class="absolute inset-0 z-40 bg-gray-900/50 backdrop-blur-sm flex items-start justify-center pt-20 animate-fade-in rounded-xl"
+          class="absolute inset-0 z-40 bg-gray-900/50 backdrop-blur-sm flex items-start justify-center pt-20 animate-fade-in rounded-xl portrait:rounded-none"
         >
-          <div class="flex flex-col items-center gap-3 bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700">
+          <div
+            class="flex flex-col items-center gap-3 bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700 portrait:rounded-none portrait:border-x-0"
+          >
             <svg
               class="animate-spin h-10 w-10 text-emerald-500"
               xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +86,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
           </div>
         </div>
 
-        <header class="flex justify-between items-center">
+        <header class="flex justify-between items-center portrait:px-4">
           <div class="space-y-1">
             <h2 class="text-3xl font-bold text-white">{{ t('superadmin.dashboard.title') }}</h2>
             <p class="text-gray-400 text-sm">{{ t('superadmin.dashboard.subtitle') }}</p>
@@ -112,9 +114,14 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
         </header>
 
         <!-- Stats Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in" *ngIf="stats">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+          *ngIf="stats"
+        >
           <!-- Total Games -->
-          <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden">
+          <div
+            class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden portrait:rounded-none portrait:border-x-0"
+          >
             <div class="absolute top-0 right-0 p-4 opacity-10">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +158,9 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
           </div>
 
           <!-- Total Users -->
-          <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden">
+          <div
+            class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden portrait:rounded-none portrait:border-x-0"
+          >
             <div class="absolute top-0 right-0 p-4 opacity-10">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -182,7 +191,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 
         <!-- Pending Users Section -->
         <section *ngIf="pendingUsers.length > 0" class="space-y-4 animate-fade-in">
-          <h2 class="text-2xl font-bold text-yellow-500 flex items-center gap-2">
+          <h2 class="text-2xl font-bold text-yellow-500 flex items-center gap-2 portrait:px-4">
             <div class="p-2 bg-yellow-900/30 rounded-full">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -195,10 +204,12 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
             </div>
             Pending Approvals ({{ pendingUsers.length }})
           </h2>
-          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+          >
             <div
               *ngFor="let user of pendingUsers"
-              class="bg-gray-800 p-6 rounded-xl border border-yellow-500/30 shadow-lg hover:border-yellow-500/50 transition"
+              class="bg-gray-800 p-6 rounded-xl border border-yellow-500/30 shadow-lg hover:border-yellow-500/50 transition portrait:rounded-none portrait:border-x-0"
             >
               <div class="flex justify-between items-start mb-4">
                 <div class="overflow-hidden">
@@ -253,7 +264,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 
         <!-- All Admins Section -->
         <section class="space-y-4">
-          <h2 class="text-2xl font-bold text-blue-400 flex items-center gap-2">
+          <h2 class="text-2xl font-bold text-blue-400 flex items-center gap-2 portrait:px-4">
             <div class="p-2 bg-blue-900/30 rounded-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -272,7 +283,9 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
             </div>
             Game Administrators
           </h2>
-          <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
+          <div
+            class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700 portrait:rounded-none portrait:border-x-0"
+          >
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse">
                 <thead class="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
@@ -388,7 +401,11 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
         </section>
 
         <!-- Selected Admin Games -->
-        <section *ngIf="selectedAdmin" class="pt-8 border-t border-gray-800 animate-fade-in" id="games-section">
+        <section
+          *ngIf="selectedAdmin"
+          class="pt-8 border-t border-gray-800 animate-fade-in portrait:px-4"
+          id="games-section"
+        >
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-emerald-900/30 rounded-full text-emerald-400">
@@ -453,18 +470,18 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 
           <div
             *ngIf="!isLoadingGames && adminGames.length === 0"
-            class="p-12 bg-gray-800 rounded-xl text-center text-gray-500 border border-gray-700 border-dashed"
+            class="p-12 bg-gray-800 rounded-xl text-center text-gray-500 border border-gray-700 border-dashed portrait:rounded-none portrait:border-x-0"
           >
             <p class="text-lg">No games found for this admin.</p>
           </div>
 
           <div
             *ngIf="!isLoadingGames && adminGames.length > 0"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
           >
             <div
               *ngFor="let game of adminGames"
-              class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition shadow-lg group relative"
+              class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition shadow-lg group relative portrait:rounded-none portrait:border-x-0"
             >
               <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition">
                 <button
@@ -520,11 +537,11 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
         <!-- Delete Confirmation Modal -->
         <div
           *ngIf="gameToDelete"
-          class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm portrait:p-0"
           (click)="cancelDelete()"
         >
           <div
-            class="bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl"
+            class="bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
             (click)="$event.stopPropagation()"
           >
             <h3
@@ -636,13 +653,16 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
         </div>
 
         <!-- Quota Modal -->
-        <div *ngIf="showQuotaModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
+        <div
+          *ngIf="showQuotaModal"
+          class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0"
+        >
           <!-- Modal Backdrop -->
           <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="closeQuotaModal()"></div>
 
           <!-- Modal Content -->
           <div
-            class="relative bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden transform transition-all scale-100"
+            class="relative bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden transform transition-all scale-100 portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
           >
             <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/50">
               <h3 class="text-xl font-bold text-white flex items-center gap-2">
@@ -722,10 +742,13 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
         </div>
 
         <!-- Approval Confirmation Modal -->
-        <div *ngIf="userToApprove" class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in">
+        <div
+          *ngIf="userToApprove"
+          class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0"
+        >
           <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="cancelApprove()"></div>
           <div
-            class="relative bg-gray-800 border border-emerald-500/50 p-6 rounded-xl flex flex-col gap-4 max-w-sm w-full shadow-2xl"
+            class="relative bg-gray-800 border border-emerald-500/50 p-6 rounded-xl flex flex-col gap-4 max-w-sm w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
             (click)="$event.stopPropagation()"
           >
             <div class="flex items-center gap-3 text-emerald-400 mb-2">

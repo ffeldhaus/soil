@@ -41,12 +41,12 @@
 </div>
 
 <!-- Main Content -->
-<div class="pt-24 px-4 max-w-4xl mx-auto flex flex-col gap-6">
-  <div *ngIf="user$ | async as user" class="space-y-4">
+<div class="pt-24 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none">
+  <div *ngIf="user$ | async as user" class="space-y-4 portrait:space-y-0">
     <!-- Pending Approval State -->
     <div
       *ngIf="!isLoading && (userStatus?.role === 'pending' || userStatus?.status === 'pending')"
-      class="p-8 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-yellow-600/50 shadow-xl text-center space-y-6 animate-fade-in-up"
+      class="p-8 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-yellow-600/50 shadow-xl text-center space-y-6 animate-fade-in-up portrait:rounded-none portrait:border-x-0"
     >
       <div class="inline-block p-4 bg-yellow-900/30 rounded-full mb-2">
         <svg
@@ -101,7 +101,7 @@
     <!-- Super Admin Redirect Fallback -->
     <div
       *ngIf="!isLoading && userStatus?.role === 'superadmin'"
-      class="p-12 flex flex-col items-center justify-center text-center space-y-6 animate-fade-in"
+      class="p-12 flex flex-col items-center justify-center text-center space-y-6 animate-fade-in portrait:bg-gray-900 portrait:border-y portrait:border-gray-800"
     >
       <div class="p-4 bg-purple-900/30 rounded-full mb-2">
         <svg
@@ -136,7 +136,7 @@
     <!-- Active Dashboard -->
     <div
       *ngIf="!isLoading && !isPendingApproval && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin'"
-      class="p-6 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-fade-in"
+      class="p-6 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-700 shadow-xl animate-fade-in portrait:rounded-none portrait:border-x-0"
     >
       <h2 class="text-2xl font-bold mb-4 text-emerald-400" data-testid="admin-controls">
         {{ t('dashboard.controls.title') }}
@@ -147,7 +147,7 @@
       </p>
 
       <!-- Game Creation Form -->
-      <div class="mb-8 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
+      <div class="mb-8 p-4 bg-gray-800/50 rounded-xl border border-gray-700 portrait:rounded-none portrait:border-x-0">
         <h3 class="text-lg font-bold text-white mb-4">{{ t('dashboard.createGame.title') }}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div class="col-span-1 md:col-span-2">
@@ -252,7 +252,7 @@
       <!-- Created Game Result -->
       <div
         *ngIf="createdGame"
-        class="mb-8 p-4 bg-emerald-900/40 border border-emerald-500/50 rounded-lg animate-pulse-once"
+        class="mb-8 p-4 bg-emerald-900/40 border border-emerald-500/50 rounded-lg animate-pulse-once portrait:rounded-none portrait:border-x-0"
       >
         <h3 class="text-lg font-bold text-emerald-400 mb-2">{{ t('dashboard.created.title') }}</h3>
         <div class="grid grid-cols-1 gap-4 text-sm">
@@ -267,7 +267,7 @@
 
       <!-- Your Games List -->
       <div class="mb-8">
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex justify-between items-center mb-4 portrait:px-4">
           <div class="flex items-center gap-3">
             <h3 class="text-xl font-bold text-white">
               <ng-container *ngIf="showTrash">{{ t('dashboard.list.trash') }}</ng-container>
@@ -360,7 +360,7 @@
         <!-- Error State -->
         <div
           *ngIf="loadingError"
-          class="mb-4 p-4 bg-red-900/30 border border-red-500/50 rounded-lg flex items-center justify-between text-red-200"
+          class="mb-4 p-4 bg-red-900/30 border border-red-500/50 rounded-lg flex items-center justify-between text-red-200 portrait:rounded-none portrait:border-x-0"
         >
           <div class="flex items-center gap-3">
             <svg
@@ -407,7 +407,7 @@
 
         <div
           *ngIf="!isLoadingGames && !loadingError"
-          class="overflow-x-auto rounded-lg border border-gray-700 animate-fade-in"
+          class="overflow-x-auto rounded-lg border border-gray-700 animate-fade-in portrait:rounded-none portrait:border-x-0"
         >
           <table class="w-full text-sm text-left text-gray-300">
             <thead class="text-xs text-gray-400 uppercase bg-gray-800/60">
@@ -571,7 +571,9 @@
                       </div>
 
                       <!-- Deadline Manager -->
-                      <div class="mb-6 p-4 bg-gray-900/60 rounded-xl border border-blue-500/20">
+                      <div
+                        class="mb-6 p-4 bg-gray-900/60 rounded-xl border border-blue-500/20 portrait:rounded-none portrait:border-x-0"
+                      >
                         <h5 class="text-xs font-bold text-blue-400 mb-3 uppercase tracking-widest">
                           {{ t('dashboard.deadline.title') }}
                         </h5>
@@ -604,10 +606,12 @@
                         {{ t('dashboard.details.noPlayers') }}
                       </div>
 
-                      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+                      >
                         <div
                           *ngFor="let slot of getSlots(game)"
-                          class="p-4 bg-gray-900 rounded-xl border flex flex-col gap-3 transition"
+                          class="p-4 bg-gray-900 rounded-xl border flex flex-col gap-3 transition portrait:rounded-none portrait:border-x-0"
                           [ngClass]="{
                             'border-emerald-500/30 bg-emerald-900/10': slot.isJoined && !slot.isAi,
                             'border-blue-500/30 bg-blue-900/10': slot.isAi,
@@ -658,7 +662,9 @@
                           </div>
 
                           <!-- Stats -->
-                          <div class="grid grid-cols-2 gap-4 text-xs bg-black/20 p-3 rounded-xl border border-white/5">
+                          <div
+                            class="grid grid-cols-2 gap-4 text-xs bg-black/20 p-3 rounded-xl border border-white/5 portrait:rounded-none"
+                          >
                             <div>
                               <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
                                 t('dashboard.player.capital')
@@ -883,14 +889,17 @@
       <!-- QR Overlay -->
       <div
         *ngIf="qrCodeUrl"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm portrait:p-0"
         (click)="closeQr()"
       >
-        <div class="bg-white p-6 rounded-xl flex flex-col items-center gap-4" (click)="$event.stopPropagation()">
+        <div
+          class="bg-white p-6 rounded-xl flex flex-col items-center gap-4 portrait:rounded-none portrait:w-full portrait:h-full portrait:justify-center"
+          (click)="$event.stopPropagation()"
+        >
           <h3 class="text-black font-bold text-xl">{{ qrCodePlayer }} {{ t('dashboard.qr.access') }}</h3>
           <img [src]="qrCodeUrl" class="w-64 h-64" />
           <p class="text-black text-sm text-center max-w-xs">{{ t('dashboard.qr.scan') }}</p>
-          <div class="flex gap-2 w-full">
+          <div class="flex gap-2 w-full max-w-xs">
             <button
               onclick="window.print()"
               class="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-black rounded font-medium"
@@ -910,11 +919,11 @@
       <!-- Delete Confirmation Modal -->
       <div
         *ngIf="gameToDelete || isDeletingSelected"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm portrait:p-0"
         (click)="cancelDelete()"
       >
         <div
-          class="bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl"
+          class="bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
           (click)="$event.stopPropagation()"
         >
           <h3
@@ -957,7 +966,10 @@
           </p>
 
           <!-- Soft Delete Info -->
-          <div *ngIf="!showTrash" class="bg-red-900/20 border border-red-900/50 p-3 rounded-lg flex gap-3 items-start">
+          <div
+            *ngIf="!showTrash"
+            class="bg-red-900/20 border border-red-900/50 p-3 rounded-lg flex gap-3 items-start portrait:rounded-none portrait:border-x-0"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5"
@@ -983,7 +995,7 @@
           <!-- Permanent Delete Warning -->
           <div
             *ngIf="showTrash"
-            class="bg-red-600/20 border border-red-500/50 p-3 rounded-lg flex gap-3 items-start animate-pulse-slow"
+            class="bg-red-600/20 border border-red-500/50 p-3 rounded-lg flex gap-3 items-start animate-pulse-slow portrait:rounded-none portrait:border-x-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -1043,11 +1055,11 @@
       <!-- Error Modal -->
       <div
         *ngIf="errorMessage"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm portrait:p-0"
         (click)="closeError()"
       >
         <div
-          class="bg-gray-800 border border-red-500/50 p-6 rounded-xl flex flex-col gap-4 max-w-sm w-full shadow-2xl animate-fade-in"
+          class="bg-gray-800 border border-red-500/50 p-6 rounded-xl flex flex-col gap-4 max-sm w-full shadow-2xl animate-fade-in portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
           (click)="$event.stopPropagation()"
         >
           <h3 class="text-xl font-bold text-red-400 flex items-center gap-2">
@@ -1107,7 +1119,9 @@
       <button
         (click)="login()"
         class="px-6 py-2 bg-blue-600 rounded flex items-center gap-2 hover:bg-blue-700 transition"
-      ></button>
+      >
+        {{ t('dashboard.login.btn') }}
+      </button>
     </div>
   </div>
 </div>

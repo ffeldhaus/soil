@@ -13,7 +13,7 @@ import { AuthService } from '../auth.service';
   imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div
-      class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden"
+      class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden portrait:p-0"
     >
       <!-- Language Switcher -->
       <div class="absolute top-6 right-6 z-[100]">
@@ -21,7 +21,7 @@ import { AuthService } from '../auth.service';
       </div>
 
       <!-- Background Image with Overlay -->
-      <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 z-0 portrait:hidden">
         <img
           src="assets/bauernhof.jpg"
           alt="Farm Background"
@@ -33,7 +33,7 @@ import { AuthService } from '../auth.service';
       </div>
 
       <div
-        class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 my-8"
+        class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 my-8 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:bg-gray-800 portrait:my-0"
       >
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-emerald-400 mb-2">

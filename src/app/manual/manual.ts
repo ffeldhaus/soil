@@ -22,7 +22,7 @@ import { CropType } from '../types';
       }"
     >
       <!-- Background Image -->
-      <div class="fixed inset-0 z-0 opacity-40 pointer-events-none">
+      <div class="fixed inset-0 z-0 opacity-40 pointer-events-none portrait:hidden">
         <img src="assets/images/bauernhof.jpg" class="w-full h-full object-cover" />
       </div>
 
@@ -81,9 +81,9 @@ import { CropType } from '../types';
         </div>
       </nav>
 
-      <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12">
+      <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 portrait:px-0 portrait:max-w-none">
         <header
-          class="text-center mb-16 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl"
+          class="text-center mb-16 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0"
         >
           <h1 class="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight">
             {{ t('manual.title') }}
@@ -93,7 +93,7 @@ import { CropType } from '../types';
 
         <!-- General Section -->
         <section
-          class="mb-20 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8"
+          class="mb-20 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
         >
           <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
             <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">📖</span>
@@ -115,19 +115,21 @@ import { CropType } from '../types';
 
         <!-- Concepts Section -->
         <section
-          class="mb-20 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8"
+          class="mb-20 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
         >
           <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
             <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">💡</span>
             {{ t('manual.concepts.title') }}
           </h2>
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div
+            class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+          >
             <div
               *ngFor="
                 let concept of ['units', 'pest', 'rotation', 'requirements', 'weather', 'yield', 'price'];
                 let i = index
               "
-              class="bg-black/30 p-6 rounded-2xl border border-white/5 h-full print:bg-gray-50 print:border-gray-200"
+              class="bg-black/30 p-6 rounded-2xl border border-white/5 h-full print:bg-gray-50 print:border-gray-200 portrait:rounded-none portrait:border-0"
             >
               <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2 print:text-black">
                 <span class="text-emerald-500">{{ ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰'][i] }}</span>
@@ -142,10 +144,10 @@ import { CropType } from '../types';
         </section>
 
         <!-- Crops Section -->
-        <div class="space-y-12">
+        <div class="space-y-12 portrait:space-y-0 portrait:divide-y portrait:divide-gray-800">
           <div
             *ngFor="let crop of crops"
-            class="bg-gray-900/90 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-gray-700 shadow-2xl group break-inside-avoid print-page-break-before print:bg-white print:border-gray-200 print:shadow-none print:p-8"
+            class="bg-gray-900/90 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-gray-700 shadow-2xl group break-inside-avoid print-page-break-before print:bg-white print:border-gray-200 print:shadow-none print:p-8 portrait:rounded-none portrait:border-x-0"
           >
             <div class="flex flex-col lg:flex-row gap-10 items-start">
               <!-- Crop Image & Title -->
@@ -200,7 +202,7 @@ import { CropType } from '../types';
               <div class="w-full lg:w-2/3 space-y-8 print:w-3/4">
                 <!-- Rotation Graph -->
                 <div
-                  class="bg-black/40 p-4 sm:p-8 rounded-3xl border border-white/5 print:bg-gray-50 print:border-gray-100"
+                  class="bg-black/40 p-4 sm:p-8 rounded-3xl border border-white/5 print:bg-gray-50 print:border-gray-100 portrait:rounded-none portrait:border-x-0"
                 >
                   <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-8 print:mb-4">
                     {{ t('manual.crops.rotation') }}
@@ -285,9 +287,13 @@ import { CropType } from '../types';
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 print:gap-4">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 gap-8 print:gap-4 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+                >
                   <!-- Requirements -->
-                  <div class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200">
+                  <div
+                    class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
+                  >
                     <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
                       {{ t('manual.crops.requirements') }}
                     </h4>
@@ -320,7 +326,9 @@ import { CropType } from '../types';
                   </div>
 
                   <!-- Weather -->
-                  <div class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200">
+                  <div
+                    class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
+                  >
                     <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
                       {{ t('manual.crops.weather') }}
                     </h4>
@@ -342,7 +350,7 @@ import { CropType } from '../types';
 
                   <!-- Yields -->
                   <div
-                    class="sm:col-span-2 bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200"
+                    class="sm:col-span-2 bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
                   >
                     <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
                       {{ t('manual.crops.yields') }} (dt/ha)
@@ -363,8 +371,12 @@ import { CropType } from '../types';
                   </div>
 
                   <!-- Prices -->
-                  <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 print:gap-4">
-                    <div class="bg-white/5 p-6 rounded-3xl border border-white/10 print:bg-white print:border-gray-200">
+                  <div
+                    class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 print:gap-4 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+                  >
+                    <div
+                      class="bg-white/5 p-6 rounded-3xl border border-white/10 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
+                    >
                       <h5
                         class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4 print:text-emerald-700"
                       >
@@ -384,7 +396,7 @@ import { CropType } from '../types';
                       </div>
                     </div>
                     <div
-                      class="bg-emerald-500/10 p-6 rounded-3xl border border-emerald-500/20 shadow-lg shadow-emerald-900/20 print:bg-white print:border-emerald-200 print:shadow-none"
+                      class="bg-emerald-500/10 p-6 rounded-3xl border border-emerald-500/20 shadow-lg shadow-emerald-900/20 print:bg-white print:border-emerald-200 print:shadow-none portrait:rounded-none portrait:border-0"
                     >
                       <h5
                         class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4 print:text-emerald-700"
@@ -409,7 +421,7 @@ import { CropType } from '../types';
                   <!-- Special -->
                   <div
                     *ngIf="crop.special"
-                    class="sm:col-span-2 bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20 flex gap-4 items-center print:bg-blue-50 print:border-blue-100 print:p-4"
+                    class="sm:col-span-2 bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20 flex gap-4 items-center print:bg-blue-50 print:border-blue-100 print:p-4 portrait:rounded-none portrait:border-0"
                   >
                     <span class="text-2xl print:text-xl">💡</span>
                     <p class="text-sm text-blue-100 italic print:text-blue-800 print:text-xs">
@@ -430,11 +442,11 @@ import { CropType } from '../types';
       <!-- Print Settings Modal -->
       <div
         *ngIf="showPrintModal"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden portrait:p-0"
         (click)="showPrintModal = false"
       >
         <div
-          class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-md w-full"
+          class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-md w-full portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
           (click)="$event.stopPropagation()"
         >
           <h2 class="text-2xl font-bold text-white mb-6">{{ t('manual.printModal.title') }}</h2>
