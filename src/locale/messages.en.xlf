@@ -98,6 +98,18 @@
         <source>Spiel-ID</source>
         <target>Game ID</target>
       </trans-unit>
+      <trans-unit id="dashboard.player.login" datatype="html">
+        <source>LOGIN</source>
+        <target>LOGIN</target>
+      </trans-unit>
+      <trans-unit id="dashboard.player.copyUrl" datatype="html">
+        <source>URL KOPIEREN</source>
+        <target>COPY URL</target>
+      </trans-unit>
+      <trans-unit id="dashboard.player.printAll" datatype="html">
+        <source>ALLE QR-CODES DRUCKEN</source>
+        <target>PRINT ALL QR CODES</target>
+      </trans-unit>
       <trans-unit id="dashboard.list.trash" datatype="html">
         <source>Papierkorb (Gelöschte Spiele)</source>
         <target>Trash (Deleted Games)</target>

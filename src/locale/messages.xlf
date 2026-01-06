@@ -176,10 +176,15 @@
       </trans-unit>
       <trans-unit id="dashboard.created.id" datatype="html">
         <source>Spiel-ID</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin/dashboard/dashboard.ts</context>
-          <context context-type="linenumber">47</context>
-        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.player.login" datatype="html">
+        <source>LOGIN</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.copyUrl" datatype="html">
+        <source>URL KOPIEREN</source>
+      </trans-unit>
+      <trans-unit id="dashboard.player.printAll" datatype="html">
+        <source>ALLE QR-CODES DRUCKEN</source>
       </trans-unit>
       <trans-unit id="dashboard.list.trash" datatype="html">
         <source>Papierkorb (Gelöschte Spiele)</source>
