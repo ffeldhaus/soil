@@ -466,6 +466,14 @@
         <source>Viel Erfolg bei Ihrer Simulation! Achten Sie stets auf das Gleichgewicht zwischen Ertrag und Nachhaltigkeit.</source>
         <target>Good luck with your simulation! Always keep an eye on the balance between yield and sustainability.</target>
       </trans-unit>
+      <trans-unit id="manual.concepts.machines.title" datatype="html">
+        <source>Maschinen</source>
+        <target>Machines</target>
+      </trans-unit>
+      <trans-unit id="manual.concepts.machines.text" datatype="html">
+        <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
+        <target>Reduce labor costs, but deteriorate soil quality and depreciate without investment.</target>
+      </trans-unit>
       <trans-unit id="manual.intro.title" datatype="html">
         <source>Einführung</source>
         <target>Introduction</target>

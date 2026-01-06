@@ -46,4 +46,34 @@ describe('SuperAdminComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should load data on init', async () => {
+    await component.ngOnInit();
+    expect(gameServiceMock.getPendingUsers).toHaveBeenCalled();
+    expect(gameServiceMock.getAllAdmins).toHaveBeenCalled();
+    expect(gameServiceMock.getSystemStats).toHaveBeenCalled();
+  });
+
+  it('should call manageAdmin when confirming approval', async () => {
+    const mockUser = { uid: 'user123', email: 'user@example.com' };
+    gameServiceMock.manageAdmin = vi.fn().mockResolvedValue({});
+
+    component.initiateApprove(mockUser);
+    await component.confirmApprove();
+
+    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('user123', 'approve');
+    expect(gameServiceMock.getPendingUsers).toHaveBeenCalled();
+  });
+
+  it('should call deleteGames when confirming delete', async () => {
+    const mockGame = { id: 'game123', status: 'active' };
+    gameServiceMock.deleteGames = vi.fn().mockResolvedValue({});
+    component.selectedAdmin = { uid: 'admin123' };
+    gameServiceMock.getAdminGames = vi.fn().mockResolvedValue({ games: [], total: 0 });
+
+    await component.deleteGame(mockGame);
+    await component.confirmDelete();
+
+    expect(gameServiceMock.deleteGames).toHaveBeenCalledWith(['game123'], false);
+  });
 });

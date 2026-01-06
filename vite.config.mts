@@ -38,6 +38,19 @@ export default defineConfig(({ mode }) => ({
     setupFiles: ['src/test-setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      include: ['src/**/*.ts'],
+      exclude: [
+        'src/main.ts',
+        'src/main.server.ts',
+        'src/test-setup.ts',
+        'src/**/*.spec.ts',
+        'src/**/*.test.ts',
+        'src/app/types.ts',
+      ],
+    },
   },
   resolve: {
     alias: {

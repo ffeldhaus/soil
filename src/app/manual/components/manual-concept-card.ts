@@ -11,7 +11,7 @@ export class ManualConceptCardComponent {
   @Input() concept = '';
   @Input() index = 0;
 
-  private icons = ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰'];
+  private icons = ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰', '🚜'];
 
   get icon(): string {
     return this.icons[this.index] || '💡';
@@ -33,6 +33,8 @@ export class ManualConceptCardComponent {
       'manual.concepts.yield.text': $localize`:@@manual.concepts.yield.text:Abhängig von Bodenqualität und Wetter.`,
       'manual.concepts.price.title': $localize`:@@manual.concepts.price.title:Preise`,
       'manual.concepts.price.text': $localize`:@@manual.concepts.price.text:Marktpreise schwanken zwischen Konventionell und Bio.`,
+      'manual.concepts.machines.title': $localize`:@@manual.concepts.machines.title:Maschinen`,
+      'manual.concepts.machines.text': $localize`:@@manual.concepts.machines.text:Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.`,
     };
     return translations[key] || key;
   }

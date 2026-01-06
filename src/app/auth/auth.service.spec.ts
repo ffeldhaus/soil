@@ -14,10 +14,20 @@ vi.mock('firebase/auth', async (importOriginal) => {
     onAuthStateChanged: vi.fn(),
     signOut: vi.fn(() => Promise.resolve()),
     signInWithCustomToken: vi.fn(() => Promise.resolve()),
+    signInWithEmailAndPassword: vi.fn(() => Promise.resolve()),
+    createUserWithEmailAndPassword: vi.fn(() => Promise.resolve()),
+    signInWithPopup: vi.fn(() => Promise.resolve()),
+    updateProfile: vi.fn(() => Promise.resolve()),
   };
 });
 
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+// Mock the firebase/functions module
+vi.mock('firebase/functions', () => ({
+  httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
+}));
+
+import { onAuthStateChanged, signInWithCustomToken, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -65,5 +75,25 @@ describe('AuthService', () => {
   it('should call auth signOut when not in test mode', async () => {
     await service.logout();
     expect(signOut).toHaveBeenCalled();
+  });
+
+  it('should call playerLogin and signInWithCustomToken', async () => {
+    const mockCallable = vi.fn(() => Promise.resolve({ data: { customToken: 'mock-token' } }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    await service.loginAsPlayer('game123', '1234');
+
+    expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'playerLogin');
+    expect(mockCallable).toHaveBeenCalledWith({ gameId: 'game123', password: '1234' });
+    expect(signInWithCustomToken).toHaveBeenCalledWith(authSpy, 'mock-token');
+  });
+
+  it('should call signInWithEmailAndPassword', async () => {
+    // Mock firebase/auth methods
+    const { signInWithEmailAndPassword: signInEmailMock } = await import('firebase/auth');
+
+    await service.loginWithEmail('test@example.com', 'password');
+
+    expect(signInEmailMock).toHaveBeenCalledWith(authSpy, 'test@example.com', 'password');
   });
 });

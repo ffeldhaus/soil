@@ -30,7 +30,49 @@ export class GameEngine {
     // -- 1. Pre-calculate global factors --
     const numParcels = previousParcels.length;
     const animalParcels = Object.values(decision.parcels).filter((c) => c === 'Grass').length;
-    const machineLevel = Math.min(4, Math.max(0, decision.machines || 0));
+
+    // Machine Decay & Growth Logic
+    // We treat decision.machines as "Investment/Maintenance Effort" (0-4)
+    // The actual machine state (machineRealLevel) decays over time if not maintained.
+    const prevMachineLevel = previousRound?.result?.machineRealLevel ?? 0;
+    const investment = Math.min(4, Math.max(0, decision.machines || 0));
+
+    // Decay increases with level (Higher complexity = faster decay)
+    // Base decay 10% + 15% scaled by level/4.
+    // Level 0: 10% decay (if any residual)
+    // Level 4: 25% decay per round
+    const decayRate = 0.1 + (prevMachineLevel / 4) * 0.15;
+    const decayAmount = prevMachineLevel * decayRate;
+
+    // Investment Efficiency
+    // We want Investment 4 to be able to sustain Level 4.
+    // At Level 4, decay is 0.25 * 4 = 1.0.
+    // So Investment 4 must provide +1.0 gain.
+    // Efficiency = 1.0 / 4 = 0.25.
+    const investmentEfficiency = 0.25;
+    const investmentGain = investment * investmentEfficiency;
+
+    // Calculate new level, clamped 0-4
+    let currentMachineLevel = prevMachineLevel - decayAmount + investmentGain;
+    currentMachineLevel = Math.max(0, Math.min(4, currentMachineLevel));
+
+    // For calculations, we use the integer part or rounded value?
+    // Let's use the float for smooth transitions, or floor for step benefits.
+    // Using floor matches the integer-based factors in constants.ts better.
+    // However, to make "small amount" useful (e.g. level 0.5), we might want to interpolate.
+    // But currently MACHINE_FACTORS arrays are index-based.
+    // Let's use Math.floor() for the factors to prevent out-of-bounds,
+    // but maybe interpolate yield bonus?
+    // For safety and consistency with existing constants, let's stick to Math.floor or Math.round.
+    // Math.round gives a "snap" effect. Math.floor requires >1.0 to see benefit.
+    // Let's use a weighted approach for factors if possible, or just index for now.
+    // Given "deprecated over time", smooth decay is best visualized by float, but effects might be stepped.
+    // Let's use Math.round() effectively "snapping" to nearest level for impact.
+    // This allows Level 1.6 -> Level 2 benefit. Level 1.4 -> Level 1 benefit.
+    const effectiveMachineLevel = Math.min(4, Math.max(0, Math.round(currentMachineLevel)));
+
+    // Use effective level for impacts
+    const machineLevel = effectiveMachineLevel;
 
     // Dynamic Scaling: Balance the speed of change based on game length
     // Baseline is 20 rounds.
@@ -208,7 +250,9 @@ export class GameEngine {
     const laborCost = MACHINE_FACTORS.BASE_LABOR_COST * MACHINE_FACTORS.LABOR_COST_REDUCTION[machineLevel];
 
     // Machine investment/running costs (Investment scaled by game length)
-    const machineInvestment = MACHINE_FACTORS.INVESTMENT_COST[machineLevel] * costScale;
+    // Cost is based on what the user ordered (investment), not the resulting level.
+    const investmentLevel = Math.round(investment); // investment is 0-4 float/int
+    const machineInvestment = MACHINE_FACTORS.INVESTMENT_COST[investmentLevel] * costScale;
 
     const runningCost =
       (decision.organic ? EXPENSES.RUNNING.BASE_ORGANIC : EXPENSES.RUNNING.BASE_CONVENTIONAL) +
@@ -248,6 +292,7 @@ export class GameEngine {
       income,
       events,
       bioSiegel,
+      machineRealLevel: currentMachineLevel,
     };
 
     return {

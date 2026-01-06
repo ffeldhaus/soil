@@ -3175,6 +3175,20 @@
           <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="manual.concepts.machines.title" datatype="html">
+        <source>Maschinen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="manual.concepts.machines.text" datatype="html">
+        <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

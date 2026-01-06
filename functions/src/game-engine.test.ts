@@ -45,8 +45,9 @@ describe('GameEngine', () => {
       }));
     const prevRound: Round = {
       number: 1,
-      decision: { ...decision, machines: 0 },
+      decision: { ...decision, machines: 4 },
       parcelsSnapshot: prevParcels,
+      result: { machineRealLevel: 4 } as any, // Inject persistent machine state
     };
 
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: 'None' }, 1000, 20);

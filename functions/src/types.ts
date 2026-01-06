@@ -33,10 +33,10 @@ export interface RoundDecision {
 export interface RoundResult {
   profit: number;
   capital: number;
-  harvestSummary: Record<CropType, number>; // Total yield per crop
+  harvestSummary: Record<CropType, number>;
   expenses: {
     seeds: number;
-    labor: number; // mechanical/machines
+    labor: number;
     running: number;
     investments: number;
     total: number;
@@ -46,7 +46,8 @@ export interface RoundResult {
     weather: string;
     vermin: string;
   };
-  bioSiegel: boolean;
+  bioSiegel?: boolean;
+  machineRealLevel?: number; // Tracks the actual condition of machines (0-4 float)
 }
 
 export interface Round {

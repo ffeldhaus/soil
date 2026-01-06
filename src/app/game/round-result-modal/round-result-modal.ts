@@ -42,6 +42,10 @@ export class RoundResultModal {
     return this.round.result?.events;
   }
 
+  get machineLevel() {
+    return this.round.result?.machineRealLevel ?? 0;
+  }
+
   onClose() {
     this.resultClosed.emit();
   }

@@ -84,8 +84,8 @@ describe('Full Game Playthrough', () => {
     // Click Next Round to open settings
     cy.get('[data-testid="next-round-button"]').click();
 
-    // Adjust Machines Slider (0->50)
-    cy.get('input[type="range"]').invoke('val', 50).trigger('change').trigger('input');
+    // Adjust Machines Slider (0->4)
+    cy.get('input[type="range"]').invoke('val', 4).trigger('change').trigger('input');
 
     // Synthetic Fertilizer checkbox (it's the second one usually)
     // Better: use labels but we want language independence.
@@ -98,7 +98,7 @@ describe('Full Game Playthrough', () => {
     // 4. Verify Backend Call Payload
     cy.wait('@nextRound').then((interception) => {
       const decision = interception.request.body.data.decision;
-      expect(decision.machines).to.eq(50);
+      expect(decision.machines).to.eq(4);
       expect(decision.fertilizer).to.be.true;
       expect(decision.parcels[0]).to.eq('Wheat');
     });

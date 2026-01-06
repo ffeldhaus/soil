@@ -46,7 +46,8 @@ export interface RoundResult {
     weather: string;
     vermin: string;
   };
-  bioSiegel: boolean;
+  bioSiegel?: boolean;
+  machineRealLevel?: number;
 }
 
 export interface Round {
