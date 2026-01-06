@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding, inject, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 
 import { CropType, Parcel as ParcelType } from '../../types';
 

@@ -14,6 +14,18 @@ export class RoundResultModal {
   @Input() round!: Round;
   @Output() resultClosed = new EventEmitter<void>();
 
+  t(key: string): string {
+    const translations: Record<string, string> = {
+      Normal: $localize`:@@weather.normal:Normal`,
+      Drought: $localize`:@@weather.drought:Dürre`,
+      Flood: $localize`:@@weather.flood:Flut`,
+      Storm: $localize`:@@weather.storm:Sturm`,
+      None: $localize`:@@vermin.none:Keine`,
+      Pests: $localize`:@@vermin.pests:Schädlinge`,
+    };
+    return translations[key] || key;
+  }
+
   get profit() {
     return this.round.result?.profit ?? 0;
   }

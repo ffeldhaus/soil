@@ -6,13 +6,13 @@
     class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-lg w-full"
     (click)="$event.stopPropagation()"
   >
-    <h2 class="text-2xl font-bold text-white mb-6 font-serif">Round Settings</h2>
+    <h2 class="text-2xl font-bold text-white mb-6 font-serif">{{ t('settings.title') }}</h2>
 
     <div class="space-y-6">
       <!-- Machines Slider -->
       <div class="space-y-2">
         <div class="flex justify-between">
-          <label class="text-gray-300 font-medium">Machines</label>
+          <label class="text-gray-300 font-medium">{{ t('settings.machines') }}</label>
           <span class="text-emerald-400 font-bold">{{ settings.machines }}</span>
         </div>
         <input
@@ -22,7 +22,7 @@
           [(ngModel)]="settings.machines"
           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
         />
-        <p class="text-xs text-gray-400">Higher machine usage increases efficiency but degrades soil over time.</p>
+        <p class="text-xs text-gray-400">{{ t('settings.machines_desc') }}</p>
       </div>
 
       <!-- Toggles Grid -->
@@ -35,8 +35,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Organic Farming</span>
-            <p class="text-xs text-gray-500">Disables chemicals. Higher prices, lower yields.</p>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+              t('settings.organic')
+            }}</span>
+            <p class="text-xs text-gray-500">{{ t('settings.organic_desc') }}</p>
           </div>
         </label>
 
@@ -49,8 +51,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Synthetic Fertilizer</span>
-            <p class="text-xs text-gray-500">Boosts nutrition. Decreases soil quality long-term.</p>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+              t('settings.fertilizer')
+            }}</span>
+            <p class="text-xs text-gray-500">{{ t('settings.fertilizer_desc') }}</p>
           </div>
         </label>
 
@@ -63,8 +67,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Pesticides</span>
-            <p class="text-xs text-gray-500">Protects against vermin. Harms soil organisms.</p>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+              t('settings.pesticide')
+            }}</span>
+            <p class="text-xs text-gray-500">{{ t('settings.pesticide_desc') }}</p>
           </div>
         </label>
 
@@ -76,8 +82,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">Beneficial Organisms</span>
-            <p class="text-xs text-gray-500">Natural pest control. Expensive but sustainable.</p>
+            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+              t('settings.organisms')
+            }}</span>
+            <p class="text-xs text-gray-500">{{ t('settings.organisms_desc') }}</p>
           </div>
         </label>
       </div>
@@ -85,14 +93,14 @@
 
     <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-800">
       <button (click)="settingsCancelled.emit()" class="px-4 py-2 text-gray-400 hover:text-white transition">
-        Cancel
+        {{ t('settings.cancel') }}
       </button>
       <button
         (click)="submit()"
         data-testid="confirm-round-settings"
         class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition shadow-lg shadow-emerald-900/20"
       >
-        Confirm Settings
+        {{ t('settings.confirm') }}
       </button>
     </div>
   </div>

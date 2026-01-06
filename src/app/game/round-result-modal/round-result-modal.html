@@ -54,11 +54,11 @@
         <h3 i18n="@@roundResult.conditions" class="text-sm font-bold text-gray-300 mb-2">Bedingungen</h3>
         <div class="flex justify-between mb-1">
           <span i18n="@@roundResult.weather" class="text-gray-400">Wetter</span>
-          <span class="text-white">{{ events?.weather || 'Normal' }}</span>
+          <span class="text-white">{{ t(events?.weather || 'Normal') }}</span>
         </div>
         <div class="flex justify-between">
           <span i18n="@@roundResult.vermin" class="text-gray-400">Schädlinge</span>
-          <span class="text-white">{{ events?.vermin || 'Keine' }}</span>
+          <span class="text-white">{{ t(events?.vermin || 'None') }}</span>
         </div>
       </div>
     </div>

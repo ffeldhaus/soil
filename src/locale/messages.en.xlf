@@ -1522,6 +1522,82 @@
         <source>Logout</source>
         <target>Logout</target>
       </trans-unit>
+      <trans-unit id="settings.title" datatype="html">
+        <source>Rundeneinstellungen</source>
+        <target>Round Settings</target>
+      </trans-unit>
+      <trans-unit id="settings.machines" datatype="html">
+        <source>Maschinen</source>
+        <target>Machines</target>
+      </trans-unit>
+      <trans-unit id="settings.machines_desc" datatype="html">
+        <source>Höherer Maschineneinsatz steigert die Effizienz, laugt aber den Boden langfristig aus.</source>
+        <target>Higher machine usage increases efficiency but degrades soil over time.</target>
+      </trans-unit>
+      <trans-unit id="settings.organic" datatype="html">
+        <source>Ökologischer Anbau</source>
+        <target>Organic Farming</target>
+      </trans-unit>
+      <trans-unit id="settings.organic_desc" datatype="html">
+        <source>Verzicht auf Chemie. Höhere Preise, geringere Erträge.</source>
+        <target>Disables chemicals. Higher prices, lower yields.</target>
+      </trans-unit>
+      <trans-unit id="settings.fertilizer" datatype="html">
+        <source>Kunstdünger</source>
+        <target>Synthetic Fertilizer</target>
+      </trans-unit>
+      <trans-unit id="settings.fertilizer_desc" datatype="html">
+        <source>Steigert die Nährstoffe. Verschlechtert langfristig die Bodenqualität.</source>
+        <target>Boosts nutrition. Decreases soil quality long-term.</target>
+      </trans-unit>
+      <trans-unit id="settings.pesticide" datatype="html">
+        <source>Pflanzenschutzmittel</source>
+        <target>Pesticides</target>
+      </trans-unit>
+      <trans-unit id="settings.pesticide_desc" datatype="html">
+        <source>Schützt vor Schädlingen. Schadet den Bodenorganismen.</source>
+        <target>Protects against vermin. Harms soil organisms.</target>
+      </trans-unit>
+      <trans-unit id="settings.organisms" datatype="html">
+        <source>Nützlinge</source>
+        <target>Beneficial Organisms</target>
+      </trans-unit>
+      <trans-unit id="settings.organisms_desc" datatype="html">
+        <source>Natürliche Schädlingsbekämpfung. Teuer, aber nachhaltig.</source>
+        <target>Natural pest control. Expensive but sustainable.</target>
+      </trans-unit>
+      <trans-unit id="settings.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="settings.confirm" datatype="html">
+        <source>Einstellungen bestätigen</source>
+        <target>Confirm Settings</target>
+      </trans-unit>
+      <trans-unit id="weather.normal" datatype="html">
+        <source>Normal</source>
+        <target>Normal</target>
+      </trans-unit>
+      <trans-unit id="weather.drought" datatype="html">
+        <source>Dürre</source>
+        <target>Drought</target>
+      </trans-unit>
+      <trans-unit id="weather.flood" datatype="html">
+        <source>Flut</source>
+        <target>Flood</target>
+      </trans-unit>
+      <trans-unit id="weather.storm" datatype="html">
+        <source>Sturm</source>
+        <target>Storm</target>
+      </trans-unit>
+      <trans-unit id="vermin.none" datatype="html">
+        <source>Keine</source>
+        <target>None</target>
+      </trans-unit>
+      <trans-unit id="vermin.pests" datatype="html">
+        <source>Schädlinge</source>
+        <target>Pests</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
