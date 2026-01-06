@@ -1,0 +1,24 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm portrait:p-0"
+  (click)="closeModal.emit()"
+>
+  <div
+    class="bg-white p-6 rounded-xl flex flex-col items-center gap-4 portrait:rounded-none portrait:w-full portrait:h-full portrait:justify-center"
+    (click)="$event.stopPropagation()"
+  >
+    <h3 class="text-black font-bold text-xl">{{ qrCodePlayer }} {{ t('dashboard.qr.access') }}</h3>
+    <img [src]="qrCodeUrl" class="w-64 h-64" />
+    <p class="text-black text-sm text-center max-w-xs">{{ t('dashboard.qr.scan') }}</p>
+    <div class="flex gap-2 w-full max-w-xs">
+      <button (click)="print()" class="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-black rounded font-medium">
+        {{ t('dashboard.qr.print') }}
+      </button>
+      <button
+        (click)="closeModal.emit()"
+        class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium"
+      >
+        {{ t('dashboard.qr.close') }}
+      </button>
+    </div>
+  </div>
+</div>

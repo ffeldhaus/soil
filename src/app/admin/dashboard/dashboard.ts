@@ -11,11 +11,32 @@ import { Finance } from '../../game/finance/finance';
 import { GameService } from '../../game/game.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { Game, UserStatus } from '../../types';
+import { DashboardCreateGameComponent } from './components/dashboard-create-game';
+import { DashboardDeleteModalComponent } from './components/dashboard-delete-modal';
+import { DashboardErrorModalComponent } from './components/dashboard-error-modal';
+import { DashboardFinanceModalComponent } from './components/dashboard-finance-modal';
+import { DashboardGameListComponent } from './components/dashboard-game-list';
+import { DashboardHudComponent } from './components/dashboard-hud';
+import { DashboardPendingComponent } from './components/dashboard-pending';
+import { DashboardSuperAdminComponent } from './components/dashboard-super-admin';
+import { QrOverlayComponent } from './components/qr-overlay';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, LanguageSwitcherComponent, Finance],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DashboardHudComponent,
+    DashboardPendingComponent,
+    DashboardErrorModalComponent,
+    QrOverlayComponent,
+    DashboardSuperAdminComponent,
+    DashboardCreateGameComponent,
+    DashboardGameListComponent,
+    DashboardDeleteModalComponent,
+    DashboardFinanceModalComponent,
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -446,6 +467,15 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
+  async onGameCreate(config: any) {
+    this.newGameConfig = { ...this.newGameConfig, ...config };
+    await this.createNewGame();
+  }
+
+  async onUpdateDeadline(event: { gameId: string; round: number; dateStr: string }) {
+    await this.updateDeadline(event.gameId, event.round, event.dateStr);
+  }
+
   async createNewGame() {
     if (this.isCreatingGame) return;
 
@@ -545,13 +575,14 @@ export class Dashboard implements OnInit, OnDestroy {
     this.deleteConfirmInput = '';
   }
 
-  async confirmDelete() {
+  async confirmDelete(confirmInput?: string) {
     this.isDeleting = true;
     try {
       const force = this.showTrash;
+      const finalInput = confirmInput ?? this.deleteConfirmInput;
 
       // Double check validation if forcing
-      if (force && this.deleteConfirmInput !== 'DELETE') {
+      if (force && finalInput !== 'DELETE') {
         throw new Error('Please type DELETE to confirm.');
       }
 

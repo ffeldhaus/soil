@@ -1,0 +1,147 @@
+:host {
+  display: block;
+}
+
+@media print {
+  @page {
+    margin: 1cm;
+  }
+
+  .print-a4 {
+    /* Defined via @page in component styles doesn't work well dynamically, 
+       so we use classes to target specific sizes if needed, but standard 
+       browser print dialog handles size. We'll use CSS for orientation. */
+  }
+
+  .print-portrait {
+    /* Handled by @page */
+  }
+
+  .print-landscape {
+    /* Handled by @page */
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  nav,
+  .fixed:not(.inset-0),
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .relative {
+    position: static !important;
+  }
+
+  .z-10 {
+    z-index: auto !important;
+  }
+
+  .bg-gray-900,
+  .bg-gray-900\/80,
+  .bg-gray-900\/90,
+  .bg-black\/40,
+  .bg-black\/30,
+  .bg-white\/5,
+  .bg-emerald-500\/10,
+  .bg-red-900\/20,
+  .bg-blue-500\/10 {
+    background-color: white !important;
+    background: white !important;
+    backdrop-filter: none !important;
+  }
+
+  .border,
+  .border-gray-700,
+  .border-gray-800,
+  .border-white\/5,
+  .border-white\/10,
+  .border-emerald-500\/20,
+  .border-red-500\/30,
+  .border-blue-500\/20 {
+    border-color: #eee !important;
+  }
+
+  .text-white,
+  .text-gray-300,
+  .text-gray-400,
+  .text-emerald-400,
+  .text-red-200,
+  .text-blue-100 {
+    color: black !important;
+  }
+
+  .shadow-2xl,
+  .shadow-lg,
+  .shadow-xl {
+    box-shadow: none !important;
+  }
+
+  .print-page-break-after {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .print-page-break-before {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  img {
+    filter: none !important;
+  }
+
+  .max-w-5xl {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
+}
+
+/* Dynamic @page based on classes */
+:host-context(.print-a4.print-portrait) {
+  @media print {
+    @page {
+      size: A4 portrait;
+    }
+  }
+}
+:host-context(.print-a4.print-landscape) {
+  @media print {
+    @page {
+      size: A4 landscape;
+    }
+  }
+}
+:host-context(.print-letter.print-portrait) {
+  @media print {
+    @page {
+      size: letter portrait;
+    }
+  }
+}
+:host-context(.print-letter.print-landscape) {
+  @media print {
+    @page {
+      size: letter landscape;
+    }
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

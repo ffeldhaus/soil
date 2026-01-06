@@ -9,7 +9,7 @@ This document outlines the local development strategy, testing procedures, and c
 ## Core Mandates
 
 - **Conventions**: Rigorously adhere to existing project conventions. Analyze surrounding code, tests, and configuration before modifying.
-- **Style & Structure**: Mimic the style (formatting, naming), structure, and architectural patterns of existing code.
+- **Style & Structure**: Mimic the style (formatting, naming), structure, and architectural patterns of existing code. Keep Angular components modular to ensure that individual files (especially HTML templates) remain manageable in size (ideally under 500 lines). Avoid extremely large inline templates; prefer separate `.html` files if the template exceeds 50 lines. This improves maintainability and ensures better performance for AI code generation tools like Gemini CLI.
 - **Idiomatic Changes**: Ensure changes integrate naturally and idiomatically within the local context.
 - **Comments**: Add comments sparingly, focusing on _why_ something is done rather than _what_.
 - **Dependencies**: Verify established usage in `package.json` before employing new libraries. Prefer stable versions.

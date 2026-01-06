@@ -1,0 +1,68 @@
+<div
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+>
+  <!-- Total Games -->
+  <div
+    class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden portrait:rounded-none portrait:border-x-0"
+  >
+    <div class="absolute top-0 right-0 p-4 opacity-10">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-24 w-24 text-blue-500"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+        />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2">
+      {{ t('superadmin.stats.totalGames') }}
+    </h3>
+    <div class="flex items-end gap-2">
+      <span class="text-4xl font-bold text-white">{{ stats?.games?.total || 0 }}</span>
+      <span class="text-sm text-gray-400 mb-1">{{ t('superadmin.stats.created') }}</span>
+    </div>
+    <div class="mt-4 flex gap-4 text-xs font-mono">
+      <span class="text-emerald-400">{{ t('superadmin.stats.active') }}</span>
+      <span class="text-red-400">{{ stats?.games?.deleted || 0 }} Trash</span>
+    </div>
+  </div>
+
+  <!-- Total Users -->
+  <div
+    class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden portrait:rounded-none portrait:border-x-0"
+  >
+    <div class="absolute top-0 right-0 p-4 opacity-10">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-24 w-24 text-purple-500"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+        />
+      </svg>
+    </div>
+    <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2">Total Users</h3>
+    <div class="flex items-end gap-2">
+      <span class="text-4xl font-bold text-white">{{ stats?.users?.total || 0 }}</span>
+      <span class="text-sm text-gray-400 mb-1">registered</span>
+    </div>
+    <div class="mt-4 flex gap-4 text-xs font-mono">
+      <span class="text-purple-400">{{ stats?.users?.admins || 0 }} Admins</span>
+      <span class="text-yellow-400">{{ stats?.users?.pending || 0 }} Pending</span>
+    </div>
+  </div>
+</div>

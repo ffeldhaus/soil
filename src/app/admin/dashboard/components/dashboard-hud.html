@@ -1,0 +1,44 @@
+<div
+  class="fixed top-0 left-0 right-0 z-50 bg-gray-900/90 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-3 flex items-center justify-between"
+>
+  <div class="flex items-center gap-4">
+    <h1 class="text-2xl font-bold font-serif text-emerald-500 tracking-wider">SOIL ADMIN</h1>
+  </div>
+
+  <div class="flex items-center gap-3">
+    @if (user) {
+      <div class="flex items-center gap-3">
+        @if (user.photoURL) {
+          <img [src]="photoURL" class="w-8 h-8 rounded-full border border-gray-600" />
+        }
+        @if (!user.photoURL) {
+          <div
+            class="w-8 h-8 rounded-full border border-gray-600 bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-300"
+          >
+            {{ user.displayName?.charAt(0) || user.email?.charAt(0) }}
+          </div>
+        }
+        <span class="text-sm font-medium text-gray-300 hidden md:block">{{ user.displayName }}</span>
+      </div>
+    }
+
+    <app-language-switcher></app-language-switcher>
+
+    <button
+      (click)="logout.emit()"
+      data-testid="logout-admin"
+      class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition"
+      title="Logout"
+      i18n-title="@@dashboard.logout.title"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+        />
+      </svg>
+    </button>
+  </div>
+</div>

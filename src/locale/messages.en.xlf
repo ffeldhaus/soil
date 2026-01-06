@@ -1482,6 +1482,46 @@
         <source>Spiel löschen</source>
         <target>Delete Game</target>
       </trans-unit>
+      <trans-unit id="adminRegister.firstName" datatype="html">
+        <source>Vorname</source>
+        <target>First Name</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.firstName" datatype="html">
+        <source>Max</source>
+        <target>Max</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.lastName" datatype="html">
+        <source>Nachname</source>
+        <target>Last Name</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.lastName" datatype="html">
+        <source>Mustermann</source>
+        <target>Mustermann</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.website" datatype="html">
+        <source>Website der Institution</source>
+        <target>Institution Website</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.placeholder.website" datatype="html">
+        <source>https://schule.de</source>
+        <target>https://school.edu</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.backToLogin" datatype="html">
+        <source> Zurück zur Anmeldung </source>
+        <target>Back to Login</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.processing" datatype="html">
+        <source>Wird verarbeitet...</source>
+        <target>Processing...</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.btnSubmit" datatype="html">
+        <source>Registrierung beantragen</source>
+        <target>Request Registration</target>
+      </trans-unit>
+      <trans-unit id="dashboard.logout.title" datatype="html">
+        <source>Logout</source>
+        <target>Logout</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

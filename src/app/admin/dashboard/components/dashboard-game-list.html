@@ -1,0 +1,345 @@
+<div class="mb-8">
+  <div class="flex justify-between items-center mb-4 portrait:px-4">
+    <div class="flex items-center gap-3">
+      <h3 class="text-xl font-bold text-white">
+        @if (showTrash) {
+          <ng-container>{{ t('dashboard.list.trash') }}</ng-container>
+        }
+        @if (!showTrash) {
+          <ng-container>{{ t('dashboard.list.active') }}</ng-container>
+        }
+      </h3>
+      <div class="flex items-center gap-2 ml-4 bg-gray-800 rounded-lg p-1 border border-gray-700">
+        <button
+          (click)="!showTrash ? null : toggleTrashView.emit()"
+          [class.bg-emerald-600]="!showTrash"
+          [class.text-white]="!showTrash"
+          [class.text-gray-400]="showTrash"
+          [class.hover:text-white]="showTrash"
+          class="px-3 py-1 rounded text-xs font-bold transition"
+        >
+          {{ t('dashboard.filter.active') }}
+        </button>
+        <button
+          (click)="showTrash ? null : toggleTrashView.emit()"
+          [class.bg-red-600]="showTrash"
+          [class.text-white]="showTrash"
+          [class.text-gray-400]="!showTrash"
+          [class.hover:text-white]="!showTrash"
+          class="px-3 py-1 rounded text-xs font-bold transition"
+        >
+          {{ t('dashboard.filter.trash') }}
+        </button>
+      </div>
+      <button
+        (click)="loadGames.emit()"
+        class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white transition"
+        title="Refresh List"
+        [title]="t('dashboard.list.refresh')"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          />
+        </svg>
+      </button>
+    </div>
+
+    @if (selectedGameIds.size > 0) {
+      <div class="flex gap-2">
+        @if (showTrash) {
+          <button
+            (click)="restoreSelected.emit()"
+            [disabled]="isRestoring"
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded transition flex items-center gap-2 shadow-lg animate-fade-in"
+          >
+            @if (isRestoring) {
+              <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+            }
+            <span>{{ t('dashboard.actions.restoreSelected') }}</span> ({{ selectedGameIds.size }})
+          </button>
+        }
+
+        @if (!showTrash) {
+          <button
+            (click)="deleteSelected.emit()"
+            [disabled]="isDeleting"
+            class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded transition flex items-center gap-2 shadow-lg animate-fade-in"
+          >
+            @if (isDeleting) {
+              <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            }
+            <span>{{ t('dashboard.actions.deleteSelected') }}</span> ({{ selectedGameIds.size }})
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Error State -->
+  @if (loadingError) {
+    <div
+      class="mb-4 p-4 bg-red-900/30 border border-red-500/50 rounded-lg flex items-center justify-between text-red-200 portrait:rounded-none portrait:border-x-0"
+    >
+      <div class="flex items-center gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span>{{ loadingError }}</span>
+      </div>
+      <button
+        (click)="loadGames.emit()"
+        class="px-3 py-1 bg-red-800 hover:bg-red-700 text-white text-sm font-medium rounded transition"
+      >
+        {{ t('dashboard.error.retry') }}
+      </button>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoadingGames) {
+    <div class="py-12 flex flex-col items-center justify-center text-gray-400">
+      <svg
+        class="animate-spin h-8 w-8 text-emerald-500 mb-3"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <span class="animate-pulse">{{ t('dashboard.loading.games') }}</span>
+    </div>
+  }
+
+  @if (!isLoadingGames && !loadingError) {
+    <div
+      class="overflow-x-auto rounded-lg border border-gray-700 animate-fade-in portrait:rounded-none portrait:border-x-0"
+    >
+      <table class="w-full text-sm text-left text-gray-300">
+        <thead class="text-xs text-gray-400 uppercase bg-gray-800/60">
+          <tr>
+            <th class="px-4 py-3 w-10">
+              <input
+                type="checkbox"
+                (change)="toggleSelectAll.emit($event)"
+                [checked]="isAllSelected()"
+                class="rounded bg-gray-700 border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+              />
+            </th>
+            <th class="px-4 py-3 w-8"></th>
+            <th class="px-4 py-3">{{ t('dashboard.table.name') }}</th>
+            <th class="px-4 py-3">{{ t('dashboard.table.details') }}</th>
+            <th class="px-4 py-3">{{ t('dashboard.table.round') }}</th>
+            @if (showTrash) {
+              <th class="px-4 py-3">{{ t('dashboard.table.deletedAt') }}</th>
+            }
+            @if (!showTrash) {
+              <th class="px-4 py-3">{{ t('dashboard.table.created') }}</th>
+            }
+            <th class="px-4 py-3">{{ t('dashboard.table.actions') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let game of games">
+            <tr class="border-b border-gray-700 hover:bg-gray-800/30 transition">
+              <td class="px-4 py-3">
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(game.id)"
+                  (change)="toggleSelection.emit(game.id)"
+                  class="rounded bg-gray-700 border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+                />
+              </td>
+              <td class="px-4 py-3">
+                <button
+                  (click)="toggleExpand.emit(game.id)"
+                  class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white transition"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 transition-transform duration-200"
+                    [class.rotate-90]="expandedGameId === game.id"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </td>
+              <td class="px-4 py-3 font-medium text-white">{{ game.name }}</td>
+              <td class="px-4 py-3 font-mono text-xs">
+                <div>
+                  {{ t('dashboard.table.id') }}
+                  <span class="text-blue-300 select-all">{{ game.id }}</span>
+                </div>
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-300">{{ game.currentRoundNumber || 0 }}</td>
+              @if (showTrash) {
+                <td class="px-4 py-3">{{ game.deletedAt | date: 'short' }}</td>
+              }
+              @if (!showTrash) {
+                <td class="px-4 py-3">{{ game.createdAt | date: 'shortDate' }}</td>
+              }
+              <td class="px-4 py-3 flex gap-2">
+                @if (!showTrash) {
+                  <button
+                    (click)="shareGame.emit(game)"
+                    class="p-1.5 text-blue-400 hover:text-white hover:bg-blue-600 rounded-lg transition"
+                    title="Email Game Details"
+                    [title]="t('dashboard.table.email')"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </button>
+                }
+                @if (showTrash) {
+                  <button
+                    (click)="restoreGame.emit(game)"
+                    class="p-1.5 text-emerald-400 hover:text-white hover:bg-emerald-600 rounded-lg transition"
+                    title="Restore Game"
+                    [title]="t('dashboard.table.restore')"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                  </button>
+                }
+                <button
+                  (click)="deleteGame.emit(game)"
+                  class="p-1.5 text-red-400 hover:text-white hover:bg-red-600 rounded-lg transition"
+                  [title]="t('dashboard.table.delete')"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <!-- Expanded Details Row -->
+            @if (expandedGameId === game.id) {
+              <tr class="bg-gray-800/40 border-b border-gray-700">
+                <td colspan="8" class="px-4 py-4">
+                  <app-dashboard-game-detail
+                    [game]="game"
+                    [aiLevel]="aiLevel"
+                    (convertPlayer)="convertPlayer.emit($event)"
+                    (loginAsPlayer)="loginAsPlayer.emit($event)"
+                    (copyLoginUrl)="copyLoginUrl.emit($event)"
+                    (generateQrCode)="generateQrCode.emit($event)"
+                    (sharePlayer)="sharePlayer.emit($event)"
+                    (openFinance)="openFinance.emit($event)"
+                    (printAllQrCodes)="printAllQrCodes.emit($event)"
+                    (updateDeadline)="updateDeadline.emit($event)"
+                  ></app-dashboard-game-detail>
+                </td>
+              </tr>
+            }
+          </ng-container>
+
+          @if (games.length === 0) {
+            <tr>
+              <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                <p class="text-lg mb-2">{{ t('dashboard.empty.title') }}</p>
+                <p class="text-sm">{{ t('dashboard.empty.subtitle') }}</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Pagination -->
+  @if (totalGames > 0) {
+    <div class="flex flex-col sm:flex-row justify-between items-center mt-4 text-sm text-gray-400 gap-4">
+      <div>
+        <ng-container>{{ t('dashboard.pagination.showing') }}</ng-container>
+        <span class="text-white">{{ (currentPage - 1) * pageSize + 1 }}</span> -
+        <span class="text-white">{{ (currentPage - 1) * pageSize + games.length }}</span>
+        <ng-container>{{ t('dashboard.pagination.of') }}</ng-container>
+        <span class="text-white">{{ totalGames }}</span>
+      </div>
+      <div class="flex gap-2">
+        <button
+          (click)="prevPage.emit()"
+          [disabled]="currentPage === 1"
+          class="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          {{ t('dashboard.pagination.prev') }}
+        </button>
+        <span class="px-3 py-1 bg-gray-800/50 rounded border border-gray-700">
+          <ng-container>{{ t('dashboard.pagination.page') }}</ng-container>
+          {{ currentPage }} {{ t('dashboard.pagination.of') }} {{ totalPages }}
+        </span>
+        <button
+          (click)="nextPage.emit()"
+          [disabled]="currentPage === totalPages"
+          class="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          {{ t('dashboard.pagination.next') }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

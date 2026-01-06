@@ -1,0 +1,152 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm portrait:p-0"
+  (click)="closeModal.emit()"
+>
+  <div
+    class="bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
+    (click)="$event.stopPropagation()"
+  >
+    <h3
+      class="text-xl font-bold flex items-center gap-2"
+      [class.text-red-400]="!showTrash"
+      [class.text-red-600]="showTrash"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+        />
+      </svg>
+      @if (showTrash) {
+        <ng-container>{{ t('dashboard.delete.permanent') }}</ng-container>
+      }
+      @if (!showTrash) {
+        <ng-container>{{ t('dashboard.delete.confirm') }}</ng-container>
+      }
+    </h3>
+
+    <p class="text-gray-300">
+      @if (gameToDelete) {
+        <span>
+          @if (showTrash) {
+            <ng-container>{{ t('dashboard.delete.questionPermanent') }}</ng-container>
+          }
+          @if (!showTrash) {
+            <ng-container>{{ t('dashboard.delete.question') }}</ng-container>
+          }
+          <span class="font-bold text-white"> {{ gameToDelete.name }}</span
+          >?
+        </span>
+      }
+      @if (isDeletingSelected) {
+        <span>
+          @if (showTrash) {
+            <ng-container>{{ t('dashboard.delete.questionBatchPermanent') }}</ng-container>
+          }
+          @if (!showTrash) {
+            <ng-container>{{ t('dashboard.delete.questionBatch') }}</ng-container>
+          }
+          <span class="font-bold text-white"> {{ selectedCount }}</span>
+          <ng-container>{{ t('dashboard.delete.games') }}</ng-container
+          >?</span
+        >
+      }
+    </p>
+
+    <!-- Soft Delete Info -->
+    @if (!showTrash) {
+      <div
+        class="bg-red-900/20 border border-red-900/50 p-3 rounded-lg flex gap-3 items-start portrait:rounded-none portrait:border-x-0"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <div class="text-sm text-red-200/80">
+          <strong>{{ t('dashboard.delete.soft.title') }}</strong
+          ><ng-container>{{ t('dashboard.delete.soft.desc') }}</ng-container
+          ><strong>30 {{ t('dashboard.delete.days') }}</strong
+          >.
+        </div>
+      </div>
+    }
+
+    <!-- Permanent Delete Warning -->
+    @if (showTrash) {
+      <div
+        class="bg-red-600/20 border border-red-500/50 p-3 rounded-lg flex gap-3 items-start animate-pulse-slow portrait:rounded-none portrait:border-x-0"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+        <div class="text-sm text-red-200">
+          <strong>{{ t('dashboard.delete.warning') }}</strong>
+          {{ t('dashboard.delete.permanentDesc') }}
+        </div>
+      </div>
+    }
+
+    <!-- Type Confirmation -->
+    @if (showTrash) {
+      <div>
+        <label class="text-xs text-gray-400 block mb-1" [innerHTML]="t('dashboard.delete.typeConfirm')"></label>
+        <input
+          [(ngModel)]="deleteConfirmInput"
+          placeholder="DELETE"
+          class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-red-500 focus:outline-none placeholder-gray-600"
+        />
+      </div>
+    }
+
+    <div class="flex gap-3 mt-4">
+      <button
+        (click)="closeModal.emit()"
+        class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+      >
+        {{ t('dashboard.delete.cancel') }}
+      </button>
+      <button
+        (click)="onConfirm()"
+        [disabled]="isDeleting || (showTrash && deleteConfirmInput !== 'DELETE')"
+        class="flex-1 py-3 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2"
+      >
+        @if (!isDeleting) {
+          <span>
+            @if (showTrash) {
+              <ng-container>{{ t('dashboard.delete.btnPermanent') }}</ng-container>
+            }
+            @if (!showTrash) {
+              <ng-container>{{ t('dashboard.delete.btnGame') }}</ng-container>
+            }
+          </span>
+        }
+        @if (isDeleting) {
+          <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+        }
+      </button>
+    </div>
+  </div>
+</div>

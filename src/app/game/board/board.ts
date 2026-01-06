@@ -15,6 +15,8 @@ import { Parcel } from '../parcel/parcel';
 import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
+import { BoardHudComponent } from './components/board-hud';
+import { BoardLoginOverlayComponent } from './components/board-login-overlay';
 
 @Component({
   selector: 'app-board',
@@ -29,6 +31,8 @@ import { RoundSettings, RoundSettingsModal } from '../round-settings-modal/round
     FormsModule,
     LanguageSwitcherComponent,
     Finance,
+    BoardLoginOverlayComponent,
+    BoardHudComponent,
   ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
@@ -112,7 +116,7 @@ export class Board implements OnInit, OnDestroy {
   showSoilOverlay = false;
   showMobileMenu = false;
   playerLabel = 'Player';
-  playerNumber: string | undefined;
+  playerNumber: string | null = null;
 
   // Timer
   countdownText = '';
@@ -126,6 +130,57 @@ export class Board implements OnInit, OnDestroy {
   // Inline Name Editing
   isEditingName = false;
   tempName = '';
+
+  gameId = '';
+  pin = '';
+  authError: string | null = null;
+  showLabels = true;
+  pendingNextRound = false;
+
+  login() {
+    this.authService.loginWithGoogle();
+  }
+
+  toggleMobileMenu() {
+    this.showMobileMenu = !this.showMobileMenu;
+  }
+
+  updateReadOnly() {
+    // Logic to determine if board is read-only
+    this.isReadOnly = this.isSubmitted || this.viewingRound < this.maxRoundNumber;
+  }
+
+  goToRound(round: number) {
+    if (round >= 0 && round <= this.maxRoundNumber) {
+      this.viewingRound = round;
+      this.updateReadOnly();
+    }
+  }
+
+  toggleLabels() {
+    this.showLabels = !this.showLabels;
+  }
+
+  toggleNutrition() {
+    this.showNutritionOverlay = !this.showNutritionOverlay;
+  }
+
+  toggleHarvest() {
+    this.showHarvestOverlay = !this.showHarvestOverlay;
+  }
+
+  toggleSoil() {
+    this.showSoilOverlay = !this.showSoilOverlay;
+  }
+
+  toggleFinance() {
+    this.showFinance = !this.showFinance;
+  }
+
+  async logout() {
+    await this.authService.logout();
+    this.router.navigate(['/']);
+  }
 
   ngOnInit() {
     combineLatest([this.route.queryParams, this.user$]).subscribe(async ([params, user]: [any, User | null]) => {
@@ -151,7 +206,7 @@ export class Board implements OnInit, OnDestroy {
                 this.maxRoundNumber = state.game.currentRoundNumber;
                 this.viewingRound = this.maxRoundNumber;
                 this.playerLabel = state.game.settings?.playerLabel || 'Player';
-                this.playerNumber = state.playerState?.playerNumber;
+                this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
 
                 // Timer Logic
                 this.updateTimer(state.game);
@@ -221,82 +276,24 @@ export class Board implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  login() {
-    // If on board and not logged in, we might want to just go to admin to login?
-    // Or allow login here.
-    this.authService.loginWithGoogle().then(() => {
-      // After login, check roles in subscription
-    });
+  handlePlayerLogin(credentials: { gameId: string; playerNumber: string; pin: string }) {
+    this.gameId = credentials.gameId;
+    this.playerNumber = credentials.playerNumber;
+    this.pin = credentials.pin;
+    this.playerLogin();
   }
 
-  // Player Auth
-  gameId = '';
-  // playerNumber is defined above at line 48
-  pin = '';
-  isRegistering = false;
-  authError = '';
-
-  // Settings
-  // showSettings & newName are defined above at lines 37-38
-
-  // UI State
-  showLabels = true;
-
-  toggleLabels() {
-    this.showLabels = !this.showLabels;
-  }
-
-  updateReadOnly() {
-    const isHistory = this.viewingRound < this.maxRoundNumber;
-    this.isReadOnly = this.isSubmitted || isHistory;
-  }
-
-  goToRound(roundNum: number) {
-    if (roundNum < 0 || roundNum > this.maxRoundNumber) return;
-    this.viewingRound = roundNum;
-
-    if (roundNum === this.maxRoundNumber) {
-      // Restore live state
-      this.parcels = this.gameService.getParcelsValue();
-      this.updateReadOnly();
-    } else {
-      const round = this.history.find((r) => r.number === roundNum);
-      if (round) {
-        this.parcels = round.parcelsSnapshot;
-        this.updateReadOnly();
-      }
-    }
-  }
-
-  toggleNutrition() {
-    this.showNutritionOverlay = !this.showNutritionOverlay;
-  }
-  toggleHarvest() {
-    this.showHarvestOverlay = !this.showHarvestOverlay;
-  }
-  toggleSoil() {
-    this.showSoilOverlay = !this.showSoilOverlay;
-  }
-  toggleMobileMenu() {
-    this.showMobileMenu = !this.showMobileMenu;
-  }
-  toggleFinance() {
-    if (this.maxRoundNumber === 0) return;
-    this.showFinance = !this.showFinance;
+  onSaveName(name: string) {
+    this.tempName = name;
+    this.saveName();
   }
 
   async playerLogin() {
-    try {
-      this.authError = '';
-      await this.authService.loginAsPlayer(this.gameId, this.pin);
-    } catch (e: any) {
-      this.authError = e.message;
+    this.authError = null;
+    if (!this.gameId || !this.playerNumber || !this.pin) {
+      this.authError = 'Please enter Game ID, Player Number and PIN';
+      return;
     }
-  }
-
-  async logout() {
-    await this.authService.logout();
-    this.router.navigate(['/']);
   }
 
   startEditName() {
@@ -482,8 +479,6 @@ export class Board implements OnInit, OnDestroy {
   openRoundSettings() {
     this.showRoundSettingsModal = true;
   }
-
-  pendingNextRound = false;
 
   onRoundSettingsSaved(settings: RoundSettings) {
     this.currentRoundSettings = settings;

@@ -6,264 +6,43 @@
 
   <!-- Login Overlay -->
   @if ((user$ | async) === null) {
-    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-lg p-4">
-      <div class="flex flex-col md:flex-row gap-8 w-full max-w-4xl">
-        <!-- Admin Login -->
-        <div
-          class="flex-1 bg-gray-900 border border-emerald-900/50 p-8 rounded-2xl shadow-2xl text-center flex flex-col items-center justify-center relative overflow-hidden group"
-        >
-          <div class="absolute inset-0 bg-emerald-900/10 group-hover:bg-emerald-900/20 transition duration-500"></div>
-          <h2 i18n="@@board.login.adminTitle" class="text-3xl font-bold text-emerald-400 mb-4 font-serif relative z-10">
-            Administrator
-          </h2>
-          <p i18n="@@board.login.adminDesc" class="text-gray-400 mb-8 relative z-10">Spiel erstellen und verwalten</p>
-          <button
-            (click)="login()"
-            data-testid="login-google"
-            class="relative z-10 px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-full transition transform hover:scale-105 shadow-lg flex items-center gap-3"
-          >
-            <svg class="w-5 h-5" viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10c5.35 0 9.25-3.67 9.25-9.09c0-1.15-.15-1.81-.15-1.81Z"
-              />
-            </svg>
-            <span i18n="@@board.login.btnGoogle">Mit Google anmelden</span>
-          </button>
-        </div>
-
-        <!-- Player Login -->
-        <div
-          class="flex-1 bg-gray-900 border border-blue-900/50 p-8 rounded-2xl shadow-2xl flex flex-col items-center justify-center relative overflow-hidden group"
-        >
-          <div class="absolute inset-0 bg-blue-900/10 group-hover:bg-blue-900/20 transition duration-500"></div>
-          <h2 i18n="@@board.login.playerTitle" class="text-3xl font-bold text-blue-400 mb-4 font-serif relative z-10">
-            Spieler
-          </h2>
-          <p i18n="@@board.login.playerDesc" class="text-gray-400 mb-6 relative z-10">
-            Einem bestehenden Spiel beitreten
-          </p>
-
-          <div class="w-full max-w-xs relative z-10 flex flex-col gap-4">
-            <input
-              [(ngModel)]="gameId"
-              type="text"
-              data-testid="board-login-gameid"
-              [placeholder]="t('board.login.phGameId')"
-              class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
-            />
-            <input
-              [(ngModel)]="playerNumber"
-              type="text"
-              data-testid="board-login-playernum"
-              [placeholder]="t('board.login.phPlayerNum')"
-              class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
-            />
-            <input
-              [(ngModel)]="pin"
-              type="password"
-              data-testid="board-login-pin"
-              [placeholder]="t('board.login.phPin')"
-              class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition"
-            />
-
-            <button
-              (click)="playerLogin()"
-              data-testid="login-player-submit"
-              class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition transform hover:scale-105 shadow-lg"
-            >
-              <ng-container i18n="@@board.login.btnLogin">Anmelden</ng-container>
-            </button>
-
-            @if (authError) {
-              <p class="text-red-400 text-sm mt-2 text-center">{{ authError }}</p>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-board-login-overlay
+      [authError]="authError"
+      (adminLogin)="login()"
+      (playerLogin)="handlePlayerLogin($event)"
+    ></app-board-login-overlay>
   }
 
   @if (user$ | async; as user) {
     <div class="relative z-10 h-full flex flex-col">
-      <div
-        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-3 flex items-center justify-between shrink-0 h-16"
-      >
-        <button
-          (click)="toggleMobileMenu()"
-          data-testid="mobile-menu-toggle"
-          class="lg:hidden p-2 hover:bg-gray-800 rounded-lg text-gray-400"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <!-- Left Side: Logo & Stats -->
-        <div class="flex items-center gap-4">
-          <h1 class="text-2xl font-bold font-serif text-emerald-500 tracking-wider hidden sm:block">SOIL</h1>
-          <div class="h-6 w-px bg-gray-700 hidden sm:block"></div>
-          @if (gameState$ | async; as state) {
-            <div class="flex gap-4 text-gray-200 font-mono text-sm md:text-base">
-              <span class="text-yellow-400" data-testid="hud-capital">{{
-                state.playerState?.capital ?? state.capital | currency: 'EUR' : 'symbol' : '1.0-0'
-              }}</span>
-            </div>
-          }
-        </div>
-
-        <!-- Center/Right: Desktop Controls -->
-        <div class="hidden lg:flex items-center gap-3">
-          <!-- User Info -->
-          <div class="flex items-center gap-2 mr-2">
-            @if (!isPlayer) {
-              <img [src]="t('user.photoURL')" class="w-6 h-6 rounded-full border border-gray-600" />
-            }
-            @if (!isEditingName) {
-              <span
-                class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200 transition-colors"
-                (click)="startEditName(); $event.stopPropagation()"
-              >
-                {{
-                  isPlayer && !user.displayName
-                    ? playerLabel + ' ' + (playerNumber || '')
-                    : (user.displayName | uppercase)
-                }}
-              </span>
-            } @else {
-              <input
-                [(ngModel)]="tempName"
-                (keyup.enter)="saveName()"
-                (blur)="saveName()"
-                class="bg-gray-800 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1"
-                (click)="$event.stopPropagation()"
-              />
-            }
-          </div>
-
-          <!-- Toggle Buttons -->
-          <button
-            (click)="toggleLabels()"
-            class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-            [class.bg-emerald-600]="showLabels"
-            [class.text-white]="showLabels"
-            [class.border-emerald-500]="showLabels"
-            [class.bg-gray-800]="!showLabels"
-            [class.text-gray-400]="!showLabels"
-            [class.border-gray-700]="!showLabels"
-          >
-            {{ t('board.nav.names') }}
-          </button>
-          <button
-            (click)="toggleNutrition()"
-            class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-            [class.bg-blue-600]="showNutritionOverlay"
-            [class.text-white]="showNutritionOverlay"
-            [class.border-blue-500]="showNutritionOverlay"
-            [class.bg-gray-800]="!showNutritionOverlay"
-            [class.text-gray-400]="!showNutritionOverlay"
-            [class.border-gray-700]="!showNutritionOverlay"
-          >
-            {{ t('board.nav.nutrition') }}
-          </button>
-          <button
-            (click)="toggleHarvest()"
-            class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-            [class.bg-yellow-600]="showHarvestOverlay"
-            [class.text-white]="showHarvestOverlay"
-            [class.border-yellow-500]="showHarvestOverlay"
-            [class.bg-gray-800]="!showHarvestOverlay"
-            [class.text-gray-400]="!showHarvestOverlay"
-            [class.border-gray-700]="!showHarvestOverlay"
-          >
-            {{ t('board.nav.harvest') }}
-          </button>
-          <button
-            (click)="toggleSoil()"
-            class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-            [class.bg-emerald-700]="showSoilOverlay"
-            [class.text-white]="showSoilOverlay"
-            [class.border-emerald-600]="showSoilOverlay"
-            [class.bg-gray-800]="!showSoilOverlay"
-            [class.text-gray-400]="!showSoilOverlay"
-            [class.border-gray-700]="!showSoilOverlay"
-          >
-            {{ t('board.nav.soil') }}
-          </button>
-          <button
-            (click)="toggleFinance()"
-            [disabled]="maxRoundNumber === 0"
-            class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-            [class.bg-emerald-600]="showFinance"
-            [class.text-white]="showFinance"
-            [class.border-emerald-500]="showFinance"
-            [class.bg-gray-800]="!showFinance"
-            [class.text-gray-400]="!showFinance"
-            [class.border-gray-700]="!showFinance"
-            [class.opacity-50]="maxRoundNumber === 0"
-          >
-            {{ t('board.nav.finance') }}
-          </button>
-
-          <div class="h-6 w-px bg-gray-700 mx-1"></div>
-
-          <!-- Action Buttons -->
-          <button
-            (click)="openRoundSettings()"
-            [disabled]="isReadOnly"
-            class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold rounded-lg border border-gray-600 transition text-[10px] flex items-center gap-1 disabled:opacity-50"
-          >
-            {{ t('board.nav.options') }}
-          </button>
-          @if ((gameState$ | async)?.game?.status !== 'finished') {
-            <button
-              (click)="nextRound()"
-              data-testid="next-round-button"
-              [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
-              class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500"
-            >
-              @if (isSubmitted || pendingNextRound) {
-                <ng-container>{{ t('board.nav.waiting') }}</ng-container>
-              } @else {
-                <ng-container>{{ t('board.nav.nextRound') }}</ng-container>
-              }
-            </button>
-          }
-          @if ((gameState$ | async)?.game?.status === 'finished') {
-            <button
-              (click)="showGameEndModal = true"
-              class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg border border-amber-500 transition text-[10px] shadow-lg shadow-amber-900/40"
-            >
-              <ng-container i18n="@@board.nav.endGame">Spiel beendet</ng-container>
-            </button>
-          }
-        </div>
-
-        <!-- Right Side: Utility -->
-        <div class="flex items-center gap-3">
-          <app-language-switcher></app-language-switcher>
-          <button
-            (click)="logout()"
-            data-testid="logout-button"
-            class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition"
-            [title]="t('board.logout')"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
+      <app-board-hud
+        [user]="user"
+        [gameState]="gameState$ | async"
+        [isPlayer]="isPlayer"
+        [playerLabel]="playerLabel"
+        [playerNumber]="playerNumber"
+        [showLabels]="showLabels"
+        [showNutritionOverlay]="showNutritionOverlay"
+        [showHarvestOverlay]="showHarvestOverlay"
+        [showSoilOverlay]="showSoilOverlay"
+        [showFinance]="showFinance"
+        [maxRoundNumber]="maxRoundNumber"
+        [isReadOnly]="isReadOnly"
+        [isSubmitted]="isSubmitted"
+        [viewingRound]="viewingRound"
+        [pendingNextRound]="pendingNextRound"
+        (logout)="logout()"
+        (toggleMobileMenu)="toggleMobileMenu()"
+        (updateName)="onSaveName($event)"
+        (toggleLabels)="toggleLabels()"
+        (toggleNutrition)="toggleNutrition()"
+        (toggleHarvest)="toggleHarvest()"
+        (toggleSoil)="toggleSoil()"
+        (toggleFinance)="toggleFinance()"
+        (openRoundSettings)="openRoundSettings()"
+        (nextRound)="nextRound()"
+        (showGameEnd)="showGameEndModal = true"
+      ></app-board-hud>
 
       <!-- Mobile Side Menu Overlay -->
       @if (showMobileMenu) {
