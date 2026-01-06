@@ -15,34 +15,36 @@
 
   @if (user$ | async; as user) {
     <div class="relative z-10 h-full flex flex-col">
-      <app-board-hud
-        [user]="user"
-        [gameState]="gameState$ | async"
-        [isPlayer]="isPlayer"
-        [playerLabel]="playerLabel"
-        [playerNumber]="playerNumber"
-        [showLabels]="showLabels"
-        [showNutritionOverlay]="showNutritionOverlay"
-        [showHarvestOverlay]="showHarvestOverlay"
-        [showSoilOverlay]="showSoilOverlay"
-        [showFinance]="showFinance"
-        [maxRoundNumber]="maxRoundNumber"
-        [isReadOnly]="isReadOnly"
-        [isSubmitted]="isSubmitted"
-        [viewingRound]="viewingRound"
-        [pendingNextRound]="pendingNextRound"
-        (logout)="logout()"
-        (toggleMobileMenu)="toggleMobileMenu()"
-        (updateName)="onSaveName($event)"
-        (toggleLabels)="toggleLabels()"
-        (toggleNutrition)="toggleNutrition()"
-        (toggleHarvest)="toggleHarvest()"
-        (toggleSoil)="toggleSoil()"
-        (toggleFinance)="toggleFinance()"
-        (openRoundSettings)="openRoundSettings()"
-        (nextRound)="nextRound()"
-        (showGameEnd)="showGameEndModal = true"
-      ></app-board-hud>
+      @defer (hydrate on idle) {
+        <app-board-hud
+          [user]="user"
+          [gameState]="gameState$ | async"
+          [isPlayer]="isPlayer"
+          [playerLabel]="playerLabel"
+          [playerNumber]="playerNumber"
+          [showLabels]="showLabels"
+          [showNutritionOverlay]="showNutritionOverlay"
+          [showHarvestOverlay]="showHarvestOverlay"
+          [showSoilOverlay]="showSoilOverlay"
+          [showFinance]="showFinance"
+          [maxRoundNumber]="maxRoundNumber"
+          [isReadOnly]="isReadOnly"
+          [isSubmitted]="isSubmitted"
+          [viewingRound]="viewingRound"
+          [pendingNextRound]="pendingNextRound"
+          (logout)="logout()"
+          (toggleMobileMenu)="toggleMobileMenu()"
+          (updateName)="onSaveName($event)"
+          (toggleLabels)="toggleLabels()"
+          (toggleNutrition)="toggleNutrition()"
+          (toggleHarvest)="toggleHarvest()"
+          (toggleSoil)="toggleSoil()"
+          (toggleFinance)="toggleFinance()"
+          (openRoundSettings)="openRoundSettings()"
+          (nextRound)="nextRound()"
+          (showGameEnd)="showGameEndModal = true"
+        ></app-board-hud>
+      }
 
       <!-- Mobile Side Menu Overlay -->
       @if (showMobileMenu) {
@@ -72,7 +74,9 @@
               <!-- Navigation -->
               <nav class="p-4 space-y-1">
                 <div class="px-2 py-3 flex justify-center">
-                  <app-language-switcher></app-language-switcher>
+                  @defer (hydrate on interaction) {
+                    <app-language-switcher></app-language-switcher>
+                  }
                 </div>
                 <div class="h-px bg-gray-800 mx-2 my-2"></div>
                 <label
@@ -369,21 +373,24 @@
             (touchend)="onTouchEnd($event)"
             (click)="$event.stopPropagation()"
           >
-            <app-parcel
-              *ngFor="let parcel of parcels; let i = index"
-              [parcel]="parcel"
-              [attr.data-index]="i"
-              data-testid="parcel"
-              class="aspect-square"
-              [selected]="isSelected(parcel.index)"
-              [showLabels]="showLabels"
-              [showNutrition]="showNutritionOverlay"
-              [showHarvest]="showHarvestOverlay"
-              [showSoil]="showSoilOverlay"
-              (mousedown)="onMouseDown(parcel.index, $event)"
-              (mouseenter)="onMouseEnter(parcel.index)"
-            >
-            </app-parcel>
+            @defer (hydrate on idle) {
+              @for (parcel of parcels; track parcel.index; let i = $index) {
+                <app-parcel
+                  [parcel]="parcel"
+                  [attr.data-index]="i"
+                  data-testid="parcel"
+                  class="aspect-square"
+                  [selected]="isSelected(parcel.index)"
+                  [showLabels]="showLabels"
+                  [showNutrition]="showNutritionOverlay"
+                  [showHarvest]="showHarvestOverlay"
+                  [showSoil]="showSoilOverlay"
+                  (mousedown)="onMouseDown(parcel.index, $event)"
+                  (mouseenter)="onMouseEnter(parcel.index)"
+                >
+                </app-parcel>
+              }
+            }
           </div>
         </div>
       </div>

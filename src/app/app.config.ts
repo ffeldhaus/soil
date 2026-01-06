@@ -4,7 +4,7 @@ import { provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth } from '@angular/fire/auth';
 import { provideFirestore } from '@angular/fire/firestore';
 import { provideFunctions } from '@angular/fire/functions';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { initializeApp } from 'firebase/app';
@@ -57,6 +57,6 @@ export const appConfig: ApplicationConfig = {
       return functions;
     }),
     provideHttpClient(),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(withIncrementalHydration(), withEventReplay()),
   ],
 };

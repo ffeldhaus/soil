@@ -151,7 +151,9 @@
   </div>
 
   <div class="flex items-center gap-3">
-    <app-language-switcher></app-language-switcher>
+    @defer (hydrate on interaction) {
+      <app-language-switcher></app-language-switcher>
+    }
     <button
       (click)="logout.emit()"
       data-testid="logout-button"

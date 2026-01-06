@@ -12,7 +12,9 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
     <div class="min-h-screen relative font-sans text-gray-100 overflow-hidden">
       <!-- Language Switcher -->
       <div class="absolute top-6 right-6 z-[100]">
-        <app-language-switcher></app-language-switcher>
+        @defer (hydrate on interaction) {
+          <app-language-switcher></app-language-switcher>
+        }
       </div>
 
       <!-- Background Image with Overlay -->
@@ -88,54 +90,56 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
       </main>
 
       <!-- Info Sections -->
-      <div class="relative z-10 bg-gray-900 text-gray-300 py-24 px-6 border-t border-gray-800">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-          <section class="space-y-6">
-            <h2
-              class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
-              i18n="@@landing.aboutTitle"
-            >
-              Über das Spiel
-            </h2>
-            <div class="space-y-4 text-lg leading-relaxed text-gray-400">
-              <p i18n="@@landing.aboutText1">
-                Soil ist ein interaktives Simulationsspiel, in dem Spieler ökologische und ökonomische Entscheidungen
-                treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schüler über zehn Runden einen
-                landwirtschaftlichen Betrieb auf.
-              </p>
-              <p i18n="@@landing.aboutText2">
-                Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und
-                Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen
-                Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.
-              </p>
-            </div>
-          </section>
+      @defer (hydrate on viewport) {
+        <div class="relative z-10 bg-gray-900 text-gray-300 py-24 px-6 border-t border-gray-800">
+          <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
+            <section class="space-y-6">
+              <h2
+                class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
+                i18n="@@landing.aboutTitle"
+              >
+                Über das Spiel
+              </h2>
+              <div class="space-y-4 text-lg leading-relaxed text-gray-400">
+                <p i18n="@@landing.aboutText1">
+                  Soil ist ein interaktives Simulationsspiel, in dem Spieler ökologische und ökonomische Entscheidungen
+                  treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schüler über zehn Runden einen
+                  landwirtschaftlichen Betrieb auf.
+                </p>
+                <p i18n="@@landing.aboutText2">
+                  Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung
+                  und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen
+                  Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.
+                </p>
+              </div>
+            </section>
 
-          <section class="space-y-6">
-            <h2
-              class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
-              i18n="@@landing.backgroundTitle"
-            >
-              Hintergrund
-            </h2>
-            <div class="space-y-4 text-lg leading-relaxed text-gray-400">
-              <p i18n="@@landing.backgroundText1">
-                Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel soll
-                durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.
-              </p>
-              <p i18n="@@landing.backgroundText2">
-                Das Simulationsspiel "Soil" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen.
-                Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen
-                Handelns spielerisch zu entdecken.
-              </p>
-            </div>
-          </section>
+            <section class="space-y-6">
+              <h2
+                class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
+                i18n="@@landing.backgroundTitle"
+              >
+                Hintergrund
+              </h2>
+              <div class="space-y-4 text-lg leading-relaxed text-gray-400">
+                <p i18n="@@landing.backgroundText1">
+                  Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel
+                  soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.
+                </p>
+                <p i18n="@@landing.backgroundText2">
+                  Das Simulationsspiel "Soil" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu
+                  machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen
+                  ökonomischen Handelns spielerisch zu entdecken.
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <footer class="mt-24 text-center text-gray-600 text-sm">
+            <p i18n="@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
+          </footer>
         </div>
-
-        <footer class="mt-24 text-center text-gray-600 text-sm">
-          <p i18n="@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
-        </footer>
-      </div>
+      }
     </div>
   `,
 })

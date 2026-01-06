@@ -36,7 +36,9 @@
         {{ t('manual.print') }}
       </button>
 
-      <app-language-switcher></app-language-switcher>
+      @defer (hydrate on interaction) {
+        <app-language-switcher></app-language-switcher>
+      }
 
       <button
         (click)="logout()"
@@ -96,20 +98,25 @@
         {{ t('manual.concepts.title') }}
       </h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 portrait:gap-0 portrait:divide-y portrait:divide-gray-800">
-        <app-manual-concept-card
-          *ngFor="
-            let concept of ['units', 'pest', 'rotation', 'requirements', 'weather', 'yield', 'price'];
-            let i = index
-          "
-          [concept]="concept"
-          [index]="i"
-        ></app-manual-concept-card>
+        @for (
+          concept of ['units', 'pest', 'rotation', 'requirements', 'weather', 'yield', 'price'];
+          track concept;
+          let i = $index
+        ) {
+          @defer (hydrate on viewport) {
+            <app-manual-concept-card [concept]="concept" [index]="i"></app-manual-concept-card>
+          }
+        }
       </div>
     </section>
 
     <!-- Crops Section -->
     <div class="space-y-12 portrait:space-y-0 portrait:divide-y portrait:divide-gray-800">
-      <app-manual-crop-card *ngFor="let crop of crops" [crop]="crop"></app-manual-crop-card>
+      @for (crop of crops; track crop.id) {
+        @defer (hydrate on viewport) {
+          <app-manual-crop-card [crop]="crop"></app-manual-crop-card>
+        }
+      }
     </div>
 
     <footer class="mt-24 pt-12 border-t border-gray-800 text-center text-gray-500 text-sm italic print:mt-8">
