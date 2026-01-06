@@ -6,7 +6,7 @@ describe('Access Control', () => {
   });
 
   it('should show action buttons on landing page', () => {
-    cy.visit('/de');
+    cy.visit('/');
     cy.get('[data-testid="landing-enter-game"]').should('be.visible');
     cy.get('[data-testid="landing-admin-login"]').should('be.visible');
     cy.get('[data-testid="landing-register"]').should('be.visible');
