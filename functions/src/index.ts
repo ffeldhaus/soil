@@ -1,17 +1,18 @@
 import * as admin from 'firebase-admin';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
+
+import { AiAgent } from './ai-agent';
+import { GameEngine } from './game-engine';
+import { mailService } from './mail.service';
+import { Round } from './types';
+import { generateRandomPassword } from './utils';
 
 setGlobalOptions({
   region: 'europe-west4',
   serviceAccount: 'firebase-app-hosting-compute@soil-602ea.iam.gserviceaccount.com',
 });
-import { onSchedule } from 'firebase-functions/v2/scheduler';
-
-import { AiAgent } from './ai-agent';
-import { GameEngine } from './game-engine';
-import { Round } from './types';
-import { generateRandomPassword } from './utils';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -513,6 +514,18 @@ export const manageAdmin = onCall(async (request) => {
   if (action === 'approve') {
     updates.role = 'admin';
     updates.status = 'active';
+
+    // Send email notification
+    const targetDoc = await targetRef.get();
+    const targetEmail = targetDoc.data()?.email;
+    if (targetEmail) {
+      try {
+        await mailService.sendAdminRegistrationApproved(targetEmail);
+      } catch (e) {
+        console.error('Failed to send approval email', e);
+        // Don't fail the operation just because email failed
+      }
+    }
   } else if (action === 'reject') {
     updates.status = 'rejected';
 
@@ -1129,6 +1142,39 @@ export const saveDraft = onCall(async (request) => {
     console.error('saveDraft failed:', error);
     throw new HttpsError('internal', 'Failed to save draft');
   }
+
+  return { success: true };
+});
+
+export const sendPlayerInvite = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  const { gameId, playerNumber, email, origin } = request.data;
+  if (!gameId || !playerNumber || !email) throw new HttpsError('invalid-argument', 'Missing args');
+
+  const gameRef = db.collection('games').doc(gameId);
+  const gameDoc = await gameRef.get();
+
+  if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
+  const game = gameDoc.data();
+
+  if (game?.hostUid !== request.auth.uid) {
+    throw new HttpsError('permission-denied', 'Only game host can send invites');
+  }
+
+  const playerSecrets = game?.playerSecrets || {};
+  const secret = playerSecrets[String(playerNumber)];
+
+  if (!secret || !secret.password) {
+    throw new HttpsError('not-found', 'Player or PIN not found');
+  }
+
+  // Use provided origin or default to production
+  const appOrigin = origin || 'https://soil-602ea.web.app';
+  // Construct login link
+  const loginLink = `${appOrigin}/login/player?gameId=${gameId}&pin=${secret.password}`;
+
+  await mailService.sendPlayerLoginInfo(email, loginLink);
 
   return { success: true };
 });

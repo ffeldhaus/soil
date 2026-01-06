@@ -17,12 +17,15 @@
   "main": "lib/index.js",
   "dependencies": {
     "firebase-admin": "^13.6.0",
-    "firebase-functions": "^7.0.2"
+    "firebase-functions": "^7.0.2",
+    "google-auth-library": "^10.5.0",
+    "nodemailer": "^7.0.12"
   },
   "devDependencies": {
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.0.0",
+    "@types/nodemailer": "^7.0.4",
     "@typescript-eslint/eslint-plugin": "^8.51.0",
     "@typescript-eslint/parser": "^8.51.0",
     "chai": "^6.2.2",
