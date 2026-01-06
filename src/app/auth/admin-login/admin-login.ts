@@ -11,7 +11,7 @@ import { AuthService } from '../auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
-    <div class="min-h-screen relative flex items-center justify-center bg-gray-900">
+    <div class="min-h-screen relative flex items-center justify-center bg-gray-900 portrait:p-0">
       <!-- Language Switcher -->
       <div class="absolute top-6 right-6 z-[100]">
         <app-language-switcher></app-language-switcher>
@@ -121,11 +121,11 @@ import { AuthService } from '../auth.service';
       <!-- Error Modal -->
       @if (showErrorModal) {
         <div
-          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in portrait:p-0"
           (click)="closeModal()"
         >
           <div
-            class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative"
+            class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
             (click)="$event.stopPropagation()"
           >
             <div class="flex flex-col items-center text-center gap-4">

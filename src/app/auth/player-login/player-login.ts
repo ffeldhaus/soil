@@ -13,7 +13,7 @@ import { AuthService } from '../auth.service';
   imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div
-      class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden"
+      class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden portrait:p-0"
     >
       <!-- Language Switcher -->
       <div class="absolute top-6 right-6 z-[100]">
@@ -21,7 +21,7 @@ import { AuthService } from '../auth.service';
       </div>
 
       <!-- Background Image with Overlay -->
-      <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 z-0 portrait:hidden">
         <img
           src="assets/bauernhof.jpg"
           alt="Farm Background"
@@ -33,7 +33,7 @@ import { AuthService } from '../auth.service';
       </div>
 
       <div
-        class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700"
+        class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:bg-gray-800"
       >
         <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
           <ng-container i18n="@@playerLogin.title">Spiel beitreten</ng-container>
@@ -94,11 +94,11 @@ import { AuthService } from '../auth.service';
       <!-- Error Modal -->
       @if (showErrorModal) {
         <div
-          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in portrait:p-0"
           (click)="closeModal()"
         >
           <div
-            class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative"
+            class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
             (click)="$event.stopPropagation()"
           >
             <div class="flex flex-col items-center text-center gap-4">
