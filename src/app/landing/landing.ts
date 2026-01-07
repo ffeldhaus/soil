@@ -102,14 +102,19 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               </h2>
               <div class="space-y-4 text-lg leading-relaxed text-gray-400">
                 <p i18n="@@landing.aboutText1">
-                  Soil ist ein interaktives Simulationsspiel, in dem Spieler ökologische und ökonomische Entscheidungen
-                  treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schüler über zehn Runden einen
-                  landwirtschaftlichen Betrieb auf.
+                  Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
+                  ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen
+                  Schülerinnen und Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf.
                 </p>
                 <p i18n="@@landing.aboutText2">
                   Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung
                   und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen
                   Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.
+                </p>
+                <p i18n="@@landing.educationalInfo">
+                  Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrerinnen und Lehrer sowie
+                  Admins ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird
+                  die Zugehörigkeit zu einer Bildungseinrichtung verifiziert.
                 </p>
               </div>
             </section>

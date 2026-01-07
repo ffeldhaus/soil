@@ -1435,12 +1435,16 @@
         <target>About the Game</target>
       </trans-unit>
       <trans-unit id="landing.aboutText1" datatype="html">
-        <source>Soil ist ein interaktives Simulationsspiel, in dem Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf.</source>
+        <source> Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schülerinnen und Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf. </source>
         <target>Soil is an interactive simulation game where players make ecological and economic decisions and experience their immediate impact. In groups, students build an agricultural business over several rounds.</target>
       </trans-unit>
       <trans-unit id="landing.aboutText2" datatype="html">
         <source>Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.</source>
         <target>The goal is to run a profitable business sustainably. Strategies like crop selection, fertilization, and pest control must be balanced. After each round, groups receive feedback on the ecological and economic consequences of their actions.</target>
+      </trans-unit>
+      <trans-unit id="landing.educationalInfo" datatype="html">
+        <source> Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrerinnen und Lehrer sowie Admins ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die Zugehörigkeit zu einer Bildungseinrichtung verifiziert. </source>
+        <target>The game is designed for educational purposes and is permanently free of charge. Registration is required for teachers and admins to create their own games. During registration, the affiliation with an educational institution is verified.</target>
       </trans-unit>
       <trans-unit id="landing.backgroundTitle" datatype="html">
         <source>Hintergrund</source>
@@ -1720,7 +1724,32 @@
           <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
           <context context-type="linenumber">125</context>
         </context-group>
-      <target>Der Verifizierungslink ist ungültig oder abgelaufen.</target></trans-unit>
-      </body>
+        <target>The verification link is invalid or has expired.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.welcome" datatype="html">
+        <source>Willkommen!</source>
+        <target>Welcome!</target>
+      </trans-unit>
+      <trans-unit id="onboarding.emailVerified" datatype="html">
+        <source>Ihre E-Mail-Adresse wurde verifiziert.</source>
+        <target>Your email address has been verified.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.nextSteps" datatype="html">
+        <source>Wie geht es weiter?</source>
+        <target>What's next?</target>
+      </trans-unit>
+      <trans-unit id="onboarding.checkingRegistration" datatype="html">
+        <source> Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </source>
+        <target>Your registration as an admin is now being reviewed by us. As soon as your account has been activated, we will inform you by email.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.usuallyLess24h" datatype="html">
+        <source>Dies dauert in der Regel weniger als 24 Stunden.</source>
+        <target>This usually takes less than 24 hours.</target>
+      </trans-unit>
+      <trans-unit id="onboarding.backToHome" datatype="html">
+        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;relative z-10&quot;&gt;"/>Zur Startseite<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <target><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;relative z-10&quot;&gt;"/>Back to home page<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+      </trans-unit>
+    </body>
   </file>
 </xliff>

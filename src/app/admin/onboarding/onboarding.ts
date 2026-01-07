@@ -7,46 +7,68 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900" i18n>Willkommen bei SOIL!</h2>
+    <div
+      class="min-h-screen relative font-sans text-gray-100 overflow-hidden flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8"
+    >
+      <!-- Background Image with Overlay -->
+      <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+        <img src="assets/bauernhof.jpg" alt="Farm Background" class="w-full h-full object-cover object-center" />
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
+        ></div>
       </div>
 
-      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 text-center">
-          <div class="rounded-md bg-blue-50 p-4 mb-6">
-            <div class="flex">
+      <div class="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="text-center mb-8">
+          <h1
+            class="text-5xl font-sans font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-100 to-emerald-200 drop-shadow-2xl tracking-tight mb-4"
+          >
+            SOIL
+          </h1>
+          <h2 class="mt-6 text-center text-3xl font-extrabold text-white" i18n="@@onboarding.welcome">Willkommen!</h2>
+        </div>
+
+        <div
+          class="bg-gray-800/40 backdrop-blur-md border border-white/10 py-8 px-4 shadow-2xl rounded-3xl sm:px-10 text-center"
+        >
+          <div class="rounded-2xl bg-emerald-900/30 border border-emerald-500/20 p-4 mb-6">
+            <div class="flex items-center justify-center">
               <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg class="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
-                    fill-rule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clip-rule="evenodd"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
               </div>
               <div class="ml-3">
-                <p class="text-sm font-medium text-blue-800" i18n>Ihre E-Mail-Adresse wurde verifiziert.</p>
+                <p class="text-sm font-medium text-emerald-200" i18n="@@onboarding.emailVerified">
+                  Ihre E-Mail-Adresse wurde verifiziert.
+                </p>
               </div>
             </div>
           </div>
 
-          <h3 class="text-lg font-medium text-gray-900 mb-4" i18n>Wie geht es weiter?</h3>
+          <h3 class="text-xl font-semibold text-white mb-4" i18n="@@onboarding.nextSteps">Wie geht es weiter?</h3>
 
-          <p class="text-gray-600 mb-6" i18n>
+          <p class="text-gray-300 mb-6 leading-relaxed" i18n="@@onboarding.checkingRegistration">
             Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren
             wir Sie per E-Mail.
           </p>
 
-          <div class="space-y-4">
-            <p class="text-sm text-gray-500" i18n>Dies dauert in der Regel weniger als 24 Stunden.</p>
+          <div class="space-y-6">
+            <p class="text-sm text-emerald-300/70" i18n="@@onboarding.usuallyLess24h">
+              Dies dauert in der Regel weniger als 24 Stunden.
+            </p>
 
             <a
               routerLink="/"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              i18n
+              class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
+              i18n="@@onboarding.backToHome"
             >
-              Zur Startseite
+              <span class="relative z-10">Zur Startseite</span>
             </a>
           </div>
         </div>
