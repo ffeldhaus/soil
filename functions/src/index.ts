@@ -1008,6 +1008,35 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   for (const doc of trashSnap.docs) {
     await db.recursiveDelete(doc.ref);
   }
+
+  // 3. Purge unverified admin registrations
+  // Pending users older than 24h who haven't verified their email
+  const pendingUsersSnap = await db.collection('users').where('role', '==', 'pending').get();
+  console.log(`Checking ${pendingUsersSnap.size} pending users for verification timeout...`);
+
+  for (const doc of pendingUsersSnap.docs) {
+    const userData = doc.data();
+    const createdAt = userData.createdAt?.toMillis() || 0;
+
+    if (nowMillis - createdAt > ONE_DAY_MS) {
+      try {
+        const authUser = await admin.auth().getUser(doc.id);
+        if (!authUser.emailVerified) {
+          console.log(`Purging unverified user: ${userData.email} (${doc.id})`);
+          await db.recursiveDelete(doc.ref);
+          await admin.auth().deleteUser(doc.id);
+        }
+      } catch (error: any) {
+        if (error.code === 'auth/user-not-found') {
+          // If auth user is already gone, just clean up firestore
+          console.log(`Auth user not found for ${doc.id}, cleaning up firestore doc.`);
+          await db.recursiveDelete(doc.ref);
+        } else {
+          console.error(`Failed to check/purge user ${doc.id}:`, error);
+        }
+      }
+    }
+  }
 });
 
 export const playerLogin = onCall(async (request) => {
