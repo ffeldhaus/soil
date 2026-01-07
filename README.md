@@ -121,6 +121,12 @@ firebase functions:secrets:set GMAIL_SERVICE_ACCOUNT_EMAIL --data "your-service-
 firebase functions:secrets:set GMAIL_IMPERSONATED_USER --data "no-reply@yourdomain.com"
 ```
 
+### 5. Google Workspace User Requirements
+The account specified in `GMAIL_IMPERSONATED_USER` (e.g., `no-reply@yourdomain.com`) must meet the following criteria:
+1. **Active License**: The user must be assigned a Google Workspace license (e.g., Business Starter or higher).
+2. **Gmail Enabled**: The Gmail service must be enabled for this user in the Google Workspace Admin Console.
+3. **Inbox Ready**: The user's mailbox must be fully provisioned and active before it can send emails via the API.
+
 ## 📄 License
 
 [Define License Here]
