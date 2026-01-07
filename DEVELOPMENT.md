@@ -49,7 +49,7 @@ _Note: You can also use `ng serve` for rapid UI-only development, but it will no
 
 1. **Understand**: Thoroughly understand the codebase context before proposing changes.
 2. **Plan**: Formulate a clear, grounded plan and share a concise summary before implementation.
-3. **Implement**: Follow the plan iteratively. Write unit tests alongside feature code.
+3. **Implement**: Follow the plan iteratively. Write unit tests alongside feature code. Note: Husky pre-commit hooks are optimized to skip tests and builds for documentation-only changes.
 4. **Verify**: Run tests and linting as described in the Testing Strategy.
 5. **Finalize**: Only after all verifications pass should the task be considered complete.
 
