@@ -528,7 +528,7 @@ export const manageAdmin = onCall(
       throw new HttpsError('permission-denied', 'Super Admins only');
     }
 
-    const { targetUid, action, value, lang } = request.data;
+    const { targetUid, action, value, lang, origin } = request.data;
     if (!targetUid || !action) throw new HttpsError('invalid-argument', 'Missing args');
 
     const targetRef = db.collection('users').doc(targetUid);
@@ -546,7 +546,15 @@ export const manageAdmin = onCall(
 
       if (targetEmail) {
         try {
-          await mailService.sendAdminRegistrationApproved(targetEmail, targetLang);
+          const appOrigin = origin || 'https://soil-602ea.web.app';
+          const isGoogleUser = (await admin.auth().getUser(targetUid)).providerData.some(
+            (p) => p.providerId === 'google.com',
+          );
+          const loginLink = isGoogleUser
+            ? `${appOrigin}/${targetLang}/admin/login`
+            : `${appOrigin}/${targetLang}/admin/login?email=${encodeURIComponent(targetEmail)}`;
+
+          await mailService.sendAdminRegistrationApproved(targetEmail, loginLink, targetLang);
         } catch (e) {
           console.error('Failed to send approval email', e);
           // Don't fail the operation just because email failed
@@ -554,11 +562,25 @@ export const manageAdmin = onCall(
       }
     } else if (action === 'reject') {
       updates.status = 'rejected';
+      updates.role = 'rejected'; // Move out of pending list
+
+      const targetDoc = await targetRef.get();
+      const targetData = targetDoc.data();
+      const targetEmail = targetData?.email;
+      const targetLang = lang || targetData?.lang || 'de';
+
+      if (targetEmail) {
+        try {
+          const reasons = value?.rejectionReasons || ['other'];
+          const customMessage = value?.customMessage;
+          await mailService.sendAdminRegistrationRejected(targetEmail, reasons, customMessage, targetLang);
+        } catch (e) {
+          console.error('Failed to send rejection email', e);
+        }
+      }
 
       // Optional: Ban email if requested
       if (value && value.banEmail) {
-        const targetDoc = await targetRef.get();
-        const targetEmail = targetDoc.data()?.email;
         if (targetEmail) {
           await db.collection('banned_emails').doc(targetEmail).set({
             bannedAt: admin.firestore.FieldValue.serverTimestamp(),

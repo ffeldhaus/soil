@@ -117,7 +117,7 @@
                 Approve
               </button>
               <button
-                (click)="rejectUser(user)"
+                (click)="initiateReject(user)"
                 class="flex-1 py-2 bg-red-900/50 border border-red-700 hover:bg-red-900 text-red-200 font-bold rounded-lg transition"
               >
                 Reject
@@ -656,6 +656,120 @@
               class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
             >
               Confirm Approval
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Rejection Modal -->
+    @if (showRejectModal) {
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="cancelReject()"></div>
+        <div
+          class="relative bg-gray-800 border border-red-500/50 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="flex items-center gap-3 text-red-400 mb-2">
+            <div class="p-2 bg-red-900/30 rounded-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white">Reject Registration</h3>
+          </div>
+
+          <p class="text-gray-300">
+            Reject registration for <span class="font-bold text-white">{{ userToReject?.email }}</span
+            >?
+          </p>
+
+          <div class="space-y-3 mt-2">
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Reasons (shown to user)</p>
+            <div class="space-y-2">
+              <label
+                class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
+              >
+                <input
+                  type="checkbox"
+                  (change)="toggleRejectionReason('institution_not_verified')"
+                  [checked]="rejectionReasons.includes('institution_not_verified')"
+                  class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
+                />
+                <span class="text-sm text-gray-300">Institution could not be verified</span>
+              </label>
+              <label
+                class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
+              >
+                <input
+                  type="checkbox"
+                  (change)="toggleRejectionReason('insufficient_reason')"
+                  [checked]="rejectionReasons.includes('insufficient_reason')"
+                  class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
+                />
+                <span class="text-sm text-gray-300">Insufficient reason for usage</span>
+              </label>
+              <label
+                class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
+              >
+                <input
+                  type="checkbox"
+                  (change)="toggleRejectionReason('other')"
+                  [checked]="rejectionReasons.includes('other')"
+                  class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
+                />
+                <span class="text-sm text-gray-300">Other reasons</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Custom Message (optional)</label>
+            <textarea
+              [(ngModel)]="customRejectionMessage"
+              rows="3"
+              class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
+              placeholder="Politely explain the decision..."
+            ></textarea>
+          </div>
+
+          <label
+            class="flex items-center gap-3 p-3 bg-orange-900/20 border border-orange-900/50 rounded-lg cursor-pointer hover:bg-orange-900/30 transition mt-2"
+          >
+            <input
+              type="checkbox"
+              [(ngModel)]="banEmailOnReject"
+              class="w-4 h-4 rounded text-orange-500 bg-gray-700 border-gray-600"
+            />
+            <div class="flex flex-col">
+              <span class="text-sm font-bold text-orange-200">Ban Email Address</span>
+              <span class="text-[10px] text-orange-300/70">Block this email from future registration attempts.</span>
+            </div>
+          </label>
+
+          <div class="flex gap-3 mt-4">
+            <button
+              (click)="cancelReject()"
+              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+            >
+              Cancel
+            </button>
+            <button
+              (click)="confirmReject()"
+              class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
+            >
+              Send Rejection
             </button>
           </div>
         </div>

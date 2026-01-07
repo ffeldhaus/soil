@@ -126,6 +126,53 @@ export class SuperAdminComponent implements OnInit {
     this.loadData();
   }
 
+  userToReject: any = null;
+  showRejectModal = false;
+  rejectionReasons: string[] = [];
+  customRejectionMessage = '';
+  banEmailOnReject = false;
+
+  initiateReject(user: any) {
+    this.userToReject = user;
+    this.rejectionReasons = [];
+    this.customRejectionMessage = '';
+    this.banEmailOnReject = false;
+    this.showRejectModal = true;
+  }
+
+  cancelReject() {
+    this.showRejectModal = false;
+    this.userToReject = null;
+  }
+
+  toggleRejectionReason(reason: string) {
+    if (this.rejectionReasons.includes(reason)) {
+      this.rejectionReasons = this.rejectionReasons.filter((r) => r !== reason);
+    } else {
+      this.rejectionReasons.push(reason);
+    }
+  }
+
+  async confirmReject() {
+    if (!this.userToReject) return;
+
+    const user = this.userToReject;
+    this.showRejectModal = false;
+
+    await this.gameService.manageAdmin(
+      user.uid,
+      'reject',
+      {
+        rejectionReasons: this.rejectionReasons,
+        customMessage: this.customRejectionMessage,
+        banEmail: this.banEmailOnReject,
+      },
+      this.languageService.currentLang,
+    );
+    this.loadData();
+    this.userToReject = null;
+  }
+
   // Old method kept for reference or direct calls if needed, but unused by template now
   async approveUser(user: any) {
     if (!confirm(`Approve ${user.email}?`)) return;

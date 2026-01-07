@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { AuthService } from '../auth.service';
@@ -182,7 +182,7 @@ import { AuthService } from '../auth.service';
     </div>
   `,
 })
-export class AdminLoginComponent {
+export class AdminLoginComponent implements OnInit {
   t(key: string): string {
     const translations: Record<string, string> = {
       'adminLogin.placeholder.email': $localize`:@@adminLogin.placeholder.email:admin@schule.de`,
@@ -195,6 +195,7 @@ export class AdminLoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -205,6 +206,13 @@ export class AdminLoginComponent {
   showErrorModal = false;
   errorMessage = '';
   successMessage = '';
+
+  ngOnInit() {
+    const email = this.route.snapshot.queryParamMap.get('email');
+    if (email) {
+      this.loginForm.patchValue({ email });
+    }
+  }
 
   async onSubmit() {
     if (this.loginForm.invalid) return;

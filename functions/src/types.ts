@@ -105,7 +105,7 @@ export interface UserData {
   uid: string;
   email: string;
   displayName?: string;
-  role: 'pending' | 'admin' | 'superadmin' | 'player';
+  role: 'pending' | 'admin' | 'superadmin' | 'player' | 'rejected';
   status: 'active' | 'rejected' | 'pending';
   quota: number;
   gameCount: number;
