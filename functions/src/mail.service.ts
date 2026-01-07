@@ -10,26 +10,26 @@ interface EmailOptions {
 }
 
 export class MailService {
-  private isConfigured = false;
-  private serviceAccountEmail: string;
-  private impersonatedUser: string;
-  private auth!: GoogleAuth;
+  private _isConfigured = false;
+  private _serviceAccountEmail = '';
+  private _impersonatedUser = '';
+  private _auth?: GoogleAuth;
 
-  constructor() {
-    this.serviceAccountEmail = process.env.GMAIL_SERVICE_ACCOUNT_EMAIL || '';
-    this.impersonatedUser = process.env.GMAIL_IMPERSONATED_USER || '';
+  private ensureConfigured(): boolean {
+    if (this._isConfigured) return true;
 
-    // We strictly need the Service Account Email and the User to impersonate
-    if (this.serviceAccountEmail && this.impersonatedUser) {
-      this.isConfigured = true;
-      this.auth = new GoogleAuth({
+    this._serviceAccountEmail = (process.env.GMAIL_SERVICE_ACCOUNT_EMAIL || '').trim();
+    this._impersonatedUser = (process.env.GMAIL_IMPERSONATED_USER || '').trim();
+
+    if (this._serviceAccountEmail && this._impersonatedUser) {
+      this._isConfigured = true;
+      this._auth = new GoogleAuth({
         scopes: ['https://www.googleapis.com/auth/cloud-platform'],
       });
-    } else {
-      console.warn(
-        'MailService: Configuration missing (GMAIL_SERVICE_ACCOUNT_EMAIL or GMAIL_IMPERSONATED_USER). Emails will be logged but not sent.',
-      );
+      return true;
     }
+
+    return false;
   }
 
   /**
@@ -37,24 +37,27 @@ export class MailService {
    * Keyless Domain-Wide Delegation via the IAM Credentials API.
    */
   private async getAccessToken(): Promise<string> {
+    if (!this.ensureConfigured() || !this._auth) {
+      throw new Error('MailService not configured');
+    }
+
     const iat = Math.floor(Date.now() / 1000);
     const exp = iat + 3600;
 
     const jwtPayload = {
-      iss: this.serviceAccountEmail,
-      sub: this.impersonatedUser,
-      scope: 'https://www.googleapis.com/auth/gmail.send',
-      aud: 'https://oauth2.googleapis.com/token',
+      iss: this._serviceAccountEmail,
+      sub: this._impersonatedUser,
+      scope: 'https://mail.google.com/',
+      aud: 'https://www.googleapis.com/oauth2/v4/token',
       iat,
       exp,
     };
 
     // 1. Get a client authenticated as the Service Account (using ADC)
-    const client = await this.auth.getClient();
+    const client = await this._auth.getClient();
 
     // 2. Sign the JWT using the IAM Credentials API
-    // We assume the environment has access to the IAM API
-    const url = `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${this.serviceAccountEmail}:signJwt`;
+    const url = `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${this._serviceAccountEmail}:signJwt`;
 
     const res = await client.request({
       url,
@@ -67,7 +70,7 @@ export class MailService {
     const signedJwt = (res.data as any).signedJwt;
 
     // 3. Exchange the signed JWT for an Access Token
-    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+    const tokenRes = await fetch('https://www.googleapis.com/oauth2/v4/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
@@ -82,11 +85,15 @@ export class MailService {
     }
 
     const tokenData = await tokenRes.json();
+    console.log(`MailService: Token Data received: ${JSON.stringify(tokenData)}`);
     return tokenData.access_token;
   }
 
   async sendEmail(options: EmailOptions): Promise<void> {
-    if (!this.isConfigured) {
+    if (!this.ensureConfigured()) {
+      console.warn(
+        'MailService: Configuration missing (GMAIL_SERVICE_ACCOUNT_EMAIL or GMAIL_IMPERSONATED_USER). Emails will be logged but not sent.',
+      );
       console.log('MailService (Mock):', JSON.stringify(options, null, 2));
       return;
     }
@@ -101,20 +108,20 @@ export class MailService {
         secure: true,
         auth: {
           type: 'OAuth2',
-          user: this.impersonatedUser,
+          user: this._impersonatedUser,
           accessToken: accessToken,
         },
       });
 
       await transporter.sendMail({
-        from: this.impersonatedUser,
+        from: this._impersonatedUser,
         to: options.to,
         subject: options.subject,
         text: options.text,
         html: options.html,
       });
       console.log(`Email sent to ${options.to}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending email:', error);
       throw new functions.https.HttpsError('internal', 'Failed to send email');
     }
