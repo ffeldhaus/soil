@@ -1040,42 +1040,42 @@
         <source>Willkommen!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">28,30</context>
+          <context context-type="linenumber">28,31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="onboarding.emailVerified" datatype="html">
-        <source>Ihre E-Mail-Adresse wurde verifiziert.</source>
+        <source> Ihre E-Mail-Adresse wurde verifiziert. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">48,50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="onboarding.nextSteps" datatype="html">
         <source>Wie geht es weiter?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">45,47</context>
+          <context context-type="linenumber">54,56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="onboarding.checkingRegistration" datatype="html">
         <source> Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">48,50</context>
+          <context context-type="linenumber">57,61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="onboarding.usuallyLess24h" datatype="html">
-        <source>Dies dauert in der Regel weniger als 24 Stunden.</source>
+        <source> Dies dauert in der Regel weniger als 24 Stunden. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">53,56</context>
+          <context context-type="linenumber">63,66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="onboarding.backToHome" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;relative z-10&quot;&gt;"/>Zur Startseite<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">60,61</context>
+          <context context-type="linenumber">71,73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="superadmin.title" datatype="html">
@@ -1337,25 +1337,39 @@
           <context context-type="linenumber">31,34</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="adminRegister.passwordRequirement" datatype="html">
+        <source>Erforderlich: Mindestens 6 Zeichen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
+          <context context-type="linenumber">122,123</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="adminRegister.explanationRequirement" datatype="html">
+        <source>Erforderlich: Mindestens 20 Zeichen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
+          <context context-type="linenumber">175,176</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="adminRegister.processing" datatype="html">
         <source>Wird verarbeitet...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">175,177</context>
+          <context context-type="linenumber">203,205</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.btnSubmit" datatype="html">
         <source>Registrierung beantragen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">177,179</context>
+          <context context-type="linenumber">205,207</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.backToHome" datatype="html">
         <source> Zurück zur Startseite </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">188,191</context>
+          <context context-type="linenumber">216,219</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.signedInAs" datatype="html">

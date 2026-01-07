@@ -1750,6 +1750,14 @@
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;relative z-10&quot;&gt;"/>Zur Startseite<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <target><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;relative z-10&quot;&gt;"/>Back to home page<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
+      <trans-unit id="adminRegister.passwordRequirement" datatype="html">
+        <source>Erforderlich: Mindestens 6 Zeichen</source>
+        <target>Required: Minimum 6 characters</target>
+      </trans-unit>
+      <trans-unit id="adminRegister.explanationRequirement" datatype="html">
+        <source>Erforderlich: Mindestens 20 Zeichen</source>
+        <target>Required: Minimum 20 characters</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
