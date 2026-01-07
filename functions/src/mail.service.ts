@@ -305,7 +305,10 @@ export class MailService {
 
   async sendAdminNewRegistrationNotification(adminEmail: string, userData: any): Promise<void> {
     const subject = 'New Admin Registration for Soil';
-    const text = `A new user has requested admin access for Soil.\n\nName: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nInstitution: ${userData.institution}\nExplanation: ${userData.explanation}\n\nPlease review the request in the super admin dashboard.`;
+    const institution = userData.onboarding?.institution || userData.institution || 'N/A';
+    const explanation = userData.onboarding?.explanation || userData.explanation || 'N/A';
+
+    const text = `A new user has requested admin access for Soil.\n\nName: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nInstitution: ${institution}\nExplanation: ${explanation}\n\nPlease review the request in the super admin dashboard.`;
     const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>New Admin Registration</h2>
@@ -313,8 +316,8 @@ export class MailService {
         <ul>
           <li><strong>Name:</strong> ${userData.firstName} ${userData.lastName}</li>
           <li><strong>Email:</strong> ${userData.email}</li>
-          <li><strong>Institution:</strong> ${userData.institution}</li>
-          <li><strong>Explanation:</strong> ${userData.explanation}</li>
+          <li><strong>Institution:</strong> ${institution}</li>
+          <li><strong>Explanation:</strong> ${explanation}</li>
         </ul>
         <p>Please review the request in the super admin dashboard.</p>
       </div>
