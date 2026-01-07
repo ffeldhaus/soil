@@ -23,9 +23,13 @@ vi.mock('firebase/auth', async (importOriginal) => {
 });
 
 // Mock the firebase/functions module
-vi.mock('firebase/functions', () => ({
-  httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
-}));
+vi.mock('firebase/functions', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
+  };
+});
 
 import { onAuthStateChanged, signInWithCustomToken, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
