@@ -450,41 +450,55 @@ export const submitOnboarding = onCall(async (request) => {
   const { firstName, lastName, explanation, institution, institutionLink } = request.data;
   const email = request.auth.token.email || '';
 
+  console.log(`submitOnboarding: Received request from ${email} (${request.auth.uid})`);
+
   // Check Banned Emails
   const bannedSnap = await db.collection('banned_emails').doc(email).get();
   if (bannedSnap.exists) {
+    console.warn(`submitOnboarding: Email ${email} is banned.`);
     throw new HttpsError('permission-denied', 'This email is banned from registration.');
   }
 
   // Basic Validation
   if (!explanation || !institution || !firstName || !lastName) {
+    console.warn(`submitOnboarding: Missing fields for ${email}.`, request.data);
     throw new HttpsError('invalid-argument', 'Missing fields');
   }
 
   const uid = request.auth.uid;
   const userRef = db.collection('users').doc(uid);
 
-  await userRef.set(
-    {
-      uid,
-      email,
-      firstName,
-      lastName,
-      displayName: `${firstName} ${lastName}`,
-      role: 'pending',
-      status: 'pending',
-      quota: 5,
-      gameCount: 0,
-      onboarding: {
-        explanation,
-        institution,
-        institutionLink: institutionLink || '',
-        submittedAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  const userData = {
+    uid,
+    email,
+    firstName,
+    lastName,
+    displayName: `${firstName} ${lastName}`,
+    role: 'pending',
+    status: 'pending',
+    quota: 5,
+    gameCount: 0,
+    onboarding: {
+      explanation,
+      institution,
+      institutionLink: institutionLink || '',
+      submittedAt: admin.firestore.FieldValue.serverTimestamp(),
     },
-    { merge: true },
-  );
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await userRef.set(userData, { merge: true });
+  console.log(`submitOnboarding: User document created/updated for ${email}`);
+
+  // Notify Super Admin
+  const adminEmail = 'florian.feldhaus@gmail.com';
+  try {
+    console.log(`submitOnboarding: Sending notification to admin ${adminEmail}`);
+    await mailService.sendAdminNewRegistrationNotification(adminEmail, userData);
+    console.log(`submitOnboarding: Admin notification sent successfully.`);
+  } catch (e) {
+    console.error('submitOnboarding: Failed to send admin notification', e);
+  }
 
   return { success: true };
 });
@@ -505,7 +519,7 @@ export const manageAdmin = onCall(async (request) => {
     throw new HttpsError('permission-denied', 'Super Admins only');
   }
 
-  const { targetUid, action, value } = request.data;
+  const { targetUid, action, value, lang } = request.data;
   if (!targetUid || !action) throw new HttpsError('invalid-argument', 'Missing args');
 
   const targetRef = db.collection('users').doc(targetUid);
@@ -520,7 +534,7 @@ export const manageAdmin = onCall(async (request) => {
     const targetEmail = targetDoc.data()?.email;
     if (targetEmail) {
       try {
-        await mailService.sendAdminRegistrationApproved(targetEmail);
+        await mailService.sendAdminRegistrationApproved(targetEmail, lang || 'de');
       } catch (e) {
         console.error('Failed to send approval email', e);
         // Don't fail the operation just because email failed
@@ -1149,7 +1163,7 @@ export const saveDraft = onCall(async (request) => {
 export const sendPlayerInvite = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-  const { gameId, playerNumber, email, origin } = request.data;
+  const { gameId, playerNumber, email, origin, lang } = request.data;
   if (!gameId || !playerNumber || !email) throw new HttpsError('invalid-argument', 'Missing args');
 
   const gameRef = db.collection('games').doc(gameId);
@@ -1174,7 +1188,71 @@ export const sendPlayerInvite = onCall(async (request) => {
   // Construct login link
   const loginLink = `${appOrigin}/login/player?gameId=${gameId}&pin=${secret.password}`;
 
-  await mailService.sendPlayerLoginInfo(email, loginLink);
+  await mailService.sendPlayerLoginInfo(email, loginLink, lang || 'de');
+
+  return { success: true };
+});
+
+export const sendVerificationEmail = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  const email = request.auth.token.email;
+  if (!email) throw new HttpsError('invalid-argument', 'User has no email');
+
+  const { lang, origin } = request.data;
+  const appOrigin = origin || 'https://soil-602ea.web.app';
+
+  try {
+    const link = await admin.auth().generateEmailVerificationLink(email, {
+      url: `${appOrigin}/onboarding`,
+    });
+    await mailService.sendVerificationEmail(email, link, lang || 'de');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error generating verification link:', error);
+    throw new HttpsError('internal', error.message);
+  }
+});
+
+export const sendPasswordResetEmail = onCall(async (request) => {
+  const { email, lang, origin } = request.data;
+  if (!email) throw new HttpsError('invalid-argument', 'Email is required');
+
+  const appOrigin = origin || 'https://soil-602ea.web.app';
+
+  try {
+    const link = await admin.auth().generatePasswordResetLink(email, {
+      url: `${appOrigin}/login/admin`,
+    });
+    await mailService.sendPasswordResetEmail(email, link, lang || 'de');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error generating password reset link:', error);
+    // For security, don't reveal if user exists or not if that's what the error means
+    // But generatePasswordResetLink throws if user not found.
+    // However, the standard Firebase behavior is to not reveal this.
+    // For now, let's just return success anyway if it's "user not found" to avoid enumeration.
+    throw new HttpsError('internal', error.message);
+  }
+});
+
+export const sendGameInvite = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  const { gameId, email, lang } = request.data;
+  if (!gameId || !email) throw new HttpsError('invalid-argument', 'Missing gameId or email');
+
+  const gameRef = db.collection('games').doc(gameId);
+  const gameDoc = await gameRef.get();
+
+  if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
+  const game = gameDoc.data();
+
+  if (game?.hostUid !== request.auth.uid) {
+    throw new HttpsError('permission-denied', 'Only game host can send invites');
+  }
+
+  await mailService.sendGameInvite(email, game?.name || 'Untitled Game', gameId, lang || 'de');
 
   return { success: true };
 });

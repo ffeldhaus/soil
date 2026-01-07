@@ -4,6 +4,7 @@ import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { LanguageService } from '../services/language.service';
 import { AuthService } from './auth.service';
 
 // Mock the firebase/auth module
@@ -52,12 +53,15 @@ describe('AuthService', () => {
       httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
     };
 
+    const languageServiceMock = { currentLang: 'de' };
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
         { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
+        { provide: LanguageService, useValue: languageServiceMock },
       ],
     });
     service = TestBed.inject(AuthService);
@@ -95,5 +99,28 @@ describe('AuthService', () => {
     await service.loginWithEmail('test@example.com', 'password');
 
     expect(signInEmailMock).toHaveBeenCalledWith(authSpy, 'test@example.com', 'password');
+  });
+
+  it('should call sendVerificationEmail callable', async () => {
+    const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+    authSpy.currentUser = { email: 'test@example.com' };
+    await service.sendVerificationEmail();
+
+    expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'sendVerificationEmail');
+    expect(mockCallable).toHaveBeenCalledWith({ lang: 'de', origin: expect.stringContaining('http://localhost') });
+  });
+
+  it('should call sendPasswordResetEmail callable', async () => {
+    const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+    await service.sendPasswordResetEmail('test@example.com');
+
+    expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'sendPasswordResetEmail');
+    expect(mockCallable).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      lang: 'de',
+      origin: expect.stringContaining('http://localhost'),
+    });
   });
 });

@@ -5,8 +5,6 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
-  sendEmailVerification,
-  sendPasswordResetEmail,
   signInWithCustomToken,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -15,7 +13,9 @@ import {
   User,
 } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+
+import { LanguageService } from '../services/language.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +24,7 @@ export class AuthService {
   private functions = inject(Functions);
   private auth = inject(Auth); // Injected instance is native due to app.config
   private ngZone = inject(NgZone);
+  private languageService = inject(LanguageService);
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
@@ -56,12 +57,21 @@ export class AuthService {
 
   async sendVerificationEmail() {
     if (this.auth.currentUser) {
-      await sendEmailVerification(this.auth.currentUser);
+      const sendFn = httpsCallable(this.functions, 'sendVerificationEmail');
+      await sendFn({
+        lang: this.languageService.currentLang,
+        origin: window.location.origin,
+      });
     }
   }
 
   async sendPasswordResetEmail(email: string) {
-    await sendPasswordResetEmail(this.auth, email);
+    const sendFn = httpsCallable(this.functions, 'sendPasswordResetEmail');
+    await sendFn({
+      email,
+      lang: this.languageService.currentLang,
+      origin: window.location.origin,
+    });
   }
 
   async loginWithEmail(email: string, pass: string) {

@@ -9,6 +9,7 @@ import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { Finance } from '../../game/finance/finance';
 import { GameService } from '../../game/game.service';
+import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { Game, UserStatus } from '../../types';
 import { DashboardCreateGameComponent } from './components/dashboard-create-game';
@@ -608,26 +609,36 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  shareGame(game: any) {
-    const subject = encodeURIComponent(`Join my Soil Game: ${game.name} `);
-    const body = encodeURIComponent(
-      `You have been invited to play Soil!\n\n` +
-        `Game ID: ${game.id} \n\n` +
-        `Please ask the host for your unique Player PIN.\n` +
-        `Go to ${window.location.origin}/ to join.`,
-    );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  private languageService = inject(LanguageService);
+
+  async shareGame(game: any) {
+    const email = prompt(`Enter email address to send game details:`);
+    if (!email) return;
+
+    try {
+      await this.gameService.sendGameInvite(game.id, email, this.languageService.currentLang);
+      alert('Invite sent successfully!');
+    } catch (e: any) {
+      this.errorMessage = 'Failed to send invite: ' + e.message;
+    }
   }
 
-  sharePlayer(game: any, slot: any) {
-    const subject = encodeURIComponent(`Join Soil Game: ${game.name} (Player ${slot.number})`);
-    const body = encodeURIComponent(
-      `You are invited to play as Player ${slot.number}!\n\n` +
-        `Game ID: ${game.id}\n` +
-        `Your PIN: ${slot.password}\n\n` +
-        `Join here: ${window.location.origin}/game?gameId=${game.id}&player=${slot.number}&pin=${slot.password}`,
-    );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  async sharePlayer(game: any, slot: any) {
+    const email = prompt(`Enter email address for Player ${slot.number}:`);
+    if (!email) return;
+
+    try {
+      await this.gameService.sendPlayerInvite(
+        game.id,
+        slot.number,
+        email,
+        window.location.origin,
+        this.languageService.currentLang,
+      );
+      alert('Invite sent successfully!');
+    } catch (e: any) {
+      this.errorMessage = 'Failed to send invite: ' + e.message;
+    }
   }
 
   getSlots(game: any): any[] {

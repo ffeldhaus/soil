@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
+import { LanguageService } from '../../services/language.service';
 import { SuperAdminHudComponent } from './components/super-admin-hud';
 import { SuperAdminStatsComponent } from './components/super-admin-stats';
 
@@ -17,6 +18,7 @@ import { SuperAdminStatsComponent } from './components/super-admin-stats';
 export class SuperAdminComponent implements OnInit {
   gameService = inject(GameService);
   authService = inject(AuthService);
+  languageService = inject(LanguageService);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
@@ -120,14 +122,14 @@ export class SuperAdminComponent implements OnInit {
     const user = this.userToApprove;
     this.userToApprove = null; // Close modal immediately
 
-    await this.gameService.manageAdmin(user.uid, 'approve');
+    await this.gameService.manageAdmin(user.uid, 'approve', null, this.languageService.currentLang);
     this.loadData();
   }
 
   // Old method kept for reference or direct calls if needed, but unused by template now
   async approveUser(user: any) {
     if (!confirm(`Approve ${user.email}?`)) return;
-    await this.gameService.manageAdmin(user.uid, 'approve');
+    await this.gameService.manageAdmin(user.uid, 'approve', null, this.languageService.currentLang);
     this.loadData();
   }
 

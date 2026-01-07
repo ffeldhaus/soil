@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { BehaviorSubject, from, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { CropType, Parcel, Round, RoundDecision } from '../types';
 
@@ -215,9 +215,34 @@ export class GameService {
     return (await fn(data)).data;
   }
 
-  async manageAdmin(targetUid: string, action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete', value?: any) {
+  async manageAdmin(
+    targetUid: string,
+    action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete',
+    value?: any,
+    lang?: string,
+  ) {
     const fn = httpsCallable(this.functions, 'manageAdmin');
-    return (await fn({ targetUid, action, value })).data;
+    return (await fn({ targetUid, action, value, lang })).data;
+  }
+
+  async sendPlayerInvite(gameId: string, playerNumber: number, email: string, origin: string, lang?: string) {
+    const fn = httpsCallable(this.functions, 'sendPlayerInvite');
+    try {
+      await fn({ gameId, playerNumber, email, origin, lang });
+    } catch (error) {
+      console.error('Failed to send player invite', error);
+      throw error;
+    }
+  }
+
+  async sendGameInvite(gameId: string, email: string, lang?: string) {
+    const fn = httpsCallable(this.functions, 'sendGameInvite');
+    try {
+      await fn({ gameId, email, lang });
+    } catch (error) {
+      console.error('Failed to send game invite', error);
+      throw error;
+    }
   }
 
   async deleteGames(gameIds: string[], force = false): Promise<void> {

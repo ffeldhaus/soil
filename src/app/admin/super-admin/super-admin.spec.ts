@@ -61,7 +61,7 @@ describe('SuperAdminComponent', () => {
     component.initiateApprove(mockUser);
     await component.confirmApprove();
 
-    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('user123', 'approve');
+    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('user123', 'approve', null, 'de');
     expect(gameServiceMock.getPendingUsers).toHaveBeenCalled();
   });
 
