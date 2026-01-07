@@ -109,6 +109,7 @@ export interface UserData {
   status: 'active' | 'rejected' | 'pending';
   quota: number;
   gameCount: number;
+  lang?: string;
   onboarding?: {
     explanation: string;
     institution: string;

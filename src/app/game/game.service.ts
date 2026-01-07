@@ -210,6 +210,7 @@ export class GameService {
     explanation: string;
     institution: string;
     institutionLink?: string;
+    lang?: string;
   }) {
     const fn = httpsCallable(this.functions, 'submitOnboarding');
     return (await fn(data)).data;

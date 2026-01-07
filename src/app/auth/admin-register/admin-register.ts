@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { GameService } from '../../game/game.service';
+import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { AuthService } from '../auth.service';
 
@@ -17,6 +18,7 @@ export class AdminRegisterComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private gameService = inject(GameService);
+  private languageService = inject(LanguageService);
   private router = inject(Router);
 
   registerForm = this.fb.group({
@@ -102,6 +104,7 @@ export class AdminRegisterComponent implements OnInit {
         institution: formData.institution!,
         institutionLink: formData.institutionLink!,
         explanation: formData.explanation!,
+        lang: this.languageService.currentLang,
       });
 
       if (!this.isGoogleUser) {
