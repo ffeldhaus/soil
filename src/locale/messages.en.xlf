@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version='1.0' encoding='utf-8'?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="de" datatype="plaintext" original="ng2.template" target-language="en">
     <body>
@@ -1455,8 +1455,8 @@
         <target>The simulation game "Soil" was developed to make this concept of sustainability understandable. It allows learners to discover the centrality of ecological variables as natural limits to economic activities through hands-on experience.</target>
       </trans-unit>
       <trans-unit id="landing.footer" datatype="html">
-        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <target>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
+        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}" /> Soil Projekt. Entwickelt für Bildungszwecke.</source>
+        <target>© <x id="INTERPOLATION" equiv-text="{{ year }}" /> Soil Project. Developed for educational purposes.</target>
       </trans-unit>
       <trans-unit id="dashboard.title" datatype="html">
         <source>Lehrkraft-Dashboard</source>
@@ -1626,6 +1626,101 @@
         <source>Schädlinge</source>
         <target>Pests</target>
       </trans-unit>
-    </body>
+    <trans-unit id="879182012683054024" datatype="html">
+        <source>Willkommen bei SOIL!</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+      <target>Willkommen bei SOIL!</target></trans-unit>
+      <trans-unit id="5963840736238336751" datatype="html">
+        <source>Ihre E-Mail-Adresse wurde verifiziert.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
+          <context context-type="linenumber">29,30</context>
+        </context-group>
+      <target>Ihre E-Mail-Adresse wurde verifiziert.</target></trans-unit>
+      <trans-unit id="311587186526110973" datatype="html">
+        <source>Wie geht es weiter?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+      <target>Wie geht es weiter?</target></trans-unit>
+      <trans-unit id="590824677060504574" datatype="html">
+        <source> Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
+          <context context-type="linenumber">37,38</context>
+        </context-group>
+      <target> Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </target></trans-unit>
+      <trans-unit id="8242520668040600785" datatype="html">
+        <source>Dies dauert in der Regel weniger als 24 Stunden.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
+          <context context-type="linenumber">42,44</context>
+        </context-group>
+      <target>Dies dauert in der Regel weniger als 24 Stunden.</target></trans-unit>
+      <trans-unit id="1782061863436635532" datatype="html">
+        <source> Zur Startseite </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+      <target> Zur Startseite </target></trans-unit>
+      <trans-unit id="8549602656025819483" datatype="html">
+        <source>Verarbeitung läuft...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">22,23</context>
+        </context-group>
+      <target>Verarbeitung läuft...</target></trans-unit>
+      <trans-unit id="8869886733481475017" datatype="html">
+        <source> Zurück zur Startseite </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">66,67</context>
+        </context-group>
+      <target> Zurück zur Startseite </target></trans-unit>
+      <trans-unit id="authAction.error.invalidParams" datatype="html">
+        <source>Ungültiger Link.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+      <target>Ungültiger Link.</target></trans-unit>
+      <trans-unit id="authAction.error.unknownMode" datatype="html">
+        <source>Unbekannte Aktion.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+      <target>Unbekannte Aktion.</target></trans-unit>
+      <trans-unit id="authAction.verifyEmail.title" datatype="html">
+        <source>E-Mail-Verifizierung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">112</context>
+        </context-group>
+      <target>E-Mail-Verifizierung</target></trans-unit>
+      <trans-unit id="authAction.verifyEmail.success" datatype="html">
+        <source>Ihre E-Mail-Adresse wurde erfolgreich verifiziert.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">116</context>
+        </context-group>
+      <target>Ihre E-Mail-Adresse wurde erfolgreich verifiziert.</target></trans-unit>
+      <trans-unit id="authAction.verifyEmail.error" datatype="html">
+        <source>Der Verifizierungslink ist ungültig oder abgelaufen.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
+          <context context-type="linenumber">125</context>
+        </context-group>
+      <target>Der Verifizierungslink ist ungültig oder abgelaufen.</target></trans-unit>
+      </body>
   </file>
 </xliff>

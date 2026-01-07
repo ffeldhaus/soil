@@ -1231,7 +1231,7 @@ export const sendVerificationEmail = onCall(
 
     try {
       const link = await admin.auth().generateEmailVerificationLink(email, {
-        url: `${appOrigin}/onboarding`,
+        url: `${appOrigin}/${finalLang}/onboarding`,
       });
       await mailService.sendVerificationEmail(email, link, finalLang);
       return { success: true };
@@ -1262,7 +1262,7 @@ export const sendPasswordResetEmail = onCall(
 
     try {
       const link = await admin.auth().generatePasswordResetLink(email, {
-        url: `${appOrigin}/login/admin`,
+        url: `${appOrigin}/${finalLang}/admin/login`,
       });
       await mailService.sendPasswordResetEmail(email, link, finalLang);
       return { success: true };
