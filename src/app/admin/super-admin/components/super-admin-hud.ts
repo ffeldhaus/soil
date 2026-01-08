@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { User } from '@angular/fire/auth';
+import type { User } from '@angular/fire/auth';
 
 import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher';
 

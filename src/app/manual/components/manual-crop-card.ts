@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 import { GAME_CONSTANTS } from '../../game-constants';
-import { CropType } from '../../types';
+import type { CropType } from '../../types';
 
 interface CropConfig {
   id: CropType;

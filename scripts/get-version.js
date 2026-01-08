@@ -1,6 +1,6 @@
-const { execSync } = require('child_process');
-const { readFileSync } = require('fs');
-const { resolve } = require('path');
+const { execSync } = require('node:child_process');
+const { readFileSync } = require('node:fs');
+const { resolve } = require('node:path');
 
 const getVersion = () => {
   const pkg = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'));
@@ -9,9 +9,9 @@ const getVersion = () => {
   let hash = '';
   try {
     hash = execSync('git rev-parse --short HEAD').toString().trim();
-  } catch (e) {
+  } catch (_e) {
     // Fallback if git is not available
-    hash = process.env['CD_BUILD_ID'] || process.env['BUILD_NUMBER'] || process.env['BUILD_ID'] || 'dev';
+    hash = process.env.CD_BUILD_ID || process.env.BUILD_NUMBER || process.env.BUILD_ID || 'dev';
   }
 
   return `${pkgVersion}-${hash}`;

@@ -74,7 +74,7 @@ export interface GameSettings {
   difficulty: 'easy' | 'normal' | 'hard';
 }
 
-import * as admin from 'firebase-admin';
+import type * as admin from 'firebase-admin';
 
 export type GameStatus = 'waiting' | 'in_progress' | 'finished' | 'deleted' | 'expired';
 

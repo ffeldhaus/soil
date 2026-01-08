@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, HostListener, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
-import { User } from 'firebase/auth';
+import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router';
+import type { User } from 'firebase/auth';
 import { combineLatest, take } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
-import { CropType, Game, Parcel as ParcelType, PlayerState, Round } from '../../types';
+import type { CropType, Game, Parcel as ParcelType, PlayerState, Round } from '../../types';
 import { Finance } from '../finance/finance';
 import { GameService } from '../game.service';
 import { Parcel } from '../parcel/parcel';
 import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
-import { RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
+import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
 import { BoardHudComponent } from './components/board-hud';
 import { BoardLoginOverlayComponent } from './components/board-login-overlay';
 
@@ -69,7 +69,6 @@ export class Board implements OnInit, OnDestroy {
   isDragging = false;
   selectionStart: number | null = null;
   private cdr = inject(ChangeDetectorRef);
-  private ngZone = inject(NgZone);
   protected languageService = inject(LanguageService);
   user$ = this.authService.user$;
 
@@ -202,7 +201,7 @@ export class Board implements OnInit, OnDestroy {
           const gameState = await this.gameService.loadGame(activeGameId);
           if (gameState) {
             this.gameService.state$.subscribe((state) => {
-              if (state && state.game) {
+              if (state?.game) {
                 this.maxRoundNumber = state.game.currentRoundNumber;
                 this.viewingRound = this.maxRoundNumber;
                 this.playerLabel = state.game.settings?.playerLabel || 'Player';
@@ -246,7 +245,7 @@ export class Board implements OnInit, OnDestroy {
     this.checkOrientation();
     this.timerInterval = setInterval(() => {
       this.gameService.state$.pipe(take(1)).subscribe((state) => {
-        if (state && state.game) this.updateTimer(state.game);
+        if (state?.game) this.updateTimer(state.game);
       });
     }, 1000);
   }
@@ -300,7 +299,7 @@ export class Board implements OnInit, OnDestroy {
   startEditName() {
     if (!this.isPlayer) return;
     this.authService.user$.pipe(take(1)).subscribe((user) => {
-      this.tempName = user?.displayName || this.playerLabel + ' ' + (this.playerNumber || '');
+      this.tempName = user?.displayName || `${this.playerLabel} ${this.playerNumber || ''}`;
       this.isEditingName = true;
     });
   }
@@ -322,9 +321,6 @@ export class Board implements OnInit, OnDestroy {
   private dragStartIndex: number | null = null;
   cols = 8; // Dynamic columns
   rows = 5; // Dynamic rows
-
-  // Touch handling properties
-  private touchStartIndex: number | null = null; // To track initial touch if needed, or just use dragStartIndex
 
   @HostListener('window:resize')
   onResize() {

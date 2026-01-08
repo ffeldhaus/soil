@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import { LanguageService } from '../../services/language.service';
-import { Feedback, Game, SystemStats, UserStatus } from '../../types';
+import type { Feedback, Game, SystemStats, UserStatus } from '../../types';
 import { SuperAdminHudComponent } from './components/super-admin-hud';
 import { SuperAdminStatsComponent } from './components/super-admin-stats';
 
@@ -218,7 +218,7 @@ export class SuperAdminComponent implements OnInit {
     } catch (e: unknown) {
       if (window.console) console.error(e);
       const error = e as Error;
-      alert('Failed to manage feedback: ' + error.message);
+      alert(`Failed to manage feedback: ${error.message}`);
     }
   }
 
@@ -416,7 +416,7 @@ export class SuperAdminComponent implements OnInit {
     } catch (e: unknown) {
       const error = e as Error;
       if (window.console) console.error(error);
-      alert('Failed to delete: ' + error.message);
+      alert(`Failed to delete: ${error.message}`);
     } finally {
       this.isDeleting = false;
       this.gameToDelete = null;

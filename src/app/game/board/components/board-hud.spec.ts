@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
 import { BoardHudComponent } from './board-hud';

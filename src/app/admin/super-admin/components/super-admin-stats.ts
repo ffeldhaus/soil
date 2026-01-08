@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { SystemStats } from '../../../types';
+import type { SystemStats } from '../../../types';
 
 @Component({
   selector: 'app-super-admin-stats',

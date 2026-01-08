@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, type OnChanges } from '@angular/core';
 
 import { GAME_CONSTANTS } from '../../game-constants';
-import { Game, Round, RoundResult } from '../../types';
+import type { Game, Round, RoundResult } from '../../types';
 
 interface DetailedExpenses {
   seeds: Record<string, number>;

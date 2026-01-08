@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { GameEngine } from './game-engine';
-import { Parcel, Round, RoundDecision } from './types';
+import type { Parcel, Round, RoundDecision } from './types';
 
 describe('GameEngine', () => {
   it('should initialize a round with correct default values', () => {

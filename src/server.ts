@@ -18,7 +18,7 @@ const angularApp = new AngularNodeAppEngine();
 /**
  * Serve static files from the root (robots.txt, sitemap.xml, etc.)
  */
-const ROOT_STATIC_FILES = [
+const rootStaticFiles = [
   '/robots.txt',
   '/sitemap.xml',
   '/favicon.ico',
@@ -31,7 +31,7 @@ const ROOT_STATIC_FILES = [
 ];
 
 app.use((req, res, next) => {
-  if (ROOT_STATIC_FILES.includes(req.path)) {
+  if (rootStaticFiles.includes(req.path)) {
     res.sendFile(join(browserDistFolder, 'de', req.path));
     return;
   }
@@ -51,7 +51,7 @@ app.use((req, res, next) => {
   const path = req.path;
 
   // Skip if it's a root static file
-  if (ROOT_STATIC_FILES.includes(path)) {
+  if (rootStaticFiles.includes(path)) {
     next();
     return;
   }
@@ -118,8 +118,6 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
     if (error) {
       throw error;
     }
-
-    console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
 

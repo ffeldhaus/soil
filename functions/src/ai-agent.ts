@@ -1,5 +1,5 @@
 import { CROP_SEQUENCE_MATRIX } from './constants';
-import { CropType, Round, RoundDecision } from './types';
+import type { CropType, Round, RoundDecision } from './types';
 
 export class AiAgent {
   static makeDecision(level: 'elementary' | 'middle' | 'high', previousRound: Round | undefined): RoundDecision {

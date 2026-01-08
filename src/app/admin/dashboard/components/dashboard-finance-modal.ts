@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { Finance } from '../../../game/finance/finance';
-import { Game, PlayerState } from '../../../types';
+import type { Game, PlayerState } from '../../../types';
 
 @Component({
   selector: 'app-dashboard-finance-modal',

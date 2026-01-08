@@ -17,7 +17,7 @@ import { BrowserTestingModule, platformBrowserTesting } from '@angular/platform-
 // Polyfill ReadableStream for undici/firebase in jsdom
 if (typeof ReadableStream === 'undefined') {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  globalThis.ReadableStream = require('stream/web').ReadableStream;
+  globalThis.ReadableStream = require('node:stream/web').ReadableStream;
 }
 
 getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());

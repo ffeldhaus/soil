@@ -1,4 +1,4 @@
-import { CropType, Game } from '../../types';
+import type { CropType, Game } from '../../types';
 import { Finance } from './finance';
 
 describe('Finance Component Logic', () => {
@@ -80,8 +80,8 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     expect(player).toBeTruthy();
-    expect(player?.detailedExpenses?.seeds['Wheat']).toBe(72); // Wheat conv
-    expect(player?.detailedExpenses?.seeds['Corn']).toBe(70); // Corn conv
+    expect(player?.detailedExpenses?.seeds.Wheat).toBe(72); // Wheat conv
+    expect(player?.detailedExpenses?.seeds.Corn).toBe(70); // Corn conv
   });
 
   it('should calculate detailed seeds correctly for Round 2 (Organic)', () => {
@@ -89,7 +89,7 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     expect(player).toBeTruthy();
-    expect(player?.detailedExpenses?.seeds['Potato']).toBe(133); // Potato organic
+    expect(player?.detailedExpenses?.seeds.Potato).toBe(133); // Potato organic
   });
 
   it('should calculate detailed income correctly for Round 1', () => {
@@ -98,8 +98,8 @@ describe('Finance Component Logic', () => {
     const player = component.players.find((p) => p.uid === 'player1');
     // Wheat: 100 * 17 (Conv) = 1700
     // Corn: 200 * 17 (Conv) = 3400
-    expect(player?.detailedIncome?.harvest['Wheat']).toBe(1700);
-    expect(player?.detailedIncome?.harvest['Corn']).toBe(3400);
+    expect(player?.detailedIncome?.harvest.Wheat).toBe(1700);
+    expect(player?.detailedIncome?.harvest.Corn).toBe(3400);
   });
 
   it('should calculate detailed investments correctly', () => {
@@ -109,7 +109,7 @@ describe('Finance Component Logic', () => {
     expect(player?.detailedExpenses?.investments?.machines).toBe(0); // in mock it was 0
 
     // Let's test with a non-zero investment
-    mockGame.players['player1'].history[1].result!.expenses.investments = 500;
+    mockGame.players.player1.history[1].result!.expenses.investments = 500;
     component.game = JSON.parse(JSON.stringify(mockGame));
     (component as any).processPlayerData();
     const p2 = component.players.find((p) => p.uid === 'player1');

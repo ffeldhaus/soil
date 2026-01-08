@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { Round } from '../../types';
+import type { Round } from '../../types';
 
 @Component({
   selector: 'app-round-result-modal',

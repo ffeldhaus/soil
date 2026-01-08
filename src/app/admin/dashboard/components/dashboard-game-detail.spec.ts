@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Game } from '../../../types';
+import type { Game } from '../../../types';
 import { DashboardGameDetailComponent } from './dashboard-game-detail';
 
 describe('DashboardGameDetailComponent', () => {

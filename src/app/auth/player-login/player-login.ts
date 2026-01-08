@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, type OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { first } from 'rxjs/operators';
@@ -162,12 +162,9 @@ export class PlayerLoginComponent implements OnInit {
   private autoSubmitted = false;
 
   async ngOnInit() {
-    console.log('PlayerLoginComponent initialized');
-
     // 1. Check if user is already logged in as a player
     this.authService.user$.pipe(first()).subscribe((user) => {
-      if (user && user.uid.startsWith('player-')) {
-        console.log('User already logged in as player, navigating to /game...');
+      if (user?.uid.startsWith('player-')) {
         this.router.navigate(['/game'], { replaceUrl: true });
         return;
       }
@@ -176,8 +173,6 @@ export class PlayerLoginComponent implements OnInit {
       this.route.queryParams.pipe(first()).subscribe(async (params) => {
         const { gameId, pin } = params;
         if (gameId && pin) {
-          // player param no longer strictly required if we use pin for lookup
-          console.log('Detected auto-login params:', { gameId, pin });
           // Auto-fill form
           this.loginForm.patchValue({ gameId, password: pin });
 
@@ -196,7 +191,6 @@ export class PlayerLoginComponent implements OnInit {
             setTimeout(() => {
               if (this.autoSubmitted) return;
               this.ngZone.run(() => {
-                console.log('Triggering auto-submission...');
                 if (!this.showErrorModal) {
                   this.autoSubmitted = true;
                   this.onSubmit();
@@ -234,15 +228,12 @@ export class PlayerLoginComponent implements OnInit {
     this.cdr.detectChanges();
 
     const { gameId, password } = this.loginForm.value;
-    console.log('Submitting login for gameId:', gameId);
 
     if (!gameId || !password) return;
 
     try {
       await this.authService.loginAsPlayer(gameId, password);
-      console.log('Login successful. Attempting navigation to /game...');
-      const success = await this.router.navigate(['/game'], { replaceUrl: true });
-      console.log('Navigation resolved. Success:', success);
+      const _success = await this.router.navigate(['/game'], { replaceUrl: true });
     } catch (err: unknown) {
       console.error('Login failed:', err);
       this.errorMessage = (err as Error).message || 'playerLogin.error.msg';

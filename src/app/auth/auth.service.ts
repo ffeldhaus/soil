@@ -1,4 +1,4 @@
-import { inject, Injectable, NgZone } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import {
@@ -9,8 +9,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  type User,
   updateProfile,
-  User,
 } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject } from 'rxjs';
@@ -41,7 +41,6 @@ export class AuthService {
 
     // Check for test mode immediate override
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
-      console.log('AuthService: Running in Test Mode');
       this.userSubject.next(this.getMockUser());
     }
   }

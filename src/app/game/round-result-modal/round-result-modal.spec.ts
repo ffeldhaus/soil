@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Round } from '../../types';
+import type { Round } from '../../types';
 import { RoundResultModal } from './round-result-modal';
 
 describe('RoundResultModal', () => {

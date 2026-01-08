@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { User } from '@angular/fire/auth';
+import { Component, inject, type OnInit } from '@angular/core';
+import type { User } from '@angular/fire/auth';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 

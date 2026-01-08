@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding, Input } from '@angular/core';
 
-import { CropType, Parcel as ParcelType } from '../../types';
+import type { CropType, Parcel as ParcelType } from '../../types';
 
 @Component({
   selector: 'app-parcel',

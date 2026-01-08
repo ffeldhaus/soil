@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const readline = require('readline');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const _path = require('node:path');
+const readline = require('node:readline');
+const { execSync } = require('node:child_process');
 
 const packageJsonPath = 'package.json';
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -23,7 +23,6 @@ const performDeployment = async (newVersion) => {
     const status = execSync('git status --porcelain').toString().trim();
     if (status) {
       console.warn('\x1b[33m%s\x1b[0m', 'WARNING: You have uncommitted changes:');
-      console.log(status);
 
       const rl = readline.createInterface({
         input: process.stdin,
@@ -39,44 +38,31 @@ const performDeployment = async (newVersion) => {
       rl.close();
 
       if (!proceed) {
-        console.log('Deployment aborted.');
         process.exit(1);
       }
     }
 
     // Update package.json
     packageJson.version = newVersion;
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
-    console.log(`Updated package.json to version ${newVersion}`);
-
-    console.log('Committing and tagging the new version...');
+    fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
     execSync(`git add ${packageJsonPath}`, { stdio: 'inherit' });
     execSync(`git commit -m "v${newVersion}"`, { stdio: 'inherit' });
     execSync(`git tag -a v${newVersion} -m "v${newVersion}"`, { stdio: 'inherit' });
-    console.log(`Successfully committed and tagged v${newVersion}`);
-
-    console.log('Pushing to GitHub...');
     execSync('git push origin main --tags', { stdio: 'inherit' });
-    console.log('Successfully pushed to GitHub. Background build should start soon.');
 
     const firebasePath = './node_modules/.bin/firebase';
-    console.log('Deploying backend and rules to Firebase (App Hosting handles frontend)...');
     execSync(`${firebasePath} deploy --only functions,firestore,storage`, {
       stdio: 'inherit',
     });
 
-    console.log('Deployment complete!');
-
     await monitorCloudBuild(newVersion);
-
-    console.log('Note: Frontend deployment is handled automatically by App Hosting upon push to main.');
   } catch (error) {
     console.error('Deployment or Git operation failed:', error.message);
     process.exit(1);
   }
 };
 
-const monitorCloudBuild = async (version) => {
+const monitorCloudBuild = async (_version) => {
   const region = 'europe-west4';
   const timeoutMs = 2 * 60 * 1000; // 2 minutes
   const pollIntervalMs = 5000; // 5 seconds
@@ -84,7 +70,6 @@ const monitorCloudBuild = async (version) => {
 
   try {
     const commitHash = execSync('git rev-parse HEAD').toString().trim();
-    console.log(`Monitoring Cloud Build for commit ${commitHash}...`);
 
     while (Date.now() - startTime < timeoutMs) {
       const buildsJson = execSync(`gcloud builds list --region=${region} --limit=10 --format="json"`, {
@@ -95,13 +80,9 @@ const monitorCloudBuild = async (version) => {
       const build = builds.find((b) => b.source?.developerConnectConfig?.revision === commitHash);
 
       if (build) {
-        console.log(`\x1b[32mBuild found! ID: ${build.id}\x1b[0m`);
-        console.log('Streaming logs from Cloud Build...');
-
         try {
           execSync(`gcloud beta builds log ${build.id} --region=${region} --stream`, { stdio: 'inherit' });
-          console.log('\x1b[32mCloud Build completed successfully!\x1b[0m');
-        } catch (e) {
+        } catch (_e) {
           console.error('\x1b[31mCloud Build failed or was interrupted.\x1b[0m');
         }
         return;
@@ -111,9 +92,6 @@ const monitorCloudBuild = async (version) => {
       process.stdout.write(`\rWaiting for build to start... (${elapsed}s)`);
       await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
     }
-
-    console.log('\n\x1b[31mTimeout: No new Cloud Build started within 2 minutes.\x1b[0m');
-    console.log('Please check the Google Cloud Console manually.');
   } catch (error) {
     console.error('Error monitoring Cloud Build:', error.message);
   }
@@ -126,8 +104,6 @@ if (newVersionRequested) {
     input: process.stdin,
     output: process.stdout,
   });
-
-  console.log(`Current version: ${currentVersion}`);
   const nextPatch = increments.patch;
   rl.question(`Enter new version (default ${nextPatch}): `, (answer) => {
     const newVersion = answer.trim() || nextPatch;

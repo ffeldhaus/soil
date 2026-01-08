@@ -1,4 +1,4 @@
-import { CropType } from './types';
+import type { CropType } from './types';
 
 interface CropConfig {
   id: CropType;

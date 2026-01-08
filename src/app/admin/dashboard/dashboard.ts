@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, type OnDestroy, type OnInit } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, type Subscription } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import { LanguageService } from '../../services/language.service';
-import { Game, PlayerState, UserStatus } from '../../types';
+import type { Game, PlayerState, UserStatus } from '../../types';
 import { FeedbackModal } from '../components/feedback-modal/feedback-modal';
 import { DashboardCreateGameComponent } from './components/dashboard-create-game';
 import { DashboardDeleteModalComponent } from './components/dashboard-delete-modal';
@@ -171,7 +171,7 @@ export class Dashboard implements OnInit, OnDestroy {
       alert($localize`:@@feedback.success:Vielen Dank für dein Feedback!`);
     } catch (e: unknown) {
       const error = e as Error;
-      this.errorMessage = 'Failed to submit feedback: ' + error.message;
+      this.errorMessage = `Failed to submit feedback: ${error.message}`;
     }
   }
 
@@ -257,10 +257,8 @@ export class Dashboard implements OnInit, OnDestroy {
   async ngOnInit() {
     this.newGameConfig.name = this.getRandomName();
     this.authService.user$.subscribe(async (user) => {
-      console.log('Dashboard: Auth User emitted:', user?.uid);
       if (user) {
         if (localStorage.getItem('soil_test_mode') === 'true') {
-          console.log('Dashboard: Test Mode Active. Forcing Admin status.');
           this.ngZone.run(() => {
             this.userStatus = { uid: user.uid, role: 'admin', status: 'active', email: user.email || '' };
             this.isPendingApproval = false;
@@ -287,9 +285,6 @@ export class Dashboard implements OnInit, OnDestroy {
         }, 10000); // 10 seconds
 
         try {
-          console.log('Dashboard: AuthService user:', user.uid);
-          console.log('Dashboard: Firestore instance:', this.db);
-
           const userRef = doc(this.db, 'users', user.uid);
 
           const statusObservable = new Observable<UserStatus | undefined>((observer) => {
@@ -312,7 +307,6 @@ export class Dashboard implements OnInit, OnDestroy {
               this.ngZone.run(() => {
                 if (userData) {
                   this.userStatus = userData;
-                  console.log('Dashboard: User Status Updated:', this.userStatus);
 
                   if (userData.role === 'new') {
                     this.isLoading = false;
@@ -325,7 +319,6 @@ export class Dashboard implements OnInit, OnDestroy {
                     this.router
                       .navigate(['/admin/super'])
                       .then((success) => {
-                        console.log('Dashboard: Navigation result:', success);
                         if (!success) {
                           console.error('Dashboard: Navigation failed!');
                         }
@@ -347,7 +340,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
                   // Fallback for bootstrap Super Admin (matches backend logic)
                   if (user.email === 'florian.feldhaus@gmail.com') {
-                    console.log('Dashboard: Detected Bootstrap Super Admin email. Forcing Super Admin status.');
                     this.userStatus = { uid: user.uid, role: 'superadmin', status: 'active', email: user.email || '' };
                     this.isLoading = false;
                     this.router.navigate(['/admin/super']);
@@ -355,7 +347,6 @@ export class Dashboard implements OnInit, OnDestroy {
                   }
 
                   if (localStorage.getItem('soil_test_mode') === 'true') {
-                    console.log('Dashboard: Test Mode Active. Forcing Admin status.');
                     this.userStatus = { uid: user.uid, role: 'admin', status: 'active', email: user.email || '' };
                     this.isPendingApproval = false;
                     this.isLoading = false;
@@ -374,7 +365,7 @@ export class Dashboard implements OnInit, OnDestroy {
               clearTimeout(timeoutId);
               this.ngZone.run(() => {
                 console.error('Dashboard: Subscription error:', error);
-                this.errorMessage = 'Error loading account status: ' + (error.message || error);
+                this.errorMessage = `Error loading account status: ${error.message || error}`;
                 this.isLoading = false;
                 this.cdr.detectChanges();
               });
@@ -384,12 +375,11 @@ export class Dashboard implements OnInit, OnDestroy {
           clearTimeout(timeoutId);
           console.error('Dashboard: Sync Error:', e);
           const error = e as Error;
-          this.errorMessage = 'Critical Error: ' + error.message;
+          this.errorMessage = `Critical Error: ${error.message}`;
           this.isLoading = false;
           this.cdr.detectChanges();
         }
       } else {
-        console.log('Dashboard: No user, redirecting to login');
         this.games = [];
         this.userStatus = null;
         this.isLoading = false;
@@ -398,8 +388,7 @@ export class Dashboard implements OnInit, OnDestroy {
     });
 
     // Handle query params for notifications (e.g., from email links)
-    this.route.queryParams.subscribe((params) => {
-      // Example: if a gameId is passed, maybe auto-expand it or highlight
+    this.route.params.subscribe((params) => {
       const gameId = params['gameId'];
       if (gameId) {
         this.expandedGameId = gameId;
@@ -449,7 +438,6 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   async loadGames() {
-    console.log('Dashboard: loadGames called');
     this.isLoadingGames = true;
     this.loadingError = null;
     this.cdr.detectChanges(); // Ensure UI updates immediately
@@ -457,7 +445,6 @@ export class Dashboard implements OnInit, OnDestroy {
     try {
       const response = await this.gameService.getAdminGames(this.currentPage, this.pageSize, this.showTrash);
       this.ngZone.run(() => {
-        console.log('Dashboard: Games loaded:', response.games?.length, 'Total:', response.total);
         this.games = response.games || [];
         this.totalGames = response.total;
         this.selectedGameIds.clear(); // Clear selection on page change or reload
@@ -468,7 +455,7 @@ export class Dashboard implements OnInit, OnDestroy {
       this.ngZone.run(() => {
         console.error('Dashboard: Error loading games', e);
         const error = e as Error;
-        this.loadingError = 'Failed to load games: ' + (error.message || error);
+        this.loadingError = `Failed to load games: ${error.message || error}`;
         this.isLoadingGames = false;
         this.cdr.detectChanges();
       });
@@ -525,11 +512,10 @@ export class Dashboard implements OnInit, OnDestroy {
       this.newGameConfig.name = this.getRandomName(); // Reset with new random name
     } catch (error: unknown) {
       console.error('Error creating game', error);
-      this.errorMessage = 'Failed to create game: ' + (error as Error).message;
+      this.errorMessage = `Failed to create game: ${(error as Error).message}`;
     } finally {
       this.isCreatingGame = false;
       this.cdr.detectChanges();
-      console.log('Create Game finished. isCreatingGame:', this.isCreatingGame);
     }
   }
 
@@ -546,7 +532,9 @@ export class Dashboard implements OnInit, OnDestroy {
   toggleSelectAll(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target.checked) {
-      this.games.forEach((g) => this.selectedGameIds.add(g.id));
+      for (const g of this.games) {
+        this.selectedGameIds.add(g.id);
+      }
     } else {
       this.selectedGameIds.clear();
     }
@@ -576,7 +564,7 @@ export class Dashboard implements OnInit, OnDestroy {
       await this.gameService.undeleteGames(Array.from(this.selectedGameIds));
       await this.loadGames();
     } catch (e: unknown) {
-      this.errorMessage = 'Failed to restore games: ' + (e as Error).message;
+      this.errorMessage = `Failed to restore games: ${(e as Error).message}`;
     } finally {
       this.isRestoring = false;
     }
@@ -587,7 +575,7 @@ export class Dashboard implements OnInit, OnDestroy {
       await this.gameService.undeleteGames([game.id]);
       await this.loadGames();
     } catch (e: unknown) {
-      this.errorMessage = 'Failed to restore game: ' + (e as Error).message;
+      this.errorMessage = `Failed to restore game: ${(e as Error).message}`;
     }
   }
 
@@ -622,7 +610,7 @@ export class Dashboard implements OnInit, OnDestroy {
     } catch (e: unknown) {
       this.ngZone.run(() => {
         console.error('Error deleting games', e);
-        this.errorMessage = 'Failed to delete games: ' + (e as Error).message;
+        this.errorMessage = `Failed to delete games: ${(e as Error).message}`;
       });
     } finally {
       this.ngZone.run(() => {
@@ -645,7 +633,7 @@ export class Dashboard implements OnInit, OnDestroy {
       await this.gameService.sendGameInvite(game.id, email, this.languageService.currentLang);
       alert('Invite sent successfully!');
     } catch (e: unknown) {
-      this.errorMessage = 'Failed to send invite: ' + (e as Error).message;
+      this.errorMessage = `Failed to send invite: ${(e as Error).message}`;
     }
   }
 
@@ -666,7 +654,7 @@ export class Dashboard implements OnInit, OnDestroy {
       );
       alert('Invite sent successfully!');
     } catch (e: unknown) {
-      this.errorMessage = 'Failed to send invite: ' + (e as Error).message;
+      this.errorMessage = `Failed to send invite: ${(e as Error).message}`;
     }
   }
 
@@ -681,7 +669,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
       // Get Password
       let password = '???';
-      if (game.playerSecrets && game.playerSecrets[String(i)]) {
+      if (game.playerSecrets?.[String(i)]) {
         password = game.playerSecrets[String(i)].password;
       } else if (game.password) {
         password = game.password; // Fallback to global
@@ -715,7 +703,7 @@ export class Dashboard implements OnInit, OnDestroy {
       // Refresh games to show update
       await this.loadGames();
     } catch (e: unknown) {
-      this.errorMessage = 'Failed to convert player: ' + (e as Error).message;
+      this.errorMessage = `Failed to convert player: ${(e as Error).message}`;
     }
   }
 
@@ -791,7 +779,7 @@ export class Dashboard implements OnInit, OnDestroy {
       await this.gameService.updateRoundDeadline(gameId, round, dateStr);
       await this.loadGames(); // Refresh
     } catch (e: unknown) {
-      this.errorMessage = 'Failed to update deadline: ' + (e as Error).message;
+      this.errorMessage = `Failed to update deadline: ${(e as Error).message}`;
     } finally {
       this.isUpdatingDeadline = false;
     }
@@ -803,7 +791,7 @@ export class Dashboard implements OnInit, OnDestroy {
     const date = d && 'seconds' in d ? new Date(d.seconds * 1000) : new Date(d as unknown as string);
 
     // Format to YYYY-MM-DDTHH:mm
-    const pad = (n: number) => (n < 10 ? '0' + n : n);
+    const pad = (n: number) => (n < 10 ? `0${n}` : n);
     return (
       date.getFullYear() +
       '-' +

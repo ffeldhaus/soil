@@ -85,7 +85,6 @@ export class MailService {
     }
 
     const tokenData = await tokenRes.json();
-    console.log(`MailService: Token Data received: ${JSON.stringify(tokenData)}`);
     return tokenData.access_token;
   }
 
@@ -94,7 +93,6 @@ export class MailService {
       console.warn(
         'MailService: Configuration missing (GMAIL_SERVICE_ACCOUNT_EMAIL or GMAIL_IMPERSONATED_USER). Emails will be logged but not sent.',
       );
-      console.log('MailService (Mock):', JSON.stringify(options, null, 2));
       return;
     }
 
@@ -120,7 +118,6 @@ export class MailService {
         text: options.text,
         html: options.html,
       });
-      console.log(`Email sent to ${options.to}`);
     } catch (error: any) {
       console.error('Error sending email:', error);
       throw new functions.https.HttpsError('internal', 'Failed to send email');
@@ -132,7 +129,7 @@ export class MailService {
       en: 'Your Login Link to Soil',
       de: 'Dein Login-Link für Soil',
     };
-    const subject = subjects[lang] || subjects['en'];
+    const subject = subjects[lang] || subjects.en;
 
     const textEN = `Welcome to Soil!\n\nPlease use the following link to log in:\n${loginLink}\n\nIf you did not request this, please ignore this email.`;
     const textDE = `Willkommen bei Soil!\n\nBitte nutze den folgenden Link, um dich einzuloggen:\n${loginLink}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
@@ -168,7 +165,7 @@ export class MailService {
       en: 'Soil Registration Approved',
       de: 'Soil-Registrierung bestätigt',
     };
-    const subject = subjects[lang] || subjects['en'];
+    const subject = subjects[lang] || subjects.en;
 
     const textEN = `Congratulations!\n\nYour registration for Soil has been approved. You can now log in to the dashboard using the following link:\n${loginLink}\n\nYour email address is already prefilled.`;
     const textDE = `Glückwunsch!\n\nDeine Registrierung als Lehrkraft für Soil wurde bestätigt. Du kannst dich jetzt im Dashboard über den folgenden Link einloggen:\n${loginLink}\n\nDeine E-Mail-Adresse ist bereits vorausgefüllt.`;
@@ -215,7 +212,7 @@ export class MailService {
       en: 'Update on your Soil Registration',
       de: 'Update zu deiner Soil-Registrierung',
     };
-    const subject = subjects[lang] || subjects['en'];
+    const subject = subjects[lang] || subjects.en;
 
     const reasonsTextEN: Record<string, string> = {
       institution_not_verified: 'The educational institution could not be verified.',
@@ -269,7 +266,7 @@ export class MailService {
       en: 'Verify your email for Soil',
       de: 'Bestätige deine E-Mail für Soil',
     };
-    const subject = subjects[lang] || subjects['en'];
+    const subject = subjects[lang] || subjects.en;
 
     const textEN = `Hello,\n\nPlease verify your email address by clicking the link below:\n${link}\n\nIf you did not request this, please ignore this email.`;
     const textDE = `Hallo,\n\nbitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
@@ -305,7 +302,7 @@ export class MailService {
       en: 'Reset your password for Soil',
       de: 'Passwort zurücksetzen für Soil',
     };
-    const subject = subjects[lang] || subjects['en'];
+    const subject = subjects[lang] || subjects.en;
 
     const textEN = `Hello,\n\nYou can reset your password by clicking the link below:\n${link}\n\nIf you did not request this, please ignore this email.`;
     const textDE = `Hallo,\n\ndu kannst dein Passwort zurücksetzen, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
@@ -341,7 +338,7 @@ export class MailService {
       en: `Invitation to Soil Game: ${gameName}`,
       de: `Einladung zum Soil-Spiel: ${gameName}`,
     };
-    const subject = subjects[lang] || subjects['en'];
+    const subject = subjects[lang] || subjects.en;
 
     const textEN = `You have been invited to play Soil!\n\nGame: ${gameName}\nGame ID: ${gameId}\n\nPlease ask your host for your unique Player PIN.\n\nGo to https://soil-602ea.web.app to join.`;
     const textDE = `Du wurdest eingeladen, Soil zu spielen!\n\nSpiel: ${gameName}\nSpiel-ID: ${gameId}\n\nBitte frage deine Lehrkraft nach deinem persönlichen PIN.\n\nGehe auf https://soil-602ea.web.app um beizutreten.`;

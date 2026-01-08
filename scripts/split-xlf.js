@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 function splitXlf(filePath, outputDir, baseName) {
   const content = fs.readFileSync(filePath, 'utf8');
-  const header = content.split('<body>')[0] + '<body>';
+  const header = `${content.split('<body>')[0]}<body>`;
   const footer = '    </body>\n  </file>\n</xliff>';
 
   const transUnitRegex = /<trans-unit id="([^"]+)"[\s\S]*?<\/trans-unit>/g;
@@ -60,9 +60,8 @@ function splitXlf(filePath, outputDir, baseName) {
     if (units.length > 0) {
       const fileName = name === 'common' ? `${baseName}.xlf` : `${baseName}.${name}.xlf`;
       const filePath = path.join(outputDir, fileName);
-      const fileContent = header + '\n      ' + units.join('\n      ') + '\n' + footer;
+      const fileContent = `${header}\n      ${units.join('\n      ')}\n${footer}`;
       fs.writeFileSync(filePath, fileContent);
-      console.log(`Created ${filePath} with ${units.length} units.`);
     }
   }
 }

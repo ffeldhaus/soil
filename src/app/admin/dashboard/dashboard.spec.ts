@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { Firestore } from '@angular/fire/firestore';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -40,6 +40,7 @@ describe('Dashboard Component', () => {
           provide: ActivatedRoute,
           useValue: {
             queryParams: of({}),
+            params: of({}),
           },
         },
       ],

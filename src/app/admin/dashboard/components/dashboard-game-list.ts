@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { Game, PlayerState } from '../../../types';
+import type { Game, PlayerState } from '../../../types';
 import { DashboardGameDetailComponent } from './dashboard-game-detail';
 
 @Component({

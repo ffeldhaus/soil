@@ -1,7 +1,7 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   min-height: 100vh;
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;

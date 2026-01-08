@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { Game, PlayerState } from '../../../types';
+import type { Game, PlayerState } from '../../../types';
 
 @Component({
   selector: 'app-dashboard-game-detail',
@@ -85,7 +85,7 @@ export class DashboardGameDetailComponent {
       const player = game.players ? game.players[uid] : null;
 
       let password = '???';
-      if (game.playerSecrets && game.playerSecrets[String(i)]) {
+      if (game.playerSecrets?.[String(i)]) {
         password = game.playerSecrets[String(i)].password;
       } else if (game.password) {
         password = game.password;
@@ -107,7 +107,7 @@ export class DashboardGameDetailComponent {
     if (!game.roundDeadlines || !game.roundDeadlines[round]) return '';
     const d = game.roundDeadlines[round];
     const date = d && 'seconds' in d ? new Date(d.seconds * 1000) : new Date(d as unknown as string);
-    const pad = (n: number) => (n < 10 ? '0' + n : n);
+    const pad = (n: number) => (n < 10 ? `0${n}` : n);
     return (
       date.getFullYear() +
       '-' +

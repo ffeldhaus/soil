@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { Game } from '../../../types';
+import type { Game } from '../../../types';
 
 @Component({
   selector: 'app-dashboard-delete-modal',

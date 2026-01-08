@@ -72,7 +72,7 @@ describe('AuthService', () => {
   });
 
   it('should handle logout when in test mode', async () => {
-    mockLocalStorage['soil_test_mode'] = 'true';
+    mockLocalStorage.soil_test_mode = 'true';
 
     await service.logout();
 

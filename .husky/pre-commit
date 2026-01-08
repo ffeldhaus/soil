@@ -1,5 +1,5 @@
 #!/bin/sh
-npx lint-staged
+npx biome check --write --staged --no-errors-on-unmatched
 node scripts/check-file-size.js
 
 # Check if any staged files are NOT documentation (.md files)

@@ -7,7 +7,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { AiAgent } from './ai-agent';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
-import { Round } from './types';
+import type { Round } from './types';
 import { generateRandomPassword } from './utils';
 
 setGlobalOptions({
@@ -138,17 +138,13 @@ async function checkAndPerformCalculation(
   gameId: string,
   transaction: admin.firestore.Transaction,
   game: any,
-  triggerUid?: string,
+  _triggerUid?: string,
   fallbackDecision?: any,
 ) {
   const players = game.players || {};
   const currentRound = game.currentRoundNumber || 0;
   const allPlayersArr = Object.values(players);
   const allSubmitted = allPlayersArr.every((p: any) => p.submittedRound === currentRound);
-
-  console.log(
-    `Debug checkAndPerformCalculation: gameId=${gameId}, currentRound=${currentRound}, playerCount=${allPlayersArr.length}, allSubmitted=${allSubmitted}`,
-  );
 
   if (allSubmitted) {
     // We use the provided decision if available, or an empty object.
@@ -171,8 +167,6 @@ async function performCalculation(
 
   const players = game.players || {};
   const nextRoundNumber = (game.currentRoundNumber || 0) + 1;
-
-  console.log(`Calculating round ${nextRoundNumber} for all players in game ${gameId}`);
 
   const events = {
     weather: Math.random() > 0.8 ? 'Drought' : Math.random() < 0.2 ? 'Flood' : 'Normal',
@@ -209,12 +203,12 @@ async function performCalculation(
     player.history = player.history || [];
     player.history.push(nextRound);
     player.currentRound = nextRoundNumber;
-    player.capital = nextRound.result!.capital; // Sync current capital
+    player.capital = nextRound.result?.capital; // Sync current capital
     player.avgSoil = Math.round(pAvgSoil);
     player.avgNutrition = Math.round(pAvgNutrition);
 
     // Reset pending decisions for next round (Firestore doesn't allow undefined)
-    delete (player as any).pendingDecisions;
+    (player as any).pendingDecisions = undefined;
   }
 
   // Update game state (current round pointer and all players)
@@ -227,8 +221,6 @@ async function performCalculation(
     players,
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
   });
-
-  console.log(`Round ${nextRoundNumber} finalized for ${Object.keys(players).length} players`);
   return { number: nextRoundNumber };
 }
 
@@ -288,7 +280,7 @@ export const createGame = onCall(async (request) => {
   // BUT checking for superadmin override in code for 'florian.feldhaus@gmail.com' not needed if data is correct.
   // However, for bootstrap, we need to handle the first user.
 
-  let userRole = request.auth.token['role'];
+  let userRole = request.auth.token.role;
   let quota = 5;
   // let gameCount = 0; // Legacy counter, ignored for quota check
 
@@ -463,8 +455,6 @@ export const submitOnboarding = onCall(
     const { firstName, lastName, explanation, institution, institutionLink, lang } = request.data;
     const email = request.auth.token.email || '';
 
-    console.log(`submitOnboarding: Received request from ${email} (${request.auth.uid}) - lang: ${lang || 'de'}`);
-
     // Check Banned Emails
     const bannedSnap = await db.collection('banned_emails').doc(email).get();
     if (bannedSnap.exists) {
@@ -502,14 +492,11 @@ export const submitOnboarding = onCall(
     };
 
     await userRef.set(userData, { merge: true });
-    console.log(`submitOnboarding: User document created/updated for ${email}`);
 
     // Notify System-Administrator
     const adminEmail = 'florian.feldhaus@gmail.com';
     try {
-      console.log(`submitOnboarding: Sending notification to admin ${adminEmail}`);
       await mailService.sendAdminNewRegistrationNotification(adminEmail, userData);
-      console.log(`submitOnboarding: Admin notification sent successfully.`);
     } catch (e) {
       console.error('submitOnboarding: Failed to send admin notification', e);
     }
@@ -588,7 +575,7 @@ export const manageAdmin = onCall(
       }
 
       // Optional: Ban email if requested
-      if (value && value.banEmail) {
+      if (value?.banEmail) {
         if (targetEmail) {
           await db.collection('banned_emails').doc(targetEmail).set({
             bannedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -616,7 +603,6 @@ export const manageAdmin = onCall(
     } else if (action === 'delete') {
       // Cascade delete all games owned by this user
       const gamesSnapshot = await db.collection('games').where('hostUid', '==', targetUid).get();
-      console.log(`Cascading delete for user ${targetUid}: Found ${gamesSnapshot.size} games.`);
 
       for (const gameDoc of gamesSnapshot.docs) {
         await db.recursiveDelete(gameDoc.ref);
@@ -834,7 +820,7 @@ export const updatePlayerType = onCall(
       if (!doc.exists) throw new HttpsError('not-found', 'Game not found');
 
       const game = doc.data()!;
-      if (game.hostUid !== request.auth!.uid) {
+      if (game.hostUid !== request.auth?.uid) {
         throw new HttpsError('permission-denied', 'Not your game');
       }
 
@@ -857,7 +843,7 @@ export const updatePlayerType = onCall(
         // Convert to Human
         if (existingPlayer) {
           players[uid].isAi = false;
-          delete players[uid].aiLevel;
+          players[uid].aiLevel = undefined;
           players[uid].displayName = `Player ${playerNumber}`;
         } else {
           players[uid] = {
@@ -916,7 +902,7 @@ export const deleteGames = onCall(async (request) => {
   // Process deletions
   const batch = db.batch();
   let batchCount = 0;
-  const MAX_BATCH = 500;
+  const maxBatch = 500;
 
   for (const gameId of gameIds) {
     const gameRef = db.collection('games').doc(gameId);
@@ -937,7 +923,7 @@ export const deleteGames = onCall(async (request) => {
           });
           batchCount++;
 
-          if (batchCount >= MAX_BATCH) {
+          if (batchCount >= maxBatch) {
             await batch.commit();
             batchCount = 0;
           }
@@ -985,13 +971,11 @@ export const undeleteGames = onCall(async (request) => {
 });
 
 // europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
-export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: 'europe-west3' }, async (event) => {
+export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: 'europe-west3' }, async (_event) => {
   const now = admin.firestore.Timestamp.now();
   const nowMillis = now.toMillis();
-  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-  const THIRTY_DAYS_MS = 30 * ONE_DAY_MS;
-
-  console.log('Starting dailyGamePurge...');
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  const thirtyDaysMs = 30 * oneDayMs;
 
   // 1. Soft delete expired games
   // We need to find games where createdAt < now - retentionDays.
@@ -1016,7 +1000,7 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
     const data = doc.data();
     const retentionDays = data.retentionDays || 90;
     const createdAt = data.createdAt.toMillis();
-    const expiresAt = createdAt + retentionDays * ONE_DAY_MS;
+    const expiresAt = createdAt + retentionDays * oneDayMs;
 
     if (nowMillis > expiresAt) {
       softDeleteBatch.update(doc.ref, {
@@ -1029,15 +1013,12 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
 
   if (softDelCount > 0) {
     await softDeleteBatch.commit();
-    console.log(`Soft deleted ${softDelCount} expired games.`);
   }
 
   // 2. Hard delete old soft-deleted games
   // deletedAt < now - 30 days
-  const purgeThreshold = admin.firestore.Timestamp.fromMillis(nowMillis - THIRTY_DAYS_MS);
+  const purgeThreshold = admin.firestore.Timestamp.fromMillis(nowMillis - thirtyDaysMs);
   const trashSnap = await db.collection('games').where('deletedAt', '<', purgeThreshold).get();
-
-  console.log(`Found ${trashSnap.size} games to permanently purge.`);
 
   for (const doc of trashSnap.docs) {
     await db.recursiveDelete(doc.ref);
@@ -1046,24 +1027,20 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   // 3. Purge unverified admin registrations
   // Pending users older than 24h who haven't verified their email
   const pendingUsersSnap = await db.collection('users').where('role', '==', 'pending').get();
-  console.log(`Checking ${pendingUsersSnap.size} pending users for verification timeout...`);
 
   for (const doc of pendingUsersSnap.docs) {
     const userData = doc.data();
     const createdAt = userData.createdAt?.toMillis() || 0;
 
-    if (nowMillis - createdAt > ONE_DAY_MS) {
+    if (nowMillis - createdAt > oneDayMs) {
       try {
         const authUser = await admin.auth().getUser(doc.id);
         if (!authUser.emailVerified) {
-          console.log(`Purging unverified user: ${userData.email} (${doc.id})`);
           await db.recursiveDelete(doc.ref);
           await admin.auth().deleteUser(doc.id);
         }
       } catch (error: any) {
         if (error.code === 'auth/user-not-found') {
-          // If auth user is already gone, just clean up firestore
-          console.log(`Auth user not found for ${doc.id}, cleaning up firestore doc.`);
           await db.recursiveDelete(doc.ref);
         } else {
           console.error(`Failed to check/purge user ${doc.id}:`, error);
@@ -1085,7 +1062,7 @@ export const playerLogin = onCall(async (request) => {
   }
 
   const game = gameDoc.data();
-  const playerSecrets = game?.['playerSecrets'] || {};
+  const playerSecrets = game?.playerSecrets || {};
 
   // playerSecrets is { "1": { password: "PIN1" }, "2": { password: "PIN2" }, ... }
   const playerNumber = Object.keys(playerSecrets).find((key) => playerSecrets[key]?.password === password);
@@ -1280,7 +1257,7 @@ export const updateRoundDeadline = onCall(async (request) => {
 });
 
 // europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
-export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region: 'europe-west3' }, async (event) => {
+export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region: 'europe-west3' }, async (_event) => {
   const now = admin.firestore.Timestamp.now();
 
   // Find games in progress
@@ -1292,8 +1269,6 @@ export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region
     const deadline = game.roundDeadlines?.[currentRound];
 
     if (deadline && deadline.toMillis() < now.toMillis()) {
-      console.log(`Deadline passed for game ${game.id} round ${currentRound}. Forcing AI turns.`);
-
       await db.runTransaction(async (transaction) => {
         const refreshedGameDoc = await transaction.get(gameDoc.ref);
         const refreshedGame = refreshedGameDoc.data();

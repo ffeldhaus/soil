@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { CropType } from '../../types';
+import type { CropType } from '../../types';
 
 @Component({
   selector: 'app-planting-modal',

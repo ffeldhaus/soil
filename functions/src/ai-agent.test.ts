@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { AiAgent } from './ai-agent';
-import { Parcel, Round } from './types';
+import type { Parcel, Round } from './types';
 
 describe('AiAgent', () => {
   it('elementary agent should make minimal decisions', () => {

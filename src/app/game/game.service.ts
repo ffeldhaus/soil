@@ -1,8 +1,18 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, type Observable } from 'rxjs';
 
-import { CropType, Feedback, Game, Parcel, PlayerState, Round, RoundDecision, SystemStats, UserStatus } from '../types';
+import type {
+  CropType,
+  Feedback,
+  Game,
+  Parcel,
+  PlayerState,
+  Round,
+  RoundDecision,
+  SystemStats,
+  UserStatus,
+} from '../types';
 
 export interface GameState {
   game: Game;
@@ -21,9 +31,8 @@ export class GameService {
 
   private stateSubject = new BehaviorSubject<GameState | null>(null);
   state$ = this.stateSubject.asObservable();
-
-  private currentRound: Round | null = null;
   private pendingDecisions: Record<number, CropType> = {};
+  currentRound: Round | null = null;
 
   getParcelsValue() {
     return this.parcelsSubject.value;

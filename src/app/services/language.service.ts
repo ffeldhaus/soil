@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { inject, Injectable, LOCALE_ID } from '@angular/core';
+import { Injectable, inject, LOCALE_ID } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -8,10 +8,6 @@ export class LanguageService {
   private readonly STORAGE_KEY = 'soil_user_language';
   private localeId = inject(LOCALE_ID);
   private document = inject(DOCUMENT);
-
-  constructor() {
-    // Initialization is mostly handled by Angular native i18n
-  }
 
   get currentLang(): string {
     return this.localeId.split('-')[0];

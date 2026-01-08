@@ -11,7 +11,7 @@ import {
   VERMIN_EFFECTS,
   WEATHER_EFFECTS,
 } from './constants';
-import { CropType, Parcel, Round, RoundDecision, RoundResult } from './types';
+import type { CropType, Parcel, Round, RoundDecision, RoundResult } from './types';
 
 export class GameEngine {
   static calculateRound(
@@ -22,10 +22,12 @@ export class GameEngine {
     currentCapital: number,
     totalRounds = 20, // Default to 20
   ): Round {
-    const previousParcels = previousRound ? previousRound.parcelsSnapshot : this.createInitialParcels();
+    const previousParcels = previousRound ? previousRound.parcelsSnapshot : GameEngine.createInitialParcels();
     const parcelupdates: Parcel[] = [];
     const harvestSummary: Record<string, number> = {};
-    Object.keys(HARVEST_YIELD).forEach((k) => (harvestSummary[k] = 0));
+    for (const k of Object.keys(HARVEST_YIELD)) {
+      harvestSummary[k] = 0;
+    }
 
     // -- 1. Pre-calculate global factors --
     const numParcels = previousParcels.length;
@@ -84,13 +86,13 @@ export class GameEngine {
     const bioSiegel = decision.organic && !decision.fertilizer && !decision.pesticide;
 
     // Weather and Vermin factors
-    const weather = WEATHER_EFFECTS[events.weather] || WEATHER_EFFECTS['Normal'];
-    const vermin = VERMIN_EFFECTS[events.vermin] || VERMIN_EFFECTS['None'];
+    const weather = WEATHER_EFFECTS[events.weather] || WEATHER_EFFECTS.Normal;
+    const vermin = VERMIN_EFFECTS[events.vermin] || VERMIN_EFFECTS.None;
 
     // Machine factors
     const machineYieldBonus = MACHINE_FACTORS.YIELD_BONUS[machineLevel];
     // Soil impact: scaling should be moderate. High tech should always be risky.
-    const machineSoilImpact = SOIL.MACHINE_IMPACT[machineLevel] * Math.pow(timeScale, 0.5);
+    const machineSoilImpact = SOIL.MACHINE_IMPACT[machineLevel] * timeScale ** 0.5;
 
     // -- 2. Calculate Parcel Updates --
     previousParcels.forEach((prevParcel, index) => {
@@ -125,8 +127,8 @@ export class GameEngine {
       }
 
       // Inputs impact (scaled moderately)
-      if (decision.fertilizer) soilFactor += SOIL.FERTILIZER_SYNTHETIC_IMPACT * Math.pow(timeScale, 0.7);
-      if (decision.pesticide) soilFactor += SOIL.PESTICIDE_IMPACT * Math.pow(timeScale, 0.7);
+      if (decision.fertilizer) soilFactor += SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale ** 0.7;
+      if (decision.pesticide) soilFactor += SOIL.PESTICIDE_IMPACT * timeScale ** 0.7;
 
       // Machines impact
       soilFactor += machineSoilImpact;
@@ -193,11 +195,9 @@ export class GameEngine {
         const base = HARVEST_YIELD[cropKey];
 
         // Yield depends on Soil and Nutrition
-        const soilEffect = Math.pow(Math.max(0, newSoil) / SOIL.START, HARVEST_SOIL_SENSITIVITY[cropKey] || 1);
-        const nutritionEffect = Math.pow(
-          Math.max(0, newNutrition) / NUTRITION.START,
-          HARVEST_NUTRITION_SENSITIVITY[cropKey] || 1,
-        );
+        const soilEffect = (Math.max(0, newSoil) / SOIL.START) ** (HARVEST_SOIL_SENSITIVITY[cropKey] || 1);
+        const nutritionEffect =
+          (Math.max(0, newNutrition) / NUTRITION.START) ** (HARVEST_NUTRITION_SENSITIVITY[cropKey] || 1);
 
         // Weather & Vermin
         let pestImpact = 1.0;

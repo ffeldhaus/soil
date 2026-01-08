@@ -15,27 +15,14 @@
     "test:functions": "npm run test --prefix functions",
     "test:e2e": "npm run build && firebase emulators:exec --project demo-soil --ui \"cypress run --config baseUrl=http://localhost:5005/de\"",
     "test:e2e:open": "npm run build && firebase emulators:exec --project demo-soil --ui \"cypress open --config baseUrl=http://localhost:5005/de\"",
-    "test:ci": "npm run lint && npm run prettier:check && npm run test:unit && npm run test:functions && npm run test:e2e",
+    "test:ci": "npm run lint && npm run test:unit && npm run test:functions && npm run test:e2e",
     "deploy": "node scripts/deploy.js",
-    "lint": "ng lint",
-    "lint:fix": "ng lint --fix",
-    "format": "prettier --write .",
-    "prettier:check": "prettier --check .",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
+    "format": "biome format --write .",
+    "prettier:check": "biome format .",
     "prepare": "husky",
     "serve:ssr:soil": "node dist/soil/server/server.mjs"
-  },
-  "lint-staged": {
-    "src/**/*.{ts,html,scss,css}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "functions/src/**/*.ts": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "**/*.md": [
-      "prettier --write"
-    ]
   },
   "private": true,
   "engines": {
@@ -70,29 +57,22 @@
     "@angular-devkit/build-angular": "^21.0.0",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
+    "@biomejs/biome": "2.3.11",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.1",
     "@types/node": "^22.19.3",
     "@types/qrcode-generator": "^0.0.16",
     "@vitest/coverage-v8": "^4.0.16",
-    "angular-eslint": "21.1.0",
     "autoprefixer": "^10.4.19",
     "cypress": "^15.8.2",
-    "eslint": "^9.39.1",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
     "firebase-tools": "^15.1.0",
     "globals": "^17.0.0",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
-    "lint-staged": "^16.2.7",
     "postcss": "^8.4.38",
-    "prettier": "^3.7.4",
     "tailwindcss": "^4.0.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "8.52.0",
     "vitest": "^4.0.16"
   },
   "overrides": {

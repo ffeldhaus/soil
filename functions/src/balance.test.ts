@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { GameEngine } from './game-engine';
-import { CropType, Round, RoundDecision } from './types';
+import type { CropType, Round, RoundDecision } from './types';
 
 describe('Game Balance Simulation', () => {
   const strategies = [
@@ -94,10 +94,9 @@ describe('Game Balance Simulation', () => {
 
   roundCounts.forEach((count) => {
     it(`should simulate strategies for ${count} rounds`, () => {
-      console.log(`\n--- Simulation Results for ${count} Rounds ---`);
       const results = strategies.map((strat) => {
         let capital = 10000;
-        let lastRound: Round | undefined = undefined;
+        let lastRound: Round | undefined;
 
         for (let r = 1; r <= count; r++) {
           const decision: RoundDecision = strat.logic(r, lastRound);
@@ -126,8 +125,6 @@ describe('Game Balance Simulation', () => {
         Rank: index + 1,
         ...res,
       }));
-
-      console.table(rankedResults);
 
       if (count === 50) {
         // Assertions for 50 rounds
