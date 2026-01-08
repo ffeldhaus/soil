@@ -264,6 +264,7 @@ export class GameService {
     action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete',
     value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number,
     lang?: string,
+    origin?: string,
   ): Promise<void> {
     const fn = httpsCallable<
       {
@@ -271,10 +272,11 @@ export class GameService {
         action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete';
         value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number;
         lang?: string;
+        origin?: string;
       },
       void
     >(this.functions, 'manageAdmin');
-    await fn({ targetUid, action, value, lang });
+    await fn({ targetUid, action, value, lang, origin });
   }
 
   async sendPlayerInvite(

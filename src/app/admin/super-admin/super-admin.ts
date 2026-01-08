@@ -236,9 +236,13 @@ export class SuperAdminComponent implements OnInit {
     if (!this.userToApprove) return;
 
     const user = this.userToApprove;
-    this.userToApprove = null; // Close modal immediately
-
-    await this.gameService.manageAdmin(user.uid, 'approve', undefined, this.languageService.currentLang);
+    await this.gameService.manageAdmin(
+      user.uid,
+      'approve',
+      undefined,
+      this.languageService.currentLang,
+      window.location.origin,
+    );
     this.loadData();
   }
 
@@ -284,6 +288,7 @@ export class SuperAdminComponent implements OnInit {
         banEmail: this.banEmailOnReject,
       },
       this.languageService.currentLang,
+      window.location.origin,
     );
     this.loadData();
     this.userToReject = null;
@@ -292,7 +297,13 @@ export class SuperAdminComponent implements OnInit {
   // Old method kept for reference or direct calls if needed, but unused by template now
   async approveUser(user: UserStatus) {
     if (!confirm(`Approve ${user.email}?`)) return;
-    await this.gameService.manageAdmin(user.uid, 'approve', undefined, this.languageService.currentLang);
+    await this.gameService.manageAdmin(
+      user.uid,
+      'approve',
+      undefined,
+      this.languageService.currentLang,
+      window.location.origin,
+    );
     this.loadData();
   }
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
@@ -78,72 +78,72 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
               <div class="bg-gray-900/30 rounded-xl p-6 border border-white/5 space-y-6">
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2">1. Core Objective: Bridging the "Knowledge-Action Gap"</h3>
-                  <p class="text-gray-300 leading-relaxed">
-                    The central challenge addressed by this research is the discrepancy between students' theoretical knowledge of
-                    sustainability and their actual behavior. Despite years of "Education for Sustainable Development" (ESD),
-                    studies show that many youths possess only marginal knowledge and fail to translate environmental values into
-                    concrete action. The dissertation aims to design a learning environment that does not just "preach"
-                    sustainability but allows students to <strong>experience the systemic consequences of their decisions</strong>
-                    through a simulation game called "SOIL."
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.objectiveTitle">1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</h3>
+                  <p class="text-gray-300 leading-relaxed" i18n="@@info.objectiveText">
+                    Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen
+                    der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige
+                    Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht
+                    schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine
+                    Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die
+                    systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben.
                   </p>
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2">2. Theoretical Framework</h3>
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.theoreticalFrameworkTitle">2. Theoretischer Rahmen</h3>
                   <ul class="list-disc list-outside ml-5 text-gray-300 space-y-2">
-                    <li>
-                      <strong class="text-white">Subjective Theories:</strong> The research distinguishes between <em>High-Reach
-                      Theories</em> (abstract knowledge, rarely influences behavior) and <em>Low-Reach Theories</em> (practical
-                      action scripts). Sustainable action requires activating and modifying these low-reach theories through
-                      experience.
+                    <li i18n="@@info.theoreticalFrameworkSubjectiveTheories">
+                      <strong class="text-white">Subjektive Theorien:</strong> Die Forschung unterscheidet zwischen weitreichenden
+                      Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische
+                      Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser
+                      nahreichweiten Theorien durch Erfahrung.
                     </li>
-                    <li>
-                      <strong class="text-white">Dust-Bowl Syndrome:</strong> The game models the non-sustainable intensification
-                      of agriculture leading to soil degradation, erosion, and economic collapse, providing a clear link between
-                      profit-seeking and ecological destruction.
+                    <li i18n="@@info.theoreticalFrameworkDustBowl">
+                      <strong class="text-white">Dust-Bowl-Syndrom:</strong> Das Spiel modelliert die nicht nachhaltige
+                      Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt
+                      und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her.
                     </li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2">3. Design Principles</h3>
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.designPrinciplesTitle">3. Gestaltungsprinzipien</h3>
                   <ul class="list-disc list-outside ml-5 text-gray-300 space-y-2">
-                    <li>
-                      <strong class="text-white">Experience-Oriented Learning:</strong> Students start with a profit-maximization
-                      mindset. As they over-exploit resources, variables like "Soil Quality" drop, leading to yield loss. This
-                      "failed experience" forces reflection.
+                    <li i18n="@@info.designPrinciplesExperience">
+                      <strong class="text-white">Erfahrungsorientiertes Lernen:</strong> Die Schüler beginnen mit einer
+                      gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die
+                      „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion.
                     </li>
-                    <li>
-                      <strong class="text-white">Balanced Complexity:</strong> To avoid cognitive overload, the game focuses on
-                      the Pedosphere (soil) but remains complex enough (weather, pests, market prices) to prevent simple linear
-                      logic.
+                    <li i18n="@@info.designPrinciplesComplexity">
+                      <strong class="text-white">Ausgewogene Komplexität:</strong> Um eine kognitive Überlastung zu vermeiden,
+                      konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge,
+                      Marktpreise), um einfache lineare Logik zu verhindern.
                     </li>
                   </ul>
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2">4. Key Research Findings</h3>
-                  <p class="text-gray-300 leading-relaxed mb-2">
-                    The study identified three "Argumentation Types":
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.findingsTitle">4. Wichtige Forschungsergebnisse</h3>
+                  <p class="text-gray-300 leading-relaxed mb-2" i18n="@@info.findingsText">
+                    Die Studie identifizierte drei Argumentationstypen:
                   </p>
                   <ol class="list-decimal list-outside ml-5 text-gray-300 space-y-1">
-                    <li><strong>Economy over Ecology:</strong> Pessimism, belief that one cannot change anything.</li>
-                    <li><strong>Ecology over Economy:</strong> Rejection of economic use, viewing protection as sacrifice.</li>
-                    <li><strong>Ecology for Economy:</strong> Recognition that ecological health is the prerequisite for economic success.</li>
+                    <li i18n="@@info.findingsType1"><strong>Ökonomie über Ökologie:</strong> Pessimismus, Glaube, dass man nichts ändern kann.</li>
+                    <li i18n="@@info.findingsType2"><strong>Ökologie über Ökonomie:</strong> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</li>
+                    <li i18n="@@info.findingsType3"><strong>Ökologie für Ökonomie:</strong> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</li>
                   </ol>
-                  <p class="text-gray-300 leading-relaxed mt-2">
-                    <strong>Conclusion:</strong> The simulation successfully moved students toward Type 3, viewing the environment
-                    as a "partner" rather than an opponent.
+                  <p class="text-gray-300 leading-relaxed mt-2" i18n="@@info.findingsConclusion">
+                    <strong>Fazit:</strong> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt
+                    als „Partner“ und nicht als Gegner sahen.
                   </p>
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2">5. Evolution to soil.app</h3>
-                  <p class="text-gray-300 leading-relaxed">
-                    The digital version automates complex calculations, provides visual data (impact diagrams), and facilitates
-                    precise "debriefing" and reflection phases, transforming abstract awareness into functional sustainable
-                    management skills.
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.evolutionTitle">5. Weiterentwicklung zu soil.app</h3>
+                  <p class="text-gray-300 leading-relaxed" i18n="@@info.evolutionText">
+                    Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und
+                    erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale
+                    Kompetenzen für nachhaltiges Management umgewandelt wird.
                   </p>
                 </section>
               </div>
@@ -224,8 +224,12 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
     </div>
   `,
 })
-export class InfoComponent {
+export class InfoComponent implements OnInit {
   year = new Date().getFullYear();
+
+  ngOnInit() {
+    window.scrollTo(0, 0);
+  }
 
   publications = [
     {
@@ -233,20 +237,20 @@ export class InfoComponent {
       authors: 'Wolf, N., & Graf, D.',
       title: 'SOIL–eine Simulation zum nachhaltigen Denken.',
       source: 'Digitale Bildung für Lehramtsstudierende. Springer Fachmedien.',
-      link: 'https://link.springer.com/book/10.1007/978-3-662-62627-7',
+      link: 'https://link.springer.com/chapter/10.1007/978-3-658-32344-8_24',
     },
     {
       year: '2019',
       authors: 'Wolf, N.',
       title: 'SOIL - Ein Planspiel zur Förderung nachhaltigen Denkens und Handelns.',
       source: 'MNU Journal.',
-      link: 'https://www.mnu.de/publikationen/zeitschrift-mnu',
+      link: 'https://www.mnu.de/zeitschriften/508-mnu-heft-2019-05',
     },
     {
       year: '2014',
       authors: 'Wolf, N.',
       title: 'Bedingungen zur Förderung nachhaltigen Handelns im Biologieunterricht.',
-      source: 'Ralle et al. (Hrsg.): Lernaufgaben entwickeln. Waxmann.',
+      source: 'Ralle et al. (Hrsg.): Lernaufgaben entwickeln, bearbeiten und überprüfen. Waxmann.',
       link: 'https://www.waxmann.com/buch3070',
     },
     {
@@ -254,14 +258,14 @@ export class InfoComponent {
       authors: 'Wolf, N. & Graf, D.',
       title: 'Iterative Entwicklung eines Unterrichtsdesigns zum Thema Nachhaltigkeit.',
       source: 'Komorek/Prediger (Hrsg.). Waxmann.',
-      link: 'https://www.waxmann.com/waxmann-buecher/?no_cache=1&tx_p2waxmann_pi2%5Bbuch%5D=BUC12377&tx_p2waxmann_pi2%5Baction%5D=show',
+      link: 'https://www.waxmann.com/buecher/?tx_p2waxmann_buchliste%5bbuchnr%5d=2943&tx_p2waxmann_buchliste%5baction%5d=show',
     },
     {
       year: '2012',
       authors: 'Wolf, N. & Graf, D.',
       title: 'Lernende erfassen Ökosysteme in einem Agrar-Planspiel.',
       source: 'Der mathematische und naturwissenschaftliche Unterricht.',
-      link: 'https://www.mnu.de/publikationen/zeitschrift-mnu',
+      link: 'https://www.fachportal-paedagogik.de/literatur/vollanzeige.html?FId=3176137',
     },
   ];
 }

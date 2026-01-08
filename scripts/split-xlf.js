@@ -9,22 +9,19 @@ function splitXlf(filePath, outputDir, baseName) {
   const transUnitRegex = /<trans-unit id="([^"]+)"[\s\S]*?<\/trans-unit>/g;
   let match;
   const groups = {
-    admin: [],
+    'admin.dashboard': [],
+    'admin.superadmin': [],
+    'admin.auth': [],
+    'admin.onboarding': [],
     game: [],
     manual: [],
     common: [],
   };
 
-  const adminPrefixes = [
-    'dashboard',
-    'superadmin',
-    'onboarding',
-    'adminLogin',
-    'adminRegister',
-    'authAction',
-    'user',
-    'feedback',
-  ];
+  const adminDashboardPrefixes = ['dashboard', 'feedback', 'user'];
+  const adminSuperAdminPrefixes = ['superadmin'];
+  const adminAuthPrefixes = ['adminLogin', 'adminRegister', 'authAction'];
+  const adminOnboardingPrefixes = ['onboarding'];
   const gamePrefixes = [
     'board',
     'finance',
@@ -45,8 +42,14 @@ function splitXlf(filePath, outputDir, baseName) {
     const unit = match[0];
     const topLevel = id.split('.')[0];
 
-    if (adminPrefixes.includes(topLevel)) {
-      groups.admin.push(unit);
+    if (adminDashboardPrefixes.includes(topLevel)) {
+      groups['admin.dashboard'].push(unit);
+    } else if (adminSuperAdminPrefixes.includes(topLevel)) {
+      groups['admin.superadmin'].push(unit);
+    } else if (adminAuthPrefixes.includes(topLevel)) {
+      groups['admin.auth'].push(unit);
+    } else if (adminOnboardingPrefixes.includes(topLevel)) {
+      groups['admin.onboarding'].push(unit);
     } else if (gamePrefixes.includes(topLevel)) {
       groups.game.push(unit);
     } else if (manualPrefixes.includes(topLevel)) {

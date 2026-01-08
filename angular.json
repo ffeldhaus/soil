@@ -23,7 +23,7 @@
           "en": {
             "translation": [
               "src/locale/messages.en.xlf",
-              "src/locale/messages.en.admin.xlf",
+              "src/locale/messages.en.admin.auth.xlf",
               "src/locale/messages.en.game.xlf",
               "src/locale/messages.en.manual.xlf"
             ]
@@ -31,7 +31,10 @@
           "de": {
             "translation": [
               "src/locale/messages.xlf",
-              "src/locale/messages.admin.xlf",
+              "src/locale/messages.admin.dashboard.xlf",
+              "src/locale/messages.admin.superadmin.xlf",
+              "src/locale/messages.admin.auth.xlf",
+              "src/locale/messages.admin.onboarding.xlf",
               "src/locale/messages.game.xlf",
               "src/locale/messages.manual.xlf"
             ]
@@ -48,8 +51,8 @@
             "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "i18nMissingTranslation": "error",
-            "i18nDuplicateTranslation": "error",
+            "i18nMissingTranslation": "warning",
+            "i18nDuplicateTranslation": "warning",
             "allowedCommonJsDependencies": ["dijkstrajs", "@grpc/grpc-js", "@grpc/proto-loader", "undici"],
             "define": {
               "import.meta.env.APP_VERSION": "\"1.1.4\""

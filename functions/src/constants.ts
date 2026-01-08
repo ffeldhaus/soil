@@ -1,3 +1,5 @@
+export const APP_DOMAIN = 'https://soil.app';
+
 export const SOIL = {
   START: 80,
   FALLOW_RECOVERY: 0.3,

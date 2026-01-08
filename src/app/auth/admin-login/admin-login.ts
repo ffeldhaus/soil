@@ -1,4 +1,4 @@
-import { Component, inject, type OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -198,6 +198,7 @@ export class AdminLoginComponent implements OnInit {
   private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -222,6 +223,7 @@ export class AdminLoginComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
     this.showErrorModal = false;
+    this.cdr.detectChanges();
 
     const { email, password } = this.loginForm.value;
     if (!email || !password) return;
@@ -233,8 +235,10 @@ export class AdminLoginComponent implements OnInit {
       console.error(err);
       this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
       this.showErrorModal = true;
+      this.cdr.detectChanges();
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -246,6 +250,7 @@ export class AdminLoginComponent implements OnInit {
       console.error(err);
       this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
       this.showErrorModal = true;
+      this.cdr.detectChanges();
     }
   }
 
@@ -254,16 +259,19 @@ export class AdminLoginComponent implements OnInit {
     if (!email) {
       this.errorMessage = $localize`:@@adminLogin.error.emailRequired:Bitte geben Sie Ihre E-Mail-Adresse ein.`;
       this.showErrorModal = true;
+      this.cdr.detectChanges();
       return;
     }
 
     try {
       await this.auth.sendPasswordResetEmail(email);
       this.successMessage = this.t('adminLogin.resetEmailSent');
+      this.cdr.detectChanges();
     } catch (err: unknown) {
       console.error(err);
       this.errorMessage = this.t('adminLogin.resetEmailError');
       this.showErrorModal = true;
+      this.cdr.detectChanges();
     }
   }
 

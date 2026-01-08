@@ -11,44 +11,108 @@
         <target>Manual</target>
       </trans-unit>
       <trans-unit id="playerLogin.title" datatype="html">
-        <source>Spieler-Anmeldung</source>
-        <target>Player Login</target>
+        <source>Spiel beitreten</source>
+        <target>Join Game</target>
       </trans-unit>
       <trans-unit id="playerLogin.gameId" datatype="html">
         <source>Spiel-ID</source>
         <target>Game ID</target>
       </trans-unit>
-      <trans-unit id="playerLogin.placeholder.gameId" datatype="html">
-        <source>Spiel-ID</source>
-        <target>Game ID</target>
-      </trans-unit>
-      <trans-unit id="playerLogin.placeholder.pin" datatype="html">
-        <source>Eindeutiger Spieler-PIN</source>
-        <target>Unique Player PIN</target>
-      </trans-unit>
       <trans-unit id="playerLogin.pin" datatype="html">
-        <source>Spieler-PIN (Code)</source>
-        <target>Player PIN (Code)</target>
-      </trans-unit>
-      <trans-unit id="playerLogin.enteringGame" datatype="html">
-        <source>Spiel wird betreten...</source>
-        <target>Entering Game...</target>
+        <source>PIN</source>
+        <target>PIN</target>
       </trans-unit>
       <trans-unit id="playerLogin.startGame" datatype="html">
         <source>Spiel starten</source>
         <target>Start Game</target>
       </trans-unit>
+      <trans-unit id="playerLogin.placeholder.gameId" datatype="html">
+        <source>Game ID</source>
+        <target>Game ID</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.placeholder.pin" datatype="html">
+        <source>Unique Player PIN</source>
+        <target>Unique Player PIN</target>
+      </trans-unit>
+      <trans-unit id="playerLogin.enteringGame" datatype="html">
+        <source>Betrete Spiel...</source>
+        <target>Entering Game...</target>
+      </trans-unit>
       <trans-unit id="playerLogin.backToHome" datatype="html">
-        <source>← Zurück zur Startseite</source>
-        <target>← Back to Home</target>
+        <source>Zurück zur Startseite</source>
+        <target>Back to Home</target>
       </trans-unit>
       <trans-unit id="playerLogin.error.title" datatype="html">
-        <source>Spielzugang fehlgeschlagen</source>
-        <target>Game access failed</target>
+        <source>Anmeldung fehlgeschlagen</source>
+        <target>Login failed</target>
       </trans-unit>
       <trans-unit id="playerLogin.error.retry" datatype="html">
         <source>Erneut versuchen</source>
         <target>Retry</target>
+      </trans-unit>
+      <trans-unit id="info.objectiveTitle" datatype="html">
+        <source>1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</source>
+        <target>1. Core Objective: Bridging the "Knowledge-Action Gap"</target>
+      </trans-unit>
+      <trans-unit id="info.objectiveText" datatype="html">
+        <source> Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben. </source>
+        <target> The central challenge addressed by this research is the discrepancy between students' theoretical knowledge of sustainability and their actual behavior. Despite years of "Education for Sustainable Development" (ESD), studies show that many youths possess only marginal knowledge and fail to translate environmental values into concrete action. The dissertation aims to design a learning environment that does not just "preach" sustainability but allows students to experience the systemic consequences of their decisions through a simulation game called "SOIL." </target>
+      </trans-unit>
+      <trans-unit id="info.theoreticalFrameworkTitle" datatype="html">
+        <source>2. Theoretischer Rahmen</source>
+        <target>2. Theoretical Framework</target>
+      </trans-unit>
+      <trans-unit id="info.theoreticalFrameworkSubjectiveTheories" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Subjektive Theorien:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Forschung unterscheidet zwischen weitreichenden Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser nahreichweiten Theorien durch Erfahrung. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Subjective Theories:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> The research distinguishes between abstract knowledge (rarely influences behavior) and practical action scripts. Sustainable action requires activating and modifying these practical theories through experience. </target>
+      </trans-unit>
+      <trans-unit id="info.theoreticalFrameworkDustBowl" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Dust-Bowl-Syndrom:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Das Spiel modelliert die nicht nachhaltige Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Dust-Bowl Syndrome:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> The game models the non-sustainable intensification of agriculture leading to soil degradation, erosion, and economic collapse, providing a clear link between profit-seeking and ecological destruction. </target>
+      </trans-unit>
+      <trans-unit id="info.designPrinciplesTitle" datatype="html">
+        <source>3. Gestaltungsprinzipien</source>
+        <target>3. Design Principles</target>
+      </trans-unit>
+      <trans-unit id="info.designPrinciplesExperience" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Erfahrungsorientiertes Lernen:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Experience-Oriented Learning:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Students start with a profit-maximization mindset. As they over-exploit resources, variables like "Soil Quality" drop, leading to yield loss. This "failed experience" forces reflection. </target>
+      </trans-unit>
+      <trans-unit id="info.designPrinciplesComplexity" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Ausgewogene Komplexität:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Um eine kognitive Überlastung zu vermeiden, konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge, Marktpreise), um einfache lineare Logik zu verhindern. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Balanced Complexity:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> To avoid cognitive overload, the game focuses on the Pedosphere (soil) but remains complex enough (weather, pests, market prices) to prevent simple linear logic. </target>
+      </trans-unit>
+      <trans-unit id="info.findingsTitle" datatype="html">
+        <source>4. Wichtige Forschungsergebnisse</source>
+        <target>4. Key Research Findings</target>
+      </trans-unit>
+      <trans-unit id="info.findingsText" datatype="html">
+        <source> Die Studie identifizierte drei Argumentationstypen: </source>
+        <target> The study identified three argumentation types: </target>
+      </trans-unit>
+      <trans-unit id="info.findingsType1" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökonomie über Ökologie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Pessimismus, Glaube, dass man nichts ändern kann.</source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Economy over Ecology:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Pessimism, belief that one cannot change anything.</target>
+      </trans-unit>
+      <trans-unit id="info.findingsType2" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökologie über Ökonomie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ecology over Economy:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Rejection of economic use, viewing protection as sacrifice.</target>
+      </trans-unit>
+      <trans-unit id="info.findingsType3" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökologie für Ökonomie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ecology for Economy:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Recognition that ecological health is the prerequisite for economic success.</target>
+      </trans-unit>
+      <trans-unit id="info.findingsConclusion" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Fazit:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt als „Partner“ und nicht als Gegner sahen. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Conclusion:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> The simulation successfully moved students toward Type 3, viewing the environment as a "partner" rather than an opponent. </target>
+      </trans-unit>
+      <trans-unit id="info.evolutionTitle" datatype="html">
+        <source>5. Weiterentwicklung zu soil.app</source>
+        <target>5. Evolution to soil.app</target>
+      </trans-unit>
+      <trans-unit id="info.evolutionText" datatype="html">
+        <source> Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale Kompetenzen für nachhaltiges Management umgewandelt wird. </source>
+        <target> The digital version automates complex calculations, provides visual data (impact diagrams), and facilitates precise debriefing and reflection phases, transforming abstract awareness into functional sustainable management skills. </target>
       </trans-unit>
       <trans-unit id="special.fieldbean" datatype="html">
         <source>Ackerbohnen erhöhen den Mineralstoffgehalt und die Bodenqualität.</source>
@@ -71,7 +135,7 @@
         <target>Legal Notice</target>
       </trans-unit>
       <trans-unit id="impressum.subtitle" datatype="html">
-        <source>Impressum &amp; Credits</source>
+        <source>Rechtliche Informationen &amp; Kontakt</source>
         <target>Legal Notice &amp; Credits</target>
       </trans-unit>
       <trans-unit id="impressum.backToHome" datatype="html">
@@ -83,7 +147,7 @@
         <target>Contact</target>
       </trans-unit>
       <trans-unit id="impressum.responsible" datatype="html">
-        <source>Verantwortlich für den Inhalt</source>
+        <source>Verantwortlich</source>
         <target>Responsible for Content</target>
       </trans-unit>
       <trans-unit id="impressum.imageSources" datatype="html">
@@ -91,47 +155,47 @@
         <target>Image Sources</target>
       </trans-unit>
       <trans-unit id="impressum.source.drought" datatype="html">
-        <source>Dürre</source>
+        <source>Drought by USDA (Public Domain)</source>
         <target>Drought</target>
       </trans-unit>
       <trans-unit id="impressum.source.borer" datatype="html">
-        <source>Maiszünsler</source>
+        <source>Maiszünsler by Keith Weller (Public Domain)</source>
         <target>European Corn Borer</target>
       </trans-unit>
       <trans-unit id="impressum.source.ladybug" datatype="html">
-        <source>Marienkäfer</source>
+        <source>Marienkäfer by Olei (CC BY-SA 3.0)</source>
         <target>Ladybug</target>
       </trans-unit>
       <trans-unit id="impressum.source.oekolandbau" datatype="html">
-        <source>Ökolandbau.de</source>
+        <source>Oekolandbau.de</source>
         <target>Ökolandbau - The Information Portal</target>
       </trans-unit>
       <trans-unit id="impressum.source.logo" datatype="html">
-        <source>Logo "Euro-Blatt"</source>
+        <source>Organic Logo (Public Domain)</source>
         <target>Logo "Euro-Leaf"</target>
       </trans-unit>
       <trans-unit id="impressum.source.chamber" datatype="html">
-        <source>Landwirtschaftskammer Nordrhein-Westfalen</source>
+        <source>Landwirtschaftskammer NRW</source>
         <target>Chamber of Agriculture North Rhine-Westphalia</target>
       </trans-unit>
       <trans-unit id="impressum.source.bioSiegel" datatype="html">
-        <source>Bio-Siegel</source>
+        <source>Bio-Siegel.de</source>
         <target>Bio-Siegel</target>
       </trans-unit>
       <trans-unit id="impressum.disclaimer.title" datatype="html">
-        <source>Haftungsausschluss (Disclaimer)</source>
+        <source>Haftungsausschluss</source>
         <target>Disclaimer</target>
       </trans-unit>
       <trans-unit id="impressum.disclaimer.p1" datatype="html">
-        <source>Für die Richtigkeit und Vollständigkeit der Inhalte dieser Website wird keine Gewähr übernommen. Die Inhalte dieser Seite unterliegen dem deutschen Urheberrecht. Jede Vervielfältigung oder Verbreitung bedarf der schriftlichen Zustimmung. Downloads und Kopien sind nur für den nicht-kommerziellen Gebrauch gestattet.</source>
-        <target>No guarantee is assumed for the correctness and completeness of the contents of this website. The contents of this page are subject to German copyright law. Any duplication or distribution requires written consent. Downloads and copies are permitted only for non-commercial use.</target>
-      </trans-unit>
-      <trans-unit id="impressum.disclaimer.p2" datatype="html">
-        <source>Für die Inhalte externer Links wird keine Haftung übernommen. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.</source>
+        <source> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich. </source>
         <target>No responsibility is assumed for content of external sites linked to. For external sites, the respective providers are exclusively responsible.</target>
       </trans-unit>
+      <trans-unit id="impressum.disclaimer.p2" datatype="html">
+        <source> Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung dar. </source>
+        <target>No guarantee is assumed for the correctness and completeness of the contents of this website. The contents of this page are subject to German copyright law.</target>
+      </trans-unit>
       <trans-unit id="impressum.disclaimer.p3" datatype="html">
-        <source>Die Nutzung der Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Personenbezogene Daten, die für die Registrierung als Spielleitung erforderlich sind, sowie Spieldaten werden nicht an Dritte weitergegeben.</source>
+        <source> Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt. </source>
         <target>The use of the website is generally possible without providing personal data. Personal data required for registration as game management, as well as game data, will not be passed on to third parties.</target>
       </trans-unit>
       <trans-unit id="landing.intro" datatype="html">
@@ -167,64 +231,40 @@
         <target>Register</target>
       </trans-unit>
       <trans-unit id="landing.aboutTitle" datatype="html">
-        <source>Über das Spiel</source>
+        <source> Über das Spiel </source>
         <target>About the Game</target>
       </trans-unit>
       <trans-unit id="landing.aboutText1" datatype="html">
         <source> Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schülerinnen und Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf. </source>
-        <target>Soil is an interactive simulation game where players make ecological and economic decisions and experience their immediate impact. In groups, students build an agricultural business over several rounds.</target>
+        <target>Soil is an interactive simulation game where players make ecological and economic decisions and experience their immediate impact.</target>
       </trans-unit>
       <trans-unit id="landing.aboutText2" datatype="html">
-        <source>Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.</source>
-        <target>The goal is to run a profitable business sustainably. Strategies like crop selection, fertilization, and pest control must be balanced. After each round, groups receive feedback on the ecological and economic consequences of their actions.</target>
+        <source> Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns. </source>
+        <target>The goal is to run a profitable business sustainably. After each round, groups receive feedback on the ecological and economic consequences of their actions.</target>
       </trans-unit>
       <trans-unit id="landing.educationalInfo" datatype="html">
-        <source> Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrerinnen und Lehrer sowie Admins ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die Zugehörigkeit zu einer Bildungseinrichtung verifiziert. </source>
-        <target>The game is designed for educational purposes and is permanently free of charge. Registration is required for teachers and admins to create their own games. During registration, the affiliation with an educational institution is verified.</target>
+        <source> Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrkräfte ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die Zugehörigkeit zu einer Bildungseinrichtung verifiziert. </source>
+        <target>The game is designed for educational purposes and is permanently free of charge. Registration is required for teachers and admins to create their own games.</target>
       </trans-unit>
       <trans-unit id="landing.backgroundTitle" datatype="html">
-        <source>Hintergrund</source>
+        <source> Hintergrund </source>
         <target>Background</target>
       </trans-unit>
       <trans-unit id="landing.backgroundText1" datatype="html">
-        <source>Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.</source>
-        <target>At the UN Conference in 1992, "sustainability" was declared a global development goal. This goal is to be achieved by integrating economic, ecological, and social perspectives.</target>
+        <source> Auf der UN-Konferenz 1992 wurde &quot;Nachhaltigkeit&quot; zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden. </source>
+        <target>At the UN Conference in 1992, "sustainability" was declared a global development goal.</target>
       </trans-unit>
       <trans-unit id="landing.backgroundText2" datatype="html">
-        <source>Das Simulationsspiel "Soil" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken.</source>
-        <target>The simulation game "Soil" was developed to make this concept of sustainability understandable. It allows learners to discover the centrality of ecological variables as natural limits to economic activities through hands-on experience.</target>
+        <source> Das Simulationsspiel &quot;Soil&quot; wurde entwickelt, um dieses concept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
+        <target>The simulation game "Soil" was developed to make this concept of sustainability understandable.</target>
+      </trans-unit>
+      <trans-unit id="landing.scientificBackground" datatype="html">
+        <source>Wissenschaftlicher Hintergrund</source>
+        <target>Scientific Background</target>
       </trans-unit>
       <trans-unit id="landing.footer" datatype="html">
-        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}" /> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <target>© <x id="INTERPOLATION" equiv-text="{{ year }}" /> Soil Project. Developed for educational purposes.</target>
-      </trans-unit>
-      <trans-unit id="settings.organic" datatype="html">
-        <source>Ökologischer Anbau</source>
-        <target>Organic Farming</target>
-      </trans-unit>
-      <trans-unit id="special.wheat" datatype="html">
-        <source>Standardkultur mit ausgeglichenen Werten.</source>
-        <target>Standard crop with balanced values.</target>
-      </trans-unit>
-      <trans-unit id="special.corn" datatype="html">
-        <source>Hoher Ertrag, aber anspruchsvoll für den Boden.</source>
-        <target>High yield but demanding on the soil.</target>
-      </trans-unit>
-      <trans-unit id="special.potato" datatype="html">
-        <source>Sehr profitabel, aber extrem schädlingsanfällig.</source>
-        <target>Very profitable but extremely susceptible to pests.</target>
-      </trans-unit>
-      <trans-unit id="special.barley" datatype="html">
-        <source>Robuste Getreideart für verschiedene Standorte.</source>
-        <target>Robust cereal for various locations.</target>
-      </trans-unit>
-      <trans-unit id="special.animals" datatype="html">
-        <source>Dauerkultur zur Viehhaltung.</source>
-        <target>Permanent crop for livestock farming.</target>
-      </trans-unit>
-      <trans-unit id="special.fallow" datatype="html">
-        <source>Regeneration für den Boden.</source>
-        <target>Soil regeneration.</target>
+        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
+        <target>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
       </trans-unit>
       <trans-unit id="settings.title" datatype="html">
         <source>Rundeneinstellungen</source>
@@ -237,10 +277,6 @@
       <trans-unit id="settings.machines_desc" datatype="html">
         <source>Höherer Maschineneinsatz steigert die Effizienz, laugt aber den Boden langfristig aus.</source>
         <target>Higher machine usage increases efficiency but degrades soil over time.</target>
-      </trans-unit>
-      <trans-unit id="settings.organic" datatype="html">
-        <source>Ökologischer Anbau</source>
-        <target>Organic Farming</target>
       </trans-unit>
       <trans-unit id="settings.organic_desc" datatype="html">
         <source>Verzicht auf Chemie. Höhere Preise, geringere Erträge.</source>
@@ -278,85 +314,101 @@
         <source>Einstellungen bestätigen</source>
         <target>Confirm Settings</target>
       </trans-unit>
-      <trans-unit id="879182012683054024" datatype="html">
-        <source>Willkommen bei SOIL!</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">12,13</context>
-        </context-group>
-      <target>Willkommen bei SOIL!</target></trans-unit>
-      <trans-unit id="5963840736238336751" datatype="html">
-        <source>Ihre E-Mail-Adresse wurde verifiziert.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">29,30</context>
-        </context-group>
-      <target>Ihre E-Mail-Adresse wurde verifiziert.</target></trans-unit>
-      <trans-unit id="311587186526110973" datatype="html">
-        <source>Wie geht es weiter?</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">34,36</context>
-        </context-group>
-      <target>Wie geht es weiter?</target></trans-unit>
-      <trans-unit id="590824677060504574" datatype="html">
-        <source> Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">37,38</context>
-        </context-group>
-      <target> Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </target></trans-unit>
-      <trans-unit id="8242520668040600785" datatype="html">
-        <source>Dies dauert in der Regel weniger als 24 Stunden.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">42,44</context>
-        </context-group>
-      <target>Dies dauert in der Regel weniger als 24 Stunden.</target></trans-unit>
-      <trans-unit id="1782061863436635532" datatype="html">
-        <source> Zur Startseite </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
-          <context context-type="linenumber">49</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
-          <context context-type="linenumber">44,45</context>
-        </context-group>
-      <target> Zur Startseite </target></trans-unit>
-      <trans-unit id="8549602656025819483" datatype="html">
-        <source>Verarbeitung läuft...</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
-          <context context-type="linenumber">22,23</context>
-        </context-group>
-      <target>Verarbeitung läuft...</target></trans-unit>
-      <trans-unit id="8869886733481475017" datatype="html">
-        <source> Zurück zur Startseite </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/auth-action/auth-action.ts</context>
-          <context context-type="linenumber">66,67</context>
-        </context-group>
-      <target> Zurück zur Startseite </target></trans-unit>
-      <trans-unit id="landing.scientificBackground" datatype="html">
-        <source>Wissenschaftlicher Hintergrund</source>
-        <target>Scientific Background</target>
+      <trans-unit id="special.wheat" datatype="html">
+        <source>Standardkultur mit ausgeglichenen Werten.</source>
+        <target>Standard crop with balanced values.</target>
       </trans-unit>
-      <trans-unit id="info.backToHome" datatype="html">
-        <source>Zurück zur Startseite</source>
-        <target>Back to home page</target>
+      <trans-unit id="special.corn" datatype="html">
+        <source>Hoher Ertrag, aber anspruchsvoll für den Boden.</source>
+        <target>High yield but demanding on the soil.</target>
       </trans-unit>
-      <trans-unit id="info.title" datatype="html">
-        <source> Wissenschaftlicher Hintergrund </source>
-        <target> Scientific Background </target>
+      <trans-unit id="special.potato" datatype="html">
+        <source>Sehr profitabel, aber extrem schädlingsanfällig.</source>
+        <target>Very profitable but extremely susceptible to pests.</target>
       </trans-unit>
-      <trans-unit id="info.subtitle" datatype="html">
-        <source> Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns. </source>
-        <target> The SOIL simulation is based on extensive research in subject-matter didactics to promote sustainable action. </target>
+      <trans-unit id="special.beet" datatype="html">
+        <source>Gute Fruchtfolgewirkung für Nachfolgekulturen.</source>
+        <target>Sugar beets improve soil quality.</target>
+      </trans-unit>
+      <trans-unit id="special.barley" datatype="html">
+        <source>Robuste Getreideart für verschiedene Standorte.</source>
+        <target>Robust cereal for various locations.</target>
+      </trans-unit>
+      <trans-unit id="special.animals" datatype="html">
+        <source>Dauerkultur zur Viehhaltung.</source>
+        <target>Permanent crop for livestock farming.</target>
+      </trans-unit>
+      <trans-unit id="special.fallow" datatype="html">
+        <source>Regeneration für den Boden.</source>
+        <target>Soil regeneration.</target>
       </trans-unit>
       <trans-unit id="info.mainReferenceTitle" datatype="html">
         <source>Zentrale Forschungsarbeit</source>
         <target>Key Research Work</target>
+      </trans-unit>
+      <trans-unit id="info.objectiveTitle" datatype="html">
+        <source>1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</source>
+        <target>1. Core Objective: Bridging the "Knowledge-Action Gap"</target>
+      </trans-unit>
+      <trans-unit id="info.objectiveText" datatype="html">
+        <source> Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben. </source>
+        <target> The central challenge addressed by this research is the discrepancy between students' theoretical knowledge of sustainability and their actual behavior. Despite years of "Education for Sustainable Development" (ESD), studies show that many youths possess only marginal knowledge and fail to translate environmental values into concrete action. The dissertation aims to design a learning environment that does not just "preach" sustainability but allows students to experience the systemic consequences of their decisions through a simulation game called "SOIL." </target>
+      </trans-unit>
+      <trans-unit id="info.theoreticalFrameworkTitle" datatype="html">
+        <source>2. Theoretischer Rahmen</source>
+        <target>2. Theoretical Framework</target>
+      </trans-unit>
+      <trans-unit id="info.theoreticalFrameworkSubjectiveTheories" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Subjektive Theorien:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Forschung unterscheidet zwischen weitreichenden Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser nahreichweiten Theorien durch Erfahrung. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Subjective Theories:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> The research distinguishes between abstract knowledge (rarely influences behavior) and practical action scripts. Sustainable action requires activating and modifying these practical theories through experience. </target>
+      </trans-unit>
+      <trans-unit id="info.theoreticalFrameworkDustBowl" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Dust-Bowl-Syndrom:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Das Spiel modelliert die nicht nachhaltige Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Dust-Bowl Syndrome:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> The game models the non-sustainable intensification of agriculture leading to soil degradation, erosion, and economic collapse, providing a clear link between profit-seeking and ecological destruction. </target>
+      </trans-unit>
+      <trans-unit id="info.designPrinciplesTitle" datatype="html">
+        <source>3. Gestaltungsprinzipien</source>
+        <target>3. Design Principles</target>
+      </trans-unit>
+      <trans-unit id="info.designPrinciplesExperience" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Erfahrungsorientiertes Lernen:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Experience-Oriented Learning:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Students start with a profit-maximization mindset. As they over-exploit resources, variables like "Soil Quality" drop, leading to yield loss. This "failed experience" forces reflection. </target>
+      </trans-unit>
+      <trans-unit id="info.designPrinciplesComplexity" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Ausgewogene Komplexität:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Um eine kognitive Überlastung zu vermeiden, konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge, Marktpreise), um einfache lineare Logik zu verhindern. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Balanced Complexity:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> To avoid cognitive overload, the game focuses on the Pedosphere (soil) but remains complex enough (weather, pests, market prices) to prevent simple linear logic. </target>
+      </trans-unit>
+      <trans-unit id="info.findingsTitle" datatype="html">
+        <source>4. Wichtige Forschungsergebnisse</source>
+        <target>4. Key Research Findings</target>
+      </trans-unit>
+      <trans-unit id="info.findingsText" datatype="html">
+        <source> Die Studie identifizierte drei Argumentationstypen: </source>
+        <target> The study identified three argumentation types: </target>
+      </trans-unit>
+      <trans-unit id="info.findingsType1" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökonomie über Ökologie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Pessimismus, Glaube, dass man nichts ändern kann.</source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Economy over Ecology:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Pessimism, belief that one cannot change anything.</target>
+      </trans-unit>
+      <trans-unit id="info.findingsType2" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökologie über Ökonomie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ecology over Economy:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Rejection of economic use, viewing protection as sacrifice.</target>
+      </trans-unit>
+      <trans-unit id="info.findingsType3" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökologie für Ökonomie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ecology for Economy:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Recognition that ecological health is the prerequisite for economic success.</target>
+      </trans-unit>
+      <trans-unit id="info.findingsConclusion" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Fazit:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt als „Partner“ und nicht als Gegner sahen. </source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Conclusion:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> The simulation successfully moved students toward Type 3, viewing the environment as a "partner" rather than an opponent. </target>
+      </trans-unit>
+      <trans-unit id="info.evolutionTitle" datatype="html">
+        <source>5. Weiterentwicklung zu soil.app</source>
+        <target>5. Evolution to soil.app</target>
+      </trans-unit>
+      <trans-unit id="info.evolutionText" datatype="html">
+        <source> Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale Kompetenzen für nachhaltiges Management umgewandelt wird. </source>
+        <target> The digital version automates complex calculations, provides visual data (impact diagrams), and facilitates precise debriefing and reflection phases, transforming abstract awareness into functional sustainable management skills. </target>
       </trans-unit>
       <trans-unit id="info.viewDissertation" datatype="html">
         <source>Volltext auf eldorado</source>
@@ -365,10 +417,6 @@
       <trans-unit id="info.publicationsTitle" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;"/>📚<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Weitere Publikationen </source>
         <target><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;"/>📚<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Further Publications </target>
-      </trans-unit>
-      <trans-unit id="info.footer" datatype="html">
-        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <target>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
       </trans-unit>
     </body>
   </file>

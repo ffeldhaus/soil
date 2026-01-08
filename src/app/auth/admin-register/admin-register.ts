@@ -1,4 +1,4 @@
-import { Component, inject, type OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
 import type { User } from '@angular/fire/auth';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -20,6 +20,7 @@ export class AdminRegisterComponent implements OnInit {
   private gameService = inject(GameService);
   private languageService = inject(LanguageService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   registerForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -34,6 +35,7 @@ export class AdminRegisterComponent implements OnInit {
   isLoading = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  showErrorModal = false;
   isGoogleUser = false;
   currentUser: User | null = null;
 
@@ -59,6 +61,8 @@ export class AdminRegisterComponent implements OnInit {
       'adminRegister.explanation': $localize`:@@adminRegister.explanation:Warum möchten Sie SOIL nutzen?`,
       'adminRegister.placeholder.explanation': $localize`:@@adminRegister.placeholder.explanation:Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht`,
       'adminRegister.success.verificationSent': $localize`:@@adminRegister.success.verificationSent:Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.`,
+      'adminRegister.error.title': $localize`:@@adminRegister.error.title:Registrierung fehlgeschlagen`,
+      'adminRegister.error.retry': $localize`:@@adminRegister.error.retry:Erneut versuchen`,
     };
     return translations[key] || key;
   }
@@ -88,6 +92,8 @@ export class AdminRegisterComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     this.successMessage = null;
+    this.showErrorModal = false;
+    this.cdr.detectChanges();
 
     try {
       const formData = this.registerForm.getRawValue();
@@ -96,6 +102,7 @@ export class AdminRegisterComponent implements OnInit {
         await this.authService.registerWithEmail(formData.email as string, formData.password as string);
         await this.authService.sendVerificationEmail();
         this.successMessage = this.t('adminRegister.success.verificationSent');
+        this.cdr.detectChanges();
       }
 
       await this.gameService.submitOnboarding({
@@ -110,6 +117,7 @@ export class AdminRegisterComponent implements OnInit {
       if (!this.isGoogleUser) {
         // Stay on page to show success message if email verification is needed
         this.isLoading = false;
+        this.cdr.detectChanges();
         return;
       }
 
@@ -118,8 +126,15 @@ export class AdminRegisterComponent implements OnInit {
       console.error('Registration error:', error);
       this.errorMessage =
         (error as Error).message || 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
+  }
+
+  closeModal() {
+    this.showErrorModal = false;
   }
 }

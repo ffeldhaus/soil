@@ -65,4 +65,23 @@ describe('AdminRegisterComponent', () => {
     expect(gameServiceMock.submitOnboarding).toHaveBeenCalled();
     expect(component.successMessage).toBeTruthy();
   });
+
+  it('should show error modal on registration failure', async () => {
+    authServiceMock.registerWithEmail.mockRejectedValue(new Error('Registration Failed'));
+    component.registerForm.setValue({
+      email: 'test@test.com',
+      password: 'password123',
+      firstName: 'Max',
+      lastName: 'Mustermann',
+      institution: 'Schule',
+      institutionLink: 'https://schule.de',
+      explanation: 'Ich möchte SOIL im Unterricht einsetzen, um Bodenkunde zu lehren.',
+    });
+
+    await component.onSubmit();
+    fixture.detectChanges();
+
+    expect(component.showErrorModal).toBe(true);
+    expect(component.errorMessage).toContain('Registration Failed');
+  });
 });

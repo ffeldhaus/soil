@@ -30,6 +30,8 @@ interface CropConfig {
   special?: string;
 }
 
+export const APP_DOMAIN = 'https://soil.app';
+
 export const GAME_CONSTANTS = {
   SOIL: {
     START: 80,

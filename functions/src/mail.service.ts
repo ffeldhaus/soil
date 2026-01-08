@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import { GoogleAuth } from 'google-auth-library';
 import * as nodemailer from 'nodemailer';
+import { APP_DOMAIN } from './constants';
 
 interface EmailOptions {
   to: string;
@@ -340,8 +341,8 @@ export class MailService {
     };
     const subject = subjects[lang] || subjects.en;
 
-    const textEN = `You have been invited to play Soil!\n\nGame: ${gameName}\nGame ID: ${gameId}\n\nPlease ask your host for your unique Player PIN.\n\nGo to https://soil-602ea.web.app to join.`;
-    const textDE = `Du wurdest eingeladen, Soil zu spielen!\n\nSpiel: ${gameName}\nSpiel-ID: ${gameId}\n\nBitte frage deine Lehrkraft nach deinem persönlichen PIN.\n\nGehe auf https://soil-602ea.web.app um beizutreten.`;
+    const textEN = `You have been invited to play Soil!\n\nGame: ${gameName}\nGame ID: ${gameId}\n\nPlease ask your host for your unique Player PIN.\n\nGo to ${APP_DOMAIN} to join.`;
+    const textDE = `Du wurdest eingeladen, Soil zu spielen!\n\nSpiel: ${gameName}\nSpiel-ID: ${gameId}\n\nBitte frage deine Lehrkraft nach deinem persönlichen PIN.\n\nGehe auf ${APP_DOMAIN} um beizutreten.`;
     const text = lang === 'de' ? textDE : textEN;
 
     const htmlEN = `
@@ -351,7 +352,7 @@ export class MailService {
         <p><strong>Game ID:</strong> ${gameId}</p>
         <p>Please ask your host for your unique Player PIN.</p>
         <p>
-          <a href="https://soil-602ea.web.app" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Soil</a>
+          <a href="${APP_DOMAIN}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Soil</a>
         </p>
       </div>
     `;
@@ -362,7 +363,7 @@ export class MailService {
         <p><strong>Spiel-ID:</strong> ${gameId}</p>
         <p>Bitte frage deine Lehrkraft nach deinem persönlichen PIN.</p>
         <p>
-          <a href="https://soil-602ea.web.app" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Zu Soil gehen</a>
+          <a href="${APP_DOMAIN}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Zu Soil gehen</a>
         </p>
       </div>
     `;

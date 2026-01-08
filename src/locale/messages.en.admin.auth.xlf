@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="de" datatype="plaintext" original="ng2.template" target-language="en">
+    <body>
+      <trans-unit id="authAction.loading" datatype="html">
+        <source>Verarbeitung läuft...</source>
+        <target>Processing...</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.instruction" datatype="html">
+        <source> Geben Sie ein neues Passwort für <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> <x id="INTERPOLATION" equiv-text="{{ resetEmail }}"/> <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> ein. </source>
+        <target> Enter a new password for <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> <x id="INTERPOLATION" equiv-text="{{ resetEmail }}"/> <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> . </target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.label" datatype="html">
+        <source>Neues Passwort</source>
+        <target>New Password</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.error.minLength" datatype="html">
+        <source>Das Passwort muss mindestens 6 Zeichen lang sein.</source>
+        <target>The password must be at least 6 characters long.</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.saving" datatype="html">
+        <source>Wird gespeichert...</source>
+        <target>Saving...</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.saveButton" datatype="html">
+        <source>Passwort speichern</source>
+        <target>Save Password</target>
+      </trans-unit>
+      <trans-unit id="authAction.toLogin" datatype="html">
+        <source> Zum Login </source>
+        <target> Go to Login </target>
+      </trans-unit>
+      <trans-unit id="authAction.backToHome" datatype="html">
+        <source> Zurück zur Startseite </source>
+        <target> Back to Home </target>
+      </trans-unit>
+      <trans-unit id="authAction.error.invalidParams" datatype="html">
+        <source>Ungültiger Link.</source>
+        <target>Invalid link.</target>
+      </trans-unit>
+      <trans-unit id="authAction.error.unknownMode" datatype="html">
+        <source>Unbekannte Aktion.</source>
+        <target>Unknown action.</target>
+      </trans-unit>
+      <trans-unit id="authAction.verifyEmail.title" datatype="html">
+        <source>E-Mail-Verifizierung</source>
+        <target>Email Verification</target>
+      </trans-unit>
+      <trans-unit id="authAction.verifyEmail.success" datatype="html">
+        <source>Ihre E-Mail-Adresse wurde erfolgreich verifiziert.</source>
+        <target>Your email address has been successfully verified.</target>
+      </trans-unit>
+      <trans-unit id="authAction.verifyEmail.error" datatype="html">
+        <source>Der Verifizierungslink ist ungültig oder abgelaufen.</source>
+        <target>The verification link is invalid or expired.</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.title" datatype="html">
+        <source>Passwort zurücksetzen</source>
+        <target>Reset Password</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.error" datatype="html">
+        <source>Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.</source>
+        <target>The password reset link is invalid or expired.</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.success" datatype="html">
+        <source>Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.</source>
+        <target>Your password has been successfully reset. You can now log in.</target>
+      </trans-unit>
+      <trans-unit id="authAction.resetPassword.confirmError" datatype="html">
+        <source>Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.</source>
+        <target>Error resetting password. Please try again.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

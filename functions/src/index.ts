@@ -5,6 +5,7 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { AiAgent } from './ai-agent';
+import { APP_DOMAIN } from './constants';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
 import type { Round } from './types';
@@ -541,7 +542,7 @@ export const manageAdmin = onCall(
 
       if (targetEmail) {
         try {
-          const appOrigin = origin || 'https://soil-602ea.web.app';
+          const appOrigin = origin || APP_DOMAIN;
           const isGoogleUser = (await admin.auth().getUser(targetUid)).providerData.some(
             (p) => p.providerId === 'google.com',
           );
@@ -1379,7 +1380,7 @@ export const sendPlayerInvite = onCall(
     }
 
     // Use provided origin or default to production
-    const appOrigin = origin || 'https://soil-602ea.web.app';
+    const appOrigin = origin || APP_DOMAIN;
     // Construct login link
     const loginLink = `${appOrigin}/login/player?gameId=${gameId}&pin=${secret.password}`;
 
@@ -1398,7 +1399,7 @@ export const sendVerificationEmail = onCall(
     if (!email) throw new HttpsError('invalid-argument', 'User has no email');
 
     const { lang, origin } = request.data;
-    const appOrigin = origin || 'https://soil-602ea.web.app';
+    const appOrigin = origin || APP_DOMAIN;
 
     let finalLang = lang;
     if (!finalLang) {
@@ -1425,7 +1426,7 @@ export const sendPasswordResetEmail = onCall(
     const { email, lang, origin } = request.data;
     if (!email) throw new HttpsError('invalid-argument', 'Email is required');
 
-    const appOrigin = origin || 'https://soil-602ea.web.app';
+    const appOrigin = origin || APP_DOMAIN;
 
     let finalLang = lang;
     if (!finalLang) {
