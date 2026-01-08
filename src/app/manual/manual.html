@@ -8,8 +8,11 @@
   }"
 >
   <!-- Background Image -->
-  <div class="fixed inset-0 z-0 opacity-40 pointer-events-none portrait:hidden print:hidden">
-    <img src="assets/images/bauernhof.jpg" alt="Farm background" class="w-full h-full object-cover" />
+  <div class="fixed inset-0 z-0 opacity-40 pointer-events-none print:hidden">
+    <picture>
+      <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+      <img src="assets/bauernhof-landscape-hd.webp" alt="Farm background" class="w-full h-full object-cover" />
+    </picture>
   </div>
 
   <!-- Navigation Bar -->

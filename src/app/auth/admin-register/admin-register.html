@@ -7,8 +7,15 @@
   </div>
 
   <!-- Background Image with Overlay -->
-  <div class="absolute inset-0 z-0 portrait:hidden">
-    <img src="assets/bauernhof.jpg" alt="Farm Background" class="w-full h-full object-cover object-center opacity-30" />
+  <div class="absolute inset-0 z-0">
+    <picture>
+      <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+      <img
+        src="assets/bauernhof-landscape-hd.webp"
+        alt="Farm Background"
+        class="w-full h-full object-cover object-center opacity-30"
+      />
+    </picture>
     <div
       class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
     ></div>

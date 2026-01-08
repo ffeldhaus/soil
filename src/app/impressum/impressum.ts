@@ -85,14 +85,6 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
           >
             <li>
               <a
-                i18n="@@impressum.source.farmstead"
-                href="https://commons.wikimedia.org/wiki/File:Farmstead_in_winter,_Windsor_Township,_Berks_County,_Pennsylvania.jpg"
-                class="hover:text-emerald-400 transition underline"
-                >Farmstead by Smallbones (Public Domain)</a
-              >
-            </li>
-            <li>
-              <a
                 i18n="@@impressum.source.drought"
                 href="https://commons.wikimedia.org/wiki/File:Drought.jpg"
                 class="hover:text-emerald-400 transition underline"

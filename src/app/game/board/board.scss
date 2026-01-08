@@ -1,7 +1,10 @@
 @use 'sass:math';
 
 .board-container {
-  background-image: url('../../../assets/bauernhof.jpg');
+  background-image: url('/assets/bauernhof-landscape-hd.webp');
+  @media (orientation: portrait) {
+    background-image: url('/assets/bauernhof-portrait-hd.webp');
+  }
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

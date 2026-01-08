@@ -90,10 +90,6 @@
         <source>Bildnachweise</source>
         <target>Image Sources</target>
       </trans-unit>
-      <trans-unit id="impressum.source.farmstead" datatype="html">
-        <source>Hintergrundbild Farmstead, Windsor Township, Berks County</source>
-        <target>Background image Farmstead, Windsor Township, Berks County</target>
-      </trans-unit>
       <trans-unit id="impressum.source.drought" datatype="html">
         <source>Dürre</source>
         <target>Drought</target>

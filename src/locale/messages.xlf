@@ -240,13 +240,6 @@
           <context context-type="linenumber">83,85</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="impressum.source.farmstead" datatype="html">
-        <source>Farmstead by Smallbones (Public Domain)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">92,95</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="impressum.source.drought" datatype="html">
         <source>Drought by USDA (Public Domain)</source>
         <context-group purpose="location">

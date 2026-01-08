@@ -18,7 +18,10 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
       <!-- Background Image with Overlay -->
       <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
-        <img src="assets/bauernhof.jpg" alt="Farm Background" class="w-full h-full object-cover object-center" />
+        <picture>
+          <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+          <img src="assets/bauernhof-landscape-hd.webp" alt="Farm Background" class="w-full h-full object-cover object-center" />
+        </picture>
         <div
           class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
         ></div>
