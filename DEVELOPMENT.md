@@ -138,5 +138,4 @@ Periodically run `ng extract-i18n` to update `messages.xlf` and `messages.de.xlf
 - **Cognitive Complexity**: Refactor `functions/src/game-engine.ts` (specifically `calculateRound`) to reduce cognitive complexity from ~54 to below 15.
 - **Biome HTML**: Re-enable Biome's HTML linter and formatter once the parser better supports Tailwind's opacity syntax (`/30`) in Angular class bindings.
 - **Naming Conventions**: Periodically review and align project naming conventions closer to Biome defaults (e.g., removing the need for `$`, `_`, or `CONSTANT_CASE` object properties where possible).
-- **Incremental Hydration**: Monitor the impact of `withIncrementalHydration()` on SSR performance and ensure all components are compatible.
 
