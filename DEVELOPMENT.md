@@ -61,6 +61,11 @@ All changes must include relevant unit tests and, for critical flows, E2E tests.
 ### 1. Unit Tests
 
 Unit tests are fast and isolate specific logic. They are automatically run during the commit process.
+A pre-commit hook also checks for file sizes:
+
+- **Warning**: If a code, documentation, JSON, or translation file exceeds **128KB**.
+- **Error**: If it exceeds **256KB**.
+  This ensures that files remain manageable for AI tools and maintainability. Exceptions can be defined in `scripts/check-file-size.js`.
 
 - **Frontend (Angular)**: `npm run test:unit`
 - **Backend (Firebase Functions)**: `npm run test:functions`

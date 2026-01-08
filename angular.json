@@ -20,7 +20,22 @@
       "i18n": {
         "sourceLocale": "de",
         "locales": {
-          "en": "src/locale/messages.en.xlf"
+          "en": {
+            "translation": [
+              "src/locale/messages.en.xlf",
+              "src/locale/messages.en.admin.xlf",
+              "src/locale/messages.en.game.xlf",
+              "src/locale/messages.en.manual.xlf"
+            ]
+          },
+          "de": {
+            "translation": [
+              "src/locale/messages.xlf",
+              "src/locale/messages.admin.xlf",
+              "src/locale/messages.game.xlf",
+              "src/locale/messages.manual.xlf"
+            ]
+          }
         }
       },
       "architect": {

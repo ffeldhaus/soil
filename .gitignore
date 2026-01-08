@@ -40,10 +40,8 @@ __screenshots__/
 
 # Firebase
 .firebase/
-firebug.log
-firebase-debug.log*
-ui-debug.log*
 /functions/lib
+*-debug.log
 
 # System files
 .DS_Store
@@ -51,8 +49,6 @@ Thumbs.db
 
 # Project specific logs and temp files
 *.log
-cypress.log
-serve.log
 test_output.txt
 debug_de.html
 
@@ -61,3 +57,19 @@ debug_de.html
 
 # Cypress
 .cypress-cache/
+cypress/screenshots/
+cypress/videos/
+
+# Vite / Vitest
+.vitest-result.json
+vite.config.mts.timestamp*
+functions/vite.config.ts.timestamp*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Linting caches
+.eslintcache
+.prettiercache

@@ -1,0 +1,455 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="de" datatype="plaintext" original="ng2.template" target-language="en">
+    <body>
+      <trans-unit id="ai.level.elementary" datatype="html">
+        <source>Grundschule</source>
+        <target>Elementary School</target>
+      </trans-unit>
+      <trans-unit id="ai.level.middle" datatype="html">
+        <source>Mittelstufe</source>
+        <target>Middle School</target>
+      </trans-unit>
+      <trans-unit id="ai.level.high" datatype="html">
+        <source>Oberstufe</source>
+        <target>High School</target>
+      </trans-unit>
+      <trans-unit id="board.login.adminTitle" datatype="html">
+        <source>Admin-Zugang</source>
+        <target>Admin Access</target>
+      </trans-unit>
+      <trans-unit id="board.login.adminDesc" datatype="html">
+        <source>Spiele verwalten und die Simulation steuern.</source>
+        <target>Manage games and orchestrate the simulation.</target>
+      </trans-unit>
+      <trans-unit id="board.login.btnGoogle" datatype="html">
+        <source>Anmelden mit Google</source>
+        <target>Login with Google</target>
+      </trans-unit>
+      <trans-unit id="board.login.playerTitle" datatype="html">
+        <source>Spieler-Zugang</source>
+        <target>Player Access</target>
+      </trans-unit>
+      <trans-unit id="board.login.playerDesc" datatype="html">
+        <source>Spiel-ID und Zugangsdaten eingeben.</source>
+        <target>Enter Game ID and credentials.</target>
+      </trans-unit>
+      <trans-unit id="board.login.phGameId" datatype="html">
+        <source>Spiel-ID</source>
+        <target>Game ID</target>
+      </trans-unit>
+      <trans-unit id="board.login.phPlayerNum" datatype="html">
+        <source>Spieler # (z.B. 1)</source>
+        <target>Player # (e.g. 1)</target>
+      </trans-unit>
+      <trans-unit id="board.login.phPin" datatype="html">
+        <source>Spiel-Passwort</source>
+        <target>Game Password</target>
+      </trans-unit>
+      <trans-unit id="board.login.btnLogin" datatype="html">
+        <source>Anmelden</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="board.nav.names" datatype="html">
+        <source>NAMEN</source>
+        <target>NAMES</target>
+      </trans-unit>
+      <trans-unit id="board.nav.nutrition" datatype="html">
+        <source>NÄHRSTOFFE</source>
+        <target>NUTRITION</target>
+      </trans-unit>
+      <trans-unit id="board.nav.harvest" datatype="html">
+        <source>ERNTE</source>
+        <target>HARVEST</target>
+      </trans-unit>
+      <trans-unit id="board.nav.soil" datatype="html">
+        <source>BODENQUALITÄT</source>
+        <target>SOIL QUALITY</target>
+      </trans-unit>
+      <trans-unit id="board.nav.finance" datatype="html">
+        <source>FINANZEN</source>
+        <target>FINANCE</target>
+      </trans-unit>
+      <trans-unit id="board.nav.options" datatype="html">
+        <source>OPTIONEN</source>
+        <target>OPTIONS</target>
+      </trans-unit>
+      <trans-unit id="board.nav.waiting" datatype="html">
+        <source>WARTEN...</source>
+        <target>WAITING...</target>
+      </trans-unit>
+      <trans-unit id="board.nav.nextRound" datatype="html">
+        <source>NÄCHSTE RUNDE</source>
+        <target>NEXT ROUND</target>
+      </trans-unit>
+      <trans-unit id="board.nav.endGame" datatype="html">
+        <source>SPIEL BEENDEN</source>
+        <target>END GAME</target>
+      </trans-unit>
+      <trans-unit id="board.logout" datatype="html">
+        <source>Abmelden</source>
+        <target>Logout</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.overlays" datatype="html">
+        <source>Visuelle Overlays</source>
+        <target>Visual Overlays</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.names" datatype="html">
+        <source>Namen anzeigen</source>
+        <target>Names Overlay</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.nutrition" datatype="html">
+        <source>Nährstoffe anzeigen</source>
+        <target>Nutrition Overlay</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.harvest" datatype="html">
+        <source>Ernte anzeigen</source>
+        <target>Harvest Overlay</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.soil" datatype="html">
+        <source>Bodenqualität anzeigen</source>
+        <target>Soil quality Overlay</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.finance" datatype="html">
+        <source>Finanzansicht</source>
+        <target>Finance View</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.actions" datatype="html">
+        <source>Spiel-Aktionen</source>
+        <target>Game Actions</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.roundOptions" datatype="html">
+        <source>RUNDEN-OPTIONEN</source>
+        <target>ROUND OPTIONS</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.waiting" datatype="html">
+        <source>WARTE AUF ANDERE...</source>
+        <target>WAITING FOR OTHERS...</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.nextRound" datatype="html">
+        <source>NÄCHSTE RUNDE</source>
+        <target>NEXT ROUND</target>
+      </trans-unit>
+      <trans-unit id="board.mobile.endGame" datatype="html">
+        <source>SPIEL BEENDEN</source>
+        <target>END GAME</target>
+      </trans-unit>
+      <trans-unit id="board.activePlayer" datatype="html">
+        <source>Aktiver Spieler</source>
+        <target>Active Player</target>
+      </trans-unit>
+      <trans-unit id="board.banner.readOnly" datatype="html">
+        <source>SCHREIBGESCHÜTZTER MODUS</source>
+        <target>READ ONLY MODE</target>
+      </trans-unit>
+      <trans-unit id="board.error.title" datatype="html">
+        <source>Fehler</source>
+        <target>Error</target>
+      </trans-unit>
+      <trans-unit id="board.error.close" datatype="html">
+        <source>Schließen</source>
+        <target>Close</target>
+      </trans-unit>
+      <trans-unit id="board.round" datatype="html">
+        <source>Runde</source>
+        <target>Round</target>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.title" datatype="html">
+        <source>Spiel beendet!</source>
+        <target>Game Finished!</target>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.subtitle" datatype="html">
+        <source>Herzlichen Glückwunsch an unsere Pioniere!</source>
+        <target>Congratulations to our pioneers!</target>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.financialTitle" datatype="html">
+        <source>Finanz-Champion</source>
+        <target>Financial Champion</target>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.soilTitle" datatype="html">
+        <source>Boden-Wächter</source>
+        <target>Soil Guardian</target>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.viewResults" datatype="html">
+        <source>ERGEBNISSE ANSEHEN</source>
+        <target>VIEW RESULTS</target>
+      </trans-unit>
+      <trans-unit id="board.gameEnd.backToDashboard" datatype="html">
+        <source>ZURÜCK ZUM DASHBOARD</source>
+        <target>BACK TO DASHBOARD</target>
+      </trans-unit>
+      <trans-unit id="finance.title" datatype="html">
+        <source>Finanzbericht</source>
+        <target>Financial Report</target>
+      </trans-unit>
+      <trans-unit id="finance.subtitle" datatype="html">
+        <source>Spielervergleich und Historie</source>
+        <target>Across-player comparison and history</target>
+      </trans-unit>
+      <trans-unit id="finance.noRounds" datatype="html">
+        <source>Noch keine Runden</source>
+        <target>No rounds yet</target>
+      </trans-unit>
+      <trans-unit id="finance.charts.capital" datatype="html">
+        <source>Kapitalentwicklung</source>
+        <target>Capital Growth</target>
+      </trans-unit>
+      <trans-unit id="finance.you" datatype="html">
+        <source>DU</source>
+        <target>YOU</target>
+      </trans-unit>
+      <trans-unit id="finance.group.decisions" datatype="html">
+        <source>Entscheidungen (vorherige Runde)</source>
+        <target>Decisions (From Prev. Round)</target>
+      </trans-unit>
+      <trans-unit id="finance.group.expenses" datatype="html">
+        <source>Ausgabendetails</source>
+        <target>Expenses Detail</target>
+      </trans-unit>
+      <trans-unit id="finance.group.income" datatype="html">
+        <source>Einnahmedetails</source>
+        <target>Income Detail</target>
+      </trans-unit>
+      <trans-unit id="finance.fertilizer" datatype="html">
+        <source>Konventioneller Dünger</source>
+        <target>Conventional Fertilizer</target>
+      </trans-unit>
+      <trans-unit id="finance.pesticide" datatype="html">
+        <source>Pestizide</source>
+        <target>Pesticides</target>
+      </trans-unit>
+      <trans-unit id="finance.organisms" datatype="html">
+        <source>Nützlinge</source>
+        <target>Beneficial Organisms</target>
+      </trans-unit>
+      <trans-unit id="finance.organic" datatype="html">
+        <source>Bio-Siegel</source>
+        <target>Organic Farming Seal</target>
+      </trans-unit>
+      <trans-unit id="finance.header.seeds" datatype="html">
+        <source>Saatgut (detailliert)</source>
+        <target>Seeds (detailed)</target>
+      </trans-unit>
+      <trans-unit id="finance.header.investments" datatype="html">
+        <source>Investitionen (detailliert)</source>
+        <target>Investments (detailed)</target>
+      </trans-unit>
+      <trans-unit id="finance.header.running" datatype="html">
+        <source>Laufende Kosten (detailliert)</source>
+        <target>Running Costs (detailed)</target>
+      </trans-unit>
+      <trans-unit id="finance.header.harvest" datatype="html">
+        <source>Gesamte Ernteeinnahmen</source>
+        <target>Total Harvest Income</target>
+      </trans-unit>
+      <trans-unit id="finance.sub.machines" datatype="html">
+        <source>Maschinen</source>
+        <target>Machines</target>
+      </trans-unit>
+      <trans-unit id="finance.sub.animalsInvest" datatype="html">
+        <source>Tiere (Initial)</source>
+        <target>Animals (Initial)</target>
+      </trans-unit>
+      <trans-unit id="finance.sub.base" datatype="html">
+        <source>Basisbetrieb</source>
+        <target>Base Operation</target>
+      </trans-unit>
+      <trans-unit id="finance.sub.organicControl" datatype="html">
+        <source>Bio-Siegel Kontrolle</source>
+        <target>Eco Seal Control</target>
+      </trans-unit>
+      <trans-unit id="finance.sub.pesticide" datatype="html">
+        <source>Pestizidausbringung</source>
+        <target>Pesticide Application</target>
+      </trans-unit>
+      <trans-unit id="finance.sub.organisms" datatype="html">
+        <source>Nützlinge</source>
+        <target>Beneficial Organisms</target>
+      </trans-unit>
+      <trans-unit id="finance.sub.animalsRunning" datatype="html">
+        <source>Tiere (Laufend)</source>
+        <target>Animals (Running)</target>
+      </trans-unit>
+      <trans-unit id="finance.result.profit" datatype="html">
+        <source>NETTOGEWINN / VERLUST</source>
+        <target>NET PROFIT / LOSS</target>
+      </trans-unit>
+      <trans-unit id="finance.result.capital" datatype="html">
+        <source>ENDKAPITAL</source>
+        <target>CLOSING CAPITAL</target>
+      </trans-unit>
+      <trans-unit id="finance.playerStatus" datatype="html">
+        <source>Farmer-Status</source>
+        <target>Farmer Status</target>
+      </trans-unit>
+      <trans-unit id="finance.event.weather" datatype="html">
+        <source>Regionales Wetter</source>
+        <target>Regional Weather</target>
+      </trans-unit>
+      <trans-unit id="finance.event.vermin" datatype="html">
+        <source>Schädlingsbericht</source>
+        <target>Pest Report</target>
+      </trans-unit>
+      <trans-unit id="crop.wheat" datatype="html">
+        <source>Weizen</source>
+        <target>Wheat</target>
+      </trans-unit>
+      <trans-unit id="crop.corn" datatype="html">
+        <source>Mais</source>
+        <target>Corn</target>
+      </trans-unit>
+      <trans-unit id="crop.potato" datatype="html">
+        <source>Kartoffel</source>
+        <target>Potato</target>
+      </trans-unit>
+      <trans-unit id="crop.beet" datatype="html">
+        <source>Zuckerrübe</source>
+        <target>Beet</target>
+      </trans-unit>
+      <trans-unit id="crop.barley" datatype="html">
+        <source>Gerste</source>
+        <target>Barley</target>
+      </trans-unit>
+      <trans-unit id="crop.oat" datatype="html">
+        <source>Hafer</source>
+        <target>Oat</target>
+      </trans-unit>
+      <trans-unit id="crop.rye" datatype="html">
+        <source>Roggen</source>
+        <target>Rye</target>
+      </trans-unit>
+      <trans-unit id="crop.fieldbean" datatype="html">
+        <source>Ackerbohne</source>
+        <target>Fieldbean</target>
+      </trans-unit>
+      <trans-unit id="crop.animals" datatype="html">
+        <source>Tiere</source>
+        <target>Animals</target>
+      </trans-unit>
+      <trans-unit id="crop.fallow" datatype="html">
+        <source>Brachland</source>
+        <target>Fallow</target>
+      </trans-unit>
+      <trans-unit id="pest.label" datatype="html">
+        <source>Schädling</source>
+        <target>Pest</target>
+      </trans-unit>
+      <trans-unit id="pest.aphid" datatype="html">
+        <source>Blattlaus</source>
+        <target>Aphid</target>
+      </trans-unit>
+      <trans-unit id="pest.fritfly" datatype="html">
+        <source>Fritfliege</source>
+        <target>Frit Fly</target>
+      </trans-unit>
+      <trans-unit id="pest.potato-beetle" datatype="html">
+        <source>Kartoffelkäfer</source>
+        <target>Colorado Potato Beetle</target>
+      </trans-unit>
+      <trans-unit id="pest.corn-borer" datatype="html">
+        <source>Maiszünsler</source>
+        <target>European Corn Borer</target>
+      </trans-unit>
+      <trans-unit id="pest.wireworm" datatype="html">
+        <source>Drahtwurm</source>
+        <target>Wireworm</target>
+      </trans-unit>
+      <trans-unit id="sensitivity.strong" datatype="html">
+        <source>Stark</source>
+        <target>High</target>
+      </trans-unit>
+      <trans-unit id="sensitivity.moderate" datatype="html">
+        <source>Mäßig</source>
+        <target>Moderate</target>
+      </trans-unit>
+      <trans-unit id="sensitivity.low" datatype="html">
+        <source>Gering</source>
+        <target>Low</target>
+      </trans-unit>
+      <trans-unit id="sensitivity.high" datatype="html">
+        <source>Hoch</source>
+        <target>High</target>
+      </trans-unit>
+      <trans-unit id="sensitivity.none" datatype="html">
+        <source>Keine</source>
+        <target>None</target>
+      </trans-unit>
+      <trans-unit id="planting.title" datatype="html">
+        <source>Fruchtart wählen</source>
+        <target>Select Crop to Plant</target>
+      </trans-unit>
+      <trans-unit id="planting.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="roundResult.title" datatype="html">
+        <source>Rundenbericht</source>
+        <target>Round Report</target>
+      </trans-unit>
+      <trans-unit id="roundResult.profit" datatype="html">
+        <source>Gewinn</source>
+        <target>Profit</target>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegel" datatype="html">
+        <source>Bio-Siegel</source>
+        <target>Bio Seal</target>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegelFail" datatype="html">
+        <source>Anforderungen nicht erfüllt</source>
+        <target>Requirements not met</target>
+      </trans-unit>
+      <trans-unit id="roundResult.bioSiegelSuccess" datatype="html">
+        <source>verliehen!</source>
+        <target>awarded!</target>
+      </trans-unit>
+      <trans-unit id="roundResult.conditions" datatype="html">
+        <source>Bedingungen</source>
+        <target>Conditions</target>
+      </trans-unit>
+      <trans-unit id="roundResult.weather" datatype="html">
+        <source>Wetter</source>
+        <target>Weather</target>
+      </trans-unit>
+      <trans-unit id="roundResult.vermin" datatype="html">
+        <source>Schädlinge</source>
+        <target>Pests</target>
+      </trans-unit>
+      <trans-unit id="roundResult.continue" datatype="html">
+        <source>Weiter zu Runde {{ roundnumber1 }}</source>
+        <target>Continue to Round {{ roundnumber1 }}</target>
+      </trans-unit>
+      <trans-unit id="finance.header.category" datatype="html">
+        <source> Kategorie </source>
+        <target> Category </target>
+      </trans-unit>
+      <trans-unit id="parcel.crop" datatype="html">
+        <source>Feldpflanze</source>
+        <target>Crop</target>
+      </trans-unit>
+      <trans-unit id="weather.normal" datatype="html">
+        <source>Normal</source>
+        <target>Normal</target>
+      </trans-unit>
+      <trans-unit id="weather.drought" datatype="html">
+        <source>Dürre</source>
+        <target>Drought</target>
+      </trans-unit>
+      <trans-unit id="weather.flood" datatype="html">
+        <source>Flut</source>
+        <target>Flood</target>
+      </trans-unit>
+      <trans-unit id="weather.storm" datatype="html">
+        <source>Sturm</source>
+        <target>Storm</target>
+      </trans-unit>
+      <trans-unit id="vermin.none" datatype="html">
+        <source>Keine</source>
+        <target>None</target>
+      </trans-unit>
+      <trans-unit id="vermin.pests" datatype="html">
+        <source>Schädlinge</source>
+        <target>Pests</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

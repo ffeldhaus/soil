@@ -1,5 +1,6 @@
 #!/bin/sh
 npx lint-staged
+node scripts/check-file-size.js
 
 # Check if any staged files are NOT documentation (.md files)
 if git diff --cached --name-only | grep -qvE '\.md$'; then
