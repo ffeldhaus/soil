@@ -28,40 +28,10 @@ import { FormsModule } from '@angular/forms';
         </div>
 
         <form (submit)="submitFeedback()" #feedbackForm="ngForm" class="space-y-6">
-          <!-- Category -->
-          <div>
-            <label for="category" class="block text-sm font-medium text-gray-400 mb-2" i18n="@@feedback.category"
-              >Kategorie</label
-            >
-            <select
-              id="category"
-              [(ngModel)]="feedback.category"
-              name="category"
-              required
-              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
-            >
-              <option value="interface" i18n="@@feedback.cat.interface">Benutzeroberfläche</option>
-              <option value="mechanics" i18n="@@feedback.cat.mechanics">Spielmechanik</option>
-              <option value="improvements" i18n="@@feedback.cat.improvements">Verbesserungen</option>
-              <option value="suggestions" i18n="@@feedback.cat.suggestions">Neue Features</option>
-              <option value="documentation" i18n="@@feedback.cat.documentation">Dokumentation/Handbuch</option>
-              <option value="other" i18n="@@feedback.cat.other">Sonstiges</option>
-            </select>
-          </div>
-
           <!-- Rating -->
           <div>
             <span class="block text-sm font-medium text-gray-400 mb-2" i18n="@@feedback.rating">Bewertung</span>
             <div class="flex items-center gap-3">
-              <button
-                type="button"
-                (click)="feedback.rating = 0"
-                class="px-3 py-1 rounded bg-gray-800 text-xs text-gray-500 hover:text-white transition border border-gray-700"
-                [class.bg-emerald-900]="feedback.rating === 0"
-                [class.text-emerald-400]="feedback.rating === 0"
-              >
-                0
-              </button>
               <div class="flex gap-1">
                 @for (star of [1, 2, 3, 4, 5]; track star) {
                   <button type="button" (click)="feedback.rating = star" class="transition-transform active:scale-90">
@@ -149,8 +119,8 @@ export class FeedbackModal {
     rating: number;
     comment: string;
   } = {
-    category: 'interface',
-    rating: 0,
+    category: 'other',
+    rating: 5,
     comment: '',
   };
 

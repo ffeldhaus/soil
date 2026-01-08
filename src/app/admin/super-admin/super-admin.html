@@ -1,5 +1,17 @@
-<div class="bg-gray-900 text-white font-sans min-h-screen">
-  <app-super-admin-hud [user]="authService.user$ | async" (logout)="logout()"></app-super-admin-hud>
+<div class="bg-gray-900 text-white font-sans min-h-screen relative overflow-x-hidden">
+  <!-- Background Image with Overlay -->
+  <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+    <picture>
+      <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+      <img src="assets/bauernhof-landscape-hd.webp" alt="Farm Background" class="w-full h-full object-cover object-center" />
+    </picture>
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
+    ></div>
+  </div>
+
+  <div class="relative z-10">
+    <app-super-admin-hud [user]="authService.user$ | async" (logout)="logout()"></app-super-admin-hud>
 
   <!-- Main Content -->
   <div class="pt-24 px-4 max-w-7xl mx-auto space-y-16 pb-12 relative portrait:px-0 portrait:max-w-none">
@@ -1037,4 +1049,5 @@
       </div>
     }
   </div>
+</div>
 </div>

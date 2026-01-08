@@ -1,65 +1,76 @@
-<div class="bg-gray-900 text-white font-sans no-print">
-  <app-dashboard-hud [user]="user$ | async" (logout)="logout()"></app-dashboard-hud>
-</div>
+<div class="min-h-screen bg-gray-900 text-white font-sans no-print relative overflow-x-hidden">
+  <!-- Background Image with Overlay -->
+  <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+    <picture>
+      <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+      <img src="assets/bauernhof-landscape-hd.webp" alt="Farm Background" class="w-full h-full object-cover object-center" />
+    </picture>
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
+    ></div>
+  </div>
 
-<!-- Main Content -->
-<div class="pt-24 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none">
-  @if (user$ | async; as user) {
-    <div class="space-y-4 portrait:space-y-0">
-      <!-- Pending Approval State -->
-      @if (!isLoading && (userStatus?.role === 'pending' || userStatus?.status === 'pending')) {
-        <app-dashboard-pending [user]="user$ | async" (logout)="logout()"></app-dashboard-pending>
-      }
+  <div class="relative z-10">
+    <app-dashboard-hud [user]="user$ | async" (logout)="logout()"></app-dashboard-hud>
 
-      <!-- Loading State -->
-      @if (isLoading) {
-        <div class="p-12 flex flex-col items-center justify-center text-gray-400 animate-fade-in">
-          <svg
-            class="animate-spin h-10 w-10 text-emerald-500 mb-4"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <span class="animate-pulse">{{ t('dashboard.loading.verifying') }}</span>
-        </div>
-      }
+    <!-- Main Content -->
+    <div class="pt-24 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none pb-12">
+      @if (user$ | async; as user) {
+        <div class="space-y-4 portrait:space-y-0">
+          <!-- Pending Approval State -->
+          @if (!isLoading && (userStatus?.role === 'pending' || userStatus?.status === 'pending')) {
+            <app-dashboard-pending [user]="user$ | async" (logout)="logout()"></app-dashboard-pending>
+          }
 
-      <!-- Super Admin Redirect Fallback -->
-      @if (!isLoading && userStatus?.role === 'superadmin') {
-        <app-dashboard-super-admin></app-dashboard-super-admin>
-      }
+          <!-- Loading State -->
+          @if (isLoading) {
+            <div class="p-12 flex flex-col items-center justify-center text-gray-400 animate-fade-in">
+              <svg
+                class="animate-spin h-10 w-10 text-emerald-500 mb-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span class="animate-pulse">{{ t('dashboard.loading.verifying') }}</span>
+            </div>
+          }
 
-      <!-- Active Dashboard -->
-      @if (!isLoading && !isPendingApproval && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin') {
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <h2 class="text-2xl font-bold text-emerald-400" data-testid="admin-controls">
-              {{ t('dashboard.controls.title') }}
-            </h2>
-            <p class="text-gray-300" i18n="@@dashboard.welcome">
-              Willkommen, <span class="font-bold text-white">{{ user.displayName }}</span
-              >!
-            </p>
-          </div>
-          <button
-            (click)="showFeedbackModal = true"
-            class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-xl border border-gray-700 transition shadow-lg"
-          >
-            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-              />
-            </svg>
-            <span i18n="@@dashboard.btnFeedback">Feedback</span>
-          </button>
-        </div>
+          <!-- Super Admin Redirect Fallback -->
+          @if (!isLoading && userStatus?.role === 'superadmin') {
+            <app-dashboard-super-admin></app-dashboard-super-admin>
+          }
+
+          <!-- Active Dashboard -->
+          @if (!isLoading && !isPendingApproval && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin') {
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h2 class="text-2xl font-bold text-emerald-400" data-testid="admin-controls">
+                  {{ t('dashboard.controls.title') }}
+                </h2>
+                <p class="text-gray-300" i18n="@@dashboard.welcome">
+                  Willkommen, <span class="font-bold text-white">{{ user.displayName || user.email }}</span
+                  >!
+                </p>
+              </div>
+              <button
+                (click)="showFeedbackModal = true"
+                class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-xl border border-gray-700 transition shadow-lg"
+              >
+                <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                  />
+                </svg>
+                <span i18n="@@dashboard.btnFeedback">Feedback</span>
+              </button>
+            </div>
 
         <app-dashboard-create-game
           [isCreatingGame]="isCreatingGame"
@@ -164,18 +175,20 @@
     </div>
   }
 
-  <!-- Login State (If no user) -->
-  @if ((user$ | async) === null) {
-    <div class="flex flex-col items-start gap-4">
-      <p>{{ t('dashboard.login.msg') }}</p>
-      <button
-        (click)="login()"
-        class="px-6 py-2 bg-blue-600 rounded flex items-center gap-2 hover:bg-blue-700 transition"
-      >
-        {{ t('dashboard.login.btn') }}
-      </button>
-    </div>
-  }
+    <!-- Login State (If no user) -->
+    @if ((user$ | async) === null) {
+      <div class="flex flex-col items-start gap-4">
+        <p>{{ t('dashboard.login.msg') }}</p>
+        <button
+          (click)="login()"
+          class="px-6 py-2 bg-blue-600 rounded flex items-center gap-2 hover:bg-blue-700 transition"
+        >
+          {{ t('dashboard.login.btn') }}
+        </button>
+      </div>
+    }
+  </div>
+</div>
 </div>
 
 <!-- Print Only: All QR Codes Grid -->
