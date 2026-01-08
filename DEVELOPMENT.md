@@ -50,8 +50,9 @@ _Note: You can also use `ng serve` for rapid UI-only development, but it will no
 1. **Understand**: Thoroughly understand the codebase context before proposing changes.
 2. **Plan**: Formulate a clear, grounded plan and share a concise summary before implementation.
 3. **Implement**: Follow the plan iteratively. Write unit tests alongside feature code. Note: Husky pre-commit hooks are optimized to skip tests and builds for documentation-only changes.
-4. **Verify**: Run tests and linting as described in the Testing Strategy.
-5. **Finalize**: Only after all verifications pass should the task be considered complete.
+4. **Commit**: Always commit changes as soon as a task is completed. This ensures a clean history and allows for easy rollbacks.
+5. **Verify**: The commit process automatically runs linting, formatting, unit tests, and a build of the application. It is therefore not necessary to run these commands manually before committing, as any errors will be caught and will prevent the commit.
+6. **Finalize**: Only after the commit has succeeded (meaning all automated checks passed) should the task be considered complete.
 
 ## Testing Strategy
 
@@ -59,21 +60,21 @@ All changes must include relevant unit tests and, for critical flows, E2E tests.
 
 ### 1. Unit Tests
 
-Unit tests are fast and isolate specific logic.
+Unit tests are fast and isolate specific logic. They are automatically run during the commit process.
 
 - **Frontend (Angular)**: `npm run test:unit`
 - **Backend (Firebase Functions)**: `npm run test:functions`
 
 ### 2. End-to-End (E2E) Tests
 
-E2E tests verify the complete flow of the application from the user's perspective.
+E2E tests verify the complete flow of the application from the user's perspective. These are NOT run during the commit process and should be run manually for critical changes.
 
 - **Run E2E Tests**: `npm run test:e2e`
 - **Interactive Mode**: `npm run test:e2e:open`
 
 ### 3. Continuous Integration (CI) & Standards
 
-Before committing code, ensure all tests pass and linting is clean.
+Before pushing code, you can ensure everything is perfect with the full suite.
 
 - **Full Test Suite**: `npm run test:ci`
 - **Linting (Functions)**: `npm run lint --prefix functions`
@@ -95,7 +96,9 @@ Before committing code, ensure all tests pass and linting is clean.
 ## Git & Commits
 
 - **Review**: Always run `git status` and `git diff` before committing.
+- **Commit Frequency**: Commit every time a task is completed. Do not bundle multiple unrelated tasks into a single commit.
 - **Messages**: Propose clear, concise commit messages focusing on "why". Match existing project style.
+- **Automation**: Trust the pre-commit hooks. They handle linting, formatting, testing, and building. If a commit fails, fix the reported errors and try again.
 - **Success**: Confirm successful commits with `git status`. Never push without explicit instruction.
 
 ## Release Process
