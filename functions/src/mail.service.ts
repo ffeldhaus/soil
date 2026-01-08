@@ -165,22 +165,22 @@ export class MailService {
 
   async sendAdminRegistrationApproved(email: string, loginLink: string, lang = 'en'): Promise<void> {
     const subjects: Record<string, string> = {
-      en: 'Soil Admin Registration Approved',
-      de: 'Soil Admin-Registrierung bestätigt',
+      en: 'Soil Registration Approved',
+      de: 'Soil-Registrierung bestätigt',
     };
     const subject = subjects[lang] || subjects['en'];
 
-    const textEN = `Congratulations!\n\nYour admin registration for Soil has been approved. You can now log in to the admin dashboard using the following link:\n${loginLink}\n\nYour email address is already prefilled.`;
-    const textDE = `Glückwunsch!\n\nDeine Registrierung als Admin für Soil wurde bestätigt. Du kannst dich jetzt im Admin-Dashboard über den folgenden Link einloggen:\n${loginLink}\n\nDeine E-Mail-Adresse ist bereits vorausgefüllt.`;
+    const textEN = `Congratulations!\n\nYour registration for Soil has been approved. You can now log in to the dashboard using the following link:\n${loginLink}\n\nYour email address is already prefilled.`;
+    const textDE = `Glückwunsch!\n\nDeine Registrierung als Lehrkraft für Soil wurde bestätigt. Du kannst dich jetzt im Dashboard über den folgenden Link einloggen:\n${loginLink}\n\nDeine E-Mail-Adresse ist bereits vorausgefüllt.`;
     const text = lang === 'de' ? textDE : textEN;
 
     const htmlEN = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #10b981;">Registration Approved</h2>
-        <p>Congratulations! Your admin registration for Soil has been approved.</p>
-        <p>You can now log in to the admin dashboard to start creating games:</p>
+        <p>Congratulations! Your registration for Soil has been approved.</p>
+        <p>You can now log in to the dashboard to start creating games:</p>
         <p style="margin: 30px 0;">
-          <a href="${loginLink}" style="background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Login to Admin Dashboard</a>
+          <a href="${loginLink}" style="background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Login to Dashboard</a>
         </p>
         <p style="font-size: 14px; color: #666;">Your email address <strong>${email}</strong> will be prefilled on the login page.</p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
@@ -190,10 +190,10 @@ export class MailService {
     const htmlDE = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #10b981;">Registrierung bestätigt</h2>
-        <p>Glückwunsch! Deine Registrierung als Admin für Soil wurde bestätigt.</p>
-        <p>Du kannst dich jetzt im Admin-Dashboard einloggen und direkt loslegen:</p>
+        <p>Glückwunsch! Deine Registrierung als Lehrkraft für Soil wurde bestätigt.</p>
+        <p>Du kannst dich jetzt im Dashboard einloggen und direkt loslegen:</p>
         <p style="margin: 30px 0;">
-          <a href="${loginLink}" style="background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Zum Admin-Dashboard</a>
+          <a href="${loginLink}" style="background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Zum Dashboard</a>
         </p>
         <p style="font-size: 14px; color: #666;">Deine E-Mail-Adresse <strong>${email}</strong> ist auf der Login-Seite bereits vorausgefüllt.</p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
@@ -212,8 +212,8 @@ export class MailService {
     lang = 'en',
   ): Promise<void> {
     const subjects: Record<string, string> = {
-      en: 'Update on your Soil Admin Registration',
-      de: 'Update zu deiner Soil Admin-Registrierung',
+      en: 'Update on your Soil Registration',
+      de: 'Update zu deiner Soil-Registrierung',
     };
     const subject = subjects[lang] || subjects['en'];
 
@@ -231,15 +231,15 @@ export class MailService {
 
     const selectedReasons = reasons.map((r) => (lang === 'de' ? reasonsTextDE[r] || r : reasonsTextEN[r] || r));
 
-    const textEN = `Hello,\n\nThank you for your interest in Soil. Unfortunately, we cannot approve your admin registration at this time for the following reasons:\n\n${selectedReasons.map((r) => `- ${r}`).join('\n')}${customMessage ? `\n\nAdditional information: ${customMessage}` : ''}\n\nBest regards,\nThe Soil Team`;
-    const textDE = `Hallo,\n\nvielen Dank für dein Interesse an Soil. Leider können wir deine Registrierung als Admin zum aktuellen Zeitpunkt aus den folgenden Gründen nicht bestätigen:\n\n${selectedReasons.map((r) => `- ${r}`).join('\n')}${customMessage ? `\n\nZusätzliche Informationen: ${customMessage}` : ''}\n\nBeste Grüße,\nDas Soil Team`;
+    const textEN = `Hello,\n\nThank you for your interest in Soil. Unfortunately, we cannot approve your registration at this time for the following reasons:\n\n${selectedReasons.map((r) => `- ${r}`).join('\n')}${customMessage ? `\n\nAdditional information: ${customMessage}` : ''}\n\nBest regards,\nThe Soil Team`;
+    const textDE = `Hallo,\n\nvielen Dank für dein Interesse an Soil. Leider können wir deine Registrierung zum aktuellen Zeitpunkt aus den folgenden Gründen nicht bestätigen:\n\n${selectedReasons.map((r) => `- ${r}`).join('\n')}${customMessage ? `\n\nZusätzliche Informationen: ${customMessage}` : ''}\n\nBeste Grüße,\nDas Soil Team`;
     const text = lang === 'de' ? textDE : textEN;
 
     const htmlEN = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <h2>Update on your Registration</h2>
         <p>Thank you for your interest in Soil.</p>
-        <p>Unfortunately, we cannot approve your admin registration at this time for the following reasons:</p>
+        <p>Unfortunately, we cannot approve your registration at this time for the following reasons:</p>
         <ul>
           ${selectedReasons.map((r) => `<li>${r}</li>`).join('')}
         </ul>
@@ -251,7 +251,7 @@ export class MailService {
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <h2>Update zu deiner Registrierung</h2>
         <p>vielen Dank für dein Interesse an Soil.</p>
-        <p>Leider können wir deine Registrierung als Admin zum aktuellen Zeitpunkt aus den folgenden Gründen nicht bestätigen:</p>
+        <p>Leider können wir deine Registrierung zum aktuellen Zeitpunkt aus den folgenden Gründen nicht bestätigen:</p>
         <ul>
           ${selectedReasons.map((r) => `<li>${r}</li>`).join('')}
         </ul>

@@ -54,8 +54,8 @@ import { RouterLink } from '@angular/router';
           <h3 class="text-xl font-semibold text-white mb-4" i18n="@@onboarding.nextSteps">Wie geht es weiter?</h3>
 
           <p class="text-gray-300 mb-6 leading-relaxed" i18n="@@onboarding.checkingRegistration">
-            Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren
-            wir Sie per E-Mail.
+            Ihre Registrierung als Lehrkraft wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde,
+            informieren wir Sie per E-Mail.
           </p>
 
           <div class="space-y-6">

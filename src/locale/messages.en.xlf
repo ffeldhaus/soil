@@ -2,13 +2,17 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="de" datatype="plaintext" original="ng2.template" target-language="en">
     <body>
+      <trans-unit id="dashboard.title" datatype="html">
+        <source>Lehrkraft-Dashboard</source>
+        <target>Teacher Dashboard</target>
+      </trans-unit>
       <trans-unit id="dashboard.pending.title" datatype="html">
         <source>Konto wartet auf Genehmigung</source>
         <target>Account Pending Approval</target>
       </trans-unit>
       <trans-unit id="dashboard.pending.welcome" datatype="html">
-        <source>Danke für die Registrierung, &lt;span class="font-bold text-white"&gt;{{ userdisplayName }}&lt;/span&gt;!</source>
-        <target>Thank you for registering, &lt;span class="font-bold text-white"&gt;{{ userdisplayName }}&lt;/span&gt;!</target>
+        <source>Danke für die Registrierung, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/>{{ userdisplayName }}<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</source>
+        <target>Thank you for registering, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/>{{ userdisplayName }}<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</target>
       </trans-unit>
       <trans-unit id="dashboard.pending.message" datatype="html">
         <source>Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.</source>
@@ -39,12 +43,12 @@
         <target>Go to Console</target>
       </trans-unit>
       <trans-unit id="dashboard.controls.title" datatype="html">
-        <source>Admin-Steuerung</source>
-        <target>Admin Controls</target>
+        <source>Lehrkraft-Steuerung</source>
+        <target>Teacher Controls</target>
       </trans-unit>
       <trans-unit id="dashboard.welcome" datatype="html">
-        <source>Willkommen, &lt;span class="font-bold text-white"&gt;{{ userdisplayName }}&lt;/span&gt;!</source>
-        <target>Welcome, &lt;span class="font-bold text-white"&gt;{{ userdisplayName }}&lt;/span&gt;!</target>
+        <source>Willkommen, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/>{{ userdisplayName }}<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</source>
+        <target>Welcome, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/>{{ userdisplayName }}<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</target>
       </trans-unit>
       <trans-unit id="dashboard.createGame.title" datatype="html">
         <source>Neues Spiel erstellen</source>
@@ -351,8 +355,8 @@
         <target>Delete Game</target>
       </trans-unit>
       <trans-unit id="dashboard.login.msg" datatype="html">
-        <source>Bitte melde dich an, um auf das Admin-Dashboard zuzugreifen.</source>
-        <target>Please log in to access the admin dashboard.</target>
+        <source>Bitte melde dich an, um auf das Dashboard zuzugreifen.</source>
+        <target>Please log in to access the dashboard.</target>
       </trans-unit>
       <trans-unit id="dashboard.login.btn" datatype="html">
         <source>Anmelden mit Google</source>
@@ -647,12 +651,12 @@
         <target>Sales / dt</target>
       </trans-unit>
       <trans-unit id="adminLogin.title" datatype="html">
-        <source>Admin-Anmeldung</source>
-        <target>Admin Login</target>
+        <source>Lehrkraft-Anmeldung</source>
+        <target>Teacher Login</target>
       </trans-unit>
       <trans-unit id="adminLogin.subtitle" datatype="html">
-        <source>Zugang zur Soil-Steuerzentrale</source>
-        <target>Access the Soil control center</target>
+        <source>Zugang zum Soil-Dashboard</source>
+        <target>Access the Soil Dashboard</target>
       </trans-unit>
       <trans-unit id="adminLogin.email" datatype="html">
         <source>E-Mail</source>
@@ -715,8 +719,8 @@
         <target>Retry</target>
       </trans-unit>
       <trans-unit id="adminRegister.title" datatype="html">
-        <source>Admin-Registrierung</source>
-        <target>Admin Registration</target>
+        <source>Registrierung für Lehrkräfte</source>
+        <target>Teacher Registration</target>
       </trans-unit>
       <trans-unit id="adminRegister.subtitle" datatype="html">
         <source>Werden Sie Teil der Soil-Community als Lehrkraft oder Administrator</source>
@@ -1423,8 +1427,8 @@
         <target>Enter Game</target>
       </trans-unit>
       <trans-unit id="landing.teacherAdmin" datatype="html">
-        <source>Lehrkraft / Admin</source>
-        <target>Teacher / Admin</target>
+        <source>Lehrkräfte</source>
+        <target>Teachers</target>
       </trans-unit>
       <trans-unit id="landing.register" datatype="html">
         <source>Registrieren</source>

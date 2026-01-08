@@ -1002,7 +1002,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="dashboard.controls.title" datatype="html">
-        <source>Admin-Steuerung</source>
+        <source>Lehrkraft-Steuerung</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/dashboard/dashboard.ts</context>
           <context context-type="linenumber">56</context>
@@ -1023,7 +1023,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="dashboard.login.msg" datatype="html">
-        <source>Bitte melde dich an, um auf das Admin-Dashboard zuzugreifen.</source>
+        <source>Bitte melde dich an, um auf das Dashboard zuzugreifen.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/dashboard/dashboard.ts</context>
           <context context-type="linenumber">134</context>
@@ -1058,7 +1058,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="onboarding.checkingRegistration" datatype="html">
-        <source> Ihre Registrierung als Admin wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </source>
+        <source> Ihre Registrierung als Lehrkraft wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/onboarding/onboarding.ts</context>
           <context context-type="linenumber">57,61</context>
