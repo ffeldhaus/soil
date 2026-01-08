@@ -4,21 +4,12 @@
 
 @media print {
   @page {
-    margin: 1cm;
+    margin: 1.5cm;
   }
 
-  .print-a4 {
-    /* Defined via @page in component styles doesn't work well dynamically, 
-       so we use classes to target specific sizes if needed, but standard 
-       browser print dialog handles size. We'll use CSS for orientation. */
-  }
-
-  .print-portrait {
-    /* Handled by @page */
-  }
-
-  .print-landscape {
-    /* Handled by @page */
+  * {
+    -webkit-print-color-adjust: economy !important;
+    print-color-adjust: economy !important;
   }
 
   body {
@@ -26,12 +17,14 @@
     color: black !important;
   }
 
+  /* Hide background images and unnecessary elements */
   nav,
-  .fixed:not(.inset-0),
+  .fixed,
   .print\:hidden {
     display: none !important;
   }
 
+  /* Reset layout for print */
   .relative {
     position: static !important;
   }
@@ -40,11 +33,16 @@
     z-index: auto !important;
   }
 
+  .min-h-screen {
+    min-height: auto !important;
+    background: white !important;
+  }
+
   .bg-gray-900,
   .bg-gray-900\/80,
   .bg-gray-900\/90,
-  .bg-black\/40,
   .bg-black\/30,
+  .bg-black\/40,
   .bg-white\/5,
   .bg-emerald-500\/10,
   .bg-red-900\/20,
@@ -62,7 +60,7 @@
   .border-emerald-500\/20,
   .border-red-500\/30,
   .border-blue-500\/20 {
-    border-color: #eee !important;
+    border-color: #ddd !important;
   }
 
   .text-white,
@@ -74,6 +72,41 @@
     color: black !important;
   }
 
+  /* Colored indicators for print - ensure they are visible on white background */
+  .bg-green-600\/20,
+  .bg-green-500\/20,
+  .bg-green-500\/10 {
+    background-color: #f0fdf4 !important;
+    border-color: #bbf7d0 !important;
+    color: #166534 !important;
+  }
+  .bg-yellow-500\/20,
+  .bg-yellow-500\/10 {
+    background-color: #fefce8 !important;
+    border-color: #fef08a !important;
+    color: #854d0e !important;
+  }
+  .bg-orange-500\/10 {
+    background-color: #fff7ed !important;
+    border-color: #ffedd5 !important;
+    color: #9a3412 !important;
+  }
+  .bg-red-500\/10,
+  .bg-red-900\/20 {
+    background-color: #fef2f2 !important;
+    border-color: #fecaca !important;
+    color: #991b1b !important;
+  }
+  .bg-blue-500\/10 {
+    background-color: #eff6ff !important;
+    border-color: #bfdbfe !important;
+    color: #1e40af !important;
+  }
+  .bg-emerald-600 {
+    background-color: #059669 !important;
+    color: white !important;
+  }
+
   .shadow-2xl,
   .shadow-lg,
   .shadow-xl {
@@ -81,23 +114,75 @@
   }
 
   .print-page-break-after {
-    break-after: page;
-    page-break-after: always;
+    break-after: page !important;
   }
 
   .print-page-break-before {
-    break-before: page;
-    page-break-before: always;
+    break-before: page !important;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid !important;
   }
 
   img {
     filter: none !important;
+    max-width: 100% !important;
   }
 
   .max-w-5xl {
     max-width: none !important;
     width: 100% !important;
     padding: 0 !important;
+  }
+
+  /* Ensure grids and flexbox display correctly in print */
+  .grid {
+    display: grid !important;
+  }
+  .flex {
+    display: flex !important;
+  }
+
+  /* Optimization for crop cards in print */
+  app-manual-crop-card {
+    display: block !important;
+    width: 100% !important;
+    page-break-inside: avoid !important;
+  }
+}
+
+/* Dynamic @page based on classes */
+:host-context(.print-a4.print-portrait) {
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 1.5cm;
+    }
+  }
+}
+:host-context(.print-a4.print-landscape) {
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 1.5cm;
+    }
+  }
+}
+:host-context(.print-letter.print-portrait) {
+  @media print {
+    @page {
+      size: letter portrait;
+      margin: 1.5cm;
+    }
+  }
+}
+:host-context(.print-letter.print-landscape) {
+  @media print {
+    @page {
+      size: letter landscape;
+      margin: 1.5cm;
+    }
   }
 }
 

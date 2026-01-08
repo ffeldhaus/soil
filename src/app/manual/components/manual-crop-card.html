@@ -3,7 +3,7 @@
 >
   <div class="flex flex-col lg:flex-row gap-10 items-start">
     <!-- Crop Image & Title -->
-    <div class="w-full lg:w-1/3 print:w-1/4">
+    <div class="w-full lg:w-1/3 print:w-1/3">
       <div
         class="aspect-square rounded-3xl overflow-hidden shadow-2xl mb-6 border-4 border-gray-800 group-hover:border-emerald-500/50 transition-all duration-500 print:border-gray-200"
       >
@@ -51,19 +51,19 @@
     </div>
 
     <!-- Crop Details -->
-    <div class="w-full lg:w-2/3 space-y-8 print:w-3/4">
+    <div class="w-full lg:w-2/3 space-y-8 print:w-2/3 print:space-y-4">
       <!-- Rotation Graph -->
       <div
-        class="bg-black/40 p-4 sm:p-8 rounded-3xl border border-white/5 print:bg-gray-50 print:border-gray-100 portrait:rounded-none portrait:border-x-0"
+        class="bg-black/40 p-4 sm:p-8 rounded-3xl border border-white/5 print:bg-gray-50 print:border-gray-100 print:p-4 portrait:rounded-none portrait:border-x-0"
       >
-        <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-8 print:mb-4">
+        <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-8 print:mb-2">
           {{ t('manual.crops.rotation') }}
         </h4>
 
         <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
           <!-- Previous Crops Column -->
           <div class="flex flex-col gap-2 w-full md:w-auto items-center md:items-end flex-1 order-1">
-            <span class="text-[8px] font-bold text-gray-600 uppercase mb-2">
+            <span class="text-[8px] font-bold text-gray-600 uppercase mb-2 print:mb-1">
               {{ t('manual.crops.rotationPrev') }}
             </span>
             <div
@@ -89,12 +89,12 @@
           </div>
 
           <!-- Current Crop (Middle) -->
-          <div class="flex flex-col items-center gap-3 order-3">
-            <span class="text-[8px] font-bold text-emerald-500 uppercase mb-1">
+          <div class="flex flex-col items-center gap-3 order-3 print:gap-1">
+            <span class="text-[8px] font-bold text-emerald-500 uppercase mb-1 print:mb-0">
               {{ t('manual.crops.current') }}
             </span>
             <div
-              class="w-28 h-28 rounded-[2.5rem] bg-emerald-600 border-4 border-emerald-400 flex items-center justify-center text-white font-black shadow-xl shadow-emerald-900/50 text-center p-4 text-sm leading-tight print:w-24 print:h-24 print:text-xs print:rounded-2xl"
+              class="w-28 h-28 rounded-[2.5rem] bg-emerald-600 border-4 border-emerald-400 flex items-center justify-center text-white font-black shadow-xl shadow-emerald-900/50 text-center p-4 text-sm leading-tight print:w-20 print:h-20 print:text-[10px] print:rounded-2xl"
             >
               {{ t('crop.' + crop.id.toLowerCase()) }}
             </div>
@@ -115,7 +115,7 @@
 
           <!-- Next Crops Column -->
           <div class="flex flex-col gap-2 w-full md:w-auto items-center md:items-start flex-1 order-5">
-            <span class="text-[8px] font-bold text-gray-600 uppercase mb-2">
+            <span class="text-[8px] font-bold text-gray-600 uppercase mb-2 print:mb-1">
               {{ t('manual.crops.rotationNext') }}
             </span>
             <div
@@ -134,32 +134,34 @@
       >
         <!-- Requirements -->
         <div
-          class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
+          class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 print:p-4 portrait:rounded-none portrait:border-0"
         >
-          <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
+          <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4 print:mb-2">
             {{ t('manual.crops.requirements') }}
           </h4>
-          <div class="space-y-4">
+          <div class="space-y-4 print:space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-400 print:text-gray-500">{{ t('manual.crops.soil') }}</span>
+              <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{ t('manual.crops.soil') }}</span>
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold print:text-black">{{
+                <span class="text-xs font-bold print:text-black print:text-[10px]">{{
                   t(crop.soilSensitivity > 1.1 ? 'sensitivity.high' : 'sensitivity.moderate')
                 }}</span>
                 <div
-                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none"
+                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none print:w-4 print:h-4"
                   [ngClass]="crop.soilSensitivity > 1.1 ? 'bg-red-500' : 'bg-yellow-500'"
                 ></div>
               </div>
             </div>
             <div class="flex justify-between items-center">
-              <span class="text-sm text-gray-400 print:text-gray-500">{{ t('manual.crops.minerals') }}</span>
+              <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{
+                t('manual.crops.minerals')
+              }}</span>
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold print:text-black">{{
+                <span class="text-xs font-bold print:text-black print:text-[10px]">{{
                   t(crop.nutritionSensitivity > 1.1 ? 'sensitivity.high' : 'sensitivity.moderate')
                 }}</span>
                 <div
-                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none"
+                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none print:w-4 print:h-4"
                   [ngClass]="crop.nutritionSensitivity > 1.1 ? 'bg-red-500' : 'bg-yellow-500'"
                 ></div>
               </div>
@@ -169,20 +171,20 @@
 
         <!-- Weather -->
         <div
-          class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
+          class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 print:p-4 portrait:rounded-none portrait:border-0"
         >
-          <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
+          <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4 print:mb-2">
             {{ t('manual.crops.weather') }}
           </h4>
-          <div class="space-y-3">
+          <div class="space-y-3 print:space-y-1">
             <div *ngFor="let w of ['drought', 'cold', 'flood']" class="flex justify-between items-center">
-              <span class="text-sm text-gray-400 print:text-gray-500">{{ t('manual.crops.' + w) }}</span>
+              <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{ t('manual.crops.' + w) }}</span>
               <div class="flex items-center gap-2">
-                <span class="text-xs font-bold print:text-black">{{
+                <span class="text-xs font-bold print:text-black print:text-[10px]">{{
                   t('sensitivity.' + getSensitivityKey(crop.weatherSensitivity[w]))
                 }}</span>
                 <div
-                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none"
+                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none print:w-4 print:h-4"
                   [ngClass]="getWeatherColor(crop.weatherSensitivity[w])"
                 ></div>
               </div>
@@ -192,15 +194,15 @@
 
         <!-- Yields -->
         <div
-          class="sm:col-span-2 bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
+          class="sm:col-span-2 bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 print:p-4 portrait:rounded-none portrait:border-0"
         >
-          <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">
+          <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4 print:mb-2">
             {{ t('manual.crops.yields') }} (dt/ha)
           </h4>
           <div class="grid grid-cols-5 gap-2">
             <div
               *ngFor="let level of ['veryHigh', 'high', 'moderate', 'low', 'veryLow']"
-              class="flex flex-col items-center p-3 rounded-2xl border transition-all print:py-1"
+              class="flex flex-col items-center p-3 rounded-2xl border transition-all print:py-1 print:p-2"
               [ngClass]="getYieldClass(level)"
             >
               <span class="text-sm font-black print:text-xs">{{ crop.yields[level] }}</span>
@@ -217,38 +219,54 @@
           class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 print:gap-4 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
         >
           <div
-            class="bg-white/5 p-6 rounded-3xl border border-white/10 print:bg-white print:border-gray-200 portrait:rounded-none portrait:border-0"
+            class="bg-white/5 p-6 rounded-3xl border border-white/10 print:bg-white print:border-gray-200 print:p-4 portrait:rounded-none portrait:border-0"
           >
-            <h5 class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4 print:text-emerald-700">
+            <h5
+              class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4 print:mb-2 print:text-emerald-700"
+            >
               {{ t('manual.prices.conv') }}
             </h5>
-            <div class="space-y-3">
+            <div class="space-y-3 print:space-y-1">
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-400 print:text-gray-500">{{ t('manual.prices.seed') }}</span>
-                <span class="font-bold text-white print:text-black">{{ crop.seedPrice.conventional }}€</span>
+                <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{
+                  t('manual.prices.seed')
+                }}</span>
+                <span class="font-bold text-white print:text-black print:text-xs"
+                  >{{ crop.seedPrice.conventional }}€</span
+                >
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-400 print:text-gray-500">{{ t('manual.prices.sale') }}</span>
-                <span class="font-bold text-emerald-400 print:text-emerald-600"
+                <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{
+                  t('manual.prices.sale')
+                }}</span>
+                <span class="font-bold text-emerald-400 print:text-emerald-600 print:text-xs"
                   >{{ crop.marketValue.conventional }}€</span
                 >
               </div>
             </div>
           </div>
           <div
-            class="bg-emerald-500/10 p-6 rounded-3xl border border-emerald-500/20 shadow-lg shadow-emerald-900/20 print:bg-white print:border-emerald-200 print:shadow-none portrait:rounded-none portrait:border-0"
+            class="bg-emerald-500/10 p-6 rounded-3xl border border-emerald-500/20 shadow-lg shadow-emerald-900/20 print:bg-white print:border-emerald-200 print:shadow-none print:p-4 portrait:rounded-none portrait:border-0"
           >
-            <h5 class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4 print:text-emerald-700">
+            <h5
+              class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4 print:mb-2 print:text-emerald-700"
+            >
               {{ t('manual.prices.org') }}
             </h5>
-            <div class="space-y-3">
+            <div class="space-y-3 print:space-y-1">
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-400 print:text-gray-500">{{ t('manual.prices.seed') }}</span>
-                <span class="font-bold text-white print:text-black">{{ crop.seedPrice.organic }}€</span>
+                <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{
+                  t('manual.prices.seed')
+                }}</span>
+                <span class="font-bold text-white print:text-black print:text-xs">{{ crop.seedPrice.organic }}€</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-400 print:text-gray-500">{{ t('manual.prices.sale') }}</span>
-                <span class="font-bold text-emerald-400 print:text-emerald-600">{{ crop.marketValue.organic }}€</span>
+                <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{
+                  t('manual.prices.sale')
+                }}</span>
+                <span class="font-bold text-emerald-400 print:text-emerald-600 print:text-xs"
+                  >{{ crop.marketValue.organic }}€</span
+                >
               </div>
             </div>
           </div>
@@ -257,9 +275,9 @@
         <!-- Special -->
         @if (crop.special) {
           <div
-            class="sm:col-span-2 bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20 flex gap-4 items-center print:bg-blue-50 print:border-blue-100 print:p-4 portrait:rounded-none portrait:border-0"
+            class="sm:col-span-2 bg-blue-500/10 p-6 rounded-3xl border border-blue-500/20 flex gap-4 items-center print:bg-blue-50 print:border-blue-100 print:p-3 portrait:rounded-none portrait:border-0"
           >
-            <span class="text-2xl print:text-xl">💡</span>
+            <span class="text-2xl print:text-lg">💡</span>
             <p class="text-sm text-blue-100 italic print:text-blue-800 print:text-xs">
               {{ t('special.' + crop.id.toLowerCase()) }}
             </p>
