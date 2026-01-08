@@ -379,7 +379,7 @@ export class MailService {
     const institution = userData.onboarding?.institution || userData.institution || 'N/A';
     const explanation = userData.onboarding?.explanation || userData.explanation || 'N/A';
 
-    const text = `A new user has requested admin access for Soil.\n\nName: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nInstitution: ${institution}\nExplanation: ${explanation}\n\nPlease review the request in the super admin dashboard.`;
+    const text = `A new user has requested admin access for Soil.\n\nName: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nInstitution: ${institution}\nExplanation: ${explanation}\n\nPlease review the request in the system dashboard.`;
     const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>New Admin Registration</h2>
@@ -390,7 +390,7 @@ export class MailService {
           <li><strong>Institution:</strong> ${institution}</li>
           <li><strong>Explanation:</strong> ${explanation}</li>
         </ul>
-        <p>Please review the request in the super admin dashboard.</p>
+        <p>Please review the request in the system dashboard.</p>
       </div>
     `;
     return this.sendEmail({ to: adminEmail, subject, text, html });

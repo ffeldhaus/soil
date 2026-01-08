@@ -2,7 +2,7 @@
   <app-super-admin-hud [user]="authService.user$ | async" (logout)="logout()"></app-super-admin-hud>
 
   <!-- Main Content -->
-  <div class="pt-24 px-4 max-w-7xl mx-auto space-y-12 pb-12 relative portrait:px-0 portrait:max-w-none">
+  <div class="pt-24 px-4 max-w-7xl mx-auto space-y-16 pb-12 relative portrait:px-0 portrait:max-w-none">
     <!-- Loading Overlay -->
     @if (isLoadingData) {
       <div
@@ -69,7 +69,7 @@
               />
             </svg>
           </div>
-          Pending Approvals ({{ pendingUsers.length }})
+          {{ t('superadmin.pending.title') }} ({{ pendingUsers.length }})
         </h2>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 portrait:gap-0 portrait:divide-y portrait:divide-gray-800">
           <div
@@ -85,17 +85,21 @@
               </div>
               <span
                 class="px-2 py-1 bg-yellow-900/50 text-yellow-200 text-xs rounded border border-yellow-700 flex-shrink-0"
-                >Pending</span
+                >{{ t('superadmin.pending.card.pending') }}</span
               >
             </div>
 
             <div class="space-y-2 text-sm text-gray-300 mb-6 bg-gray-900/50 p-4 rounded-lg border border-gray-700/50">
               <p class="flex flex-col">
-                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">Institution</strong>
+                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
+                  t('superadmin.pending.card.institution')
+                }}</strong>
                 {{ user.onboarding?.institution }}
               </p>
               <p class="flex flex-col">
-                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">Website</strong>
+                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
+                  t('superadmin.pending.card.website')
+                }}</strong>
                 <a
                   [href]="user.onboarding?.institutionLink"
                   target="_blank"
@@ -104,7 +108,9 @@
                 >
               </p>
               <p class="flex flex-col">
-                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">Why Soil?</strong>
+                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
+                  t('superadmin.pending.card.why')
+                }}</strong>
                 <span class="italic text-gray-400">"{{ user.onboarding?.explanation }}"</span>
               </p>
             </div>
@@ -114,13 +120,13 @@
                 (click)="initiateApprove(user)"
                 class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg"
               >
-                Approve
+                {{ t('superadmin.actions.approve') }}
               </button>
               <button
                 (click)="initiateReject(user)"
                 class="flex-1 py-2 bg-red-900/50 border border-red-700 hover:bg-red-900 text-red-200 font-bold rounded-lg transition"
               >
-                Reject
+                {{ t('superadmin.actions.reject') }}
               </button>
             </div>
           </div>
@@ -141,7 +147,7 @@
             />
           </svg>
         </div>
-        Game Administrators
+        {{ t('superadmin.admins.title') }}
       </h2>
       <div
         class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700 portrait:rounded-none portrait:border-x-0"
@@ -150,12 +156,12 @@
           <table class="w-full text-left border-collapse">
             <thead class="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
               <tr>
-                <th class="p-4 font-medium">Email / User</th>
-                <th class="p-4 font-medium">Role</th>
-                <th class="p-4 font-medium">Status</th>
-                <th class="p-4 font-medium">Quota</th>
-                <th class="p-4 font-medium">Games Created</th>
-                <th class="p-4 font-medium text-right">Actions</th>
+                <th class="p-4 font-medium">{{ t('superadmin.table.user') }}</th>
+                <th class="p-4 font-medium">{{ t('superadmin.table.role') }}</th>
+                <th class="p-4 font-medium">{{ t('superadmin.table.status') }}</th>
+                <th class="p-4 font-medium">{{ t('superadmin.table.quota') }}</th>
+                <th class="p-4 font-medium">{{ t('superadmin.table.games') }}</th>
+                <th class="p-4 font-medium text-right">{{ t('superadmin.table.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-700 text-sm">
@@ -171,6 +177,8 @@
                       'bg-purple-900/20 text-purple-300 border-purple-800': admin.role === 'superadmin',
                       'bg-blue-900/20 text-blue-300 border-blue-800': admin.role === 'admin',
                       'bg-yellow-900/20 text-yellow-300 border-yellow-800': admin.role === 'pending',
+                      'bg-orange-900/20 text-orange-300 border-orange-800': admin.role === 'rejected',
+                      'bg-red-900/20 text-red-300 border-red-800': admin.role === 'banned',
                     }"
                   >
                     {{ admin.role | titlecase }}
@@ -212,26 +220,26 @@
                       (click)="viewGames(admin)"
                       class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
                     >
-                      Games
+                      {{ t('superadmin.actions.games') }}
                     </button>
                     <button
                       (click)="setQuota(admin)"
                       class="px-2 py-1 bg-gray-700 hover:emerald-800 text-gray-300 rounded text-xs transition border border-gray-600"
-                      title="Edit Quota"
+                      [title]="t('superadmin.actions.quota')"
                     >
-                      Quota
+                      {{ t('superadmin.actions.quota') }}
                     </button>
                     <button
                       (click)="banAdmin(admin)"
                       class="px-2 py-1 bg-gray-700 hover:bg-orange-900 text-orange-200 rounded text-xs transition border border-gray-600"
-                      title="Ban User"
+                      [title]="t('superadmin.actions.ban')"
                     >
-                      Ban
+                      {{ t('superadmin.actions.ban') }}
                     </button>
                     <button
                       (click)="deleteAdmin(admin)"
                       class="px-2 py-1 bg-gray-700 hover:bg-red-900 text-red-200 rounded text-xs transition border border-gray-600"
-                      title="Delete User"
+                      [title]="t('superadmin.actions.delete')"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -288,7 +296,7 @@
               </svg>
             </div>
             <h2 class="text-2xl font-bold text-white">
-              Games by <span class="text-emerald-400">{{ selectedAdmin.email }}</span>
+              {{ t('superadmin.games.title') }} <span class="text-emerald-400">{{ selectedAdmin.email }}</span>
             </h2>
           </div>
           <button
@@ -304,7 +312,7 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-            Close
+            {{ t('superadmin.games.close') }}
           </button>
         </div>
 
@@ -323,7 +331,7 @@
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            Loading games...
+            {{ t('superadmin.games.loading') }}
           </div>
         }
 
@@ -331,7 +339,7 @@
           <div
             class="p-12 bg-gray-800 rounded-xl text-center text-gray-500 border border-gray-700 border-dashed portrait:rounded-none portrait:border-x-0"
           >
-            <p class="text-lg">No games found for this admin.</p>
+            <p class="text-lg">{{ t('superadmin.games.none') }}</p>
           </div>
         }
 
@@ -374,18 +382,18 @@
 
               <div class="text-sm text-gray-400 space-y-2 mb-4">
                 <div class="flex justify-between border-b border-gray-700 pb-2 mb-2">
-                  <span class="text-xs uppercase tracking-wide text-gray-500">Status</span>
+                  <span class="text-xs uppercase tracking-wide text-gray-500">{{ t('superadmin.games.status') }}</span>
                   <span
                     class="text-emerald-400 font-bold bg-emerald-900/20 px-2 py-0.5 rounded text-xs border border-emerald-900/50"
                     >{{ game.status | uppercase }}</span
                   >
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-500">Round</span>
+                  <span class="text-gray-500">{{ t('superadmin.games.round') }}</span>
                   <span class="text-white font-mono">{{ game.currentRoundNumber }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-500">Created</span>
+                  <span class="text-gray-500">{{ t('superadmin.games.created') }}</span>
                   <span class="text-gray-300">{{ game.createdAt | date: 'shortDate' }}</span>
                 </div>
                 <div class="text-[10px] text-gray-600 font-mono mt-2 truncate bg-gray-900/50 p-1 rounded">
@@ -427,11 +435,11 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            {{ isTrash(gameToDelete) ? 'Permanent Deletion' : 'Confirm Deletion' }}
+            {{ isTrash(gameToDelete) ? t('superadmin.delete.game.permanent') : t('superadmin.delete.game.title') }}
           </h3>
 
           <p class="text-gray-300">
-            Are you sure you want to {{ isTrash(gameToDelete) ? 'permanently' : '' }} delete
+            {{ isTrash(gameToDelete) ? t('superadmin.delete.game.confirm') : t('superadmin.delete.game.confirm') }}
             <span class="font-bold text-white">{{ gameToDelete.name }}</span
             >?
           </p>
@@ -453,7 +461,7 @@
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <div class="text-sm text-red-200/80"><strong>Soft Delete:</strong> Games will be moved to the Trash.</div>
+              <div class="text-sm text-red-200/80">{{ t('superadmin.delete.game.soft') }}</div>
             </div>
           }
 
@@ -477,7 +485,7 @@
                 />
               </svg>
               <div class="text-sm text-red-200">
-                <strong>WARNING:</strong> This action cannot be undone. All game data will be destroyed immediately.
+                {{ t('superadmin.delete.game.warning') }}
               </div>
             </div>
           }
@@ -485,9 +493,10 @@
           <!-- Type Confirmation -->
           @if (isTrash(gameToDelete)) {
             <div>
-              <label class="text-xs text-gray-400 block mb-1"
-                >Type <span class="font-mono font-bold text-red-400">DELETE</span> to confirm:</label
-              >
+              <label
+                class="text-xs text-gray-400 block mb-1"
+                [innerHTML]="t('superadmin.delete.game.typeConfirm')"
+              ></label>
               <input
                 [(ngModel)]="deleteConfirmInput"
                 placeholder="DELETE"
@@ -501,7 +510,7 @@
               (click)="cancelDelete()"
               class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
             >
-              Cancel
+              {{ t('superadmin.modal.cancel') }}
             </button>
             <button
               (click)="confirmDelete()"
@@ -509,7 +518,9 @@
               class="flex-1 py-3 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2"
             >
               @if (!isDeleting) {
-                <span>{{ isTrash(gameToDelete) ? 'Permanently Delete' : 'Delete Game' }}</span>
+                <span>{{
+                  isTrash(gameToDelete) ? t('superadmin.delete.game.permanent') : t('superadmin.delete.game.title')
+                }}</span>
               }
               @if (isDeleting) {
                 <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
@@ -548,7 +559,7 @@
                   />
                 </svg>
               </div>
-              Set Game Quota
+              {{ t('superadmin.quota.modal.title') }}
             </h3>
             <button (click)="closeQuotaModal()" class="text-gray-400 hover:text-white transition">
               <svg
@@ -565,13 +576,15 @@
 
           <div class="p-6 space-y-4">
             <p class="text-gray-400 text-sm">
-              Set the maximum number of games allowed for
+              {{ t('superadmin.quota.modal.desc') }}
               <span class="text-white font-bold">{{ selectedUserForQuota?.email }}</span
               >.
             </p>
 
             <div class="space-y-2">
-              <label class="block text-xs uppercase tracking-wide text-gray-500 font-bold">Quota Limit</label>
+              <label class="block text-xs uppercase tracking-wide text-gray-500 font-bold">{{
+                t('superadmin.quota.modal.label')
+              }}</label>
               <input
                 type="number"
                 [(ngModel)]="newQuotaValue"
@@ -586,7 +599,7 @@
               (click)="closeQuotaModal()"
               class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition"
             >
-              Cancel
+              {{ t('superadmin.modal.cancel') }}
             </button>
             <button
               (click)="saveQuota()"
@@ -601,7 +614,7 @@
               >
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Save
+              {{ t('superadmin.quota.modal.save') }}
             </button>
           </div>
         </div>
@@ -633,15 +646,17 @@
                 />
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-white">Approve User</h3>
+            <h3 class="text-xl font-bold text-white">
+              {{ t('superadmin.approve.modal.title') }}
+            </h3>
           </div>
 
           <p class="text-gray-300">
-            Are you sure you want to approve <span class="font-bold text-white">{{ userToApprove.email }}</span
+            {{ t('superadmin.approve.modal.desc') }} <span class="font-bold text-white">{{ userToApprove.email }}</span
             >?
           </p>
           <p class="text-xs text-gray-500 bg-gray-900/50 p-3 rounded border border-gray-700">
-            This will grant them full administrative access to create games and manage their own students.
+            {{ t('superadmin.approve.modal.info') }}
           </p>
 
           <div class="flex gap-3 mt-2">
@@ -649,13 +664,13 @@
               (click)="cancelApprove()"
               class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
             >
-              Cancel
+              {{ t('superadmin.modal.cancel') }}
             </button>
             <button
               (click)="confirmApprove()"
               class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
             >
-              Confirm Approval
+              {{ t('superadmin.approve.modal.confirm') }}
             </button>
           </div>
         </div>
@@ -687,16 +702,18 @@
                 />
               </svg>
             </div>
-            <h3 class="text-xl font-bold text-white">Reject Registration</h3>
+            <h3 class="text-xl font-bold text-white">{{ t('superadmin.reject.modal.title') }}</h3>
           </div>
 
           <p class="text-gray-300">
-            Reject registration for <span class="font-bold text-white">{{ userToReject?.email }}</span
+            {{ t('superadmin.reject.modal.desc') }} <span class="font-bold text-white">{{ userToReject?.email }}</span
             >?
           </p>
 
           <div class="space-y-3 mt-2">
-            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Reasons (shown to user)</p>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              {{ t('superadmin.reject.modal.reasons') }}
+            </p>
             <div class="space-y-2">
               <label
                 class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
@@ -707,7 +724,7 @@
                   [checked]="rejectionReasons.includes('institution_not_verified')"
                   class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
                 />
-                <span class="text-sm text-gray-300">Institution could not be verified</span>
+                <span class="text-sm text-gray-300">{{ t('superadmin.reject.modal.reason.institution') }}</span>
               </label>
               <label
                 class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
@@ -718,7 +735,7 @@
                   [checked]="rejectionReasons.includes('insufficient_reason')"
                   class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
                 />
-                <span class="text-sm text-gray-300">Insufficient reason for usage</span>
+                <span class="text-sm text-gray-300">{{ t('superadmin.reject.modal.reason.insufficient') }}</span>
               </label>
               <label
                 class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
@@ -729,13 +746,15 @@
                   [checked]="rejectionReasons.includes('other')"
                   class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
                 />
-                <span class="text-sm text-gray-300">Other reasons</span>
+                <span class="text-sm text-gray-300">{{ t('superadmin.reject.modal.reason.other') }}</span>
               </label>
             </div>
           </div>
 
           <div class="space-y-2">
-            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Custom Message (optional)</label>
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{
+              t('superadmin.reject.modal.custom')
+            }}</label>
             <textarea
               [(ngModel)]="customRejectionMessage"
               rows="3"
@@ -753,8 +772,8 @@
               class="w-4 h-4 rounded text-orange-500 bg-gray-700 border-gray-600"
             />
             <div class="flex flex-col">
-              <span class="text-sm font-bold text-orange-200">Ban Email Address</span>
-              <span class="text-[10px] text-orange-300/70">Block this email from future registration attempts.</span>
+              <span class="text-sm font-bold text-orange-200">{{ t('superadmin.reject.modal.ban') }}</span>
+              <span class="text-[10px] text-orange-300/70">{{ t('superadmin.reject.modal.banInfo') }}</span>
             </div>
           </label>
 
@@ -763,13 +782,13 @@
               (click)="cancelReject()"
               class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
             >
-              Cancel
+              {{ t('superadmin.modal.cancel') }}
             </button>
             <button
               (click)="confirmReject()"
               class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
             >
-              Send Rejection
+              {{ t('superadmin.reject.modal.send') }}
             </button>
           </div>
         </div>

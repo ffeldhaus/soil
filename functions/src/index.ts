@@ -496,7 +496,7 @@ export const submitOnboarding = onCall(
     await userRef.set(userData, { merge: true });
     console.log(`submitOnboarding: User document created/updated for ${email}`);
 
-    // Notify Super Admin
+    // Notify System-Administrator
     const adminEmail = 'florian.feldhaus@gmail.com';
     try {
       console.log(`submitOnboarding: Sending notification to admin ${adminEmail}`);
@@ -515,7 +515,7 @@ export const manageAdmin = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-    // Super Admin Check
+    // System-Administrator Check
     const callerRef = db.collection('users').doc(request.auth.uid);
     const callerSnap = await callerRef.get();
 
@@ -525,7 +525,7 @@ export const manageAdmin = onCall(
       request.auth.token.email === 'florian.feldhaus@gmail.com';
 
     if (!isSuper) {
-      throw new HttpsError('permission-denied', 'Super Admins only');
+      throw new HttpsError('permission-denied', 'System-Administratoren only');
     }
 
     const { targetUid, action, value, lang, origin } = request.data;
@@ -585,7 +585,7 @@ export const manageAdmin = onCall(
           await db.collection('banned_emails').doc(targetEmail).set({
             bannedAt: admin.firestore.FieldValue.serverTimestamp(),
             bannedBy: request.auth.uid,
-            reason: 'Rejected by Super Admin',
+            reason: 'Rejected by System-Administrator',
           });
         }
       }
@@ -594,7 +594,7 @@ export const manageAdmin = onCall(
     } else if (action === 'ban') {
       // Full Ban
       updates.status = 'banned';
-      updates.role = 'pending'; // Revoke admin privileges
+      updates.role = 'banned'; // Revoke admin privileges
 
       const targetDoc = await targetRef.get();
       const targetEmail = targetDoc.data()?.email;
@@ -602,7 +602,7 @@ export const manageAdmin = onCall(
         await db.collection('banned_emails').doc(targetEmail).set({
           bannedAt: admin.firestore.FieldValue.serverTimestamp(),
           bannedBy: request.auth.uid,
-          reason: 'Banned by Super Admin',
+          reason: 'Banned by System-Administrator',
         });
       }
     } else if (action === 'delete') {
@@ -672,19 +672,21 @@ export const getSystemStats = onCall(async (request) => {
     (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
     request.auth.token.email === 'florian.feldhaus@gmail.com';
 
-  if (!isSuper) throw new HttpsError('permission-denied', 'Super Admins only');
+  if (!isSuper) throw new HttpsError('permission-denied', 'System-Administratoren only');
 
   // Aggregations
   const gamesColl = db.collection('games');
   const usersColl = db.collection('users');
 
   const totalGamesSnap = await gamesColl.count().get();
-  const deletedGamesSnap = await gamesColl.where('status', '==', 'deleted').count().get();
+  const deletedGamesSnap = await gamesColl.where('deletedAt', '!=', null).count().get();
 
   // For users, we want specific role counts
   const totalUsersSnap = await usersColl.count().get();
   const pendingUsersSnap = await usersColl.where('role', '==', 'pending').count().get();
   const adminUsersSnap = await usersColl.where('role', 'in', ['admin', 'superadmin']).count().get();
+  const rejectedUsersSnap = await usersColl.where('role', '==', 'rejected').count().get();
+  const bannedUsersSnap = await usersColl.where('role', '==', 'banned').count().get();
 
   return {
     games: {
@@ -696,6 +698,8 @@ export const getSystemStats = onCall(async (request) => {
       total: totalUsersSnap.data().count,
       pending: pendingUsersSnap.data().count,
       admins: adminUsersSnap.data().count,
+      rejected: rejectedUsersSnap.data().count,
+      banned: bannedUsersSnap.data().count,
     },
   };
 });
@@ -710,7 +714,7 @@ export const getPendingUsers = onCall(async (request) => {
     (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
     request.auth.token.email === 'florian.feldhaus@gmail.com';
 
-  if (!isSuper) throw new HttpsError('permission-denied', 'Super Admins only');
+  if (!isSuper) throw new HttpsError('permission-denied', 'System-Administratoren only');
 
   const snap = await db.collection('users').where('role', '==', 'pending').get();
   return snap.docs.map((d) => d.data());
@@ -719,16 +723,16 @@ export const getPendingUsers = onCall(async (request) => {
 export const getAllAdmins = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-  // Super Check
+  // System Check
   const callerRef = db.collection('users').doc(request.auth.uid);
   const callerSnap = await callerRef.get();
   const isSuper =
     (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
     request.auth.token.email === 'florian.feldhaus@gmail.com';
 
-  if (!isSuper) throw new HttpsError('permission-denied', 'Super Admins only');
+  if (!isSuper) throw new HttpsError('permission-denied', 'System-Administratoren only');
 
-  const snap = await db.collection('users').where('role', 'in', ['admin', 'superadmin']).get();
+  const snap = await db.collection('users').get();
   return snap.docs.map((d) => d.data());
 });
 
@@ -751,7 +755,7 @@ export const getAdminGames = onCall(async (request) => {
       request.auth.token.email === 'florian.feldhaus@gmail.com';
 
     if (!isSuper) {
-      throw new HttpsError('permission-denied', 'Only Super Admins can view other users games.');
+      throw new HttpsError('permission-denied', 'Only System-Administratoren can view other users games.');
     }
     searchUid = targetUid;
   }
@@ -894,7 +898,7 @@ export const deleteGames = onCall(async (request) => {
     throw new HttpsError('invalid-argument', 'No game IDs provided');
   }
 
-  // Check if Super Admin
+  // Check if System-Administrator
   const callerRef = db.collection('users').doc(request.auth.uid);
   const callerSnap = await callerRef.get();
   const isSuper =
@@ -931,7 +935,7 @@ export const deleteGames = onCall(async (request) => {
           }
         }
       } else {
-        console.warn(`Skipping delete for ${gameId}: Not owner and not super admin.`);
+        console.warn(`Skipping delete for ${gameId}: Not owner and not system-administrator.`);
       }
     }
   }

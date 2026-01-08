@@ -15,6 +15,13 @@ export class SuperAdminStatsComponent {
       'superadmin.stats.totalGames': $localize`:@@superadmin.stats.totalGames:Gesamt Spiele`,
       'superadmin.stats.created': $localize`:@@superadmin.stats.created:erstellt`,
       'superadmin.stats.active': $localize`:@@superadmin.stats.active:Aktiv`,
+      'superadmin.stats.trash': $localize`:@@superadmin.stats.trash:Papierkorb`,
+      'superadmin.stats.totalUsers': $localize`:@@superadmin.stats.totalUsers:Gesamt Benutzer`,
+      'superadmin.stats.registered': $localize`:@@superadmin.stats.registered:registriert`,
+      'superadmin.stats.teachers': $localize`:@@superadmin.stats.teachers:Lehrkräfte`,
+      'superadmin.stats.pending': $localize`:@@superadmin.stats.pending:Ausstehend`,
+      'superadmin.stats.rejected': $localize`:@@superadmin.stats.rejected:Abgelehnt`,
+      'superadmin.stats.banned': $localize`:@@superadmin.stats.banned:Gesperrt`,
     };
     return translations[key] || key;
   }

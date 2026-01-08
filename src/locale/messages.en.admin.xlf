@@ -15,8 +15,8 @@
         <target>Thank you for registering, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/>{{ userdisplayName }}<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</target>
       </trans-unit>
       <trans-unit id="dashboard.pending.message" datatype="html">
-        <source>Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.</source>
-        <target>Your account is currently under review by a Super Admin. You will receive an email once your account has been approved.</target>
+        <source>Ihr Konto wird derzeit von einem System-Administrator überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.</source>
+        <target>Your account is currently under review by a System Administrator. You will receive an email once your account has been approved.</target>
       </trans-unit>
       <trans-unit id="dashboard.logout" datatype="html">
         <source>Abmelden</source>
@@ -31,12 +31,12 @@
         <target>Loading games...</target>
       </trans-unit>
       <trans-unit id="dashboard.super.title" datatype="html">
-        <source>Super-Admin-Zugriff</source>
-        <target>Super Admin Access</target>
+        <source>System-Administrator-Zugriff</source>
+        <target>System Administrator Access</target>
       </trans-unit>
       <trans-unit id="dashboard.super.redirect" datatype="html">
-        <source>Weiterleitung zur Super-Admin-Konsole...</source>
-        <target>Redirecting you to the Super Admin Console...</target>
+        <source>Weiterleitung zum System-Dashboard...</source>
+        <target>Redirecting you to the System Dashboard...</target>
       </trans-unit>
       <trans-unit id="dashboard.super.btnGo" datatype="html">
         <source>Zur Konsole</source>
@@ -363,8 +363,236 @@
         <target>Login with Google</target>
       </trans-unit>
       <trans-unit id="superadmin.title" datatype="html">
-        <source>SOIL SUPER ADMIN</source>
-        <target>SOIL SUPER ADMIN</target>
+        <source>System-Administrator</source>
+        <target>System Administrator</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.trash" datatype="html">
+        <source>Papierkorb</source>
+        <target>Trash</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.totalUsers" datatype="html">
+        <source>Gesamt Benutzer</source>
+        <target>Total Users</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.registered" datatype="html">
+        <source>registriert</source>
+        <target>registered</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.teachers" datatype="html">
+        <source>Lehrkräfte</source>
+        <target>Teachers</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.pending" datatype="html">
+        <source>Ausstehend</source>
+        <target>Pending</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.rejected" datatype="html">
+        <source>Abgelehnt</source>
+        <target>Rejected</target>
+      </trans-unit>
+      <trans-unit id="superadmin.stats.banned" datatype="html">
+        <source>Gesperrt</source>
+        <target>Banned</target>
+      </trans-unit>
+      <trans-unit id="superadmin.pending.title" datatype="html">
+        <source>Ausstehende Genehmigungen</source>
+        <target>Pending Approvals</target>
+      </trans-unit>
+      <trans-unit id="superadmin.admins.title" datatype="html">
+        <source>Lehrkräfte (Administratoren)</source>
+        <target>Teachers (Administrators)</target>
+      </trans-unit>
+      <trans-unit id="superadmin.table.user" datatype="html">
+        <source>Benutzer / E-Mail</source>
+        <target>User / Email</target>
+      </trans-unit>
+      <trans-unit id="superadmin.table.role" datatype="html">
+        <source>Rolle</source>
+        <target>Role</target>
+      </trans-unit>
+      <trans-unit id="superadmin.table.status" datatype="html">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="superadmin.table.quota" datatype="html">
+        <source>Limit</source>
+        <target>Quota</target>
+      </trans-unit>
+      <trans-unit id="superadmin.table.games" datatype="html">
+        <source>Spiele</source>
+        <target>Games</target>
+      </trans-unit>
+      <trans-unit id="superadmin.table.actions" datatype="html">
+        <source>Aktionen</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="superadmin.actions.approve" datatype="html">
+        <source>Genehmigen</source>
+        <target>Approve</target>
+      </trans-unit>
+      <trans-unit id="superadmin.actions.reject" datatype="html">
+        <source>Ablehnen</source>
+        <target>Reject</target>
+      </trans-unit>
+      <trans-unit id="superadmin.actions.ban" datatype="html">
+        <source>Sperren</source>
+        <target>Ban</target>
+      </trans-unit>
+      <trans-unit id="superadmin.actions.delete" datatype="html">
+        <source>Löschen</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="superadmin.actions.games" datatype="html">
+        <source>Spiele</source>
+        <target>Games</target>
+      </trans-unit>
+      <trans-unit id="superadmin.actions.quota" datatype="html">
+        <source>Limit</source>
+        <target>Quota</target>
+      </trans-unit>
+      <trans-unit id="superadmin.pending.card.institution" datatype="html">
+        <source>Institution</source>
+        <target>Institution</target>
+      </trans-unit>
+      <trans-unit id="superadmin.pending.card.website" datatype="html">
+        <source>Website</source>
+        <target>Website</target>
+      </trans-unit>
+      <trans-unit id="superadmin.pending.card.why" datatype="html">
+        <source>Warum Soil?</source>
+        <target>Why Soil?</target>
+      </trans-unit>
+      <trans-unit id="superadmin.pending.card.pending" datatype="html">
+        <source>Ausstehend</source>
+        <target>Pending</target>
+      </trans-unit>
+      <trans-unit id="superadmin.games.title" datatype="html">
+        <source>Spiele von</source>
+        <target>Games by</target>
+      </trans-unit>
+      <trans-unit id="superadmin.games.close" datatype="html">
+        <source>Schließen</source>
+        <target>Close</target>
+      </trans-unit>
+      <trans-unit id="superadmin.games.loading" datatype="html">
+        <source>Spiele werden geladen...</source>
+        <target>Loading games...</target>
+      </trans-unit>
+      <trans-unit id="superadmin.games.none" datatype="html">
+        <source>Keine Spiele für diese Lehrkraft gefunden.</source>
+        <target>No games found for this teacher.</target>
+      </trans-unit>
+      <trans-unit id="superadmin.games.status" datatype="html">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="superadmin.games.round" datatype="html">
+        <source>Runde</source>
+        <target>Round</target>
+      </trans-unit>
+      <trans-unit id="superadmin.games.created" datatype="html">
+        <source>Erstellt</source>
+        <target>Created</target>
+      </trans-unit>
+      <trans-unit id="superadmin.delete.game.title" datatype="html">
+        <source>Spiel löschen</source>
+        <target>Delete Game</target>
+      </trans-unit>
+      <trans-unit id="superadmin.delete.game.confirm" datatype="html">
+        <source>Bist du sicher, dass du dieses Spiel löschen möchtest?</source>
+        <target>Are you sure you want to delete this game?</target>
+      </trans-unit>
+      <trans-unit id="superadmin.delete.game.permanent" datatype="html">
+        <source>Dauerhaft löschen</source>
+        <target>Permanent Deletion</target>
+      </trans-unit>
+      <trans-unit id="superadmin.delete.game.soft" datatype="html">
+        <source>In den Papierkorb verschieben</source>
+        <target>Move to Trash</target>
+      </trans-unit>
+      <trans-unit id="superadmin.delete.game.warning" datatype="html">
+        <source>WARNUNG: Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.</source>
+        <target>WARNING: This action cannot be undone. All game data will be destroyed immediately.</target>
+      </trans-unit>
+      <trans-unit id="superadmin.delete.game.typeConfirm" datatype="html">
+        <source>Tippe &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
+        <target>Type &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; to confirm:</target>
+      </trans-unit>
+      <trans-unit id="superadmin.quota.modal.title" datatype="html">
+        <source>Spiel-Limit setzen</source>
+        <target>Set Game Quota</target>
+      </trans-unit>
+      <trans-unit id="superadmin.quota.modal.desc" datatype="html">
+        <source>Lege fest, wie viele Spiele diese Lehrkraft maximal erstellen darf:</source>
+        <target>Set the maximum number of games this teacher can create:</target>
+      </trans-unit>
+      <trans-unit id="superadmin.quota.modal.label" datatype="html">
+        <source>Limit</source>
+        <target>Quota</target>
+      </trans-unit>
+      <trans-unit id="superadmin.quota.modal.save" datatype="html">
+        <source>Speichern</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="superadmin.approve.modal.title" datatype="html">
+        <source>Benutzer genehmigen</source>
+        <target>Approve User</target>
+      </trans-unit>
+      <trans-unit id="superadmin.approve.modal.desc" datatype="html">
+        <source>Bist du sicher, dass du diesen Benutzer genehmigen möchtest?</source>
+        <target>Are you sure you want to approve this user?</target>
+      </trans-unit>
+      <trans-unit id="superadmin.approve.modal.info" datatype="html">
+        <source>Dies gewährt vollen administrativen Zugriff auf das Dashboard.</source>
+        <target>This will grant them full administrative access to the dashboard.</target>
+      </trans-unit>
+      <trans-unit id="superadmin.approve.modal.confirm" datatype="html">
+        <source>Genehmigung bestätigen</source>
+        <target>Confirm Approval</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.title" datatype="html">
+        <source>Registrierung ablehnen</source>
+        <target>Reject Registration</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.desc" datatype="html">
+        <source>Bist du sicher, dass du die Registrierung ablehnen möchtest?</source>
+        <target>Are you sure you want to reject this registration?</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.reasons" datatype="html">
+        <source>Gründe (werden dem Benutzer per E-Mail mitgeteilt)</source>
+        <target>Reasons (shown to user in email)</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.reason.institution" datatype="html">
+        <source>Institution konnte nicht verifiziert werden</source>
+        <target>Institution could not be verified</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.reason.insufficient" datatype="html">
+        <source>Grund für die Nutzung nicht ausreichend</source>
+        <target>Insufficient reason for usage</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.reason.other" datatype="html">
+        <source>Andere Gründe</source>
+        <target>Other reasons</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.custom" datatype="html">
+        <source>Zusätzliche Nachricht (optional)</source>
+        <target>Custom message (optional)</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.ban" datatype="html">
+        <source>E-Mail-Adresse sperren</source>
+        <target>Ban Email Address</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.banInfo" datatype="html">
+        <source>Blockiert diese E-Mail-Adresse für zukünftige Registrierungen.</source>
+        <target>Block this email from future registration attempts.</target>
+      </trans-unit>
+      <trans-unit id="superadmin.reject.modal.send" datatype="html">
+        <source>Ablehnung senden</source>
+        <target>Send Rejection</target>
+      </trans-unit>
+      <trans-unit id="superadmin.modal.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <target>Cancel</target>
       </trans-unit>
       <trans-unit id="superadmin.badge" datatype="html">
         <source>SUPER</source>

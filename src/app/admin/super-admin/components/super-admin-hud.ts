@@ -16,7 +16,7 @@ export class SuperAdminHudComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'superadmin.title': $localize`:@@superadmin.title:Super Admin`,
+      'superadmin.title': $localize`:@@superadmin.title:System-Administrator`,
       'user.photoURL': $localize`:@@user.photoURL:assets/images/ok.jpg`,
       'superadmin.badge': $localize`:@@superadmin.badge:System`,
       'superadmin.logout': $localize`:@@superadmin.logout:Abmelden`,

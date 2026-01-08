@@ -31,7 +31,7 @@
     </div>
     <div class="mt-4 flex gap-4 text-xs font-mono">
       <span class="text-emerald-400">{{ t('superadmin.stats.active') }}</span>
-      <span class="text-red-400">{{ stats?.games?.deleted || 0 }} Trash</span>
+      <span class="text-red-400">{{ stats?.games?.deleted || 0 }} {{ t('superadmin.stats.trash') }}</span>
     </div>
   </div>
 
@@ -55,14 +55,22 @@
         />
       </svg>
     </div>
-    <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2">Total Users</h3>
+    <h3 class="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2">
+      {{ t('superadmin.stats.totalUsers') }}
+    </h3>
     <div class="flex items-end gap-2">
       <span class="text-4xl font-bold text-white">{{ stats?.users?.total || 0 }}</span>
-      <span class="text-sm text-gray-400 mb-1">registered</span>
+      <span class="text-sm text-gray-400 mb-1">{{ t('superadmin.stats.registered') }}</span>
     </div>
-    <div class="mt-4 flex gap-4 text-xs font-mono">
-      <span class="text-purple-400">{{ stats?.users?.admins || 0 }} Admins</span>
-      <span class="text-yellow-400">{{ stats?.users?.pending || 0 }} Pending</span>
+    <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono">
+      <span class="text-purple-400">{{ stats?.users?.admins || 0 }} {{ t('superadmin.stats.teachers') }}</span>
+      <span class="text-yellow-400">{{ stats?.users?.pending || 0 }} {{ t('superadmin.stats.pending') }}</span>
+      @if (stats?.users?.rejected) {
+        <span class="text-orange-400">{{ stats?.users?.rejected || 0 }} {{ t('superadmin.stats.rejected') }}</span>
+      }
+      @if (stats?.users?.banned) {
+        <span class="text-red-500">{{ stats?.users?.banned || 0 }} {{ t('superadmin.stats.banned') }}</span>
+      }
     </div>
   </div>
 </div>
