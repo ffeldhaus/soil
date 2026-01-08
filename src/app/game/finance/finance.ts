@@ -40,7 +40,8 @@ interface PlayerFinanceData {
   prevResult?: RoundResult;
   detailedExpenses?: DetailedExpenses;
   detailedIncome?: DetailedIncome;
-  capitalHistory: number[];
+  capitalHistory: number[]; // History up to currentViewingRound
+  isCurrentPlayer: boolean;
 }
 
 @Component({
@@ -62,6 +63,7 @@ export class Finance implements OnChanges {
       'crop.fieldbean': $localize`:@@crop.fieldbean:Ackerbohne`,
       'crop.animals': $localize`:@@crop.animals:Tiere`,
       'crop.fallow': $localize`:@@crop.fallow:Brachland`,
+      'crop.grass': $localize`:@@crop.grass:Tiere`,
     };
     return translations[key] || key;
   }
@@ -70,7 +72,6 @@ export class Finance implements OnChanges {
   @Input() playerUid = '';
 
   players: PlayerFinanceData[] = [];
-  isRoundOne = false;
   currentViewingRound = 0;
   availableRounds: number[] = [];
 
@@ -78,7 +79,7 @@ export class Finance implements OnChanges {
     if (!this.game) return;
 
     if (this.currentViewingRound === 0 || this.currentViewingRound > this.game.currentRoundNumber) {
-      this.currentViewingRound = this.viewingRound || this.game.currentRoundNumber;
+      this.currentViewingRound = this.viewingRound || this.game.currentRoundNumber || 1;
     }
 
     this.updateAvailableRounds();
@@ -86,6 +87,7 @@ export class Finance implements OnChanges {
   }
 
   private updateAvailableRounds() {
+    // Show all rounds that have been completed (have a result)
     this.availableRounds = Array.from({ length: this.game.currentRoundNumber }, (_, i) => i + 1);
   }
 
@@ -95,41 +97,45 @@ export class Finance implements OnChanges {
   }
 
   private processPlayerData() {
-    this.isRoundOne = this.currentViewingRound === 1;
-
     this.players = Object.values(this.game.players)
       .map((player) => {
+        // Capital history should start at 1000 for Round 0, then follow results
+        const historyData = [1000];
+        player.history.forEach((r) => {
+          if (r.number <= this.currentViewingRound && r.result) {
+            historyData.push(r.result.capital);
+          }
+        });
+
         const data: PlayerFinanceData = {
           uid: player.uid,
           name: player.displayName || `Player ${player.uid.substring(0, 4)}`,
-          capitalHistory: player.history.map((r) => r.result?.capital || 0),
+          capitalHistory: historyData,
+          isCurrentPlayer: player.uid === this.playerUid,
         };
 
         // Current viewing round result
         const currentRound = player.history.find((r) => r.number === this.currentViewingRound);
         if (currentRound) {
           data.result = currentRound.result;
+          data.decision = {
+            fertilizer: currentRound.decision.fertilizer,
+            pesticide: currentRound.decision.pesticide,
+            organisms: currentRound.decision.organisms,
+            machines: currentRound.decision.machines,
+            organic: currentRound.decision.organic,
+          };
           this.calculateDetails(data, currentRound);
-        }
-
-        // Previous round decision/result (for comparison)
-        if (this.currentViewingRound > 1) {
-          const prevRound = player.history.find((r) => r.number === this.currentViewingRound - 1);
-          if (prevRound) {
-            data.decision = {
-              fertilizer: prevRound.decision.fertilizer,
-              pesticide: prevRound.decision.pesticide,
-              organisms: prevRound.decision.organisms,
-              machines: prevRound.decision.machines,
-              organic: prevRound.decision.organic,
-            };
-            data.prevResult = prevRound.result;
-          }
         }
 
         return data;
       })
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => {
+        // Current player first, then alphabetical
+        if (a.isCurrentPlayer) return -1;
+        if (b.isCurrentPlayer) return 1;
+        return a.name.localeCompare(b.name);
+      });
   }
 
   private calculateDetails(data: PlayerFinanceData, round: Round) {
@@ -139,7 +145,11 @@ export class Finance implements OnChanges {
 
     // Calculate detailed seeds
     const seeds: Record<string, number> = {};
+    let animalCount = 0;
     Object.entries(decision.parcels).forEach(([_, crop]) => {
+      if (crop === 'Grass') {
+        animalCount++;
+      }
       if (crop !== 'Fallow' && crop !== 'Grass' && GAME_CONSTANTS.CROPS[crop]) {
         const cost = decision.organic
           ? GAME_CONSTANTS.CROPS[crop].seedPrice.organic
@@ -162,15 +172,15 @@ export class Finance implements OnChanges {
     data.detailedExpenses = {
       seeds,
       investments: {
-        machines: result.expenses.investments || 0, // In current engine, investments is mostly machines
-        animals: 0, // Placeholder if animals are added later
+        machines: result.expenses.investments || 0,
+        animals: 0, // In current engine, livestock is not a one-time investment but a running cost per parcel
       },
       running: {
         organic_control: decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0,
         fertilize: decision.fertilizer ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0,
         pesticide: decision.pesticide ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0,
         organisms: decision.organisms ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0,
-        animals: 0,
+        animals: animalCount * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS,
         base: decision.organic
           ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC
           : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL,
@@ -184,20 +194,40 @@ export class Finance implements OnChanges {
     };
   }
 
-  getChartHeight(capital: number, max: number): string {
-    if (max === 0) return '0%';
-    // Use a base height and scale
-    const height = Math.max(10, (capital / max) * 100);
-    return `${height}%`;
-  }
+  // --- Graph Helpers ---
 
   getMaxCapital(): number {
-    let max = 0;
+    let max = 1000;
     this.players.forEach((p) => {
       p.capitalHistory.forEach((c) => {
         if (c > max) max = c;
       });
     });
-    return max || 1000;
+    return Math.ceil(max / 500) * 500; // Round to nearest 500
+  }
+
+  getGraphPath(history: number[]): string {
+    if (history.length < 2) return '';
+    const maxCap = this.getMaxCapital();
+    const maxRound = this.availableRounds.length;
+
+    return history
+      .map((cap, roundIdx) => {
+        const x = (roundIdx / maxRound) * 100;
+        const y = 100 - (cap / maxCap) * 100;
+        return `${roundIdx === 0 ? 'M' : 'L'} ${x} ${y}`;
+      })
+      .join(' ');
+  }
+
+  getGraphPoints(history: number[]) {
+    const maxCap = this.getMaxCapital();
+    const maxRound = this.availableRounds.length;
+    return history.map((cap, roundIdx) => ({
+      x: (roundIdx / maxRound) * 100,
+      y: 100 - (cap / maxCap) * 100,
+      val: cap,
+      round: roundIdx,
+    }));
   }
 }

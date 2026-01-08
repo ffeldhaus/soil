@@ -72,7 +72,7 @@ describe('Finance Component Logic', () => {
     component.game = JSON.parse(JSON.stringify(mockGame)); // Fresh copy
     component.playerUid = 'player1';
     component.viewingRound = 2;
-    // component.ngOnChanges(); // Trigger initial logic
+    component.ngOnChanges(); // Trigger initial logic
   });
 
   it('should calculate detailed seeds correctly for Round 1', () => {
@@ -129,10 +129,11 @@ describe('Finance Component Logic', () => {
   it('should calculate capital history correctly', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
-    expect(player?.capitalHistory).toEqual([11000, 13000]);
+    expect(player?.capitalHistory).toEqual([1000, 11000, 13000]);
   });
 
   it('should update currentViewingRound in ngOnChanges', () => {
+    component.currentViewingRound = 0;
     component.viewingRound = 1;
     component.ngOnChanges();
     expect(component.currentViewingRound).toBe(1);

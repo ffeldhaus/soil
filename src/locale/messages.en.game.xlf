@@ -1074,6 +1074,10 @@
         </context-group>
         <target>undefined</target>
       </trans-unit>
+      <trans-unit id="crop.grass" datatype="html">
+        <source>Tiere</source>
+        <target>Livestock</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

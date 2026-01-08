@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { BehaviorSubject, type Observable } from 'rxjs';
+import { BehaviorSubject, Subject, debounceTime, type Observable } from 'rxjs';
 
 import type {
   CropType,
@@ -32,7 +32,15 @@ export class GameService {
   private stateSubject = new BehaviorSubject<GameState | null>(null);
   state$ = this.stateSubject.asObservable();
   private pendingDecisions: Record<number, CropType> = {};
+  private draftSaveSubject = new Subject<string>();
   currentRound: Round | null = null;
+
+  constructor() {
+    // Initialize debounced draft saving
+    this.draftSaveSubject.pipe(debounceTime(2000)).subscribe((gameId) => {
+      this.saveDraft(gameId);
+    });
+  }
 
   getParcelsValue() {
     return this.parcelsSubject.value;
@@ -84,9 +92,9 @@ export class GameService {
     }
     this.parcelsSubject.next(updatedParcels);
 
-    // Auto-Save Immediately
+    // Auto-Save with debounce
     if (gameId) {
-      this.saveDraft(gameId);
+      this.draftSaveSubject.next(gameId);
     }
   }
 

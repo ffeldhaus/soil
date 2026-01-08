@@ -40,16 +40,21 @@ describe('GameService', () => {
   });
 
   it('should call saveDraft when updating parcel decision if gameId is provided', async () => {
+    vi.useFakeTimers();
     const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
     vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
 
     service.updateParcelDecision(0, 'Corn', 'test-game-id');
 
-    // Wait for async saveDraft
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    // Fast-forward debounce time
+    vi.advanceTimersByTime(2000);
+
+    // Give microtasks a chance to run
+    await Promise.resolve();
 
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'saveDraft');
     expect(mockCallable).toHaveBeenCalled();
+    vi.useRealTimers();
   });
 
   it('should load game data correctly', async () => {
