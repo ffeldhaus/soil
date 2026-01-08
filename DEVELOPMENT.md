@@ -17,6 +17,7 @@ This document outlines the local development strategy, testing procedures, and c
 - **Manual**: Ensure the User Manual (`src/app/manual/manual.ts`) is kept up to date whenever game logic or crop properties change.
 - **Sitemap & SEO**: Ensure the Sitemap (`public/sitemap.xml`) and `public/robots.txt` are kept up to date whenever public routes are added or changed.
 - **Compliance**: All public pages and views must include a link to the Impressum page.
+- **Search**: NEVER run a `grep` recursively in the project without excluding files/folders from `.gitignore`. Use tools like `ripgrep` or properly configured search tools that respect project ignore patterns to avoid excessive output and token consumption.
 
 ## Prerequisites
 

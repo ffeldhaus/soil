@@ -1,4 +1,4 @@
-import { VertexAI } from '@google-cloud/vertexai';
+import { GoogleGenAI } from '@google/genai';
 import * as admin from 'firebase-admin';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
@@ -18,11 +18,11 @@ setGlobalOptions({
 admin.initializeApp();
 const db = admin.firestore();
 
-// Initialize Vertex AI
-const vertexAI = new VertexAI({ project: 'soil-602ea', location: 'europe-west4' });
-const generativeModel = vertexAI.getGenerativeModel({
-  model: 'gemini-2.5-flash',
-  generationConfig: { responseMimeType: 'application/json' },
+// Initialize Vertex AI with the new @google/genai SDK
+const ai = new GoogleGenAI({
+  vertexai: true,
+  project: 'soil-602ea',
+  location: 'europe-west4',
 });
 
 // --- HTTP Callable Functions for Game Logic ---
@@ -1148,8 +1148,12 @@ export const submitFeedback = onCall(
         - sentiment: One of 'positive', 'neutral', 'negative'.
       `;
 
-      const result = await generativeModel.generateContent(prompt);
-      const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+      const result = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: { responseMimeType: 'application/json' },
+      });
+      const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (responseText) {
         const analysis = JSON.parse(responseText);
