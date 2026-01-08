@@ -22,7 +22,10 @@ const performDeployment = async (newVersion) => {
     // Check for uncommitted changes
     const status = execSync('git status --porcelain').toString().trim();
     if (status) {
-      console.error('\x1b[31m%s\x1b[0m', 'ERROR: You have uncommitted changes. Please commit or stash them before releasing.');
+      console.error(
+        '\x1b[31m%s\x1b[0m',
+        'ERROR: You have uncommitted changes. Please commit or stash them before releasing.',
+      );
       console.log(status);
       process.exit(1);
     }
