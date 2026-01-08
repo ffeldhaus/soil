@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { BehaviorSubject, Subject, debounceTime, type Observable } from 'rxjs';
+import { BehaviorSubject, debounceTime, type Observable, Subject } from 'rxjs';
 
 import type {
   CropType,

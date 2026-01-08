@@ -50,33 +50,34 @@ _Note: You can also use `ng serve` for rapid UI-only development, but it will no
 
 1. **Understand**: Thoroughly understand the codebase context before proposing changes.
 2. **Plan**: Formulate a clear, grounded plan and share a concise summary before implementation.
-3. **Implement**: Follow the plan iteratively. Write unit tests alongside feature code. Note: Husky pre-commit hooks are optimized to skip tests and builds for documentation-only changes.
-4. **Commit**: Always commit changes as soon as a task is completed. This ensures a clean history and allows for easy rollbacks.
-5. **Verify**: The commit process automatically runs linting, formatting, unit tests, and a build of the application. It is therefore not necessary to run these commands manually before committing, as any errors will be caught and will prevent the commit.
+3. **Implement**: Follow the plan iteratively.
+4. **Commit**: Always commit changes as soon as a task is completed. You **do not** need to run linting, formatting, or unit tests manually before committing.
+5. **Verify (Automated)**:
+   - **Pre-commit Hook**: Automatically runs linting, formatting, and unit tests. If any check fails, the commit will be blocked.
+   - **Pre-push Hook**: Automatically runs the full E2E test suite. This ensures that no regressions are pushed to the repository.
 6. **Finalize**: Only after the commit has succeeded (meaning all automated checks passed) should the task be considered complete.
 
 ## Testing Strategy
 
-All changes must include relevant unit tests and, for critical flows, E2E tests.
+The project uses automated hooks to maintain code quality and stability.
 
-### 1. Unit Tests
+### 1. Pre-commit Hooks (Fast)
+These run automatically on every `git commit`:
+- **Biome**: Lints and formats the code.
+- **Vitest**: Runs frontend unit tests.
+- **Mocha**: Runs backend (Cloud Functions) unit tests.
+- **File Size Check**: Ensures no file exceeds manageable size limits (see `scripts/check-file-size.js`).
 
-Unit tests are fast and isolate specific logic. They are automatically run during the commit process.
-A pre-commit hook also checks for file sizes:
+### 2. Pre-push Hooks (Comprehensive)
+These run automatically on `git push`:
+- **Cypress**: Runs the complete E2E test suite.
 
-- **Warning**: If a code, documentation, JSON, or translation file exceeds **128KB**.
-- **Error**: If it exceeds **256KB**.
-  This ensures that files remain manageable for AI tools and maintainability. Exceptions can be defined in `scripts/check-file-size.js`.
-
-- **Frontend (Angular)**: `npm run test:unit`
-- **Backend (Firebase Functions)**: `npm run test:functions`
-
-### 2. End-to-End (E2E) Tests
-
-E2E tests verify the complete flow of the application from the user's perspective. These are NOT run during the commit process and should be run manually for critical changes.
-
-- **Run E2E Tests**: `npm run test:e2e`
-- **Interactive Mode**: `npm run test:e2e:open`
+### Manual Commands (If needed)
+While hooks handle the heavy lifting, you can still run checks manually:
+- **Frontend Unit Tests**: `npm run test:unit`
+- **Backend Unit Tests**: `npm run test:functions`
+- **E2E Tests**: `npm run test:e2e`
+- **Linting**: `npm run lint`
 
 ### 3. Continuous Integration (CI) & Standards
 

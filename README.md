@@ -26,20 +26,9 @@ Soil is a web-based agricultural simulation game built on the Firebase platform.
 - Firebase CLI (`npm install -g firebase-tools`)
 - Angular CLI (`npm install -g @angular/cli`)
 
-### Installation
+### Installation & Setup
 
-1. Clone the repository:
-
-   ```bash
-   git clone <repository-url>
-   cd soil
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   cd functions && npm install && cd ..
-   ```
+For detailed instructions on setting up Firebase, GCP APIs, and the email service, please see the [SETUP.md](SETUP.md) file.
 
 ### Local Development
 
