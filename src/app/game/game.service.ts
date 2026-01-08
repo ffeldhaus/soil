@@ -96,14 +96,20 @@ export class GameService {
       'saveDraft',
     );
 
-    // Construct partial decision for draft
+    // Construct full decision for draft to ensure no undefined values
+    const fullParcels: Record<number, CropType> = {};
+    const currentParcels = this.parcelsSubject.value;
+    for (let i = 0; i < 40; i++) {
+      fullParcels[i] = this.pendingDecisions[i] || currentParcels[i].crop || 'Fallow';
+    }
+
     const decision: RoundDecision = {
       machines: 0,
       organic: false,
       fertilizer: false,
       pesticide: false,
       organisms: false,
-      parcels: { ...this.pendingDecisions },
+      parcels: fullParcels,
     };
 
     try {
@@ -134,7 +140,7 @@ export class GameService {
 
     const currentParcels = this.parcelsSubject.value;
     for (let i = 0; i < 40; i++) {
-      decision.parcels[i] = this.pendingDecisions[i] || currentParcels[i].crop;
+      decision.parcels[i] = this.pendingDecisions[i] || currentParcels[i].crop || 'Fallow';
     }
 
     try {

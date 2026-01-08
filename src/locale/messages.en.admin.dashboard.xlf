@@ -1222,7 +1222,75 @@
           <context context-type="sourcefile">src/app/admin/dashboard/dashboard.ts</context>
           <context context-type="linenumber">171</context>
         </context-group>
-        <target>undefined</target>
+        <target>Thank you for your feedback!</target>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.green" datatype="html">
+        <source>Grünes</source>
+        <target>Green</target>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.sunny" datatype="html">
+        <source>Sonniges</source>
+        <target>Sunny</target>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.golden" datatype="html">
+        <source>Goldenes</source>
+        <target>Golden</target>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.misty" datatype="html">
+        <source>Nebeliges</source>
+        <target>Misty</target>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.fertile" datatype="html">
+        <source>Fruchtbares</source>
+        <target>Fertile</target>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.quiet" datatype="html">
+        <source>Stilles</source>
+        <target>Quiet</target>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.wild" datatype="html">
+        <source>Wildes</source>
+        <target>Wild</target>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.valley" datatype="html">
+        <source>Tal</source>
+        <target>Valley</target>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.field" datatype="html">
+        <source>Feld</source>
+        <target>Field</target>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.meadow" datatype="html">
+        <source>Wiesental</source>
+        <target>Meadow</target>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.farm" datatype="html">
+        <source>Gut</source>
+        <target>Farm</target>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.acre" datatype="html">
+        <source>Land</source>
+        <target>Acre</target>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.grove" datatype="html">
+        <source>Hain</source>
+        <target>Grove</target>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.orchard" datatype="html">
+        <source>Garten</source>
+        <target>Orchard</target>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.required" datatype="html">
+        <source>Erforderlich</source>
+        <target>Required</target>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.nameHint" datatype="html">
+        <source>Wähle einen aussagekräftigen Namen für dein Spiel.</source>
+        <target>Choose a descriptive name for your game.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.playerHint" datatype="html">
+        <source>Wie sollen die Teilnehmenden genannt werden?</source>
+        <target>What should the participants be called?</target>
       </trans-unit>
     </body>
   </file>

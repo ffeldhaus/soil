@@ -18,6 +18,7 @@ setGlobalOptions({
 
 admin.initializeApp();
 const db = admin.firestore();
+db.settings({ ignoreUndefinedProperties: true });
 
 // Initialize Vertex AI with the new @google/genai SDK
 const ai = new GoogleGenAI({

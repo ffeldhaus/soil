@@ -137,6 +137,20 @@ export class Dashboard implements OnInit, OnDestroy {
       'ai.level.middle': $localize`:@@ai.level.middle:Mittelstufe`,
       'ai.level.high': $localize`:@@ai.level.high:Oberstufe`,
       'user.photoURL': $localize`:@@user.photoURL:assets/images/ok.jpg`,
+      'dashboard.adj.green': $localize`:@@dashboard.adj.green:Grünes`,
+      'dashboard.adj.sunny': $localize`:@@dashboard.adj.sunny:Sonniges`,
+      'dashboard.adj.golden': $localize`:@@dashboard.adj.golden:Goldenes`,
+      'dashboard.adj.misty': $localize`:@@dashboard.adj.misty:Nebeliges`,
+      'dashboard.adj.fertile': $localize`:@@dashboard.adj.fertile:Fruchtbares`,
+      'dashboard.adj.quiet': $localize`:@@dashboard.adj.quiet:Stilles`,
+      'dashboard.adj.wild': $localize`:@@dashboard.adj.wild:Wildes`,
+      'dashboard.noun.valley': $localize`:@@dashboard.noun.valley:Tal`,
+      'dashboard.noun.field': $localize`:@@dashboard.noun.field:Feld`,
+      'dashboard.noun.meadow': $localize`:@@dashboard.noun.meadow:Wiesental`,
+      'dashboard.noun.farm': $localize`:@@dashboard.noun.farm:Gut`,
+      'dashboard.noun.acre': $localize`:@@dashboard.noun.acre:Land`,
+      'dashboard.noun.grove': $localize`:@@dashboard.noun.grove:Hain`,
+      'dashboard.noun.orchard': $localize`:@@dashboard.noun.orchard:Garten`,
     };
     return translations[key] || key;
   }
@@ -806,12 +820,12 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   // Random Names
-  private adjectives = ['Green', 'Sunny', 'Golden', 'Misty', 'Fertile', 'Quiet', 'Wild'];
-  private nouns = ['Valley', 'Field', 'Meadow', 'Farm', 'Acre', 'Grove', 'Orchard'];
+  private adjectives = ['green', 'sunny', 'golden', 'misty', 'fertile', 'quiet', 'wild'];
+  private nouns = ['valley', 'field', 'meadow', 'farm', 'acre', 'grove', 'orchard'];
 
   getRandomName() {
-    const adj = this.adjectives[Math.floor(Math.random() * this.adjectives.length)];
-    const noun = this.nouns[Math.floor(Math.random() * this.nouns.length)];
-    return `${adj} ${noun} ${Math.floor(Math.random() * 100)}`;
+    const adjKey = `dashboard.adj.${this.adjectives[Math.floor(Math.random() * this.adjectives.length)]}`;
+    const nounKey = `dashboard.noun.${this.nouns[Math.floor(Math.random() * this.nouns.length)]}`;
+    return `${this.t(adjKey)} ${this.t(nounKey)} ${Math.floor(Math.random() * 100)}`;
   }
 }

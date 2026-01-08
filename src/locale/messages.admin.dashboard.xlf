@@ -1115,6 +1115,57 @@
           <context context-type="linenumber">171</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="dashboard.adj.green" datatype="html">
+        <source>Grünes</source>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.sunny" datatype="html">
+        <source>Sonniges</source>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.golden" datatype="html">
+        <source>Goldenes</source>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.misty" datatype="html">
+        <source>Nebeliges</source>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.fertile" datatype="html">
+        <source>Fruchtbares</source>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.quiet" datatype="html">
+        <source>Stilles</source>
+      </trans-unit>
+      <trans-unit id="dashboard.adj.wild" datatype="html">
+        <source>Wildes</source>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.valley" datatype="html">
+        <source>Tal</source>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.field" datatype="html">
+        <source>Feld</source>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.meadow" datatype="html">
+        <source>Wiesental</source>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.farm" datatype="html">
+        <source>Gut</source>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.acre" datatype="html">
+        <source>Land</source>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.grove" datatype="html">
+        <source>Hain</source>
+      </trans-unit>
+      <trans-unit id="dashboard.noun.orchard" datatype="html">
+        <source>Garten</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.required" datatype="html">
+        <source>Erforderlich</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.nameHint" datatype="html">
+        <source>Wähle einen aussagekräftigen Namen für dein Spiel.</source>
+      </trans-unit>
+      <trans-unit id="dashboard.createGame.playerHint" datatype="html">
+        <source>Wie sollen die Teilnehmenden genannt werden?</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>
