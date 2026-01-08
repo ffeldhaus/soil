@@ -60,7 +60,7 @@
           {{ t('manual.crops.rotation') }}
         </h4>
 
-        <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
           <!-- Previous Crops Column -->
           <div class="flex flex-col gap-2 w-full md:w-auto items-center md:items-end flex-1 order-1">
             <span class="text-[8px] font-bold text-gray-600 uppercase mb-2">
@@ -68,7 +68,7 @@
             </span>
             <div
               *ngFor="let prev of getRotationData(crop.id, 'previous')"
-              class="px-3 py-2 rounded-xl text-[10px] font-bold border transition-all hover:scale-105 w-full md:w-44 text-center md:text-right print:w-32 print:py-1 print:text-[8px]"
+              class="px-3 py-2 rounded-xl text-[10px] font-bold border transition-all hover:scale-105 w-full md:w-32 text-center md:text-right print:w-32 print:py-1 print:text-[8px]"
               [ngClass]="getRotationClass(prev.quality)"
             >
               {{ t('crop.' + prev.id.toLowerCase()) }}
@@ -79,7 +79,7 @@
           <div class="flex items-center justify-center text-gray-600 order-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-8 w-8 rotate-90 md:rotate-0"
+              class="h-6 w-6 rotate-90 md:rotate-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -94,7 +94,7 @@
               {{ t('manual.crops.current') }}
             </span>
             <div
-              class="w-32 h-32 rounded-[2.5rem] bg-emerald-600 border-4 border-emerald-400 flex items-center justify-center text-white font-black shadow-xl shadow-emerald-900/50 text-center p-4 text-base leading-tight print:w-24 print:h-24 print:text-xs print:rounded-2xl"
+              class="w-28 h-28 rounded-[2.5rem] bg-emerald-600 border-4 border-emerald-400 flex items-center justify-center text-white font-black shadow-xl shadow-emerald-900/50 text-center p-4 text-sm leading-tight print:w-24 print:h-24 print:text-xs print:rounded-2xl"
             >
               {{ t('crop.' + crop.id.toLowerCase()) }}
             </div>
@@ -104,7 +104,7 @@
           <div class="flex items-center justify-center text-gray-600 order-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-8 w-8 rotate-90 md:rotate-0"
+              class="h-6 w-6 rotate-90 md:rotate-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -120,7 +120,7 @@
             </span>
             <div
               *ngFor="let next of getRotationData(crop.id, 'next')"
-              class="px-3 py-2 rounded-xl text-[10px] font-bold border transition-all hover:scale-105 w-full md:w-44 text-center md:text-left print:w-32 print:py-1 print:text-[8px]"
+              class="px-3 py-2 rounded-xl text-[10px] font-bold border transition-all hover:scale-105 w-full md:w-32 text-center md:text-left print:w-32 print:py-1 print:text-[8px]"
               [ngClass]="getRotationClass(next.quality)"
             >
               {{ t('crop.' + next.id.toLowerCase()) }}
