@@ -41,7 +41,7 @@
         },
         "noVoid": "error",
         "noStaticOnlyClass": "off",
-        "useLiteralKeys": "off"
+        "useLiteralKeys": "error"
       },
       "correctness": {
         "noUnusedVariables": "error",

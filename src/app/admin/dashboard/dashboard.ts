@@ -389,7 +389,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
     // Handle query params for notifications (e.g., from email links)
     this.route.params.subscribe((params) => {
-      const gameId = params['gameId'];
+      const gameId = params.gameId;
       if (gameId) {
         this.expandedGameId = gameId;
       }

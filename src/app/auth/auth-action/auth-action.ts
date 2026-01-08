@@ -91,8 +91,8 @@ export class AuthActionComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      this.mode = params['mode'];
-      this.oobCode = params['oobCode'];
+      this.mode = params.mode;
+      this.oobCode = params.oobCode;
 
       if (!this.mode || !this.oobCode) {
         this.status = 'error';

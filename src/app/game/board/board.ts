@@ -188,7 +188,7 @@ export class Board implements OnInit, OnDestroy {
         const claims = idTokenResult.claims;
 
         // Extract Game ID
-        let activeGameId = params['gameId'] || (claims['gameId'] as string);
+        let activeGameId = params.gameId || (claims.gameId as string);
         if (!activeGameId && user.uid.startsWith('player-')) {
           const parts = user.uid.split('-');
           if (parts.length >= 3) {
@@ -230,12 +230,12 @@ export class Board implements OnInit, OnDestroy {
           }
         }
 
-        if (claims['role'] === 'player' || user.uid.startsWith('player-')) {
+        if (claims.role === 'player' || user.uid.startsWith('player-')) {
           Promise.resolve().then(() => {
             this.isPlayer = true;
           });
         } else {
-          if (claims['role'] !== 'player' && !user.uid.startsWith('player-')) {
+          if (claims.role !== 'player' && !user.uid.startsWith('player-')) {
             this.router.navigate(['/admin']);
           }
         }
