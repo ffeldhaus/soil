@@ -1,234 +1,438 @@
-<?xml version='1.0' encoding='utf-8'?>
-<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="de" datatype="plaintext" original="ng2.template" target-language="en">
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="de" target-language="en" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="manual.title" datatype="html">
-        <source>Soil Handbuch</source>
-        <target>Soil User Manual</target>
-      </trans-unit>
-      <trans-unit id="manual.subtitle" datatype="html">
-        <source>Der Leitfaden für erfolgreiche Farmer</source>
-        <target>The guide for successful farmers</target>
-      </trans-unit>
-      <trans-unit id="manual.print" datatype="html">
-        <source>Als PDF speichern</source>
-        <target>Save as PDF</target>
-      </trans-unit>
-      <trans-unit id="manual.back" datatype="html">
-        <source>Zurück zum Spiel</source>
-        <target>Back to Game</target>
-      </trans-unit>
-      <trans-unit id="manual.printModal.title" datatype="html">
-        <source>Druckeinstellungen</source>
-        <target>Print Settings</target>
-      </trans-unit>
-      <trans-unit id="manual.printModal.size" datatype="html">
-        <source>Papierformat</source>
-        <target>Paper Size</target>
-      </trans-unit>
-      <trans-unit id="manual.printModal.orientation" datatype="html">
-        <source>Ausrichtung</source>
-        <target>Orientation</target>
-      </trans-unit>
-      <trans-unit id="manual.printModal.portrait" datatype="html">
-        <source>Hochformat</source>
-        <target>Portrait</target>
-      </trans-unit>
-      <trans-unit id="manual.printModal.landscape" datatype="html">
-        <source>Querformat</source>
-        <target>Landscape</target>
-      </trans-unit>
-      <trans-unit id="manual.printModal.print" datatype="html">
-        <source>Drucken</source>
-        <target>Print</target>
-      </trans-unit>
-      <trans-unit id="manual.printModal.cancel" datatype="html">
-        <source>Abbrechen</source>
-        <target>Cancel</target>
-      </trans-unit>
-      <trans-unit id="manual.footer" datatype="html">
-        <source>Viel Erfolg bei Ihrer Simulation! Achten Sie stets auf das Gleichgewicht zwischen Ertrag und Nachhaltigkeit.</source>
-        <target>Good luck with your simulation! Always keep an eye on the balance between yield and sustainability.</target>
-      </trans-unit>
-      <trans-unit id="manual.concepts.machines.title" datatype="html">
-        <source>Maschinen</source>
-        <target>Machines</target>
-      </trans-unit>
-      <trans-unit id="manual.concepts.machines.text" datatype="html">
-        <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
-        <target>Reduce labor costs, but deteriorate soil quality and depreciate without investment.</target>
-      </trans-unit>
-      <trans-unit id="manual.intro.title" datatype="html">
-        <source>Einführung</source>
-        <target>Introduction</target>
-      </trans-unit>
-      <trans-unit id="manual.intro.goal.title" datatype="html">
-        <source>Das Spielziel</source>
-        <target>Game Objective</target>
-      </trans-unit>
-      <trans-unit id="manual.intro.goal.text" datatype="html">
-        <source>In Soil führen Sie einen landwirtschaftlichen Betrieb über mehrere Runden. Ziel ist es, ein hohes Endkapital zu erwirtschaften und gleichzeitig die Bodenqualität für zukünftige Generationen zu erhalten. Ein nachhaltiges Handeln wird durch das Bio-Siegel belohnt, das höhere Verkaufspreise ermöglicht.</source>
-        <target>In Soil, you lead an agricultural operation over several rounds. The goal is to generate high closing capital while maintaining soil quality for future generations. Sustainable actions are rewarded with the Organic Seal, which enables higher selling prices.</target>
-      </trans-unit>
-      <trans-unit id="manual.intro.mechanics.title" datatype="html">
-        <source>Spielmechanik</source>
-        <target>Game Mechanics</target>
-      </trans-unit>
-      <trans-unit id="manual.intro.mechanics.text" datatype="html">
-        <source>Jede Runde entscheiden Sie, was auf Ihren Feldern gepflanzt wird. Beachten Sie dabei die Fruchtfolge: Bestimmte Pflanzen wachsen besser nach anderen. Dünger und Pestizide steigern den Ertrag, können aber langfristig den Boden belasten. Nützlinge und biologische Methoden fördern die Bodengesundheit.</source>
-        <target>Each round, you decide what to plant on your fields. Pay attention to crop rotation: certain plants grow better after others. Fertilizers and pesticides increase yield but can strain the soil in the long term. Beneficial organisms and organic methods promote soil health.</target>
-      </trans-unit>
-      <trans-unit id="manual.concepts.title" datatype="html">
-        <source>Konzepte &amp; Einheiten</source>
-        <target>Concepts &amp; Units</target>
-      </trans-unit>
       <trans-unit id="manual.concepts.units.title" datatype="html">
-        <source>Maßeinheiten</source>
-        <target>Units of Measure</target>
+        <source>Einheiten</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.units.text" datatype="html">
-        <source>In der Landwirtschaft nutzen wir spezifische Einheiten: &lt;b&gt;ha&lt;/b&gt; (Hektar) beschreibt die Fläche (1 ha = 10.000 m²). &lt;b&gt;dt&lt;/b&gt; (Dezitonne) beschreibt das Gewicht (1 dt = 100 kg). Erträge werden oft in &lt;b&gt;dt/ha&lt;/b&gt; (Dezitonnen pro Hektar) angegeben.</source>
-        <target>In agriculture, we use specific units: &lt;b&gt;ha&lt;/b&gt; (hectare) describes the area (1 ha = 10,000 m²). &lt;b&gt;dt&lt;/b&gt; (decitonne) describes the weight (1 dt = 100 kg). Yields are often given in &lt;b&gt;dt/ha&lt;/b&gt; (decitonnes per hectare).</target>
+        <source>Fläche in Hektar (ha), Ertrag in Dezitonnen (dt).</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.pest.title" datatype="html">
         <source>Schädlinge</source>
-        <target>Pests</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.pest.text" datatype="html">
-        <source>Jede Fruchtart hat spezifische Schädlinge, die den Ertrag mindern können. Der Befall variiert je nach Wetter und Fruchtfolge.</source>
-        <target>Each type of crop has specific pests that can reduce yield. Infestation varies depending on weather and crop rotation.</target>
+        <source>Jede Pflanze hat spezifische natürliche Feinde.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.rotation.title" datatype="html">
         <source>Fruchtfolge</source>
-        <target>Crop Rotation</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.rotation.text" datatype="html">
-        <source>Die Fruchtfolge beschreibt die zeitliche Abfolge von Kulturen auf einem Feld. Eine gute Folge erhält die Bodenfruchtbarkeit und mindert Krankheitsdruck.</source>
-        <target>Crop rotation describes the temporal sequence of crops on a field. A good sequence maintains soil fertility and reduces disease pressure.</target>
+        <source>Der Vorfruchtwert bestimmt die Bodengesundheit.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.requirements.title" datatype="html">
         <source>Anforderungen</source>
-        <target>Requirements</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.requirements.text" datatype="html">
-        <source>Pflanzen haben unterschiedliche Ansprüche an die Bodenqualität und die Nährstoffversorgung (Minerale).</source>
-        <target>Plants have different demands on soil quality and nutrient supply (minerals).</target>
+        <source>Mineralienbedarf und Bodenanspruch variieren.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.weather.title" datatype="html">
-        <source>Wetterempfindlichkeit</source>
-        <target>Weather Sensitivity</target>
+        <source>Wetter</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.weather.text" datatype="html">
-        <source>Extremwetter wie Dürre, Kälte oder Überschwemmungen wirken sich je nach Sorte unterschiedlich stark auf den Ertrag aus.</source>
-        <target>Extreme weather such as drought, cold, or flooding has different effects on yield depending on the variety.</target>
+        <source>Trockenheit, Kälte oder Nässe beeinflussen den Ertrag.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.yield.title" datatype="html">
-        <source>Ertragshöhen</source>
-        <target>Yield Heights</target>
+        <source>Ertrag</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.yield.text" datatype="html">
-        <source>Der Ertrag gibt an, wie viel Erntegut pro Fläche geerntet wird. Er hängt von der Sorte, der Pflege und den Umweltbedingungen ab.</source>
-        <target>Yield indicates how much crop is harvested per area. It depends on the variety, care, and environmental conditions.</target>
+        <source>Abhängig von Bodenqualität und Wetter.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.price.title" datatype="html">
-        <source>Preise &amp; Marktwerte</source>
-        <target>Prices &amp; Market Values</target>
+        <source>Preise</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.concepts.price.text" datatype="html">
-        <source>Die Saatgutpreise sind fix, während die Verkaufspreise (Marktwerte) je nach Anbaumethode (Konventionell vs. Bio) variieren.</source>
-        <target>Seed prices are fixed, while selling prices (market values) vary depending on the cultivation method (Conventional vs. Organic).</target>
+        <source>Marktpreise schwanken zwischen Konventionell und Bio.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
-      <trans-unit id="manual.crops.title" datatype="html">
-        <source>Sortenpass</source>
-        <target>Crop Pass</target>
+      <trans-unit id="manual.concepts.machines.title" datatype="html">
+        <source>Maschinen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.concepts.machines.text" datatype="html">
+        <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-concept-card.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.rotation" datatype="html">
-        <source>Fruchtfolge-Graph</source>
-        <target>Crop Rotation Graph</target>
+        <source>Fruchtfolgewirkung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.rotationPrev" datatype="html">
-        <source>Gute Vorfrüchte</source>
-        <target>Suitable Previous Crops</target>
-      </trans-unit>
-      <trans-unit id="manual.crops.rotationNext" datatype="html">
-        <source>Gute Nachfrüchte</source>
-        <target>Suitable Next Crops</target>
+        <source>Vorfrucht</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.current" datatype="html">
-        <source>Aktuelle Frucht</source>
-        <target>Current Crop</target>
+        <source>Aktuell</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.crops.rotationNext" datatype="html">
+        <source>Nachfrucht</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.requirements" datatype="html">
-        <source>Anforderungen</source>
-        <target>Requirements</target>
+        <source>Ansprüche</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.soil" datatype="html">
         <source>Bodenqualität</source>
-        <target>Soil Quality</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.minerals" datatype="html">
         <source>Mineralstoffe</source>
-        <target>Minerals</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.weather" datatype="html">
-        <source>Wetterempfindlichkeit</source>
-        <target>Weather Sensitivity</target>
+        <source>Wetter-Empfindlichkeit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">75</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.drought" datatype="html">
-        <source>Dürre</source>
-        <target>Drought</target>
+        <source>Trockenheit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.cold" datatype="html">
         <source>Kälte</source>
-        <target>Cold</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.flood" datatype="html">
-        <source>Überschwemmung</source>
-        <target>Flood</target>
+        <source>Nässe</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.crops.yields" datatype="html">
-        <source>Ertragshöhen</source>
-        <target>Yield Heights</target>
-      </trans-unit>
-      <trans-unit id="manual.crops.prices" datatype="html">
-        <source>Preise &amp; Marktwerte</source>
-        <target>Prices &amp; Market Values</target>
+        <source>Ertragspotenzial</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.yields.veryHigh" datatype="html">
-        <source>Sehr hoch</source>
-        <target>Very high</target>
+        <source>Sehr Hoch</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.yields.high" datatype="html">
         <source>Hoch</source>
-        <target>High</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.yields.moderate" datatype="html">
-        <source>Mäßig</source>
-        <target>Moderate</target>
+        <source>Mittel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.yields.low" datatype="html">
-        <source>Niedrig</source>
-        <target>Low</target>
+        <source>Gering</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.yields.veryLow" datatype="html">
-        <source>Sehr niedrig</source>
-        <target>Very low</target>
+        <source>Sehr Gering</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.prices.conv" datatype="html">
         <source>Konventionell</source>
-        <target>Conventional</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.prices.org" datatype="html">
         <source>Ökologisch (Bio)</source>
-        <target>Ecological (Bio)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.prices.seed" datatype="html">
-        <source>Saatgut / ha</source>
-        <target>Seed / ha</target>
+        <source>Saatgutkosten</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
       <trans-unit id="manual.prices.sale" datatype="html">
-        <source>Verkauf / dt</source>
-        <target>Sales / dt</target>
+        <source>Verkaufspreis</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.printModal.title" datatype="html">
+        <source>Druckeinstellungen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-print-modal.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.printModal.size" datatype="html">
+        <source>Papierformat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-print-modal.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.printModal.orientation" datatype="html">
+        <source>Ausrichtung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-print-modal.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.printModal.portrait" datatype="html">
+        <source>Hochformat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-print-modal.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.printModal.landscape" datatype="html">
+        <source>Querformat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-print-modal.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.printModal.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-print-modal.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.printModal.print" datatype="html">
+        <source>Drucken starten</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/components/manual-print-modal.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.print" datatype="html">
+        <source>Drucken</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.title" datatype="html">
+        <source>Handbuch</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.subtitle" datatype="html">
+        <source>Alles was Sie über nachhaltige Landwirtschaft in Soil wissen müssen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.intro.title" datatype="html">
+        <source>Einleitung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.intro.goal.title" datatype="html">
+        <source>Das Ziel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.intro.goal.text" datatype="html">
+        <source>Erfolgreich wirtschaften und dabei den Boden schützen.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.intro.mechanics.title" datatype="html">
+        <source>Mechanik</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.intro.mechanics.text" datatype="html">
+        <source>In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.concepts.title" datatype="html">
+        <source>Konzepte</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <target>undefined</target>
+      </trans-unit>
+      <trans-unit id="manual.footer" datatype="html">
+        <source>Soil Simulation - Ein Bildungsprojekt für nachhaltige Landwirtschaft.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manual/manual.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+        <target>undefined</target>
       </trans-unit>
     </body>
   </file>

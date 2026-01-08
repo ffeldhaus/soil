@@ -46,7 +46,7 @@ export class Dashboard implements OnInit, OnDestroy {
     const translations: Record<string, string> = {
       'dashboard.title': $localize`:@@dashboard.title:Dashboard für Lehrkräfte`,
       'dashboard.pending.title': $localize`:@@dashboard.pending.title:Konto wartet auf Genehmigung`,
-      'dashboard.pending.message': $localize`:@@dashboard.pending.message:Ihr Konto wird derzeit von einem System-Administrator überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.`,
+      'dashboard.pending.message': $localize`:@@dashboard.pending.message:Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.`,
       'dashboard.logout': $localize`:@@dashboard.logout:Abmelden`,
       'dashboard.loading.verifying': $localize`:@@dashboard.loading.verifying:Konto-Status wird geprüft...`,
       'dashboard.loading.games': $localize`:@@dashboard.loading.games:Spiele werden geladen...`,

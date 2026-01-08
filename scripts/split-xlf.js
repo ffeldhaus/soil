@@ -60,12 +60,10 @@ function splitXlf(filePath, outputDir, baseName) {
   }
 
   for (const [name, units] of Object.entries(groups)) {
-    if (units.length > 0) {
-      const fileName = name === 'common' ? `${baseName}.xlf` : `${baseName}.${name}.xlf`;
-      const filePath = path.join(outputDir, fileName);
-      const fileContent = `${header}\n      ${units.join('\n      ')}\n${footer}`;
-      fs.writeFileSync(filePath, fileContent);
-    }
+    const fileName = name === 'common' ? `${baseName}.xlf` : `${baseName}.${name}.xlf`;
+    const filePath = path.join(outputDir, fileName);
+    const fileContent = `${header}\n      ${units.join('\n      ')}\n${footer}`;
+    fs.writeFileSync(filePath, fileContent);
   }
 }
 
