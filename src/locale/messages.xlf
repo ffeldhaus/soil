@@ -1187,14 +1187,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.title" datatype="html">
-        <source>Admin-Anmeldung</source>
+        <source>Lehrkraft-Anmeldung</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
           <context context-type="linenumber">36,37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.subtitle" datatype="html">
-        <source>Zugang zur Soil-Steuerzentrale</source>
+        <source>Zugang zum Soil-Dashboard</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
           <context context-type="linenumber">37,40</context>
@@ -1302,22 +1302,22 @@
         <source>Anmeldung fehlgeschlagen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">222</context>
+          <context context-type="linenumber">230</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="linenumber">243</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.error.emailRequired" datatype="html">
         <source>Bitte geben Sie Ihre E-Mail-Adresse ein.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
-          <context context-type="linenumber">243</context>
+          <context context-type="linenumber">251</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.title" datatype="html">
-        <source>Admin-Registrierung</source>
+        <source>Registrierung für Lehrkräfte</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
           <context context-type="linenumber">22,24</context>
@@ -1338,38 +1338,38 @@
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.passwordRequirement" datatype="html">
-        <source>Erforderlich: Mindestens 6 Zeichen</source>
+        <source> Erforderlich: Mindestens 6 Zeichen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">122,123</context>
+          <context context-type="linenumber">127,129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.explanationRequirement" datatype="html">
-        <source>Erforderlich: Mindestens 20 Zeichen</source>
+        <source> Erforderlich: Mindestens 20 Zeichen </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">175,176</context>
+          <context context-type="linenumber">188,191</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.processing" datatype="html">
         <source>Wird verarbeitet...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">203,205</context>
+          <context context-type="linenumber">221,223</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.btnSubmit" datatype="html">
         <source>Registrierung beantragen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">205,207</context>
+          <context context-type="linenumber">223,225</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.backToHome" datatype="html">
         <source> Zurück zur Startseite </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-register/admin-register.html</context>
-          <context context-type="linenumber">216,219</context>
+          <context context-type="linenumber">234,237</context>
         </context-group>
       </trans-unit>
       <trans-unit id="adminRegister.signedInAs" datatype="html">
@@ -2713,6 +2713,55 @@
           <context context-type="linenumber">168,170</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="info.backToHome" datatype="html">
+        <source>Zurück zur Startseite</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/info/info.ts</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="info.title" datatype="html">
+        <source> Wissenschaftlicher Hintergrund </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/info/info.ts</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="info.subtitle" datatype="html">
+        <source> Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/info/info.ts</context>
+          <context context-type="linenumber">52,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="info.mainReferenceTitle" datatype="html">
+        <source>Zentrale Forschungsarbeit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/info/info.ts</context>
+          <context context-type="linenumber">62,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="info.viewDissertation" datatype="html">
+        <source>Volltext auf eldorado</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/info/info.ts</context>
+          <context context-type="linenumber">76,78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="info.publicationsTitle" datatype="html">
+        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;"/>📚<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Weitere Publikationen </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/info/info.ts</context>
+          <context context-type="linenumber">99,101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="info.footer" datatype="html">
+        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/info/info.ts</context>
+          <context context-type="linenumber">124,125</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="landing.intro" datatype="html">
         <source>Eine interaktive Simulation über</source>
         <context-group purpose="location">
@@ -2756,7 +2805,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="landing.teacherAdmin" datatype="html">
-        <source>Lehrkraft / Admin</source>
+        <source>Lehrkräfte</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/landing/landing.ts</context>
           <context context-type="linenumber">71,75</context>
@@ -2791,7 +2840,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="landing.educationalInfo" datatype="html">
-        <source> Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrerinnen und Lehrer sowie Admins ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die Zugehörigkeit zu einer Bildungseinrichtung verifiziert. </source>
+        <source> Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrkräfte ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die Zugehörigkeit zu einer Bildungseinrichtung verifiziert. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/landing/landing.ts</context>
           <context context-type="linenumber">115,117</context>
@@ -2818,11 +2867,18 @@
           <context context-type="linenumber">135,137</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="landing.scientificBackground" datatype="html">
+        <source>Wissenschaftlicher Hintergrund</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/landing/landing.ts</context>
+          <context context-type="linenumber">149,153</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="landing.footer" datatype="html">
         <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">144,145</context>
+          <context context-type="linenumber">154,155</context>
         </context-group>
       </trans-unit>
       <trans-unit id="manual.concepts.units.title" datatype="html">

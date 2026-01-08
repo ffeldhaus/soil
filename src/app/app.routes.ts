@@ -53,6 +53,10 @@ const baseRoutes: Routes = [
     path: 'manual',
     loadComponent: () => import('./manual/manual').then((m) => m.ManualComponent),
   },
+  {
+    path: 'info',
+    loadComponent: () => import('./info/info').then((m) => m.InfoComponent),
+  },
 ];
 
 export const routes: Routes = [...baseRoutes];

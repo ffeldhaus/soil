@@ -68,7 +68,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               data-testid="landing-admin-login"
               class="flex items-center justify-center px-8 py-5 bg-gray-800/80 hover:bg-gray-700/90 backdrop-blur-md border border-white/20 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/40 transform hover:-translate-y-1"
               i18n="@@landing.teacherAdmin"
-              >Lehrkraft / Admin</a
+              >Lehrkräfte</a
             >
 
             <a
@@ -112,9 +112,9 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.
                 </p>
                 <p i18n="@@landing.educationalInfo">
-                  Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrerinnen und Lehrer sowie
-                  Admins ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird
-                  die Zugehörigkeit zu einer Bildungseinrichtung verifiziert.
+                  Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrkräfte ist eine
+                  Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die
+                  Zugehörigkeit zu einer Bildungseinrichtung verifiziert.
                 </p>
               </div>
             </section>
@@ -138,6 +138,16 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 </p>
               </div>
             </section>
+          </div>
+
+          <div class="mt-16 text-center">
+            <a
+              routerLink="/info"
+              class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-emerald-900/20 hover:bg-emerald-900/40"
+            >
+              <span class="p-1 bg-emerald-900/30 rounded-lg">🎓</span>
+              <span i18n="@@landing.scientificBackground">Wissenschaftlicher Hintergrund</span>
+            </a>
           </div>
 
           <footer class="mt-24 text-center text-gray-600 text-sm">

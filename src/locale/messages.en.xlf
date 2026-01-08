@@ -1758,6 +1758,38 @@
         <source>Erforderlich: Mindestens 20 Zeichen</source>
         <target>Required: Minimum 20 characters</target>
       </trans-unit>
+      <trans-unit id="landing.scientificBackground" datatype="html">
+        <source>Wissenschaftlicher Hintergrund</source>
+        <target>Scientific Background</target>
+      </trans-unit>
+      <trans-unit id="info.backToHome" datatype="html">
+        <source>Zurück zur Startseite</source>
+        <target>Back to home page</target>
+      </trans-unit>
+      <trans-unit id="info.title" datatype="html">
+        <source> Wissenschaftlicher Hintergrund </source>
+        <target> Scientific Background </target>
+      </trans-unit>
+      <trans-unit id="info.subtitle" datatype="html">
+        <source> Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns. </source>
+        <target> The SOIL simulation is based on extensive research in subject-matter didactics to promote sustainable action. </target>
+      </trans-unit>
+      <trans-unit id="info.mainReferenceTitle" datatype="html">
+        <source>Zentrale Forschungsarbeit</source>
+        <target>Key Research Work</target>
+      </trans-unit>
+      <trans-unit id="info.viewDissertation" datatype="html">
+        <source>Volltext auf eldorado</source>
+        <target>Full text on eldorado</target>
+      </trans-unit>
+      <trans-unit id="info.publicationsTitle" datatype="html">
+        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;"/>📚<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Weitere Publikationen </source>
+        <target><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;"/>📚<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Further Publications </target>
+      </trans-unit>
+      <trans-unit id="info.footer" datatype="html">
+        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
+        <target>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
