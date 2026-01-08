@@ -1,15 +1,16 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import { Game } from '../../../types';
 
 @Component({
   selector: 'app-dashboard-delete-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './dashboard-delete-modal.html',
 })
 export class DashboardDeleteModalComponent {
-  @Input() gameToDelete: any = null;
+  @Input() gameToDelete: Game | null = null;
   @Input() isDeletingSelected = false;
   @Input() selectedCount = 0;
   @Input() showTrash = false;

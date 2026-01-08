@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard-error-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './dashboard-error-modal.html',
 })
 export class DashboardErrorModalComponent {

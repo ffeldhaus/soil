@@ -12,11 +12,32 @@ function splitXlf(filePath, outputDir, baseName) {
     admin: [],
     game: [],
     manual: [],
-    common: []
+    common: [],
   };
 
-  const adminPrefixes = ['dashboard', 'superadmin', 'onboarding', 'adminLogin', 'adminRegister', 'authAction', 'user', 'feedback'];
-  const gamePrefixes = ['board', 'finance', 'crop', 'roundResult', 'weather', 'pest', 'vermin', 'planting', 'parcel', 'sensitivity', 'ai'];
+  const adminPrefixes = [
+    'dashboard',
+    'superadmin',
+    'onboarding',
+    'adminLogin',
+    'adminRegister',
+    'authAction',
+    'user',
+    'feedback',
+  ];
+  const gamePrefixes = [
+    'board',
+    'finance',
+    'crop',
+    'roundResult',
+    'weather',
+    'pest',
+    'vermin',
+    'planting',
+    'parcel',
+    'sensitivity',
+    'ai',
+  ];
   const manualPrefixes = ['manual'];
 
   while ((match = transUnitRegex.exec(content)) !== null) {

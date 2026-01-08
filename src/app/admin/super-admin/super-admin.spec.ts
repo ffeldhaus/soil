@@ -11,8 +11,16 @@ import { SuperAdminComponent } from './super-admin';
 describe('SuperAdminComponent', () => {
   let component: SuperAdminComponent;
   let fixture: ComponentFixture<SuperAdminComponent>;
-  let authServiceMock: any;
-  let gameServiceMock: any;
+  let authServiceMock: { user$: any; logout: any };
+  let gameServiceMock: {
+    getPendingUsers: any;
+    getAllAdmins: any;
+    getSystemStats: any;
+    getAllFeedback: any;
+    manageAdmin?: any;
+    deleteGames?: any;
+    getAdminGames?: any;
+  };
 
   beforeEach(async () => {
     authServiceMock = {
@@ -25,6 +33,7 @@ describe('SuperAdminComponent', () => {
       getSystemStats: vi
         .fn()
         .mockResolvedValue({ games: { total: 0, deleted: 0 }, users: { total: 0, admins: 0, pending: 0 } }),
+      getAllFeedback: vi.fn().mockResolvedValue([]),
     };
     const languageServiceMock = { currentLang: 'de' };
 
@@ -61,7 +70,7 @@ describe('SuperAdminComponent', () => {
     component.initiateApprove(mockUser);
     await component.confirmApprove();
 
-    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('user123', 'approve', null, 'de');
+    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('user123', 'approve', undefined, 'de');
     expect(gameServiceMock.getPendingUsers).toHaveBeenCalled();
   });
 

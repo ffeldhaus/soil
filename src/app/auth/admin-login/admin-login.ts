@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -9,7 +8,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen relative flex items-center justify-center bg-gray-900 portrait:p-0">
       <!-- Language Switcher -->
@@ -222,10 +221,12 @@ export class AdminLoginComponent implements OnInit {
     this.showErrorModal = false;
 
     const { email, password } = this.loginForm.value;
+    if (!email || !password) return;
+
     try {
-      await this.auth.loginWithEmail(email!, password!);
+      await this.auth.loginWithEmail(email, password);
       this.router.navigate(['/admin']);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
       this.showErrorModal = true;
@@ -238,7 +239,7 @@ export class AdminLoginComponent implements OnInit {
     try {
       await this.auth.loginWithGoogle();
       this.router.navigate(['/admin']);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
       this.showErrorModal = true;
@@ -256,7 +257,7 @@ export class AdminLoginComponent implements OnInit {
     try {
       await this.auth.sendPasswordResetEmail(email);
       this.successMessage = this.t('adminLogin.resetEmailSent');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       this.errorMessage = this.t('adminLogin.resetEmailError');
       this.showErrorModal = true;

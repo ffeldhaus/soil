@@ -1,5 +1,35 @@
 import { CropType } from './types';
 
+interface CropConfig {
+  id: CropType;
+  image: string;
+  pest: string;
+  yields: {
+    veryHigh: string;
+    high: string;
+    moderate: string;
+    low: string;
+    veryLow: string;
+  };
+  baseYield: number;
+  soilSensitivity: number;
+  nutritionSensitivity: number;
+  weatherSensitivity: {
+    drought: string;
+    cold: string;
+    flood: string;
+  };
+  seedPrice: {
+    conventional: number;
+    organic: number;
+  };
+  marketValue: {
+    conventional: number;
+    organic: number;
+  };
+  special?: string;
+}
+
 export const GAME_CONSTANTS = {
   SOIL: {
     START: 80,
@@ -131,7 +161,7 @@ export const GAME_CONSTANTS = {
       marketValue: { conventional: 2.5, organic: 2 },
       special: 'Zuckerrüben verbessern die Bodenqualität.',
     },
-  } as Record<string, any>,
+  } as Record<string, CropConfig>,
   EXPENSES: {
     RUNNING: {
       ORGANIC_CONTROL: 200,

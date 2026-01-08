@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -10,7 +9,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-player-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
     <div
       class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden portrait:p-0"
@@ -175,7 +174,7 @@ export class PlayerLoginComponent implements OnInit {
 
       // 2. Only if not logged in, handle auto-login params
       this.route.queryParams.pipe(first()).subscribe(async (params) => {
-        const { gameId, player, pin } = params;
+        const { gameId, pin } = params;
         if (gameId && pin) {
           // player param no longer strictly required if we use pin for lookup
           console.log('Detected auto-login params:', { gameId, pin });
@@ -237,14 +236,16 @@ export class PlayerLoginComponent implements OnInit {
     const { gameId, password } = this.loginForm.value;
     console.log('Submitting login for gameId:', gameId);
 
+    if (!gameId || !password) return;
+
     try {
-      await this.authService.loginAsPlayer(gameId!, password!);
+      await this.authService.loginAsPlayer(gameId, password);
       console.log('Login successful. Attempting navigation to /game...');
       const success = await this.router.navigate(['/game'], { replaceUrl: true });
       console.log('Navigation resolved. Success:', success);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Login failed:', err);
-      this.errorMessage = err.message || 'playerLogin.error.msg';
+      this.errorMessage = (err as Error).message || 'playerLogin.error.msg';
       this.showErrorModal = true;
     } finally {
       this.isLoading = false;

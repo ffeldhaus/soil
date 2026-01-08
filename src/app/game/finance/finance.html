@@ -11,19 +11,20 @@
         </div>
 
         <div class="flex items-center gap-1 bg-gray-900/80 p-1.5 rounded-xl border border-gray-800 shadow-inner">
-          <button
-            *ngFor="let r of availableRounds"
-            (click)="setRound(r)"
-            class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300"
-            [class.bg-emerald-600]="currentViewingRound === r"
-            [class.text-white]="currentViewingRound === r"
-            [class.shadow-lg]="currentViewingRound === r"
-            [class.text-gray-400]="currentViewingRound !== r"
-            [class.hover:text-gray-200]="currentViewingRound !== r"
-            [class.hover:bg-gray-800]="currentViewingRound !== r"
-          >
-            {{ r }}
-          </button>
+          @for (r of availableRounds; track r) {
+            <button
+              (click)="setRound(r)"
+              class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300"
+              [class.bg-emerald-600]="currentViewingRound === r"
+              [class.text-white]="currentViewingRound === r"
+              [class.shadow-lg]="currentViewingRound === r"
+              [class.text-gray-400]="currentViewingRound !== r"
+              [class.hover:text-gray-200]="currentViewingRound !== r"
+              [class.hover:bg-gray-800]="currentViewingRound !== r"
+            >
+              {{ r }}
+            </button>
+          }
           @if (availableRounds.length === 0) {
             <span i18n="@@finance.noRounds" class="px-4 py-2 text-sm text-gray-500 font-mono"
               >Keine Runden verfügbar</span
@@ -46,28 +47,28 @@
             <div class="absolute inset-x-0 bottom-24 border-t border-gray-800/30"></div>
             <div class="absolute inset-x-0 top-12 border-t border-gray-800/10"></div>
 
-            <div
-              *ngFor="let p of players"
-              class="flex-1 flex flex-col items-center group/bar relative h-full justify-end"
-            >
-              <div class="flex gap-0.5 items-end justify-center w-full h-full pb-1">
-                <div
-                  *ngFor="let cap of p.capitalHistory; let i = index"
-                  class="w-full max-w-[12px] rounded-t-sm transition-all duration-500 ease-out"
-                  [style.height]="getChartHeight(cap, getMaxCapital())"
-                  [ngClass]="{
-                    'bg-emerald-500/40': p.uid === playerUid && i === p.capitalHistory.length - 1,
-                    'bg-emerald-600': p.uid === playerUid && i < p.capitalHistory.length - 1,
-                    'bg-blue-500/40': p.uid !== playerUid && i === p.capitalHistory.length - 1,
-                    'bg-blue-600': p.uid !== playerUid && i < p.capitalHistory.length - 1,
-                  }"
-                ></div>
+            @for (p of players; track p) {
+              <div class="flex-1 flex flex-col items-center group/bar relative h-full justify-end">
+                <div class="flex gap-0.5 items-end justify-center w-full h-full pb-1">
+                  @for (cap of p.capitalHistory; track cap; let i = $index) {
+                    <div
+                      class="w-full max-w-[12px] rounded-t-sm transition-all duration-500 ease-out"
+                      [style.height]="getChartHeight(cap, getMaxCapital())"
+                      [ngClass]="{
+                        'bg-emerald-500/40': p.uid === playerUid && i === p.capitalHistory.length - 1,
+                        'bg-emerald-600': p.uid === playerUid && i < p.capitalHistory.length - 1,
+                        'bg-blue-500/40': p.uid !== playerUid && i === p.capitalHistory.length - 1,
+                        'bg-blue-600': p.uid !== playerUid && i < p.capitalHistory.length - 1,
+                      }"
+                    ></div>
+                  }
+                </div>
+                <span
+                  class="text-[9px] font-bold text-gray-600 mt-2 truncate max-w-full group-hover/bar:text-gray-300 transition-colors"
+                  >{{ p.name }}</span
+                >
               </div>
-              <span
-                class="text-[9px] font-bold text-gray-600 mt-2 truncate max-w-full group-hover/bar:text-gray-300 transition-colors"
-                >{{ p.name }}</span
-              >
-            </div>
+            }
           </div>
         </div>
       }
@@ -82,23 +83,22 @@
               >
                 Kategorie
               </th>
-              <th
-                *ngFor="let p of players"
-                class="p-6 text-sm font-bold border-b border-gray-800 text-center min-w-[120px]"
-              >
-                <div class="flex flex-col items-center gap-1">
-                  <span [class.text-emerald-400]="p.uid === playerUid" [class.text-blue-400]="p.uid !== playerUid">{{
-                    p.name
-                  }}</span>
-                  @if (p.uid === playerUid) {
-                    <span
-                      i18n="@@finance.you"
-                      class="text-[9px] bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter"
-                      >DU</span
-                    >
-                  }
-                </div>
-              </th>
+              @for (p of players; track p) {
+                <th class="p-6 text-sm font-bold border-b border-gray-800 text-center min-w-[120px]">
+                  <div class="flex flex-col items-center gap-1">
+                    <span [class.text-emerald-400]="p.uid === playerUid" [class.text-blue-400]="p.uid !== playerUid">{{
+                      p.name
+                    }}</span>
+                    @if (p.uid === playerUid) {
+                      <span
+                        i18n="@@finance.you"
+                        class="text-[9px] bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter"
+                        >DU</span
+                      >
+                    }
+                  </div>
+                </th>
+              }
             </tr>
           </thead>
           <tbody class="text-gray-300">
@@ -116,49 +116,57 @@
               <td i18n="@@finance.fertilizer" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
                 Mineraldünger
               </td>
-              <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                @if (p.decision?.fertilizer) {
-                  <span class="text-emerald-500 text-base">●</span>
-                } @else {
-                  <span class="text-gray-800 text-base">○</span>
-                }
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                  @if (p.decision?.fertilizer) {
+                    <span class="text-emerald-500 text-base">●</span>
+                  } @else {
+                    <span class="text-gray-800 text-base">○</span>
+                  }
+                </td>
+              }
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
               <td i18n="@@finance.pesticide" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
                 Pflanzenschutz
               </td>
-              <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                @if (p.decision?.pesticide) {
-                  <span class="text-red-500 text-base">●</span>
-                } @else {
-                  <span class="text-gray-800 text-base">○</span>
-                }
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                  @if (p.decision?.pesticide) {
+                    <span class="text-red-500 text-base">●</span>
+                  } @else {
+                    <span class="text-gray-800 text-base">○</span>
+                  }
+                </td>
+              }
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
               <td i18n="@@finance.organisms" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
                 Nützlinge
               </td>
-              <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                @if (p.decision?.organisms) {
-                  <span class="text-emerald-500 text-base">●</span>
-                } @else {
-                  <span class="text-gray-800 text-base">○</span>
-                }
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                  @if (p.decision?.organisms) {
+                    <span class="text-emerald-500 text-base">●</span>
+                  } @else {
+                    <span class="text-gray-800 text-base">○</span>
+                  }
+                </td>
+              }
             </tr>
             <tr class="hover:bg-gray-800/20 transition-colors">
               <td i18n="@@finance.organic" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
                 Ökologischer Landbau
               </td>
-              <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                @if (p.decision?.organic) {
-                  <span class="text-emerald-500 text-base">●</span>
-                } @else {
-                  <span class="text-gray-800 text-base">○</span>
-                }
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                  @if (p.decision?.organic) {
+                    <span class="text-emerald-500 text-base">●</span>
+                  } @else {
+                    <span class="text-gray-800 text-base">○</span>
+                  }
+                </td>
+              }
             </tr>
 
             <!-- Expenses Detail -->
@@ -182,19 +190,22 @@
               >
                 Saatgut
               </td>
-              <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
-                {{ p.result?.expenses?.seeds | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
+                  {{ p.result?.expenses?.seeds | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
-            <tr
-              *ngFor="let crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']"
-              class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.seeds?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
-            </tr>
+            @for (crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']; track crop) {
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.seeds?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+            }
 
             <!-- Investments Breakdown -->
             <tr class="group hover:bg-gray-800/20 transition-colors">
@@ -204,23 +215,29 @@
               >
                 Investitionen
               </td>
-              <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
-                {{ p.result?.expenses?.investments | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
+                  {{ p.result?.expenses?.investments | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td i18n="@@finance.sub.machines" class="p-2 pl-12 border-b border-gray-800/30 italic">Maschinen</td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.investments?.machines || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                  {{ p.detailedExpenses?.investments?.machines || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td i18n="@@finance.sub.animalsInvest" class="p-2 pl-12 border-b border-gray-800/30 italic">
                 Tierbestand
               </td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.investments?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                  {{ p.detailedExpenses?.investments?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
 
             <!-- Running Costs Breakdown -->
@@ -231,47 +248,59 @@
               >
                 Betriebskosten
               </td>
-              <td *ngFor="let p of players" class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
-                {{ p.result?.expenses?.running | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
+                  {{ p.result?.expenses?.running | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td i18n="@@finance.sub.base" class="p-2 pl-12 border-b border-gray-800/30 italic">Grundkosten</td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.running?.base || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                  {{ p.detailedExpenses?.running?.base || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td i18n="@@finance.sub.organicControl" class="p-2 pl-12 border-b border-gray-800/30 italic">
                 Bio-Kontrolle
               </td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.running?.organic_control || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                  {{ p.detailedExpenses?.running?.organic_control || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td i18n="@@finance.sub.pesticide" class="p-2 pl-12 border-b border-gray-800/30 italic">
                 Pflanzenschutzmittel
               </td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.running?.pesticide || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                  {{ p.detailedExpenses?.running?.pesticide || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td i18n="@@finance.sub.organisms" class="p-2 pl-12 border-b border-gray-800/30 italic">
                 Nützlinge (Kosten)
               </td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.running?.organisms || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                  {{ p.detailedExpenses?.running?.organisms || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
               <td i18n="@@finance.sub.animalsRunning" class="p-2 pl-12 border-b border-gray-800/30 italic">
                 Tierhaltung
               </td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedExpenses?.running?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                  {{ p.detailedExpenses?.running?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
 
             <!-- Income Breakdown -->
@@ -291,46 +320,46 @@
               >
                 Ernteverkauf
               </td>
-              <td
-                *ngFor="let p of players"
-                class="p-4 border-b border-gray-800/50 text-center font-black text-emerald-500"
-              >
-                {{ p.result?.income | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-4 border-b border-gray-800/50 text-center font-black text-emerald-500">
+                  {{ p.result?.income | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
-            <tr
-              *ngFor="let crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']"
-              class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
-              <td *ngFor="let p of players" class="p-2 border-b border-gray-800/30 text-center font-mono">
-                {{ p.detailedIncome?.harvest?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
-            </tr>
+            @for (crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']; track crop) {
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedIncome?.harvest?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+            }
 
             <!-- Global Totals -->
             <tr class="bg-gray-900 border-t-2 border-gray-700">
               <td i18n="@@finance.result.profit" class="p-6 text-base font-black text-white">Rundenergebnis</td>
-              <td
-                *ngFor="let p of players"
-                class="p-6 text-center text-xl font-black font-mono"
-                [class.text-emerald-500]="(p.result?.profit || 0) >= 0"
-                [class.text-red-500]="(p.result?.profit || 0) < 0"
-              >
-                @if ((p.result?.profit || 0) > 0) {
-                  <span>+</span>
-                }
-                {{ p.result?.profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td
+                  class="p-6 text-center text-xl font-black font-mono"
+                  [class.text-emerald-500]="(p.result?.profit || 0) >= 0"
+                  [class.text-red-500]="(p.result?.profit || 0) < 0"
+                >
+                  @if ((p.result?.profit || 0) > 0) {
+                    <span>+</span>
+                  }
+                  {{ p.result?.profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
             <tr class="bg-gray-950">
               <td i18n="@@finance.result.capital" class="p-6 text-base font-black text-white">Neues Gesamtkapital</td>
-              <td
-                *ngFor="let p of players"
-                class="p-6 text-center text-2xl font-black text-yellow-400 font-mono scale-110"
-              >
-                {{ p.result?.capital || p.prevResult?.capital || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              </td>
+              @for (p of players; track p) {
+                <td class="p-6 text-center text-2xl font-black text-yellow-400 font-mono scale-110">
+                  {{ p.result?.capital || p.prevResult?.capital || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </td>
+              }
             </tr>
           </tbody>
         </table>
@@ -338,54 +367,56 @@
 
       <!-- Events Summary -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div
-          *ngFor="let p of players"
-          class="bg-gray-900/60 border border-gray-800 rounded-[2rem] p-8 shadow-xl space-y-6 relative overflow-hidden group hover:border-gray-700 transition-all"
-        >
+        @for (p of players; track p) {
           <div
-            class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-colors"
-          ></div>
-
-          <div class="flex items-center gap-4">
+            class="bg-gray-900/60 border border-gray-800 rounded-[2rem] p-8 shadow-xl space-y-6 relative overflow-hidden group hover:border-gray-700 transition-all"
+          >
             <div
-              class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black text-white bg-gray-800 shadow-lg border border-gray-700"
-            >
-              {{ p.name.charAt(0) }}
+              class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-colors"
+            ></div>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black text-white bg-gray-800 shadow-lg border border-gray-700"
+              >
+                {{ p.name.charAt(0) }}
+              </div>
+              <div>
+                <h4 class="font-black text-white group-hover:text-emerald-400 transition-colors">{{ p.name }}</h4>
+                <p i18n="@@finance.playerStatus" class="text-[10px] text-gray-500 uppercase font-black tracking-widest">
+                  Status
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 class="font-black text-white group-hover:text-emerald-400 transition-colors">{{ p.name }}</h4>
-              <p i18n="@@finance.playerStatus" class="text-[10px] text-gray-500 uppercase font-black tracking-widest">
-                Status
-              </p>
+            <div class="space-y-6">
+              @if (p.result?.events?.weather) {
+                <div class="space-y-2">
+                  <p
+                    i18n="@@finance.event.weather"
+                    class="text-[10px] font-black text-gray-500 uppercase tracking-widest"
+                  >
+                    Wetter-Einfluss
+                  </p>
+                  <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
+                    "{{ p.result?.events?.weather }}"
+                  </div>
+                </div>
+              }
+              @if (p.result?.events?.vermin) {
+                <div class="space-y-2">
+                  <p
+                    i18n="@@finance.event.vermin"
+                    class="text-[10px] font-black text-gray-500 uppercase tracking-widest"
+                  >
+                    Schädlings-Einfluss
+                  </p>
+                  <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
+                    "{{ p.result?.events?.vermin }}"
+                  </div>
+                </div>
+              }
             </div>
           </div>
-
-          <div class="space-y-6">
-            @if (p.result?.events?.weather) {
-              <div class="space-y-2">
-                <p
-                  i18n="@@finance.event.weather"
-                  class="text-[10px] font-black text-gray-500 uppercase tracking-widest"
-                >
-                  Wetter-Einfluss
-                </p>
-                <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
-                  "{{ p.result?.events?.weather }}"
-                </div>
-              </div>
-            }
-            @if (p.result?.events?.vermin) {
-              <div class="space-y-2">
-                <p i18n="@@finance.event.vermin" class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                  Schädlings-Einfluss
-                </p>
-                <div class="bg-gray-950/50 p-4 rounded-2xl border border-gray-800/80 text-sm italic text-gray-300">
-                  "{{ p.result?.events?.vermin }}"
-                </div>
-              </div>
-            }
-          </div>
-        </div>
+        }
       </div>
     </div>
   </div>

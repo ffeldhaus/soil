@@ -30,11 +30,16 @@ module.exports = tseslint.config(
         ...globals.browser,
         ...globals.node,
       },
+      parserOptions: {
+        project: ['./tsconfig.app.json', './tsconfig.spec.json'],
+        tsconfigRootDir: __dirname,
+      },
     },
     rules: {
       'prettier/prettier': 'error',
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
+      '@typescript-eslint/no-deprecated': 'error',
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -51,8 +56,43 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+      '@typescript-eslint/no-inferrable-types': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@angular-eslint/no-conflicting-lifecycle': 'error',
+      '@angular-eslint/use-lifecycle-interface': 'error',
+      '@angular-eslint/no-empty-lifecycle-method': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-duplicate-imports': 'error',
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'default',
+          format: ['camelCase'],
+          leadingUnderscore: 'allow',
+          trailingUnderscore: 'allow',
+        },
+        {
+          selector: 'variable',
+          format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+          leadingUnderscore: 'allow',
+          trailingUnderscore: 'allow',
+        },
+        {
+          selector: 'typeLike',
+          format: ['PascalCase'],
+        },
+        {
+          selector: 'enumMember',
+          format: ['UPPER_CASE', 'PascalCase'],
+        },
+        {
+          selector: 'property',
+          format: null,
+        },
+      ],
     },
   },
   {
@@ -73,13 +113,19 @@ module.exports = tseslint.config(
         ...globals.node,
         ...globals.mocha,
       },
+      parserOptions: {
+        project: './functions/tsconfig.json',
+        tsconfigRootDir: __dirname,
+      },
     },
     rules: {
       'prettier/prettier': 'error',
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-deprecated': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     },
   },
   {
@@ -87,17 +133,19 @@ module.exports = tseslint.config(
     rules: {
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
   {
     files: ['**/*.html'],
     extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
     rules: {
-      '@angular-eslint/template/prefer-control-flow': 'warn',
-      '@angular-eslint/template/alt-text': 'warn',
+      '@angular-eslint/template/prefer-control-flow': 'error',
+      '@angular-eslint/template/alt-text': 'error',
       '@angular-eslint/template/click-events-have-key-events': 'warn',
       '@angular-eslint/template/interactive-supports-focus': 'warn',
       '@angular-eslint/template/label-has-associated-control': 'warn',
+      '@angular-eslint/template/no-negated-async': 'error',
     },
   },
   prettierConfig,

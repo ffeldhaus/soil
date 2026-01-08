@@ -4,6 +4,38 @@ import { Component, Input } from '@angular/core';
 import { GAME_CONSTANTS } from '../../game-constants';
 import { CropType } from '../../types';
 
+interface CropConfig {
+  id: CropType;
+  image: string;
+  pest: string;
+  yields: {
+    veryHigh: string;
+    high: string;
+    moderate: string;
+    low: string;
+    veryLow: string;
+    [key: string]: string;
+  };
+  baseYield: number;
+  soilSensitivity: number;
+  nutritionSensitivity: number;
+  weatherSensitivity: {
+    drought: string;
+    cold: string;
+    flood: string;
+    [key: string]: string;
+  };
+  seedPrice: {
+    conventional: number;
+    organic: number;
+  };
+  marketValue: {
+    conventional: number;
+    organic: number;
+  };
+  special?: string;
+}
+
 @Component({
   selector: 'app-manual-crop-card',
   standalone: true,
@@ -11,7 +43,7 @@ import { CropType } from '../../types';
   templateUrl: './manual-crop-card.html',
 })
 export class ManualCropCardComponent {
-  @Input() crop: any = null;
+  @Input() crop!: CropConfig;
 
   t(key: string): string {
     const translations: Record<string, string> = {

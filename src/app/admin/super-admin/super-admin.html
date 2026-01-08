@@ -72,64 +72,63 @@
           {{ t('superadmin.pending.title') }} ({{ pendingUsers.length }})
         </h2>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 portrait:gap-0 portrait:divide-y portrait:divide-gray-800">
-          <div
-            *ngFor="let user of pendingUsers"
-            class="bg-gray-800 p-6 rounded-xl border border-yellow-500/30 shadow-lg hover:border-yellow-500/50 transition portrait:rounded-none portrait:border-x-0"
-          >
-            <div class="flex justify-between items-start mb-4">
-              <div class="overflow-hidden">
-                <h3 class="font-bold text-lg text-white truncate" title="{{ user.email }}">{{ user.email }}</h3>
-                <span class="text-xs text-gray-500 font-mono truncate block" title="{{ user.uid }}"
-                  >UID: {{ user.uid }}</span
+          @for (user of pendingUsers; track user) {
+            <div
+              class="bg-gray-800 p-6 rounded-xl border border-yellow-500/30 shadow-lg hover:border-yellow-500/50 transition portrait:rounded-none portrait:border-x-0"
+            >
+              <div class="flex justify-between items-start mb-4">
+                <div class="overflow-hidden">
+                  <h3 class="font-bold text-lg text-white truncate" title="{{ user.email }}">{{ user.email }}</h3>
+                  <span class="text-xs text-gray-500 font-mono truncate block" title="{{ user.uid }}"
+                    >UID: {{ user.uid }}</span
+                  >
+                </div>
+                <span
+                  class="px-2 py-1 bg-yellow-900/50 text-yellow-200 text-xs rounded border border-yellow-700 flex-shrink-0"
+                  >{{ t('superadmin.pending.card.pending') }}</span
                 >
               </div>
-              <span
-                class="px-2 py-1 bg-yellow-900/50 text-yellow-200 text-xs rounded border border-yellow-700 flex-shrink-0"
-                >{{ t('superadmin.pending.card.pending') }}</span
-              >
-            </div>
-
-            <div class="space-y-2 text-sm text-gray-300 mb-6 bg-gray-900/50 p-4 rounded-lg border border-gray-700/50">
-              <p class="flex flex-col">
-                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
-                  t('superadmin.pending.card.institution')
-                }}</strong>
-                {{ user.onboarding?.institution }}
-              </p>
-              <p class="flex flex-col">
-                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
-                  t('superadmin.pending.card.website')
-                }}</strong>
-                <a
-                  [href]="user.onboarding?.institutionLink"
-                  target="_blank"
-                  class="text-blue-400 hover:underline truncate block"
-                  >{{ user.onboarding?.institutionLink }}</a
+              <div class="space-y-2 text-sm text-gray-300 mb-6 bg-gray-900/50 p-4 rounded-lg border border-gray-700/50">
+                <p class="flex flex-col">
+                  <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
+                    t('superadmin.pending.card.institution')
+                  }}</strong>
+                  {{ user.onboarding?.institution }}
+                </p>
+                <p class="flex flex-col">
+                  <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
+                    t('superadmin.pending.card.website')
+                  }}</strong>
+                  <a
+                    [href]="user.onboarding?.institutionLink"
+                    target="_blank"
+                    class="text-blue-400 hover:underline truncate block"
+                    >{{ user.onboarding?.institutionLink }}</a
+                  >
+                </p>
+                <p class="flex flex-col">
+                  <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
+                    t('superadmin.pending.card.why')
+                  }}</strong>
+                  <span class="italic text-gray-400">"{{ user.onboarding?.explanation }}"</span>
+                </p>
+              </div>
+              <div class="flex gap-3">
+                <button
+                  (click)="initiateApprove(user)"
+                  class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg"
                 >
-              </p>
-              <p class="flex flex-col">
-                <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
-                  t('superadmin.pending.card.why')
-                }}</strong>
-                <span class="italic text-gray-400">"{{ user.onboarding?.explanation }}"</span>
-              </p>
+                  {{ t('superadmin.actions.approve') }}
+                </button>
+                <button
+                  (click)="initiateReject(user)"
+                  class="flex-1 py-2 bg-red-900/50 border border-red-700 hover:bg-red-900 text-red-200 font-bold rounded-lg transition"
+                >
+                  {{ t('superadmin.actions.reject') }}
+                </button>
+              </div>
             </div>
-
-            <div class="flex gap-3">
-              <button
-                (click)="initiateApprove(user)"
-                class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg"
-              >
-                {{ t('superadmin.actions.approve') }}
-              </button>
-              <button
-                (click)="initiateReject(user)"
-                class="flex-1 py-2 bg-red-900/50 border border-red-700 hover:bg-red-900 text-red-200 font-bold rounded-lg transition"
-              >
-                {{ t('superadmin.actions.reject') }}
-              </button>
-            </div>
-          </div>
+          }
         </div>
       </section>
     }
@@ -165,103 +164,105 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-700 text-sm">
-              <tr *ngFor="let admin of admins" class="hover:bg-gray-700/30 transition group">
-                <td class="p-4">
-                  <div class="font-bold text-white">{{ admin.email }}</div>
-                  <div class="text-xs text-gray-500 font-mono">{{ admin.uid }}</div>
-                </td>
-                <td class="p-4">
-                  <span
-                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border"
-                    [ngClass]="{
-                      'bg-purple-900/20 text-purple-300 border-purple-800': admin.role === 'superadmin',
-                      'bg-blue-900/20 text-blue-300 border-blue-800': admin.role === 'admin',
-                      'bg-yellow-900/20 text-yellow-300 border-yellow-800': admin.role === 'pending',
-                      'bg-orange-900/20 text-orange-300 border-orange-800': admin.role === 'rejected',
-                      'bg-red-900/20 text-red-300 border-red-800': admin.role === 'banned',
-                    }"
-                  >
-                    {{ admin.role | titlecase }}
-                  </span>
-                </td>
-                <td class="p-4">
-                  <div class="flex items-center gap-2">
+              @for (admin of admins; track admin) {
+                <tr class="hover:bg-gray-700/30 transition group">
+                  <td class="p-4">
+                    <div class="font-bold text-white">{{ admin.email }}</div>
+                    <div class="text-xs text-gray-500 font-mono">{{ admin.uid }}</div>
+                  </td>
+                  <td class="p-4">
                     <span
-                      class="h-2 w-2 rounded-full"
+                      class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border"
                       [ngClass]="{
-                        'bg-emerald-500': admin.status === 'active',
-                        'bg-red-500': admin.status === 'rejected',
-                        'bg-yellow-500': admin.status === 'pending',
-                        'bg-gray-500': admin.status === 'banned',
+                        'bg-purple-900/20 text-purple-300 border-purple-800': admin.role === 'superadmin',
+                        'bg-blue-900/20 text-blue-300 border-blue-800': admin.role === 'admin',
+                        'bg-yellow-900/20 text-yellow-300 border-yellow-800': admin.role === 'pending',
+                        'bg-orange-900/20 text-orange-300 border-orange-800': admin.role === 'rejected',
+                        'bg-red-900/20 text-red-300 border-red-800': admin.role === 'banned',
                       }"
-                    ></span>
-                    <span class="text-gray-300">{{ admin.status | titlecase }}</span>
-                  </div>
-                </td>
-                <td class="p-4">
-                  <div class="flex items-center gap-2">
-                    <div class="w-full bg-gray-700 rounded-full h-1.5 w-16">
-                      <div
-                        class="bg-blue-500 h-1.5 rounded-full"
-                        [style.width.%]="(admin.gameCount / admin.quota) * 100"
-                      ></div>
+                    >
+                      {{ admin.role | titlecase }}
+                    </span>
+                  </td>
+                  <td class="p-4">
+                    <div class="flex items-center gap-2">
+                      <span
+                        class="h-2 w-2 rounded-full"
+                        [ngClass]="{
+                          'bg-emerald-500': admin.status === 'active',
+                          'bg-red-500': admin.status === 'rejected',
+                          'bg-yellow-500': admin.status === 'pending',
+                          'bg-gray-500': admin.status === 'banned',
+                        }"
+                      ></span>
+                      <span class="text-gray-300">{{ admin.status | titlecase }}</span>
                     </div>
-                    <span class="text-xs text-gray-400">{{ admin.gameCount }}/{{ admin.quota }}</span>
-                  </div>
-                </td>
-                <td class="p-4 text-gray-300">
-                  {{ admin.gameCount }}
-                </td>
-                <td
-                  class="p-4 text-right flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition"
-                >
-                  @if (admin.role !== 'superadmin') {
-                    <button
-                      (click)="viewGames(admin)"
-                      class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
-                    >
-                      {{ t('superadmin.actions.games') }}
-                    </button>
-                    <button
-                      (click)="setQuota(admin)"
-                      class="px-2 py-1 bg-gray-700 hover:emerald-800 text-gray-300 rounded text-xs transition border border-gray-600"
-                      [title]="t('superadmin.actions.quota')"
-                    >
-                      {{ t('superadmin.actions.quota') }}
-                    </button>
-                    <button
-                      (click)="banAdmin(admin)"
-                      class="px-2 py-1 bg-gray-700 hover:bg-orange-900 text-orange-200 rounded text-xs transition border border-gray-600"
-                      [title]="t('superadmin.actions.ban')"
-                    >
-                      {{ t('superadmin.actions.ban') }}
-                    </button>
-                    <button
-                      (click)="deleteAdmin(admin)"
-                      class="px-2 py-1 bg-gray-700 hover:bg-red-900 text-red-200 rounded text-xs transition border border-gray-600"
-                      [title]="t('superadmin.actions.delete')"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                  </td>
+                  <td class="p-4">
+                    <div class="flex items-center gap-2">
+                      <div class="w-full bg-gray-700 rounded-full h-1.5 w-16">
+                        <div
+                          class="bg-blue-500 h-1.5 rounded-full"
+                          [style.width.%]="(admin.gameCount / admin.quota) * 100"
+                        ></div>
+                      </div>
+                      <span class="text-xs text-gray-400">{{ admin.gameCount }}/{{ admin.quota }}</span>
+                    </div>
+                  </td>
+                  <td class="p-4 text-gray-300">
+                    {{ admin.gameCount }}
+                  </td>
+                  <td
+                    class="p-4 text-right flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition"
+                  >
+                    @if (admin.role !== 'superadmin') {
+                      <button
+                        (click)="viewGames(admin)"
+                        class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  }
-                  @if (admin.role === 'superadmin') {
-                    <span class="text-gray-600 italic text-xs px-2">Protected</span>
-                  }
-                </td>
-              </tr>
+                        {{ t('superadmin.actions.games') }}
+                      </button>
+                      <button
+                        (click)="setQuota(admin)"
+                        class="px-2 py-1 bg-gray-700 hover:emerald-800 text-gray-300 rounded text-xs transition border border-gray-600"
+                        [title]="t('superadmin.actions.quota')"
+                      >
+                        {{ t('superadmin.actions.quota') }}
+                      </button>
+                      <button
+                        (click)="banAdmin(admin)"
+                        class="px-2 py-1 bg-gray-700 hover:bg-orange-900 text-orange-200 rounded text-xs transition border border-gray-600"
+                        [title]="t('superadmin.actions.ban')"
+                      >
+                        {{ t('superadmin.actions.ban') }}
+                      </button>
+                      <button
+                        (click)="deleteAdmin(admin)"
+                        class="px-2 py-1 bg-gray-700 hover:bg-red-900 text-red-200 rounded text-xs transition border border-gray-600"
+                        [title]="t('superadmin.actions.delete')"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    }
+                    @if (admin.role === 'superadmin') {
+                      <span class="text-gray-600 italic text-xs px-2">Protected</span>
+                    }
+                  </td>
+                </tr>
+              }
             </tbody>
           </table>
         </div>
@@ -298,82 +299,89 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-700 text-sm">
-              <tr *ngFor="let item of feedback" class="hover:bg-gray-700/30 transition group">
-                <td class="p-4">
-                  <div class="font-bold text-white">{{ item.userName }}</div>
-                  <div class="text-xs text-gray-500">{{ item.userEmail }}</div>
-                  <div class="mt-2 text-gray-300 italic">"{{ item.comment }}"</div>
-                  @if (item.aiAnalysis) {
-                    <div class="mt-2 p-2 bg-gray-900/50 rounded text-xs">
-                      <div class="text-emerald-400 font-bold">AI Summary:</div>
-                      <div class="text-gray-400">{{ item.aiAnalysis.summary }}</div>
-                      <div class="text-emerald-400 font-bold mt-1">Suggested Actions:</div>
-                      <ul class="list-disc list-inside text-gray-400">
-                        <li *ngFor="let action of item.aiAnalysis.suggestedActions">{{ action }}</li>
-                      </ul>
+              @for (item of feedback; track item) {
+                <tr class="hover:bg-gray-700/30 transition group">
+                  <td class="p-4">
+                    <div class="font-bold text-white">{{ item.userName }}</div>
+                    <div class="text-xs text-gray-500">{{ item.userEmail }}</div>
+                    <div class="mt-2 text-gray-300 italic">"{{ item.comment }}"</div>
+                    @if (item.aiAnalysis) {
+                      <div class="mt-2 p-2 bg-gray-900/50 rounded text-xs">
+                        <div class="text-emerald-400 font-bold">AI Summary:</div>
+                        <div class="text-gray-400">{{ item.aiAnalysis.summary }}</div>
+                        <div class="text-emerald-400 font-bold mt-1">Suggested Actions:</div>
+                        <ul class="list-disc list-inside text-gray-400">
+                          @for (action of item.aiAnalysis.suggestedActions; track action) {
+                            <li>{{ action }}</li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                  </td>
+                  <td class="p-4 text-gray-300">
+                    {{ item.category | titlecase }}
+                  </td>
+                  <td class="p-4">
+                    <div class="flex gap-0.5">
+                      @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <svg
+                          class="w-4 h-4"
+                          [class.text-yellow-500]="item.rating >= star"
+                          [class.text-gray-600]="item.rating < star"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                          />
+                        </svg>
+                      }
                     </div>
-                  }
-                </td>
-                <td class="p-4 text-gray-300">
-                  {{ item.category | titlecase }}
-                </td>
-                <td class="p-4">
-                  <div class="flex gap-0.5">
-                    <svg
-                      *ngFor="let star of [1, 2, 3, 4, 5]"
-                      class="w-4 h-4"
-                      [class.text-yellow-500]="item.rating >= star"
-                      [class.text-gray-600]="item.rating < star"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
+                  </td>
+                  <td class="p-4">
+                    <span
+                      class="px-2 py-0.5 rounded-full text-xs font-medium border"
+                      [ngClass]="{
+                        'bg-blue-900/20 text-blue-300 border-blue-800': item.status === 'new',
+                        'bg-purple-900/20 text-purple-300 border-purple-800': item.status === 'replied',
+                        'bg-emerald-900/20 text-emerald-300 border-emerald-800': item.status === 'resolved',
+                        'bg-red-900/20 text-red-300 border-red-800': item.status === 'rejected',
+                      }"
                     >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                  </div>
-                </td>
-                <td class="p-4">
-                  <span
-                    class="px-2 py-0.5 rounded-full text-xs font-medium border"
-                    [ngClass]="{
-                      'bg-blue-900/20 text-blue-300 border-blue-800': item.status === 'new',
-                      'bg-purple-900/20 text-purple-300 border-purple-800': item.status === 'replied',
-                      'bg-emerald-900/20 text-emerald-300 border-emerald-800': item.status === 'resolved',
-                      'bg-red-900/20 text-red-300 border-red-800': item.status === 'rejected',
-                    }"
-                  >
-                    {{ item.status | titlecase }}
-                  </span>
-                </td>
-                <td class="p-4 text-right">
-                  <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition">
-                    <button
-                      (click)="initiateFeedbackAction(item, 'reply')"
-                      class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
-                    >
-                      {{ t('superadmin.feedback.actions.reply') }}
-                    </button>
-                    <button
-                      (click)="initiateFeedbackAction(item, 'resolve')"
-                      class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
-                    >
-                      {{ t('superadmin.feedback.actions.resolve') }}
-                    </button>
-                    <button
-                      (click)="initiateFeedbackAction(item, 'reject')"
-                      class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
-                    >
-                      {{ t('superadmin.feedback.actions.reject') }}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr *ngIf="feedback.length === 0">
-                <td colspan="5" class="p-8 text-center text-gray-500">
-                  {{ t('superadmin.feedback.none') }}
-                </td>
-              </tr>
+                      {{ item.status | titlecase }}
+                    </span>
+                  </td>
+                  <td class="p-4 text-right">
+                    <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition">
+                      <button
+                        (click)="initiateFeedbackAction(item, 'reply')"
+                        class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
+                      >
+                        {{ t('superadmin.feedback.actions.reply') }}
+                      </button>
+                      <button
+                        (click)="initiateFeedbackAction(item, 'resolve')"
+                        class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
+                      >
+                        {{ t('superadmin.feedback.actions.resolve') }}
+                      </button>
+                      <button
+                        (click)="initiateFeedbackAction(item, 'reject')"
+                        class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
+                      >
+                        {{ t('superadmin.feedback.actions.reject') }}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (feedback.length === 0) {
+                <tr>
+                  <td colspan="5" class="p-8 text-center text-gray-500">
+                    {{ t('superadmin.feedback.none') }}
+                  </td>
+                </tr>
+              }
             </tbody>
           </table>
         </div>
@@ -459,60 +467,61 @@
           <div
             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
           >
-            <div
-              *ngFor="let game of adminGames"
-              class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition shadow-lg group relative portrait:rounded-none portrait:border-x-0"
-            >
-              <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition">
-                <button
-                  (click)="deleteGame(game)"
-                  class="text-red-500 hover:text-red-300 p-2 rounded hover:bg-red-900/30"
-                  title="Delete Game"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+            @for (game of adminGames; track game) {
+              <div
+                class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition shadow-lg group relative portrait:rounded-none portrait:border-x-0"
+              >
+                <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition">
+                  <button
+                    (click)="deleteGame(game)"
+                    class="text-red-500 hover:text-red-300 p-2 rounded hover:bg-red-900/30"
+                    title="Delete Game"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex justify-between items-start mb-3 pr-8">
+                  <h3 class="font-bold text-lg text-white truncate w-full" title="{{ game.name }}">
+                    {{ game.name }}
+                  </h3>
+                </div>
+                <div class="text-sm text-gray-400 space-y-2 mb-4">
+                  <div class="flex justify-between border-b border-gray-700 pb-2 mb-2">
+                    <span class="text-xs uppercase tracking-wide text-gray-500">{{
+                      t('superadmin.games.status')
+                    }}</span>
+                    <span
+                      class="text-emerald-400 font-bold bg-emerald-900/20 px-2 py-0.5 rounded text-xs border border-emerald-900/50"
+                      >{{ game.status | uppercase }}</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">{{ t('superadmin.games.round') }}</span>
+                    <span class="text-white font-mono">{{ game.currentRoundNumber }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">{{ t('superadmin.games.created') }}</span>
+                    <span class="text-gray-300">{{ formatDate(game.createdAt) | date: 'shortDate' }}</span>
+                  </div>
+                  <div class="text-[10px] text-gray-600 font-mono mt-2 truncate bg-gray-900/50 p-1 rounded">
+                    {{ game.id }}
+                  </div>
+                </div>
               </div>
-
-              <div class="flex justify-between items-start mb-3 pr-8">
-                <h3 class="font-bold text-lg text-white truncate w-full" title="{{ game.name }}">
-                  {{ game.name }}
-                </h3>
-              </div>
-
-              <div class="text-sm text-gray-400 space-y-2 mb-4">
-                <div class="flex justify-between border-b border-gray-700 pb-2 mb-2">
-                  <span class="text-xs uppercase tracking-wide text-gray-500">{{ t('superadmin.games.status') }}</span>
-                  <span
-                    class="text-emerald-400 font-bold bg-emerald-900/20 px-2 py-0.5 rounded text-xs border border-emerald-900/50"
-                    >{{ game.status | uppercase }}</span
-                  >
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">{{ t('superadmin.games.round') }}</span>
-                  <span class="text-white font-mono">{{ game.currentRoundNumber }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">{{ t('superadmin.games.created') }}</span>
-                  <span class="text-gray-300">{{ game.createdAt | date: 'shortDate' }}</span>
-                </div>
-                <div class="text-[10px] text-gray-600 font-mono mt-2 truncate bg-gray-900/50 p-1 rounded">
-                  {{ game.id }}
-                </div>
-              </div>
-            </div>
+            }
           </div>
         }
       </section>
@@ -924,43 +933,31 @@
                 'bg-red-900/30 text-red-400': feedbackAction === 'reject',
               }"
             >
-              <svg
-                *ngIf="feedbackAction === 'reply'"
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
-                />
-              </svg>
-              <svg
-                *ngIf="feedbackAction === 'resolve'"
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <svg
-                *ngIf="feedbackAction === 'reject'"
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              @if (feedbackAction === 'reply') {
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                  />
+                </svg>
+              }
+              @if (feedbackAction === 'resolve') {
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              }
+              @if (feedbackAction === 'reject') {
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              }
             </div>
             <h3 class="text-xl font-bold text-white">
               {{
@@ -989,19 +986,21 @@
                     : t('superadmin.feedback.modal.resolve.label')
                 }}
               </label>
-              <textarea
-                *ngIf="feedbackAction === 'reply'"
-                [(ngModel)]="feedbackValue"
-                rows="4"
-                class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
-                placeholder="Write your response..."
-              ></textarea>
-              <input
-                *ngIf="feedbackAction === 'resolve'"
-                [(ngModel)]="feedbackValue"
-                class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 text-sm"
-                placeholder="GitHub issue link, etc."
-              />
+              @if (feedbackAction === 'reply') {
+                <textarea
+                  [(ngModel)]="feedbackValue"
+                  rows="4"
+                  class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
+                  placeholder="Write your response..."
+                ></textarea>
+              }
+              @if (feedbackAction === 'resolve') {
+                <input
+                  [(ngModel)]="feedbackValue"
+                  class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 text-sm"
+                  placeholder="GitHub issue link, etc."
+                />
+              }
             </div>
           } @else {
             <p class="text-gray-300 text-sm">{{ t('superadmin.reject.modal.desc') }}</p>

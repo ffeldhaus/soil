@@ -13,18 +13,19 @@
       <div>
         <label class="block text-sm font-medium text-gray-400 mb-3">{{ t('manual.printModal.size') }}</label>
         <div class="grid grid-cols-2 gap-3">
-          <button
-            *ngFor="let size of ['A4', 'Letter']"
-            (click)="sizeChange.emit(size)"
-            class="px-4 py-2 rounded-xl border font-bold transition-all"
-            [ngClass]="
-              printSize === size
-                ? 'bg-emerald-600 border-emerald-500 text-white'
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-            "
-          >
-            {{ size }}
-          </button>
+          @for (size of ['A4', 'Letter']; track size) {
+            <button
+              (click)="sizeChange.emit(size)"
+              class="px-4 py-2 rounded-xl border font-bold transition-all"
+              [ngClass]="
+                printSize === size
+                  ? 'bg-emerald-600 border-emerald-500 text-white'
+                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+              "
+            >
+              {{ size }}
+            </button>
+          }
         </div>
       </div>
 
@@ -32,18 +33,19 @@
       <div>
         <label class="block text-sm font-medium text-gray-400 mb-3">{{ t('manual.printModal.orientation') }}</label>
         <div class="grid grid-cols-2 gap-3">
-          <button
-            *ngFor="let orient of ['portrait', 'landscape']"
-            (click)="orientationChange.emit(orient)"
-            class="px-4 py-2 rounded-xl border font-bold transition-all"
-            [ngClass]="
-              printOrientation === orient
-                ? 'bg-emerald-600 border-emerald-500 text-white'
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
-            "
-          >
-            {{ t('manual.printModal.' + orient) }}
-          </button>
+          @for (orient of ['portrait', 'landscape']; track orient) {
+            <button
+              (click)="orientationChange.emit(orient)"
+              class="px-4 py-2 rounded-xl border font-bold transition-all"
+              [ngClass]="
+                printOrientation === orient
+                  ? 'bg-emerald-600 border-emerald-500 text-white'
+                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+              "
+            >
+              {{ t('manual.printModal.' + orient) }}
+            </button>
+          }
         </div>
       </div>
     </div>

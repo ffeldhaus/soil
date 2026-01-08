@@ -1,11 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { User } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-dashboard-pending',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './dashboard-pending.html',
 })
 export class DashboardPendingComponent {

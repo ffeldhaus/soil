@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import { LanguageService } from '../../services/language.service';
+import { Feedback, Game, SystemStats, UserStatus } from '../../types';
 import { SuperAdminHudComponent } from './components/super-admin-hud';
 import { SuperAdminStatsComponent } from './components/super-admin-stats';
 
@@ -112,16 +113,16 @@ export class SuperAdminComponent implements OnInit {
     return translations[key] || key;
   }
 
-  pendingUsers: any[] = [];
-  admins: any[] = [];
-  feedback: any[] = [];
+  pendingUsers: UserStatus[] = [];
+  admins: (UserStatus & { gameCount: number; quota: number })[] = [];
+  feedback: Feedback[] = [];
 
-  selectedAdmin: any = null;
-  adminGames: any[] = [];
+  selectedAdmin: (UserStatus & { gameCount: number; quota: number }) | null = null;
+  adminGames: Game[] = [];
   isLoadingGames = false;
 
   showQuotaModal = false;
-  selectedUserForQuota: any = null;
+  selectedUserForQuota: (UserStatus & { gameCount: number; quota: number }) | null = null;
   newQuotaValue = 0;
 
   async ngOnInit() {
@@ -132,7 +133,7 @@ export class SuperAdminComponent implements OnInit {
       } else {
         // Wait a bit or check if we are truly logged out?
         // For now, we respect the original logic but adding a log.
-        console.log('SuperAdmin: No user, possible redirect needed');
+        if (window.console) console.warn('SuperAdmin: No user, possible redirect needed');
         // We only redirect if we are sure. This logic was arguably aggressive
         // (redirecting on initial null) but if it works for the user generally,
         // I will leave the strict redirect for now, focused on the DATA LOADING issue.
@@ -148,12 +149,12 @@ export class SuperAdminComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  stats: any = null;
+  stats: SystemStats | null = null;
   isLoadingData = false;
 
   async loadData() {
     this.isLoadingData = true;
-    console.log('SuperAdmin: Loading data...');
+    if (window.console) console.warn('SuperAdmin: Loading data...');
     try {
       const [pendingUsers, admins, stats, feedback] = await Promise.all([
         this.gameService.getPendingUsers(),
@@ -167,15 +168,16 @@ export class SuperAdminComponent implements OnInit {
         this.admins = admins;
         this.stats = stats;
         this.feedback = feedback;
-        console.log('SuperAdmin: Data loaded', {
-          pending: this.pendingUsers.length,
-          admins: this.admins.length,
-          feedback: this.feedback.length,
-        });
+        if (window.console)
+          console.warn('SuperAdmin: Data loaded', {
+            pending: this.pendingUsers.length,
+            admins: this.admins.length,
+            feedback: this.feedback.length,
+          });
         this.cdr.detectChanges();
       });
     } catch (err) {
-      console.error('SuperAdmin: Error loading data', err);
+      if (window.console) console.error('SuperAdmin: Error loading data', err);
     } finally {
       this.isLoadingData = false;
       this.cdr.detectChanges();
@@ -183,11 +185,11 @@ export class SuperAdminComponent implements OnInit {
   }
 
   // Feedback Management
-  feedbackToManage: any = null;
+  feedbackToManage: Feedback | null = null;
   feedbackAction: 'reply' | 'resolve' | 'reject' | null = null;
   feedbackValue = '';
 
-  initiateFeedbackAction(item: any, action: 'reply' | 'resolve' | 'reject') {
+  initiateFeedbackAction(item: Feedback, action: 'reply' | 'resolve' | 'reject') {
     this.feedbackToManage = item;
     this.feedbackAction = action;
     this.feedbackValue = '';
@@ -202,7 +204,7 @@ export class SuperAdminComponent implements OnInit {
   async confirmFeedbackAction() {
     if (!this.feedbackToManage || !this.feedbackAction) return;
 
-    const value: any = {};
+    const value: { response?: string; externalReference?: string } = {};
     if (this.feedbackAction === 'reply') {
       value.response = this.feedbackValue;
     } else if (this.feedbackAction === 'resolve') {
@@ -213,15 +215,16 @@ export class SuperAdminComponent implements OnInit {
       await this.gameService.manageFeedback(this.feedbackToManage.id, this.feedbackAction, value);
       this.cancelFeedbackAction();
       this.loadData();
-    } catch (e: any) {
-      console.error(e);
-      alert('Failed to manage feedback: ' + e.message);
+    } catch (e: unknown) {
+      if (window.console) console.error(e);
+      const error = e as Error;
+      alert('Failed to manage feedback: ' + error.message);
     }
   }
 
-  userToApprove: any = null;
+  userToApprove: UserStatus | null = null;
 
-  initiateApprove(user: any) {
+  initiateApprove(user: UserStatus) {
     this.userToApprove = user;
   }
 
@@ -235,17 +238,17 @@ export class SuperAdminComponent implements OnInit {
     const user = this.userToApprove;
     this.userToApprove = null; // Close modal immediately
 
-    await this.gameService.manageAdmin(user.uid, 'approve', null, this.languageService.currentLang);
+    await this.gameService.manageAdmin(user.uid, 'approve', undefined, this.languageService.currentLang);
     this.loadData();
   }
 
-  userToReject: any = null;
+  userToReject: UserStatus | null = null;
   showRejectModal = false;
   rejectionReasons: string[] = [];
   customRejectionMessage = '';
   banEmailOnReject = false;
 
-  initiateReject(user: any) {
+  initiateReject(user: UserStatus) {
     this.userToReject = user;
     this.rejectionReasons = [];
     this.customRejectionMessage = '';
@@ -287,13 +290,13 @@ export class SuperAdminComponent implements OnInit {
   }
 
   // Old method kept for reference or direct calls if needed, but unused by template now
-  async approveUser(user: any) {
+  async approveUser(user: UserStatus) {
     if (!confirm(`Approve ${user.email}?`)) return;
-    await this.gameService.manageAdmin(user.uid, 'approve', null, this.languageService.currentLang);
+    await this.gameService.manageAdmin(user.uid, 'approve', undefined, this.languageService.currentLang);
     this.loadData();
   }
 
-  async rejectUser(user: any) {
+  async rejectUser(user: UserStatus) {
     const ban = confirm(`Reject ${user.email}?\n\nPress OK to REJECT only.\nPress CANCEL to consider other options.`);
     if (ban) {
       await this.gameService.manageAdmin(user.uid, 'reject');
@@ -311,8 +314,8 @@ export class SuperAdminComponent implements OnInit {
   }
 
   // Open the modal
-  setQuota(user: any) {
-    this.selectedUserForQuota = user;
+  setQuota(user: UserStatus & { quota: number }) {
+    this.selectedUserForQuota = user as UserStatus & { gameCount: number; quota: number };
     this.newQuotaValue = user.quota;
     this.showQuotaModal = true;
   }
@@ -331,7 +334,7 @@ export class SuperAdminComponent implements OnInit {
     }
   }
 
-  async banAdmin(user: any) {
+  async banAdmin(user: UserStatus) {
     const confirmBan = prompt(`Type "BAN" to permanently ban ${user.email} and block their email.`);
     if (confirmBan === 'BAN') {
       await this.gameService.manageAdmin(user.uid, 'ban');
@@ -339,7 +342,7 @@ export class SuperAdminComponent implements OnInit {
     }
   }
 
-  async deleteAdmin(user: any) {
+  async deleteAdmin(user: UserStatus) {
     const confirmDelete = prompt(`Type "DELETE" to PERMANENTLY DELETE ${user.email}. This cannot be undone.`);
     if (confirmDelete === 'DELETE') {
       await this.gameService.manageAdmin(user.uid, 'delete');
@@ -347,7 +350,7 @@ export class SuperAdminComponent implements OnInit {
     }
   }
 
-  async viewGames(admin: any) {
+  async viewGames(admin: UserStatus & { gameCount: number; quota: number }) {
     this.selectedAdmin = admin;
     this.isLoadingGames = true;
     this.adminGames = [];
@@ -360,14 +363,14 @@ export class SuperAdminComponent implements OnInit {
       const res = await this.gameService.getAdminGames(1, 100, false, admin.uid);
 
       this.ngZone.run(() => {
-        console.log('SuperAdmin: Games loaded', res.games.length);
+        if (window.console) console.warn('SuperAdmin: Games loaded', res.games.length);
         this.adminGames = res.games;
         this.isLoadingGames = false;
         this.cdr.detectChanges();
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       this.ngZone.run(() => {
-        console.error(e);
+        if (window.console) console.error(e);
         this.isLoadingGames = false;
         alert('Failed to load games');
         this.cdr.detectChanges();
@@ -376,11 +379,11 @@ export class SuperAdminComponent implements OnInit {
   }
 
   // Delete Logic
-  gameToDelete: any = null;
+  gameToDelete: Game | null = null;
   isDeleting = false;
   deleteConfirmInput = '';
 
-  async deleteGame(game: any) {
+  async deleteGame(game: Game) {
     this.gameToDelete = game;
     this.deleteConfirmInput = '';
   }
@@ -410,9 +413,10 @@ export class SuperAdminComponent implements OnInit {
       if (this.selectedAdmin) {
         this.viewGames(this.selectedAdmin);
       }
-    } catch (e: any) {
-      console.error(e);
-      alert('Failed to delete: ' + e.message);
+    } catch (e: unknown) {
+      const error = e as Error;
+      if (window.console) console.error(error);
+      alert('Failed to delete: ' + error.message);
     } finally {
       this.isDeleting = false;
       this.gameToDelete = null;
@@ -421,7 +425,15 @@ export class SuperAdminComponent implements OnInit {
     }
   }
 
-  isTrash(game: any): boolean {
+  isTrash(game: Game): boolean {
     return game?.status === 'deleted' || !!game?.deletedAt;
+  }
+
+  formatDate(d: { seconds: number; nanoseconds: number } | Date | string | null | undefined): Date | null {
+    if (!d) return null;
+    if (d instanceof Date) return d;
+    if (typeof d === 'string') return new Date(d);
+    if ('seconds' in d) return new Date(d.seconds * 1000);
+    return null;
   }
 }

@@ -9,7 +9,7 @@
     @if (user) {
       <div class="flex items-center gap-3">
         @if (user.photoURL) {
-          <img [src]="photoURL" class="w-8 h-8 rounded-full border border-gray-600" />
+          <img [src]="user.photoURL" alt="Profile" class="w-8 h-8 rounded-full border border-gray-700" />
         }
         @if (!user.photoURL) {
           <div

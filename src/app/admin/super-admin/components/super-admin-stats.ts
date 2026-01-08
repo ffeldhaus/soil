@@ -1,14 +1,15 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+
+import { SystemStats } from '../../../types';
 
 @Component({
   selector: 'app-super-admin-stats',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './super-admin-stats.html',
 })
 export class SuperAdminStatsComponent {
-  @Input() stats: any = null;
+  @Input() stats: SystemStats | null = null;
 
   t(key: string): string {
     const translations: Record<string, string> = {

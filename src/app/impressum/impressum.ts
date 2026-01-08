@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
@@ -7,7 +6,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 @Component({
   selector: 'app-impressum',
   standalone: true,
-  imports: [CommonModule, RouterLink, LanguageSwitcherComponent],
+  imports: [RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen bg-gray-900 text-gray-300 font-sans p-6 md:p-12 relative">
       <!-- Language Switcher -->

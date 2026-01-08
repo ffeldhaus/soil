@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { CropType } from '../../types';
@@ -6,7 +5,7 @@ import { CropType } from '../../types';
 @Component({
   selector: 'app-planting-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div
       class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
@@ -19,26 +18,29 @@ import { CropType } from '../../types';
         <h2 i18n="@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
 
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
-          <button
-            *ngFor="let crop of crops"
-            (click)="select(crop)"
-            [attr.data-testid]="'crop-' + crop.toLowerCase()"
-            class="group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700/50 bg-gray-800/80 hover:z-10 hover:shadow-[0_0_20px_5px_rgba(52,211,153,0.7)] hover:border-emerald-400/50 transition-all duration-200"
-          >
-            <img
-              [src]="'assets/images/' + getConfig(crop).image"
-              class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-            />
-
-            <div class="absolute top-1 left-0 right-0 text-center pointer-events-none z-20 flex flex-col items-center">
-              <span
-                class="text-[10px] sm:text-xs font-serif font-bold text-white tracking-wide"
-                style="-webkit-text-stroke: 0.5px black; paint-order: stroke fill; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
+          @for (crop of crops; track crop) {
+            <button
+              (click)="select(crop)"
+              [attr.data-testid]="'crop-' + crop.toLowerCase()"
+              class="group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700/50 bg-gray-800/80 hover:z-10 hover:shadow-[0_0_20px_5px_rgba(52,211,153,0.7)] hover:border-emerald-400/50 transition-all duration-200"
+            >
+              <img
+                [src]="'assets/images/' + getConfig(crop).image"
+                [alt]="t(getConfig(crop).label)"
+                class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+              />
+              <div
+                class="absolute top-1 left-0 right-0 text-center pointer-events-none z-20 flex flex-col items-center"
               >
-                {{ t(getConfig(crop).label) }}
-              </span>
-            </div>
-          </button>
+                <span
+                  class="text-[10px] sm:text-xs font-serif font-bold text-white tracking-wide"
+                  style="-webkit-text-stroke: 0.5px black; paint-order: stroke fill; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
+                >
+                  {{ t(getConfig(crop).label) }}
+                </span>
+              </div>
+            </button>
+          }
         </div>
 
         <div class="flex justify-end gap-3 mt-8">

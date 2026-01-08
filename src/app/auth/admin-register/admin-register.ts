@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { User } from '@angular/fire/auth';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-admin-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   templateUrl: './admin-register.html',
 })
 export class AdminRegisterComponent implements OnInit {
@@ -35,7 +35,7 @@ export class AdminRegisterComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   isGoogleUser = false;
-  currentUser: any = null;
+  currentUser: User | null = null;
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -93,17 +93,17 @@ export class AdminRegisterComponent implements OnInit {
       const formData = this.registerForm.getRawValue();
 
       if (!this.isGoogleUser) {
-        await this.authService.registerWithEmail(formData.email!, formData.password!);
+        await this.authService.registerWithEmail(formData.email as string, formData.password as string);
         await this.authService.sendVerificationEmail();
         this.successMessage = this.t('adminRegister.success.verificationSent');
       }
 
       await this.gameService.submitOnboarding({
-        firstName: formData.firstName!,
-        lastName: formData.lastName!,
-        institution: formData.institution!,
-        institutionLink: formData.institutionLink!,
-        explanation: formData.explanation!,
+        firstName: formData.firstName as string,
+        lastName: formData.lastName as string,
+        institution: formData.institution as string,
+        institutionLink: formData.institutionLink as string,
+        explanation: formData.explanation as string,
         lang: this.languageService.currentLang,
       });
 
@@ -114,9 +114,10 @@ export class AdminRegisterComponent implements OnInit {
       }
 
       this.router.navigate(['/admin/dashboard']);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
-      this.errorMessage = error.message || 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+      this.errorMessage =
+        (error as Error).message || 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
     } finally {
       this.isLoading = false;
     }

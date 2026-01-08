@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -7,7 +6,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 @Component({
   selector: 'app-info',
   standalone: true,
-  imports: [CommonModule, RouterLink, LanguageSwitcherComponent],
+  imports: [RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen relative font-sans text-gray-100 overflow-x-hidden">
       <!-- Language Switcher -->

@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, HostListener, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { User } from 'firebase/auth';
-import { combineLatest, firstValueFrom, take } from 'rxjs';
+import { combineLatest, take } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
-import { CropType, Parcel as ParcelType, Round } from '../../types';
+import { CropType, Game, Parcel as ParcelType, PlayerState, Round } from '../../types';
 import { Finance } from '../finance/finance';
 import { GameService } from '../game.service';
 import { Parcel } from '../parcel/parcel';
@@ -120,7 +120,7 @@ export class Board implements OnInit, OnDestroy {
 
   // Timer
   countdownText = '';
-  private timerInterval: any;
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
 
   // Game End Logic
   showGameEndModal = false;
@@ -183,7 +183,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest([this.route.queryParams, this.user$]).subscribe(async ([params, user]: [any, User | null]) => {
+    combineLatest([this.route.queryParams, this.user$]).subscribe(async ([params, user]: [Params, User | null]) => {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
         const claims = idTokenResult.claims;
@@ -255,14 +255,15 @@ export class Board implements OnInit, OnDestroy {
     if (this.timerInterval) clearInterval(this.timerInterval);
   }
 
-  private updateTimer(game: any) {
+  private updateTimer(game: Game) {
     const deadline = game.roundDeadlines?.[game.currentRoundNumber];
     if (!deadline) {
       this.countdownText = '';
       return;
     }
 
-    const target = deadline.seconds ? deadline.seconds * 1000 : new Date(deadline).getTime();
+    const target =
+      deadline && 'seconds' in deadline ? deadline.seconds * 1000 : new Date(deadline as unknown as string).getTime();
     const now = Date.now();
     const diff = target - now;
 
@@ -369,7 +370,7 @@ export class Board implements OnInit, OnDestroy {
     }
   }
 
-  onTouchEnd(event: TouchEvent) {
+  onTouchEnd(_event: TouchEvent) {
     this.isDragging = false;
     this.dragStartIndex = null;
     if (this.selectedIndices.size > 0 && !this.isReadOnly) {
@@ -520,15 +521,15 @@ export class Board implements OnInit, OnDestroy {
         this.showRoundResultModal = true;
       }
       this.selectedIndices = new Set();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting round', error);
-      this.errorMessage = error.message || 'Failed to submit round. Please try again.';
+      this.errorMessage = (error as Error).message || 'Failed to submit round. Please try again.';
     } finally {
       this.pendingNextRound = false;
     }
   }
 
-  onBackgroundClick(event: MouseEvent) {
+  onBackgroundClick(_event: MouseEvent) {
     if (this.selectedIndices.size > 0 && !this.showPlantingModal) {
       this.selectedIndices.clear();
     }
@@ -538,12 +539,12 @@ export class Board implements OnInit, OnDestroy {
     this.showRoundResultModal = false;
   }
 
-  private calculateWinners(game: any) {
+  private calculateWinners(game: Game) {
     if (!game.players) return;
-    const playerList = Object.values(game.players) as any[];
+    const playerList = Object.values(game.players);
     if (playerList.length === 0) return;
 
-    const getPlayerName = (p: any) =>
+    const getPlayerName = (p: PlayerState) =>
       p.displayName || `${this.playerLabel} ${p.uid.startsWith('player-') ? p.uid.split('-')[2] : ''}`;
 
     // Financial Winner
@@ -576,13 +577,13 @@ export class Board implements OnInit, OnDestroy {
     };
   }
 
-  private calculateAvgSoil(player: any): number {
+  private calculateAvgSoil(player: PlayerState): number {
     const history = player.history || [];
     if (history.length === 0) return 0;
     const lastRound = history[history.length - 1];
     const parcels = lastRound.parcelsSnapshot || [];
     if (parcels.length === 0) return 0;
-    const totalSoil = parcels.reduce((sum: number, p: any) => sum + (p.soil || 0), 0);
+    const totalSoil = parcels.reduce((sum: number, p: ParcelType) => sum + (p.soil || 0), 0);
     return totalSoil / parcels.length;
   }
 

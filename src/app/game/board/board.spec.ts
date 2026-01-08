@@ -71,8 +71,8 @@ describe('Board', () => {
             yield: 0,
           })),
       updateParcelDecision: () => {},
-      submitRound: (gameId: string) => Promise.resolve(),
-      loadGame: (gameId: string) =>
+      submitRound: (_gameId: string) => Promise.resolve(),
+      loadGame: (_gameId: string) =>
         Promise.resolve({
           game: { currentRoundNumber: 0 },
           playerState: { history: [], submittedRound: -1 },
@@ -98,8 +98,6 @@ describe('Board', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   it('should create', () => {
     expect(component).toBeTruthy();

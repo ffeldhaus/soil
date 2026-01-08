@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-manual-concept-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './manual-concept-card.html',
 })
 export class ManualConceptCardComponent {

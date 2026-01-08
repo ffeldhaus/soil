@@ -1,16 +1,22 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard-create-game',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './dashboard-create-game.html',
 })
 export class DashboardCreateGameComponent {
   @Input() isCreatingGame = false;
-  @Output() createGame = new EventEmitter<any>();
+  @Output() createGame = new EventEmitter<{
+    name: string;
+    numPlayers: number;
+    numRounds: number;
+    numAi: number;
+    playerLabel: string;
+    aiLevel: 'elementary' | 'middle' | 'high';
+  }>();
   @Output() playersChange = new EventEmitter<void>();
 
   newGameConfig = {

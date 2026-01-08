@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { User } from 'firebase/auth';
 
 import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher';
+import { Game, PlayerState } from '../../../types';
 
 @Component({
   selector: 'app-board-hud',
@@ -11,8 +13,8 @@ import { LanguageSwitcherComponent } from '../../../shared/language-switcher/lan
   templateUrl: './board-hud.html',
 })
 export class BoardHudComponent {
-  @Input() user: any = null;
-  @Input() gameState: any = null;
+  @Input() user: User | null = null;
+  @Input() gameState: { game: Game | null; playerState: PlayerState | null } | null = null;
   @Input() isPlayer = false;
   @Input() playerLabel = 'Player';
   @Input() playerNumber: string | null = null;

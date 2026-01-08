@@ -1,10 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-qr-overlay',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './qr-overlay.html',
 })
 export class QrOverlayComponent {

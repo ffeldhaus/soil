@@ -67,7 +67,12 @@ export interface PlayerState {
   submittedRound?: number; // Last round submitted by this player
   pendingDecisions?: RoundDecision;
   history: Round[]; // Store full history
+  avgSoil?: number;
+  avgNutrition?: number;
+  playerNumber?: number;
 }
+
+export type GameStatus = 'waiting' | 'in_progress' | 'finished' | 'deleted' | 'expired';
 
 export interface GameSettings {
   length: number; // Number of rounds
@@ -75,23 +80,38 @@ export interface GameSettings {
   playerLabel?: string; // e.g. 'Player', 'Team', 'Farmers'
 }
 
+export interface GameConfig {
+  numPlayers: number;
+  numRounds: number;
+  numAi: number;
+}
+
 export interface Game {
   id: string;
   name: string;
+  password?: string;
   hostUid: string;
-  status: 'waiting' | 'in_progress' | 'finished';
+  status: GameStatus;
   settings: GameSettings;
+  config: GameConfig;
   players: Record<string, PlayerState>; // Keyed by UID
   currentRoundNumber: number;
-  createdAt: number; // Timestamp
-  roundDeadlines?: Record<number, any>;
+  createdAt: { seconds: number; nanoseconds: number }; // Firestore Timestamp
+  deletedAt?: { seconds: number; nanoseconds: number } | null;
+  playerSecrets?: Record<string, { password: string }>;
+  roundDeadlines?: Record<number, { seconds: number; nanoseconds: number }>;
 }
 
 export interface UserStatus {
-  uid?: string;
-  role?: string;
-  status?: string; // 'pending', 'active'
-  email?: string;
+  uid: string;
+  role: 'pending' | 'admin' | 'superadmin' | 'player' | 'rejected' | 'new' | 'banned';
+  status: 'active' | 'rejected' | 'pending' | 'banned';
+  email: string;
+  onboarding?: {
+    explanation: string;
+    institution: string;
+    institutionLink: string;
+  };
 }
 
 export interface Feedback {
@@ -110,6 +130,21 @@ export interface Feedback {
   status: 'new' | 'replied' | 'resolved' | 'rejected';
   adminResponse?: string;
   externalReference?: string; // e.g. GitHub issue link
-  createdAt: any; // Timestamp
-  updatedAt: any; // Timestamp
+  createdAt: { seconds: number; nanoseconds: number };
+  updatedAt: { seconds: number; nanoseconds: number };
+}
+
+export interface SystemStats {
+  games: {
+    total: number;
+    active: number;
+    deleted: number;
+  };
+  users: {
+    total: number;
+    admins: number;
+    pending: number;
+    rejected: number;
+    banned: number;
+  };
 }

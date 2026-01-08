@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges } from '@angular/core';
 
 import { GAME_CONSTANTS } from '../../game-constants';
-import { CropType, Game, PlayerState, Round, RoundDecision, RoundResult } from '../../types';
+import { Game, Round, RoundResult } from '../../types';
 
 interface DetailedExpenses {
   seeds: Record<string, number>;

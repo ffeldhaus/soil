@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -13,7 +12,7 @@ export interface RoundSettings {
 @Component({
   selector: 'app-round-settings-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './round-settings-modal.html',
 })
 export class RoundSettingsModal {

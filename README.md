@@ -95,14 +95,17 @@ This script handles the build process and deployment to Firebase Hosting and Fun
 The application uses a Google Service Account with Domain-Wide Delegation (DWD) to send emails via Gmail.
 
 ### 1. Enable Gmail API
+
 Ensure the Gmail API is enabled for your project in the [Google Cloud Console](https://console.cloud.google.com/apis/library/gmail.googleapis.com).
 
 ### 2. Configure Service Account
+
 1. Create a Service Account in the [Google Cloud IAM Console](https://console.cloud.google.com/iam-admin/serviceaccounts).
 2. Note the **Client ID** (Unique ID) of the Service Account.
 3. Ensure the Service Account has the "Service Account Token Creator" role.
 
 ### 3. Google Workspace Domain-Wide Delegation
+
 1. Go to the [Google Workspace Admin Console](https://admin.google.com/) -> Security -> Access and data control -> API controls.
 2. Click **Manage Domain Wide Delegation**.
 3. Add a new API client using the **Client ID** of your Service Account.
@@ -111,6 +114,7 @@ Ensure the Gmail API is enabled for your project in the [Google Cloud Console](h
    - `https://www.googleapis.com/auth/gmail.send`
 
 ### 4. Set Firebase Secrets
+
 Configure the Cloud Functions to use the Service Account and the user to impersonate:
 
 ```bash
@@ -122,7 +126,9 @@ firebase functions:secrets:set GMAIL_IMPERSONATED_USER --data "no-reply@yourdoma
 ```
 
 ### 5. Google Workspace User Requirements
+
 The account specified in `GMAIL_IMPERSONATED_USER` (e.g., `no-reply@yourdomain.com`) must meet the following criteria:
+
 1. **Active License**: The user must be assigned a Google Workspace license (e.g., Business Starter or higher).
 2. **Gmail Enabled**: The Gmail service must be enabled for this user in the Google Workspace Admin Console.
 3. **Inbox Ready**: The user's mailbox must be fully provisioned and active before it can send emails via the API.

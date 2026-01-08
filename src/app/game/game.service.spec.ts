@@ -1,19 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { Functions } from '@angular/fire/functions';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GameService } from './game.service';
 
 // Mock @angular/fire/functions
 vi.mock('@angular/fire/functions', async (importOriginal) => {
-  const actual = await importOriginal<any>();
+  const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,
     httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
   };
 });
-
-import { httpsCallable } from '@angular/fire/functions';
 
 describe('GameService', () => {
   let service: GameService;

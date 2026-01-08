@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
 
 import { LanguageService } from '../../services/language.service';
@@ -6,7 +5,7 @@ import { LanguageService } from '../../services/language.service';
 @Component({
   selector: 'app-language-switcher',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="relative inline-block text-left" (click)="$event.stopPropagation()">
       <!-- Toggle Button -->

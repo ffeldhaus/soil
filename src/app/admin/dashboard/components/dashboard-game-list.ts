@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+import { Game, PlayerState } from '../../../types';
 import { DashboardGameDetailComponent } from './dashboard-game-detail';
 
 @Component({
@@ -10,7 +11,7 @@ import { DashboardGameDetailComponent } from './dashboard-game-detail';
   templateUrl: './dashboard-game-list.html',
 })
 export class DashboardGameListComponent {
-  @Input() games: any[] = [];
+  @Input() games: Game[] = [];
   @Input() showTrash = false;
   @Input() selectedGameIds = new Set<string>();
   @Input() isRestoring = false;
@@ -28,23 +29,43 @@ export class DashboardGameListComponent {
   @Output() loadGames = new EventEmitter<void>();
   @Output() restoreSelected = new EventEmitter<void>();
   @Output() deleteSelected = new EventEmitter<void>();
-  @Output() toggleSelectAll = new EventEmitter<any>();
+  @Output() toggleSelectAll = new EventEmitter<Event>();
   @Output() toggleSelection = new EventEmitter<string>();
   @Output() toggleExpand = new EventEmitter<string>();
-  @Output() shareGame = new EventEmitter<any>();
-  @Output() restoreGame = new EventEmitter<any>();
-  @Output() deleteGame = new EventEmitter<any>();
+  @Output() shareGame = new EventEmitter<Game>();
+  @Output() restoreGame = new EventEmitter<Game>();
+  @Output() deleteGame = new EventEmitter<Game>();
   @Output() prevPage = new EventEmitter<void>();
   @Output() nextPage = new EventEmitter<void>();
 
   // Detail actions
-  @Output() convertPlayer = new EventEmitter<{ game: any; slot: any }>();
+  @Output() convertPlayer = new EventEmitter<{ game: Game; slot: { number: number; isAi: boolean } }>();
   @Output() loginAsPlayer = new EventEmitter<{ gameId: string; password: string }>();
   @Output() copyLoginUrl = new EventEmitter<{ gameId: string; password: string }>();
   @Output() generateQrCode = new EventEmitter<{ gameId: string; playerNumber: number; password: string }>();
-  @Output() sharePlayer = new EventEmitter<{ game: any; slot: any }>();
-  @Output() openFinance = new EventEmitter<{ game: any; slot: any }>();
-  @Output() printAllQrCodes = new EventEmitter<any>();
+  @Output() sharePlayer = new EventEmitter<{
+    game: Game;
+    slot: {
+      number: number;
+      uid: string;
+      player: PlayerState | null;
+      isJoined: boolean;
+      isAi: boolean;
+      password: string;
+    };
+  }>();
+  @Output() openFinance = new EventEmitter<{
+    game: Game;
+    slot: {
+      number: number;
+      uid: string;
+      player: PlayerState | null;
+      isJoined: boolean;
+      isAi: boolean;
+      password: string;
+    };
+  }>();
+  @Output() printAllQrCodes = new EventEmitter<Game>();
   @Output() updateDeadline = new EventEmitter<{ gameId: string; round: number; dateStr: string }>();
 
   t(key: string): string {
@@ -85,5 +106,13 @@ export class DashboardGameListComponent {
 
   isSelected(gameId: string): boolean {
     return this.selectedGameIds.has(gameId);
+  }
+
+  formatDate(d: { seconds: number; nanoseconds: number } | Date | string | null | undefined): Date | null {
+    if (!d) return null;
+    if (d instanceof Date) return d;
+    if (typeof d === 'string') return new Date(d);
+    if ('seconds' in d) return new Date(d.seconds * 1000);
+    return null;
   }
 }

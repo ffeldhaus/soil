@@ -1,11 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   template: `
     <div
       class="min-h-screen relative font-sans text-gray-100 overflow-hidden flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8"

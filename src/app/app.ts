@@ -14,26 +14,28 @@ export class App {
   protected languageService = inject(LanguageService);
   private updates = inject(SwUpdate);
   protected readonly title = signal('soil');
-  version = (import.meta as any).env.APP_VERSION || 'dev';
+  version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
 
   constructor() {
-    console.log(`Soil Version ${this.version} (app.ts)`);
+    console.warn(`Soil Version ${this.version} (app.ts)`);
 
     if (this.updates.isEnabled) {
-      console.log('Service Worker is enabled');
+      console.warn('Service Worker is enabled');
       this.updates.versionUpdates.subscribe((evt) => {
         switch (evt.type) {
           case 'VERSION_DETECTED':
-            console.log(`Downloading new app version: ${evt.version.hash}`);
+            console.warn(`Downloading new app version: ${evt.version.hash}`);
             break;
           case 'VERSION_READY':
-            console.log(`Current app version: ${evt.currentVersion.hash}`);
-            console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
+            console.warn(`Current app version: ${evt.currentVersion.hash}`);
+            console.warn(`New app version ready for use: ${evt.latestVersion.hash}`);
             // Reload the page to update to the latest version.
-            document.location.reload();
+            if (typeof window !== 'undefined') {
+              document.location.reload();
+            }
             break;
           case 'VERSION_INSTALLATION_FAILED':
-            console.log(`Failed to install app version '${evt.version.hash}': ${evt.error}`);
+            console.error(`Failed to install app version '${evt.version.hash}': ${evt.error}`);
             break;
         }
       });

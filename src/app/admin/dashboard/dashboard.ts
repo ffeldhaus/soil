@@ -2,16 +2,14 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Observable, Subscription } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
-import { Finance } from '../../game/finance/finance';
 import { GameService } from '../../game/game.service';
 import { LanguageService } from '../../services/language.service';
-import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
-import { Game, UserStatus } from '../../types';
+import { Game, PlayerState, UserStatus } from '../../types';
 import { FeedbackModal } from '../components/feedback-modal/feedback-modal';
 import { DashboardCreateGameComponent } from './components/dashboard-create-game';
 import { DashboardDeleteModalComponent } from './components/dashboard-delete-modal';
@@ -162,13 +160,18 @@ export class Dashboard implements OnInit, OnDestroy {
     this.showFeedbackModal = false;
   }
 
-  async onFeedbackSubmit(feedback: any) {
+  async onFeedbackSubmit(feedback: {
+    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+    rating: number;
+    comment: string;
+  }) {
     try {
       await this.gameService.submitFeedback(feedback);
       this.showFeedbackModal = false;
       alert($localize`:@@feedback.success:Vielen Dank für dein Feedback!`);
-    } catch (e: any) {
-      this.errorMessage = 'Failed to submit feedback: ' + e.message;
+    } catch (e: unknown) {
+      const error = e as Error;
+      this.errorMessage = 'Failed to submit feedback: ' + error.message;
     }
   }
 
@@ -182,7 +185,7 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   createdGame: { id: string; password?: string } | null = null;
-  games: any[] = [];
+  games: Game[] = [];
 
   // Pagination
   currentPage = 1;
@@ -211,7 +214,7 @@ export class Dashboard implements OnInit, OnDestroy {
   isDeleting = false;
 
   // Delete Modal
-  gameToDelete: any = null;
+  gameToDelete: Game | null = null;
   isDeletingSelected = false;
   deleteConfirmInput = '';
 
@@ -220,10 +223,13 @@ export class Dashboard implements OnInit, OnDestroy {
 
   // Finance Modal
   showFinanceModal = false;
-  selectedFinanceGame: any = null;
-  selectedFinancePlayer: any = null;
+  selectedFinanceGame: Game | null = null;
+  selectedFinancePlayer: PlayerState | null = null;
 
-  openFinance(game: any, slot: any) {
+  openFinance(
+    game: Game,
+    slot: { number: number; uid: string; player: PlayerState | null; isJoined: boolean; isAi: boolean },
+  ) {
     this.selectedFinanceGame = game;
     this.selectedFinancePlayer = slot.player;
     this.showFinanceModal = true;
@@ -243,7 +249,7 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  getPlayerKeys(players: any): string[] {
+  getPlayerKeys(players: Record<string, PlayerState>): string[] {
     if (!players) return [];
     return Object.keys(players);
   }
@@ -256,7 +262,7 @@ export class Dashboard implements OnInit, OnDestroy {
         if (localStorage.getItem('soil_test_mode') === 'true') {
           console.log('Dashboard: Test Mode Active. Forcing Admin status.');
           this.ngZone.run(() => {
-            this.userStatus = { role: 'admin', status: 'active' } as any;
+            this.userStatus = { uid: user.uid, role: 'admin', status: 'active', email: user.email || '' };
             this.isPendingApproval = false;
             this.isLoading = false;
             this.loadGames();
@@ -284,14 +290,14 @@ export class Dashboard implements OnInit, OnDestroy {
           console.log('Dashboard: AuthService user:', user.uid);
           console.log('Dashboard: Firestore instance:', this.db);
 
-          const userRef = doc(this.db as any, 'users', user.uid);
+          const userRef = doc(this.db, 'users', user.uid);
 
-          const statusObservable = new Observable<any>((observer) => {
+          const statusObservable = new Observable<UserStatus | undefined>((observer) => {
             const unsubscribe = onSnapshot(
               userRef,
               { includeMetadataChanges: true },
               (snapshot) => {
-                observer.next(snapshot.data());
+                observer.next(snapshot.data() as UserStatus | undefined);
               },
               (error) => {
                 observer.error(error);
@@ -300,8 +306,8 @@ export class Dashboard implements OnInit, OnDestroy {
             return () => unsubscribe();
           });
 
-          this.userStatusSub = statusObservable.subscribe(
-            (userData: any) => {
+          this.userStatusSub = statusObservable.subscribe({
+            next: (userData) => {
               clearTimeout(timeoutId); // Clear timeout on first response
               this.ngZone.run(() => {
                 if (userData) {
@@ -342,7 +348,7 @@ export class Dashboard implements OnInit, OnDestroy {
                   // Fallback for bootstrap Super Admin (matches backend logic)
                   if (user.email === 'florian.feldhaus@gmail.com') {
                     console.log('Dashboard: Detected Bootstrap Super Admin email. Forcing Super Admin status.');
-                    this.userStatus = { role: 'superadmin', status: 'active' } as any;
+                    this.userStatus = { uid: user.uid, role: 'superadmin', status: 'active', email: user.email || '' };
                     this.isLoading = false;
                     this.router.navigate(['/admin/super']);
                     return;
@@ -350,7 +356,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
                   if (localStorage.getItem('soil_test_mode') === 'true') {
                     console.log('Dashboard: Test Mode Active. Forcing Admin status.');
-                    this.userStatus = { role: 'admin', status: 'active' } as any;
+                    this.userStatus = { uid: user.uid, role: 'admin', status: 'active', email: user.email || '' };
                     this.isPendingApproval = false;
                     this.isLoading = false;
                     this.loadGames();
@@ -364,7 +370,7 @@ export class Dashboard implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
               });
             },
-            (error) => {
+            error: (error) => {
               clearTimeout(timeoutId);
               this.ngZone.run(() => {
                 console.error('Dashboard: Subscription error:', error);
@@ -373,11 +379,12 @@ export class Dashboard implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
               });
             },
-          );
-        } catch (e: any) {
+          });
+        } catch (e: unknown) {
           clearTimeout(timeoutId);
           console.error('Dashboard: Sync Error:', e);
-          this.errorMessage = 'Critical Error: ' + e.message;
+          const error = e as Error;
+          this.errorMessage = 'Critical Error: ' + error.message;
           this.isLoading = false;
           this.cdr.detectChanges();
         }
@@ -457,10 +464,11 @@ export class Dashboard implements OnInit, OnDestroy {
         this.isLoadingGames = false;
         this.cdr.detectChanges();
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       this.ngZone.run(() => {
         console.error('Dashboard: Error loading games', e);
-        this.loadingError = 'Failed to load games: ' + (e.message || e);
+        const error = e as Error;
+        this.loadingError = 'Failed to load games: ' + (error.message || error);
         this.isLoadingGames = false;
         this.cdr.detectChanges();
       });
@@ -485,7 +493,7 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  async onGameCreate(config: any) {
+  async onGameCreate(config: { numPlayers: number; numRounds: number; numAi: number; playerLabel: string }) {
     this.newGameConfig = { ...this.newGameConfig, ...config };
     await this.createNewGame();
   }
@@ -515,9 +523,9 @@ export class Dashboard implements OnInit, OnDestroy {
       this.expandedGameId = result.gameId;
       this.cdr.detectChanges();
       this.newGameConfig.name = this.getRandomName(); // Reset with new random name
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating game', error);
-      this.errorMessage = 'Failed to create game: ' + error.message;
+      this.errorMessage = 'Failed to create game: ' + (error as Error).message;
     } finally {
       this.isCreatingGame = false;
       this.cdr.detectChanges();
@@ -535,8 +543,9 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  toggleSelectAll(event: any) {
-    if (event.target.checked) {
+  toggleSelectAll(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (target.checked) {
       this.games.forEach((g) => this.selectedGameIds.add(g.id));
     } else {
       this.selectedGameIds.clear();
@@ -566,23 +575,23 @@ export class Dashboard implements OnInit, OnDestroy {
     try {
       await this.gameService.undeleteGames(Array.from(this.selectedGameIds));
       await this.loadGames();
-    } catch (e: any) {
-      this.errorMessage = 'Failed to restore games: ' + e.message;
+    } catch (e: unknown) {
+      this.errorMessage = 'Failed to restore games: ' + (e as Error).message;
     } finally {
       this.isRestoring = false;
     }
   }
 
-  async restoreGame(game: any) {
+  async restoreGame(game: Game) {
     try {
       await this.gameService.undeleteGames([game.id]);
       await this.loadGames();
-    } catch (e: any) {
-      this.errorMessage = 'Failed to restore game: ' + e.message;
+    } catch (e: unknown) {
+      this.errorMessage = 'Failed to restore game: ' + (e as Error).message;
     }
   }
 
-  async deleteGame(game: any) {
+  async deleteGame(game: Game) {
     this.gameToDelete = game;
     this.deleteConfirmInput = '';
   }
@@ -610,10 +619,10 @@ export class Dashboard implements OnInit, OnDestroy {
         await this.gameService.deleteGames(Array.from(this.selectedGameIds), force);
       }
       await this.loadGames();
-    } catch (e: any) {
+    } catch (e: unknown) {
       this.ngZone.run(() => {
         console.error('Error deleting games', e);
-        this.errorMessage = 'Failed to delete games: ' + e.message;
+        this.errorMessage = 'Failed to delete games: ' + (e as Error).message;
       });
     } finally {
       this.ngZone.run(() => {
@@ -628,19 +637,22 @@ export class Dashboard implements OnInit, OnDestroy {
 
   private languageService = inject(LanguageService);
 
-  async shareGame(game: any) {
+  async shareGame(game: Game) {
     const email = prompt(`Enter email address to send game details:`);
     if (!email) return;
 
     try {
       await this.gameService.sendGameInvite(game.id, email, this.languageService.currentLang);
       alert('Invite sent successfully!');
-    } catch (e: any) {
-      this.errorMessage = 'Failed to send invite: ' + e.message;
+    } catch (e: unknown) {
+      this.errorMessage = 'Failed to send invite: ' + (e as Error).message;
     }
   }
 
-  async sharePlayer(game: any, slot: any) {
+  async sharePlayer(
+    game: Game,
+    slot: { number: number; uid: string; player: PlayerState | null; isJoined: boolean; isAi: boolean },
+  ) {
     const email = prompt(`Enter email address for Player ${slot.number}:`);
     if (!email) return;
 
@@ -653,12 +665,14 @@ export class Dashboard implements OnInit, OnDestroy {
         this.languageService.currentLang,
       );
       alert('Invite sent successfully!');
-    } catch (e: any) {
-      this.errorMessage = 'Failed to send invite: ' + e.message;
+    } catch (e: unknown) {
+      this.errorMessage = 'Failed to send invite: ' + (e as Error).message;
     }
   }
 
-  getSlots(game: any): any[] {
+  getSlots(
+    game: Game,
+  ): { number: number; uid: string; player: PlayerState | null; isJoined: boolean; isAi: boolean; password: string }[] {
     const count = game.config?.numPlayers || 1;
     const slots = [];
     for (let i = 1; i <= count; i++) {
@@ -685,7 +699,7 @@ export class Dashboard implements OnInit, OnDestroy {
     return slots;
   }
 
-  async convertPlayer(game: any, slot: any) {
+  async convertPlayer(game: Game, slot: { number: number; isAi: boolean }) {
     // If it's AI, convert to Human. If Human (or empty), convert to AI.
     // If empty: convert to AI means create AI player.
     // If empty: convert to Human means create Human placeholder? Or just set metadata?
@@ -700,8 +714,8 @@ export class Dashboard implements OnInit, OnDestroy {
       await this.gameService.updatePlayerType(game.id, slot.number, targetType, aiLevel);
       // Refresh games to show update
       await this.loadGames();
-    } catch (e: any) {
-      this.errorMessage = 'Failed to convert player: ' + e.message;
+    } catch (e: unknown) {
+      this.errorMessage = 'Failed to convert player: ' + (e as Error).message;
     }
   }
 
@@ -709,7 +723,7 @@ export class Dashboard implements OnInit, OnDestroy {
   qrCodeUrl = '';
   qrCodePlayer = '';
   allQrCodes: { name: string; url: string; qrData: string }[] = [];
-  QRCode: any;
+  QRCode: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   async generateQrCode(gameId: string, playerNumber: number, password: string) {
     if (!this.QRCode) {
@@ -731,7 +745,7 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  async printAllQrCodes(game: any) {
+  async printAllQrCodes(game: Game) {
     if (!this.QRCode) {
       const module = await import('qrcode-generator');
       this.QRCode = module.default || module;
@@ -748,7 +762,7 @@ export class Dashboard implements OnInit, OnDestroy {
       qr.addData(url);
       qr.make();
       this.allQrCodes.push({
-        name: `${game.config?.playerLabel || 'Player'} ${slot.number}`,
+        name: `${game.settings?.playerLabel || 'Player'} ${slot.number}`,
         url: url,
         qrData: qr.createDataURL(4),
       });
@@ -776,18 +790,17 @@ export class Dashboard implements OnInit, OnDestroy {
     try {
       await this.gameService.updateRoundDeadline(gameId, round, dateStr);
       await this.loadGames(); // Refresh
-    } catch (e: any) {
-      this.errorMessage = 'Failed to update deadline: ' + e.message;
+    } catch (e: unknown) {
+      this.errorMessage = 'Failed to update deadline: ' + (e as Error).message;
     } finally {
       this.isUpdatingDeadline = false;
     }
   }
 
-  getDeadlineForRound(game: any, round: number): string {
+  getDeadlineForRound(game: Game, round: number): string {
     if (!game.roundDeadlines || !game.roundDeadlines[round]) return '';
     const d = game.roundDeadlines[round];
-    // Convert Firestore timestamp or ISO string to local datetime-local format
-    const date = d.seconds ? new Date(d.seconds * 1000) : new Date(d);
+    const date = d && 'seconds' in d ? new Date(d.seconds * 1000) : new Date(d as unknown as string);
 
     // Format to YYYY-MM-DDTHH:mm
     const pad = (n: number) => (n < 10 ? '0' + n : n);

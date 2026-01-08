@@ -166,7 +166,7 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let game of games">
+          @for (game of games; track game) {
             <tr class="border-b border-gray-700 hover:bg-gray-800/30 transition">
               <td class="px-4 py-3">
                 <input
@@ -202,10 +202,10 @@
               </td>
               <td class="px-4 py-3 text-sm text-gray-300">{{ game.currentRoundNumber || 0 }}</td>
               @if (showTrash) {
-                <td class="px-4 py-3">{{ game.deletedAt | date: 'short' }}</td>
+                <td class="px-4 py-3">{{ formatDate(game.deletedAt) | date: 'short' }}</td>
               }
               @if (!showTrash) {
-                <td class="px-4 py-3">{{ game.createdAt | date: 'shortDate' }}</td>
+                <td class="px-4 py-3">{{ formatDate(game.createdAt) | date: 'shortDate' }}</td>
               }
               <td class="px-4 py-3 flex gap-2">
                 @if (!showTrash) {
@@ -295,7 +295,7 @@
                 </td>
               </tr>
             }
-          </ng-container>
+          }
 
           @if (games.length === 0) {
             <tr>

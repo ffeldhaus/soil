@@ -1,17 +1,17 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { Finance } from '../../../game/finance/finance';
+import { Game, PlayerState } from '../../../types';
 
 @Component({
   selector: 'app-dashboard-finance-modal',
   standalone: true,
-  imports: [CommonModule, Finance],
+  imports: [Finance],
   templateUrl: './dashboard-finance-modal.html',
 })
 export class DashboardFinanceModalComponent {
   @Input() showFinanceModal = false;
-  @Input() selectedFinanceGame: any = null;
-  @Input() selectedFinancePlayer: any = null;
+  @Input() selectedFinanceGame: Game | null = null;
+  @Input() selectedFinancePlayer: PlayerState | null = null;
   @Output() closeModal = new EventEmitter<void>();
 }

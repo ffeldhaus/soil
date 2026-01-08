@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { User } from '@angular/fire/auth';
 
@@ -7,7 +6,7 @@ import { LanguageSwitcherComponent } from '../../../shared/language-switcher/lan
 @Component({
   selector: 'app-super-admin-hud',
   standalone: true,
-  imports: [CommonModule, LanguageSwitcherComponent],
+  imports: [LanguageSwitcherComponent],
   templateUrl: './super-admin-hud.html',
 })
 export class SuperAdminHudComponent {

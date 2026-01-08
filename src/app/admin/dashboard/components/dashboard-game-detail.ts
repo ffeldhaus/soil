@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+import { Game, PlayerState } from '../../../types';
+
 @Component({
   selector: 'app-dashboard-game-detail',
   standalone: true,
@@ -8,16 +10,36 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   templateUrl: './dashboard-game-detail.html',
 })
 export class DashboardGameDetailComponent {
-  @Input() game: any = null;
+  @Input() game!: Game;
   @Input() aiLevel = 'middle';
 
-  @Output() convertPlayer = new EventEmitter<{ game: any; slot: any }>();
+  @Output() convertPlayer = new EventEmitter<{ game: Game; slot: { number: number; isAi: boolean } }>();
   @Output() loginAsPlayer = new EventEmitter<{ gameId: string; password: string }>();
   @Output() copyLoginUrl = new EventEmitter<{ gameId: string; password: string }>();
   @Output() generateQrCode = new EventEmitter<{ gameId: string; playerNumber: number; password: string }>();
-  @Output() sharePlayer = new EventEmitter<{ game: any; slot: any }>();
-  @Output() openFinance = new EventEmitter<{ game: any; slot: any }>();
-  @Output() printAllQrCodes = new EventEmitter<any>();
+  @Output() sharePlayer = new EventEmitter<{
+    game: Game;
+    slot: {
+      number: number;
+      uid: string;
+      player: PlayerState | null;
+      isJoined: boolean;
+      isAi: boolean;
+      password: string;
+    };
+  }>();
+  @Output() openFinance = new EventEmitter<{
+    game: Game;
+    slot: {
+      number: number;
+      uid: string;
+      player: PlayerState | null;
+      isJoined: boolean;
+      isAi: boolean;
+      password: string;
+    };
+  }>();
+  @Output() printAllQrCodes = new EventEmitter<Game>();
   @Output() updateDeadline = new EventEmitter<{ gameId: string; round: number; dateStr: string }>();
 
   t(key: string): string {
@@ -43,12 +65,19 @@ export class DashboardGameDetailComponent {
     return translations[key] || key;
   }
 
-  getPlayerKeys(players: any): string[] {
+  getPlayerKeys(players: Record<string, PlayerState>): string[] {
     if (!players) return [];
     return Object.keys(players);
   }
 
-  getSlots(game: any): any[] {
+  getSlots(game: Game): {
+    number: number;
+    uid: string;
+    player: PlayerState | null;
+    isJoined: boolean;
+    isAi: boolean;
+    password: string;
+  }[] {
     const count = game.config?.numPlayers || 1;
     const slots = [];
     for (let i = 1; i <= count; i++) {
@@ -74,10 +103,10 @@ export class DashboardGameDetailComponent {
     return slots;
   }
 
-  getDeadlineForRound(game: any, round: number): string {
+  getDeadlineForRound(game: Game, round: number): string {
     if (!game.roundDeadlines || !game.roundDeadlines[round]) return '';
     const d = game.roundDeadlines[round];
-    const date = d.seconds ? new Date(d.seconds * 1000) : new Date(d);
+    const date = d && 'seconds' in d ? new Date(d.seconds * 1000) : new Date(d as unknown as string);
     const pad = (n: number) => (n < 10 ? '0' + n : n);
     return (
       date.getFullYear() +

@@ -31,7 +31,7 @@ vi.mock('firebase/functions', async (importOriginal) => {
   };
 });
 
-import { onAuthStateChanged, signInWithCustomToken, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithCustomToken, signOut } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 
 describe('AuthService', () => {

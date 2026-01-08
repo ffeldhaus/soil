@@ -5,28 +5,14 @@ const { execSync } = require('child_process');
 const WARN_SIZE = 128 * 1024; // 128KB
 const ERROR_SIZE = 256 * 1024; // 256KB
 
-const EXCEPTIONS = [
-  'package-lock.json',
-  'dist/',
-  '.angular/',
-  'coverage/'
-];
+const EXCEPTIONS = ['package-lock.json', 'dist/', '.angular/', 'coverage/'];
 
-const INCLUDED_EXTENSIONS = [
-  '.ts',
-  '.html',
-  '.scss',
-  '.css',
-  '.js',
-  '.md',
-  '.json',
-  '.xlf'
-];
+const INCLUDED_EXTENSIONS = ['.ts', '.html', '.scss', '.css', '.js', '.md', '.json', '.xlf'];
 
 function getStagedFiles() {
   try {
     const output = execSync('git diff --cached --name-only', { encoding: 'utf8' });
-    return output.split('\n').filter(file => file.trim() !== '');
+    return output.split('\n').filter((file) => file.trim() !== '');
   } catch (error) {
     console.error('Error getting staged files:', error);
     return [];
@@ -34,7 +20,7 @@ function getStagedFiles() {
 }
 
 function isException(file) {
-  return EXCEPTIONS.some(exception => file.includes(exception));
+  return EXCEPTIONS.some((exception) => file.includes(exception));
 }
 
 function isIncluded(file) {
@@ -45,7 +31,7 @@ function isIncluded(file) {
 const stagedFiles = getStagedFiles();
 let hasError = false;
 
-stagedFiles.forEach(file => {
+stagedFiles.forEach((file) => {
   if (isException(file) || !isIncluded(file)) {
     return;
   }
@@ -58,10 +44,14 @@ stagedFiles.forEach(file => {
   const size = stats.size;
 
   if (size > ERROR_SIZE) {
-    console.error(`\x1b[31mERROR: File "${file}" is too large (${(size / 1024).toFixed(2)}KB). Max allowed is 256KB.\x1b[0m`);
+    console.error(
+      `\x1b[31mERROR: File "${file}" is too large (${(size / 1024).toFixed(2)}KB). Max allowed is 256KB.\x1b[0m`,
+    );
     hasError = true;
   } else if (size > WARN_SIZE) {
-    console.warn(`\x1b[33mWARNING: File "${file}" is large (${(size / 1024).toFixed(2)}KB). Consider breaking it up. Max recommended is 128KB.\x1b[0m`);
+    console.warn(
+      `\x1b[33mWARNING: File "${file}" is large (${(size / 1024).toFixed(2)}KB). Consider breaking it up. Max recommended is 128KB.\x1b[0m`,
+    );
   }
 });
 

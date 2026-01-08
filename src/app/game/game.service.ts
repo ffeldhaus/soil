@@ -2,7 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { CropType, Parcel, Round, RoundDecision } from '../types';
+import { CropType, Feedback, Game, Parcel, PlayerState, Round, RoundDecision, SystemStats, UserStatus } from '../types';
+
+export interface GameState {
+  game: Game;
+  playerState: PlayerState;
+  lastRound?: Round;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +19,7 @@ export class GameService {
   private parcelsSubject = new BehaviorSubject<Parcel[]>(this.createInitialParcels());
   parcels$ = this.parcelsSubject.asObservable();
 
-  private stateSubject = new BehaviorSubject<any>(null);
+  private stateSubject = new BehaviorSubject<GameState | null>(null);
   state$ = this.stateSubject.asObservable();
 
   private currentRound: Round | null = null;
@@ -23,11 +29,11 @@ export class GameService {
     return this.parcelsSubject.value;
   }
 
-  async loadGame(gameId: string) {
-    const getGameStateFn = httpsCallable(this.functions, 'getGameState');
+  async loadGame(gameId: string): Promise<GameState | null> {
+    const getGameStateFn = httpsCallable<{ gameId: string }, GameState>(this.functions, 'getGameState');
     try {
       const result = await getGameStateFn({ gameId });
-      const data = result.data as any; // { game, playerState, lastRound }
+      const data = result.data;
 
       if (data.lastRound) {
         this.currentRound = data.lastRound;
@@ -49,15 +55,11 @@ export class GameService {
         }
 
         this.parcelsSubject.next(parcels);
-        this.stateSubject.next({
-          currentRound: currentRoundNum,
-          capital: data.playerState?.capital ?? 1000,
-        });
       }
       this.stateSubject.next(data);
       return data;
-    } catch (error) {
-      console.error('Failed to load game:', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to load game:', error);
       throw error;
     }
   }
@@ -80,7 +82,10 @@ export class GameService {
   }
 
   async saveDraft(gameId: string) {
-    const saveDraftFn = httpsCallable(this.functions, 'saveDraft');
+    const saveDraftFn = httpsCallable<{ gameId: string; decision: RoundDecision }, { success: boolean }>(
+      this.functions,
+      'saveDraft',
+    );
 
     // Construct partial decision for draft
     const decision: RoundDecision = {
@@ -94,17 +99,20 @@ export class GameService {
 
     try {
       await saveDraftFn({ gameId, decision });
-      console.log('Draft saved');
-    } catch (error) {
-      console.error('Failed to save draft:', error);
+      if (window.console) console.warn('Draft saved');
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to save draft:', error);
     }
   }
 
   async submitRound(
     gameId: string,
     settings?: { machines: number; organic: boolean; fertilizer: boolean; pesticide: boolean; organisms: boolean },
-  ) {
-    const submitDecisionFn = httpsCallable(this.functions, 'submitDecision');
+  ): Promise<Round | { status: string }> {
+    const submitDecisionFn = httpsCallable<
+      { gameId: string; decision: RoundDecision },
+      { status: string; nextRound?: Round }
+    >(this.functions, 'submitDecision');
 
     const decision: RoundDecision = {
       machines: settings?.machines ?? 0,
@@ -125,7 +133,7 @@ export class GameService {
         gameId,
         decision,
       });
-      const data = result.data as { status: string; nextRound?: Round };
+      const data = result.data;
 
       if (data.status === 'calculated' && data.nextRound) {
         const round = data.nextRound;
@@ -139,8 +147,8 @@ export class GameService {
         // Just submitted, wait for others.
         return { status: 'submitted' };
       }
-    } catch (error) {
-      console.error('Failed to submit round:', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to submit round:', error);
       throw error;
     }
   }
@@ -152,8 +160,18 @@ export class GameService {
     return this.parcels$;
   }
 
-  async createGame(name: string, config: any) {
-    const createGameFn = httpsCallable(this.functions, 'createGame');
+  async createGame(
+    name: string,
+    config: { numPlayers: number; numRounds: number; numAi: number; playerLabel: string },
+  ): Promise<{ gameId: string; password?: string }> {
+    const createGameFn = httpsCallable<
+      {
+        name: string;
+        config: { numPlayers: number; numRounds: number; numAi: number; playerLabel: string };
+        settings: { length: number; difficulty: string; playerLabel: string };
+      },
+      { gameId: string; password?: string }
+    >(this.functions, 'createGame');
     try {
       const settings = {
         length: config.numRounds || 20,
@@ -161,9 +179,9 @@ export class GameService {
         playerLabel: config.playerLabel || 'Player',
       };
       const result = await createGameFn({ name, config, settings });
-      return result.data as { gameId: string; password?: string };
-    } catch (error) {
-      console.error('Failed to create game:', error);
+      return result.data;
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to create game:', error);
       throw error;
     }
   }
@@ -171,37 +189,43 @@ export class GameService {
   async getAdminGames(
     page: number,
     pageSize: number,
-    showDeleted = false,
-    targetUid?: string,
-  ): Promise<{ games: any[]; total: number }> {
-    const getAdminGamesFn = httpsCallable(this.functions, 'getAdminGames');
+    showTrash = false,
+    adminUid?: string,
+  ): Promise<{ games: Game[]; total: number }> {
+    const getAdminGamesFn = httpsCallable<
+      { page: number; pageSize: number; showTrash: boolean; adminUid?: string },
+      { games: Game[]; total: number }
+    >(this.functions, 'getAdminGames');
     try {
-      const result = await getAdminGamesFn({ page, pageSize, showDeleted, targetUid });
-      return result.data as { games: any[]; total: number };
-    } catch (error) {
-      console.error('Failed to fetch games:', error);
+      const result = await getAdminGamesFn({ page, pageSize, showTrash, adminUid });
+      return result.data;
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to fetch games:', error);
       throw error;
     }
   }
 
-  async getPendingUsers() {
-    const fn = httpsCallable(this.functions, 'getPendingUsers');
-    return (await fn()).data as any[];
+  async getPendingUsers(): Promise<UserStatus[]> {
+    const fn = httpsCallable<void, UserStatus[]>(this.functions, 'getPendingUsers');
+    return (await fn()).data;
   }
 
-  async getUserStatus() {
-    const fn = httpsCallable(this.functions, 'getUserStatus');
-    return (await fn()).data as any;
+  async getUserStatus(): Promise<UserStatus | null> {
+    const fn = httpsCallable<void, UserStatus | null>(this.functions, 'getUserStatus');
+    return (await fn()).data;
   }
 
-  async getAllAdmins() {
-    const fn = httpsCallable(this.functions, 'getAllAdmins');
-    return (await fn()).data as any[];
+  async getAllAdmins(): Promise<(UserStatus & { gameCount: number; quota: number })[]> {
+    const fn = httpsCallable<void, (UserStatus & { gameCount: number; quota: number })[]>(
+      this.functions,
+      'getAllAdmins',
+    );
+    return (await fn()).data;
   }
 
-  async getSystemStats() {
-    const fn = httpsCallable(this.functions, 'getSystemStats');
-    return (await fn()).data as any;
+  async getSystemStats(): Promise<SystemStats> {
+    const fn = httpsCallable<void, SystemStats>(this.functions, 'getSystemStats');
+    return (await fn()).data;
   }
 
   async submitOnboarding(data: {
@@ -211,107 +235,150 @@ export class GameService {
     institution: string;
     institutionLink?: string;
     lang?: string;
-  }) {
-    const fn = httpsCallable(this.functions, 'submitOnboarding');
-    return (await fn(data)).data;
+  }): Promise<void> {
+    const fn = httpsCallable<
+      {
+        firstName: string;
+        lastName: string;
+        explanation: string;
+        institution: string;
+        institutionLink?: string;
+        lang?: string;
+      },
+      void
+    >(this.functions, 'submitOnboarding');
+    await fn(data);
   }
 
   async manageAdmin(
     targetUid: string,
     action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete',
-    value?: any,
+    value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number,
     lang?: string,
-  ) {
-    const fn = httpsCallable(this.functions, 'manageAdmin');
-    return (await fn({ targetUid, action, value, lang })).data;
+  ): Promise<void> {
+    const fn = httpsCallable<
+      {
+        targetUid: string;
+        action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete';
+        value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number;
+        lang?: string;
+      },
+      void
+    >(this.functions, 'manageAdmin');
+    await fn({ targetUid, action, value, lang });
   }
 
-  async sendPlayerInvite(gameId: string, playerNumber: number, email: string, origin: string, lang?: string) {
-    const fn = httpsCallable(this.functions, 'sendPlayerInvite');
+  async sendPlayerInvite(
+    gameId: string,
+    playerNumber: number,
+    email: string,
+    origin: string,
+    lang?: string,
+  ): Promise<void> {
+    const fn = httpsCallable<
+      { gameId: string; playerNumber: number; email: string; origin: string; lang?: string },
+      void
+    >(this.functions, 'sendPlayerInvite');
     try {
       await fn({ gameId, playerNumber, email, origin, lang });
-    } catch (error) {
-      console.error('Failed to send player invite', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to send player invite', error);
       throw error;
     }
   }
 
-  async sendGameInvite(gameId: string, email: string, lang?: string) {
-    const fn = httpsCallable(this.functions, 'sendGameInvite');
+  async sendGameInvite(gameId: string, email: string, lang?: string): Promise<void> {
+    const fn = httpsCallable<{ gameId: string; email: string; lang?: string }, void>(this.functions, 'sendGameInvite');
     try {
       await fn({ gameId, email, lang });
-    } catch (error) {
-      console.error('Failed to send game invite', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to send game invite', error);
       throw error;
     }
   }
 
   async deleteGames(gameIds: string[], force = false): Promise<void> {
-    const deleteGamesFn = httpsCallable(this.functions, 'deleteGames');
+    const deleteGamesFn = httpsCallable<{ gameIds: string[]; force: boolean }, void>(this.functions, 'deleteGames');
     try {
       await deleteGamesFn({ gameIds, force });
-    } catch (error) {
-      console.error('Failed to delete games:', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to delete games:', error);
       throw error;
     }
   }
 
   async undeleteGames(gameIds: string[]): Promise<void> {
-    const undeleteGamesFn = httpsCallable(this.functions, 'undeleteGames');
+    const undeleteGamesFn = httpsCallable<{ gameIds: string[] }, void>(this.functions, 'undeleteGames');
     try {
       await undeleteGamesFn({ gameIds });
-    } catch (error) {
-      console.error('Failed to undelete games:', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to undelete games:', error);
       throw error;
     }
   }
 
-  async updatePlayerType(gameId: string, playerNumber: number, type: 'human' | 'ai', aiLevel?: string) {
-    const updatePlayerTypeFn = httpsCallable(this.functions, 'updatePlayerType');
+  async updatePlayerType(gameId: string, playerNumber: number, type: 'human' | 'ai', aiLevel?: string): Promise<void> {
+    const updatePlayerTypeFn = httpsCallable<
+      { gameId: string; playerNumber: number; type: 'human' | 'ai'; aiLevel?: string },
+      void
+    >(this.functions, 'updatePlayerType');
     try {
       await updatePlayerTypeFn({ gameId, playerNumber, type, aiLevel });
-    } catch (error) {
-      console.error('Failed to update player type', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to update player type', error);
       throw error;
     }
   }
 
-  async updateRoundDeadline(gameId: string, roundNumber: number, deadline: string) {
-    const fn = httpsCallable(this.functions, 'updateRoundDeadline');
+  async updateRoundDeadline(gameId: string, roundNumber: number, deadline: string): Promise<void> {
+    const fn = httpsCallable<{ gameId: string; roundNumber: number; deadline: string }, void>(
+      this.functions,
+      'updateRoundDeadline',
+    );
     try {
       await fn({ gameId, roundNumber, deadline });
-    } catch (error) {
-      console.error('Failed to update deadline', error);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to update deadline', error);
       throw error;
     }
   }
 
-  async submitFeedback(feedback: any) {
-    const fn = httpsCallable(this.functions, 'submitFeedback');
+  async submitFeedback(feedback: { category: string; rating: number; comment: string }): Promise<void> {
+    const fn = httpsCallable<{ category: string; rating: number; comment: string }, void>(
+      this.functions,
+      'submitFeedback',
+    );
     try {
-      return (await fn(feedback)).data;
-    } catch (error) {
-      console.error('Failed to submit feedback', error);
+      await fn(feedback);
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to submit feedback', error);
       throw error;
     }
   }
 
-  async getAllFeedback() {
-    const fn = httpsCallable(this.functions, 'getAllFeedback');
+  async getAllFeedback(): Promise<Feedback[]> {
+    const fn = httpsCallable<void, Feedback[]>(this.functions, 'getAllFeedback');
     try {
-      return (await fn()).data as any[];
-    } catch (error) {
-      console.error('Failed to fetch all feedback', error);
+      return (await fn()).data;
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to fetch all feedback', error);
       throw error;
     }
   }
 
-  async manageFeedback(feedbackId: string, action: 'reply' | 'resolve' | 'reject', value?: any) {
-    const fn = httpsCallable(this.functions, 'manageFeedback');
+  async manageFeedback(
+    feedbackId: string,
+    action: 'reply' | 'resolve' | 'reject',
+    value?: { response?: string; externalReference?: string },
+  ): Promise<void> {
+    const fn = httpsCallable<
+      { feedbackId: string; action: string; value?: { response?: string; externalReference?: string } },
+      void
+    >(this.functions, 'manageFeedback');
     try {
-      return (await fn({ feedbackId, action, value })).data;
-    } catch (error) {
-      console.error('Failed to manage feedback', error);
+      await fn({ feedbackId, action, value });
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to manage feedback:', error);
       throw error;
     }
   }
