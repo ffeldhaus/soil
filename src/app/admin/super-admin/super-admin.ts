@@ -93,12 +93,28 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.reject.modal.banInfo': $localize`:@@superadmin.reject.modal.banInfo:Blockiert diese E-Mail-Adresse für zukünftige Registrierungen.`,
       'superadmin.reject.modal.send': $localize`:@@superadmin.reject.modal.send:Ablehnung senden`,
       'superadmin.modal.cancel': $localize`:@@superadmin.modal.cancel:Abbrechen`,
+      'superadmin.feedback.title': $localize`:@@superadmin.feedback.title:Feedback & Vorschläge`,
+      'superadmin.feedback.none': $localize`:@@superadmin.feedback.none:Kein Feedback gefunden.`,
+      'superadmin.feedback.table.user': $localize`:@@superadmin.feedback.table.user:Benutzer`,
+      'superadmin.feedback.table.category': $localize`:@@superadmin.feedback.table.category:Kategorie`,
+      'superadmin.feedback.table.rating': $localize`:@@superadmin.feedback.table.rating:Bewertung`,
+      'superadmin.feedback.table.status': $localize`:@@superadmin.feedback.table.status:Status`,
+      'superadmin.feedback.actions.reply': $localize`:@@superadmin.feedback.actions.reply:Antworten`,
+      'superadmin.feedback.actions.resolve': $localize`:@@superadmin.feedback.actions.resolve:Lösen`,
+      'superadmin.feedback.actions.reject': $localize`:@@superadmin.feedback.actions.reject:Ablehnen`,
+      'superadmin.feedback.modal.reply.title': $localize`:@@superadmin.feedback.modal.reply.title:Antwort an Benutzer`,
+      'superadmin.feedback.modal.reply.label': $localize`:@@superadmin.feedback.modal.reply.label:Deine Nachricht`,
+      'superadmin.feedback.modal.reply.send': $localize`:@@superadmin.feedback.modal.reply.send:Antwort senden`,
+      'superadmin.feedback.modal.resolve.title': $localize`:@@superadmin.feedback.modal.resolve.title:Feedback lösen`,
+      'superadmin.feedback.modal.resolve.label': $localize`:@@superadmin.feedback.modal.resolve.label:Externe Referenz (z.B. GitHub Link)`,
+      'superadmin.feedback.modal.resolve.confirm': $localize`:@@superadmin.feedback.modal.resolve.confirm:Als gelöst markieren`,
     };
     return translations[key] || key;
   }
 
   pendingUsers: any[] = [];
   admins: any[] = [];
+  feedback: any[] = [];
 
   selectedAdmin: any = null;
   adminGames: any[] = [];
@@ -139,19 +155,22 @@ export class SuperAdminComponent implements OnInit {
     this.isLoadingData = true;
     console.log('SuperAdmin: Loading data...');
     try {
-      const [pendingUsers, admins, stats] = await Promise.all([
+      const [pendingUsers, admins, stats, feedback] = await Promise.all([
         this.gameService.getPendingUsers(),
         this.gameService.getAllAdmins(),
         this.gameService.getSystemStats(),
+        this.gameService.getAllFeedback(),
       ]);
 
       this.ngZone.run(() => {
         this.pendingUsers = pendingUsers;
         this.admins = admins;
         this.stats = stats;
+        this.feedback = feedback;
         console.log('SuperAdmin: Data loaded', {
           pending: this.pendingUsers.length,
           admins: this.admins.length,
+          feedback: this.feedback.length,
         });
         this.cdr.detectChanges();
       });
@@ -160,6 +179,43 @@ export class SuperAdminComponent implements OnInit {
     } finally {
       this.isLoadingData = false;
       this.cdr.detectChanges();
+    }
+  }
+
+  // Feedback Management
+  feedbackToManage: any = null;
+  feedbackAction: 'reply' | 'resolve' | 'reject' | null = null;
+  feedbackValue = '';
+
+  initiateFeedbackAction(item: any, action: 'reply' | 'resolve' | 'reject') {
+    this.feedbackToManage = item;
+    this.feedbackAction = action;
+    this.feedbackValue = '';
+  }
+
+  cancelFeedbackAction() {
+    this.feedbackToManage = null;
+    this.feedbackAction = null;
+    this.feedbackValue = '';
+  }
+
+  async confirmFeedbackAction() {
+    if (!this.feedbackToManage || !this.feedbackAction) return;
+
+    const value: any = {};
+    if (this.feedbackAction === 'reply') {
+      value.response = this.feedbackValue;
+    } else if (this.feedbackAction === 'resolve') {
+      value.externalReference = this.feedbackValue;
+    }
+
+    try {
+      await this.gameService.manageFeedback(this.feedbackToManage.id, this.feedbackAction, value);
+      this.cancelFeedbackAction();
+      this.loadData();
+    } catch (e: any) {
+      console.error(e);
+      alert('Failed to manage feedback: ' + e.message);
     }
   }
 

@@ -93,3 +93,23 @@ export interface UserStatus {
   status?: string; // 'pending', 'active'
   email?: string;
 }
+
+export interface Feedback {
+  id: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+  rating: number; // 0-5
+  comment: string;
+  aiAnalysis?: {
+    summary: string;
+    suggestedActions: string[];
+    sentiment: string;
+  };
+  status: 'new' | 'replied' | 'resolved' | 'rejected';
+  adminResponse?: string;
+  externalReference?: string; // e.g. GitHub issue link
+  createdAt: any; // Timestamp
+  updatedAt: any; // Timestamp
+}

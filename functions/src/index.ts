@@ -1,3 +1,4 @@
+import { VertexAI } from '@google-cloud/vertexai';
 import * as admin from 'firebase-admin';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
@@ -16,6 +17,13 @@ setGlobalOptions({
 
 admin.initializeApp();
 const db = admin.firestore();
+
+// Initialize Vertex AI
+const vertexAI = new VertexAI({ project: 'soil-602ea', location: 'europe-west4' });
+const generativeModel = vertexAI.getGenerativeModel({
+  model: 'gemini-2.5-flash',
+  generationConfig: { responseMimeType: 'application/json' },
+});
 
 // --- HTTP Callable Functions for Game Logic ---
 
@@ -1115,6 +1123,141 @@ export const triggerAiTurn = onCall(async (request) => {
   return AiAgent.makeDecision(level as any, lastRound);
 });
 
+export const submitFeedback = onCall(
+  { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
+  async (request) => {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+    const { category, rating, comment } = request.data;
+    if (!category || rating === undefined || !comment) {
+      throw new HttpsError('invalid-argument', 'Missing feedback fields');
+    }
+
+    const uid = request.auth.uid;
+    const email = request.auth.token.email || '';
+    const name = request.auth.token.name || email;
+
+    const feedbackId = db.collection('feedback').doc().id;
+    const feedbackRef = db.collection('feedback').doc(feedbackId);
+
+    const feedbackData: any = {
+      id: feedbackId,
+      userId: uid,
+      userEmail: email,
+      userName: name,
+      category,
+      rating,
+      comment,
+      status: 'new',
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // 1. Save feedback
+    await feedbackRef.set(feedbackData);
+
+    // 2. Perform AI Analysis with Gemini
+    try {
+      const prompt = `
+        Analyze the following feedback from a user of the SOIL agricultural simulation game.
+        User: ${name} (${email})
+        Category: ${category}
+        Rating: ${rating}/5
+        Comment: ${comment}
+
+        Provide a JSON response with the following fields:
+        - summary: A concise summary of the feedback.
+        - suggestedActions: A list of 2-3 actionable steps for the development team.
+        - sentiment: One of 'positive', 'neutral', 'negative'.
+      `;
+
+      const result = await generativeModel.generateContent(prompt);
+      const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (responseText) {
+        const analysis = JSON.parse(responseText);
+        await feedbackRef.update({
+          aiAnalysis: analysis,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        feedbackData.aiAnalysis = analysis;
+      }
+    } catch (error) {
+      console.error('Gemini analysis failed:', error);
+    }
+
+    // 3. Notify Super Admins
+    const superAdminsSnap = await db.collection('users').where('role', '==', 'superadmin').get();
+    const superAdminEmails = superAdminsSnap.docs.map((doc) => doc.data().email).filter((e) => !!e);
+
+    // Also include the hardcoded super admin
+    if (!superAdminEmails.includes('florian.feldhaus@gmail.com')) {
+      superAdminEmails.push('florian.feldhaus@gmail.com');
+    }
+
+    const notificationSubject = `New Feedback Received: ${category} (${rating}/5)`;
+    const notificationText = `New feedback from ${name} (${email}):\n\nCategory: ${category}\nRating: ${rating}/5\nComment: ${comment}\n\nAI Analysis:\nSummary: ${feedbackData.aiAnalysis?.summary || 'N/A'}\nSentiment: ${feedbackData.aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${(feedbackData.aiAnalysis?.suggestedActions || []).join(', ')}`;
+
+    const notificationHtml = `
+      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #059669;">New Feedback Received</h2>
+        <p><strong>From:</strong> ${name} (${email})</p>
+        <p><strong>Category:</strong> ${category}</p>
+        <p><strong>Rating:</strong> ${rating}/5</p>
+        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0;">${comment}</p>
+        </div>
+        ${
+          feedbackData.aiAnalysis
+            ? `
+          <h3 style="color: #10b981;">Gemini Analysis</h3>
+          <p><strong>Sentiment:</strong> ${feedbackData.aiAnalysis.sentiment}</p>
+          <p><strong>Summary:</strong> ${feedbackData.aiAnalysis.summary}</p>
+          <p><strong>Suggested Actions:</strong></p>
+          <ul>
+            ${feedbackData.aiAnalysis.suggestedActions.map((a: string) => `<li>${a}</li>`).join('')}
+          </ul>
+        `
+            : ''
+        }
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 12px; color: #999;">View this feedback in the Super Admin Dashboard.</p>
+      </div>
+    `;
+
+    for (const adminEmail of superAdminEmails) {
+      try {
+        await mailService.sendEmail({
+          to: adminEmail,
+          subject: notificationSubject,
+          text: notificationText,
+          html: notificationHtml,
+        });
+      } catch (e) {
+        console.error(`Failed to notify super admin ${adminEmail}:`, e);
+      }
+    }
+
+    return { success: true };
+  },
+);
+
+export const getAllFeedback = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  // Super Admin Check
+  const callerRef = db.collection('users').doc(request.auth.uid);
+  const callerSnap = await callerRef.get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  if (!isSuper) throw new HttpsError('permission-denied', 'Super-Administratoren only');
+
+  const feedbackSnap = await db.collection('feedback').orderBy('createdAt', 'desc').get();
+  return feedbackSnap.docs.map((doc) => doc.data());
+});
+
 export const updateRoundDeadline = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
   const { gameId, roundNumber, deadline } = request.data;
@@ -1329,6 +1472,83 @@ export const sendPasswordResetEmail = onCall(
       // For now, let's just return success anyway if it's "user not found" to avoid enumeration.
       throw new HttpsError('internal', error.message);
     }
+  },
+);
+
+export const manageFeedback = onCall(
+  { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
+  async (request) => {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+    // Super Admin Check
+    const callerRef = db.collection('users').doc(request.auth.uid);
+    const callerSnap = await callerRef.get();
+    const isSuper =
+      (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+      request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+    if (!isSuper) throw new HttpsError('permission-denied', 'Super-Administratoren only');
+
+    const { feedbackId, action, value } = request.data;
+    if (!feedbackId || !action) throw new HttpsError('invalid-argument', 'Missing feedbackId or action');
+
+    const feedbackRef = db.collection('feedback').doc(feedbackId);
+    const feedbackSnap = await feedbackRef.get();
+    if (!feedbackSnap.exists) throw new HttpsError('not-found', 'Feedback not found');
+
+    const feedback = feedbackSnap.data() as any;
+    const updates: any = {
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    if (action === 'reply') {
+      const response = value?.response;
+      if (!response) throw new HttpsError('invalid-argument', 'Missing reply response');
+
+      updates.status = 'replied';
+      updates.adminResponse = response;
+
+      // Send email to the admin who provided feedback
+      const subject = `Re: Your feedback on SOIL (${feedback.category})`;
+      const text = `Hello ${feedback.userName},\n\nThank you for your feedback. A system administrator has replied to your comment:\n\n"${feedback.comment}"\n\nReply:\n${response}\n\nBest regards,\nThe SOIL Team`;
+      const html = `
+        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+          <h2>Reply to your Feedback</h2>
+          <p>Hello ${feedback.userName},</p>
+          <p>Thank you for your feedback. A system administrator has replied to your comment:</p>
+          <div style="border-left: 4px solid #e5e7eb; padding-left: 15px; font-style: italic; color: #4b5563; margin: 20px 0;">
+            "${feedback.comment}"
+          </div>
+          <p><strong>Reply:</strong></p>
+          <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px;">
+            ${response}
+          </div>
+          <p>Best regards,<br>The SOIL Team</p>
+        </div>
+      `;
+
+      try {
+        await mailService.sendEmail({
+          to: feedback.userEmail,
+          subject,
+          text,
+          html,
+        });
+      } catch (e) {
+        console.error('Failed to send feedback reply email', e);
+        throw new HttpsError('internal', 'Failed to send email');
+      }
+    } else if (action === 'resolve') {
+      updates.status = 'resolved';
+      if (value?.externalReference) {
+        updates.externalReference = value.externalReference;
+      }
+    } else if (action === 'reject') {
+      updates.status = 'rejected';
+    }
+
+    await feedbackRef.update(updates);
+    return { success: true };
   },
 );
 

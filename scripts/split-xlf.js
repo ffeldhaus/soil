@@ -15,7 +15,7 @@ function splitXlf(filePath, outputDir, baseName) {
     common: []
   };
 
-  const adminPrefixes = ['dashboard', 'superadmin', 'onboarding', 'adminLogin', 'adminRegister', 'authAction', 'user'];
+  const adminPrefixes = ['dashboard', 'superadmin', 'onboarding', 'adminLogin', 'adminRegister', 'authAction', 'user', 'feedback'];
   const gamePrefixes = ['board', 'finance', 'crop', 'roundResult', 'weather', 'pest', 'vermin', 'planting', 'parcel', 'sensitivity', 'ai'];
   const manualPrefixes = ['manual'];
 

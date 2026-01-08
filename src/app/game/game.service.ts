@@ -286,6 +286,36 @@ export class GameService {
     }
   }
 
+  async submitFeedback(feedback: any) {
+    const fn = httpsCallable(this.functions, 'submitFeedback');
+    try {
+      return (await fn(feedback)).data;
+    } catch (error) {
+      console.error('Failed to submit feedback', error);
+      throw error;
+    }
+  }
+
+  async getAllFeedback() {
+    const fn = httpsCallable(this.functions, 'getAllFeedback');
+    try {
+      return (await fn()).data as any[];
+    } catch (error) {
+      console.error('Failed to fetch all feedback', error);
+      throw error;
+    }
+  }
+
+  async manageFeedback(feedbackId: string, action: 'reply' | 'resolve' | 'reject', value?: any) {
+    const fn = httpsCallable(this.functions, 'manageFeedback');
+    try {
+      return (await fn({ feedbackId, action, value })).data;
+    } catch (error) {
+      console.error('Failed to manage feedback', error);
+      throw error;
+    }
+  }
+
   private createInitialParcels(): Parcel[] {
     return Array(40)
       .fill(null)

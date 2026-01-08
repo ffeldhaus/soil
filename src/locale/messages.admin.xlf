@@ -1671,6 +1671,99 @@
           <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="feedback.title" datatype="html">
+        <source>Feedback &amp; Vorschläge</source>
+      </trans-unit>
+      <trans-unit id="feedback.category" datatype="html">
+        <source>Kategorie</source>
+      </trans-unit>
+      <trans-unit id="feedback.cat.interface" datatype="html">
+        <source>Benutzeroberfläche</source>
+      </trans-unit>
+      <trans-unit id="feedback.cat.mechanics" datatype="html">
+        <source>Spielmechanik</source>
+      </trans-unit>
+      <trans-unit id="feedback.cat.improvements" datatype="html">
+        <source>Verbesserungen</source>
+      </trans-unit>
+      <trans-unit id="feedback.cat.suggestions" datatype="html">
+        <source>Neue Features</source>
+      </trans-unit>
+      <trans-unit id="feedback.cat.documentation" datatype="html">
+        <source>Dokumentation/Handbuch</source>
+      </trans-unit>
+      <trans-unit id="feedback.cat.other" datatype="html">
+        <source>Sonstiges</source>
+      </trans-unit>
+      <trans-unit id="feedback.rating" datatype="html">
+        <source>Bewertung</source>
+      </trans-unit>
+      <trans-unit id="feedback.comment" datatype="html">
+        <source>Dein Feedback</source>
+      </trans-unit>
+      <trans-unit id="feedback.commentPlaceholder" datatype="html">
+        <source>Erzähl uns mehr...</source>
+      </trans-unit>
+      <trans-unit id="feedback.cancel" datatype="html">
+        <source> Abbrechen </source>
+      </trans-unit>
+      <trans-unit id="feedback.submit" datatype="html">
+        <source>Feedback senden</source>
+      </trans-unit>
+      <trans-unit id="feedback.submitting" datatype="html">
+        <source>Wird gesendet...</source>
+      </trans-unit>
+      <trans-unit id="feedback.success" datatype="html">
+        <source>Vielen Dank für dein Feedback!</source>
+      </trans-unit>
+      <trans-unit id="dashboard.btnFeedback" datatype="html">
+        <source>Feedback</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.title" datatype="html">
+        <source>Feedback &amp; Vorschläge</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.none" datatype="html">
+        <source>Kein Feedback gefunden.</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.table.user" datatype="html">
+        <source>Benutzer</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.table.category" datatype="html">
+        <source>Kategorie</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.table.rating" datatype="html">
+        <source>Bewertung</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.table.status" datatype="html">
+        <source>Status</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.actions.reply" datatype="html">
+        <source>Antworten</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.actions.resolve" datatype="html">
+        <source>Lösen</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.actions.reject" datatype="html">
+        <source>Ablehnen</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.modal.reply.title" datatype="html">
+        <source>Antwort an Benutzer</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.modal.reply.label" datatype="html">
+        <source>Deine Nachricht</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.modal.reply.send" datatype="html">
+        <source>Antwort senden</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.modal.resolve.title" datatype="html">
+        <source>Feedback lösen</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.modal.resolve.label" datatype="html">
+        <source>Externe Referenz (z.B. GitHub Link)</source>
+      </trans-unit>
+      <trans-unit id="superadmin.feedback.modal.resolve.confirm" datatype="html">
+        <source>Als gelöst markieren</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

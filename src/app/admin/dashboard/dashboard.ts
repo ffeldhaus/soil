@@ -12,6 +12,7 @@ import { GameService } from '../../game/game.service';
 import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { Game, UserStatus } from '../../types';
+import { FeedbackModal } from '../components/feedback-modal/feedback-modal';
 import { DashboardCreateGameComponent } from './components/dashboard-create-game';
 import { DashboardDeleteModalComponent } from './components/dashboard-delete-modal';
 import { DashboardErrorModalComponent } from './components/dashboard-error-modal';
@@ -37,6 +38,7 @@ import { QrOverlayComponent } from './components/qr-overlay';
     DashboardGameListComponent,
     DashboardDeleteModalComponent,
     DashboardFinanceModalComponent,
+    FeedbackModal,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -154,6 +156,21 @@ export class Dashboard implements OnInit, OnDestroy {
 
   isPendingApproval = false;
   isLoading = true; // Initial loading state for auth check
+  showFeedbackModal = false;
+
+  onFeedbackClose() {
+    this.showFeedbackModal = false;
+  }
+
+  async onFeedbackSubmit(feedback: any) {
+    try {
+      await this.gameService.submitFeedback(feedback);
+      this.showFeedbackModal = false;
+      alert($localize`:@@feedback.success:Vielen Dank für dein Feedback!`);
+    } catch (e: any) {
+      this.errorMessage = 'Failed to submit feedback: ' + e.message;
+    }
+  }
 
   login() {
     this.authService.loginWithGoogle();

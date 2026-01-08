@@ -268,6 +268,118 @@
       </div>
     </section>
 
+    <!-- Feedback Section -->
+    <section class="space-y-4">
+      <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-2 portrait:px-4">
+        <div class="p-2 bg-emerald-900/30 rounded-full">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+            />
+          </svg>
+        </div>
+        {{ t('superadmin.feedback.title') }}
+      </h2>
+      <div
+        class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700 portrait:rounded-none portrait:border-x-0"
+      >
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.user') }}</th>
+                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.category') }}</th>
+                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.rating') }}</th>
+                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.status') }}</th>
+                <th class="p-4 font-medium text-right">{{ t('superadmin.table.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700 text-sm">
+              <tr *ngFor="let item of feedback" class="hover:bg-gray-700/30 transition group">
+                <td class="p-4">
+                  <div class="font-bold text-white">{{ item.userName }}</div>
+                  <div class="text-xs text-gray-500">{{ item.userEmail }}</div>
+                  <div class="mt-2 text-gray-300 italic">"{{ item.comment }}"</div>
+                  @if (item.aiAnalysis) {
+                    <div class="mt-2 p-2 bg-gray-900/50 rounded text-xs">
+                      <div class="text-emerald-400 font-bold">AI Summary:</div>
+                      <div class="text-gray-400">{{ item.aiAnalysis.summary }}</div>
+                      <div class="text-emerald-400 font-bold mt-1">Suggested Actions:</div>
+                      <ul class="list-disc list-inside text-gray-400">
+                        <li *ngFor="let action of item.aiAnalysis.suggestedActions">{{ action }}</li>
+                      </ul>
+                    </div>
+                  }
+                </td>
+                <td class="p-4 text-gray-300">
+                  {{ item.category | titlecase }}
+                </td>
+                <td class="p-4">
+                  <div class="flex gap-0.5">
+                    <svg
+                      *ngFor="let star of [1, 2, 3, 4, 5]"
+                      class="w-4 h-4"
+                      [class.text-yellow-500]="item.rating >= star"
+                      [class.text-gray-600]="item.rating < star"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                      />
+                    </svg>
+                  </div>
+                </td>
+                <td class="p-4">
+                  <span
+                    class="px-2 py-0.5 rounded-full text-xs font-medium border"
+                    [ngClass]="{
+                      'bg-blue-900/20 text-blue-300 border-blue-800': item.status === 'new',
+                      'bg-purple-900/20 text-purple-300 border-purple-800': item.status === 'replied',
+                      'bg-emerald-900/20 text-emerald-300 border-emerald-800': item.status === 'resolved',
+                      'bg-red-900/20 text-red-300 border-red-800': item.status === 'rejected',
+                    }"
+                  >
+                    {{ item.status | titlecase }}
+                  </span>
+                </td>
+                <td class="p-4 text-right">
+                  <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition">
+                    <button
+                      (click)="initiateFeedbackAction(item, 'reply')"
+                      class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
+                    >
+                      {{ t('superadmin.feedback.actions.reply') }}
+                    </button>
+                    <button
+                      (click)="initiateFeedbackAction(item, 'resolve')"
+                      class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
+                    >
+                      {{ t('superadmin.feedback.actions.resolve') }}
+                    </button>
+                    <button
+                      (click)="initiateFeedbackAction(item, 'reject')"
+                      class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-xs transition border border-gray-600"
+                    >
+                      {{ t('superadmin.feedback.actions.reject') }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="feedback.length === 0">
+                <td colspan="5" class="p-8 text-center text-gray-500">
+                  {{ t('superadmin.feedback.none') }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- Selected Admin Games -->
     @if (selectedAdmin) {
       <section class="pt-8 border-t border-gray-800 animate-fade-in portrait:px-4" id="games-section">
@@ -789,6 +901,137 @@
               class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
             >
               {{ t('superadmin.reject.modal.send') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Feedback Action Modals -->
+    @if (feedbackToManage) {
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="cancelFeedbackAction()"></div>
+        <div
+          class="relative bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="flex items-center gap-3 mb-2">
+            <div
+              class="p-2 rounded-full"
+              [ngClass]="{
+                'bg-blue-900/30 text-blue-400': feedbackAction === 'reply',
+                'bg-emerald-900/30 text-emerald-400': feedbackAction === 'resolve',
+                'bg-red-900/30 text-red-400': feedbackAction === 'reject',
+              }"
+            >
+              <svg
+                *ngIf="feedbackAction === 'reply'"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                />
+              </svg>
+              <svg
+                *ngIf="feedbackAction === 'resolve'"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <svg
+                *ngIf="feedbackAction === 'reject'"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white">
+              {{
+                feedbackAction === 'reply'
+                  ? t('superadmin.feedback.modal.reply.title')
+                  : feedbackAction === 'resolve'
+                    ? t('superadmin.feedback.modal.resolve.title')
+                    : t('superadmin.reject.modal.title')
+              }}
+            </h3>
+          </div>
+
+          <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-2">
+            <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">
+              Feedback from {{ feedbackToManage.userName }}
+            </div>
+            <div class="text-sm text-gray-300">"{{ feedbackToManage.comment }}"</div>
+          </div>
+
+          @if (feedbackAction !== 'reject') {
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                {{
+                  feedbackAction === 'reply'
+                    ? t('superadmin.feedback.modal.reply.label')
+                    : t('superadmin.feedback.modal.resolve.label')
+                }}
+              </label>
+              <textarea
+                *ngIf="feedbackAction === 'reply'"
+                [(ngModel)]="feedbackValue"
+                rows="4"
+                class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
+                placeholder="Write your response..."
+              ></textarea>
+              <input
+                *ngIf="feedbackAction === 'resolve'"
+                [(ngModel)]="feedbackValue"
+                class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 text-sm"
+                placeholder="GitHub issue link, etc."
+              />
+            </div>
+          } @else {
+            <p class="text-gray-300 text-sm">{{ t('superadmin.reject.modal.desc') }}</p>
+          }
+
+          <div class="flex gap-3 mt-4">
+            <button
+              (click)="cancelFeedbackAction()"
+              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+            >
+              {{ t('superadmin.modal.cancel') }}
+            </button>
+            <button
+              (click)="confirmFeedbackAction()"
+              [disabled]="feedbackAction === 'reply' && !feedbackValue"
+              class="flex-1 py-2 font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
+              [ngClass]="{
+                'bg-blue-600 hover:bg-blue-500 text-white': feedbackAction === 'reply',
+                'bg-emerald-600 hover:bg-emerald-500 text-white': feedbackAction === 'resolve',
+                'bg-red-600 hover:bg-red-500 text-white': feedbackAction === 'reject',
+                'opacity-50 cursor-not-allowed': feedbackAction === 'reply' && !feedbackValue,
+              }"
+            >
+              {{
+                feedbackAction === 'reply'
+                  ? t('superadmin.feedback.modal.reply.send')
+                  : feedbackAction === 'resolve'
+                    ? t('superadmin.feedback.modal.resolve.confirm')
+                    : t('superadmin.actions.reject')
+              }}
             </button>
           </div>
         </div>
