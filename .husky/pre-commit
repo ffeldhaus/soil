@@ -5,6 +5,7 @@ node scripts/check-file-size.js
 # Check if any staged files are NOT documentation (.md files)
 if git diff --cached --name-only | grep -qvE '\.md$'; then
   npm run test:unit:coverage
+  npm run test:functions
   npm run build
 else
   echo "Only documentation changes detected. Skipping tests and build."

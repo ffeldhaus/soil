@@ -16,7 +16,7 @@
     "test:functions:coverage": "npm run test:coverage --prefix functions",
     "test:e2e": "npm run build && firebase emulators:exec --project demo-soil --ui \"cypress run --config baseUrl=http://localhost:5005/de\"",
     "test:e2e:open": "npm run build && firebase emulators:exec --project demo-soil --ui \"cypress open --config baseUrl=http://localhost:5005/de\"",
-    "test:ci": "npm run lint && npm run test:unit && npm run test:functions && npm run test:e2e",
+    "test:ci": "npm run lint && npm run test:unit && npm run test:functions:coverage && npm run test:e2e",
     "deploy": "node scripts/deploy.js",
     "lint": "biome check",
     "lint:fix": "biome check --write",
