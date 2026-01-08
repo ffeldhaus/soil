@@ -18,7 +18,7 @@
       "sourceRoot": "src",
       "prefix": "app",
       "i18n": {
-        "sourceLocale": "de",
+        "sourceLocale": "de-ID",
         "locales": {
           "en": {
             "translation": [

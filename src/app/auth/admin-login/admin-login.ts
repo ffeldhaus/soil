@@ -33,7 +33,7 @@ import { AuthService } from '../auth.service';
         class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:bg-gray-800"
       >
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Lehrkraft-Anmeldung</h1>
+          <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Anmeldung für Lehrkräfte</h1>
           <p class="text-gray-400" i18n="@@adminLogin.subtitle">Zugang zum Soil-Dashboard</p>
         </div>
 

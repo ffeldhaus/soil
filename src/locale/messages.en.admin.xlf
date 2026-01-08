@@ -3,7 +3,7 @@
   <file source-language="de" datatype="plaintext" original="ng2.template" target-language="en">
     <body>
       <trans-unit id="dashboard.title" datatype="html">
-        <source>Lehrkraft-Dashboard</source>
+        <source>Dashboard für Lehrkräfte</source>
         <target>Teacher Dashboard</target>
       </trans-unit>
       <trans-unit id="dashboard.pending.title" datatype="html">
@@ -43,8 +43,8 @@
         <target>Go to Console</target>
       </trans-unit>
       <trans-unit id="dashboard.controls.title" datatype="html">
-        <source>Lehrkraft-Steuerung</source>
-        <target>Teacher Controls</target>
+        <source>Konfiguration</source>
+        <target>Configuration</target>
       </trans-unit>
       <trans-unit id="dashboard.welcome" datatype="html">
         <source>Willkommen, <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-bold text-white&quot;&gt;"/>{{ userdisplayName }}<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/>!</source>
@@ -403,7 +403,7 @@
         <target>Active</target>
       </trans-unit>
       <trans-unit id="adminLogin.title" datatype="html">
-        <source>Lehrkraft-Anmeldung</source>
+        <source>Anmeldung für Lehrkräfte</source>
         <target>Teacher Login</target>
       </trans-unit>
       <trans-unit id="adminLogin.subtitle" datatype="html">
@@ -623,7 +623,7 @@
         <target>← Back to Home</target>
       </trans-unit>
       <trans-unit id="dashboard.title" datatype="html">
-        <source>Lehrkraft-Dashboard</source>
+        <source>Dashboard für Lehrkräfte</source>
         <target>Teacher Dashboard</target>
       </trans-unit>
       <trans-unit id="user.photoURL" datatype="html">

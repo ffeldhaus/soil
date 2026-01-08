@@ -955,7 +955,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="dashboard.title" datatype="html">
-        <source>Lehrkraft-Dashboard</source>
+        <source>Dashboard für Lehrkräfte</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/dashboard/dashboard.ts</context>
           <context context-type="linenumber">47</context>
@@ -969,7 +969,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="dashboard.controls.title" datatype="html">
-        <source>Lehrkraft-Steuerung</source>
+        <source>Konfiguration</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/admin/dashboard/dashboard.ts</context>
           <context context-type="linenumber">56</context>
@@ -1140,7 +1140,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="adminLogin.title" datatype="html">
-        <source>Lehrkraft-Anmeldung</source>
+        <source>Anmeldung für Lehrkräfte</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/auth/admin-login/admin-login.ts</context>
           <context context-type="linenumber">36,37</context>

@@ -44,7 +44,7 @@ import { QrOverlayComponent } from './components/qr-overlay';
 export class Dashboard implements OnInit, OnDestroy {
   t(key: string): string {
     const translations: Record<string, string> = {
-      'dashboard.title': $localize`:@@dashboard.title:Lehrkraft-Dashboard`,
+      'dashboard.title': $localize`:@@dashboard.title:Dashboard für Lehrkräfte`,
       'dashboard.pending.title': $localize`:@@dashboard.pending.title:Konto wartet auf Genehmigung`,
       'dashboard.pending.message': $localize`:@@dashboard.pending.message:Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.`,
       'dashboard.logout': $localize`:@@dashboard.logout:Abmelden`,
@@ -53,7 +53,7 @@ export class Dashboard implements OnInit, OnDestroy {
       'dashboard.super.title': $localize`:@@dashboard.super.title:Super-Admin-Zugriff`,
       'dashboard.super.redirect': $localize`:@@dashboard.super.redirect:Weiterleitung zur Super-Admin-Konsole...`,
       'dashboard.super.btnGo': $localize`:@@dashboard.super.btnGo:Zur Konsole`,
-      'dashboard.controls.title': $localize`:@@dashboard.controls.title:Lehrkraft-Steuerung`,
+      'dashboard.controls.title': $localize`:@@dashboard.controls.title:Konfiguration`,
       'dashboard.createGame.title': $localize`:@@dashboard.createGame.title:Neues Spiel erstellen`,
       'dashboard.createGame.name': $localize`:@@dashboard.createGame.name:Spielname`,
       'dashboard.createGame.phName': $localize`:@@dashboard.createGame.phName:Spielname`,
