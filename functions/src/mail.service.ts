@@ -114,7 +114,7 @@ export class MailService {
       });
 
       await transporter.sendMail({
-        from: this._impersonatedUser,
+        from: `"SOIL" <${this._impersonatedUser}>`,
         to: options.to,
         subject: options.subject,
         text: options.text,
