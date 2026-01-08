@@ -3,6 +3,8 @@ const _path = require('node:path');
 const readline = require('node:readline');
 const { execSync } = require('node:child_process');
 
+const scriptStartTime = new Date();
+
 const packageJsonPath = 'package.json';
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 const currentVersion = packageJson.version;
@@ -57,17 +59,20 @@ const monitorCloudBuild = async (_version) => {
   const startTime = Date.now();
 
   try {
-    const commitHash = execSync('git rev-parse HEAD').toString().trim();
-
     while (Date.now() - startTime < timeoutMs) {
       const buildsJson = execSync(`gcloud builds list --region=${region} --limit=10 --format="json"`, {
         stdio: ['pipe', 'pipe', 'ignore'],
       }).toString();
 
       const builds = JSON.parse(buildsJson);
-      const build = builds.find((b) => b.source?.developerConnectConfig?.revision === commitHash);
+      // Find the latest build that started after our script started
+      const build = builds.find((b) => {
+        const createTime = new Date(b.createTime);
+        return createTime > scriptStartTime;
+      });
 
       if (build) {
+        console.log(`\nFound build: ${build.id} (created at ${build.createTime})`);
         try {
           execSync(`gcloud beta builds log ${build.id} --region=${region} --stream`, { stdio: 'inherit' });
         } catch (_e) {
@@ -80,6 +85,7 @@ const monitorCloudBuild = async (_version) => {
       process.stdout.write(`\rWaiting for build to start... (${elapsed}s)`);
       await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
     }
+    console.log('\nTimeout waiting for Cloud Build to start.');
   } catch (error) {
     console.error('Error monitoring Cloud Build:', error.message);
   }
