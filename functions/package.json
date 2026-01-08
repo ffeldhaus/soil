@@ -9,16 +9,39 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "mocha -r ts-node/register src/**/*.test.ts"
+    "test": "mocha -r ts-node/register src/**/*.test.ts",
+    "test:coverage": "nyc npm run test"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.test.ts",
+      "src/types.ts"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "all": true,
+    "sourceMap": true,
+    "instrument": true
   },
   "engines": {
     "node": "24"
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google/genai": "^1.34.0",
     "firebase-admin": "^13.6.0",
     "firebase-functions": "^7.0.2",
-    "@google/genai": "^1.34.0",
     "google-auth-library": "^10.5.0",
     "nodemailer": "^7.0.12"
   },
@@ -30,6 +53,8 @@
     "chai": "^6.2.2",
     "firebase-functions-test": "^3.4.1",
     "mocha": "^11.7.5",
+    "nyc": "^17.1.0",
+    "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
