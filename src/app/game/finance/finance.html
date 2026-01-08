@@ -58,30 +58,31 @@
           </div>
 
           <div
-            class="bg-gray-900/30 border border-gray-800 rounded-3xl p-8 h-64 relative group shadow-inner backdrop-blur-sm"
+            class="bg-gray-900/30 border border-gray-800 rounded-3xl p-4 md:p-8 h-80 relative group shadow-inner backdrop-blur-sm"
           >
             <!-- SVG Graph -->
             <svg
-              viewBox="0 0 100 100"
+              viewBox="0 0 1000 100"
               preserveAspectRatio="none"
-              class="w-full h-full overflow-visible"
+              class="w-full h-full"
               style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"
             >
               <!-- Grid Lines (Horizontal) -->
               @for (line of [0, 25, 50, 75, 100]; track line) {
                 <line
-                  x1="0"
-                  [attr.y1]="line"
-                  x2="100"
-                  [attr.y2]="line"
+                  [attr.x1]="GRAPH_MARGIN.left"
+                  [attr.y1]="GRAPH_MARGIN.top + (line / 100) * (100 - GRAPH_MARGIN.top - GRAPH_MARGIN.bottom)"
+                  [attr.x2]="1000 - GRAPH_MARGIN.right"
+                  [attr.y2]="GRAPH_MARGIN.top + (line / 100) * (100 - GRAPH_MARGIN.top - GRAPH_MARGIN.bottom)"
                   stroke="currentColor"
-                  stroke-width="0.1"
+                  stroke-width="1"
+                  vector-effect="non-scaling-stroke"
                   class="text-gray-800"
                 />
                 <text
-                  x="-2"
-                  [attr.y]="line + 1"
-                  class="fill-gray-600 text-[3px] font-mono font-bold"
+                  [attr.x]="GRAPH_MARGIN.left - 10"
+                  [attr.y]="GRAPH_MARGIN.top + (line / 100) * (100 - GRAPH_MARGIN.top - GRAPH_MARGIN.bottom) + 1"
+                  class="fill-gray-600 text-[10px] font-mono font-bold"
                   text-anchor="end"
                 >
                   {{ ((100 - line) / 100) * getMaxCapital() | number: '1.0-0' }} €
@@ -91,25 +92,34 @@
               <!-- Grid Lines (Vertical - Rounds) -->
               @for (r of availableRounds; track r; let i = $index) {
                 <line
-                  [attr.x1]="((i + 1) / availableRounds.length) * 100"
-                  y1="0"
-                  [attr.x2]="((i + 1) / availableRounds.length) * 100"
-                  y2="100"
+                  [attr.x1]="GRAPH_MARGIN.left + ((i + 1) / availableRounds.length) * (1000 - GRAPH_MARGIN.left - GRAPH_MARGIN.right)"
+                  [attr.y1]="GRAPH_MARGIN.top"
+                  [attr.x2]="GRAPH_MARGIN.left + ((i + 1) / availableRounds.length) * (1000 - GRAPH_MARGIN.left - GRAPH_MARGIN.right)"
+                  [attr.y2]="100 - GRAPH_MARGIN.bottom"
                   stroke="currentColor"
-                  stroke-width="0.1"
+                  stroke-width="1"
+                  vector-effect="non-scaling-stroke"
                   class="text-gray-800"
                 />
                 <text
-                  [attr.x]="((i + 1) / availableRounds.length) * 100"
-                  y="105"
-                  class="fill-gray-600 text-[3px] font-mono font-bold"
+                  [attr.x]="GRAPH_MARGIN.left + ((i + 1) / availableRounds.length) * (1000 - GRAPH_MARGIN.left - GRAPH_MARGIN.right)"
+                  [attr.y]="100 - GRAPH_MARGIN.bottom + 12"
+                  class="fill-gray-600 text-[10px] font-mono font-bold"
                   text-anchor="middle"
                 >
                   R{{ r }}
                 </text>
               }
               <!-- Round 0 label -->
-              <text x="0" y="105" class="fill-gray-600 text-[3px] font-mono font-bold" text-anchor="middle">Start</text>
+              <text
+                [attr.x]="GRAPH_MARGIN.left"
+                [attr.y]="100 - GRAPH_MARGIN.bottom + 12"
+                class="fill-gray-600 text-[10px] font-mono font-bold"
+                text-anchor="middle"
+              >
+                Start
+              </text>
+
 
               <!-- Data Lines -->
               @for (p of players; track p.uid) {
@@ -118,7 +128,8 @@
                   [attr.d]="getGraphPath(p.capitalHistory)"
                   fill="none"
                   stroke="black"
-                  stroke-width="1.5"
+                  stroke-width="3"
+                  vector-effect="non-scaling-stroke"
                   class="opacity-10"
                   style="transform: translateY(0.5px);"
                 />
@@ -127,7 +138,8 @@
                   [attr.d]="getGraphPath(p.capitalHistory)"
                   fill="none"
                   [attr.stroke]="p.isCurrentPlayer ? 'var(--color-emerald-500)' : 'var(--color-blue-500)'"
-                  [attr.stroke-width]="p.isCurrentPlayer ? 0.8 : 0.4"
+                  [attr.stroke-width]="p.isCurrentPlayer ? 3 : 1.5"
+                  vector-effect="non-scaling-stroke"
                   [attr.opacity]="p.isCurrentPlayer ? 1 : 0.3"
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -138,10 +150,10 @@
                   <circle
                     [attr.cx]="point.x"
                     [attr.cy]="point.y"
-                    [attr.r]="p.isCurrentPlayer ? 0.8 : 0.5"
+                    [attr.r]="p.isCurrentPlayer ? 4 : 2"
                     [attr.fill]="p.isCurrentPlayer ? 'var(--color-emerald-400)' : 'var(--color-blue-400)'"
                     [attr.opacity]="p.isCurrentPlayer ? 1 : 0.3"
-                    class="hover:r-1.5 transition-all cursor-crosshair"
+                    class="hover:r-6 transition-all cursor-crosshair"
                   >
                     <title>{{ p.name }} - R{{ point.round }}: {{ point.val | number }} €</title>
                   </circle>
@@ -149,11 +161,12 @@
               }
             </svg>
           </div>
+
         </div>
       }
 
       <div class="overflow-x-auto rounded-3xl border border-gray-800 bg-gray-900/40 shadow-2xl backdrop-blur-sm">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full min-w-max text-left border-collapse">
           <thead>
             <tr class="bg-gray-800/40">
               <th
@@ -182,75 +195,82 @@
           </thead>
           <tbody class="text-gray-300">
             <!-- Previous Decisions -->
-            <tr class="bg-gray-800/10">
+            <tr class="bg-gray-800/10 cursor-pointer hover:bg-gray-800/30 transition-colors" (click)="toggleSection('decisions')">
               <td
                 colspan="100%"
-                i18n="@@finance.group.decisions"
-                class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-widest border-b border-gray-800/50"
+                class="px-6 py-3 border-b border-gray-800/50"
               >
-                Entscheidungen
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] transition-transform duration-300" [class.rotate-90]="expandedSections['decisions']">▶</span>
+                  <span i18n="@@finance.group.decisions" class="text-[10px] font-black text-gray-600 uppercase tracking-widest">
+                    Entscheidungen
+                  </span>
+                </div>
               </td>
             </tr>
-            <tr class="hover:bg-gray-800/20 transition-colors">
-              <td i18n="@@finance.fertilizer" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                Mineraldünger
-              </td>
-              @for (p of players; track p) {
-                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                  @if (p.decision?.fertilizer) {
-                    <span class="text-emerald-500 text-base">●</span>
-                  } @else {
-                    <span class="text-gray-800 text-base">○</span>
-                  }
+            @if (expandedSections['decisions']) {
+              <tr class="hover:bg-gray-800/20 transition-colors">
+                <td i18n="@@finance.fertilizer" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
+                  Mineraldünger
                 </td>
-              }
-            </tr>
-            <tr class="hover:bg-gray-800/20 transition-colors">
-              <td i18n="@@finance.pesticide" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                Pflanzenschutz
-              </td>
-              @for (p of players; track p) {
-                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                  @if (p.decision?.pesticide) {
-                    <span class="text-red-500 text-base">●</span>
-                  } @else {
-                    <span class="text-gray-800 text-base">○</span>
-                  }
+                @for (p of players; track p) {
+                  <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                    @if (p.decision?.fertilizer) {
+                      <span class="text-emerald-500 text-base">●</span>
+                    } @else {
+                      <span class="text-gray-800 text-base">○</span>
+                    }
+                  </td>
+                }
+              </tr>
+              <tr class="hover:bg-gray-800/20 transition-colors">
+                <td i18n="@@finance.pesticide" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
+                  Pflanzenschutz
                 </td>
-              }
-            </tr>
-            <tr class="hover:bg-gray-800/20 transition-colors">
-              <td i18n="@@finance.organisms" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                Nützlinge
-              </td>
-              @for (p of players; track p) {
-                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                  @if (p.decision?.organisms) {
-                    <span class="text-emerald-500 text-base">●</span>
-                  } @else {
-                    <span class="text-gray-800 text-base">○</span>
-                  }
+                @for (p of players; track p) {
+                  <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                    @if (p.decision?.pesticide) {
+                      <span class="text-red-500 text-base">●</span>
+                    } @else {
+                      <span class="text-gray-800 text-base">○</span>
+                    }
+                  </td>
+                }
+              </tr>
+              <tr class="hover:bg-gray-800/20 transition-colors">
+                <td i18n="@@finance.organisms" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
+                  Nützlinge
                 </td>
-              }
-            </tr>
-            <tr class="hover:bg-gray-800/20 transition-colors">
-              <td i18n="@@finance.organic" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
-                Ökologischer Landbau
-              </td>
-              @for (p of players; track p) {
-                <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
-                  @if (p.decision?.organic) {
-                    <span class="text-emerald-500 text-base">●</span>
-                  } @else {
-                    <span class="text-gray-800 text-base">○</span>
-                  }
+                @for (p of players; track p) {
+                  <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                    @if (p.decision?.organisms) {
+                      <span class="text-emerald-500 text-base">●</span>
+                    } @else {
+                      <span class="text-gray-800 text-base">○</span>
+                    }
+                  </td>
+                }
+              </tr>
+              <tr class="hover:bg-gray-800/20 transition-colors">
+                <td i18n="@@finance.organic" class="p-4 pl-8 text-sm text-gray-400 border-b border-gray-800/50">
+                  Ökologischer Landbau
                 </td>
-              }
-            </tr>
+                @for (p of players; track p) {
+                  <td class="p-4 border-b border-gray-800/50 text-center font-mono text-xs">
+                    @if (p.decision?.organic) {
+                      <span class="text-emerald-500 text-base">●</span>
+                    } @else {
+                      <span class="text-gray-800 text-base">○</span>
+                    }
+                  </td>
+                }
+              </tr>
+            }
+
 
             <!-- Expenses Detail -->
-            <tr class="bg-gray-800/10">
-              <td colspan="100%" class="p-0 border-b border-gray-800/50">
+            <tr class="bg-gray-800/10 border-b border-gray-800/50">
+              <td colspan="100%">
                 <div class="px-6 py-3 flex items-center justify-between">
                   <span
                     i18n="@@finance.group.expenses"
@@ -262,12 +282,14 @@
             </tr>
 
             <!-- Seeds Breakdown -->
-            <tr class="group hover:bg-gray-800/20 transition-colors">
+            <tr class="group hover:bg-gray-800/20 transition-colors cursor-pointer" (click)="toggleSection('seeds')">
               <td
-                i18n="@@finance.header.seeds"
                 class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50"
               >
-                Saatgut
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] transition-transform duration-300" [class.rotate-90]="expandedSections['seeds']">▶</span>
+                  <span i18n="@@finance.header.seeds">Saatgut</span>
+                </div>
               </td>
               @for (p of players; track p) {
                 <td class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
@@ -275,24 +297,28 @@
                 </td>
               }
             </tr>
-            @for (crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']; track crop) {
-              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-                <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
-                @for (p of players; track p) {
-                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                    {{ p.detailedExpenses?.seeds?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-                  </td>
-                }
-              </tr>
+            @if (expandedSections['seeds']) {
+              @for (crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']; track crop) {
+                <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                  <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
+                  @for (p of players; track p) {
+                    <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                      {{ p.detailedExpenses?.seeds?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                    </td>
+                  }
+                </tr>
+              }
             }
 
             <!-- Investments Breakdown -->
-            <tr class="group hover:bg-gray-800/20 transition-colors">
+            <tr class="group hover:bg-gray-800/20 transition-colors cursor-pointer" (click)="toggleSection('investments')">
               <td
-                i18n="@@finance.header.investments"
                 class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50"
               >
-                Investitionen
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] transition-transform duration-300" [class.rotate-90]="expandedSections['investments']">▶</span>
+                  <span i18n="@@finance.header.investments">Investitionen</span>
+                </div>
               </td>
               @for (p of players; track p) {
                 <td class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
@@ -300,32 +326,36 @@
                 </td>
               }
             </tr>
-            <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td i18n="@@finance.sub.machines" class="p-2 pl-12 border-b border-gray-800/30 italic">Maschinen</td>
-              @for (p of players; track p) {
-                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                  {{ p.detailedExpenses?.investments?.machines || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            @if (expandedSections['investments']) {
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td i18n="@@finance.sub.machines" class="p-2 pl-12 border-b border-gray-800/30 italic">Maschinen</td>
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.investments?.machines || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td i18n="@@finance.sub.animalsInvest" class="p-2 pl-12 border-b border-gray-800/30 italic">
+                  Tierbestand
                 </td>
-              }
-            </tr>
-            <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td i18n="@@finance.sub.animalsInvest" class="p-2 pl-12 border-b border-gray-800/30 italic">
-                Tierbestand
-              </td>
-              @for (p of players; track p) {
-                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                  {{ p.detailedExpenses?.investments?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-                </td>
-              }
-            </tr>
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.investments?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+            }
 
             <!-- Running Costs Breakdown -->
-            <tr class="group hover:bg-gray-800/20 transition-colors">
+            <tr class="group hover:bg-gray-800/20 transition-colors cursor-pointer" (click)="toggleSection('running')">
               <td
-                i18n="@@finance.header.running"
                 class="p-4 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50"
               >
-                Betriebskosten
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] transition-transform duration-300" [class.rotate-90]="expandedSections['running']">▶</span>
+                  <span i18n="@@finance.header.running">Betriebskosten</span>
+                </div>
               </td>
               @for (p of players; track p) {
                 <td class="p-4 border-b border-gray-800/50 text-center font-bold text-red-400">
@@ -333,63 +363,70 @@
                 </td>
               }
             </tr>
-            <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td i18n="@@finance.sub.base" class="p-2 pl-12 border-b border-gray-800/30 italic">Grundkosten</td>
-              @for (p of players; track p) {
-                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                  {{ p.detailedExpenses?.running?.base || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            @if (expandedSections['running']) {
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td i18n="@@finance.sub.base" class="p-2 pl-12 border-b border-gray-800/30 italic">Grundkosten</td>
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.running?.base || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td i18n="@@finance.sub.organicControl" class="p-2 pl-12 border-b border-gray-800/30 italic">
+                  Bio-Kontrolle
                 </td>
-              }
-            </tr>
-            <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td i18n="@@finance.sub.organicControl" class="p-2 pl-12 border-b border-gray-800/30 italic">
-                Bio-Kontrolle
-              </td>
-              @for (p of players; track p) {
-                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                  {{ p.detailedExpenses?.running?.organic_control || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.running?.organic_control || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td i18n="@@finance.sub.pesticide" class="p-2 pl-12 border-b border-gray-800/30 italic">
+                  Pflanzenschutzmittel
                 </td>
-              }
-            </tr>
-            <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td i18n="@@finance.sub.pesticide" class="p-2 pl-12 border-b border-gray-800/30 italic">
-                Pflanzenschutzmittel
-              </td>
-              @for (p of players; track p) {
-                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                  {{ p.detailedExpenses?.running?.pesticide || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.running?.pesticide || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td i18n="@@finance.sub.organisms" class="p-2 pl-12 border-b border-gray-800/30 italic">
+                  Nützlinge (Kosten)
                 </td>
-              }
-            </tr>
-            <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td i18n="@@finance.sub.organisms" class="p-2 pl-12 border-b border-gray-800/30 italic">
-                Nützlinge (Kosten)
-              </td>
-              @for (p of players; track p) {
-                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                  {{ p.detailedExpenses?.running?.organisms || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.running?.organisms || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                <td i18n="@@finance.sub.animalsRunning" class="p-2 pl-12 border-b border-gray-800/30 italic">
+                  Tierhaltung
                 </td>
-              }
-            </tr>
-            <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-              <td i18n="@@finance.sub.animalsRunning" class="p-2 pl-12 border-b border-gray-800/30 italic">
-                Tierhaltung
-              </td>
-              @for (p of players; track p) {
-                <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                  {{ p.detailedExpenses?.running?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-                </td>
-              }
-            </tr>
+                @for (p of players; track p) {
+                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                    {{ p.detailedExpenses?.running?.animals || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </td>
+                }
+              </tr>
+            }
+
 
             <!-- Income Breakdown -->
-            <tr class="bg-gray-800/10 border-t border-gray-800">
+            <tr class="bg-gray-800/10 border-t border-gray-800 cursor-pointer hover:bg-gray-800/30 transition-colors" (click)="toggleSection('harvest')">
               <td
                 colspan="100%"
-                i18n="@@finance.group.income"
-                class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-widest border-b border-gray-800/50"
+                class="px-6 py-3 border-b border-gray-800/50"
               >
-                Einnahmen
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] transition-transform duration-300" [class.rotate-90]="expandedSections['harvest']">▶</span>
+                  <span i18n="@@finance.group.income" class="text-[10px] font-black text-gray-600 uppercase tracking-widest">
+                    Einnahmen
+                  </span>
+                </div>
               </td>
             </tr>
             <tr class="group hover:bg-gray-800/20 transition-colors">
@@ -405,16 +442,19 @@
                 </td>
               }
             </tr>
-            @for (crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']; track crop) {
-              <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
-                <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
-                @for (p of players; track p) {
-                  <td class="p-2 border-b border-gray-800/30 text-center font-mono">
-                    {{ p.detailedIncome?.harvest?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
-                  </td>
-                }
-              </tr>
+            @if (expandedSections['harvest']) {
+              @for (crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']; track crop) {
+                <tr class="bg-black/10 text-[11px] opacity-60 hover:opacity-100 transition-opacity">
+                  <td class="p-2 pl-12 border-b border-gray-800/30 italic">{{ t('crop.' + crop.toLowerCase()) }}</td>
+                  @for (p of players; track p) {
+                    <td class="p-2 border-b border-gray-800/30 text-center font-mono">
+                      {{ p.detailedIncome?.harvest?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                    </td>
+                  }
+                </tr>
+              }
             }
+
 
             <!-- Global Totals -->
             <tr class="bg-gray-900 border-t-2 border-gray-700">

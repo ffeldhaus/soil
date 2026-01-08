@@ -74,6 +74,13 @@ export class Finance implements OnChanges {
   players: PlayerFinanceData[] = [];
   currentViewingRound = 0;
   availableRounds: number[] = [];
+  expandedSections: Record<string, boolean> = {
+    decisions: false,
+    seeds: false,
+    investments: false,
+    running: false,
+    harvest: false,
+  };
 
   ngOnChanges() {
     if (!this.game) return;
@@ -84,6 +91,10 @@ export class Finance implements OnChanges {
 
     this.updateAvailableRounds();
     this.processPlayerData();
+  }
+
+  toggleSection(section: string) {
+    this.expandedSections[section] = !this.expandedSections[section];
   }
 
   private updateAvailableRounds() {
@@ -196,6 +207,8 @@ export class Finance implements OnChanges {
 
   // --- Graph Helpers ---
 
+  readonly GRAPH_MARGIN = { top: 10, right: 20, bottom: 20, left: 80 };
+
   getMaxCapital(): number {
     let max = 1000;
     this.players.forEach((p) => {
@@ -213,8 +226,9 @@ export class Finance implements OnChanges {
 
     return history
       .map((cap, roundIdx) => {
-        const x = (roundIdx / maxRound) * 100;
-        const y = 100 - (cap / maxCap) * 100;
+        const x =
+          this.GRAPH_MARGIN.left + (roundIdx / maxRound) * (1000 - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right);
+        const y = this.GRAPH_MARGIN.top + (1 - cap / maxCap) * (100 - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom);
         return `${roundIdx === 0 ? 'M' : 'L'} ${x} ${y}`;
       })
       .join(' ');
@@ -224,8 +238,8 @@ export class Finance implements OnChanges {
     const maxCap = this.getMaxCapital();
     const maxRound = this.availableRounds.length;
     return history.map((cap, roundIdx) => ({
-      x: (roundIdx / maxRound) * 100,
-      y: 100 - (cap / maxCap) * 100,
+      x: this.GRAPH_MARGIN.left + (roundIdx / maxRound) * (1000 - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right),
+      y: this.GRAPH_MARGIN.top + (1 - cap / maxCap) * (100 - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom),
       val: cap,
       round: roundIdx,
     }));
