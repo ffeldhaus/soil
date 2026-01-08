@@ -22,24 +22,9 @@ const performDeployment = async (newVersion) => {
     // Check for uncommitted changes
     const status = execSync('git status --porcelain').toString().trim();
     if (status) {
-      console.warn('\x1b[33m%s\x1b[0m', 'WARNING: You have uncommitted changes:');
-
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      });
-
-      const proceed = await new Promise((resolve) => {
-        rl.question('Do you want to proceed with the release anyway? (y/N): ', (answer) => {
-          resolve(answer.trim().toLowerCase() === 'y');
-        });
-      });
-
-      rl.close();
-
-      if (!proceed) {
-        process.exit(1);
-      }
+      console.error('\x1b[31m%s\x1b[0m', 'ERROR: You have uncommitted changes. Please commit or stash them before releasing.');
+      console.log(status);
+      process.exit(1);
     }
 
     // Update package.json
