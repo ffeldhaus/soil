@@ -1078,6 +1078,10 @@
         <source>Tiere</source>
         <target>Livestock</target>
       </trans-unit>
+      <trans-unit id="crop.barley.desc" datatype="html">
+        <source>Gerste</source>
+        <target>Barley</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

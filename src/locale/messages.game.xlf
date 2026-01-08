@@ -966,6 +966,9 @@
       <trans-unit id="crop.grass" datatype="html">
         <source>Tiere</source>
       </trans-unit>
+      <trans-unit id="crop.barley.desc" datatype="html">
+        <source>Gerste</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

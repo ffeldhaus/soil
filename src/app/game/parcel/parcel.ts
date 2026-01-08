@@ -38,12 +38,12 @@ export class Parcel {
   private cropConfig: Record<string, { label: string; image: string }> = {
     Wheat: { label: 'crop.wheat', image: 'weizen.jpg' },
     Corn: { label: 'crop.corn', image: 'mais.jpg' },
-    Potato: { label: 'crop.potato', image: 'kartoffel.jpg' },
+    Potato: { label: 'crop.potato', image: 'kartoffel.webp' },
     Beet: { label: 'crop.beet', image: 'zuckerruebe.jpg' },
-    Barley: { label: 'crop.barley', image: 'gerste.jpg' },
+    Barley: { label: 'crop.barley', image: 'gerste.webp' },
     Oat: { label: 'crop.oat', image: 'hafer.jpg' },
     Rye: { label: 'crop.rye', image: 'roggen.jpg' },
-    Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.jpg' },
+    Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
     Grass: { label: 'crop.animals', image: 'tiere.jpg' },
     Fallow: { label: 'crop.fallow', image: 'brachland.jpg' },
   };

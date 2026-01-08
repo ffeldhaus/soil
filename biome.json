@@ -210,6 +210,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["scripts/deploy.js"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
     }
   ]
 }
