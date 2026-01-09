@@ -1,651 +1,2663 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="de-ID" datatype="plaintext" original="ng2.template">
-    <body>
-      <trans-unit id="footer.impressum" datatype="html">
-        <source>Impressum</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/app.html</context>
-          <context context-type="linenumber">6,8</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="footer.manual" datatype="html">
-        <source>Handbuch</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/app.html</context>
-          <context context-type="linenumber">14,16</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.title" datatype="html">
-        <source>Spiel beitreten</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">41,44</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.gameId" datatype="html">
-        <source>Spiel-ID</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">47,48</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.pin" datatype="html">
-        <source>PIN</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">62,63</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.startGame" datatype="html">
-        <source>Spiel starten</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">84,86</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.placeholder.gameId" datatype="html">
-        <source>Game ID</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">150</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.placeholder.pin" datatype="html">
-        <source>Unique Player PIN</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">151</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.enteringGame" datatype="html">
-        <source>Betrete Spiel...</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">152</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.backToHome" datatype="html">
-        <source>Zurück zur Startseite</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">153</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.error.title" datatype="html">
-        <source>Anmeldung fehlgeschlagen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">154</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="playerLogin.error.retry" datatype="html">
-        <source>Erneut versuchen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/auth/player-login/player-login.ts</context>
-          <context context-type="linenumber">155</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.title" datatype="html">
-        <source>Rundeneinstellungen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">32</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.machines" datatype="html">
-        <source>Maschinen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">33</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.machines_desc" datatype="html">
-        <source>Höherer Maschineneinsatz steigert die Effizienz, laugt aber den Boden langfristig aus.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">34</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.organic" datatype="html">
-        <source>Ökologischer Anbau</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">35</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.organic_desc" datatype="html">
-        <source>Verzicht auf Chemie. Höhere Preise, geringere Erträge.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">36</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.fertilizer" datatype="html">
-        <source>Kunstdünger</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">37</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.fertilizer_desc" datatype="html">
-        <source>Steigert die Nährstoffe. Verschlechtert langfristig die Bodenqualität.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">38</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.pesticide" datatype="html">
-        <source>Pflanzenschutzmittel</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">39</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.pesticide_desc" datatype="html">
-        <source>Schützt vor Schädlingen. Schadet den Bodenorganismen.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">40</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.organisms" datatype="html">
-        <source>Nützlinge</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">41</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.organisms_desc" datatype="html">
-        <source>Natürliche Schädlingsbekämpfung. Teuer, aber nachhaltig.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.cancel" datatype="html">
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="de">
+  <file id="ngi18n" original="ng.template">
+    <unit id="feedback.title">
+      <notes>
+        <note category="description">The title for the feedback modal</note>
+      </notes>
+      <segment>
+        <source>Feedback &amp; Vorschläge</source>
+      </segment>
+    </unit>
+    <unit id="feedback.rating">
+      <segment>
+        <source>Bewertung</source>
+      </segment>
+    </unit>
+    <unit id="feedback.comment">
+      <segment>
+        <source>Dein Feedback</source>
+      </segment>
+    </unit>
+    <unit id="feedback.commentPlaceholder">
+      <segment>
+        <source>Erzähl uns mehr...</source>
+      </segment>
+    </unit>
+    <unit id="feedback.cancel">
+      <segment>
+        <source> Abbrechen </source>
+      </segment>
+    </unit>
+    <unit id="feedback.submit">
+      <segment>
+        <source>Feedback senden</source>
+      </segment>
+    </unit>
+    <unit id="feedback.submitting">
+      <segment>
+        <source>Wird gesendet...</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.title">
+      <segment>
+        <source>Neues Spiel erstellen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.name">
+      <segment>
+        <source>Spielname</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.phName">
+      <segment>
+        <source>Spielname</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.playerLabel">
+      <segment>
+        <source>Spieler-Bezeichnung (z. B. Team, Farmer)</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.phPlayer">
+      <segment>
+        <source>Spieler</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.players">
+      <segment>
+        <source>Spieler (1-50)</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.rounds">
+      <segment>
+        <source>Runden</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.bots">
+      <segment>
+        <source>KI-Bots</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.aiLevel">
+      <segment>
+        <source>KI-Niveau</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.submit">
+      <segment>
+        <source>+ Neues Spiel erstellen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.creating">
+      <segment>
+        <source>Wird erstellt...</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.required">
+      <segment>
+        <source>Erforderlich</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.nameHint">
+      <segment>
+        <source>Wähle einen aussagekräftigen Namen für dein Spiel.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.playerHint">
+      <segment>
+        <source>Wie sollen die Teilnehmenden genannt werden?</source>
+      </segment>
+    </unit>
+    <unit id="ai.level.elementary">
+      <segment>
+        <source>Grundschule</source>
+      </segment>
+    </unit>
+    <unit id="ai.level.middle">
+      <segment>
+        <source>Mittelstufe</source>
+      </segment>
+    </unit>
+    <unit id="ai.level.high">
+      <segment>
+        <source>Oberstufe</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.permanent">
+      <segment>
+        <source>Dauerhaftes Löschen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.confirm">
+      <segment>
+        <source>Löschen bestätigen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.questionPermanent">
+      <segment>
+        <source>Dauerhaft löschen?</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.question">
+      <segment>
+        <source>Löschen?</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.questionBatchPermanent">
+      <segment>
+        <source>Ausgewählte dauerhaft löschen?</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.questionBatch">
+      <segment>
+        <source>Ausgewählte löschen?</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.games">
+      <segment>
+        <source>Spiel(e)</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.soft.title">
+      <segment>
+        <source>Papierkorb:</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.soft.desc">
+      <segment>
+        <source>Spiele werden in den Papierkorb verschoben. Du kannst sie jederzeit wiederherstellen innerhalb von</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.days">
+      <segment>
+        <source>Tagen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.warning">
+      <segment>
+        <source>WARNUNG:</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.permanentDesc">
+      <segment>
+        <source>Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.typeConfirm">
+      <segment>
+        <source>Tippe &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.cancel">
+      <segment>
         <source>Abbrechen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">43</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="settings.confirm" datatype="html">
-        <source>Einstellungen bestätigen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/game/round-settings-modal/round-settings-modal.ts</context>
-          <context context-type="linenumber">44</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.title" datatype="html">
-        <source>Impressum</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">23,24</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.subtitle" datatype="html">
-        <source>Rechtliche Informationen &amp; Kontakt</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">24,26</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.backToHome" datatype="html">
-        <source>Zurück zur Startseite</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">44,46</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.contact" datatype="html">
-        <source>Kontakt</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">50,51</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.responsible" datatype="html">
-        <source>Verantwortlich</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">66,67</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.imageSources" datatype="html">
-        <source>Bildnachweise</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">82,84</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.source.drought" datatype="html">
-        <source>Drought by USDA (Public Domain)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">91,94</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.source.borer" datatype="html">
-        <source>Maiszünsler by Keith Weller (Public Domain)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">99,101</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.source.ladybug" datatype="html">
-        <source>Marienkäfer by Olei (CC BY-SA 3.0)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">107,110</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.source.oekolandbau" datatype="html">
-        <source>Oekolandbau.de</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">115,118</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.source.logo" datatype="html">
-        <source>Organic Logo (Public Domain)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">123,125</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.source.chamber" datatype="html">
-        <source>Landwirtschaftskammer NRW</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">131,134</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.source.bioSiegel" datatype="html">
-        <source>Bio-Siegel.de</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">139,142</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.disclaimer.title" datatype="html">
-        <source>Haftungsausschluss</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">147,148</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.disclaimer.p1" datatype="html">
-        <source> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">150,152</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.disclaimer.p2" datatype="html">
-        <source> Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung dar. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">154,156</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="impressum.disclaimer.p3" datatype="html">
-        <source> Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/impressum/impressum.ts</context>
-          <context context-type="linenumber">159,161</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.backToHome" datatype="html">
-        <source>Zurück zur Startseite</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">46,48</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.title" datatype="html">
-        <source> Wissenschaftlicher Hintergrund </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">55,56</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.subtitle" datatype="html">
-        <source> Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">58,60</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.mainReferenceTitle" datatype="html">
-        <source>Zentrale Forschungsarbeit</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">68,70</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.objectiveTitle" datatype="html">
-        <source>1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">81,82</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.objectiveText" datatype="html">
-        <source> Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">83,88</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.theoreticalFrameworkTitle" datatype="html">
-        <source>2. Theoretischer Rahmen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">93,94</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.theoreticalFrameworkSubjectiveTheories" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Subjektive Theorien:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Forschung unterscheidet zwischen weitreichenden Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser nahreichweiten Theorien durch Erfahrung. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">96,99</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.theoreticalFrameworkDustBowl" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Dust-Bowl-Syndrom:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Das Spiel modelliert die nicht nachhaltige Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">102,104</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.designPrinciplesTitle" datatype="html">
-        <source>3. Gestaltungsprinzipien</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">110,111</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.designPrinciplesExperience" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Erfahrungsorientiertes Lernen:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">113,115</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.designPrinciplesComplexity" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong class=&quot;text-white&quot;&gt;"/>Ausgewogene Komplexität:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Um eine kognitive Überlastung zu vermeiden, konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge, Marktpreise), um einfache lineare Logik zu verhindern. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">118,120</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.findingsTitle" datatype="html">
-        <source>4. Wichtige Forschungsergebnisse</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">126,127</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.findingsText" datatype="html">
-        <source> Die Studie identifizierte drei Argumentationstypen: </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">128,129</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.findingsType1" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökonomie über Ökologie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Pessimismus, Glaube, dass man nichts ändern kann.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">131,132</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.findingsType2" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökologie über Ökonomie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">132,133</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.findingsType3" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Ökologie für Ökonomie:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">133,134</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.findingsConclusion" datatype="html">
-        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/>Fazit:<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt als „Partner“ und nicht als Gegner sahen. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">136,138</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.evolutionTitle" datatype="html">
-        <source>5. Weiterentwicklung zu soil.app</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">142,143</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.evolutionText" datatype="html">
-        <source> Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale Kompetenzen für nachhaltiges Management umgewandelt wird. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">144,146</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.viewDissertation" datatype="html">
-        <source>Volltext auf eldorado</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">157,159</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.publicationsTitle" datatype="html">
-        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;"/>📚<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> Weitere Publikationen </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">180,182</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="info.footer" datatype="html">
-        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/info/info.ts</context>
-          <context context-type="linenumber">221,222</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.intro" datatype="html">
-        <source>Eine interaktive Simulation über</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">40,41</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.agriculture" datatype="html">
-        <source>Landwirtschaft</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">44,46</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.economics" datatype="html">
-        <source>Ökonomie</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">47,48</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.and" datatype="html">
-        <source>und</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">48,49</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.sustainability" datatype="html">
-        <source>Nachhaltigkeit</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">53,56</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.enterGame" datatype="html">
-        <source>Spiel beitreten</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">64,66</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.teacherAdmin" datatype="html">
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.btnPermanent">
+      <segment>
+        <source>Dauerhaft löschen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.delete.btnGame">
+      <segment>
+        <source>Spiel löschen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.error.title">
+      <segment>
+        <source>Fehler</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.error.close">
+      <segment>
+        <source>Schließen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.details.players">
+      <segment>
+        <source>Spieler</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.details.noPlayers">
+      <segment>
+        <source>Noch keine Spieler beigetreten.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.deadline.title">
+      <segment>
+        <source>Runden-Frist-Manager</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.deadline.round">
+      <segment>
+        <source>Rundenfrist</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.deadline.set">
+      <segment>
+        <source>Frist setzen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.deadline.hint">
+      <segment>
+        <source>* Wenn eine Frist gesetzt ist, übernimmt die KI automatisch für alle Spieler, die bis dahin nicht abgegeben haben.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.label">
+      <segment>
+        <source>Spieler</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.capital">
+      <segment>
+        <source>Kapital</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.round">
+      <segment>
+        <source>Runde</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.soil">
+      <segment>
+        <source>Bodenqualität (ø)</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.nutrition">
+      <segment>
+        <source>Nährstoffe (ø)</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.submitted">
+      <segment>
+        <source>Abgegeben?</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.toHuman">
+      <segment>
+        <source>ZU MENSCH</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.toAi">
+      <segment>
+        <source>ZU KI</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.login">
+      <segment>
+        <source>LOGIN</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.copyUrl">
+      <segment>
+        <source>URL KOPIEREN</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.printAll">
+      <segment>
+        <source>ALLE QR-CODES DRUCKEN</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.list.trash">
+      <segment>
+        <source>Papierkorb (Gelöschte Spiele)</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.list.active">
+      <segment>
+        <source>Aktive Spiele</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.list.refresh">
+      <segment>
+        <source>Liste aktualisieren</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.filter.active">
+      <segment>
+        <source>Aktiv</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.filter.trash">
+      <segment>
+        <source>Papierkorb</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.actions.restoreSelected">
+      <segment>
+        <source>Ausgewählte wiederherstellen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.actions.deleteSelected">
+      <segment>
+        <source>Ausgewählte löschen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.error.retry">
+      <segment>
+        <source>Erneut versuchen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.loading.games">
+      <segment>
+        <source>Spiele werden geladen...</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.name">
+      <segment>
+        <source>Name</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.details">
+      <segment>
+        <source>Details</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.round">
+      <segment>
+        <source>Runde</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.deletedAt">
+      <segment>
+        <source>Gelöscht am</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.created">
+      <segment>
+        <source>Erstellt</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.actions">
+      <segment>
+        <source>Aktionen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.id">
+      <segment>
+        <source>ID:</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.email">
+      <segment>
+        <source>Spieldetails senden</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.restore">
+      <segment>
+        <source>Spiel wiederherstellen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.table.delete">
+      <segment>
+        <source>Spiel löschen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.empty.title">
+      <segment>
+        <source>Keine Spiele gefunden.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.empty.subtitle">
+      <segment>
+        <source>Erstelle ein neues Spiel, um zu beginnen!</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pagination.showing">
+      <segment>
+        <source>Zeige</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pagination.of">
+      <segment>
+        <source>von</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pagination.prev">
+      <segment>
+        <source>Zurück</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pagination.page">
+      <segment>
+        <source>Seite</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pagination.next">
+      <segment>
+        <source>Weiter</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.logout.title">
+      <segment>
+        <source>Logout</source>
+      </segment>
+    </unit>
+    <unit id="user.photoURL">
+      <segment>
+        <source>assets/images/ok.jpg</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pending.welcome">
+      <segment>
+        <source> Danke für die Registrierung, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user?.displayName }}"/></pc>! </source>
+      </segment>
+    </unit>
+    <unit id="dashboard.logout">
+      <segment>
+        <source>Abmelden</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pending.title">
+      <segment>
+        <source>Konto wartet auf Genehmigung</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.pending.message">
+      <segment>
+        <source>Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.super.title">
+      <segment>
+        <source>Super-Admin-Zugriff</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.super.redirect">
+      <segment>
+        <source>Weiterleitung zur Super-Admin-Konsole...</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.super.btnGo">
+      <segment>
+        <source>Zur Konsole</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.qr.access">
+      <segment>
+        <source>Zugang</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.qr.scan">
+      <segment>
+        <source>Scannen zum automatischen Anmelden.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.qr.print">
+      <segment>
+        <source>Drucken</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.qr.close">
+      <segment>
+        <source>Schließen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.welcome">
+      <segment>
+        <source> Willkommen, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/></pc>! </source>
+      </segment>
+    </unit>
+    <unit id="dashboard.btnFeedback">
+      <segment>
+        <source>Feedback</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.title">
+      <segment>
+        <source>Dashboard für Lehrkräfte</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.loading.verifying">
+      <segment>
+        <source>Konto-Status wird geprüft...</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.controls.title">
+      <segment>
+        <source>Konfiguration</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.created.title">
+      <segment>
+        <source>Spiel erstellt!</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.created.id">
+      <segment>
+        <source>Spiel-ID</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.login.msg">
+      <segment>
+        <source>Bitte melde dich an, um auf das Dashboard zuzugreifen.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.login.btn">
+      <segment>
+        <source>Anmelden mit Google</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.adj.green">
+      <segment>
+        <source>Grünes</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.adj.sunny">
+      <segment>
+        <source>Sonniges</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.adj.golden">
+      <segment>
+        <source>Goldenes</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.adj.misty">
+      <segment>
+        <source>Nebeliges</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.adj.fertile">
+      <segment>
+        <source>Fruchtbares</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.adj.quiet">
+      <segment>
+        <source>Stilles</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.adj.wild">
+      <segment>
+        <source>Wildes</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.noun.valley">
+      <segment>
+        <source>Tal</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.noun.field">
+      <segment>
+        <source>Feld</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.noun.meadow">
+      <segment>
+        <source>Wiesental</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.noun.farm">
+      <segment>
+        <source>Gut</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.noun.acre">
+      <segment>
+        <source>Land</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.noun.grove">
+      <segment>
+        <source>Hain</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.noun.orchard">
+      <segment>
+        <source>Garten</source>
+      </segment>
+    </unit>
+    <unit id="feedback.success">
+      <segment>
+        <source>Vielen Dank für dein Feedback!</source>
+      </segment>
+    </unit>
+    <unit id="onboarding.welcome">
+      <segment>
+        <source>Willkommen!</source>
+      </segment>
+    </unit>
+    <unit id="onboarding.emailVerified">
+      <segment>
+        <source> Ihre E-Mail-Adresse wurde verifiziert. </source>
+      </segment>
+    </unit>
+    <unit id="onboarding.nextSteps">
+      <segment>
+        <source>Wie geht es weiter?</source>
+      </segment>
+    </unit>
+    <unit id="onboarding.checkingRegistration">
+      <segment>
+        <source> Ihre Registrierung als Lehrkraft wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde, informieren wir Sie per E-Mail. </source>
+      </segment>
+    </unit>
+    <unit id="onboarding.usuallyLess24h">
+      <segment>
+        <source> Dies dauert in der Regel weniger als 24 Stunden. </source>
+      </segment>
+    </unit>
+    <unit id="onboarding.backToHome">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;relative z-10&quot;&gt;" dispEnd="&lt;/span&gt;">Zur Startseite</pc></source>
+      </segment>
+    </unit>
+    <unit id="superadmin.title">
+      <segment>
+        <source>System-Administrator</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.badge">
+      <segment>
+        <source>System</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.logout">
+      <segment>
+        <source>Abmelden</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.totalGames">
+      <segment>
+        <source>Gesamt Spiele</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.created">
+      <segment>
+        <source>erstellt</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.active">
+      <segment>
+        <source>Aktiv</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.trash">
+      <segment>
+        <source>Papierkorb</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.totalUsers">
+      <segment>
+        <source>Gesamt Benutzer</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.registered">
+      <segment>
+        <source>registriert</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.teachers">
+      <segment>
         <source>Lehrkräfte</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">73,77</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.register" datatype="html">
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.pending">
+      <segment>
+        <source>Ausstehend</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.rejected">
+      <segment>
+        <source>Abgelehnt</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.stats.banned">
+      <segment>
+        <source>Gesperrt</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.loading">
+      <segment>
+        <source>Daten werden geladen...</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.dashboard.title">
+      <segment>
+        <source>System-Dashboard</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.dashboard.subtitle">
+      <segment>
+        <source>Systemweite Übersicht und Lehrerverwaltung</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.dashboard.refresh">
+      <segment>
+        <source>Aktualisieren</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.pending.title">
+      <segment>
+        <source>Ausstehende Genehmigungen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.admins.title">
+      <segment>
+        <source>Lehrkräfte (Administratoren)</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.table.user">
+      <segment>
+        <source>Benutzer / E-Mail</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.table.role">
+      <segment>
+        <source>Rolle</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.table.status">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.table.quota">
+      <segment>
+        <source>Limit</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.table.games">
+      <segment>
+        <source>Spiele</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.table.actions">
+      <segment>
+        <source>Aktionen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.actions.approve">
+      <segment>
+        <source>Genehmigen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.actions.reject">
+      <segment>
+        <source>Ablehnen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.actions.ban">
+      <segment>
+        <source>Sperren</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.actions.delete">
+      <segment>
+        <source>Löschen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.actions.games">
+      <segment>
+        <source>Spiele</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.actions.quota">
+      <segment>
+        <source>Limit</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.pending.card.institution">
+      <segment>
+        <source>Institution</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.pending.card.website">
+      <segment>
+        <source>Website</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.pending.card.why">
+      <segment>
+        <source>Warum Soil?</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.pending.card.pending">
+      <segment>
+        <source>Ausstehend</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.games.title">
+      <segment>
+        <source>Spiele von</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.games.close">
+      <segment>
+        <source>Schließen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.games.loading">
+      <segment>
+        <source>Spiele werden geladen...</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.games.none">
+      <segment>
+        <source>Keine Spiele für diese Lehrkraft gefunden.</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.games.status">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.games.round">
+      <segment>
+        <source>Runde</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.games.created">
+      <segment>
+        <source>Erstellt</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.delete.game.title">
+      <segment>
+        <source>Spiel löschen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.delete.game.confirm">
+      <segment>
+        <source>Bist du sicher, dass du dieses Spiel löschen möchtest?</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.delete.game.permanent">
+      <segment>
+        <source>Dauerhaft löschen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.delete.game.soft">
+      <segment>
+        <source>In den Papierkorb verschieben</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.delete.game.warning">
+      <segment>
+        <source>WARNUNG: Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.delete.game.typeConfirm">
+      <segment>
+        <source>Tippe &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.quota.modal.title">
+      <segment>
+        <source>Spiel-Limit setzen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.quota.modal.desc">
+      <segment>
+        <source>Lege fest, wie viele Spiele diese Lehrkraft maximal erstellen darf:</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.quota.modal.label">
+      <segment>
+        <source>Limit</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.quota.modal.save">
+      <segment>
+        <source>Speichern</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.approve.modal.title">
+      <segment>
+        <source>Benutzer genehmigen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.approve.modal.desc">
+      <segment>
+        <source>Bist du sicher, dass du diesen Benutzer genehmigen möchtest?</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.approve.modal.info">
+      <segment>
+        <source>Dies gewährt vollen administrativen Zugriff auf das Dashboard.</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.approve.modal.confirm">
+      <segment>
+        <source>Genehmigung bestätigen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.title">
+      <segment>
+        <source>Registrierung ablehnen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.desc">
+      <segment>
+        <source>Bist du sicher, dass du die Registrierung ablehnen möchtest?</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.reasons">
+      <segment>
+        <source>Gründe (werden dem Benutzer per E-Mail mitgeteilt)</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.reason.institution">
+      <segment>
+        <source>Institution konnte nicht verifiziert werden</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.reason.insufficient">
+      <segment>
+        <source>Grund für die Nutzung nicht ausreichend</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.reason.other">
+      <segment>
+        <source>Andere Gründe</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.custom">
+      <segment>
+        <source>Zusätzliche Nachricht (optional)</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.ban">
+      <segment>
+        <source>E-Mail-Adresse sperren</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.banInfo">
+      <segment>
+        <source>Blockiert diese E-Mail-Adresse für zukünftige Registrierungen.</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.reject.modal.send">
+      <segment>
+        <source>Ablehnung senden</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.modal.cancel">
+      <segment>
+        <source>Abbrechen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.title">
+      <segment>
+        <source>Feedback &amp; Vorschläge</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.none">
+      <segment>
+        <source>Kein Feedback gefunden.</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.table.user">
+      <segment>
+        <source>Benutzer</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.table.category">
+      <segment>
+        <source>Kategorie</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.table.rating">
+      <segment>
+        <source>Bewertung</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.table.status">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.actions.reply">
+      <segment>
+        <source>Antworten</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.actions.resolve">
+      <segment>
+        <source>Lösen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.actions.reject">
+      <segment>
+        <source>Ablehnen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.modal.reply.title">
+      <segment>
+        <source>Antwort an Benutzer</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.modal.reply.label">
+      <segment>
+        <source>Deine Nachricht</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.modal.reply.send">
+      <segment>
+        <source>Antwort senden</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.modal.resolve.title">
+      <segment>
+        <source>Feedback lösen</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.modal.resolve.label">
+      <segment>
+        <source>Externe Referenz (z.B. GitHub Link)</source>
+      </segment>
+    </unit>
+    <unit id="superadmin.feedback.modal.resolve.confirm">
+      <segment>
+        <source>Als gelöst markieren</source>
+      </segment>
+    </unit>
+    <unit id="footer.impressum">
+      <segment>
+        <source>Impressum</source>
+      </segment>
+    </unit>
+    <unit id="footer.manual">
+      <segment>
+        <source>Handbuch</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.title">
+      <segment>
+        <source>Anmeldung für Lehrkräfte</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.subtitle">
+      <segment>
+        <source>Zugang zum Soil-Dashboard</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.email">
+      <segment>
+        <source>E-Mail</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.password">
+      <segment>
+        <source>Passwort</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.loggingIn">
+      <segment>
+        <source>Anmeldung läuft...</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.loginButton">
+      <segment>
+        <source>Anmelden</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.googleSignIn">
+      <segment>
+        <source>Mit Google anmelden</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.noAccount">
+      <segment>
+        <source>Noch kein Konto?</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.registerLink">
+      <segment>
+        <source>Hier registrieren</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.backToHome">
+      <segment>
+        <source>← Zurück zur Startseite</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.error.title">
+      <segment>
+        <source> Anmeldung fehlgeschlagen </source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.error.retry">
+      <segment>
+        <source> Erneut versuchen </source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.placeholder.email">
+      <segment>
+        <source>admin@schule.de</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.forgotPassword">
+      <segment>
+        <source>Passwort vergessen?</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.resetEmailSent">
+      <segment>
+        <source>E-Mail zum Zurücksetzen des Passworts wurde gesendet.</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.resetEmailError">
+      <segment>
+        <source>Fehler beim Senden der E-Mail zum Zurücksetzen des Passworts.</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.error.failed">
+      <segment>
+        <source>Anmeldung fehlgeschlagen</source>
+      </segment>
+    </unit>
+    <unit id="adminLogin.error.emailRequired">
+      <segment>
+        <source>Bitte geben Sie Ihre E-Mail-Adresse ein.</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.title">
+      <segment>
+        <source>Registrierung für Lehrkräfte</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.subtitle">
+      <segment>
+        <source>Treten Sie der SOIL-Community bei</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.completeTitle">
+      <segment>
+        <source>Registrierung abschließen</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.passwordRequirement">
+      <segment>
+        <source> Erforderlich: Mindestens 6 Zeichen </source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.explanationRequirement">
+      <segment>
+        <source> Erforderlich: Mindestens 20 Zeichen </source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.processing">
+      <segment>
+        <source>Wird verarbeitet...</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.btnSubmit">
+      <segment>
+        <source>Registrierung beantragen</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.backToHome">
+      <segment>
+        <source> Zurück zur Startseite </source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.signedInAs">
+      <segment>
+        <source>Angemeldet als</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.viaGoogle">
+      <segment>
+        <source>über Google</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.completeApp">
+      <segment>
+        <source>Bitte vervollständigen Sie Ihren Antrag</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.firstName">
+      <segment>
+        <source>Vorname</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.placeholder.firstName">
+      <segment>
+        <source>Max</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.lastName">
+      <segment>
+        <source>Nachname</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.placeholder.lastName">
+      <segment>
+        <source>Mustermann</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.email">
+      <segment>
+        <source>E-Mail-Adresse</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.placeholder.email">
+      <segment>
+        <source>admin@schule.de</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.error.email">
+      <segment>
+        <source>Bitte geben Sie eine gültige E-Mail-Adresse ein</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.password">
+      <segment>
+        <source>Passwort</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.placeholder.password">
+      <segment>
+        <source>Mindestens 6 Zeichen</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.error.password">
+      <segment>
+        <source>Das Passwort muss mindestens 6 Zeichen lang sein</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.institution">
+      <segment>
+        <source>Institution / Schule</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.placeholder.institution">
+      <segment>
+        <source>z.B. Humboldt Gymnasium</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.website">
+      <segment>
+        <source>Website der Institution</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.placeholder.website">
+      <segment>
+        <source>https://schule.de</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.explanation">
+      <segment>
+        <source>Warum möchten Sie SOIL nutzen?</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.placeholder.explanation">
+      <segment>
+        <source>Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.success.verificationSent">
+      <segment>
+        <source>Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.error.title">
+      <segment>
+        <source>Registrierung fehlgeschlagen</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.error.retry">
+      <segment>
+        <source>Erneut versuchen</source>
+      </segment>
+    </unit>
+    <unit id="authAction.loading">
+      <segment>
+        <source>Verarbeitung läuft...</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.instruction">
+      <segment>
+        <source> Geben Sie ein neues Passwort für <pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ resetEmail }}"/></pc> ein. </source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.label">
+      <segment>
+        <source>Neues Passwort</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.error.minLength">
+      <segment>
+        <source>Das Passwort muss mindestens 6 Zeichen lang sein.</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.saving">
+      <segment>
+        <source>Wird gespeichert...</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.saveButton">
+      <segment>
+        <source>Passwort speichern</source>
+      </segment>
+    </unit>
+    <unit id="authAction.toLogin">
+      <segment>
+        <source> Zum Login </source>
+      </segment>
+    </unit>
+    <unit id="authAction.backToHome">
+      <segment>
+        <source> Zurück zur Startseite </source>
+      </segment>
+    </unit>
+    <unit id="authAction.error.invalidParams">
+      <segment>
+        <source>Ungültiger Link.</source>
+      </segment>
+    </unit>
+    <unit id="authAction.error.unknownMode">
+      <segment>
+        <source>Unbekannte Aktion.</source>
+      </segment>
+    </unit>
+    <unit id="authAction.verifyEmail.title">
+      <segment>
+        <source>E-Mail-Verifizierung</source>
+      </segment>
+    </unit>
+    <unit id="authAction.verifyEmail.success">
+      <segment>
+        <source>Ihre E-Mail-Adresse wurde erfolgreich verifiziert.</source>
+      </segment>
+    </unit>
+    <unit id="authAction.verifyEmail.error">
+      <segment>
+        <source>Der Verifizierungslink ist ungültig oder abgelaufen.</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.title">
+      <segment>
+        <source>Passwort zurücksetzen</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.error">
+      <segment>
+        <source>Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.success">
+      <segment>
+        <source>Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.</source>
+      </segment>
+    </unit>
+    <unit id="authAction.resetPassword.confirmError">
+      <segment>
+        <source>Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.title">
+      <segment>
+        <source>Spiel beitreten</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.gameId">
+      <segment>
+        <source>Spiel-ID</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.pin">
+      <segment>
+        <source>PIN</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.startGame">
+      <segment>
+        <source>Spiel starten</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.placeholder.gameId">
+      <segment>
+        <source>Game ID</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.placeholder.pin">
+      <segment>
+        <source>Unique Player PIN</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.enteringGame">
+      <segment>
+        <source>Betrete Spiel...</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.backToHome">
+      <segment>
+        <source>Zurück zur Startseite</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.error.title">
+      <segment>
+        <source>Anmeldung fehlgeschlagen</source>
+      </segment>
+    </unit>
+    <unit id="playerLogin.error.retry">
+      <segment>
+        <source>Erneut versuchen</source>
+      </segment>
+    </unit>
+    <unit id="crop.barley">
+      <segment>
+        <source>Gerste</source>
+      </segment>
+    </unit>
+    <unit id="crop.barley.desc">
+      <segment>
+        <source>Gerste</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.overlays">
+      <segment>
+        <source>Einblendungen</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.names">
+      <segment>
+        <source>Feldnamen</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.nutrition">
+      <segment>
+        <source>Nährstoffe</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.harvest">
+      <segment>
+        <source>Ertrag</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.soil">
+      <segment>
+        <source>Bodenqualität</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.finance">
+      <segment>
+        <source>Finanzen</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.actions">
+      <segment>
+        <source>Aktionen</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.roundOptions">
+      <segment>
+        <source>Runden-Optionen</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.waiting">
+      <segment>
+        <source>Warten auf andere...</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.nextRound">
+      <segment>
+        <source>Nächste Runde</source>
+      </segment>
+    </unit>
+    <unit id="board.mobile.endGame">
+      <segment>
+        <source>Spiel beendet</source>
+      </segment>
+    </unit>
+    <unit id="board.activePlayer">
+      <segment>
+        <source>Aktiver Spieler</source>
+      </segment>
+    </unit>
+    <unit id="board.banner.readOnly">
+      <segment>
+        <source>Nur Lesezugriff (Admin-Vorschau)</source>
+      </segment>
+    </unit>
+    <unit id="board.error.title">
+      <segment>
+        <source>Fehler</source>
+      </segment>
+    </unit>
+    <unit id="board.error.close">
+      <segment>
+        <source> Schließen </source>
+      </segment>
+    </unit>
+    <unit id="board.round">
+      <segment>
+        <source>Runde</source>
+      </segment>
+    </unit>
+    <unit id="board.gameEnd.title">
+      <segment>
+        <source> Spiel beendet! </source>
+      </segment>
+    </unit>
+    <unit id="board.gameEnd.subtitle">
+      <segment>
+        <source> Herausragende Leistung aller Landwirte. </source>
+      </segment>
+    </unit>
+    <unit id="board.gameEnd.financialTitle">
+      <segment>
+        <source> Finanz-Champion </source>
+      </segment>
+    </unit>
+    <unit id="board.gameEnd.soilTitle">
+      <segment>
+        <source> Boden-Wächter </source>
+      </segment>
+    </unit>
+    <unit id="board.gameEnd.viewResults">
+      <segment>
+        <source> Ergebnisse ansehen </source>
+      </segment>
+    </unit>
+    <unit id="board.gameEnd.backToDashboard">
+      <segment>
+        <source> Zum Dashboard </source>
+      </segment>
+    </unit>
+    <unit id="board.login.phGameId">
+      <segment>
+        <source>Game ID</source>
+      </segment>
+    </unit>
+    <unit id="board.login.phPlayerNum">
+      <segment>
+        <source>Player Number</source>
+      </segment>
+    </unit>
+    <unit id="board.login.phPin">
+      <segment>
+        <source>PIN</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.names">
+      <segment>
+        <source>Namen</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.nutrition">
+      <segment>
+        <source>Mineralstoffe</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.harvest">
+      <segment>
+        <source>Ernte</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.soil">
+      <segment>
+        <source>Bodenqualität</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.finance">
+      <segment>
+        <source>Finanzen</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.options">
+      <segment>
+        <source>Optionen</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.waiting">
+      <segment>
+        <source>Warten...</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.nextRound">
+      <segment>
+        <source>Nächste Runde</source>
+      </segment>
+    </unit>
+    <unit id="board.logout">
+      <segment>
+        <source>Abmelden</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.endGame">
+      <segment>
+        <source>Spiel beendet</source>
+      </segment>
+    </unit>
+    <unit id="board.login.adminTitle">
+      <segment>
+        <source> Administrator </source>
+      </segment>
+    </unit>
+    <unit id="board.login.adminDesc">
+      <segment>
+        <source>Spiel erstellen und verwalten</source>
+      </segment>
+    </unit>
+    <unit id="board.login.btnGoogle">
+      <segment>
+        <source>Mit Google anmelden</source>
+      </segment>
+    </unit>
+    <unit id="board.login.playerTitle">
+      <segment>
+        <source> Spieler </source>
+      </segment>
+    </unit>
+    <unit id="board.login.playerDesc">
+      <segment>
+        <source>Einem bestehenden Spiel beitreten</source>
+      </segment>
+    </unit>
+    <unit id="board.login.btnLogin">
+      <segment>
+        <source>Anmelden</source>
+      </segment>
+    </unit>
+    <unit id="finance.title">
+      <segment>
+        <source>Finanzbericht</source>
+      </segment>
+    </unit>
+    <unit id="finance.subtitle">
+      <segment>
+        <source> Detaillierte Analyse Ihrer landwirtschaftlichen Leistung </source>
+      </segment>
+    </unit>
+    <unit id="finance.noRounds">
+      <segment>
+        <source>Keine Runden verfügbar</source>
+      </segment>
+    </unit>
+    <unit id="finance.charts.capital">
+      <segment>
+        <source> Kapitalverlauf über die Runden </source>
+      </segment>
+    </unit>
+    <unit id="finance.header.category">
+      <segment>
+        <source> Kategorie </source>
+      </segment>
+    </unit>
+    <unit id="finance.you">
+      <segment>
+        <source>DU</source>
+      </segment>
+    </unit>
+    <unit id="finance.group.decisions">
+      <segment>
+        <source> Entscheidungen </source>
+      </segment>
+    </unit>
+    <unit id="finance.fertilizer">
+      <segment>
+        <source> Mineraldünger </source>
+      </segment>
+    </unit>
+    <unit id="finance.pesticide">
+      <segment>
+        <source> Pflanzenschutz </source>
+      </segment>
+    </unit>
+    <unit id="finance.organisms">
+      <segment>
+        <source> Nützlinge </source>
+      </segment>
+    </unit>
+    <unit id="finance.organic">
+      <segment>
+        <source> Ökologischer Landbau </source>
+      </segment>
+    </unit>
+    <unit id="finance.group.expenses">
+      <segment>
+        <source>Ausgaben</source>
+      </segment>
+    </unit>
+    <unit id="finance.header.seeds">
+      <segment>
+        <source>Saatgut</source>
+      </segment>
+    </unit>
+    <unit id="finance.header.investments">
+      <segment>
+        <source>Investitionen</source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.machines">
+      <segment>
+        <source>Maschinen</source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.animalsInvest">
+      <segment>
+        <source> Tierbestand </source>
+      </segment>
+    </unit>
+    <unit id="finance.header.running">
+      <segment>
+        <source>Betriebskosten</source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.base">
+      <segment>
+        <source>Grundkosten</source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.organicControl">
+      <segment>
+        <source> Bio-Kontrolle </source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.pesticide">
+      <segment>
+        <source> Pflanzenschutzmittel </source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.organisms">
+      <segment>
+        <source> Nützlinge (Kosten) </source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.animalsRunning">
+      <segment>
+        <source> Tierhaltung </source>
+      </segment>
+    </unit>
+    <unit id="finance.group.income">
+      <segment>
+        <source> Einnahmen </source>
+      </segment>
+    </unit>
+    <unit id="finance.header.harvest">
+      <segment>
+        <source> Ernteverkauf </source>
+      </segment>
+    </unit>
+    <unit id="finance.result.profit">
+      <segment>
+        <source>Rundenergebnis</source>
+      </segment>
+    </unit>
+    <unit id="finance.result.capital">
+      <segment>
+        <source>Neues Gesamtkapital</source>
+      </segment>
+    </unit>
+    <unit id="finance.playerStatus">
+      <segment>
+        <source> Status </source>
+      </segment>
+    </unit>
+    <unit id="finance.event.weather">
+      <segment>
+        <source> Wetter-Einfluss </source>
+      </segment>
+    </unit>
+    <unit id="finance.event.vermin">
+      <segment>
+        <source> Schädlings-Einfluss </source>
+      </segment>
+    </unit>
+    <unit id="crop.wheat">
+      <segment>
+        <source>Weizen</source>
+      </segment>
+    </unit>
+    <unit id="crop.corn">
+      <segment>
+        <source>Mais</source>
+      </segment>
+    </unit>
+    <unit id="crop.potato">
+      <segment>
+        <source>Kartoffel</source>
+      </segment>
+    </unit>
+    <unit id="crop.beet">
+      <segment>
+        <source>Zuckerrübe</source>
+      </segment>
+    </unit>
+    <unit id="crop.oat">
+      <segment>
+        <source>Hafer</source>
+      </segment>
+    </unit>
+    <unit id="crop.rye">
+      <segment>
+        <source>Roggen</source>
+      </segment>
+    </unit>
+    <unit id="crop.fieldbean">
+      <segment>
+        <source>Ackerbohne</source>
+      </segment>
+    </unit>
+    <unit id="crop.animals">
+      <segment>
+        <source>Tiere</source>
+      </segment>
+    </unit>
+    <unit id="crop.fallow">
+      <segment>
+        <source>Brachland</source>
+      </segment>
+    </unit>
+    <unit id="crop.grass">
+      <segment>
+        <source>Tiere</source>
+      </segment>
+    </unit>
+    <unit id="parcel.crop">
+      <segment>
+        <source>Feldpflanze</source>
+      </segment>
+    </unit>
+    <unit id="planting.title">
+      <segment>
+        <source>Was möchtest du anbauen?</source>
+      </segment>
+    </unit>
+    <unit id="planting.cancel">
+      <segment>
+        <source> Abbrechen </source>
+      </segment>
+    </unit>
+    <unit id="roundResult.title">
+      <segment>
+        <source>Rundenergebnis</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.profit">
+      <segment>
+        <source>Rundengewinn</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.bioSiegel">
+      <segment>
+        <source>EU-Bio-Siegel</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.bioSiegelFail">
+      <segment>
+        <source>Kriterien nicht erfüllt</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.bioSiegelSuccess">
+      <segment>
+        <source>Kriterien erfüllt!</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.conditions">
+      <segment>
+        <source>Bedingungen</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.weather">
+      <segment>
+        <source>Wetter</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.vermin">
+      <segment>
+        <source>Schädlinge</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.continue">
+      <segment>
+        <source> Weiter </source>
+      </segment>
+    </unit>
+    <unit id="weather.normal">
+      <segment>
+        <source>Normal</source>
+      </segment>
+    </unit>
+    <unit id="weather.drought">
+      <segment>
+        <source>Dürre</source>
+      </segment>
+    </unit>
+    <unit id="weather.flood">
+      <segment>
+        <source>Flut</source>
+      </segment>
+    </unit>
+    <unit id="weather.storm">
+      <segment>
+        <source>Sturm</source>
+      </segment>
+    </unit>
+    <unit id="vermin.none">
+      <segment>
+        <source>Keine</source>
+      </segment>
+    </unit>
+    <unit id="vermin.pests">
+      <segment>
+        <source>Schädlinge</source>
+      </segment>
+    </unit>
+    <unit id="settings.title">
+      <segment>
+        <source>Rundeneinstellungen</source>
+      </segment>
+    </unit>
+    <unit id="settings.machines">
+      <segment>
+        <source>Maschinen</source>
+      </segment>
+    </unit>
+    <unit id="settings.machines_desc">
+      <segment>
+        <source>Höherer Maschineneinsatz steigert die Effizienz, laugt aber den Boden langfristig aus.</source>
+      </segment>
+    </unit>
+    <unit id="settings.organic">
+      <segment>
+        <source>Ökologischer Anbau</source>
+      </segment>
+    </unit>
+    <unit id="settings.organic_desc">
+      <segment>
+        <source>Verzicht auf Chemie. Höhere Preise, geringere Erträge.</source>
+      </segment>
+    </unit>
+    <unit id="settings.fertilizer">
+      <segment>
+        <source>Kunstdünger</source>
+      </segment>
+    </unit>
+    <unit id="settings.fertilizer_desc">
+      <segment>
+        <source>Steigert die Nährstoffe. Verschlechtert langfristig die Bodenqualität.</source>
+      </segment>
+    </unit>
+    <unit id="settings.pesticide">
+      <segment>
+        <source>Pflanzenschutzmittel</source>
+      </segment>
+    </unit>
+    <unit id="settings.pesticide_desc">
+      <segment>
+        <source>Schützt vor Schädlingen. Schadet den Bodenorganismen.</source>
+      </segment>
+    </unit>
+    <unit id="settings.organisms">
+      <segment>
+        <source>Nützlinge</source>
+      </segment>
+    </unit>
+    <unit id="settings.organisms_desc">
+      <segment>
+        <source>Natürliche Schädlingsbekämpfung. Teuer, aber nachhaltig.</source>
+      </segment>
+    </unit>
+    <unit id="settings.cancel">
+      <segment>
+        <source>Abbrechen</source>
+      </segment>
+    </unit>
+    <unit id="settings.confirm">
+      <segment>
+        <source>Einstellungen bestätigen</source>
+      </segment>
+    </unit>
+    <unit id="impressum.title">
+      <segment>
+        <source>Impressum</source>
+      </segment>
+    </unit>
+    <unit id="impressum.subtitle">
+      <segment>
+        <source>Rechtliche Informationen &amp; Kontakt</source>
+      </segment>
+    </unit>
+    <unit id="impressum.backToHome">
+      <segment>
+        <source>Zurück zur Startseite</source>
+      </segment>
+    </unit>
+    <unit id="impressum.contact">
+      <segment>
+        <source>Kontakt</source>
+      </segment>
+    </unit>
+    <unit id="impressum.responsible">
+      <segment>
+        <source>Verantwortlich</source>
+      </segment>
+    </unit>
+    <unit id="impressum.imageSources">
+      <segment>
+        <source>Bildnachweise</source>
+      </segment>
+    </unit>
+    <unit id="impressum.source.drought">
+      <segment>
+        <source>Drought by USDA (Public Domain)</source>
+      </segment>
+    </unit>
+    <unit id="impressum.source.borer">
+      <segment>
+        <source>Maiszünsler by Keith Weller (Public Domain)</source>
+      </segment>
+    </unit>
+    <unit id="impressum.source.ladybug">
+      <segment>
+        <source>Marienkäfer by Olei (CC BY-SA 3.0)</source>
+      </segment>
+    </unit>
+    <unit id="impressum.source.oekolandbau">
+      <segment>
+        <source>Oekolandbau.de</source>
+      </segment>
+    </unit>
+    <unit id="impressum.source.logo">
+      <segment>
+        <source>Organic Logo (Public Domain)</source>
+      </segment>
+    </unit>
+    <unit id="impressum.source.chamber">
+      <segment>
+        <source>Landwirtschaftskammer NRW</source>
+      </segment>
+    </unit>
+    <unit id="impressum.source.bioSiegel">
+      <segment>
+        <source>Bio-Siegel.de</source>
+      </segment>
+    </unit>
+    <unit id="impressum.disclaimer.title">
+      <segment>
+        <source>Haftungsausschluss</source>
+      </segment>
+    </unit>
+    <unit id="impressum.disclaimer.p1">
+      <segment>
+        <source> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich. </source>
+      </segment>
+    </unit>
+    <unit id="impressum.disclaimer.p2">
+      <segment>
+        <source> Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung dar. </source>
+      </segment>
+    </unit>
+    <unit id="impressum.disclaimer.p3">
+      <segment>
+        <source> Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt. </source>
+      </segment>
+    </unit>
+    <unit id="info.backToHome">
+      <segment>
+        <source>Zurück zur Startseite</source>
+      </segment>
+    </unit>
+    <unit id="info.title">
+      <segment>
+        <source> Wissenschaftlicher Hintergrund </source>
+      </segment>
+    </unit>
+    <unit id="info.subtitle">
+      <segment>
+        <source> Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns. </source>
+      </segment>
+    </unit>
+    <unit id="info.mainReferenceTitle">
+      <segment>
+        <source>Zentrale Forschungsarbeit</source>
+      </segment>
+    </unit>
+    <unit id="info.objectiveTitle">
+      <segment>
+        <source>1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</source>
+      </segment>
+    </unit>
+    <unit id="info.objectiveText">
+      <segment>
+        <source> Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben. </source>
+      </segment>
+    </unit>
+    <unit id="info.theoreticalFrameworkTitle">
+      <segment>
+        <source>2. Theoretischer Rahmen</source>
+      </segment>
+    </unit>
+    <unit id="info.theoreticalFrameworkSubjectiveTheories">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Subjektive Theorien:</pc> Die Forschung unterscheidet zwischen weitreichenden Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser nahreichweiten Theorien durch Erfahrung. </source>
+      </segment>
+    </unit>
+    <unit id="info.theoreticalFrameworkDustBowl">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Dust-Bowl-Syndrom:</pc> Das Spiel modelliert die nicht nachhaltige Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her. </source>
+      </segment>
+    </unit>
+    <unit id="info.designPrinciplesTitle">
+      <segment>
+        <source>3. Gestaltungsprinzipien</source>
+      </segment>
+    </unit>
+    <unit id="info.designPrinciplesExperience">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Erfahrungsorientiertes Lernen:</pc> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
+      </segment>
+    </unit>
+    <unit id="info.designPrinciplesComplexity">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Ausgewogene Komplexität:</pc> Um eine kognitive Überlastung zu vermeiden, konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge, Marktpreise), um einfache lineare Logik zu verhindern. </source>
+      </segment>
+    </unit>
+    <unit id="info.findingsTitle">
+      <segment>
+        <source>4. Wichtige Forschungsergebnisse</source>
+      </segment>
+    </unit>
+    <unit id="info.findingsText">
+      <segment>
+        <source> Die Studie identifizierte drei Argumentationstypen: </source>
+      </segment>
+    </unit>
+    <unit id="info.findingsType1">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökonomie über Ökologie:</pc> Pessimismus, Glaube, dass man nichts ändern kann.</source>
+      </segment>
+    </unit>
+    <unit id="info.findingsType2">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökologie über Ökonomie:</pc> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</source>
+      </segment>
+    </unit>
+    <unit id="info.findingsType3">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökologie für Ökonomie:</pc> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</source>
+      </segment>
+    </unit>
+    <unit id="info.findingsConclusion">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Fazit:</pc> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt als „Partner“ und nicht als Gegner sahen. </source>
+      </segment>
+    </unit>
+    <unit id="info.evolutionTitle">
+      <segment>
+        <source>5. Weiterentwicklung zu soil.app</source>
+      </segment>
+    </unit>
+    <unit id="info.evolutionText">
+      <segment>
+        <source> Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale Kompetenzen für nachhaltiges Management umgewandelt wird. </source>
+      </segment>
+    </unit>
+    <unit id="info.viewDissertation">
+      <segment>
+        <source>Volltext auf eldorado</source>
+      </segment>
+    </unit>
+    <unit id="info.publicationsTitle">
+      <segment>
+        <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;" dispEnd="&lt;/span&gt;">📚</pc> Weitere Publikationen </source>
+      </segment>
+    </unit>
+    <unit id="info.footer">
+      <segment>
+        <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
+      </segment>
+    </unit>
+    <unit id="landing.intro">
+      <segment>
+        <source>Eine interaktive Simulation über</source>
+      </segment>
+    </unit>
+    <unit id="landing.agriculture">
+      <segment>
+        <source>Landwirtschaft</source>
+      </segment>
+    </unit>
+    <unit id="landing.economics">
+      <segment>
+        <source>Ökonomie</source>
+      </segment>
+    </unit>
+    <unit id="landing.and">
+      <segment>
+        <source>und</source>
+      </segment>
+    </unit>
+    <unit id="landing.sustainability">
+      <segment>
+        <source>Nachhaltigkeit</source>
+      </segment>
+    </unit>
+    <unit id="landing.enterGame">
+      <segment>
+        <source>Spiel beitreten</source>
+      </segment>
+    </unit>
+    <unit id="landing.teacherAdmin">
+      <segment>
+        <source>Lehrkräfte</source>
+      </segment>
+    </unit>
+    <unit id="landing.register">
+      <segment>
         <source>Registrieren</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">81,83</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.aboutTitle" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.aboutTitle">
+      <segment>
         <source> Über das Spiel </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">103,104</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.aboutText1" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.aboutText1">
+      <segment>
         <source> Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schülerinnen und Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">107,109</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.aboutText2" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.aboutText2">
+      <segment>
         <source> Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">112,114</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.educationalInfo" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.educationalInfo">
+      <segment>
         <source> Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrkräfte ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die Zugehörigkeit zu einer Bildungseinrichtung verifiziert. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">117,119</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.backgroundTitle" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.backgroundTitle">
+      <segment>
         <source> Hintergrund </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">129,131</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.backgroundText1" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.backgroundText1">
+      <segment>
         <source> Auf der UN-Konferenz 1992 wurde &quot;Nachhaltigkeit&quot; zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">133,135</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.backgroundText2" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.backgroundText2">
+      <segment>
         <source> Das Simulationsspiel &quot;Soil&quot; wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">137,139</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.scientificBackground" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.scientificBackground">
+      <segment>
         <source>Wissenschaftlicher Hintergrund</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">151,155</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="landing.footer" datatype="html">
-        <source>© <x id="INTERPOLATION" equiv-text="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/landing/landing.ts</context>
-          <context context-type="linenumber">156,157</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.wheat" datatype="html">
+      </segment>
+    </unit>
+    <unit id="landing.footer">
+      <segment>
+        <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.units.title">
+      <segment>
+        <source>Einheiten</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.units.text">
+      <segment>
+        <source>Fläche in Hektar (ha), Ertrag in Dezitonnen (dt).</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.pest.title">
+      <segment>
+        <source>Schädlinge</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.pest.text">
+      <segment>
+        <source>Jede Pflanze hat spezifische natürliche Feinde.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.rotation.title">
+      <segment>
+        <source>Fruchtfolge</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.rotation.text">
+      <segment>
+        <source>Der Vorfruchtwert bestimmt die Bodengesundheit.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.requirements.title">
+      <segment>
+        <source>Anforderungen</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.requirements.text">
+      <segment>
+        <source>Mineralienbedarf und Bodenanspruch variieren.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.weather.title">
+      <segment>
+        <source>Wetter</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.weather.text">
+      <segment>
+        <source>Trockenheit, Kälte oder Nässe beeinflussen den Ertrag.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.yield.title">
+      <segment>
+        <source>Ertrag</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.yield.text">
+      <segment>
+        <source>Abhängig von Bodenqualität und Wetter.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.price.title">
+      <segment>
+        <source>Preise</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.price.text">
+      <segment>
+        <source>Marktpreise schwanken zwischen Konventionell und Bio.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.machines.title">
+      <segment>
+        <source>Maschinen</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.machines.text">
+      <segment>
+        <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
+      </segment>
+    </unit>
+    <unit id="pest.label">
+      <segment>
+        <source>Hauptschädling</source>
+      </segment>
+    </unit>
+    <unit id="pest.aphid">
+      <segment>
+        <source>Blattlaus</source>
+      </segment>
+    </unit>
+    <unit id="pest.fritfly">
+      <segment>
+        <source>Fritfliege</source>
+      </segment>
+    </unit>
+    <unit id="pest.potato-beetle">
+      <segment>
+        <source>Kartoffelkäfer</source>
+      </segment>
+    </unit>
+    <unit id="pest.corn-borer">
+      <segment>
+        <source>Maiszünsler</source>
+      </segment>
+    </unit>
+    <unit id="pest.wireworm">
+      <segment>
+        <source>Drahtwurm</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.rotation">
+      <segment>
+        <source>Fruchtfolgewirkung</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.rotationPrev">
+      <segment>
+        <source>Vorfrucht</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.current">
+      <segment>
+        <source>Aktuell</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.rotationNext">
+      <segment>
+        <source>Nachfrucht</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.requirements">
+      <segment>
+        <source>Ansprüche</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.soil">
+      <segment>
+        <source>Bodenqualität</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.minerals">
+      <segment>
+        <source>Mineralstoffe</source>
+      </segment>
+    </unit>
+    <unit id="sensitivity.high">
+      <segment>
+        <source>Hoch</source>
+      </segment>
+    </unit>
+    <unit id="sensitivity.moderate">
+      <segment>
+        <source>Mäßig</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.weather">
+      <segment>
+        <source>Wetter-Empfindlichkeit</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.drought">
+      <segment>
+        <source>Trockenheit</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.cold">
+      <segment>
+        <source>Kälte</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.flood">
+      <segment>
+        <source>Nässe</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.yields">
+      <segment>
+        <source>Ertragspotenzial</source>
+      </segment>
+    </unit>
+    <unit id="manual.yields.veryHigh">
+      <segment>
+        <source>Sehr Hoch</source>
+      </segment>
+    </unit>
+    <unit id="manual.yields.high">
+      <segment>
+        <source>Hoch</source>
+      </segment>
+    </unit>
+    <unit id="manual.yields.moderate">
+      <segment>
+        <source>Mittel</source>
+      </segment>
+    </unit>
+    <unit id="manual.yields.low">
+      <segment>
+        <source>Gering</source>
+      </segment>
+    </unit>
+    <unit id="manual.yields.veryLow">
+      <segment>
+        <source>Sehr Gering</source>
+      </segment>
+    </unit>
+    <unit id="manual.prices.conv">
+      <segment>
+        <source>Konventionell</source>
+      </segment>
+    </unit>
+    <unit id="manual.prices.org">
+      <segment>
+        <source>Ökologisch (Bio)</source>
+      </segment>
+    </unit>
+    <unit id="manual.prices.seed">
+      <segment>
+        <source>Saatgutkosten</source>
+      </segment>
+    </unit>
+    <unit id="manual.prices.sale">
+      <segment>
+        <source>Verkaufspreis</source>
+      </segment>
+    </unit>
+    <unit id="sensitivity.strong">
+      <segment>
+        <source>Stark</source>
+      </segment>
+    </unit>
+    <unit id="sensitivity.none">
+      <segment>
+        <source>Keine</source>
+      </segment>
+    </unit>
+    <unit id="special.wheat">
+      <segment>
         <source>Standardkultur mit ausgeglichenen Werten.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">91</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.corn" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.corn">
+      <segment>
         <source>Hoher Ertrag, aber anspruchsvoll für den Boden.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">92</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.potato" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.potato">
+      <segment>
         <source>Sehr profitabel, aber extrem schädlingsanfällig.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">93</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.beet" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.beet">
+      <segment>
         <source>Gute Fruchtfolgewirkung für Nachfolgekulturen.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">94</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.barley" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.barley">
+      <segment>
         <source>Robuste Getreideart für verschiedene Standorte.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">95</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.oat" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.oat">
+      <segment>
         <source>Gute Vorfrucht, geringe Ansprüche.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">96</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.rye" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.rye">
+      <segment>
         <source>Sehr widerstandsfähig gegen Kälte.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">97</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.fieldbean" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.fieldbean">
+      <segment>
         <source>Baut Stickstoff im Boden auf (Leguminose).</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">98</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.animals" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.animals">
+      <segment>
         <source>Dauerkultur zur Viehhaltung.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">99</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="special.fallow" datatype="html">
+      </segment>
+    </unit>
+    <unit id="special.fallow">
+      <segment>
         <source>Regeneration für den Boden.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manual/components/manual-crop-card.ts</context>
-          <context context-type="linenumber">100</context>
-        </context-group>
-      </trans-unit>
-    </body>
+      </segment>
+    </unit>
+    <unit id="manual.printModal.title">
+      <segment>
+        <source>Druckeinstellungen</source>
+      </segment>
+    </unit>
+    <unit id="manual.printModal.size">
+      <segment>
+        <source>Papierformat</source>
+      </segment>
+    </unit>
+    <unit id="manual.printModal.orientation">
+      <segment>
+        <source>Ausrichtung</source>
+      </segment>
+    </unit>
+    <unit id="manual.printModal.portrait">
+      <segment>
+        <source>Hochformat</source>
+      </segment>
+    </unit>
+    <unit id="manual.printModal.landscape">
+      <segment>
+        <source>Querformat</source>
+      </segment>
+    </unit>
+    <unit id="manual.printModal.cancel">
+      <segment>
+        <source>Abbrechen</source>
+      </segment>
+    </unit>
+    <unit id="manual.printModal.print">
+      <segment>
+        <source>Drucken starten</source>
+      </segment>
+    </unit>
+    <unit id="manual.print">
+      <segment>
+        <source>Drucken</source>
+      </segment>
+    </unit>
+    <unit id="manual.title">
+      <segment>
+        <source>Handbuch</source>
+      </segment>
+    </unit>
+    <unit id="manual.subtitle">
+      <segment>
+        <source>Alles was Sie über nachhaltige Landwirtschaft in Soil wissen müssen</source>
+      </segment>
+    </unit>
+    <unit id="manual.intro.title">
+      <segment>
+        <source>Einleitung</source>
+      </segment>
+    </unit>
+    <unit id="manual.intro.goal.title">
+      <segment>
+        <source>Das Ziel</source>
+      </segment>
+    </unit>
+    <unit id="manual.intro.goal.text">
+      <segment>
+        <source>Erfolgreich wirtschaften und dabei den Boden schützen.</source>
+      </segment>
+    </unit>
+    <unit id="manual.intro.mechanics.title">
+      <segment>
+        <source>Mechanik</source>
+      </segment>
+    </unit>
+    <unit id="manual.intro.mechanics.text">
+      <segment>
+        <source>In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.title">
+      <segment>
+        <source>Konzepte</source>
+      </segment>
+    </unit>
+    <unit id="manual.footer">
+      <segment>
+        <source>Soil Simulation - Ein Bildungsprojekt für nachhaltige Landwirtschaft.</source>
+      </segment>
+    </unit>
   </file>
 </xliff>

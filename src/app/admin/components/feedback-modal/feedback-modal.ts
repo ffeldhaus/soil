@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
         tabindex="0"
       >
         <div class="flex justify-between items-center mb-6">
-          <h2 i18n="@@feedback.title" class="text-2xl font-bold text-white font-serif">Feedback & Vorschläge</h2>
+          <h2 i18n="The title for the feedback modal@@feedback.title" class="text-2xl font-bold text-white font-serif">Feedback & Vorschläge</h2>
           <button (click)="closeModal.emit()" class="text-gray-400 hover:text-white transition">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -119,10 +119,10 @@ export class FeedbackModal {
     rating: number;
     comment: string;
   } = {
-    category: 'other',
-    rating: 5,
-    comment: '',
-  };
+      category: 'other',
+      rating: 5,
+      comment: '',
+    };
 
   isSubmitting = false;
 
