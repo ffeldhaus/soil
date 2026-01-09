@@ -351,7 +351,7 @@
     <unit id="authAction.resetPassword.instruction">
       <segment state="translated">
         <source> Geben Sie ein neues Passwort für <pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ resetEmail }}"/></pc> ein. </source>
-        <target>Enter a new password for &lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;&lt;ph id="1" equiv="INTERPOLATION" disp="{{ resetEmail }}"/&gt;&lt;/pc&gt;.</target>
+        <target>Enter a new password for <pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ resetEmail }}"/></pc>.</target>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.label">
@@ -999,7 +999,7 @@
     <unit id="dashboard.delete.typeConfirm">
       <segment state="translated">
         <source>Tippe &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
-        <target>Type &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; to confirm:</target>
+        <target>Type &lt;span class="font-mono font-bold text-red-400">DELETE&lt;/span> to confirm:</target>
       </segment>
     </unit>
     <unit id="dashboard.delete.warning">
@@ -1203,7 +1203,7 @@
     <unit id="dashboard.pending.welcome">
       <segment state="translated">
         <source> Danke für die Registrierung, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user?.displayName }}"/></pc>! </source>
-        <target>Thanks for registering, &lt;pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&amp;lt;span class=&amp;quot;font-bold text-white&amp;quot;&amp;gt;" dispEnd="&amp;lt;/span &amp;gt;"&gt;&lt;ph id="1" equiv="INTERPOLATION" disp="{{ user?.displayName }}"/&gt;&lt;/pc&gt;!</target>
+        <target>Thanks for registering, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user?.displayName }}"/></pc>!</target>
       </segment>
     </unit>
     <unit id="dashboard.player.capital">
@@ -1383,7 +1383,7 @@
     <unit id="dashboard.welcome">
       <segment state="translated">
         <source> Willkommen, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/></pc>! </source>
-        <target>Welcome, &lt;pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&amp;lt;span class=&amp;quot;font-bold text-white&amp;quot;&amp;gt;" dispEnd="&amp;lt;/span &amp;gt;"&gt;&lt;ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/&gt;&lt;/pc&gt;!</target>
+        <target>Welcome, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/></pc>!</target>
       </segment>
     </unit>
     <unit id="feedback.cancel">
@@ -1734,13 +1734,13 @@
     <unit id="info.designPrinciplesComplexity">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Ausgewogene Komplexität:</pc> Um eine kognitive Überlastung zu vermeiden, konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge, Marktpreise), um einfache lineare Logik zu verhindern. </source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong class=&amp;quot;text-white&amp;quot;&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Balanced Complexity:&lt;/pc&gt; To avoid cognitive overload, the game focuses on the pedosphere (soil) but remains complex enough (weather, pests, market prices) to prevent simple linear logic.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Balanced Complexity:</pc> To avoid cognitive overload, the game focuses on the pedosphere (soil) but remains complex enough (weather, pests, market prices) to prevent simple linear logic.</target>
       </segment>
     </unit>
     <unit id="info.designPrinciplesExperience">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Erfahrungsorientiertes Lernen:</pc> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong class=&amp;quot;text-white&amp;quot;&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Experience-Oriented Learning:&lt;/pc&gt; Students begin with a profit-maximizing mindset. If they overexploit resources, variables such as "soil quality" decrease, leading to yield losses. This "failure experience" forces reflection.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Experience-Oriented Learning:</pc> Students begin with a profit-maximizing mindset. If they overexploit resources, variables such as "soil quality" decrease, leading to yield losses. This "failure experience" forces reflection.</target>
       </segment>
     </unit>
     <unit id="info.designPrinciplesTitle">
@@ -1764,7 +1764,7 @@
     <unit id="info.findingsConclusion">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Fazit:</pc> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt als „Partner“ und nicht als Gegner sahen. </source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Conclusion:&lt;/pc&gt; The simulation successfully moved students toward Type 3, by seeing the environment as a "partner" rather than an opponent.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Conclusion:</pc> The simulation successfully moved students toward Type 3, by seeing the environment as a "partner" rather than an opponent.</target>
       </segment>
     </unit>
     <unit id="info.findingsText">
@@ -1782,25 +1782,25 @@
     <unit id="info.findingsType1">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökonomie über Ökologie:</pc> Pessimismus, Glaube, dass man nichts ändern kann.</source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Economy over Ecology:&lt;/pc&gt; Pessimism, belief that nothing can be changed.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Economy over Ecology:</pc> Pessimism, belief that nothing can be changed.</target>
       </segment>
     </unit>
     <unit id="info.findingsType2">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökologie über Ökonomie:</pc> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Ecology over Economy:&lt;/pc&gt; Rejection of economic use, protection is seen as sacrifice.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ecology over Economy:</pc> Rejection of economic use, protection is seen as sacrifice.</target>
       </segment>
     </unit>
     <unit id="info.findingsType3">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökologie für Ökonomie:</pc> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Ecology for Economy:&lt;/pc&gt; Realization that ecological health is the prerequisite for economic success.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ecology for Economy:</pc> Realization that ecological health is the prerequisite for economic success.</target>
       </segment>
     </unit>
     <unit id="info.footer">
       <segment state="translated">
         <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <target>© &lt;ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/&gt; Soil Project. Developed for educational purposes.</target>
+        <target>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
       </segment>
     </unit>
     <unit id="info.mainReferenceTitle">
@@ -1824,7 +1824,7 @@
     <unit id="info.publicationsTitle">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;" dispEnd="&lt;/span&gt;">📚</pc> Weitere Publikationen </source>
-        <target>&lt;pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&amp;lt;span class=&amp;quot;p-2 bg-emerald-900/30 rounded-xl text-xl&amp;quot;&amp;gt;" dispEnd="&amp;lt;/span&amp;gt;"&gt;📚&lt;/pc&gt; Further Publications</target>
+        <target><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;" dispEnd="&lt;/span&gt;">📚</pc> Further Publications</target>
       </segment>
     </unit>
     <unit id="info.subtitle">
@@ -1836,13 +1836,13 @@
     <unit id="info.theoreticalFrameworkDustBowl">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Dust-Bowl-Syndrom:</pc> Das Spiel modelliert die nicht nachhaltige Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her. </source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong class=&amp;quot;text-white&amp;quot;&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Dust Bowl Syndrome:&lt;/pc&gt; The game models non-sustainable agricultural intensification leading to soil degradation, erosion, and economic collapse, thus establishing a clear link between the pursuit of profit and ecological destruction.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Dust Bowl Syndrome:</pc> The game models non-sustainable agricultural intensification leading to soil degradation, erosion, and economic collapse, thus establishing a clear link between the pursuit of profit and ecological destruction.</target>
       </segment>
     </unit>
     <unit id="info.theoreticalFrameworkSubjectiveTheories">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Subjektive Theorien:</pc> Die Forschung unterscheidet zwischen weitreichenden Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser nahreichweiten Theorien durch Erfahrung. </source>
-        <target>&lt;pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&amp;lt;strong class=&amp;quot;text-white&amp;quot;&amp;gt;" dispEnd="&amp;lt;/strong&amp;gt;"&gt;Subjective Theories:&lt;/pc&gt; Research distinguishes between long-range theories (abstract knowledge, rarely affects behavior) and short-range theories (practical action scripts). Sustainable action requires the activation and modification of these short-range theories through experience.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Subjective Theories:</pc> Research distinguishes between long-range theories (abstract knowledge, rarely affects behavior) and short-range theories (practical action scripts). Sustainable action requires the activation and modification of these short-range theories through experience.</target>
       </segment>
     </unit>
     <unit id="info.theoreticalFrameworkTitle">
@@ -1932,7 +1932,7 @@
     <unit id="landing.footer">
       <segment state="translated">
         <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <target>© &lt;ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/&gt; Soil Project. Developed for educational purposes.</target>
+        <target>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
       </segment>
     </unit>
     <unit id="landing.intro">
@@ -2292,7 +2292,7 @@
     <unit id="onboarding.backToHome">
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;relative z-10&quot;&gt;" dispEnd="&lt;/span&gt;">Zur Startseite</pc></source>
-        <target>&lt;pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&amp;lt;span class=&amp;quot;relative z-10&amp;quot;&amp;gt;" dispEnd="&amp;lt;/span&amp;gt;"&gt;To Home Page&lt;/pc&gt;</target>
+        <target><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;relative z-10&quot;&gt;" dispEnd="&lt;/span&gt;">To Home Page</pc></target>
       </segment>
     </unit>
     <unit id="onboarding.checkingRegistration">
@@ -2772,7 +2772,7 @@
     <unit id="superadmin.delete.game.typeConfirm">
       <segment state="translated">
         <source>Tippe &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
-        <target>Type &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; to confirm:</target>
+        <target>Type &lt;span class="font-mono font-bold text-red-400">DELETE&lt;/span> to confirm:</target>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.warning">
