@@ -1,12 +1,9 @@
 {
-    "mcpServers": {
-        "angular-i18n": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "angular-i18n-mcp"
-            ],
-            "env": {}
-        }
+  "mcpServers": {
+    "angular-i18n": {
+      "command": "npx",
+      "args": ["-y", "angular-i18n-mcp"],
+      "env": {}
     }
+  }
 }

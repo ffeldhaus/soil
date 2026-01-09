@@ -119,10 +119,10 @@ export class FeedbackModal {
     rating: number;
     comment: string;
   } = {
-      category: 'other',
-      rating: 5,
-      comment: '',
-    };
+    category: 'other',
+    rating: 5,
+    comment: '',
+  };
 
   isSubmitting = false;
 
