@@ -751,6 +751,10 @@
       </segment>
     </unit>
     <unit id="user.photoURL">
+      <notes>
+        <note category="description">Default user photo path</note>
+        <note category="meaning">Asset Path</note>
+      </notes>
       <segment>
         <source>assets/images/ok.jpg</source>
       </segment>
@@ -1101,411 +1105,739 @@
       </segment>
     </unit>
     <unit id="superadmin.title">
+      <notes>
+        <note category="description">Title of the super admin dashboard</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>System-Administrator</source>
       </segment>
     </unit>
     <unit id="superadmin.badge">
+      <notes>
+        <note category="description">Label for system-level badge</note>
+        <note category="meaning">Badge Label</note>
+      </notes>
       <segment>
         <source>System</source>
       </segment>
     </unit>
     <unit id="superadmin.logout">
+      <notes>
+        <note category="description">Logout button text for super admin</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Abmelden</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.totalGames">
+      <notes>
+        <note category="description">Total number of games in the system</note>
+        <note category="meaning">Stat Label</note>
+      </notes>
       <segment>
         <source>Gesamt Spiele</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.created">
+      <notes>
+        <note category="description">Indicator for created games</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>erstellt</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.active">
+      <notes>
+        <note category="description">Indicator for active games</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>Aktiv</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.trash">
+      <notes>
+        <note category="description">Indicator for games in trash</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>Papierkorb</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.totalUsers">
+      <notes>
+        <note category="description">Total number of users in the system</note>
+        <note category="meaning">Stat Label</note>
+      </notes>
       <segment>
         <source>Gesamt Benutzer</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.registered">
+      <notes>
+        <note category="description">Indicator for registered users</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>registriert</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.teachers">
+      <notes>
+        <note category="description">Indicator for teacher accounts</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>Lehrkräfte</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.pending">
+      <notes>
+        <note category="description">Indicator for pending approvals</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>Ausstehend</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.rejected">
+      <notes>
+        <note category="description">Indicator for rejected applications</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>Abgelehnt</source>
       </segment>
     </unit>
     <unit id="superadmin.stats.banned">
+      <notes>
+        <note category="description">Indicator for banned users</note>
+        <note category="meaning">Stat Sub-label</note>
+      </notes>
       <segment>
         <source>Gesperrt</source>
       </segment>
     </unit>
     <unit id="superadmin.loading">
+      <notes>
+        <note category="description">Text shown while loading super admin data</note>
+        <note category="meaning">Loading State</note>
+      </notes>
       <segment>
         <source>Daten werden geladen...</source>
       </segment>
     </unit>
     <unit id="superadmin.dashboard.title">
+      <notes>
+        <note category="description">Title for the system dashboard section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>System-Dashboard</source>
       </segment>
     </unit>
     <unit id="superadmin.dashboard.subtitle">
+      <notes>
+        <note category="description">Description of the system dashboard purpose</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Systemweite Übersicht und Lehrerverwaltung</source>
       </segment>
     </unit>
     <unit id="superadmin.dashboard.refresh">
+      <notes>
+        <note category="description">Button to refresh system data</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Aktualisieren</source>
       </segment>
     </unit>
     <unit id="superadmin.pending.title">
+      <notes>
+        <note category="description">Title for pending approvals section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Ausstehende Genehmigungen</source>
       </segment>
     </unit>
     <unit id="superadmin.admins.title">
+      <notes>
+        <note category="description">Title for teacher management section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Lehrkräfte (Administratoren)</source>
       </segment>
     </unit>
     <unit id="superadmin.table.user">
+      <notes>
+        <note category="description">Table header for user email or name</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Benutzer / E-Mail</source>
       </segment>
     </unit>
     <unit id="superadmin.table.role">
+      <notes>
+        <note category="description">Table header for user role</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Rolle</source>
       </segment>
     </unit>
     <unit id="superadmin.table.status">
+      <notes>
+        <note category="description">Table header for account status</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Status</source>
       </segment>
     </unit>
     <unit id="superadmin.table.quota">
+      <notes>
+        <note category="description">Table header for game creation limit</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Limit</source>
       </segment>
     </unit>
     <unit id="superadmin.table.games">
+      <notes>
+        <note category="description">Table header for number of games</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Spiele</source>
       </segment>
     </unit>
     <unit id="superadmin.table.actions">
+      <notes>
+        <note category="description">Table header for available actions</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Aktionen</source>
       </segment>
     </unit>
     <unit id="superadmin.actions.approve">
+      <notes>
+        <note category="description">Button to approve a user</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Genehmigen</source>
       </segment>
     </unit>
     <unit id="superadmin.actions.reject">
+      <notes>
+        <note category="description">Button to reject a user</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Ablehnen</source>
       </segment>
     </unit>
     <unit id="superadmin.actions.ban">
+      <notes>
+        <note category="description">Button to ban a user</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Sperren</source>
       </segment>
     </unit>
     <unit id="superadmin.actions.delete">
+      <notes>
+        <note category="description">Button to delete a user</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Löschen</source>
       </segment>
     </unit>
     <unit id="superadmin.actions.games">
+      <notes>
+        <note category="description">Button to view user games</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Spiele</source>
       </segment>
     </unit>
     <unit id="superadmin.actions.quota">
+      <notes>
+        <note category="description">Button to set user quota</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Limit</source>
       </segment>
     </unit>
     <unit id="superadmin.pending.card.institution">
+      <notes>
+        <note category="description">Institution name in application card</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Institution</source>
       </segment>
     </unit>
     <unit id="superadmin.pending.card.website">
+      <notes>
+        <note category="description">Institution website in application card</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Website</source>
       </segment>
     </unit>
     <unit id="superadmin.pending.card.why">
+      <notes>
+        <note category="description">Explanation for using Soil in application card</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Warum Soil?</source>
       </segment>
     </unit>
     <unit id="superadmin.pending.card.pending">
+      <notes>
+        <note category="description">Status for application awaiting review</note>
+        <note category="meaning">Status Label</note>
+      </notes>
       <segment>
         <source>Ausstehend</source>
       </segment>
     </unit>
     <unit id="superadmin.games.title">
+      <notes>
+        <note category="description">Title for the user&apos;s games modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Spiele von</source>
       </segment>
     </unit>
     <unit id="superadmin.games.close">
+      <notes>
+        <note category="description">Button to close the games modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Schließen</source>
       </segment>
     </unit>
     <unit id="superadmin.games.loading">
+      <notes>
+        <note category="description">Text shown while loading user games</note>
+        <note category="meaning">Loading State</note>
+      </notes>
       <segment>
         <source>Spiele werden geladen...</source>
       </segment>
     </unit>
     <unit id="superadmin.games.none">
+      <notes>
+        <note category="description">Message shown when no games are found for a teacher</note>
+        <note category="meaning">Empty State</note>
+      </notes>
       <segment>
         <source>Keine Spiele für diese Lehrkraft gefunden.</source>
       </segment>
     </unit>
     <unit id="superadmin.games.status">
+      <notes>
+        <note category="description">Table header for game status</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Status</source>
       </segment>
     </unit>
     <unit id="superadmin.games.round">
+      <notes>
+        <note category="description">Table header for game round</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Runde</source>
       </segment>
     </unit>
     <unit id="superadmin.games.created">
+      <notes>
+        <note category="description">Table header for game creation date</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Erstellt</source>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.title">
+      <notes>
+        <note category="description">Title for the game deletion modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Spiel löschen</source>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.confirm">
+      <notes>
+        <note category="description">Confirmation question for deleting a game</note>
+        <note category="meaning">Question</note>
+      </notes>
       <segment>
         <source>Bist du sicher, dass du dieses Spiel löschen möchtest?</source>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.permanent">
+      <notes>
+        <note category="description">Button for permanent game deletion</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Dauerhaft löschen</source>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.soft">
+      <notes>
+        <note category="description">Button for moving game to trash</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>In den Papierkorb verschieben</source>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.warning">
+      <notes>
+        <note category="description">Warning about the consequences of permanent deletion</note>
+        <note category="meaning">Warning Message</note>
+      </notes>
       <segment>
         <source>WARNUNG: Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.</source>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.typeConfirm">
+      <notes>
+        <note category="description">Instruction to type DELETE to confirm</note>
+        <note category="meaning">Action Instruction</note>
+      </notes>
       <segment>
         <source>Tippe &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
       </segment>
     </unit>
     <unit id="superadmin.quota.modal.title">
+      <notes>
+        <note category="description">Title for the quota management modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Spiel-Limit setzen</source>
       </segment>
     </unit>
     <unit id="superadmin.quota.modal.desc">
+      <notes>
+        <note category="description">Instruction for setting the maximum number of games</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Lege fest, wie viele Spiele diese Lehrkraft maximal erstellen darf:</source>
       </segment>
     </unit>
     <unit id="superadmin.quota.modal.label">
+      <notes>
+        <note category="description">Label for the quota input field</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Limit</source>
       </segment>
     </unit>
     <unit id="superadmin.quota.modal.save">
+      <notes>
+        <note category="description">Button to save the new quota</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Speichern</source>
       </segment>
     </unit>
     <unit id="superadmin.approve.modal.title">
+      <notes>
+        <note category="description">Title for the user approval modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Benutzer genehmigen</source>
       </segment>
     </unit>
     <unit id="superadmin.approve.modal.desc">
+      <notes>
+        <note category="description">Confirmation question for approving a user</note>
+        <note category="meaning">Question</note>
+      </notes>
       <segment>
         <source>Bist du sicher, dass du diesen Benutzer genehmigen möchtest?</source>
       </segment>
     </unit>
     <unit id="superadmin.approve.modal.info">
+      <notes>
+        <note category="description">Explanation of the consequences of approval</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Dies gewährt vollen administrativen Zugriff auf das Dashboard.</source>
       </segment>
     </unit>
     <unit id="superadmin.approve.modal.confirm">
+      <notes>
+        <note category="description">Button to confirm user approval</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Genehmigung bestätigen</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.title">
+      <notes>
+        <note category="description">Title for the application rejection modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Registrierung ablehnen</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.desc">
+      <notes>
+        <note category="description">Confirmation question for rejecting an application</note>
+        <note category="meaning">Question</note>
+      </notes>
       <segment>
         <source>Bist du sicher, dass du die Registrierung ablehnen möchtest?</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.reasons">
+      <notes>
+        <note category="description">Label for rejection reasons selection</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Gründe (werden dem Benutzer per E-Mail mitgeteilt)</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.reason.institution">
+      <notes>
+        <note category="description">Reason indicating institution verification failure</note>
+        <note category="meaning">Rejection Reason</note>
+      </notes>
       <segment>
         <source>Institution konnte nicht verifiziert werden</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.reason.insufficient">
+      <notes>
+        <note category="description">Reason indicating insufficient usage explanation</note>
+        <note category="meaning">Rejection Reason</note>
+      </notes>
       <segment>
         <source>Grund für die Nutzung nicht ausreichend</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.reason.other">
+      <notes>
+        <note category="description">Generic other reason</note>
+        <note category="meaning">Rejection Reason</note>
+      </notes>
       <segment>
         <source>Andere Gründe</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.custom">
+      <notes>
+        <note category="description">Label for custom rejection message</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Zusätzliche Nachricht (optional)</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.ban">
+      <notes>
+        <note category="description">Option to ban the email address</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>E-Mail-Adresse sperren</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.banInfo">
+      <notes>
+        <note category="description">Explanation of what banning an email does</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Blockiert diese E-Mail-Adresse für zukünftige Registrierungen.</source>
       </segment>
     </unit>
     <unit id="superadmin.reject.modal.send">
+      <notes>
+        <note category="description">Button to send the rejection</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Ablehnung senden</source>
       </segment>
     </unit>
     <unit id="superadmin.modal.cancel">
+      <notes>
+        <note category="description">Button to cancel and close a modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Abbrechen</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.title">
+      <notes>
+        <note category="description">Title for the feedback management section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Feedback &amp; Vorschläge</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.none">
+      <notes>
+        <note category="description">Message shown when no feedback is found</note>
+        <note category="meaning">Empty State</note>
+      </notes>
       <segment>
         <source>Kein Feedback gefunden.</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.table.user">
+      <notes>
+        <note category="description">Table header for user who gave feedback</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Benutzer</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.table.category">
+      <notes>
+        <note category="description">Table header for feedback category</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Kategorie</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.table.rating">
+      <notes>
+        <note category="description">Table header for feedback rating</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Bewertung</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.table.status">
+      <notes>
+        <note category="description">Table header for feedback status</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Status</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.actions.reply">
+      <notes>
+        <note category="description">Button to reply to feedback</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Antworten</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.actions.resolve">
+      <notes>
+        <note category="description">Button to resolve feedback</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Lösen</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.actions.reject">
+      <notes>
+        <note category="description">Button to reject feedback</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Ablehnen</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.modal.reply.title">
+      <notes>
+        <note category="description">Title for the feedback reply modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Antwort an Benutzer</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.modal.reply.label">
+      <notes>
+        <note category="description">Label for the reply message input</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Deine Nachricht</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.modal.reply.send">
+      <notes>
+        <note category="description">Button to send the feedback reply</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Antwort senden</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.modal.resolve.title">
+      <notes>
+        <note category="description">Title for the feedback resolution modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Feedback lösen</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.modal.resolve.label">
+      <notes>
+        <note category="description">Label for external reference input when resolving feedback</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Externe Referenz (z.B. GitHub Link)</source>
       </segment>
     </unit>
     <unit id="superadmin.feedback.modal.resolve.confirm">
+      <notes>
+        <note category="description">Button to confirm feedback resolution</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Als gelöst markieren</source>
       </segment>
@@ -1889,136 +2221,244 @@
       </segment>
     </unit>
     <unit id="authAction.loading">
+      <notes>
+        <note category="description">Indicates processing is in progress</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Verarbeitung läuft...</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.instruction">
+      <notes>
+        <note category="description">Instruction for resetting the password</note>
+        <note category="meaning">Instruction</note>
+      </notes>
       <segment>
         <source> Geben Sie ein neues Passwort für <pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ resetEmail }}"/></pc> ein. </source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.label">
+      <notes>
+        <note category="description">Label for the new password input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Neues Passwort</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.error.minLength">
+      <notes>
+        <note category="description">Requirement for minimum password length</note>
+        <note category="meaning">Form Error</note>
+      </notes>
       <segment>
         <source>Das Passwort muss mindestens 6 Zeichen lang sein.</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.saving">
+      <notes>
+        <note category="description">Indicates the new password is being saved</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Wird gespeichert...</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.saveButton">
+      <notes>
+        <note category="description">Button to save the new password</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Passwort speichern</source>
       </segment>
     </unit>
     <unit id="authAction.toLogin">
+      <notes>
+        <note category="description">Link to return to login page</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Zum Login </source>
       </segment>
     </unit>
     <unit id="authAction.backToHome">
+      <notes>
+        <note category="description">Link to return to home page</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Zurück zur Startseite </source>
       </segment>
     </unit>
     <unit id="authAction.error.invalidParams">
+      <notes>
+        <note category="description">Link is invalid because of missing parameters</note>
+        <note category="meaning">Error Message</note>
+      </notes>
       <segment>
         <source>Ungültiger Link.</source>
       </segment>
     </unit>
     <unit id="authAction.error.unknownMode">
+      <notes>
+        <note category="description">Action requested is unknown</note>
+        <note category="meaning">Error Message</note>
+      </notes>
       <segment>
         <source>Unbekannte Aktion.</source>
       </segment>
     </unit>
     <unit id="authAction.verifyEmail.title">
+      <notes>
+        <note category="description">Title for email verification action</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>E-Mail-Verifizierung</source>
       </segment>
     </unit>
     <unit id="authAction.verifyEmail.success">
+      <notes>
+        <note category="description">Notification that email was verified</note>
+        <note category="meaning">Success Message</note>
+      </notes>
       <segment>
         <source>Ihre E-Mail-Adresse wurde erfolgreich verifiziert.</source>
       </segment>
     </unit>
     <unit id="authAction.verifyEmail.error">
+      <notes>
+        <note category="description">Email verification link is invalid or expired</note>
+        <note category="meaning">Error Message</note>
+      </notes>
       <segment>
         <source>Der Verifizierungslink ist ungültig oder abgelaufen.</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.title">
+      <notes>
+        <note category="description">Title for password reset action</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Passwort zurücksetzen</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.error">
+      <notes>
+        <note category="description">Password reset link is invalid or expired</note>
+        <note category="meaning">Error Message</note>
+      </notes>
       <segment>
         <source>Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.success">
+      <notes>
+        <note category="description">Notification that password was reset</note>
+        <note category="meaning">Success Message</note>
+      </notes>
       <segment>
         <source>Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.</source>
       </segment>
     </unit>
     <unit id="authAction.resetPassword.confirmError">
+      <notes>
+        <note category="description">Password reset failed</note>
+        <note category="meaning">Error Message</note>
+      </notes>
       <segment>
         <source>Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.</source>
       </segment>
     </unit>
     <unit id="playerLogin.title">
+      <notes>
+        <note category="description">Title of the player login page</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Spiel beitreten</source>
       </segment>
     </unit>
     <unit id="playerLogin.gameId">
+      <notes>
+        <note category="description">Label for the game ID input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Spiel-ID</source>
       </segment>
     </unit>
     <unit id="playerLogin.pin">
+      <notes>
+        <note category="description">Label for the player PIN input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>PIN</source>
       </segment>
     </unit>
     <unit id="playerLogin.startGame">
+      <notes>
+        <note category="description">Button to enter the game</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Spiel starten</source>
       </segment>
     </unit>
     <unit id="playerLogin.placeholder.gameId">
+      <notes>
+        <note category="description">Placeholder for game ID</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Game ID</source>
       </segment>
     </unit>
     <unit id="playerLogin.placeholder.pin">
+      <notes>
+        <note category="description">Placeholder for player PIN</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Unique Player PIN</source>
       </segment>
     </unit>
     <unit id="playerLogin.enteringGame">
+      <notes>
+        <note category="description">Text shown while entering the game</note>
+        <note category="meaning">Loading State</note>
+      </notes>
       <segment>
         <source>Betrete Spiel...</source>
       </segment>
     </unit>
     <unit id="playerLogin.backToHome">
+      <notes>
+        <note category="description">Link to return to home page</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Zurück zur Startseite</source>
       </segment>
     </unit>
     <unit id="playerLogin.error.title">
+      <notes>
+        <note category="description">Title for login error modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Anmeldung fehlgeschlagen</source>
       </segment>
     </unit>
     <unit id="playerLogin.error.retry">
+      <notes>
+        <note category="description">Button to retry login</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Erneut versuchen</source>
       </segment>
@@ -2232,61 +2672,109 @@
       </segment>
     </unit>
     <unit id="board.login.phGameId">
+      <notes>
+        <note category="description">Placeholder for game ID input</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Game ID</source>
       </segment>
     </unit>
     <unit id="board.login.phPlayerNum">
+      <notes>
+        <note category="description">Placeholder for player number input</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Player Number</source>
       </segment>
     </unit>
     <unit id="board.login.phPin">
+      <notes>
+        <note category="description">Placeholder for PIN input</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>PIN</source>
       </segment>
     </unit>
     <unit id="board.nav.names">
+      <notes>
+        <note category="description">Toggle display of field names</note>
+        <note category="meaning">Nav Label</note>
+      </notes>
       <segment>
         <source>Namen</source>
       </segment>
     </unit>
     <unit id="board.nav.nutrition">
+      <notes>
+        <note category="description">Toggle display of nutrition levels</note>
+        <note category="meaning">Nav Label</note>
+      </notes>
       <segment>
         <source>Mineralstoffe</source>
       </segment>
     </unit>
     <unit id="board.nav.harvest">
+      <notes>
+        <note category="description">Toggle display of harvest yields</note>
+        <note category="meaning">Nav Label</note>
+      </notes>
       <segment>
         <source>Ernte</source>
       </segment>
     </unit>
     <unit id="board.nav.soil">
+      <notes>
+        <note category="description">Toggle display of soil quality</note>
+        <note category="meaning">Nav Label</note>
+      </notes>
       <segment>
         <source>Bodenqualität</source>
       </segment>
     </unit>
     <unit id="board.nav.finance">
+      <notes>
+        <note category="description">Toggle display of financial report</note>
+        <note category="meaning">Nav Label</note>
+      </notes>
       <segment>
         <source>Finanzen</source>
       </segment>
     </unit>
     <unit id="board.nav.options">
+      <notes>
+        <note category="description">Open round options</note>
+        <note category="meaning">Nav Label</note>
+      </notes>
       <segment>
         <source>Optionen</source>
       </segment>
     </unit>
     <unit id="board.nav.waiting">
+      <notes>
+        <note category="description">Wait message after round submission</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Warten...</source>
       </segment>
     </unit>
     <unit id="board.nav.nextRound">
+      <notes>
+        <note category="description">Button to submit round and proceed</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Nächste Runde</source>
       </segment>
     </unit>
     <unit id="board.logout">
+      <notes>
+        <note category="description">Logout button text</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Abmelden</source>
       </segment>
@@ -2774,31 +3262,55 @@
       </segment>
     </unit>
     <unit id="weather.normal">
+      <notes>
+        <note category="description">Standard weather without special effects</note>
+        <note category="meaning">Weather Condition</note>
+      </notes>
       <segment>
         <source>Normal</source>
       </segment>
     </unit>
     <unit id="weather.drought">
+      <notes>
+        <note category="description">Dry weather affecting yields</note>
+        <note category="meaning">Weather Condition</note>
+      </notes>
       <segment>
         <source>Dürre</source>
       </segment>
     </unit>
     <unit id="weather.flood">
+      <notes>
+        <note category="description">Excessive rain affecting yields</note>
+        <note category="meaning">Weather Condition</note>
+      </notes>
       <segment>
         <source>Flut</source>
       </segment>
     </unit>
     <unit id="weather.storm">
+      <notes>
+        <note category="description">Strong winds affecting yields</note>
+        <note category="meaning">Weather Condition</note>
+      </notes>
       <segment>
         <source>Sturm</source>
       </segment>
     </unit>
     <unit id="vermin.none">
+      <notes>
+        <note category="description">No pest infestation present</note>
+        <note category="meaning">Vermin Status</note>
+      </notes>
       <segment>
         <source>Keine</source>
       </segment>
     </unit>
     <unit id="vermin.pests">
+      <notes>
+        <note category="description">Presence of crop-damaging insects</note>
+        <note category="meaning">Vermin Status</note>
+      </notes>
       <segment>
         <source>Schädlinge</source>
       </segment>

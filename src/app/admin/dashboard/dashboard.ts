@@ -182,7 +182,9 @@ export class Dashboard implements OnInit, OnDestroy {
     try {
       await this.gameService.submitFeedback(feedback);
       this.showFeedbackModal = false;
-      alert($localize`:Success Message|Toast shown after successful feedback submission@@feedback.success:Vielen Dank für dein Feedback!`);
+      alert(
+        $localize`:Success Message|Toast shown after successful feedback submission@@feedback.success:Vielen Dank für dein Feedback!`,
+      );
     } catch (e: unknown) {
       const error = e as Error;
       this.errorMessage = `Failed to submit feedback: ${error.message}`;

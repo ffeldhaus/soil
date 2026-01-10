@@ -19,17 +19,17 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           @if (status === 'loading') {
             <div class="text-center">
-              <p i18n="@@authAction.loading">Verarbeitung läuft...</p>
+              <p i18n="Status Message|Indicates processing is in progress@@authAction.loading">Verarbeitung läuft...</p>
             </div>
           }
 
           @if (status === 'resetPassword') {
             <form [formGroup]="resetForm" (ngSubmit)="onResetPassword()" class="space-y-6">
               <div>
-                <p class="text-sm text-gray-600 mb-4" i18n="@@authAction.resetPassword.instruction">
+                <p class="text-sm text-gray-600 mb-4" i18n="Instruction|Instruction for resetting the password@@authAction.resetPassword.instruction">
                   Geben Sie ein neues Passwort für <strong>{{ resetEmail }}</strong> ein.
                 </p>
-                <label for="password" class="block text-sm font-medium text-gray-700" i18n="@@authAction.resetPassword.label">Neues Passwort</label>
+                <label for="password" class="block text-sm font-medium text-gray-700" i18n="Form Label|Label for the new password input@@authAction.resetPassword.label">Neues Passwort</label>
                 <div class="mt-1">
                   <input
                     id="password"
@@ -41,7 +41,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
                   />
                 </div>
                 @if (resetForm.get('password')?.touched && resetForm.get('password')?.invalid) {
-                  <p class="mt-2 text-sm text-red-600" i18n="@@authAction.resetPassword.error.minLength">Das Passwort muss mindestens 6 Zeichen lang sein.</p>
+                  <p class="mt-2 text-sm text-red-600" i18n="Form Error|Requirement for minimum password length@@authAction.resetPassword.error.minLength">Das Passwort muss mindestens 6 Zeichen lang sein.</p>
                 }
               </div>
 
@@ -52,9 +52,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
                   class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                 >
                   @if (isSubmitting) {
-                    <ng-container i18n="@@authAction.resetPassword.saving">Wird gespeichert...</ng-container>
+                    <ng-container i18n="Status Message|Indicates the new password is being saved@@authAction.resetPassword.saving">Wird gespeichert...</ng-container>
                   } @else {
-                    <ng-container i18n="@@authAction.resetPassword.saveButton">Passwort speichern</ng-container>
+                    <ng-container i18n="Action Label|Button to save the new password@@authAction.resetPassword.saveButton">Passwort speichern</ng-container>
                   }
                 </button>
               </div>
@@ -81,7 +81,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
                   </div>
                 </div>
               </div>
-              <a routerLink="/admin/login" class="text-indigo-600 hover:text-indigo-500 font-medium" i18n="@@authAction.toLogin">
+              <a routerLink="/admin/login" class="text-indigo-600 hover:text-indigo-500 font-medium" i18n="Action Label|Link to return to login page@@authAction.toLogin">
                 Zum Login
               </a>
             </div>
@@ -107,7 +107,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
                   </div>
                 </div>
               </div>
-              <a routerLink="/" class="text-indigo-600 hover:text-indigo-500 font-medium" i18n="@@authAction.backToHome">
+              <a routerLink="/" class="text-indigo-600 hover:text-indigo-500 font-medium" i18n="Action Label|Link to return to home page@@authAction.backToHome">
                 Zurück zur Startseite
               </a>
             </div>
@@ -144,7 +144,7 @@ export class AuthActionComponent implements OnInit {
 
       if (!this.mode || !this.oobCode) {
         this.status = 'error';
-        this.errorMessage = $localize`:@@authAction.error.invalidParams:Ungültiger Link.`;
+        this.errorMessage = $localize`:Error Message|Link is invalid because of missing parameters@@authAction.error.invalidParams:Ungültiger Link.`;
         return;
       }
 
@@ -157,17 +157,17 @@ export class AuthActionComponent implements OnInit {
           break;
         default:
           this.status = 'error';
-          this.errorMessage = $localize`:@@authAction.error.unknownMode:Unbekannte Aktion.`;
+          this.errorMessage = $localize`:Error Message|Action requested is unknown@@authAction.error.unknownMode:Unbekannte Aktion.`;
       }
     });
   }
 
   private async handleVerifyEmail() {
-    this.title = $localize`:@@authAction.verifyEmail.title:E-Mail-Verifizierung`;
+    this.title = $localize`:Heading|Title for email verification action@@authAction.verifyEmail.title:E-Mail-Verifizierung`;
     try {
       await applyActionCode(this.auth, this.oobCode);
       this.status = 'success';
-      this.successMessage = $localize`:@@authAction.verifyEmail.success:Ihre E-Mail-Adresse wurde erfolgreich verifiziert.`;
+      this.successMessage = $localize`:Success Message|Notification that email was verified@@authAction.verifyEmail.success:Ihre E-Mail-Adresse wurde erfolgreich verifiziert.`;
       this.cdr.detectChanges();
 
       // Redirect to onboarding after a short delay
@@ -177,13 +177,13 @@ export class AuthActionComponent implements OnInit {
     } catch (error: unknown) {
       console.error('Email verification error:', error);
       this.status = 'error';
-      this.errorMessage = $localize`:@@authAction.verifyEmail.error:Der Verifizierungslink ist ungültig oder abgelaufen.`;
+      this.errorMessage = $localize`:Error Message|Email verification link is invalid or expired@@authAction.verifyEmail.error:Der Verifizierungslink ist ungültig oder abgelaufen.`;
       this.cdr.detectChanges();
     }
   }
 
   private async handleResetPassword() {
-    this.title = $localize`:@@authAction.resetPassword.title:Passwort zurücksetzen`;
+    this.title = $localize`:Heading|Title for password reset action@@authAction.resetPassword.title:Passwort zurücksetzen`;
     try {
       this.resetEmail = await verifyPasswordResetCode(this.auth, this.oobCode);
       this.status = 'resetPassword';
@@ -191,7 +191,7 @@ export class AuthActionComponent implements OnInit {
     } catch (error: unknown) {
       console.error('Password reset code error:', error);
       this.status = 'error';
-      this.errorMessage = $localize`:@@authAction.resetPassword.error:Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.`;
+      this.errorMessage = $localize`:Error Message|Password reset link is invalid or expired@@authAction.resetPassword.error:Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.`;
       this.cdr.detectChanges();
     }
   }
@@ -208,11 +208,11 @@ export class AuthActionComponent implements OnInit {
 
       await confirmPasswordReset(this.auth, this.oobCode, newPassword);
       this.status = 'success';
-      this.successMessage = $localize`:@@authAction.resetPassword.success:Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.`;
+      this.successMessage = $localize`:Success Message|Notification that password was reset@@authAction.resetPassword.success:Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.`;
       this.cdr.detectChanges();
     } catch (error: unknown) {
       console.error('Confirm password reset error:', error);
-      this.errorMessage = $localize`:@@authAction.resetPassword.confirmError:Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.`;
+      this.errorMessage = $localize`:Error Message|Password reset failed@@authAction.resetPassword.confirmError:Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.`;
       this.status = 'error';
       this.cdr.detectChanges();
     } finally {

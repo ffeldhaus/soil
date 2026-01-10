@@ -16,12 +16,12 @@ export class RoundResultModal {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      Normal: $localize`:@@weather.normal:Normal`,
-      Drought: $localize`:@@weather.drought:Dürre`,
-      Flood: $localize`:@@weather.flood:Flut`,
-      Storm: $localize`:@@weather.storm:Sturm`,
-      None: $localize`:@@vermin.none:Keine`,
-      Pests: $localize`:@@vermin.pests:Schädlinge`,
+      Normal: $localize`:Weather Condition|Standard weather without special effects@@weather.normal:Normal`,
+      Drought: $localize`:Weather Condition|Dry weather affecting yields@@weather.drought:Dürre`,
+      Flood: $localize`:Weather Condition|Excessive rain affecting yields@@weather.flood:Flut`,
+      Storm: $localize`:Weather Condition|Strong winds affecting yields@@weather.storm:Sturm`,
+      None: $localize`:Vermin Status|No pest infestation present@@vermin.none:Keine`,
+      Pests: $localize`:Vermin Status|Presence of crop-damaging insects@@vermin.pests:Schädlinge`,
     };
     return translations[key] || key;
   }

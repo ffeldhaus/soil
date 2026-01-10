@@ -38,13 +38,13 @@ import { AuthService } from '../auth.service';
         class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:bg-gray-800"
       >
         <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
-          <ng-container i18n="@@playerLogin.title">Spiel beitreten</ng-container>
+          <ng-container i18n="Main Heading|Title of the player login page@@playerLogin.title">Spiel beitreten</ng-container>
         </h2>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2"
-              ><ng-container i18n="@@playerLogin.gameId">Spiel-ID</ng-container></label
+              ><ng-container i18n="Form Label|Label for the game ID input@@playerLogin.gameId">Spiel-ID</ng-container></label
             >
             <input
               formControlName="gameId"
@@ -59,7 +59,7 @@ import { AuthService } from '../auth.service';
 
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2"
-              ><ng-container i18n="@@playerLogin.pin">PIN</ng-container></label
+              ><ng-container i18n="Form Label|Label for the player PIN input@@playerLogin.pin">PIN</ng-container></label
             >
             <input
               formControlName="password"
@@ -81,7 +81,7 @@ import { AuthService } from '../auth.service';
             @if (isLoading) {
               <ng-container>{{ t('playerLogin.enteringGame') }}</ng-container>
             } @else {
-              <ng-container i18n="@@playerLogin.startGame">Spiel starten</ng-container>
+              <ng-container i18n="Action Label|Button to enter the game@@playerLogin.startGame">Spiel starten</ng-container>
             }
           </button>
         </form>
@@ -147,49 +147,46 @@ export class PlayerLoginComponent implements OnInit {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'playerLogin.placeholder.gameId': $localize`:@@playerLogin.placeholder.gameId:Game ID`,
-      'playerLogin.placeholder.pin': $localize`:@@playerLogin.placeholder.pin:Unique Player PIN`,
-      'playerLogin.enteringGame': $localize`:@@playerLogin.enteringGame:Betrete Spiel...`,
-      'playerLogin.backToHome': $localize`:@@playerLogin.backToHome:Zurück zur Startseite`,
-      'playerLogin.error.title': $localize`:@@playerLogin.error.title:Anmeldung fehlgeschlagen`,
-      'playerLogin.error.retry': $localize`:@@playerLogin.error.retry:Erneut versuchen`,
+      'playerLogin.placeholder.gameId': $localize`:Form Placeholder|Placeholder for game ID@@playerLogin.placeholder.gameId:Game ID`,
+      'playerLogin.placeholder.pin': $localize`:Form Placeholder|Placeholder for player PIN@@playerLogin.placeholder.pin:Unique Player PIN`,
+      'playerLogin.enteringGame': $localize`:Loading State|Text shown while entering the game@@playerLogin.enteringGame:Betrete Spiel...`,
+      'playerLogin.backToHome': $localize`:Action Label|Link to return to home page@@playerLogin.backToHome:Zurück zur Startseite`,
+      'playerLogin.error.title': $localize`:Heading|Title for login error modal@@playerLogin.error.title:Anmeldung fehlgeschlagen`,
+      'playerLogin.error.retry': $localize`:Action Label|Button to retry login@@playerLogin.error.retry:Erneut versuchen`,
     };
     return translations[key] || key;
   }
 
   loginForm = this.fb.group({
-    gameId: ['', [Validators.required, Validators.minLength(20)]], // Game IDs are long Firestore IDs
-    password: ['', [Validators.required, Validators.minLength(4)]], // PINs usually 6
+    gameId: ['', [Validators.required, Validators.minLength(20)]],
+    password: ['', [Validators.required, Validators.minLength(4)]],
   });
 
   private autoSubmitted = false;
+  isLoading = false;
+  showErrorModal = false;
+  errorMessage = '';
+  private isSubmitting = false;
 
   async ngOnInit() {
-    // 1. Check if user is already logged in as a player
     this.authService.user$.pipe(first()).subscribe((user) => {
       if (user?.uid.startsWith('player-')) {
         this.router.navigate(['/game'], { replaceUrl: true });
         return;
       }
 
-      // 2. Only if not logged in, handle auto-login params
       this.route.queryParams.pipe(first()).subscribe(async (params) => {
         const { gameId, pin } = params;
         if (gameId && pin) {
-          // Auto-fill form
           this.loginForm.patchValue({ gameId, password: pin });
-
-          // Mark as touched and dirty to help browsers recognize interaction
           const gId = this.loginForm.get('gameId');
           const pass = this.loginForm.get('password');
           gId?.markAsTouched();
           gId?.markAsDirty();
           pass?.markAsTouched();
           pass?.markAsDirty();
-
           this.cdr.detectChanges();
 
-          // Use NgZone to ensure the timeout runs within Angular's tracking
           this.ngZone.runOutsideAngular(() => {
             setTimeout(() => {
               if (this.autoSubmitted) return;
@@ -205,12 +202,6 @@ export class PlayerLoginComponent implements OnInit {
       });
     });
   }
-
-  isLoading = false;
-  showErrorModal = false;
-  errorMessage = '';
-
-  private isSubmitting = false;
 
   async onSubmit(event?: Event) {
     if (event) {
@@ -231,12 +222,11 @@ export class PlayerLoginComponent implements OnInit {
     this.cdr.detectChanges();
 
     const { gameId, password } = this.loginForm.value;
-
     if (!gameId || !password) return;
 
     try {
       await this.authService.loginAsPlayer(gameId, password);
-      const _success = await this.router.navigate(['/game'], { replaceUrl: true });
+      await this.router.navigate(['/game'], { replaceUrl: true });
     } catch (err: unknown) {
       console.error('Login failed:', err);
       this.errorMessage = (err as Error).message || 'playerLogin.error.msg';

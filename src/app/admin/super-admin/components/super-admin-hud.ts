@@ -15,10 +15,10 @@ export class SuperAdminHudComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'superadmin.title': $localize`:@@superadmin.title:System-Administrator`,
-      'user.photoURL': $localize`:@@user.photoURL:assets/images/ok.jpg`,
-      'superadmin.badge': $localize`:@@superadmin.badge:System`,
-      'superadmin.logout': $localize`:@@superadmin.logout:Abmelden`,
+      'superadmin.title': $localize`:Main Heading|Title of the super admin dashboard@@superadmin.title:System-Administrator`,
+      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/ok.jpg`,
+      'superadmin.badge': $localize`:Badge Label|Label for system-level badge@@superadmin.badge:System`,
+      'superadmin.logout': $localize`:Action Label|Logout button text for super admin@@superadmin.logout:Abmelden`,
     };
     return translations[key] || key;
   }
