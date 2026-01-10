@@ -40,396 +40,712 @@
       </segment>
     </unit>
     <unit id="dashboard.createGame.title">
+      <notes>
+        <note category="description">Title for the game creation form</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Neues Spiel erstellen</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.name">
+      <notes>
+        <note category="description">Label for the game name input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Spielname</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.phName">
+      <notes>
+        <note category="description">Placeholder for the game name input</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Spielname</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.playerLabel">
+      <notes>
+        <note category="description">Label for the player designation input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Spieler-Bezeichnung (z. B. Team, Farmer)</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.phPlayer">
+      <notes>
+        <note category="description">Placeholder for the player designation input</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Spieler</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.players">
+      <notes>
+        <note category="description">Label for number of players input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Spieler (1-50)</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.rounds">
+      <notes>
+        <note category="description">Label for number of rounds input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Runden</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.bots">
+      <notes>
+        <note category="description">Label for number of AI bots input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>KI-Bots</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.aiLevel">
+      <notes>
+        <note category="description">Label for AI difficulty level input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>KI-Niveau</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.submit">
+      <notes>
+        <note category="description">Button to create a new game</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>+ Neues Spiel erstellen</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.creating">
+      <notes>
+        <note category="description">Text shown while game is being created</note>
+        <note category="meaning">Loading State</note>
+      </notes>
       <segment>
         <source>Wird erstellt...</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.required">
+      <notes>
+        <note category="description">Text indicating a field is required</note>
+        <note category="meaning">Form Error</note>
+      </notes>
       <segment>
         <source>Erforderlich</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.nameHint">
+      <notes>
+        <note category="description">Guidance for choosing a game name</note>
+        <note category="meaning">Form Hint</note>
+      </notes>
       <segment>
         <source>Wähle einen aussagekräftigen Namen für dein Spiel.</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.playerHint">
+      <notes>
+        <note category="description">Guidance for choosing player labels</note>
+        <note category="meaning">Form Hint</note>
+      </notes>
       <segment>
         <source>Wie sollen die Teilnehmenden genannt werden?</source>
       </segment>
     </unit>
     <unit id="ai.level.elementary">
+      <notes>
+        <note category="description">Elementary school level AI</note>
+        <note category="meaning">Difficulty Level</note>
+      </notes>
       <segment>
         <source>Grundschule</source>
       </segment>
     </unit>
     <unit id="ai.level.middle">
+      <notes>
+        <note category="description">Middle school level AI</note>
+        <note category="meaning">Difficulty Level</note>
+      </notes>
       <segment>
         <source>Mittelstufe</source>
       </segment>
     </unit>
     <unit id="ai.level.high">
+      <notes>
+        <note category="description">High school level AI</note>
+        <note category="meaning">Difficulty Level</note>
+      </notes>
       <segment>
         <source>Oberstufe</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.permanent">
+      <notes>
+        <note category="description">Title for permanent deletion modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Dauerhaftes Löschen</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.confirm">
+      <notes>
+        <note category="description">Subheading for confirming deletion</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Löschen bestätigen</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.questionPermanent">
+      <notes>
+        <note category="description">Confirmation question for permanent deletion</note>
+        <note category="meaning">Question</note>
+      </notes>
       <segment>
         <source>Dauerhaft löschen?</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.question">
+      <notes>
+        <note category="description">Confirmation question for regular deletion</note>
+        <note category="meaning">Question</note>
+      </notes>
       <segment>
         <source>Löschen?</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.questionBatchPermanent">
+      <notes>
+        <note category="description">Confirmation question for batch permanent deletion</note>
+        <note category="meaning">Question</note>
+      </notes>
       <segment>
         <source>Ausgewählte dauerhaft löschen?</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.questionBatch">
+      <notes>
+        <note category="description">Confirmation question for batch regular deletion</note>
+        <note category="meaning">Question</note>
+      </notes>
       <segment>
         <source>Ausgewählte löschen?</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.games">
+      <notes>
+        <note category="description">Label for games being deleted</note>
+        <note category="meaning">Object Label</note>
+      </notes>
       <segment>
         <source>Spiel(e)</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.soft.title">
+      <notes>
+        <note category="description">Title for trash information section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Papierkorb:</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.soft.desc">
+      <notes>
+        <note category="description">Explanation of how the trash feature works</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Spiele werden in den Papierkorb verschoben. Du kannst sie jederzeit wiederherstellen innerhalb von</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.days">
+      <notes>
+        <note category="description">Label for time duration in days</note>
+        <note category="meaning">Unit Label</note>
+      </notes>
       <segment>
         <source>Tagen</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.warning">
+      <notes>
+        <note category="description">Warning prefix for permanent deletion</note>
+        <note category="meaning">Alert Label</note>
+      </notes>
       <segment>
         <source>WARNUNG:</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.permanentDesc">
+      <notes>
+        <note category="description">Description of the consequences of permanent deletion</note>
+        <note category="meaning">Warning Message</note>
+      </notes>
       <segment>
         <source>Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.typeConfirm">
+      <notes>
+        <note category="description">Instruction to type DELETE to confirm</note>
+        <note category="meaning">Action Instruction</note>
+      </notes>
       <segment>
         <source>Tippe &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.cancel">
+      <notes>
+        <note category="description">Button to cancel deletion</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Abbrechen</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.btnPermanent">
+      <notes>
+        <note category="description">Button to confirm permanent deletion</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Dauerhaft löschen</source>
       </segment>
     </unit>
     <unit id="dashboard.delete.btnGame">
+      <notes>
+        <note category="description">Button to confirm regular deletion</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Spiel löschen</source>
       </segment>
     </unit>
     <unit id="dashboard.error.title">
+      <notes>
+        <note category="description">Title for error messages</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Fehler</source>
       </segment>
     </unit>
     <unit id="dashboard.error.close">
+      <notes>
+        <note category="description">Button to close the error modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Schließen</source>
       </segment>
     </unit>
     <unit id="dashboard.details.players">
+      <notes>
+        <note category="description">Title for the players details section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Spieler</source>
       </segment>
     </unit>
     <unit id="dashboard.details.noPlayers">
+      <notes>
+        <note category="description">Shown when no players have joined yet</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Noch keine Spieler beigetreten.</source>
       </segment>
     </unit>
     <unit id="dashboard.deadline.title">
+      <notes>
+        <note category="description">Title for the round deadline manager</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Runden-Frist-Manager</source>
       </segment>
     </unit>
     <unit id="dashboard.deadline.round">
+      <notes>
+        <note category="description">Label for round deadline input</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Rundenfrist</source>
       </segment>
     </unit>
     <unit id="dashboard.deadline.set">
+      <notes>
+        <note category="description">Button to set the deadline</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Frist setzen</source>
       </segment>
     </unit>
     <unit id="dashboard.deadline.hint">
+      <notes>
+        <note category="description">Explanation about what happens when deadline is reached</note>
+        <note category="meaning">Info Hint</note>
+      </notes>
       <segment>
         <source>* Wenn eine Frist gesetzt ist, übernimmt die KI automatisch für alle Spieler, die bis dahin nicht abgegeben haben.</source>
       </segment>
     </unit>
     <unit id="dashboard.player.label">
+      <notes>
+        <note category="description">Label for player information</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Spieler</source>
       </segment>
     </unit>
     <unit id="dashboard.player.capital">
+      <notes>
+        <note category="description">Label for player capital</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Kapital</source>
       </segment>
     </unit>
     <unit id="dashboard.player.round">
+      <notes>
+        <note category="description">Label for player current round</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Runde</source>
       </segment>
     </unit>
     <unit id="dashboard.player.soil">
+      <notes>
+        <note category="description">Label for average soil quality</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Bodenqualität (ø)</source>
       </segment>
     </unit>
     <unit id="dashboard.player.nutrition">
+      <notes>
+        <note category="description">Label for average nutrition level</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Nährstoffe (ø)</source>
       </segment>
     </unit>
     <unit id="dashboard.player.submitted">
+      <notes>
+        <note category="description">Label for submission status</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Abgegeben?</source>
       </segment>
     </unit>
     <unit id="dashboard.player.toHuman">
+      <notes>
+        <note category="description">Button to convert AI to human player</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>ZU MENSCH</source>
       </segment>
     </unit>
     <unit id="dashboard.player.toAi">
+      <notes>
+        <note category="description">Button to convert human to AI player</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>ZU KI</source>
       </segment>
     </unit>
     <unit id="dashboard.player.login">
+      <notes>
+        <note category="description">Button to log in as player</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>LOGIN</source>
       </segment>
     </unit>
     <unit id="dashboard.player.copyUrl">
+      <notes>
+        <note category="description">Button to copy player login URL</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>URL KOPIEREN</source>
       </segment>
     </unit>
     <unit id="dashboard.player.printAll">
+      <notes>
+        <note category="description">Button to print all player QR codes</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>ALLE QR-CODES DRUCKEN</source>
       </segment>
     </unit>
     <unit id="dashboard.list.trash">
+      <notes>
+        <note category="description">Title for the trash view of games</note>
+        <note category="meaning">List Header</note>
+      </notes>
       <segment>
         <source>Papierkorb (Gelöschte Spiele)</source>
       </segment>
     </unit>
     <unit id="dashboard.list.active">
+      <notes>
+        <note category="description">Title for the active games list</note>
+        <note category="meaning">List Header</note>
+      </notes>
       <segment>
         <source>Aktive Spiele</source>
       </segment>
     </unit>
     <unit id="dashboard.list.refresh">
+      <notes>
+        <note category="description">Button to refresh the games list</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Liste aktualisieren</source>
       </segment>
     </unit>
     <unit id="dashboard.filter.active">
+      <notes>
+        <note category="description">Filter for active games</note>
+        <note category="meaning">Filter Label</note>
+      </notes>
       <segment>
         <source>Aktiv</source>
       </segment>
     </unit>
     <unit id="dashboard.filter.trash">
+      <notes>
+        <note category="description">Filter for games in trash</note>
+        <note category="meaning">Filter Label</note>
+      </notes>
       <segment>
         <source>Papierkorb</source>
       </segment>
     </unit>
     <unit id="dashboard.actions.restoreSelected">
+      <notes>
+        <note category="description">Button to restore selected games from trash</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Ausgewählte wiederherstellen</source>
       </segment>
     </unit>
     <unit id="dashboard.actions.deleteSelected">
+      <notes>
+        <note category="description">Button to delete selected games</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Ausgewählte löschen</source>
       </segment>
     </unit>
     <unit id="dashboard.error.retry">
+      <notes>
+        <note category="description">Button to retry an action after error</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Erneut versuchen</source>
       </segment>
     </unit>
     <unit id="dashboard.loading.games">
+      <notes>
+        <note category="description">Text shown while loading the list of games</note>
+        <note category="meaning">Loading State</note>
+      </notes>
       <segment>
         <source>Spiele werden geladen...</source>
       </segment>
     </unit>
     <unit id="dashboard.table.name">
+      <notes>
+        <note category="description">Table header for game name</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Name</source>
       </segment>
     </unit>
     <unit id="dashboard.table.details">
+      <notes>
+        <note category="description">Table header for game details</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Details</source>
       </segment>
     </unit>
     <unit id="dashboard.table.round">
+      <notes>
+        <note category="description">Table header for current round</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Runde</source>
       </segment>
     </unit>
     <unit id="dashboard.table.deletedAt">
+      <notes>
+        <note category="description">Table header for deletion date</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Gelöscht am</source>
       </segment>
     </unit>
     <unit id="dashboard.table.created">
+      <notes>
+        <note category="description">Table header for creation date</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Erstellt</source>
       </segment>
     </unit>
     <unit id="dashboard.table.actions">
+      <notes>
+        <note category="description">Table header for available actions</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source>Aktionen</source>
       </segment>
     </unit>
     <unit id="dashboard.table.id">
+      <notes>
+        <note category="description">Prefix for game ID</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>ID:</source>
       </segment>
     </unit>
     <unit id="dashboard.table.email">
+      <notes>
+        <note category="description">Action to send game details via email</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Spieldetails senden</source>
       </segment>
     </unit>
     <unit id="dashboard.table.restore">
+      <notes>
+        <note category="description">Action to restore a single game</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Spiel wiederherstellen</source>
       </segment>
     </unit>
     <unit id="dashboard.table.delete">
+      <notes>
+        <note category="description">Action to delete a single game</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Spiel löschen</source>
       </segment>
     </unit>
     <unit id="dashboard.empty.title">
+      <notes>
+        <note category="description">Title shown when the games list is empty</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Keine Spiele gefunden.</source>
       </segment>
     </unit>
     <unit id="dashboard.empty.subtitle">
+      <notes>
+        <note category="description">Suggestion to create a game when list is empty</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Erstelle ein neues Spiel, um zu beginnen!</source>
       </segment>
     </unit>
     <unit id="dashboard.pagination.showing">
+      <notes>
+        <note category="description">Text prefix for currently shown items</note>
+        <note category="meaning">Pagination Info</note>
+      </notes>
       <segment>
         <source>Zeige</source>
       </segment>
     </unit>
     <unit id="dashboard.pagination.of">
+      <notes>
+        <note category="description">Text separator for total items count</note>
+        <note category="meaning">Pagination Info</note>
+      </notes>
       <segment>
         <source>von</source>
       </segment>
     </unit>
     <unit id="dashboard.pagination.prev">
+      <notes>
+        <note category="description">Previous page button text</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Zurück</source>
       </segment>
     </unit>
     <unit id="dashboard.pagination.page">
+      <notes>
+        <note category="description">Label for current page</note>
+        <note category="meaning">Pagination Info</note>
+      </notes>
       <segment>
         <source>Seite</source>
       </segment>
     </unit>
     <unit id="dashboard.pagination.next">
+      <notes>
+        <note category="description">Next page button text</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Weiter</source>
       </segment>
     </unit>
     <unit id="dashboard.logout.title">
+      <notes>
+        <note category="description">Tooltip for the logout button</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Logout</source>
       </segment>
@@ -440,176 +756,316 @@
       </segment>
     </unit>
     <unit id="dashboard.pending.welcome">
+      <notes>
+        <note category="description">Greeting for user awaiting account approval</note>
+        <note category="meaning">Welcome Message</note>
+      </notes>
       <segment>
         <source> Danke für die Registrierung, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user?.displayName }}"/></pc>! </source>
       </segment>
     </unit>
     <unit id="dashboard.logout">
+      <notes>
+        <note category="description">Logout button text</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Abmelden</source>
       </segment>
     </unit>
     <unit id="dashboard.pending.title">
+      <notes>
+        <note category="description">Title for account pending approval</note>
+        <note category="meaning">Status Title</note>
+      </notes>
       <segment>
         <source>Konto wartet auf Genehmigung</source>
       </segment>
     </unit>
     <unit id="dashboard.pending.message">
+      <notes>
+        <note category="description">Information about the account approval process</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.</source>
       </segment>
     </unit>
     <unit id="dashboard.super.title">
+      <notes>
+        <note category="description">Title for the super admin access section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Super-Admin-Zugriff</source>
       </segment>
     </unit>
     <unit id="dashboard.super.redirect">
+      <notes>
+        <note category="description">Information about being redirected to the super admin console</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Weiterleitung zur Super-Admin-Konsole...</source>
       </segment>
     </unit>
     <unit id="dashboard.super.btnGo">
+      <notes>
+        <note category="description">Button to go to the super admin console</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Zur Konsole</source>
       </segment>
     </unit>
     <unit id="dashboard.qr.access">
+      <notes>
+        <note category="description">Title for the QR access modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Zugang</source>
       </segment>
     </unit>
     <unit id="dashboard.qr.scan">
+      <notes>
+        <note category="description">Instruction to scan the QR code</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Scannen zum automatischen Anmelden.</source>
       </segment>
     </unit>
     <unit id="dashboard.qr.print">
+      <notes>
+        <note category="description">Button to print the QR code</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Drucken</source>
       </segment>
     </unit>
     <unit id="dashboard.qr.close">
+      <notes>
+        <note category="description">Button to close the QR modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Schließen</source>
       </segment>
     </unit>
     <unit id="dashboard.welcome">
+      <notes>
+        <note category="description">Greeting for the logged-in user</note>
+        <note category="meaning">Welcome Message</note>
+      </notes>
       <segment>
         <source> Willkommen, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/></pc>! </source>
       </segment>
     </unit>
     <unit id="dashboard.btnFeedback">
+      <notes>
+        <note category="description">Button to open feedback modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Feedback</source>
       </segment>
     </unit>
     <unit id="dashboard.title">
+      <notes>
+        <note category="description">Title of the teacher dashboard</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Dashboard für Lehrkräfte</source>
       </segment>
     </unit>
     <unit id="dashboard.loading.verifying">
+      <notes>
+        <note category="description">Text shown while checking account status</note>
+        <note category="meaning">Loading State</note>
+      </notes>
       <segment>
         <source>Konto-Status wird geprüft...</source>
       </segment>
     </unit>
     <unit id="dashboard.controls.title">
+      <notes>
+        <note category="description">Title for game configuration section</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Konfiguration</source>
       </segment>
     </unit>
     <unit id="dashboard.created.title">
+      <notes>
+        <note category="description">Title shown when a game is successfully created</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Spiel erstellt!</source>
       </segment>
     </unit>
     <unit id="dashboard.created.id">
+      <notes>
+        <note category="description">Label for the game ID</note>
+        <note category="meaning">Field Label</note>
+      </notes>
       <segment>
         <source>Spiel-ID</source>
       </segment>
     </unit>
     <unit id="dashboard.login.msg">
+      <notes>
+        <note category="description">Message shown when user needs to log in</note>
+        <note category="meaning">Info Message</note>
+      </notes>
       <segment>
         <source>Bitte melde dich an, um auf das Dashboard zuzugreifen.</source>
       </segment>
     </unit>
     <unit id="dashboard.login.btn">
+      <notes>
+        <note category="description">Button for Google login</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Anmelden mit Google</source>
       </segment>
     </unit>
     <unit id="dashboard.adj.green">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Adjective</note>
+      </notes>
       <segment>
         <source>Grünes</source>
       </segment>
     </unit>
     <unit id="dashboard.adj.sunny">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Adjective</note>
+      </notes>
       <segment>
         <source>Sonniges</source>
       </segment>
     </unit>
     <unit id="dashboard.adj.golden">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Adjective</note>
+      </notes>
       <segment>
         <source>Goldenes</source>
       </segment>
     </unit>
     <unit id="dashboard.adj.misty">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Adjective</note>
+      </notes>
       <segment>
         <source>Nebeliges</source>
       </segment>
     </unit>
     <unit id="dashboard.adj.fertile">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Adjective</note>
+      </notes>
       <segment>
         <source>Fruchtbares</source>
       </segment>
     </unit>
     <unit id="dashboard.adj.quiet">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Adjective</note>
+      </notes>
       <segment>
         <source>Stilles</source>
       </segment>
     </unit>
     <unit id="dashboard.adj.wild">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Adjective</note>
+      </notes>
       <segment>
         <source>Wildes</source>
       </segment>
     </unit>
     <unit id="dashboard.noun.valley">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Noun</note>
+      </notes>
       <segment>
         <source>Tal</source>
       </segment>
     </unit>
     <unit id="dashboard.noun.field">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Noun</note>
+      </notes>
       <segment>
         <source>Feld</source>
       </segment>
     </unit>
     <unit id="dashboard.noun.meadow">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Noun</note>
+      </notes>
       <segment>
         <source>Wiesental</source>
       </segment>
     </unit>
     <unit id="dashboard.noun.farm">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Noun</note>
+      </notes>
       <segment>
         <source>Gut</source>
       </segment>
     </unit>
     <unit id="dashboard.noun.acre">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Noun</note>
+      </notes>
       <segment>
         <source>Land</source>
       </segment>
     </unit>
     <unit id="dashboard.noun.grove">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Noun</note>
+      </notes>
       <segment>
         <source>Hain</source>
       </segment>
     </unit>
     <unit id="dashboard.noun.orchard">
+      <notes>
+        <note category="description">Part of random game name generation</note>
+        <note category="meaning">Noun</note>
+      </notes>
       <segment>
         <source>Garten</source>
       </segment>
     </unit>
     <unit id="feedback.success">
+      <notes>
+        <note category="description">Toast shown after successful feedback submission</note>
+        <note category="meaning">Success Message</note>
+      </notes>
       <segment>
         <source>Vielen Dank für dein Feedback!</source>
       </segment>
@@ -1055,11 +1511,19 @@
       </segment>
     </unit>
     <unit id="footer.impressum">
+      <notes>
+        <note category="description">Link to the imprint page</note>
+        <note category="meaning">Legal notice</note>
+      </notes>
       <segment>
         <source>Impressum</source>
       </segment>
     </unit>
     <unit id="footer.manual">
+      <notes>
+        <note category="description">Link to the game manual page</note>
+        <note category="meaning">User manual</note>
+      </notes>
       <segment>
         <source>Handbuch</source>
       </segment>
@@ -1155,151 +1619,271 @@
       </segment>
     </unit>
     <unit id="adminRegister.title">
+      <notes>
+        <note category="description">Title of the teacher registration page</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Registrierung für Lehrkräfte</source>
       </segment>
     </unit>
     <unit id="adminRegister.subtitle">
+      <notes>
+        <note category="description">Invitation to join the SOIL community</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Treten Sie der SOIL-Community bei</source>
       </segment>
     </unit>
     <unit id="adminRegister.completeTitle">
+      <notes>
+        <note category="description">Title for completing the registration for Google users</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Registrierung abschließen</source>
       </segment>
     </unit>
     <unit id="adminRegister.passwordRequirement">
+      <notes>
+        <note category="description">Requirement for password length</note>
+        <note category="meaning">Form Hint</note>
+      </notes>
       <segment>
         <source> Erforderlich: Mindestens 6 Zeichen </source>
       </segment>
     </unit>
     <unit id="adminRegister.explanationRequirement">
+      <notes>
+        <note category="description">Requirement for explanation length</note>
+        <note category="meaning">Form Hint</note>
+      </notes>
       <segment>
         <source> Erforderlich: Mindestens 20 Zeichen </source>
       </segment>
     </unit>
     <unit id="adminRegister.processing">
+      <notes>
+        <note category="description">Indicates the registration is being processed</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Wird verarbeitet...</source>
       </segment>
     </unit>
     <unit id="adminRegister.btnSubmit">
+      <notes>
+        <note category="description">Button to submit the registration request</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Registrierung beantragen</source>
       </segment>
     </unit>
     <unit id="adminRegister.backToHome">
+      <notes>
+        <note category="description">Link to return to the home page</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Zurück zur Startseite </source>
       </segment>
     </unit>
     <unit id="adminRegister.signedInAs">
+      <notes>
+        <note category="description">Indicates who the user is signed in as</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Angemeldet als</source>
       </segment>
     </unit>
     <unit id="adminRegister.viaGoogle">
+      <notes>
+        <note category="description">Indicates the authentication provider</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>über Google</source>
       </segment>
     </unit>
     <unit id="adminRegister.completeApp">
+      <notes>
+        <note category="description">Request to complete the registration application</note>
+        <note category="meaning">Instruction</note>
+      </notes>
       <segment>
         <source>Bitte vervollständigen Sie Ihren Antrag</source>
       </segment>
     </unit>
     <unit id="adminRegister.firstName">
+      <notes>
+        <note category="description">Label for first name input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Vorname</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.firstName">
+      <notes>
+        <note category="description">Placeholder for first name</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Max</source>
       </segment>
     </unit>
     <unit id="adminRegister.lastName">
+      <notes>
+        <note category="description">Label for last name input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Nachname</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.lastName">
+      <notes>
+        <note category="description">Placeholder for last name</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Mustermann</source>
       </segment>
     </unit>
     <unit id="adminRegister.email">
+      <notes>
+        <note category="description">Label for email input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>E-Mail-Adresse</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.email">
+      <notes>
+        <note category="description">Placeholder for email address</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>admin@schule.de</source>
       </segment>
     </unit>
     <unit id="adminRegister.error.email">
+      <notes>
+        <note category="description">Error shown for invalid email</note>
+        <note category="meaning">Error Message</note>
+      </notes>
       <segment>
         <source>Bitte geben Sie eine gültige E-Mail-Adresse ein</source>
       </segment>
     </unit>
     <unit id="adminRegister.password">
+      <notes>
+        <note category="description">Label for password input</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Passwort</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.password">
+      <notes>
+        <note category="description">Placeholder for password field</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Mindestens 6 Zeichen</source>
       </segment>
     </unit>
     <unit id="adminRegister.error.password">
+      <notes>
+        <note category="description">Error shown for short password</note>
+        <note category="meaning">Error Message</note>
+      </notes>
       <segment>
         <source>Das Passwort muss mindestens 6 Zeichen lang sein</source>
       </segment>
     </unit>
     <unit id="adminRegister.institution">
+      <notes>
+        <note category="description">Label for school or institution name</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Institution / Schule</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.institution">
+      <notes>
+        <note category="description">Placeholder for school name</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>z.B. Humboldt Gymnasium</source>
       </segment>
     </unit>
     <unit id="adminRegister.website">
+      <notes>
+        <note category="description">Label for institution website URL</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Website der Institution</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.website">
+      <notes>
+        <note category="description">Placeholder for institution website</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>https://schule.de</source>
       </segment>
     </unit>
     <unit id="adminRegister.explanation">
+      <notes>
+        <note category="description">Label for usage explanation textarea</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Warum möchten Sie SOIL nutzen?</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.explanation">
+      <notes>
+        <note category="description">Placeholder for usage explanation</note>
+        <note category="meaning">Form Placeholder</note>
+      </notes>
       <segment>
         <source>Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht</source>
       </segment>
     </unit>
     <unit id="adminRegister.success.verificationSent">
+      <notes>
+        <note category="description">Notification that registration was successful and email sent</note>
+        <note category="meaning">Success Message</note>
+      </notes>
       <segment>
         <source>Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.</source>
       </segment>
     </unit>
     <unit id="adminRegister.error.title">
+      <notes>
+        <note category="description">Title for registration error modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Registrierung fehlgeschlagen</source>
       </segment>
     </unit>
     <unit id="adminRegister.error.retry">
+      <notes>
+        <note category="description">Button to retry registration</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Erneut versuchen</source>
       </segment>
@@ -1450,111 +2034,199 @@
       </segment>
     </unit>
     <unit id="board.mobile.overlays">
+      <notes>
+        <note category="description">Group header for map overlays in mobile menu</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Einblendungen</source>
       </segment>
     </unit>
     <unit id="board.mobile.names">
+      <notes>
+        <note category="description">Toggle display of field names</note>
+        <note category="meaning">Button Label</note>
+      </notes>
       <segment>
         <source>Feldnamen</source>
       </segment>
     </unit>
     <unit id="board.mobile.nutrition">
+      <notes>
+        <note category="description">Toggle display of nutrition levels</note>
+        <note category="meaning">Button Label</note>
+      </notes>
       <segment>
         <source>Nährstoffe</source>
       </segment>
     </unit>
     <unit id="board.mobile.harvest">
+      <notes>
+        <note category="description">Toggle display of harvest yields</note>
+        <note category="meaning">Button Label</note>
+      </notes>
       <segment>
         <source>Ertrag</source>
       </segment>
     </unit>
     <unit id="board.mobile.soil">
+      <notes>
+        <note category="description">Toggle display of soil quality</note>
+        <note category="meaning">Button Label</note>
+      </notes>
       <segment>
         <source>Bodenqualität</source>
       </segment>
     </unit>
     <unit id="board.mobile.finance">
+      <notes>
+        <note category="description">Toggle display of financial report</note>
+        <note category="meaning">Button Label</note>
+      </notes>
       <segment>
         <source>Finanzen</source>
       </segment>
     </unit>
     <unit id="board.mobile.actions">
+      <notes>
+        <note category="description">Group header for game actions in mobile menu</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Aktionen</source>
       </segment>
     </unit>
     <unit id="board.mobile.roundOptions">
+      <notes>
+        <note category="description">Open modal for round-specific settings</note>
+        <note category="meaning">Button Label</note>
+      </notes>
       <segment>
         <source>Runden-Optionen</source>
       </segment>
     </unit>
     <unit id="board.mobile.waiting">
+      <notes>
+        <note category="description">Wait message for round submission</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Warten auf andere...</source>
       </segment>
     </unit>
     <unit id="board.mobile.nextRound">
+      <notes>
+        <note category="description">Submit round and proceed to next</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Nächste Runde</source>
       </segment>
     </unit>
     <unit id="board.mobile.endGame">
+      <notes>
+        <note category="description">Indicates the game has ended</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Spiel beendet</source>
       </segment>
     </unit>
     <unit id="board.activePlayer">
+      <notes>
+        <note category="description">Indicates the current active player</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Aktiver Spieler</source>
       </segment>
     </unit>
     <unit id="board.banner.readOnly">
+      <notes>
+        <note category="description">Banner shown when in admin preview mode</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Nur Lesezugriff (Admin-Vorschau)</source>
       </segment>
     </unit>
     <unit id="board.error.title">
+      <notes>
+        <note category="description">Title for error modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Fehler</source>
       </segment>
     </unit>
     <unit id="board.error.close">
+      <notes>
+        <note category="description">Button to close the error modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Schließen </source>
       </segment>
     </unit>
     <unit id="board.round">
+      <notes>
+        <note category="description">Prefix for the round number display</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Runde</source>
       </segment>
     </unit>
     <unit id="board.gameEnd.title">
+      <notes>
+        <note category="description">Title shown when the game is finished</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source> Spiel beendet! </source>
       </segment>
     </unit>
     <unit id="board.gameEnd.subtitle">
+      <notes>
+        <note category="description">Congratulations message at the end of the game</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source> Herausragende Leistung aller Landwirte. </source>
       </segment>
     </unit>
     <unit id="board.gameEnd.financialTitle">
+      <notes>
+        <note category="description">Title for the player with the most capital</note>
+        <note category="meaning">Award Title</note>
+      </notes>
       <segment>
         <source> Finanz-Champion </source>
       </segment>
     </unit>
     <unit id="board.gameEnd.soilTitle">
+      <notes>
+        <note category="description">Title for the player with the best average soil quality</note>
+        <note category="meaning">Award Title</note>
+      </notes>
       <segment>
         <source> Boden-Wächter </source>
       </segment>
     </unit>
     <unit id="board.gameEnd.viewResults">
+      <notes>
+        <note category="description">Button to close the celebration modal and view results</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Ergebnisse ansehen </source>
       </segment>
     </unit>
     <unit id="board.gameEnd.backToDashboard">
+      <notes>
+        <note category="description">Button to return to the teacher dashboard</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Zum Dashboard </source>
       </segment>
@@ -1620,181 +2292,325 @@
       </segment>
     </unit>
     <unit id="board.nav.endGame">
+      <notes>
+        <note category="description">Indicates the game has ended</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Spiel beendet</source>
       </segment>
     </unit>
     <unit id="board.login.adminTitle">
+      <notes>
+        <note category="description">Title for the administrator login section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source> Administrator </source>
       </segment>
     </unit>
     <unit id="board.login.adminDesc">
+      <notes>
+        <note category="description">Short explanation for administrator role</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Spiel erstellen und verwalten</source>
       </segment>
     </unit>
     <unit id="board.login.btnGoogle">
+      <notes>
+        <note category="description">Button to sign in using Google as admin</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Mit Google anmelden</source>
       </segment>
     </unit>
     <unit id="board.login.playerTitle">
+      <notes>
+        <note category="description">Title for the player login section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source> Spieler </source>
       </segment>
     </unit>
     <unit id="board.login.playerDesc">
+      <notes>
+        <note category="description">Short explanation for player role</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Einem bestehenden Spiel beitreten</source>
       </segment>
     </unit>
     <unit id="board.login.btnLogin">
+      <notes>
+        <note category="description">Button to log in as player</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Anmelden</source>
       </segment>
     </unit>
     <unit id="finance.title">
+      <notes>
+        <note category="description">Title of the financial report</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Finanzbericht</source>
       </segment>
     </unit>
     <unit id="finance.subtitle">
+      <notes>
+        <note category="description">Description of the financial report analysis</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source> Detaillierte Analyse Ihrer landwirtschaftlichen Leistung </source>
       </segment>
     </unit>
     <unit id="finance.noRounds">
+      <notes>
+        <note category="description">Message shown when no rounds are available</note>
+        <note category="meaning">Empty State</note>
+      </notes>
       <segment>
         <source>Keine Runden verfügbar</source>
       </segment>
     </unit>
     <unit id="finance.charts.capital">
+      <notes>
+        <note category="description">Title for the capital history graph</note>
+        <note category="meaning">Chart Title</note>
+      </notes>
       <segment>
         <source> Kapitalverlauf über die Runden </source>
       </segment>
     </unit>
     <unit id="finance.header.category">
+      <notes>
+        <note category="description">Category of the financial entry</note>
+        <note category="meaning">Column Header</note>
+      </notes>
       <segment>
         <source> Kategorie </source>
       </segment>
     </unit>
     <unit id="finance.you">
+      <notes>
+        <note category="description">Marker for the current player in the list</note>
+        <note category="meaning">User Indicator</note>
+      </notes>
       <segment>
         <source>DU</source>
       </segment>
     </unit>
     <unit id="finance.group.decisions">
+      <notes>
+        <note category="description">Decisions made by players</note>
+        <note category="meaning">Group Header</note>
+      </notes>
       <segment>
         <source> Entscheidungen </source>
       </segment>
     </unit>
     <unit id="finance.fertilizer">
+      <notes>
+        <note category="description">Usage of mineral fertilizer</note>
+        <note category="meaning">Decision Label</note>
+      </notes>
       <segment>
         <source> Mineraldünger </source>
       </segment>
     </unit>
     <unit id="finance.pesticide">
+      <notes>
+        <note category="description">Usage of pesticides</note>
+        <note category="meaning">Decision Label</note>
+      </notes>
       <segment>
         <source> Pflanzenschutz </source>
       </segment>
     </unit>
     <unit id="finance.organisms">
+      <notes>
+        <note category="description">Usage of beneficial organisms</note>
+        <note category="meaning">Decision Label</note>
+      </notes>
       <segment>
         <source> Nützlinge </source>
       </segment>
     </unit>
     <unit id="finance.organic">
+      <notes>
+        <note category="description">Adherence to organic farming</note>
+        <note category="meaning">Decision Label</note>
+      </notes>
       <segment>
         <source> Ökologischer Landbau </source>
       </segment>
     </unit>
     <unit id="finance.group.expenses">
+      <notes>
+        <note category="description">Expenses incurred by players</note>
+        <note category="meaning">Group Header</note>
+      </notes>
       <segment>
         <source>Ausgaben</source>
       </segment>
     </unit>
     <unit id="finance.header.seeds">
+      <notes>
+        <note category="description">Costs for seeds</note>
+        <note category="meaning">Row Header</note>
+      </notes>
       <segment>
         <source>Saatgut</source>
       </segment>
     </unit>
     <unit id="finance.header.investments">
+      <notes>
+        <note category="description">Costs for investments</note>
+        <note category="meaning">Row Header</note>
+      </notes>
       <segment>
         <source>Investitionen</source>
       </segment>
     </unit>
     <unit id="finance.sub.machines">
+      <notes>
+        <note category="description">Costs for machines</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
       <segment>
         <source>Maschinen</source>
       </segment>
     </unit>
     <unit id="finance.sub.animalsInvest">
+      <notes>
+        <note category="description">Costs for animal stock</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
       <segment>
         <source> Tierbestand </source>
       </segment>
     </unit>
     <unit id="finance.header.running">
+      <notes>
+        <note category="description">Operational running costs</note>
+        <note category="meaning">Row Header</note>
+      </notes>
       <segment>
         <source>Betriebskosten</source>
       </segment>
     </unit>
     <unit id="finance.sub.base">
+      <notes>
+        <note category="description">Basic operating costs</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
       <segment>
         <source>Grundkosten</source>
       </segment>
     </unit>
     <unit id="finance.sub.organicControl">
+      <notes>
+        <note category="description">Costs for organic certification and control</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
       <segment>
         <source> Bio-Kontrolle </source>
       </segment>
     </unit>
     <unit id="finance.sub.pesticide">
+      <notes>
+        <note category="description">Costs for plant protection products</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
       <segment>
         <source> Pflanzenschutzmittel </source>
       </segment>
     </unit>
     <unit id="finance.sub.organisms">
+      <notes>
+        <note category="description">Costs for using beneficial organisms</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
       <segment>
         <source> Nützlinge (Kosten) </source>
       </segment>
     </unit>
     <unit id="finance.sub.animalsRunning">
+      <notes>
+        <note category="description">Costs for animal husbandry</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
       <segment>
         <source> Tierhaltung </source>
       </segment>
     </unit>
     <unit id="finance.group.income">
+      <notes>
+        <note category="description">Income earned by players</note>
+        <note category="meaning">Group Header</note>
+      </notes>
       <segment>
         <source> Einnahmen </source>
       </segment>
     </unit>
     <unit id="finance.header.harvest">
+      <notes>
+        <note category="description">Income from selling harvests</note>
+        <note category="meaning">Row Header</note>
+      </notes>
       <segment>
         <source> Ernteverkauf </source>
       </segment>
     </unit>
     <unit id="finance.result.profit">
+      <notes>
+        <note category="description">Profit or loss for the current round</note>
+        <note category="meaning">Row Header</note>
+      </notes>
       <segment>
         <source>Rundenergebnis</source>
       </segment>
     </unit>
     <unit id="finance.result.capital">
+      <notes>
+        <note category="description">Total capital after the round</note>
+        <note category="meaning">Row Header</note>
+      </notes>
       <segment>
         <source>Neues Gesamtkapital</source>
       </segment>
     </unit>
     <unit id="finance.playerStatus">
+      <notes>
+        <note category="description">Player status indicator</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source> Status </source>
       </segment>
     </unit>
     <unit id="finance.event.weather">
+      <notes>
+        <note category="description">Influence of weather on the results</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source> Wetter-Einfluss </source>
       </segment>
     </unit>
     <unit id="finance.event.vermin">
+      <notes>
+        <note category="description">Influence of vermin on the results</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source> Schädlings-Einfluss </source>
       </segment>
@@ -1850,61 +2666,109 @@
       </segment>
     </unit>
     <unit id="parcel.crop">
+      <notes>
+        <note category="description">Alternative text for the crop image on a parcel</note>
+        <note category="meaning">Asset Alt Text</note>
+      </notes>
       <segment>
         <source>Feldpflanze</source>
       </segment>
     </unit>
     <unit id="planting.title">
+      <notes>
+        <note category="description">Title of the planting selection modal</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Was möchtest du anbauen?</source>
       </segment>
     </unit>
     <unit id="planting.cancel">
+      <notes>
+        <note category="description">Button to cancel planting and close the modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Abbrechen </source>
       </segment>
     </unit>
     <unit id="roundResult.title">
+      <notes>
+        <note category="description">Title of the round result modal</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Rundenergebnis</source>
       </segment>
     </unit>
     <unit id="roundResult.profit">
+      <notes>
+        <note category="description">Profit earned in the current round</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Rundengewinn</source>
       </segment>
     </unit>
     <unit id="roundResult.bioSiegel">
+      <notes>
+        <note category="description">EU Organic Logo status</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>EU-Bio-Siegel</source>
       </segment>
     </unit>
     <unit id="roundResult.bioSiegelFail">
+      <notes>
+        <note category="description">Message shown when organic criteria are not met</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Kriterien nicht erfüllt</source>
       </segment>
     </unit>
     <unit id="roundResult.bioSiegelSuccess">
+      <notes>
+        <note category="description">Message shown when organic criteria are successfully met</note>
+        <note category="meaning">Status Message</note>
+      </notes>
       <segment>
         <source>Kriterien erfüllt!</source>
       </segment>
     </unit>
     <unit id="roundResult.conditions">
+      <notes>
+        <note category="description">Environmental conditions section</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Bedingungen</source>
       </segment>
     </unit>
     <unit id="roundResult.weather">
+      <notes>
+        <note category="description">Weather conditions</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Wetter</source>
       </segment>
     </unit>
     <unit id="roundResult.vermin">
+      <notes>
+        <note category="description">Vermin or pest situation</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Schädlinge</source>
       </segment>
     </unit>
     <unit id="roundResult.continue">
+      <notes>
+        <note category="description">Button to close the modal and continue playing</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source> Weiter </source>
       </segment>
@@ -1940,636 +2804,1144 @@
       </segment>
     </unit>
     <unit id="settings.title">
+      <notes>
+        <note category="description">Title of the round settings modal</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Rundeneinstellungen</source>
       </segment>
     </unit>
     <unit id="settings.machines">
+      <notes>
+        <note category="description">Label for machine usage slider</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Maschinen</source>
       </segment>
     </unit>
     <unit id="settings.machines_desc">
+      <notes>
+        <note category="description">Explanation of machine usage impacts</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Höherer Maschineneinsatz steigert die Effizienz, laugt aber den Boden langfristig aus.</source>
       </segment>
     </unit>
     <unit id="settings.organic">
+      <notes>
+        <note category="description">Label for organic farming toggle</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Ökologischer Anbau</source>
       </segment>
     </unit>
     <unit id="settings.organic_desc">
+      <notes>
+        <note category="description">Explanation of organic farming impacts</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Verzicht auf Chemie. Höhere Preise, geringere Erträge.</source>
       </segment>
     </unit>
     <unit id="settings.fertilizer">
+      <notes>
+        <note category="description">Label for synthetic fertilizer toggle</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Kunstdünger</source>
       </segment>
     </unit>
     <unit id="settings.fertilizer_desc">
+      <notes>
+        <note category="description">Explanation of synthetic fertilizer impacts</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Steigert die Nährstoffe. Verschlechtert langfristig die Bodenqualität.</source>
       </segment>
     </unit>
     <unit id="settings.pesticide">
+      <notes>
+        <note category="description">Label for pesticide usage toggle</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Pflanzenschutzmittel</source>
       </segment>
     </unit>
     <unit id="settings.pesticide_desc">
+      <notes>
+        <note category="description">Explanation of pesticide usage impacts</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Schützt vor Schädlingen. Schadet den Bodenorganismen.</source>
       </segment>
     </unit>
     <unit id="settings.organisms">
+      <notes>
+        <note category="description">Label for beneficial organisms toggle</note>
+        <note category="meaning">Form Label</note>
+      </notes>
       <segment>
         <source>Nützlinge</source>
       </segment>
     </unit>
     <unit id="settings.organisms_desc">
+      <notes>
+        <note category="description">Explanation of beneficial organisms impacts</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Natürliche Schädlingsbekämpfung. Teuer, aber nachhaltig.</source>
       </segment>
     </unit>
     <unit id="settings.cancel">
+      <notes>
+        <note category="description">Button to cancel settings and close modal</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Abbrechen</source>
       </segment>
     </unit>
     <unit id="settings.confirm">
+      <notes>
+        <note category="description">Button to confirm and save round settings</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Einstellungen bestätigen</source>
       </segment>
     </unit>
     <unit id="impressum.title">
+      <notes>
+        <note category="description">Title of the imprint page</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Impressum</source>
       </segment>
     </unit>
     <unit id="impressum.subtitle">
+      <notes>
+        <note category="description">Legal information and contact subtitle</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Rechtliche Informationen &amp; Kontakt</source>
       </segment>
     </unit>
     <unit id="impressum.backToHome">
+      <notes>
+        <note category="description">Link to return to the home page</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Zurück zur Startseite</source>
       </segment>
     </unit>
     <unit id="impressum.contact">
+      <notes>
+        <note category="description">Contact information section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Kontakt</source>
       </segment>
     </unit>
     <unit id="impressum.responsible">
+      <notes>
+        <note category="description">Section identifying the person responsible for content</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Verantwortlich</source>
       </segment>
     </unit>
     <unit id="impressum.imageSources">
+      <notes>
+        <note category="description">Section for image source credits</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Bildnachweise</source>
       </segment>
     </unit>
     <unit id="impressum.source.drought">
+      <notes>
+        <note category="description">Credit for drought image</note>
+        <note category="meaning">Source Info</note>
+      </notes>
       <segment>
         <source>Drought by USDA (Public Domain)</source>
       </segment>
     </unit>
     <unit id="impressum.source.borer">
+      <notes>
+        <note category="description">Credit for corn borer image</note>
+        <note category="meaning">Source Info</note>
+      </notes>
       <segment>
         <source>Maiszünsler by Keith Weller (Public Domain)</source>
       </segment>
     </unit>
     <unit id="impressum.source.ladybug">
+      <notes>
+        <note category="description">Credit for ladybug image</note>
+        <note category="meaning">Source Info</note>
+      </notes>
       <segment>
         <source>Marienkäfer by Olei (CC BY-SA 3.0)</source>
       </segment>
     </unit>
     <unit id="impressum.source.oekolandbau">
+      <notes>
+        <note category="description">Credit for Oekolandbau.de</note>
+        <note category="meaning">Source Info</note>
+      </notes>
       <segment>
         <source>Oekolandbau.de</source>
       </segment>
     </unit>
     <unit id="impressum.source.logo">
+      <notes>
+        <note category="description">Credit for Organic Logo</note>
+        <note category="meaning">Source Info</note>
+      </notes>
       <segment>
         <source>Organic Logo (Public Domain)</source>
       </segment>
     </unit>
     <unit id="impressum.source.chamber">
+      <notes>
+        <note category="description">Credit for Landwirtschaftskammer NRW</note>
+        <note category="meaning">Source Info</note>
+      </notes>
       <segment>
         <source>Landwirtschaftskammer NRW</source>
       </segment>
     </unit>
     <unit id="impressum.source.bioSiegel">
+      <notes>
+        <note category="description">Credit for Bio-Siegel.de</note>
+        <note category="meaning">Source Info</note>
+      </notes>
       <segment>
         <source>Bio-Siegel.de</source>
       </segment>
     </unit>
     <unit id="impressum.disclaimer.title">
+      <notes>
+        <note category="description">Title for the disclaimer section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Haftungsausschluss</source>
       </segment>
     </unit>
     <unit id="impressum.disclaimer.p1">
+      <notes>
+        <note category="description">Disclaimer regarding external links</note>
+        <note category="meaning">Legal Text</note>
+      </notes>
       <segment>
         <source> Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich. </source>
       </segment>
     </unit>
     <unit id="impressum.disclaimer.p2">
+      <notes>
+        <note category="description">Disclaimer regarding game data and pedagogical purpose</note>
+        <note category="meaning">Legal Text</note>
+      </notes>
       <segment>
         <source> Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung dar. </source>
       </segment>
     </unit>
     <unit id="impressum.disclaimer.p3">
+      <notes>
+        <note category="description">Disclaimer regarding copyrights and open source nature</note>
+        <note category="meaning">Legal Text</note>
+      </notes>
       <segment>
         <source> Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt. </source>
       </segment>
     </unit>
     <unit id="info.backToHome">
+      <notes>
+        <note category="description">Link to return to the home page</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Zurück zur Startseite</source>
       </segment>
     </unit>
     <unit id="info.title">
+      <notes>
+        <note category="description">Title of the scientific background page</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source> Wissenschaftlicher Hintergrund </source>
       </segment>
     </unit>
     <unit id="info.subtitle">
+      <notes>
+        <note category="description">Short summary of the scientific basis</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source> Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns. </source>
       </segment>
     </unit>
     <unit id="info.mainReferenceTitle">
+      <notes>
+        <note category="description">Title for the main research reference section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Zentrale Forschungsarbeit</source>
       </segment>
     </unit>
     <unit id="info.objectiveTitle">
+      <notes>
+        <note category="description">Title for the objective section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</source>
       </segment>
     </unit>
     <unit id="info.objectiveText">
+      <notes>
+        <note category="description">Description of the main goal of the research</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben. </source>
       </segment>
     </unit>
     <unit id="info.theoreticalFrameworkTitle">
+      <notes>
+        <note category="description">Title for the theoretical framework section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>2. Theoretischer Rahmen</source>
       </segment>
     </unit>
     <unit id="info.theoreticalFrameworkSubjectiveTheories">
+      <notes>
+        <note category="description">Explanation of subjective theories in research context</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Subjektive Theorien:</pc> Die Forschung unterscheidet zwischen weitreichenden Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser nahreichweiten Theorien durch Erfahrung. </source>
       </segment>
     </unit>
     <unit id="info.theoreticalFrameworkDustBowl">
+      <notes>
+        <note category="description">Explanation of the Dust Bowl syndrome in research context</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Dust-Bowl-Syndrom:</pc> Das Spiel modelliert die nicht nachhaltige Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her. </source>
       </segment>
     </unit>
     <unit id="info.designPrinciplesTitle">
+      <notes>
+        <note category="description">Title for the design principles section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>3. Gestaltungsprinzipien</source>
       </segment>
     </unit>
     <unit id="info.designPrinciplesExperience">
+      <notes>
+        <note category="description">Explanation of experience-oriented learning principle</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Erfahrungsorientiertes Lernen:</pc> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
       </segment>
     </unit>
     <unit id="info.designPrinciplesComplexity">
+      <notes>
+        <note category="description">Explanation of balanced complexity principle</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Ausgewogene Komplexität:</pc> Um eine kognitive Überlastung zu vermeiden, konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge, Marktpreise), um einfache lineare Logik zu verhindern. </source>
       </segment>
     </unit>
     <unit id="info.findingsTitle">
+      <notes>
+        <note category="description">Title for the research results section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>4. Wichtige Forschungsergebnisse</source>
       </segment>
     </unit>
     <unit id="info.findingsText">
+      <notes>
+        <note category="description">Introduction to identification of argumentation types</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Die Studie identifizierte drei Argumentationstypen: </source>
       </segment>
     </unit>
     <unit id="info.findingsType1">
+      <notes>
+        <note category="description">Description of argumentation type 1</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökonomie über Ökologie:</pc> Pessimismus, Glaube, dass man nichts ändern kann.</source>
       </segment>
     </unit>
     <unit id="info.findingsType2">
+      <notes>
+        <note category="description">Description of argumentation type 2</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökologie über Ökonomie:</pc> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</source>
       </segment>
     </unit>
     <unit id="info.findingsType3">
+      <notes>
+        <note category="description">Description of argumentation type 3</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökologie für Ökonomie:</pc> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</source>
       </segment>
     </unit>
     <unit id="info.findingsConclusion">
+      <notes>
+        <note category="description">Conclusion of the research findings</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Fazit:</pc> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt als „Partner“ und nicht als Gegner sahen. </source>
       </segment>
     </unit>
     <unit id="info.evolutionTitle">
+      <notes>
+        <note category="description">Title for the evolution section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>5. Weiterentwicklung zu soil.app</source>
       </segment>
     </unit>
     <unit id="info.evolutionText">
+      <notes>
+        <note category="description">Description of the evolution from research to digital app</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale Kompetenzen für nachhaltiges Management umgewandelt wird. </source>
       </segment>
     </unit>
     <unit id="info.viewDissertation">
+      <notes>
+        <note category="description">Link to view the full dissertation online</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Volltext auf eldorado</source>
       </segment>
     </unit>
     <unit id="info.publicationsTitle">
+      <notes>
+        <note category="description">Title for the other publications section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;" dispEnd="&lt;/span&gt;">📚</pc> Weitere Publikationen </source>
       </segment>
     </unit>
     <unit id="info.footer">
+      <notes>
+        <note category="description">Copyright and project info</note>
+        <note category="meaning">Footer Text</note>
+      </notes>
       <segment>
         <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
       </segment>
     </unit>
     <unit id="landing.intro">
+      <notes>
+        <note category="description">Part of the landing page introduction</note>
+        <note category="meaning">Intro Text</note>
+      </notes>
       <segment>
         <source>Eine interaktive Simulation über</source>
       </segment>
     </unit>
     <unit id="landing.agriculture">
+      <notes>
+        <note category="description">Agriculture topic</note>
+        <note category="meaning">Topic Label</note>
+      </notes>
       <segment>
         <source>Landwirtschaft</source>
       </segment>
     </unit>
     <unit id="landing.economics">
+      <notes>
+        <note category="description">Economics topic</note>
+        <note category="meaning">Topic Label</note>
+      </notes>
       <segment>
         <source>Ökonomie</source>
       </segment>
     </unit>
     <unit id="landing.and">
+      <notes>
+        <note category="description">The word &apos;and&apos;</note>
+        <note category="meaning">Connective</note>
+      </notes>
       <segment>
         <source>und</source>
       </segment>
     </unit>
     <unit id="landing.sustainability">
+      <notes>
+        <note category="description">Sustainability topic</note>
+        <note category="meaning">Topic Label</note>
+      </notes>
       <segment>
         <source>Nachhaltigkeit</source>
       </segment>
     </unit>
     <unit id="landing.enterGame">
+      <notes>
+        <note category="description">Button to join a game</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Spiel beitreten</source>
       </segment>
     </unit>
     <unit id="landing.teacherAdmin">
+      <notes>
+        <note category="description">Link for teachers to log in</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Lehrkräfte</source>
       </segment>
     </unit>
     <unit id="landing.register">
+      <notes>
+        <note category="description">Link to register as a new teacher</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Registrieren</source>
       </segment>
     </unit>
     <unit id="landing.aboutTitle">
+      <notes>
+        <note category="description">About the game section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source> Über das Spiel </source>
       </segment>
     </unit>
     <unit id="landing.aboutText1">
+      <notes>
+        <note category="description">Description of the game and its participants</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen Schülerinnen und Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf. </source>
       </segment>
     </unit>
     <unit id="landing.aboutText2">
+      <notes>
+        <note category="description">Goals and strategies of the game</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns. </source>
       </segment>
     </unit>
     <unit id="landing.educationalInfo">
+      <notes>
+        <note category="description">Educational purpose and access information</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrkräfte ist eine Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die Zugehörigkeit zu einer Bildungseinrichtung verifiziert. </source>
       </segment>
     </unit>
     <unit id="landing.backgroundTitle">
+      <notes>
+        <note category="description">Background information section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source> Hintergrund </source>
       </segment>
     </unit>
     <unit id="landing.backgroundText1">
+      <notes>
+        <note category="description">Sustainability as a global development goal</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Auf der UN-Konferenz 1992 wurde &quot;Nachhaltigkeit&quot; zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden. </source>
       </segment>
     </unit>
     <unit id="landing.backgroundText2">
+      <notes>
+        <note category="description">Development purpose of Soil simulation</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source> Das Simulationsspiel &quot;Soil&quot; wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
       </segment>
     </unit>
     <unit id="landing.scientificBackground">
+      <notes>
+        <note category="description">Link to scientific background details</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Wissenschaftlicher Hintergrund</source>
       </segment>
     </unit>
     <unit id="landing.footer">
+      <notes>
+        <note category="description">Copyright and project info</note>
+        <note category="meaning">Footer Text</note>
+      </notes>
       <segment>
         <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.units.title">
+      <notes>
+        <note category="description">Title for measurement units section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Einheiten</source>
       </segment>
     </unit>
     <unit id="manual.concepts.units.text">
+      <notes>
+        <note category="description">Explanation of measurement units used in the game</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Fläche in Hektar (ha), Ertrag in Dezitonnen (dt).</source>
       </segment>
     </unit>
     <unit id="manual.concepts.pest.title">
+      <notes>
+        <note category="description">Title for pests section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Schädlinge</source>
       </segment>
     </unit>
     <unit id="manual.concepts.pest.text">
+      <notes>
+        <note category="description">Explanation of pests and their impact</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Jede Pflanze hat spezifische natürliche Feinde.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.rotation.title">
+      <notes>
+        <note category="description">Title for crop rotation section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Fruchtfolge</source>
       </segment>
     </unit>
     <unit id="manual.concepts.rotation.text">
+      <notes>
+        <note category="description">Explanation of crop rotation and soil health</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Der Vorfruchtwert bestimmt die Bodengesundheit.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.requirements.title">
+      <notes>
+        <note category="description">Title for plant requirements section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Anforderungen</source>
       </segment>
     </unit>
     <unit id="manual.concepts.requirements.text">
+      <notes>
+        <note category="description">Explanation of mineral and soil requirements for plants</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Mineralienbedarf und Bodenanspruch variieren.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.weather.title">
+      <notes>
+        <note category="description">Title for weather section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Wetter</source>
       </segment>
     </unit>
     <unit id="manual.concepts.weather.text">
+      <notes>
+        <note category="description">Explanation of weather impacts on agriculture</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Trockenheit, Kälte oder Nässe beeinflussen den Ertrag.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.yield.title">
+      <notes>
+        <note category="description">Title for yield section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Ertrag</source>
       </segment>
     </unit>
     <unit id="manual.concepts.yield.text">
+      <notes>
+        <note category="description">Explanation of what determines the harvest yield</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Abhängig von Bodenqualität und Wetter.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.price.title">
+      <notes>
+        <note category="description">Title for market prices section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Preise</source>
       </segment>
     </unit>
     <unit id="manual.concepts.price.text">
+      <notes>
+        <note category="description">Explanation of market price fluctuations</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Marktpreise schwanken zwischen Konventionell und Bio.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.machines.title">
+      <notes>
+        <note category="description">Title for machinery section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
       <segment>
         <source>Maschinen</source>
       </segment>
     </unit>
     <unit id="manual.concepts.machines.text">
+      <notes>
+        <note category="description">Explanation of machinery benefits and drawbacks</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
       <segment>
         <source>Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.</source>
       </segment>
     </unit>
     <unit id="pest.label">
+      <notes>
+        <note category="description">Title for the main pest associated with a crop</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Hauptschädling</source>
       </segment>
     </unit>
     <unit id="pest.aphid">
+      <notes>
+        <note category="description">Aphid</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
       <segment>
         <source>Blattlaus</source>
       </segment>
     </unit>
     <unit id="pest.fritfly">
+      <notes>
+        <note category="description">Frit fly</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
       <segment>
         <source>Fritfliege</source>
       </segment>
     </unit>
     <unit id="pest.potato-beetle">
+      <notes>
+        <note category="description">Colorado potato beetle</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
       <segment>
         <source>Kartoffelkäfer</source>
       </segment>
     </unit>
     <unit id="pest.corn-borer">
+      <notes>
+        <note category="description">European corn borer</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
       <segment>
         <source>Maiszünsler</source>
       </segment>
     </unit>
     <unit id="pest.wireworm">
+      <notes>
+        <note category="description">Wireworm</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
       <segment>
         <source>Drahtwurm</source>
       </segment>
     </unit>
     <unit id="manual.crops.rotation">
+      <notes>
+        <note category="description">Title for the crop rotation impact section</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Fruchtfolgewirkung</source>
       </segment>
     </unit>
     <unit id="manual.crops.rotationPrev">
+      <notes>
+        <note category="description">Indicator for the previous crop in rotation</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Vorfrucht</source>
       </segment>
     </unit>
     <unit id="manual.crops.current">
+      <notes>
+        <note category="description">Indicator for the current crop being viewed</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Aktuell</source>
       </segment>
     </unit>
     <unit id="manual.crops.rotationNext">
+      <notes>
+        <note category="description">Indicator for the following crop in rotation</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Nachfrucht</source>
       </segment>
     </unit>
     <unit id="manual.crops.requirements">
+      <notes>
+        <note category="description">Title for plant growing requirements</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Ansprüche</source>
       </segment>
     </unit>
     <unit id="manual.crops.soil">
+      <notes>
+        <note category="description">Soil quality requirement</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Bodenqualität</source>
       </segment>
     </unit>
     <unit id="manual.crops.minerals">
+      <notes>
+        <note category="description">Mineral/nutrient requirement</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Mineralstoffe</source>
       </segment>
     </unit>
     <unit id="sensitivity.high">
+      <notes>
+        <note category="description">High sensitivity or requirement</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Hoch</source>
       </segment>
     </unit>
     <unit id="sensitivity.moderate">
+      <notes>
+        <note category="description">Moderate sensitivity or requirement</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Mäßig</source>
       </segment>
     </unit>
     <unit id="manual.crops.weather">
+      <notes>
+        <note category="description">Title for weather sensitivity section</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Wetter-Empfindlichkeit</source>
       </segment>
     </unit>
     <unit id="manual.crops.drought">
+      <notes>
+        <note category="description">Sensitivity to drought</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Trockenheit</source>
       </segment>
     </unit>
     <unit id="manual.crops.cold">
+      <notes>
+        <note category="description">Sensitivity to cold</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Kälte</source>
       </segment>
     </unit>
     <unit id="manual.crops.flood">
+      <notes>
+        <note category="description">Sensitivity to excessive wetness/flooding</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Nässe</source>
       </segment>
     </unit>
     <unit id="manual.crops.yields">
+      <notes>
+        <note category="description">Title for yield potential section</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Ertragspotenzial</source>
       </segment>
     </unit>
     <unit id="manual.yields.veryHigh">
+      <notes>
+        <note category="description">Very high yield</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Sehr Hoch</source>
       </segment>
     </unit>
     <unit id="manual.yields.high">
+      <notes>
+        <note category="description">High yield</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Hoch</source>
       </segment>
     </unit>
     <unit id="manual.yields.moderate">
+      <notes>
+        <note category="description">Moderate yield</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Mittel</source>
       </segment>
     </unit>
     <unit id="manual.yields.low">
+      <notes>
+        <note category="description">Low yield</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Gering</source>
       </segment>
     </unit>
     <unit id="manual.yields.veryLow">
+      <notes>
+        <note category="description">Very low yield</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Sehr Gering</source>
       </segment>
     </unit>
     <unit id="manual.prices.conv">
+      <notes>
+        <note category="description">Conventional farming</note>
+        <note category="meaning">Type</note>
+      </notes>
       <segment>
         <source>Konventionell</source>
       </segment>
     </unit>
     <unit id="manual.prices.org">
+      <notes>
+        <note category="description">Organic farming</note>
+        <note category="meaning">Type</note>
+      </notes>
       <segment>
         <source>Ökologisch (Bio)</source>
       </segment>
     </unit>
     <unit id="manual.prices.seed">
+      <notes>
+        <note category="description">Cost of seeds per unit</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Saatgutkosten</source>
       </segment>
     </unit>
     <unit id="manual.prices.sale">
+      <notes>
+        <note category="description">Selling price per unit of harvest</note>
+        <note category="meaning">Label</note>
+      </notes>
       <segment>
         <source>Verkaufspreis</source>
       </segment>
     </unit>
     <unit id="sensitivity.strong">
+      <notes>
+        <note category="description">Strong sensitivity</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Stark</source>
       </segment>
     </unit>
     <unit id="sensitivity.none">
+      <notes>
+        <note category="description">No sensitivity</note>
+        <note category="meaning">Level</note>
+      </notes>
       <segment>
         <source>Keine</source>
       </segment>
     </unit>
     <unit id="special.wheat">
+      <notes>
+        <note category="description">Special properties of wheat</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Standardkultur mit ausgeglichenen Werten.</source>
       </segment>
     </unit>
     <unit id="special.corn">
+      <notes>
+        <note category="description">Special properties of corn</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Hoher Ertrag, aber anspruchsvoll für den Boden.</source>
       </segment>
     </unit>
     <unit id="special.potato">
+      <notes>
+        <note category="description">Special properties of potato</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Sehr profitabel, aber extrem schädlingsanfällig.</source>
       </segment>
     </unit>
     <unit id="special.beet">
+      <notes>
+        <note category="description">Special properties of sugar beet</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Gute Fruchtfolgewirkung für Nachfolgekulturen.</source>
       </segment>
     </unit>
     <unit id="special.barley">
+      <notes>
+        <note category="description">Special properties of barley</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Robuste Getreideart für verschiedene Standorte.</source>
       </segment>
     </unit>
     <unit id="special.oat">
+      <notes>
+        <note category="description">Special properties of oat</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Gute Vorfrucht, geringe Ansprüche.</source>
       </segment>
     </unit>
     <unit id="special.rye">
+      <notes>
+        <note category="description">Special properties of rye</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Sehr widerstandsfähig gegen Kälte.</source>
       </segment>
     </unit>
     <unit id="special.fieldbean">
+      <notes>
+        <note category="description">Special properties of field bean</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Baut Stickstoff im Boden auf (Leguminose).</source>
       </segment>
     </unit>
     <unit id="special.animals">
+      <notes>
+        <note category="description">Special properties of animal husbandry</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Dauerkultur zur Viehhaltung.</source>
       </segment>
     </unit>
     <unit id="special.fallow">
+      <notes>
+        <note category="description">Special properties of fallow land</note>
+        <note category="meaning">Description</note>
+      </notes>
       <segment>
         <source>Regeneration für den Boden.</source>
       </segment>
@@ -2610,51 +3982,91 @@
       </segment>
     </unit>
     <unit id="manual.print">
+      <notes>
+        <note category="description">Button to open print dialog</note>
+        <note category="meaning">Action Label</note>
+      </notes>
       <segment>
         <source>Drucken</source>
       </segment>
     </unit>
     <unit id="manual.title">
+      <notes>
+        <note category="description">Title of the user manual</note>
+        <note category="meaning">Main Heading</note>
+      </notes>
       <segment>
         <source>Handbuch</source>
       </segment>
     </unit>
     <unit id="manual.subtitle">
+      <notes>
+        <note category="description">Description of the manual&apos;s content</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Alles was Sie über nachhaltige Landwirtschaft in Soil wissen müssen</source>
       </segment>
     </unit>
     <unit id="manual.intro.title">
+      <notes>
+        <note category="description">Title for the introduction section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Einleitung</source>
       </segment>
     </unit>
     <unit id="manual.intro.goal.title">
+      <notes>
+        <note category="description">Title for the game goals section</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Das Ziel</source>
       </segment>
     </unit>
     <unit id="manual.intro.goal.text">
+      <notes>
+        <note category="description">Description of the game&apos;s main goal</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source>Erfolgreich wirtschaften und dabei den Boden schützen.</source>
       </segment>
     </unit>
     <unit id="manual.intro.mechanics.title">
+      <notes>
+        <note category="description">Title for the game mechanics section</note>
+        <note category="meaning">Subheading</note>
+      </notes>
       <segment>
         <source>Mechanik</source>
       </segment>
     </unit>
     <unit id="manual.intro.mechanics.text">
+      <notes>
+        <note category="description">Description of how the game works</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source>In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.title">
+      <notes>
+        <note category="description">Title for the game concepts section</note>
+        <note category="meaning">Heading</note>
+      </notes>
       <segment>
         <source>Konzepte</source>
       </segment>
     </unit>
     <unit id="manual.footer">
+      <notes>
+        <note category="description">Footer text for the manual</note>
+        <note category="meaning">Info Text</note>
+      </notes>
       <segment>
         <source>Soil Simulation - Ein Bildungsprojekt für nachhaltige Landwirtschaft.</source>
       </segment>

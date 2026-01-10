@@ -26,16 +26,16 @@
   >
     <div class="text-center mb-8">
       <h1 class="text-3xl font-bold text-emerald-400 mb-2">
-        <ng-container i18n="@@adminRegister.title">Registrierung für Lehrkräfte</ng-container>
+        <ng-container i18n="Main Heading|Title of the teacher registration page@@adminRegister.title">Registrierung für Lehrkräfte</ng-container>
       </h1>
       <p class="text-gray-400">
-        <ng-container i18n="@@adminRegister.subtitle">Treten Sie der SOIL-Community bei</ng-container>
+        <ng-container i18n="Subheading|Invitation to join the SOIL community@@adminRegister.subtitle">Treten Sie der SOIL-Community bei</ng-container>
       </p>
     </div>
 
     @if (isGoogleUser) {
       <h2 class="text-xl font-bold text-center mb-6 text-white">
-        <ng-container i18n="@@adminRegister.completeTitle">Registrierung abschließen</ng-container>
+        <ng-container i18n="Subheading|Title for completing the registration for Google users@@adminRegister.completeTitle">Registrierung abschließen</ng-container>
       </h2>
 
       <div class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-lg text-center text-gray-100">
@@ -124,7 +124,7 @@
               placeholder="Minimum 6 characters"
               [placeholder]="t('adminRegister.placeholder.password')"
             />
-            <p class="text-xs text-gray-500 mt-1" i18n="@@adminRegister.passwordRequirement">
+            <p class="text-xs text-gray-500 mt-1" i18n="Form Hint|Requirement for password length@@adminRegister.passwordRequirement">
               Erforderlich: Mindestens 6 Zeichen
             </p>
             @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
@@ -185,7 +185,7 @@
             [placeholder]="t('adminRegister.placeholder.explanation')"
           ></textarea>
           <div class="flex justify-between mt-1">
-            <p class="text-xs text-gray-500" i18n="@@adminRegister.explanationRequirement">
+            <p class="text-xs text-gray-500" i18n="Form Hint|Requirement for explanation length@@adminRegister.explanationRequirement">
               Erforderlich: Mindestens 20 Zeichen
             </p>
             <p
@@ -219,9 +219,9 @@
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <ng-container i18n="@@adminRegister.processing">Wird verarbeitet...</ng-container>
+            <ng-container i18n="Status Message|Indicates the registration is being processed@@adminRegister.processing">Wird verarbeitet...</ng-container>
           } @else {
-            <ng-container i18n="@@adminRegister.btnSubmit">Registrierung beantragen</ng-container>
+            <ng-container i18n="Action Label|Button to submit the registration request@@adminRegister.btnSubmit">Registrierung beantragen</ng-container>
           }
         </button>
       </div>
@@ -230,7 +230,7 @@
         <a
           routerLink="/"
           class="text-sm text-gray-400 hover:text-emerald-400 transition"
-          i18n="@@adminRegister.backToHome"
+          i18n="Action Label|Link to return to the home page@@adminRegister.backToHome"
         >
           Zurück zur Startseite
         </a>

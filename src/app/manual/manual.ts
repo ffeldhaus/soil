@@ -28,17 +28,17 @@ export class ManualComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'manual.print': $localize`:@@manual.print:Drucken`,
-      'board.logout': $localize`:@@board.logout:Abmelden`,
-      'manual.title': $localize`:@@manual.title:Handbuch`,
-      'manual.subtitle': $localize`:@@manual.subtitle:Alles was Sie über nachhaltige Landwirtschaft in Soil wissen müssen`,
-      'manual.intro.title': $localize`:@@manual.intro.title:Einleitung`,
-      'manual.intro.goal.title': $localize`:@@manual.intro.goal.title:Das Ziel`,
-      'manual.intro.goal.text': $localize`:@@manual.intro.goal.text:Erfolgreich wirtschaften und dabei den Boden schützen.`,
-      'manual.intro.mechanics.title': $localize`:@@manual.intro.mechanics.title:Mechanik`,
-      'manual.intro.mechanics.text': $localize`:@@manual.intro.mechanics.text:In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.`,
-      'manual.concepts.title': $localize`:@@manual.concepts.title:Konzepte`,
-      'manual.footer': $localize`:@@manual.footer:Soil Simulation - Ein Bildungsprojekt für nachhaltige Landwirtschaft.`,
+      'manual.print': $localize`:Action Label|Button to open print dialog@@manual.print:Drucken`,
+      'board.logout': $localize`:Action Label|Logout button text@@board.logout:Abmelden`,
+      'manual.title': $localize`:Main Heading|Title of the user manual@@manual.title:Handbuch`,
+      'manual.subtitle': $localize`:Subheading|Description of the manual's content@@manual.subtitle:Alles was Sie über nachhaltige Landwirtschaft in Soil wissen müssen`,
+      'manual.intro.title': $localize`:Heading|Title for the introduction section@@manual.intro.title:Einleitung`,
+      'manual.intro.goal.title': $localize`:Subheading|Title for the game goals section@@manual.intro.goal.title:Das Ziel`,
+      'manual.intro.goal.text': $localize`:Info Text|Description of the game's main goal@@manual.intro.goal.text:Erfolgreich wirtschaften und dabei den Boden schützen.`,
+      'manual.intro.mechanics.title': $localize`:Subheading|Title for the game mechanics section@@manual.intro.mechanics.title:Mechanik`,
+      'manual.intro.mechanics.text': $localize`:Info Text|Description of how the game works@@manual.intro.mechanics.text:In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.`,
+      'manual.concepts.title': $localize`:Heading|Title for the game concepts section@@manual.concepts.title:Konzepte`,
+      'manual.footer': $localize`:Info Text|Footer text for the manual@@manual.footer:Soil Simulation - Ein Bildungsprojekt für nachhaltige Landwirtschaft.`,
     };
     return translations[key] || key;
   }

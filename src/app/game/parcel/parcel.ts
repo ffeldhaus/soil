@@ -20,17 +20,17 @@ export class Parcel {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'crop.wheat': $localize`:@@crop.wheat:Weizen`,
-      'crop.corn': $localize`:@@crop.corn:Mais`,
-      'crop.potato': $localize`:@@crop.potato:Kartoffel`,
-      'crop.beet': $localize`:@@crop.beet:Zuckerrübe`,
-      'crop.barley': $localize`:@@crop.barley:Gerste`,
-      'crop.oat': $localize`:@@crop.oat:Hafer`,
-      'crop.rye': $localize`:@@crop.rye:Roggen`,
-      'crop.fieldbean': $localize`:@@crop.fieldbean:Ackerbohne`,
-      'crop.animals': $localize`:@@crop.animals:Tiere`,
-      'crop.fallow': $localize`:@@crop.fallow:Brachland`,
-      'parcel.crop': $localize`:@@parcel.crop:Feldpflanze`,
+      'crop.wheat': $localize`:Crop Name|Wheat@@crop.wheat:Weizen`,
+      'crop.corn': $localize`:Crop Name|Corn@@crop.corn:Mais`,
+      'crop.potato': $localize`:Crop Name|Potato@@crop.potato:Kartoffel`,
+      'crop.beet': $localize`:Crop Name|Sugar beet@@crop.beet:Zuckerrübe`,
+      'crop.barley': $localize`:Crop Name|Barley@@crop.barley:Gerste`,
+      'crop.oat': $localize`:Crop Name|Oat@@crop.oat:Hafer`,
+      'crop.rye': $localize`:Crop Name|Rye@@crop.rye:Roggen`,
+      'crop.fieldbean': $localize`:Crop Name|Field bean@@crop.fieldbean:Ackerbohne`,
+      'crop.animals': $localize`:Crop Name|Animals (as a land use type)@@crop.animals:Tiere`,
+      'crop.fallow': $localize`:Crop Name|Fallow land@@crop.fallow:Brachland`,
+      'parcel.crop': $localize`:Asset Alt Text|Alternative text for the crop image on a parcel@@parcel.crop:Feldpflanze`,
     };
     return translations[key] || key;
   }

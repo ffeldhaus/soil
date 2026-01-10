@@ -18,9 +18,9 @@ export class BoardLoginOverlayComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'board.login.phGameId': $localize`:@@board.login.phGameId:Game ID`,
-      'board.login.phPlayerNum': $localize`:@@board.login.phPlayerNum:Player Number`,
-      'board.login.phPin': $localize`:@@board.login.phPin:PIN`,
+      'board.login.phGameId': $localize`:Form Placeholder|Placeholder for game ID input@@board.login.phGameId:Game ID`,
+      'board.login.phPlayerNum': $localize`:Form Placeholder|Placeholder for player number input@@board.login.phPlayerNum:Player Number`,
+      'board.login.phPin': $localize`:Form Placeholder|Placeholder for PIN input@@board.login.phPin:PIN`,
     };
     return translations[key] || key;
   }

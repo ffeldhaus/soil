@@ -15,7 +15,7 @@ import type { CropType } from '../../types';
         class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-2xl w-full"
         (click)="$event.stopPropagation()"
       >
-        <h2 i18n="@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
+        <h2 i18n="Main Heading|Title of the planting selection modal@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
 
         <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
           @for (crop of crops; track crop) {
@@ -46,7 +46,7 @@ import type { CropType } from '../../types';
         <div class="flex justify-end gap-3 mt-8">
           <button
             (click)="plantingCancelled.emit()"
-            i18n="@@planting.cancel"
+            i18n="Action Label|Button to cancel planting and close the modal@@planting.cancel"
             class="px-4 py-2 text-gray-400 hover:text-white transition"
           >
             Abbrechen
@@ -63,16 +63,16 @@ export class PlantingModal {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'crop.wheat': $localize`:@@crop.wheat:Weizen`,
-      'crop.corn': $localize`:@@crop.corn:Mais`,
-      'crop.potato': $localize`:@@crop.potato:Kartoffel`,
-      'crop.beet': $localize`:@@crop.beet:Zuckerrübe`,
-      'crop.barley': $localize`:@@crop.barley:Gerste`,
-      'crop.oat': $localize`:@@crop.oat:Hafer`,
-      'crop.rye': $localize`:@@crop.rye:Roggen`,
-      'crop.fieldbean': $localize`:@@crop.fieldbean:Ackerbohne`,
-      'crop.animals': $localize`:@@crop.animals:Tiere`,
-      'crop.fallow': $localize`:@@crop.fallow:Brachland`,
+      'crop.wheat': $localize`:Crop Name|Wheat@@crop.wheat:Weizen`,
+      'crop.corn': $localize`:Crop Name|Corn@@crop.corn:Mais`,
+      'crop.potato': $localize`:Crop Name|Potato@@crop.potato:Kartoffel`,
+      'crop.beet': $localize`:Crop Name|Sugar beet@@crop.beet:Zuckerrübe`,
+      'crop.barley': $localize`:Crop Name|Barley@@crop.barley:Gerste`,
+      'crop.oat': $localize`:Crop Name|Oat@@crop.oat:Hafer`,
+      'crop.rye': $localize`:Crop Name|Rye@@crop.rye:Roggen`,
+      'crop.fieldbean': $localize`:Crop Name|Field bean@@crop.fieldbean:Ackerbohne`,
+      'crop.animals': $localize`:Crop Name|Animals (as a land use type)@@crop.animals:Tiere`,
+      'crop.fallow': $localize`:Crop Name|Fallow land@@crop.fallow:Brachland`,
     };
     return translations[key] || key;
   }

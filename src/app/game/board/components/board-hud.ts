@@ -50,16 +50,16 @@ export class BoardHudComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'user.photoURL': $localize`:@@user.photoURL:assets/images/ok.jpg`,
-      'board.nav.names': $localize`:@@board.nav.names:Namen`,
-      'board.nav.nutrition': $localize`:@@board.nav.nutrition:Mineralstoffe`,
-      'board.nav.harvest': $localize`:@@board.nav.harvest:Ernte`,
-      'board.nav.soil': $localize`:@@board.nav.soil:Bodenqualität`,
-      'board.nav.finance': $localize`:@@board.nav.finance:Finanzen`,
-      'board.nav.options': $localize`:@@board.nav.options:Optionen`,
-      'board.nav.waiting': $localize`:@@board.nav.waiting:Warten...`,
-      'board.nav.nextRound': $localize`:@@board.nav.nextRound:Nächste Runde`,
-      'board.logout': $localize`:@@board.logout:Abmelden`,
+      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/ok.jpg`,
+      'board.nav.names': $localize`:Nav Label|Toggle display of field names@@board.nav.names:Namen`,
+      'board.nav.nutrition': $localize`:Nav Label|Toggle display of nutrition levels@@board.nav.nutrition:Mineralstoffe`,
+      'board.nav.harvest': $localize`:Nav Label|Toggle display of harvest yields@@board.nav.harvest:Ernte`,
+      'board.nav.soil': $localize`:Nav Label|Toggle display of soil quality@@board.nav.soil:Bodenqualität`,
+      'board.nav.finance': $localize`:Nav Label|Toggle display of financial report@@board.nav.finance:Finanzen`,
+      'board.nav.options': $localize`:Nav Label|Open round options@@board.nav.options:Optionen`,
+      'board.nav.waiting': $localize`:Status Message|Wait message after round submission@@board.nav.waiting:Warten...`,
+      'board.nav.nextRound': $localize`:Action Label|Button to submit round and proceed@@board.nav.nextRound:Nächste Runde`,
+      'board.logout': $localize`:Action Label|Logout button text@@board.logout:Abmelden`,
     };
     return translations[key] || key;
   }

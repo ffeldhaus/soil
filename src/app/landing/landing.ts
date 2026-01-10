@@ -37,19 +37,19 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
           </h1>
 
           <p class="text-xl md:text-3xl text-gray-200 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-            <span data-testid="landing-intro" i18n="@@landing.intro">Eine interaktive Simulation über</span>&nbsp;<span
+            <span data-testid="landing-intro" i18n="Intro Text|Part of the landing page introduction@@landing.intro">Eine interaktive Simulation über</span>&nbsp;<span
               class="text-emerald-300 font-normal"
               data-testid="landing-agriculture"
-              i18n="@@landing.agriculture"
+              i18n="Topic Label|Agriculture topic@@landing.agriculture"
               >Landwirtschaft</span
             >,
-            <span class="text-blue-300 font-normal" data-testid="landing-economics" i18n="@@landing.economics"
+            <span class="text-blue-300 font-normal" data-testid="landing-economics" i18n="Topic Label|Economics topic@@landing.economics"
               >Ökonomie</span
-            >, <span><ng-container i18n="@@landing.and">und</ng-container></span
+            >, <span><ng-container i18n="Connective|The word 'and'@@landing.and">und</ng-container></span
             >&nbsp;<span
               class="text-yellow-200 font-normal"
               data-testid="landing-sustainability"
-              i18n="@@landing.sustainability"
+              i18n="Topic Label|Sustainability topic@@landing.sustainability"
               >Nachhaltigkeit</span
             >.
           </p>
@@ -60,7 +60,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               data-testid="landing-enter-game"
               class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
             >
-              <span class="relative z-10 flex items-center justify-center gap-2" i18n="@@landing.enterGame"
+              <span class="relative z-10 flex items-center justify-center gap-2" i18n="Action Label|Button to join a game@@landing.enterGame"
                 >Spiel beitreten</span
               >
             </a>
@@ -69,7 +69,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               routerLink="/admin/login"
               data-testid="landing-admin-login"
               class="flex items-center justify-center px-8 py-5 bg-gray-800/80 hover:bg-gray-700/90 backdrop-blur-md border border-white/20 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/40 transform hover:-translate-y-1"
-              i18n="@@landing.teacherAdmin"
+              i18n="Action Label|Link for teachers to log in@@landing.teacherAdmin"
               >Lehrkräfte</a
             >
 
@@ -77,7 +77,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               routerLink="/admin/register"
               data-testid="landing-register"
               class="flex items-center justify-center px-8 py-5 bg-emerald-900/80 hover:bg-emerald-800/90 backdrop-blur-md border border-emerald-500/40 text-emerald-100 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/60 transform hover:-translate-y-1"
-              i18n="@@landing.register"
+              i18n="Action Label|Link to register as a new teacher@@landing.register"
               >Registrieren</a
             >
           </div>
@@ -98,22 +98,22 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <section class="space-y-6">
               <h2
                 class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
-                i18n="@@landing.aboutTitle"
+                i18n="Heading|About the game section@@landing.aboutTitle"
               >
                 Über das Spiel
               </h2>
               <div class="space-y-4 text-lg leading-relaxed text-gray-400">
-                <p i18n="@@landing.aboutText1">
+                <p i18n="Info Text|Description of the game and its participants@@landing.aboutText1">
                   Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
                   ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen
                   Schülerinnen und Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf.
                 </p>
-                <p i18n="@@landing.aboutText2">
+                <p i18n="Info Text|Goals and strategies of the game@@landing.aboutText2">
                   Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung
                   und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen
                   Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.
                 </p>
-                <p i18n="@@landing.educationalInfo">
+                <p i18n="Info Text|Educational purpose and access information@@landing.educationalInfo">
                   Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrkräfte ist eine
                   Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die
                   Zugehörigkeit zu einer Bildungseinrichtung verifiziert.
@@ -124,16 +124,16 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <section class="space-y-6">
               <h2
                 class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
-                i18n="@@landing.backgroundTitle"
+                i18n="Heading|Background information section@@landing.backgroundTitle"
               >
                 Hintergrund
               </h2>
               <div class="space-y-4 text-lg leading-relaxed text-gray-400">
-                <p i18n="@@landing.backgroundText1">
+                <p i18n="Info Text|Sustainability as a global development goal@@landing.backgroundText1">
                   Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel
                   soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.
                 </p>
-                <p i18n="@@landing.backgroundText2">
+                <p i18n="Info Text|Development purpose of Soil simulation@@landing.backgroundText2">
                   Das Simulationsspiel "Soil" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu
                   machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen
                   ökonomischen Handelns spielerisch zu entdecken.
@@ -148,12 +148,12 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-emerald-900/20 hover:bg-emerald-900/40"
             >
               <span class="p-1 bg-emerald-900/30 rounded-lg">🎓</span>
-              <span i18n="@@landing.scientificBackground">Wissenschaftlicher Hintergrund</span>
+              <span i18n="Action Label|Link to scientific background details@@landing.scientificBackground">Wissenschaftlicher Hintergrund</span>
             </a>
           </div>
 
           <footer class="mt-24 text-center text-gray-600 text-sm">
-            <p i18n="@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
+            <p i18n="Footer Text|Copyright and project info@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
           </footer>
         </div>
       }

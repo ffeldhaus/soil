@@ -43,18 +43,18 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 clip-rule="evenodd"
               />
             </svg>
-            <span i18n="@@info.backToHome">Zurück zur Startseite</span>
+            <span i18n="Action Label|Link to return to the home page@@info.backToHome">Zurück zur Startseite</span>
           </a>
         </nav>
 
         <header class="mb-16">
           <h1
             class="text-4xl md:text-6xl font-sans font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-100 to-emerald-200 drop-shadow-2xl tracking-tight mb-6"
-            i18n="@@info.title"
+            i18n="Main Heading|Title of the scientific background page@@info.title"
           >
             Wissenschaftlicher Hintergrund
           </h1>
-          <p class="text-xl text-gray-300 leading-relaxed font-light" i18n="@@info.subtitle">
+          <p class="text-xl text-gray-300 leading-relaxed font-light" i18n="Subheading|Short summary of the scientific basis@@info.subtitle">
             Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen
             Handelns.
           </p>
@@ -65,7 +65,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
           <section class="bg-gray-800/40 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎓</span>
-              <ng-container i18n="@@info.mainReferenceTitle">Zentrale Forschungsarbeit</ng-container>
+              <ng-container i18n="Heading|Title for the main research reference section@@info.mainReferenceTitle">Zentrale Forschungsarbeit</ng-container>
             </h2>
             <div class="space-y-6">
               <div>
@@ -78,8 +78,8 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
               <div class="bg-gray-900/30 rounded-xl p-6 border border-white/5 space-y-6">
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.objectiveTitle">1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</h3>
-                  <p class="text-gray-300 leading-relaxed" i18n="@@info.objectiveText">
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the objective section@@info.objectiveTitle">1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</h3>
+                  <p class="text-gray-300 leading-relaxed" i18n="Info Text|Description of the main goal of the research@@info.objectiveText">
                     Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen
                     der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige
                     Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht
@@ -90,15 +90,15 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.theoreticalFrameworkTitle">2. Theoretischer Rahmen</h3>
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the theoretical framework section@@info.theoreticalFrameworkTitle">2. Theoretischer Rahmen</h3>
                   <ul class="list-disc list-outside ml-5 text-gray-300 space-y-2">
-                    <li i18n="@@info.theoreticalFrameworkSubjectiveTheories">
+                    <li i18n="Info Text|Explanation of subjective theories in research context@@info.theoreticalFrameworkSubjectiveTheories">
                       <strong class="text-white">Subjektive Theorien:</strong> Die Forschung unterscheidet zwischen weitreichenden
                       Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische
                       Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser
                       nahreichweiten Theorien durch Erfahrung.
                     </li>
-                    <li i18n="@@info.theoreticalFrameworkDustBowl">
+                    <li i18n="Info Text|Explanation of the Dust Bowl syndrome in research context@@info.theoreticalFrameworkDustBowl">
                       <strong class="text-white">Dust-Bowl-Syndrom:</strong> Das Spiel modelliert die nicht nachhaltige
                       Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt
                       und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her.
@@ -107,14 +107,14 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.designPrinciplesTitle">3. Gestaltungsprinzipien</h3>
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the design principles section@@info.designPrinciplesTitle">3. Gestaltungsprinzipien</h3>
                   <ul class="list-disc list-outside ml-5 text-gray-300 space-y-2">
-                    <li i18n="@@info.designPrinciplesExperience">
+                    <li i18n="Info Text|Explanation of experience-oriented learning principle@@info.designPrinciplesExperience">
                       <strong class="text-white">Erfahrungsorientiertes Lernen:</strong> Die Schüler beginnen mit einer
                       gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die
                       „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion.
                     </li>
-                    <li i18n="@@info.designPrinciplesComplexity">
+                    <li i18n="Info Text|Explanation of balanced complexity principle@@info.designPrinciplesComplexity">
                       <strong class="text-white">Ausgewogene Komplexität:</strong> Um eine kognitive Überlastung zu vermeiden,
                       konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge,
                       Marktpreise), um einfache lineare Logik zu verhindern.
@@ -123,24 +123,24 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.findingsTitle">4. Wichtige Forschungsergebnisse</h3>
-                  <p class="text-gray-300 leading-relaxed mb-2" i18n="@@info.findingsText">
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the research results section@@info.findingsTitle">4. Wichtige Forschungsergebnisse</h3>
+                  <p class="text-gray-300 leading-relaxed mb-2" i18n="Info Text|Introduction to identification of argumentation types@@info.findingsText">
                     Die Studie identifizierte drei Argumentationstypen:
                   </p>
                   <ol class="list-decimal list-outside ml-5 text-gray-300 space-y-1">
-                    <li i18n="@@info.findingsType1"><strong>Ökonomie über Ökologie:</strong> Pessimismus, Glaube, dass man nichts ändern kann.</li>
-                    <li i18n="@@info.findingsType2"><strong>Ökologie über Ökonomie:</strong> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</li>
-                    <li i18n="@@info.findingsType3"><strong>Ökologie für Ökonomie:</strong> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</li>
+                    <li i18n="Info Text|Description of argumentation type 1@@info.findingsType1"><strong>Ökonomie über Ökologie:</strong> Pessimismus, Glaube, dass man nichts ändern kann.</li>
+                    <li i18n="Info Text|Description of argumentation type 2@@info.findingsType2"><strong>Ökologie über Ökonomie:</strong> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</li>
+                    <li i18n="Info Text|Description of argumentation type 3@@info.findingsType3"><strong>Ökologie für Ökonomie:</strong> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</li>
                   </ol>
-                  <p class="text-gray-300 leading-relaxed mt-2" i18n="@@info.findingsConclusion">
+                  <p class="text-gray-300 leading-relaxed mt-2" i18n="Info Text|Conclusion of the research findings@@info.findingsConclusion">
                     <strong>Fazit:</strong> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt
                     als „Partner“ und nicht als Gegner sahen.
                   </p>
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="@@info.evolutionTitle">5. Weiterentwicklung zu soil.app</h3>
-                  <p class="text-gray-300 leading-relaxed" i18n="@@info.evolutionText">
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the evolution section@@info.evolutionTitle">5. Weiterentwicklung zu soil.app</h3>
+                  <p class="text-gray-300 leading-relaxed" i18n="Info Text|Description of the evolution from research to digital app@@info.evolutionText">
                     Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und
                     erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale
                     Kompetenzen für nachhaltiges Management umgewandelt wird.
@@ -154,7 +154,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   target="_blank"
                   class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-800/50 hover:bg-emerald-700/50 text-emerald-100 rounded-2xl border border-emerald-500/30 transition-all group"
                 >
-                  <span i18n="@@info.viewDissertation">Volltext auf eldorado</span>
+                  <span i18n="Action Label|Link to view the full dissertation online@@info.viewDissertation">Volltext auf eldorado</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-4 w-4 transform group-hover:translate-x-1 transition-transform"
@@ -176,7 +176,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
           <!-- Publication List -->
           <section class="space-y-8">
-            <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3" i18n="@@info.publicationsTitle">
+            <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3" i18n="Heading|Title for the other publications section@@info.publicationsTitle">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">📚</span>
               Weitere Publikationen
             </h2>
@@ -218,7 +218,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         </div>
 
         <footer class="mt-24 pt-12 border-t border-gray-800 text-center text-gray-500 text-sm">
-          <p i18n="@@info.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
+          <p i18n="Footer Text|Copyright and project info@@info.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
         </footer>
       </div>
     </div>

@@ -18,7 +18,7 @@
     </svg>
   </div>
   <h2 class="text-3xl font-bold text-yellow-400 font-serif">{{ t('dashboard.pending.title') }}</h2>
-  <p class="text-xl text-gray-300 max-w-lg mx-auto leading-relaxed" i18n="@@dashboard.pending.welcome">
+  <p class="text-xl text-gray-300 max-w-lg mx-auto leading-relaxed" i18n="Welcome Message|Greeting for user awaiting account approval@@dashboard.pending.welcome">
     Danke für die Registrierung, <span class="font-bold text-white">{{ user?.displayName }}</span
     >!
   </p>
@@ -28,7 +28,7 @@
       (click)="logout.emit()"
       class="px-6 py-2 border border-gray-600 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
     >
-      <ng-container i18n="@@dashboard.logout">Abmelden</ng-container>
+      <ng-container i18n="Action Label|Logout button text@@dashboard.logout">Abmelden</ng-container>
     </button>
   </div>
 </div>

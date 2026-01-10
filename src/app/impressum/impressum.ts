@@ -20,8 +20,8 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         <!-- Header -->
         <header class="border-b border-gray-700 pb-8 flex justify-between items-center">
           <div>
-            <h1 i18n="@@impressum.title" class="text-4xl font-serif font-bold text-emerald-500 mb-2">Impressum</h1>
-            <p i18n="@@impressum.subtitle" class="text-gray-400">Rechtliche Informationen & Kontakt</p>
+            <h1 i18n="Main Heading|Title of the imprint page@@impressum.title" class="text-4xl font-serif font-bold text-emerald-500 mb-2">Impressum</h1>
+            <p i18n="Subheading|Legal information and contact subtitle@@impressum.subtitle" class="text-gray-400">Rechtliche Informationen & Kontakt</p>
           </div>
           <a
             routerLink="/"
@@ -41,13 +41,13 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
               />
             </svg>
-            <ng-container i18n="@@impressum.backToHome">Zurück zur Startseite</ng-container>
+            <ng-container i18n="Action Label|Link to return to the home page@@impressum.backToHome">Zurück zur Startseite</ng-container>
           </a>
         </header>
 
         <!-- Kontakt -->
         <section class="space-y-4">
-          <h2 i18n="@@impressum.contact" class="text-2xl font-bold text-white">Kontakt</h2>
+          <h2 i18n="Heading|Contact information section@@impressum.contact" class="text-2xl font-bold text-white">Kontakt</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <p class="font-bold text-white">Florian Feldhaus</p>
             <p>Kanonikerweg 2</p>
@@ -63,7 +63,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Verantwortlich -->
         <section class="space-y-4">
-          <h2 i18n="@@impressum.responsible" class="text-2xl font-bold text-white">Verantwortlich</h2>
+          <h2 i18n="Heading|Section identifying the person responsible for content@@impressum.responsible" class="text-2xl font-bold text-white">Verantwortlich</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <p class="font-bold text-white">Nina Wolf</p>
             <p>Kanonikerweg 2</p>
@@ -79,13 +79,13 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Bilder -->
         <section class="space-y-4">
-          <h2 i18n="@@impressum.imageSources" class="text-2xl font-bold text-white">Bildnachweise</h2>
+          <h2 i18n="Heading|Section for image source credits@@impressum.imageSources" class="text-2xl font-bold text-white">Bildnachweise</h2>
           <ul
             class="space-y-2 list-disc list-inside text-gray-400 bg-gray-800/30 p-6 rounded-xl border border-gray-800"
           >
             <li>
               <a
-                i18n="@@impressum.source.drought"
+                i18n="Source Info|Credit for drought image@@impressum.source.drought"
                 href="https://commons.wikimedia.org/wiki/File:Drought.jpg"
                 class="hover:text-emerald-400 transition underline"
                 >Drought by USDA (Public Domain)</a
@@ -93,7 +93,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </li>
             <li>
               <a
-                i18n="@@impressum.source.borer"
+                i18n="Source Info|Credit for corn borer image@@impressum.source.borer"
                 href="https://commons.wikimedia.org/wiki/File:Ostrinia.nubilalis.7771.jpg"
                 class="hover:text-emerald-400 transition underline"
                 >Maiszünsler by Keith Weller (Public Domain)</a
@@ -101,7 +101,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </li>
             <li>
               <a
-                i18n="@@impressum.source.ladybug"
+                i18n="Source Info|Credit for ladybug image@@impressum.source.ladybug"
                 href="https://commons.wikimedia.org/wiki/File:Marienk%C3%A4fer_0241.jpg"
                 class="hover:text-emerald-400 transition underline"
                 >Marienkäfer by Olei (CC BY-SA 3.0)</a
@@ -109,7 +109,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </li>
             <li>
               <a
-                i18n="@@impressum.source.oekolandbau"
+                i18n="Source Info|Credit for Oekolandbau.de@@impressum.source.oekolandbau"
                 href="http://www.oekolandbau.de"
                 class="hover:text-emerald-400 transition underline"
                 >Oekolandbau.de</a
@@ -117,7 +117,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </li>
             <li>
               <a
-                i18n="@@impressum.source.logo"
+                i18n="Source Info|Credit for Organic Logo@@impressum.source.logo"
                 href="https://commons.wikimedia.org/wiki/File:Organic-Logo.svg"
                 class="hover:text-emerald-400 transition underline"
                 >Organic Logo (Public Domain)</a
@@ -125,7 +125,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </li>
             <li>
               <a
-                i18n="@@impressum.source.chamber"
+                i18n="Source Info|Credit for Landwirtschaftskammer NRW@@impressum.source.chamber"
                 href="https://www.landwirtschaftskammer.de"
                 class="hover:text-emerald-400 transition underline"
                 >Landwirtschaftskammer NRW</a
@@ -133,7 +133,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </li>
             <li>
               <a
-                i18n="@@impressum.source.bioSiegel"
+                i18n="Source Info|Credit for Bio-Siegel.de@@impressum.source.bioSiegel"
                 href="https://www.bio-siegel.de/"
                 class="hover:text-emerald-400 transition underline"
                 >Bio-Siegel.de</a
@@ -144,18 +144,18 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <!-- Disclaimer -->
         <section class="space-y-4">
-          <h2 i18n="@@impressum.disclaimer.title" class="text-2xl font-bold text-white">Haftungsausschluss</h2>
+          <h2 i18n="Heading|Title for the disclaimer section@@impressum.disclaimer.title" class="text-2xl font-bold text-white">Haftungsausschluss</h2>
           <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 text-sm leading-relaxed space-y-4">
-            <p i18n="@@impressum.disclaimer.p1">
+            <p i18n="Legal Text|Disclaimer regarding external links@@impressum.disclaimer.p1">
               Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für
               den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
             </p>
-            <p i18n="@@impressum.disclaimer.p2">
+            <p i18n="Legal Text|Disclaimer regarding game data and pedagogical purpose@@impressum.disclaimer.p2">
               Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem
               pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung
               dar.
             </p>
-            <p i18n="@@impressum.disclaimer.p3">
+            <p i18n="Legal Text|Disclaimer regarding copyrights and open source nature@@impressum.disclaimer.p3">
               Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe
               Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt.
             </p>
