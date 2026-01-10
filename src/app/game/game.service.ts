@@ -48,7 +48,7 @@ export class GameService {
 
   async loadGame(gameId: string): Promise<GameState | null> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       const mockState = this.getMockGameState();
       this.currentRound = mockState.lastRound || null;
       this.parcelsSubject.next(mockState.lastRound?.parcelsSnapshot || this.createInitialParcels());
@@ -109,7 +109,7 @@ export class GameService {
 
   async saveDraft(gameId: string) {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       if (window.console) console.warn('Mock: Draft saved locally');
       return;
     }
@@ -148,7 +148,7 @@ export class GameService {
     settings?: { machines: number; organic: boolean; fertilizer: boolean; pesticide: boolean; organisms: boolean },
   ): Promise<Round | { status: string }> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       const currentParcels = this.parcelsSubject.value;
       const nextRoundNum = (this.currentRound?.number || 0) + 1;
       const mockRound: Round = {

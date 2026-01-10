@@ -128,6 +128,9 @@ describe('SOIL Game E2E', () => {
     // Wait for mocked backend call
     cy.wait('@nextRound');
 
+    // Close Round Result Modal
+    cy.get('[data-testid="close-round-result"]').click();
+
     // Round number should update (Mock returns Round 2)
     cy.get('[data-testid="round-indicator"]').should('contain', '2');
 

@@ -103,6 +103,9 @@ describe('Full Game Playthrough', () => {
       expect(decision.parcels[0]).to.eq('Wheat');
     });
 
+    // Close Round Result Modal
+    cy.get('[data-testid="close-round-result"]').click();
+
     // 5. Verify Next Round State
     cy.get('[data-testid="round-indicator"]').should('contain', '2');
     cy.contains('[data-testid="hud-capital"]', '500', { timeout: 10000 }).should('be.visible');
