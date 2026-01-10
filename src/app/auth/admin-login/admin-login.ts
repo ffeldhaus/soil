@@ -10,129 +10,149 @@ import { AuthService } from '../auth.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
-    <div class="min-h-screen relative flex items-center justify-center bg-gray-900 portrait:p-0">
-      <!-- Language Switcher -->
-      <div class="absolute top-6 right-6 z-[100]">
-        <app-language-switcher></app-language-switcher>
-      </div>
-
-      <!-- Background Image with Overlay -->
-      <div class="absolute inset-0 z-0">
-        <picture>
-          <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
-          <img
-            src="assets/bauernhof-landscape-hd.webp"
-            alt="Farm Background"
-            class="w-full h-full object-cover object-center opacity-30"
-          />
-        </picture>
-        <div
-          class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
-        ></div>
-      </div>
-
-      <div
-        class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:bg-gray-800"
+    <div class="min-h-screen relative bg-gray-900 text-gray-100 font-sans overflow-hidden flex flex-col">
+      <!-- Navigation Bar -->
+      <nav
+        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
       >
-        <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Anmeldung für Lehrkräfte</h1>
-          <p class="text-gray-400" i18n="@@adminLogin.subtitle">Zugang zum Soil-Dashboard</p>
+        <div class="flex items-center gap-4">
+          <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL ADMIN LOGIN</h1>
         </div>
 
-        @if (successMessage) {
-          <div
-            class="mb-6 p-3 bg-emerald-900/50 border border-emerald-500 rounded text-emerald-200 text-sm text-center"
+        <div class="flex items-center gap-3">
+          @defer (hydrate on interaction) {
+            <app-language-switcher></app-language-switcher>
+          }
+
+          <a
+            routerLink="/"
+            class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+            title="Back to Landing Page"
+            i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
           >
-            {{ successMessage }}
-          </div>
-        }
-
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.email">E-Mail</label>
-            <input
-              formControlName="email"
-              type="email"
-              autocomplete="email"
-              class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-              [placeholder]="t('adminLogin.placeholder.email')"
-            />
-          </div>
-
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <label class="block text-sm font-medium text-gray-400" i18n="@@adminLogin.password">Passwort</label>
-              <button
-                type="button"
-                (click)="forgotPassword()"
-                class="text-xs text-emerald-400 hover:text-emerald-300 transition"
-              >
-                {{ t('adminLogin.forgotPassword') }}
-              </button>
-            </div>
-            <input
-              formControlName="password"
-              type="password"
-              autocomplete="current-password"
-              class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-              placeholder="••••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            [disabled]="loginForm.invalid || isLoading"
-            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
-          >
-            @if (isLoading) {
-              <ng-container i18n="@@adminLogin.loggingIn">Anmeldung läuft...</ng-container>
-            } @else {
-              <ng-container i18n="@@adminLogin.loginButton">Anmelden</ng-container>
-            }
-          </button>
-        </form>
-
-        <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
-          <button
-            (click)="loginWithGoogle()"
-            class="w-full py-3 bg-white text-gray-700 font-bold rounded-lg hover:bg-gray-100 flex items-center justify-center gap-3 transition shadow-md"
-          >
-            <!-- Google G Icon -->
-            <svg class="w-5 h-5" viewBox="0 0 48 48">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
-                fill="#EA4335"
-                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
-              ></path>
-              <path
-                fill="#4285F4"
-                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-              ></path>
-              <path
-                fill="#FBBC05"
-                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
-              ></path>
-              <path
-                fill="#34A853"
-                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
-              ></path>
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
             </svg>
-            <span i18n="@@adminLogin.googleSignIn">Mit Google anmelden</span>
-          </button>
-          <p class="text-sm text-gray-500">
-            <ng-container i18n="@@adminLogin.noAccount">Noch kein Konto?</ng-container>&nbsp;<a
-              routerLink="/admin/register"
-              class="text-emerald-400 hover:underline"
-              i18n="@@adminLogin.registerLink"
-              >Hier registrieren</a
+          </a>
+        </div>
+      </nav>
+
+      <div class="flex-1 relative flex items-center justify-center p-6 portrait:p-0">
+        <!-- Background Image with Overlay -->
+        <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+          <picture>
+            <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+            <img
+              src="assets/bauernhof-landscape-hd.webp"
+              alt="Farm Background"
+              class="w-full h-full object-cover portrait:object-center landscape:object-center opacity-30"
+            />
+          </picture>
+          <div
+            class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
+          ></div>
+        </div>
+
+        <div
+          class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
+        >
+          <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Anmeldung für Lehrkräfte</h1>
+            <p class="text-gray-400" i18n="@@adminLogin.subtitle">Zugang zum Soil-Dashboard</p>
+          </div>
+
+          @if (successMessage) {
+            <div
+              class="mb-6 p-3 bg-emerald-900/50 border border-emerald-500 rounded text-emerald-200 text-sm text-center"
             >
-          </p>
-          <div class="pt-2">
-            <a
-              routerLink="/"
-              class="text-gray-400 hover:text-white text-sm transition flex items-center justify-center gap-2"
-              i18n="@@adminLogin.backToHome"
-              >← Zurück zur Startseite</a
+              {{ successMessage }}
+            </div>
+          }
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.email">E-Mail</label>
+              <input
+                formControlName="email"
+                type="email"
+                autocomplete="email"
+                class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+                [placeholder]="t('adminLogin.placeholder.email')"
+              />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="block text-sm font-medium text-gray-400" i18n="@@adminLogin.password">Passwort</label>
+                <button
+                  type="button"
+                  (click)="forgotPassword()"
+                  class="text-xs text-emerald-400 hover:text-emerald-300 transition"
+                >
+                  {{ t('adminLogin.forgotPassword') }}
+                </button>
+              </div>
+              <input
+                formControlName="password"
+                type="password"
+                autocomplete="current-password"
+                class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <button
+              type="submit"
+              [disabled]="loginForm.invalid || isLoading"
+              class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
             >
+              @if (isLoading) {
+                <ng-container i18n="@@adminLogin.loggingIn">Anmeldung läuft...</ng-container>
+              } @else {
+                <ng-container i18n="@@adminLogin.loginButton">Anmelden</ng-container>
+              }
+            </button>
+          </form>
+
+          <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
+            <button
+              (click)="loginWithGoogle()"
+              class="w-full py-3 bg-white text-gray-700 font-bold rounded-lg hover:bg-gray-100 flex items-center justify-center gap-3 transition shadow-md"
+            >
+              <!-- Google G Icon -->
+              <svg class="w-5 h-5" viewBox="0 0 48 48">
+                <path
+                  fill="#EA4335"
+                  d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                ></path>
+                <path
+                  fill="#4285F4"
+                  d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                ></path>
+                <path
+                  fill="#FBBC05"
+                  d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                ></path>
+                <path
+                  fill="#34A853"
+                  d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                ></path>
+              </svg>
+              <span i18n="@@adminLogin.googleSignIn">Mit Google anmelden</span>
+            </button>
+            <p class="text-sm text-gray-500">
+              <ng-container i18n="@@adminLogin.noAccount">Noch kein Konto?</ng-container>&nbsp;<a
+                routerLink="/admin/register"
+                class="text-emerald-400 hover:underline"
+                i18n="@@adminLogin.registerLink"
+                >Hier registrieren</a
+              >
+            </p>
           </div>
         </div>
       </div>

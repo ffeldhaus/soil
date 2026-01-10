@@ -9,47 +9,54 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
   imports: [RouterLink, LanguageSwitcherComponent],
   template: `
     <div class="min-h-screen relative font-sans text-gray-100 overflow-x-hidden">
-      <!-- Language Switcher -->
-      <div class="absolute top-6 right-6 z-[100]">
-        <app-language-switcher></app-language-switcher>
-      </div>
-
-      <!-- Background Image with Overlay -->
+      <!-- Background Image -->
       <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
         <picture>
           <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
           <img
             src="assets/bauernhof-landscape-hd.webp"
             alt="Farm Background"
-            class="w-full h-full object-cover object-center"
+            class="w-full h-full object-cover portrait:object-center landscape:object-center"
           />
         </picture>
-        <div
-          class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
-        ></div>
+        <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-[2px]"></div>
       </div>
 
-      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-12 lg:py-24">
-        <!-- Navigation -->
-        <nav class="mb-12">
+      <!-- Navigation Bar -->
+      <nav
+        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
+      >
+        <div class="flex items-center gap-4">
+          <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL INFO</h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+          @defer (hydrate on interaction) {
+            <app-language-switcher></app-language-switcher>
+          }
+
           <a
             routerLink="/"
-            class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium"
+            class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+            title="Back to Landing Page"
+            i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
-                fill-rule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clip-rule="evenodd"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
             </svg>
-            <span i18n="Action Label|Link to return to the home page@@info.backToHome">Zurück zur Startseite</span>
           </a>
-        </nav>
+        </div>
+      </nav>
 
-        <header class="mb-16">
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-16 animate-fade-in">
+        <header class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl text-center space-y-4">
           <h1
-            class="text-4xl md:text-6xl font-sans font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-100 to-emerald-200 drop-shadow-2xl tracking-tight mb-6"
+            class="text-4xl md:text-6xl font-bold text-emerald-500 tracking-tight"
             i18n="Main Heading|Title of the scientific background page@@info.title"
           >
             Wissenschaftlicher Hintergrund
@@ -62,7 +69,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <div class="space-y-12">
           <!-- Main Reference -->
-          <section class="bg-gray-800/40 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-2xl">
+          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎓</span>
               <ng-container i18n="Heading|Title for the main research reference section@@info.mainReferenceTitle">Zentrale Forschungsarbeit</ng-container>
@@ -76,7 +83,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 <p class="text-gray-400">Dissertation von Dr. Nina Wolf (TU Dortmund, 2014)</p>
               </div>
 
-              <div class="bg-gray-900/30 rounded-xl p-6 border border-white/5 space-y-6">
+              <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5 space-y-6">
                 <section>
                   <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the objective section@@info.objectiveTitle">1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</h3>
                   <p class="text-gray-300 leading-relaxed" i18n="Info Text|Description of the main goal of the research@@info.objectiveText">
@@ -175,7 +182,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
           </section>
 
           <!-- Publication List -->
-          <section class="space-y-8">
+          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8">
             <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3" i18n="Heading|Title for the other publications section@@info.publicationsTitle">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">📚</span>
               Weitere Publikationen
@@ -186,7 +193,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                 <a
                   [href]="item.link"
                   target="_blank"
-                  class="block bg-gray-800/20 border border-white/5 rounded-2xl p-6 hover:bg-gray-800/40 hover:border-emerald-500/30 transition-all group"
+                  class="block bg-gray-950/50 border border-white/5 rounded-2xl p-6 hover:bg-gray-900/80 hover:border-emerald-500/30 transition-all group"
                 >
                   <div class="flex gap-4 items-start">
                     <span class="text-emerald-500 font-mono font-bold">{{ item.year }}</span>

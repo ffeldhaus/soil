@@ -11,22 +11,48 @@
   <div class="fixed inset-0 z-0 opacity-40 pointer-events-none print:hidden">
     <picture>
       <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
-      <img src="assets/bauernhof-landscape-hd.webp" alt="Farm background" class="w-full h-full object-cover" />
+      <img src="assets/bauernhof-landscape-hd.webp" alt="Farm background" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
     </picture>
   </div>
 
   <!-- Navigation Bar -->
   <nav
-    class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-3 sticky top-0 z-50 flex items-center justify-between shrink-0 h-16 print:hidden"
+    class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
   >
     <div class="flex items-center gap-4">
-      <h1 class="text-2xl font-bold font-serif text-emerald-500 tracking-wider">SOIL MANUAL</h1>
+      <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL MANUAL</h1>
     </div>
 
     <div class="flex items-center gap-3">
+      @defer (hydrate on interaction) {
+        <app-language-switcher></app-language-switcher>
+      }
+
+      <a
+        routerLink="/"
+        class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+        title="Back to Landing Page"
+        i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+          />
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 portrait:px-0 portrait:max-w-none flex flex-col gap-8">
+    <header
+      class="text-center bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0 relative"
+    >
       <button
         (click)="showPrintModal = true"
-        class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-xs flex items-center gap-2"
+        class="absolute top-8 right-8 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-sm flex items-center gap-2 print:hidden"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -39,31 +65,6 @@
         {{ t('manual.print') }}
       </button>
 
-      @defer (hydrate on interaction) {
-        <app-language-switcher></app-language-switcher>
-      }
-
-      <button
-        (click)="logout()"
-        class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition"
-        [title]="t('board.logout')"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-          />
-        </svg>
-      </button>
-    </div>
-  </nav>
-
-  <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 portrait:px-0 portrait:max-w-none">
-    <header
-      class="text-center mb-8 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0"
-    >
       <h1 class="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight">
         {{ t('manual.title') }}
       </h1>
@@ -72,7 +73,7 @@
 
     <!-- General Section -->
     <section
-      class="mb-8 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
+      class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
     >
       <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
         <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">📖</span>
@@ -94,7 +95,7 @@
 
     <!-- Concepts Section -->
     <section
-      class="mb-8 bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
+      class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
     >
       <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
         <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">💡</span>
@@ -114,7 +115,7 @@
     </section>
 
     <!-- Crops Section -->
-    <div class="space-y-8">
+    <div class="flex flex-col gap-8">
       @for (crop of crops; track crop.id) {
         @defer (hydrate on viewport) {
           <app-manual-crop-card [crop]="crop"></app-manual-crop-card>
@@ -122,8 +123,8 @@
       }
     </div>
 
-    <footer class="mt-12 pt-12 border-t border-gray-800 text-center text-gray-500 text-sm italic print:mt-8">
-      {{ t('manual.footer') }}
+    <footer class="mt-4 pt-12 border-t border-gray-800 text-center text-gray-500 text-sm print:mt-8">
+      <p i18n="Footer Text|Copyright and project info@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
     </footer>
   </div>
 

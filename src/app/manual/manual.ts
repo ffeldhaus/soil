@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-import { AuthService } from '../auth/auth.service';
 import { GAME_CONSTANTS } from '../game-constants';
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 import { ManualConceptCardComponent } from './components/manual-concept-card';
@@ -14,6 +13,7 @@ import { ManualPrintModalComponent } from './components/manual-print-modal';
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     LanguageSwitcherComponent,
     ManualConceptCardComponent,
     ManualCropCardComponent,
@@ -23,8 +23,7 @@ import { ManualPrintModalComponent } from './components/manual-print-modal';
   styleUrl: './manual.scss',
 })
 export class ManualComponent {
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  year = new Date().getFullYear();
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -38,7 +37,7 @@ export class ManualComponent {
       'manual.intro.mechanics.title': $localize`:Subheading|Title for the game mechanics section@@manual.intro.mechanics.title:Mechanik`,
       'manual.intro.mechanics.text': $localize`:Info Text|Description of how the game works@@manual.intro.mechanics.text:In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.`,
       'manual.concepts.title': $localize`:Heading|Title for the game concepts section@@manual.concepts.title:Konzepte`,
-      'manual.footer': $localize`:Info Text|Footer text for the manual@@manual.footer:Soil Simulation - Ein Bildungsprojekt für nachhaltige Landwirtschaft.`,
+      'manual.footer': $localize`:Footer Text|Copyright and project info@@landing.footer:© ${this.year}:INTERPOLATION: Soil Projekt. Entwickelt für Bildungszwecke.`,
     };
     return translations[key] || key;
   }
@@ -54,10 +53,5 @@ export class ManualComponent {
     setTimeout(() => {
       window.print();
     }, 100);
-  }
-
-  async logout() {
-    await this.authService.logout();
-    this.router.navigate(['/']);
   }
 }

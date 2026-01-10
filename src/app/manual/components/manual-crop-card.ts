@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, type OnChanges, type SimpleChanges } from '@angular/core';
 
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType } from '../../types';
 
 interface CropConfig {
   id: CropType;
+  name?: string;
   image: string;
   pest: string;
   yields: {
@@ -36,14 +37,32 @@ interface CropConfig {
   special?: string;
 }
 
+interface RotationItem {
+  id: string;
+  quality: 'good' | 'ok' | 'bad';
+}
+
 @Component({
   selector: 'app-manual-crop-card',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './manual-crop-card.html',
+  host: {
+    class: 'block',
+  },
 })
-export class ManualCropCardComponent {
+export class ManualCropCardComponent implements OnChanges {
   @Input() crop!: CropConfig;
+
+  previousCrops: RotationItem[] = [];
+  nextCrops: RotationItem[] = [];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.crop && this.crop) {
+      this.previousCrops = this.calculateRotationData(this.crop.id, 'previous');
+      this.nextCrops = this.calculateRotationData(this.crop.id, 'next');
+    }
+  }
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -140,10 +159,10 @@ export class ManualCropCardComponent {
     return map[level] || '';
   }
 
-  getRotationData(cropId: string, direction: 'previous' | 'next') {
+  calculateRotationData(cropId: string, direction: 'previous' | 'next'): RotationItem[] {
     const matrix = GAME_CONSTANTS.ROTATION_MATRIX;
     const currentCrop = cropId as CropType;
-    const results: { id: string; quality: 'good' | 'ok' | 'bad' }[] = [];
+    const results: RotationItem[] = [];
 
     if (direction === 'previous') {
       Object.keys(matrix).forEach((prev) => {
@@ -174,5 +193,20 @@ export class ManualCropCardComponent {
       bad: 'bg-red-500/20 border-red-500/50 text-red-400',
     };
     return map[quality];
+  }
+
+  getCropName(cropId: string): string {
+    if (!cropId) return '';
+    // Try to find the crop in constants (case-sensitive as defined in the object)
+    const crop = (GAME_CONSTANTS.CROPS as any)[cropId];
+    if (crop?.name) return crop.name;
+
+    // Try case-insensitive fallback for the key if exact match failed
+    const crops = GAME_CONSTANTS.CROPS as Record<string, any>;
+    const entry = Object.entries(crops).find(([key]) => key.toLowerCase() === cropId.toLowerCase());
+    if (entry?.[1].name) return entry[1].name;
+
+    // Final fallback to the translation map in this component
+    return this.t(`crop.${cropId.toLowerCase()}`);
   }
 }

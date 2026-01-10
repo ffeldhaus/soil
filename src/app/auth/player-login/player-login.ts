@@ -11,85 +11,105 @@ import { AuthService } from '../auth.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
   template: `
-    <div
-      class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden portrait:p-0"
-    >
-      <!-- Language Switcher -->
-      <div class="absolute top-6 right-6 z-[100]">
-        <app-language-switcher></app-language-switcher>
-      </div>
-
-      <!-- Background Image with Overlay -->
-      <div class="absolute inset-0 z-0">
-        <picture>
-          <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
-          <img
-            src="assets/bauernhof-landscape-hd.webp"
-            alt="Farm Background"
-            class="w-full h-full object-cover object-center opacity-30"
-          />
-        </picture>
-        <div
-          class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
-        ></div>
-      </div>
-
-      <div
-        class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:bg-gray-800"
+    <div class="min-h-screen relative bg-gray-900 text-gray-100 font-sans overflow-hidden flex flex-col">
+      <!-- Navigation Bar -->
+      <nav
+        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
       >
-        <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
-          <ng-container i18n="Main Heading|Title of the player login page@@playerLogin.title">Spiel beitreten</ng-container>
-        </h2>
+        <div class="flex items-center gap-4">
+          <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL LOGIN</h1>
+        </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2"
-              ><ng-container i18n="Form Label|Label for the game ID input@@playerLogin.gameId">Spiel-ID</ng-container></label
-            >
-            <input
-              formControlName="gameId"
-              type="text"
-              autocomplete="username"
-              data-testid="player-login-gameid"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
-              placeholder="Game ID"
-              [placeholder]="t('playerLogin.placeholder.gameId')"
-            />
-          </div>
+        <div class="flex items-center gap-3">
+          @defer (hydrate on interaction) {
+            <app-language-switcher></app-language-switcher>
+          }
 
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2"
-              ><ng-container i18n="Form Label|Label for the player PIN input@@playerLogin.pin">PIN</ng-container></label
-            >
-            <input
-              formControlName="password"
-              type="password"
-              autocomplete="current-password"
-              data-testid="player-login-pin"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
-              placeholder="Unique Player PIN"
-              [placeholder]="t('playerLogin.placeholder.pin')"
-            />
-          </div>
-
-          <button
-            type="submit"
-            [disabled]="loginForm.invalid || isLoading"
-            data-testid="player-login-submit"
-            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
+          <a
+            routerLink="/"
+            class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+            title="Back to Landing Page"
+            i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
           >
-            @if (isLoading) {
-              <ng-container>{{ t('playerLogin.enteringGame') }}</ng-container>
-            } @else {
-              <ng-container i18n="Action Label|Button to enter the game@@playerLogin.startGame">Spiel starten</ng-container>
-            }
-          </button>
-        </form>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
+            </svg>
+          </a>
+        </div>
+      </nav>
 
-        <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
-          <a routerLink="/" class="text-gray-400 hover:text-white text-sm transition">{{
-            t('playerLogin.backToHome')
-          }}</a>
+      <div class="flex-1 relative flex items-center justify-center p-6 portrait:p-0">
+        <!-- Background Image with Overlay -->
+        <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+          <picture>
+            <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+            <img
+              src="assets/bauernhof-landscape-hd.webp"
+              alt="Farm Background"
+              class="w-full h-full object-cover portrait:object-center landscape:object-center opacity-30"
+            />
+          </picture>
+          <div
+            class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
+          ></div>
+        </div>
+
+        <div
+          class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
+        >
+          <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
+            <ng-container i18n="Main Heading|Title of the player login page@@playerLogin.title">Spiel beitreten</ng-container>
+          </h2>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2"
+                ><ng-container i18n="Form Label|Label for the game ID input@@playerLogin.gameId">Spiel-ID</ng-container></label
+              >
+              <input
+                formControlName="gameId"
+                type="text"
+                autocomplete="username"
+                data-testid="player-login-gameid"
+                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
+                placeholder="Game ID"
+                [placeholder]="t('playerLogin.placeholder.gameId')"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2"
+                ><ng-container i18n="Form Label|Label for the player PIN input@@playerLogin.pin">PIN</ng-container></label
+              >
+              <input
+                formControlName="password"
+                type="password"
+                autocomplete="current-password"
+                data-testid="player-login-pin"
+                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
+                placeholder="Unique Player PIN"
+                [placeholder]="t('playerLogin.placeholder.pin')"
+              />
+            </div>
+
+            <button
+              type="submit"
+              [disabled]="loginForm.invalid || isLoading"
+              data-testid="player-login-submit"
+              class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
+            >
+              @if (isLoading) {
+                <ng-container>{{ t('playerLogin.enteringGame') }}</ng-container>
+              } @else {
+                <ng-container i18n="Action Label|Button to enter the game@@playerLogin.startGame">Spiel starten</ng-container>
+              }
+            </button>
+          </form>
         </div>
       </div>
 

@@ -20,7 +20,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
       <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
         <picture>
           <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
-          <img src="assets/bauernhof-landscape-hd.webp" alt="Farm Background" class="w-full h-full object-cover object-center" />
+          <img src="assets/bauernhof-landscape-hd.webp" alt="Farm Background" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
         </picture>
         <div
           class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
@@ -84,18 +84,22 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         </div>
 
         <!-- Scroll Indicator -->
-        <div class="absolute bottom-10 animate-bounce text-gray-400">
+        <button
+          (click)="scrollToInfo()"
+          class="absolute bottom-10 animate-bounce text-gray-400 hover:text-emerald-400 transition-colors cursor-pointer"
+          aria-label="Scroll to info"
+        >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
-        </div>
+        </button>
       </main>
 
       <!-- Info Sections -->
       @defer (hydrate on viewport) {
-        <div class="relative z-10 bg-gray-900 text-gray-300 py-24 px-6 border-t border-gray-800">
-          <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-            <section class="space-y-6">
+        <div id="info-section" class="relative z-10 py-24 px-6">
+          <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-6">
               <h2
                 class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
                 i18n="Heading|About the game section@@landing.aboutTitle"
@@ -121,7 +125,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               </div>
             </section>
 
-            <section class="space-y-6">
+            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-6">
               <h2
                 class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
                 i18n="Heading|Background information section@@landing.backgroundTitle"
@@ -145,14 +149,14 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
           <div class="mt-16 text-center">
             <a
               routerLink="/info"
-              class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-emerald-900/20 hover:bg-emerald-900/40"
+              class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-gray-900/80 backdrop-blur-md hover:bg-gray-900/40"
             >
               <span class="p-1 bg-emerald-900/30 rounded-lg">🎓</span>
               <span i18n="Action Label|Link to scientific background details@@landing.scientificBackground">Wissenschaftlicher Hintergrund</span>
             </a>
           </div>
 
-          <footer class="mt-24 text-center text-gray-600 text-sm">
+          <footer class="mt-24 text-center text-gray-500 text-sm">
             <p i18n="Footer Text|Copyright and project info@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
           </footer>
         </div>
@@ -162,4 +166,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 })
 export class Landing {
   year = new Date().getFullYear();
+
+  scrollToInfo() {
+    const element = document.getElementById('info-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 }

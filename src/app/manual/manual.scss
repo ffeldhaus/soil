@@ -136,20 +136,16 @@
     padding: 0 !important;
   }
 
-  /* Ensure grids and flexbox display correctly in print */
   .grid {
     display: grid !important;
   }
   .flex {
     display: flex !important;
   }
+}
 
-  /* Optimization for crop cards in print */
-  app-manual-crop-card {
-    display: block !important;
-    width: 100% !important;
-    page-break-inside: avoid !important;
-  }
+app-manual-crop-card {
+  display: block;
 }
 
 /* Dynamic @page based on classes */

@@ -1,9 +1,7 @@
 @use 'sass:math';
 
 .board-container {
-  background-image: url('/assets/bauernhof-landscape-hd.webp');
   @media (orientation: portrait) {
-    background-image: url('/assets/bauernhof-portrait-hd.webp');
   }
   background-size: cover;
   background-position: center;
@@ -14,15 +12,15 @@
   grid-template-columns: repeat(var(--cols), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
 
-  // Reduced overhead: Header (64px) + Round HUD (~40px) + minimal padding
-  $overhead: 160px;
+  // Reduced overhead: Header (40px) + Round HUD (~40px) + minimal padding
+  $overhead: 140px;
 
   // Ensure the grid maintains an aspect ratio based on its elements
   aspect-ratio: var(--cols) / var(--rows);
 
-  width: min(calc(100vw - 32px), calc((100vh - 180px) * (var(--cols) / var(--rows))));
-  max-height: calc(100vh - 180px);
-  max-width: calc(100vw - 32px);
+  width: min(calc(100vw - 16px), calc((100vh - #{$overhead}) * (var(--cols) / var(--rows))));
+  max-height: calc(100vh - #{$overhead});
+  max-width: calc(100vw - 16px);
 
   margin: auto;
 }

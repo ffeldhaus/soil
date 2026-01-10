@@ -85,7 +85,7 @@ export class PlantingModal {
     Corn: { label: 'crop.corn', image: 'mais.webp' },
     Oat: { label: 'crop.oat', image: 'hafer.webp' },
     Rye: { label: 'crop.rye', image: 'roggen.webp' },
-    FieldBean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
+    Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
     Grass: { label: 'crop.animals', image: 'hausschwein.webp' },
     Fallow: { label: 'crop.fallow', image: 'brachland.jpg' },
   };

@@ -47,6 +47,15 @@ export class GameService {
   }
 
   async loadGame(gameId: string): Promise<GameState | null> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const mockState = this.getMockGameState();
+      this.currentRound = mockState.lastRound || null;
+      this.parcelsSubject.next(mockState.lastRound?.parcelsSnapshot || this.createInitialParcels());
+      this.stateSubject.next(mockState);
+      return mockState;
+    }
+
     const getGameStateFn = httpsCallable<{ gameId: string }, GameState>(this.functions, 'getGameState');
     try {
       const result = await getGameStateFn({ gameId });
@@ -99,6 +108,12 @@ export class GameService {
   }
 
   async saveDraft(gameId: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      if (window.console) console.warn('Mock: Draft saved locally');
+      return;
+    }
+
     const saveDraftFn = httpsCallable<{ gameId: string; decision: RoundDecision }, { success: boolean }>(
       this.functions,
       'saveDraft',
@@ -132,6 +147,42 @@ export class GameService {
     gameId: string,
     settings?: { machines: number; organic: boolean; fertilizer: boolean; pesticide: boolean; organisms: boolean },
   ): Promise<Round | { status: string }> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const currentParcels = this.parcelsSubject.value;
+      const nextRoundNum = (this.currentRound?.number || 0) + 1;
+      const mockRound: Round = {
+        number: nextRoundNum,
+        decision: {
+          machines: settings?.machines ?? 0,
+          organic: settings?.organic ?? false,
+          fertilizer: settings?.fertilizer ?? false,
+          pesticide: settings?.pesticide ?? false,
+          organisms: settings?.organisms ?? false,
+          parcels: { ...this.pendingDecisions },
+        },
+        parcelsSnapshot: currentParcels.map((p) => ({ ...p, yield: Math.random() * 100 })),
+        result: {
+          profit: 500,
+          capital: 5500,
+          income: 1000,
+          expenses: { seeds: 100, labor: 200, running: 100, investments: 100, total: 500 },
+          harvestSummary: {} as any,
+          events: { weather: 'Normal', vermin: 'None' },
+        },
+      };
+      this.currentRound = mockRound;
+      this.parcelsSubject.next(mockRound.parcelsSnapshot);
+      const state = this.stateSubject.value;
+      if (state) {
+        state.game.currentRoundNumber = nextRoundNum;
+        state.lastRound = mockRound;
+        state.playerState.history.push(mockRound);
+        this.stateSubject.next({ ...state });
+      }
+      return mockRound;
+    }
+
     const submitDecisionFn = httpsCallable<
       { gameId: string; decision: RoundDecision },
       { status: string; nextRound?: Round }
@@ -418,5 +469,56 @@ export class GameService {
         nutrition: 80,
         yield: 0,
       }));
+  }
+
+  private getMockGameState(): GameState {
+    const parcels = this.createInitialParcels();
+    return {
+      game: {
+        id: 'test-game-id',
+        name: 'Mock Test Game',
+        hostUid: 'mock-admin',
+        status: 'in_progress',
+        currentRoundNumber: 1,
+        config: { numPlayers: 1, numRounds: 20, numAi: 0 },
+        settings: { length: 20, difficulty: 'normal', playerLabel: 'Player' },
+        players: {},
+        createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
+      },
+      playerState: {
+        uid: 'player-test-game-id-1',
+        displayName: 'Test User',
+        isAi: false,
+        capital: 5000,
+        currentRound: 1,
+        history: [
+          {
+            number: 0,
+            decision: {
+              machines: 0,
+              organic: false,
+              fertilizer: false,
+              pesticide: false,
+              organisms: false,
+              parcels: {},
+            },
+            parcelsSnapshot: parcels,
+          },
+        ],
+        playerNumber: 1,
+      },
+      lastRound: {
+        number: 0,
+        decision: {
+          machines: 0,
+          organic: false,
+          fertilizer: false,
+          pesticide: false,
+          organisms: false,
+          parcels: {},
+        },
+        parcelsSnapshot: parcels,
+      },
+    };
   }
 }

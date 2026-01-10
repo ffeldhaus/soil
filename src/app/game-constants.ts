@@ -65,6 +65,8 @@ export const GAME_CONSTANTS = {
   CROPS: {
     Fieldbean: {
       id: 'Fieldbean',
+      name: $localize`:@@crop.fieldbean:Ackerbohne`,
+      description: $localize`:@@crop.fieldbean.desc:Ackerbohne`,
       image: 'ackerbohne.webp',
       pest: 'Blattlaus',
       yields: { veryHigh: '≥ 48', high: '36-47', moderate: '24-35', low: '13-23', veryLow: '< 13' },
@@ -93,6 +95,8 @@ export const GAME_CONSTANTS = {
     },
     Oat: {
       id: 'Oat',
+      name: $localize`:@@crop.oat:Hafer`,
+      description: $localize`:@@crop.oat.desc:Hafer`,
       image: 'hafer.webp',
       pest: 'Fritfliege',
       yields: { veryHigh: '≥ 56', high: '42-55', moderate: '28-41', low: '15-27', veryLow: '< 15' },
@@ -106,6 +110,8 @@ export const GAME_CONSTANTS = {
     },
     Potato: {
       id: 'Potato',
+      name: $localize`:@@crop.potato:Kartoffel`,
+      description: $localize`:@@crop.potato.desc:Kartoffel`,
       image: 'kartoffel.webp',
       pest: 'Kartoffelkäfer',
       yields: { veryHigh: '≥ 296', high: '222-295', moderate: '148-221', low: '75-147', veryLow: '< 75' },
@@ -118,6 +124,8 @@ export const GAME_CONSTANTS = {
     },
     Corn: {
       id: 'Corn',
+      name: $localize`:@@crop.corn:Mais`,
+      description: $localize`:@@crop.corn.desc:Mais`,
       image: 'mais.webp',
       pest: 'Maiszünsler',
       yields: { veryHigh: '≥ 88', high: '66-87', moderate: '44-65', low: '23-43', veryLow: '< 23' },
@@ -130,6 +138,8 @@ export const GAME_CONSTANTS = {
     },
     Rye: {
       id: 'Rye',
+      name: $localize`:@@crop.rye:Roggen`,
+      description: $localize`:@@crop.rye.desc:Roggen`,
       image: 'roggen.webp',
       pest: 'Blattlaus',
       yields: { veryHigh: '≥ 80', high: '60-79', moderate: '40-59', low: '20-39', veryLow: '< 20' },
@@ -143,6 +153,8 @@ export const GAME_CONSTANTS = {
     },
     Wheat: {
       id: 'Wheat',
+      name: $localize`:@@crop.wheat:Weizen`,
+      description: $localize`:@@crop.wheat.desc:Weizen`,
       image: 'weizen.webp',
       pest: 'Blattlaus',
       yields: { veryHigh: '≥ 92', high: '69-91', moderate: '46-68', low: '24-45', veryLow: '< 24' },
@@ -155,6 +167,8 @@ export const GAME_CONSTANTS = {
     },
     Beet: {
       id: 'Beet',
+      name: $localize`:@@crop.beet:Zuckerrübe`,
+      description: $localize`:@@crop.beet.desc:Zuckerrübe`,
       image: 'zuckerruebe.webp',
       pest: 'Drahtwurm',
       yields: { veryHigh: '≥ 456', high: '342-455', moderate: '228-341', low: '115-227', veryLow: '< 115' },

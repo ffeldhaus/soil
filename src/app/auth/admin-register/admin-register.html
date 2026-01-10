@@ -1,241 +1,257 @@
-<div
-  class="min-h-screen relative flex items-center justify-center bg-gray-900 text-gray-100 font-sans p-6 overflow-hidden portrait:p-0"
->
-  <!-- Language Switcher -->
-  <div class="absolute top-6 right-6 z-[100]">
-    <app-language-switcher></app-language-switcher>
-  </div>
-
-  <!-- Background Image with Overlay -->
-  <div class="absolute inset-0 z-0">
-    <picture>
-      <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
-      <img
-        src="assets/bauernhof-landscape-hd.webp"
-        alt="Farm Background"
-        class="w-full h-full object-cover object-center opacity-30"
-      />
-    </picture>
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
-    ></div>
-  </div>
-
-  <div
-    class="relative z-10 w-full max-w-md bg-gray-800/80 backdrop-blur-md rounded-xl shadow-2xl p-8 border border-gray-700 my-8 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:bg-gray-800 portrait:my-0"
+<div class="min-h-screen relative bg-gray-900 text-gray-100 font-sans overflow-hidden flex flex-col">
+  <!-- Navigation Bar -->
+  <nav
+    class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
   >
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-emerald-400 mb-2">
-        <ng-container i18n="Main Heading|Title of the teacher registration page@@adminRegister.title">Registrierung für Lehrkräfte</ng-container>
-      </h1>
-      <p class="text-gray-400">
-        <ng-container i18n="Subheading|Invitation to join the SOIL community@@adminRegister.subtitle">Treten Sie der SOIL-Community bei</ng-container>
-      </p>
+    <div class="flex items-center gap-4">
+      <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL REGISTRATION</h1>
     </div>
 
-    @if (isGoogleUser) {
-      <h2 class="text-xl font-bold text-center mb-6 text-white">
-        <ng-container i18n="Subheading|Title for completing the registration for Google users@@adminRegister.completeTitle">Registrierung abschließen</ng-container>
-      </h2>
+    <div class="flex items-center gap-3">
+      @defer (hydrate on interaction) {
+        <app-language-switcher></app-language-switcher>
+      }
 
-      <div class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-lg text-center text-gray-100">
-        <p class="text-blue-200 text-sm">
-          {{ t('adminRegister.signedInAs') }}
-          <span class="font-bold text-white">{{ currentUser?.email }}</span>
-          <ng-container>{{ t('adminRegister.viaGoogle') }}</ng-container
-          >.
+      <a
+        routerLink="/"
+        class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+        title="Back to Landing Page"
+        i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+          />
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <div class="flex-1 relative flex items-center justify-center p-6 overflow-y-auto portrait:p-0">
+    <!-- Background Image with Overlay -->
+    <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+      <picture>
+        <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+        <img
+          src="assets/bauernhof-landscape-hd.webp"
+          alt="Farm Background"
+          class="w-full h-full object-cover portrait:object-center landscape:object-center opacity-30"
+        />
+      </picture>
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
+      ></div>
+    </div>
+
+    <div
+      class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 my-8 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:my-0"
+    >
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-emerald-400 mb-2">
+          <ng-container i18n="Main Heading|Title of the teacher registration page@@adminRegister.title">Registrierung für Lehrkräfte</ng-container>
+        </h1>
+        <p class="text-gray-400">
+          <ng-container i18n="Subheading|Invitation to join the SOIL community@@adminRegister.subtitle">Treten Sie der SOIL-Community bei</ng-container>
         </p>
-        <p class="text-xs text-gray-400 mt-1">{{ t('adminRegister.completeApp') }}</p>
       </div>
-    }
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
-      @if (successMessage) {
-        <div class="p-3 bg-emerald-900/50 border border-emerald-500 rounded text-emerald-200 text-sm text-center">
-          {{ successMessage }}
+      @if (isGoogleUser) {
+        <h2 class="text-xl font-bold text-center mb-6 text-white">
+          <ng-container i18n="Subheading|Title for completing the registration for Google users@@adminRegister.completeTitle">Registrierung abschließen</ng-container>
+        </h2>
+
+        <div class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-lg text-center text-gray-100">
+          <p class="text-blue-200 text-sm">
+            {{ t('adminRegister.signedInAs') }}
+            <span class="font-bold text-white">{{ currentUser?.email }}</span>
+            <ng-container>{{ t('adminRegister.viaGoogle') }}</ng-container
+            >.
+          </p>
+          <p class="text-xs text-gray-400 mt-1">{{ t('adminRegister.completeApp') }}</p>
         </div>
       }
 
-      <!-- Name Section -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">
-            {{ t('adminRegister.firstName') }} <span class="text-emerald-500">*</span>
-          </label>
-          <input
-            formControlName="firstName"
-            type="text"
-            class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-            [class.border-red-500]="
-              registerForm.get('firstName')?.touched && registerForm.get('firstName')?.errors?.['required']
-            "
-            [placeholder]="t('adminRegister.placeholder.firstName')"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">
-            {{ t('adminRegister.lastName') }} <span class="text-emerald-500">*</span>
-          </label>
-          <input
-            formControlName="lastName"
-            type="text"
-            class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-            [class.border-red-500]="
-              registerForm.get('lastName')?.touched && registerForm.get('lastName')?.errors?.['required']
-            "
-            [placeholder]="t('adminRegister.placeholder.lastName')"
-          />
-        </div>
-      </div>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        @if (successMessage) {
+          <div class="p-3 bg-emerald-900/50 border border-emerald-500 rounded text-emerald-200 text-sm text-center">
+            {{ successMessage }}
+          </div>
+        }
 
-      <!-- Email/Password Section (Hidden for Google Users) -->
-      @if (!isGoogleUser) {
-        <div class="space-y-6">
+        <!-- Name Section -->
+        <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2">
-              {{ t('adminRegister.email') }} <span class="text-emerald-500">*</span>
+              {{ t('adminRegister.firstName') }} <span class="text-emerald-500">*</span>
             </label>
             <input
-              formControlName="email"
-              type="email"
-              autocomplete="email"
+              formControlName="firstName"
+              type="text"
               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-              [class.border-red-500]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
-              placeholder="admin@school.edu"
-              [placeholder]="t('adminRegister.placeholder.email')"
+              [class.border-red-500]="
+                registerForm.get('firstName')?.touched && registerForm.get('firstName')?.errors?.['required']
+              "
+              [placeholder]="t('adminRegister.placeholder.firstName')"
             />
-            @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
-              <div class="text-red-400 text-xs mt-1">
-                {{ t('adminRegister.error.email') }}
-              </div>
-            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">
+              {{ t('adminRegister.lastName') }} <span class="text-emerald-500">*</span>
+            </label>
+            <input
+              formControlName="lastName"
+              type="text"
+              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+              [class.border-red-500]="
+                registerForm.get('lastName')?.touched && registerForm.get('lastName')?.errors?.['required']
+              "
+              [placeholder]="t('adminRegister.placeholder.lastName')"
+            />
+          </div>
+        </div>
+
+        <!-- Email/Password Section (Hidden for Google Users) -->
+        @if (!isGoogleUser) {
+          <div class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2">
+                {{ t('adminRegister.email') }} <span class="text-emerald-500">*</span>
+              </label>
+              <input
+                formControlName="email"
+                type="email"
+                autocomplete="email"
+                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+                [class.border-red-500]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+                placeholder="admin@school.edu"
+                [placeholder]="t('adminRegister.placeholder.email')"
+              />
+              @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+                <div class="text-red-400 text-xs mt-1">
+                  {{ t('adminRegister.error.email') }}
+                </div>
+              }
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2">
+                {{ t('adminRegister.password') }} <span class="text-emerald-500">*</span>
+              </label>
+              <input
+                formControlName="password"
+                type="password"
+                autocomplete="new-password"
+                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+                [class.border-red-500]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+                placeholder="Minimum 6 characters"
+                [placeholder]="t('adminRegister.placeholder.password')"
+              />
+              <p class="text-xs text-gray-500 mt-1" i18n="Form Hint|Requirement for password length@@adminRegister.passwordRequirement">
+                Erforderlich: Mindestens 6 Zeichen
+              </p>
+              @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+                <div class="text-red-400 text-xs mt-1">
+                  {{ t('adminRegister.error.password') }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Onboarding Section -->
+        <div class="space-y-6 pt-2 border-t border-gray-700/50">
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">
+              {{ t('adminRegister.institution') }} <span class="text-emerald-500">*</span>
+            </label>
+            <input
+              formControlName="institution"
+              type="text"
+              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+              [class.border-red-500]="
+                registerForm.get('institution')?.touched && registerForm.get('institution')?.errors?.['required']
+              "
+              placeholder="e.g. Humboldt High School"
+              [placeholder]="t('adminRegister.placeholder.institution')"
+            />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-400 mb-2">
-              {{ t('adminRegister.password') }} <span class="text-emerald-500">*</span>
+              {{ t('adminRegister.website') }} <span class="text-emerald-500">*</span>
             </label>
             <input
-              formControlName="password"
-              type="password"
-              autocomplete="new-password"
+              formControlName="institutionLink"
+              type="url"
               class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-              [class.border-red-500]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
-              placeholder="Minimum 6 characters"
-              [placeholder]="t('adminRegister.placeholder.password')"
+              [class.border-red-500]="
+                registerForm.get('institutionLink')?.touched && registerForm.get('institutionLink')?.invalid
+              "
+              placeholder="https://school.edu"
+              [placeholder]="t('adminRegister.placeholder.website')"
             />
-            <p class="text-xs text-gray-500 mt-1" i18n="Form Hint|Requirement for password length@@adminRegister.passwordRequirement">
-              Erforderlich: Mindestens 6 Zeichen
-            </p>
-            @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
-              <div class="text-red-400 text-xs mt-1">
-                {{ t('adminRegister.error.password') }}
-              </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">
+              {{ t('adminRegister.explanation') }} <span class="text-emerald-500">*</span>
+            </label>
+            <textarea
+              formControlName="explanation"
+              rows="3"
+              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white resize-none"
+              [class.border-red-500]="
+                registerForm.get('explanation')?.touched && registerForm.get('explanation')?.invalid
+              "
+              placeholder="How do you plan to use SOIL?"
+              [placeholder]="t('adminRegister.placeholder.explanation')"
+            ></textarea>
+            <div class="flex justify-between mt-1">
+              <p class="text-xs text-gray-500" i18n="Form Hint|Requirement for explanation length@@adminRegister.explanationRequirement">
+                Erforderlich: Mindestens 20 Zeichen
+              </p>
+              <p
+                class="text-xs"
+                [class.text-emerald-500]="(registerForm.get('explanation')?.value?.length || 0) >= 20"
+                [class.text-gray-500]="(registerForm.get('explanation')?.value?.length || 0) < 20"
+              >
+                {{ registerForm.get('explanation')?.value?.length || 0 }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button
+            type="submit"
+            [disabled]="registerForm.invalid || isLoading"
+            class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-lg hover:shadow-emerald-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3"
+          >
+            @if (isLoading) {
+              <svg
+                class="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <ng-container i18n="Status Message|Indicates the registration is being processed@@adminRegister.processing">Wird verarbeitet...</ng-container>
+            } @else {
+              <ng-container i18n="Action Label|Button to submit the registration request@@adminRegister.btnSubmit">Registrierung beantragen</ng-container>
             }
-          </div>
+          </button>
         </div>
-      }
-
-      <!-- Onboarding Section -->
-      <div class="space-y-6 pt-2 border-t border-gray-700/50">
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">
-            {{ t('adminRegister.institution') }} <span class="text-emerald-500">*</span>
-          </label>
-          <input
-            formControlName="institution"
-            type="text"
-            class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-            [class.border-red-500]="
-              registerForm.get('institution')?.touched && registerForm.get('institution')?.errors?.['required']
-            "
-            placeholder="e.g. Humboldt High School"
-            [placeholder]="t('adminRegister.placeholder.institution')"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">
-            {{ t('adminRegister.website') }} <span class="text-emerald-500">*</span>
-          </label>
-          <input
-            formControlName="institutionLink"
-            type="url"
-            class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-            [class.border-red-500]="
-              registerForm.get('institutionLink')?.touched && registerForm.get('institutionLink')?.invalid
-            "
-            placeholder="https://school.edu"
-            [placeholder]="t('adminRegister.placeholder.website')"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">
-            {{ t('adminRegister.explanation') }} <span class="text-emerald-500">*</span>
-          </label>
-          <textarea
-            formControlName="explanation"
-            rows="3"
-            class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white resize-none"
-            [class.border-red-500]="
-              registerForm.get('explanation')?.touched && registerForm.get('explanation')?.invalid
-            "
-            placeholder="How do you plan to use SOIL?"
-            [placeholder]="t('adminRegister.placeholder.explanation')"
-          ></textarea>
-          <div class="flex justify-between mt-1">
-            <p class="text-xs text-gray-500" i18n="Form Hint|Requirement for explanation length@@adminRegister.explanationRequirement">
-              Erforderlich: Mindestens 20 Zeichen
-            </p>
-            <p
-              class="text-xs"
-              [class.text-emerald-500]="(registerForm.get('explanation')?.value?.length || 0) >= 20"
-              [class.text-gray-500]="(registerForm.get('explanation')?.value?.length || 0) < 20"
-            >
-              {{ registerForm.get('explanation')?.value?.length || 0 }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="pt-2">
-        <button
-          type="submit"
-          [disabled]="registerForm.invalid || isLoading"
-          class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold rounded-lg shadow-lg hover:shadow-emerald-500/20 transition-all transform active:scale-95 flex items-center justify-center gap-3"
-        >
-          @if (isLoading) {
-            <svg
-              class="animate-spin h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <ng-container i18n="Status Message|Indicates the registration is being processed@@adminRegister.processing">Wird verarbeitet...</ng-container>
-          } @else {
-            <ng-container i18n="Action Label|Button to submit the registration request@@adminRegister.btnSubmit">Registrierung beantragen</ng-container>
-          }
-        </button>
-      </div>
-
-      <div class="text-center">
-        <a
-          routerLink="/"
-          class="text-sm text-gray-400 hover:text-emerald-400 transition"
-          i18n="Action Label|Link to return to the home page@@adminRegister.backToHome"
-        >
-          Zurück zur Startseite
-        </a>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 
   <!-- Error Modal -->

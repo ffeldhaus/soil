@@ -1905,11 +1905,6 @@
         <source>Hier registrieren</source>
       </segment>
     </unit>
-    <unit id="adminLogin.backToHome">
-      <segment>
-        <source>← Zurück zur Startseite</source>
-      </segment>
-    </unit>
     <unit id="adminLogin.error.title">
       <segment>
         <source> Anmeldung fehlgeschlagen </source>
@@ -2011,15 +2006,6 @@
       </notes>
       <segment>
         <source>Registrierung beantragen</source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.backToHome">
-      <notes>
-        <note category="description">Link to return to the home page</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source> Zurück zur Startseite </source>
       </segment>
     </unit>
     <unit id="adminRegister.signedInAs">
@@ -2596,7 +2582,7 @@
         <note category="meaning">Heading</note>
       </notes>
       <segment>
-        <source>Fehler</source>
+        <source>Fehler </source>
       </segment>
     </unit>
     <unit id="board.error.close">
@@ -3108,7 +3094,17 @@
         <source>Weizen</source>
       </segment>
     </unit>
+    <unit id="crop.wheat.desc">
+      <segment>
+        <source>Weizen</source>
+      </segment>
+    </unit>
     <unit id="crop.corn">
+      <segment>
+        <source>Mais</source>
+      </segment>
+    </unit>
+    <unit id="crop.corn.desc">
       <segment>
         <source>Mais</source>
       </segment>
@@ -3118,7 +3114,17 @@
         <source>Kartoffel</source>
       </segment>
     </unit>
+    <unit id="crop.potato.desc">
+      <segment>
+        <source>Kartoffel</source>
+      </segment>
+    </unit>
     <unit id="crop.beet">
+      <segment>
+        <source>Zuckerrübe</source>
+      </segment>
+    </unit>
+    <unit id="crop.beet.desc">
       <segment>
         <source>Zuckerrübe</source>
       </segment>
@@ -3128,12 +3134,27 @@
         <source>Hafer</source>
       </segment>
     </unit>
+    <unit id="crop.oat.desc">
+      <segment>
+        <source>Hafer</source>
+      </segment>
+    </unit>
     <unit id="crop.rye">
       <segment>
         <source>Roggen</source>
       </segment>
     </unit>
+    <unit id="crop.rye.desc">
+      <segment>
+        <source>Roggen</source>
+      </segment>
+    </unit>
     <unit id="crop.fieldbean">
+      <segment>
+        <source>Ackerbohne</source>
+      </segment>
+    </unit>
+    <unit id="crop.fieldbean.desc">
       <segment>
         <source>Ackerbohne</source>
       </segment>
@@ -3450,15 +3471,6 @@
         <source>Rechtliche Informationen &amp; Kontakt</source>
       </segment>
     </unit>
-    <unit id="impressum.backToHome">
-      <notes>
-        <note category="description">Link to return to the home page</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Zurück zur Startseite</source>
-      </segment>
-    </unit>
     <unit id="impressum.contact">
       <notes>
         <note category="description">Contact information section</note>
@@ -3583,15 +3595,6 @@
       </notes>
       <segment>
         <source> Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt. </source>
-      </segment>
-    </unit>
-    <unit id="info.backToHome">
-      <notes>
-        <note category="description">Link to return to the home page</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Zurück zur Startseite</source>
       </segment>
     </unit>
     <unit id="info.title">
@@ -4314,6 +4317,15 @@
         <source>Sehr Gering</source>
       </segment>
     </unit>
+    <unit id="nav.backToLanding">
+      <notes>
+        <note category="description">Tooltip to go back to landing page</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Back to Landing Page</source>
+      </segment>
+    </unit>
     <unit id="manual.prices.conv">
       <notes>
         <note category="description">Conventional farming</note>
@@ -4572,15 +4584,6 @@
       </notes>
       <segment>
         <source>Konzepte</source>
-      </segment>
-    </unit>
-    <unit id="manual.footer">
-      <notes>
-        <note category="description">Footer text for the manual</note>
-        <note category="meaning">Info Text</note>
-      </notes>
-      <segment>
-        <source>Soil Simulation - Ein Bildungsprojekt für nachhaltige Landwirtschaft.</source>
       </segment>
     </unit>
   </file>
