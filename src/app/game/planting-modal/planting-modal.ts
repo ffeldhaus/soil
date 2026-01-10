@@ -78,15 +78,15 @@ export class PlantingModal {
   }
 
   private cropConfig: Record<string, { label: string; image: string }> = {
-    Wheat: { label: 'crop.wheat', image: 'weizen.jpg' },
-    Corn: { label: 'crop.corn', image: 'mais.jpg' },
-    Potato: { label: 'crop.potato', image: 'kartoffel.webp' },
-    Beet: { label: 'crop.beet', image: 'zuckerruebe.jpg' },
+    Wheat: { label: 'crop.wheat', image: 'weizen.webp' },
     Barley: { label: 'crop.barley', image: 'gerste.webp' },
-    Oat: { label: 'crop.oat', image: 'hafer.jpg' },
-    Rye: { label: 'crop.rye', image: 'roggen.jpg' },
-    Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
-    Grass: { label: 'crop.animals', image: 'tiere.jpg' },
+    Potato: { label: 'crop.potato', image: 'kartoffel.webp' },
+    Beet: { label: 'crop.beet', image: 'zuckerruebe.webp' },
+    Corn: { label: 'crop.corn', image: 'mais.webp' },
+    Oat: { label: 'crop.oat', image: 'hafer.webp' },
+    Rye: { label: 'crop.rye', image: 'roggen.webp' },
+    FieldBean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
+    Grass: { label: 'crop.animals', image: 'hausschwein.webp' },
     Fallow: { label: 'crop.fallow', image: 'brachland.jpg' },
   };
 

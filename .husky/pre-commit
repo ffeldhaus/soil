@@ -16,14 +16,20 @@ else
   echo "Warning: nvm not found. Using system node version: $(node -v)"
 fi
 
+# If ONLY media files are changed, skip everything
+if ! git diff --cached --name-only | grep -qvE '\.(jpeg|jpg|png|webp|gif|svg|ico)$'; then
+  echo "Only media changes detected. Skipping pre-commit hooks."
+  exit 0
+fi
+
 npx biome check --write --staged --no-errors-on-unmatched
 node scripts/check-file-size.js
 
-# Check if any staged files are NOT documentation (.md files)
-if git diff --cached --name-only | grep -qvE '\.md$'; then
+# Check if any staged files are NOT documentation or media
+if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$'; then
   npm run test:unit:coverage
   npm run test:functions
   npm run build
 else
-  echo "Only documentation changes detected. Skipping tests and build."
+  echo "Only media or documentation changes detected. Skipping tests and build."
 fi

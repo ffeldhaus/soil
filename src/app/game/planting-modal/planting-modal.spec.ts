@@ -21,16 +21,16 @@ describe('PlantingModal', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should map Grass to Animals and tiere.jpg', () => {
+  it('should map Grass to Animals and hausschwein.webp', () => {
     const config = component.getConfig('Grass');
     expect(config.label).toBe('crop.animals');
-    expect(config.image).toBe('tiere.jpg');
+    expect(config.image).toBe('hausschwein.webp');
   });
 
-  it('should map Wheat to Wheat and weizen.jpg', () => {
+  it('should map Wheat to Wheat and weizen.webp', () => {
     const config = component.getConfig('Wheat');
     expect(config.label).toBe('crop.wheat');
-    expect(config.image).toBe('weizen.jpg');
+    expect(config.image).toBe('weizen.webp');
   });
 
   it('should fallback to default for unknown crop', () => {

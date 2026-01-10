@@ -93,7 +93,7 @@ export const GAME_CONSTANTS = {
     },
     Oat: {
       id: 'Oat',
-      image: 'hafer.jpg',
+      image: 'hafer.webp',
       pest: 'Fritfliege',
       yields: { veryHigh: '≥ 56', high: '42-55', moderate: '28-41', low: '15-27', veryLow: '< 15' },
       baseYield: 70,
@@ -118,7 +118,7 @@ export const GAME_CONSTANTS = {
     },
     Corn: {
       id: 'Corn',
-      image: 'mais.jpg',
+      image: 'mais.webp',
       pest: 'Maiszünsler',
       yields: { veryHigh: '≥ 88', high: '66-87', moderate: '44-65', low: '23-43', veryLow: '< 23' },
       baseYield: 110,
@@ -130,7 +130,7 @@ export const GAME_CONSTANTS = {
     },
     Rye: {
       id: 'Rye',
-      image: 'roggen.jpg',
+      image: 'roggen.webp',
       pest: 'Blattlaus',
       yields: { veryHigh: '≥ 80', high: '60-79', moderate: '40-59', low: '20-39', veryLow: '< 20' },
       baseYield: 100,
@@ -143,7 +143,7 @@ export const GAME_CONSTANTS = {
     },
     Wheat: {
       id: 'Wheat',
-      image: 'weizen.jpg',
+      image: 'weizen.webp',
       pest: 'Blattlaus',
       yields: { veryHigh: '≥ 92', high: '69-91', moderate: '46-68', low: '24-45', veryLow: '< 24' },
       baseYield: 115,
@@ -155,7 +155,7 @@ export const GAME_CONSTANTS = {
     },
     Beet: {
       id: 'Beet',
-      image: 'zuckerruebe.jpg',
+      image: 'zuckerruebe.webp',
       pest: 'Drahtwurm',
       yields: { veryHigh: '≥ 456', high: '342-455', moderate: '228-341', low: '115-227', veryLow: '< 115' },
       baseYield: 570,
