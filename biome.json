@@ -202,6 +202,16 @@
       }
     },
     {
+      "includes": ["cypress/support/e2e.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["vite.config.mts"],
       "linter": {
         "rules": {
