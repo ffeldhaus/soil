@@ -87,7 +87,7 @@ export class PlantingModal {
     Rye: { label: 'crop.rye', image: 'roggen.webp' },
     Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
     Grass: { label: 'crop.animals', image: 'hausschwein.webp' },
-    Fallow: { label: 'crop.fallow', image: 'brachland.jpg' },
+    Fallow: { label: 'crop.fallow', image: 'acker.webp' },
   };
 
   getConfig(crop: CropType) {
