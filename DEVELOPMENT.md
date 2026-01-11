@@ -25,6 +25,7 @@ This document outlines the local development strategy, testing procedures, and c
 - npm
 - Firebase CLI (`npm install -g firebase-tools`)
 - Java (required for Firebase Emulators)
+- [lychee](https://github.com/lycheeverse/lychee) (required for link checking)
 
 ## Local Development Environment
 
@@ -64,6 +65,7 @@ The project uses automated hooks to maintain code quality and stability.
 ### 1. Pre-commit Hooks (Fast)
 These run automatically on every `git commit`:
 - **Biome**: Lints and formats the code.
+- **lychee**: Checks for broken links.
 - **Vitest**: Runs frontend unit tests.
 - **Mocha**: Runs backend (Cloud Functions) unit tests.
 - **File Size Check**: Ensures no file exceeds manageable size limits (see `scripts/check-file-size.js`).

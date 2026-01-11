@@ -33,9 +33,10 @@ fi
 
 # Check if any staged files are NOT documentation or media
 if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$'; then
-  npm run test:unit:coverage
-  npm run test:functions
-  npm run build
+  # Use concise reporters and suppress stdout for build unless there's an error
+  npx vitest run --reporter=dot
+  npm run test --prefix functions -- --reporter min
+  ng build --define "import.meta.env.APP_VERSION='$(node scripts/get-version.js)'" --progress=false > /dev/null
 else
   echo "Only media or documentation changes detected. Skipping tests and build."
 fi
