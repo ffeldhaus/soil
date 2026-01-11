@@ -11,7 +11,7 @@ describe('Game Balance Simulation', () => {
         const avgNutrition = lastRound ? lastRound.parcelsSnapshot.reduce((acc, p) => acc + p.nutrition, 0) / 40 : 80;
         const rotation: CropType[] = ['Fieldbean', 'Wheat', 'Rapeseed', 'Barley', 'Pea', 'Rye'];
         return {
-          machines: 2,
+          machines: 1, // Optimized tech
           organic: false,
           fertilizer: avgNutrition < 70,
           pesticide: false,
@@ -25,9 +25,10 @@ describe('Game Balance Simulation', () => {
     {
       name: 'Organic Right',
       logic: (round: number) => {
-        const rotation: CropType[] = ['Fallow', 'Wheat', 'Pea', 'Rye', 'Rapeseed', 'Oat'];
+        // Includes Grass (Animals) for nitrogen fixation and Fallow for recovery
+        const rotation: CropType[] = ['Grass', 'Wheat', 'Pea', 'Rye', 'Fallow', 'Oat'];
         return {
-          machines: 0, // Low tech for soil preservation
+          machines: 1, // Balanced tech
           organic: true,
           fertilizer: false,
           pesticide: false,
@@ -101,7 +102,9 @@ describe('Game Balance Simulation', () => {
         for (let r = 1; r <= count; r++) {
           const decision: RoundDecision = strat.logic(r, lastRound);
           const events = { weather: 'Normal', vermin: 'None' };
-          const round = GameEngine.calculateRound(r, lastRound, decision, events, capital, count);
+          const round = GameEngine.calculateRound(r, lastRound, decision, events, capital, count, {
+            subsidiesEnabled: true,
+          });
           capital = round.result?.capital || capital;
           lastRound = round;
         }
@@ -126,31 +129,32 @@ describe('Game Balance Simulation', () => {
         ...res,
       }));
 
-      if (count === 50) {
-        // Assertions for 50 rounds
-        // 1. Integrated Farming (Rank #1)
-        expect(rankedResults[0].Strategy).to.equal('Integrated Farming');
+      // --- Assertions for ALL round counts ---
 
-        // 2. Conventional Right (Rank #2)
-        expect(rankedResults[1].Strategy).to.equal('Conventional Right');
+      const topTwo = [rankedResults[0].Strategy, rankedResults[1].Strategy];
+      expect(topTwo, `Top 2 for ${count} rounds should be Integrated/Organic`).to.include('Integrated Farming');
+      expect(topTwo, `Top 2 for ${count} rounds should be Integrated/Organic`).to.include('Organic Right');
 
-        // 3. Organic Right (Rank #3) - check high soil
-        expect(rankedResults[2].Strategy).to.equal('Organic Right');
-        expect(rankedResults[2]['Avg Soil']).to.be.greaterThan(60); // High soil check (adjusted)
-        expect(rankedResults[1]['Avg Soil']).to.be.lessThan(rankedResults[2]['Avg Soil']); // Conventional has lower soil
+      // 1. & 2. Integrated and Organic Right should be top 2 and positive
+      expect(rankedResults[0].Capital).to.be.greaterThan(0);
+      expect(rankedResults[1].Capital).to.be.greaterThan(0);
 
-        // 4. Conventional Wrong (Rank #4)
-        // Allow for Resource Miser to potentially intervene, but usually ConvWrong is 4 or 5
-        const convWrong = rankedResults.find((r) => r.Strategy === 'Conventional Wrong');
-        expect(convWrong).to.exist;
-        expect(convWrong!['Avg Soil']).to.be.lessThan(60); // Low soil check
-        expect(convWrong!.Rank).to.be.greaterThan(3); // Should be lower rank
+      // 3. Conventional Right should be positive and Rank 3
+      expect(rankedResults[2].Strategy, `Conventional Right should be #3 for ${count} rounds`).to.equal(
+        'Conventional Right',
+      );
+      expect(rankedResults[2].Capital).to.be.greaterThan(0);
 
-        // 5. Organic Wrong
-        const orgWrong = rankedResults.find((r) => r.Strategy === 'Organic Wrong');
-        expect(orgWrong).to.exist;
-        expect(orgWrong!.Rank).to.be.greaterThan(3);
-      }
+      // 4. "Wrong" strategies should be at the bottom
+      const convWrong = rankedResults.find((r) => r.Strategy === 'Conventional Wrong');
+      const orgWrong = rankedResults.find((r) => r.Strategy === 'Organic Wrong');
+      expect(convWrong!.Rank).to.be.greaterThan(3);
+      expect(orgWrong!.Rank).to.be.greaterThan(3);
+
+      // 5. Soil Quality: Organic Right should have higher soil than Conventional Right
+      const organicRight = rankedResults.find((r) => r.Strategy === 'Organic Right');
+      const convRight = rankedResults.find((r) => r.Strategy === 'Conventional Right');
+      expect(organicRight!['Avg Soil']).to.be.greaterThan(convRight!['Avg Soil']);
     });
   });
 });

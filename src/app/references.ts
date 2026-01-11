@@ -34,5 +34,15 @@ export const AGRICULTURAL_REFERENCES = {
       url: 'https://eldorado.tu-dortmund.de/handle/2003/33121',
       description: 'Wissenschaftliches Fundament der SOIL-Simulation.',
     },
+    {
+      name: 'pflanzenkrankheiten.ch: Schaderreger im Ackerbau',
+      url: 'https://www.pflanzenkrankheiten.ch/ackerkulturen',
+      description: 'Referenz für die Auswahl und Beschreibung der Pflanzenschädlinge.',
+    },
+    {
+      name: 'JKI: Klimawandel und Pflanzengesundheit',
+      url: 'https://www.julius-kuehn.de/themen/klimawandel/',
+      description: 'Hintergrundinformationen zu den Auswirkungen extremer Wetterereignisse.',
+    },
   ],
 };

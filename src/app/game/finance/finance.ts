@@ -154,6 +154,9 @@ export class Finance implements OnChanges {
     const result = round.result;
     if (!result) return;
 
+    const totalRounds = this.game.settings?.length || 20;
+    const costScale = totalRounds / 20;
+
     // Calculate detailed seeds
     const seeds: Record<string, number> = {};
     let animalCount = 0;
@@ -187,14 +190,15 @@ export class Finance implements OnChanges {
         animals: 0, // In current engine, livestock is not a one-time investment but a running cost per parcel
       },
       running: {
-        organic_control: decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0,
-        fertilize: decision.fertilizer ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0,
-        pesticide: decision.pesticide ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0,
-        organisms: decision.organisms ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0,
-        animals: animalCount * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS,
-        base: decision.organic
-          ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC
-          : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL,
+        organic_control: (decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0) * costScale,
+        fertilize: (decision.fertilizer ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0) * costScale,
+        pesticide: (decision.pesticide ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0) * costScale,
+        organisms: (decision.organisms ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0) * costScale,
+        animals: animalCount * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS * costScale,
+        base:
+          (decision.organic
+            ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC
+            : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL) * costScale,
       },
       total: result.expenses.total,
     };

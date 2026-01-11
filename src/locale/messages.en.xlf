@@ -57,7 +57,7 @@
     <unit id="adminLogin.noAccount">
       <segment state="translated">
         <source>Noch kein Konto?</source>
-        <target>Don't have an account yet?</target>
+        <target>Don&apos;t have an account yet?</target>
       </segment>
     </unit>
     <unit id="adminLogin.password">
@@ -1616,8 +1616,8 @@
         <note category="meaning">Action Instruction</note>
       </notes>
       <segment state="translated">
-        <source>Tippe &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
-        <target>Type &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; to confirm:</target>
+        <source>Tippe &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
+        <target>Type &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; to confirm:</target>
       </segment>
     </unit>
     <unit id="dashboard.delete.warning">
@@ -2842,7 +2842,7 @@
       </notes>
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Erfahrungsorientiertes Lernen:</pc> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
-        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Experience-Oriented Learning:</pc> Students begin with a profit-maximizing mindset. If they overexploit resources, variables such as "soil quality" decrease, leading to yield losses. This "failure experience" forces reflection.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Experience-Oriented Learning:</pc> Students begin with a profit-maximizing mindset. If they overexploit resources, variables such as &quot;soil quality&quot; decrease, leading to yield losses. This &quot;failure experience&quot; forces reflection.</target>
       </segment>
     </unit>
     <unit id="info.designPrinciplesTitle">
@@ -2862,7 +2862,7 @@
       </notes>
       <segment state="translated">
         <source> Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale Kompetenzen für nachhaltiges Management umgewandelt wird. </source>
-        <target>The digital version automates complex calculations, provides visual data (impact diagrams), and facilitates precise "debriefing" and reflection phases, transforming abstract awareness into functional competencies for sustainable management.</target>
+        <target>The digital version automates complex calculations, provides visual data (impact diagrams), and facilitates precise &quot;debriefing&quot; and reflection phases, transforming abstract awareness into functional competencies for sustainable management.</target>
       </segment>
     </unit>
     <unit id="info.evolutionTitle">
@@ -2882,7 +2882,7 @@
       </notes>
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Fazit:</pc> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt als „Partner“ und nicht als Gegner sahen. </source>
-        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Conclusion:</pc> The simulation successfully moved students toward Type 3, by seeing the environment as a "partner" rather than an opponent.</target>
+        <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Conclusion:</pc> The simulation successfully moved students toward Type 3, by seeing the environment as a &quot;partner&quot; rather than an opponent.</target>
       </segment>
     </unit>
     <unit id="info.findingsText">
@@ -2962,7 +2962,7 @@
       </notes>
       <segment state="translated">
         <source> Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben. </source>
-        <target>The central challenge of this research is the discrepancy between students' theoretical knowledge of sustainability and their actual behavior. Despite years of "Education for Sustainable Development" (ESD), studies show that many young people have only limited knowledge and fail to translate ecological values into concrete action. The dissertation aims to design a learning environment that does not just "preach" sustainability but enables students to experience the systemic consequences of their decisions through a simulation game called "SOIL".</target>
+        <target>The central challenge of this research is the discrepancy between students&apos; theoretical knowledge of sustainability and their actual behavior. Despite years of &quot;Education for Sustainable Development&quot; (ESD), studies show that many young people have only limited knowledge and fail to translate ecological values into concrete action. The dissertation aims to design a learning environment that does not just &quot;preach&quot; sustainability but enables students to experience the systemic consequences of their decisions through a simulation game called &quot;SOIL&quot;.</target>
       </segment>
     </unit>
     <unit id="info.objectiveTitle">
@@ -2972,7 +2972,17 @@
       </notes>
       <segment state="translated">
         <source>1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</source>
-        <target>1. Core Goal: Overcoming the "Knowledge-Action Gap"</target>
+        <target>1. Core Goal: Overcoming the &quot;Knowledge-Action Gap&quot;</target>
+      </segment>
+    </unit>
+    <unit id="info.pestsImpactTitle">
+      <notes>
+        <note category="description">Pest dynamics</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment state="translated">
+        <source>Schädlingsdruck &amp; Pflanzenschutz</source>
+        <target>Pest Pressure &amp; Crop Protection</target>
       </segment>
     </unit>
     <unit id="info.pricingText">
@@ -2982,7 +2992,7 @@
       </notes>
       <segment state="translated">
         <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Biologische Produkte erzielen signifikant höhere Preise (Marktprämie), haben jedoch oft geringere Erträge. Der „Fortgeschrittene Markt“ simuliert Preisänderungen durch Angebot und Nachfrage innerhalb der Spielgruppe. </source>
-        <target>Seed and harvest prices are based on historical market data (approx. 2022-2024). Organic products achieve significantly higher prices (market premium), but often have lower yields. The "Advanced Market" simulates price changes through supply and demand within the play group.</target>
+        <target>Seed and harvest prices are based on historical market data (approx. 2022-2024). Organic products achieve significantly higher prices (market premium), but often have lower yields. The &quot;Advanced Market&quot; simulates price changes through supply and demand within the play group.</target>
       </segment>
     </unit>
     <unit id="info.pricingTitle">
@@ -3125,6 +3135,26 @@
         <target>Full text on eldorado</target>
       </segment>
     </unit>
+    <unit id="info.weatherImpactTitle">
+      <notes>
+        <note category="description">Weather impacts</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment state="translated">
+        <source>Einfluss extremer Wetterereignisse</source>
+        <target>Impact of extreme weather events</target>
+      </segment>
+    </unit>
+    <unit id="info.weatherPestsTitle">
+      <notes>
+        <note category="description">Title for the weather and pests section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment state="translated">
+        <source>Wissenschaftlicher Hintergrund: Wetter &amp; Schädlinge</source>
+        <target>Scientific Background: Weather &amp; Pests</target>
+      </segment>
+    </unit>
     <unit id="info.weatherText">
       <notes>
         <note category="description">Explanation of weather impacts</note>
@@ -3187,7 +3217,7 @@
     </unit>
     <unit id="landing.and">
       <notes>
-        <note category="description">The word 'and'</note>
+        <note category="description">The word &apos;and&apos;</note>
         <note category="meaning">Connective</note>
       </notes>
       <segment state="translated">
@@ -3211,8 +3241,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source> Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden. </source>
-        <target>At the 1992 UN Conference, "sustainability" was declared a global development goal. This goal is to be achieved by integrating economic, ecological, and social perspectives.</target>
+        <source> Auf der UN-Konferenz 1992 wurde &quot;Nachhaltigkeit&quot; zum globalen Entwicklungsziel erklärt. Dieses Ziel soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden. </source>
+        <target>At the 1992 UN Conference, &quot;sustainability&quot; was declared a global development goal. This goal is to be achieved by integrating economic, ecological, and social perspectives.</target>
       </segment>
     </unit>
     <unit id="landing.backgroundText2">
@@ -3220,9 +3250,9 @@
         <note category="description">Development purpose of Soil simulation</note>
         <note category="meaning">Info Text</note>
       </notes>
-      <segment state="translated">
-        <source> Das Simulationsspiel "Soil" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
-        <target>The simulation game "Soil" was developed to make this concept of sustainability tangible. It enables learners to playfully discover the centrality of ecological variables as natural limits to economic activity.</target>
+      <segment state="initial">
+        <source> Das Simulationsspiel &quot;Soil&quot; wurde entwickelt, um dieses concept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
+        <target>The simulation game &quot;Soil&quot; was developed to make this concept of sustainability tangible. It enables learners to playfully discover the centrality of ecological variables as natural limits to economic activity.</target>
       </segment>
     </unit>
     <unit id="landing.backgroundTitle">
@@ -3293,36 +3323,6 @@
       <segment state="translated">
         <source>Registrieren</source>
         <target>Register</target>
-      </segment>
-    </unit>
-    <unit id="manual.sourcesData">
-      <notes>
-        <note category="description">Title for stats and price sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source>Statistiken &amp; Preise</source>
-        <target>Statistics &amp; Prices</target>
-      </segment>
-    </unit>
-    <unit id="manual.sourcesScience">
-      <notes>
-        <note category="description">Title for scientific background sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source>Wissenschaftlicher Hintergrund</source>
-        <target>Scientific Background</target>
-      </segment>
-    </unit>
-    <unit id="manual.sourcesTitle">
-      <notes>
-        <note category="description">Title for the sources and references section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source>Quellen &amp; Referenzen</source>
-        <target>Sources &amp; References</target>
       </segment>
     </unit>
     <unit id="landing.sustainability">
@@ -3637,7 +3637,7 @@
     </unit>
     <unit id="manual.intro.goal.text">
       <notes>
-        <note category="description">Description of the game's main goal</note>
+        <note category="description">Description of the game&apos;s main goal</note>
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
@@ -3779,7 +3779,7 @@
     </unit>
     <unit id="manual.subtitle">
       <notes>
-        <note category="description">Description of the manual's content</note>
+        <note category="description">Description of the manual&apos;s content</note>
         <note category="meaning">Subheading</note>
       </notes>
       <segment state="translated">
@@ -3793,8 +3793,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source>SOIL ist als problemorientierte Simulation konzipiert. Die Lernenden sollen durch Versuch und Irrtum (Trial &amp; Error) die komplexen Zusammenhänge zwischen ökonomischem Erfolg und ökologischer Nachhaltigkeit begreifen.</source>
-        <target>SOIL is designed as a problem-oriented simulation. Learners should understand the complex relationships between economic success and ecological sustainability through trial &amp; error.</target>
+        <source> SOIL ist als problemorientierte Simulation konzipiert. Die Lernenden sollen durch Versuch und Irrtum (Trial &amp; Error) die komplexen Zusammenhänge zwischen ökonomischem Erfolg und ökologischer Nachhaltigkeit begreifen. </source>
+        <target> SOIL is designed as a problem-oriented simulation. Learners should understand the complex relationships between economic success and ecological sustainability through trial &amp; error. </target>
       </segment>
     </unit>
     <unit id="manual.teacher.concept.title">
@@ -3813,8 +3813,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source>Nutzen Sie die Rundenergebnisse für Reflexionen: Warum war Gruppe A erfolgreicher? Welchen Einfluss hatte das Wetter? Ist ein hoher Kontostand wichtiger als eine gute Bodenqualität?</source>
-        <target>Use the round results for reflection: Why was Group A more successful? What influence did the weather have? Is a high bank balance more important than good soil quality?</target>
+        <source> Nutzen Sie die Rundenergebnisse für Reflexionen: Warum war Gruppe A erfolgreicher? Welchen Einfluss hatte das Wetter? Ist ein hoher Kontostand wichtiger als eine gute Bodenqualität? </source>
+        <target> Use the round results for reflection: Why was Group A more successful? What influence did the weather have? Is a high bank balance more important than good soil quality? </target>
       </segment>
     </unit>
     <unit id="manual.teacher.discussion.title">
@@ -3833,8 +3833,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source>Es wird empfohlen, Schüler in Gruppen von 2-4 Personen als ein 'Farmer-Team' spielen zu lassen. Dies fördert den Diskurs über die beste Strategie und zwingt zur Begründung von Entscheidungen.</source>
-        <target>It is recommended to let students play in groups of 2-4 people as a 'farmer team'. This promotes discourse about the best strategy and forces the justification of decisions.</target>
+        <source> Es wird empfohlen, Schüler in Gruppen von 2-4 Personen als ein &apos;Farmer-Team&apos; spielen zu lassen. Dies fördert den Diskurs über die beste Strategie und zwingt zur Begründung von Entscheidungen. </source>
+        <target> It is recommended to let students play in groups of 2-4 people as a &apos;farmer team&apos;. This promotes discourse about the best strategy and forces the justification of decisions. </target>
       </segment>
     </unit>
     <unit id="manual.teacher.group.title">
@@ -3854,7 +3854,7 @@
       </notes>
       <segment state="translated">
         <source>Handreichung für Lehrende</source>
-        <target>Teacher's Guide</target>
+        <target>Teacher&apos;s Guide</target>
       </segment>
     </unit>
     <unit id="manual.title">
@@ -3948,7 +3948,7 @@
     <unit id="onboarding.nextSteps">
       <segment state="translated">
         <source>Wie geht es weiter?</source>
-        <target>What's next?</target>
+        <target>What&apos;s next?</target>
       </segment>
     </unit>
     <unit id="onboarding.usuallyLess24h">
@@ -4789,8 +4789,8 @@
         <note category="meaning">Action Instruction</note>
       </notes>
       <segment state="translated">
-        <source>Tippe &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
-        <target>Type &lt;span class="font-mono font-bold text-red-400"&gt;DELETE&lt;/span&gt; to confirm:</target>
+        <source>Tippe &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; zur Bestätigung:</source>
+        <target>Type &lt;span class=&quot;font-mono font-bold text-red-400&quot;&gt;DELETE&lt;/span&gt; to confirm:</target>
       </segment>
     </unit>
     <unit id="superadmin.delete.game.warning">
@@ -5015,7 +5015,7 @@
     </unit>
     <unit id="superadmin.games.title">
       <notes>
-        <note category="description">Title for the user's games modal</note>
+        <note category="description">Title for the user&apos;s games modal</note>
         <note category="meaning">Heading</note>
       </notes>
       <segment state="translated">

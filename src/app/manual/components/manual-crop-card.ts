@@ -129,6 +129,8 @@ export class ManualCropCardComponent implements OnChanges {
 
   getPestKey(pest: string): string {
     const map: Record<string, string> = {
+      'Schwarze Bohnenlaus': 'aphid',
+      Getreideblattlaus: 'aphid',
       Blattlaus: 'aphid',
       Fritfliege: 'fritfly',
       Kartoffelkäfer: 'potato-beetle',

@@ -118,6 +118,64 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </div>
           </section>
 
+          <!-- Weather & Pests Section -->
+          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
+              <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🐛</span>
+              <ng-container i18n="Heading|Title for the weather and pests section@@info.weatherPestsTitle">Wissenschaftlicher Hintergrund: Wetter & Schädlinge</ng-container>
+            </h2>
+            <div class="space-y-8 text-gray-300 leading-relaxed">
+              <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                  <h3 class="text-white font-bold flex items-center gap-2">
+                    <span class="text-emerald-500">⛅</span>
+                    <ng-container i18n="Heading|Weather impacts@@info.weatherImpactTitle">Einfluss extremer Wetterereignisse</ng-container>
+                  </h3>
+                  <p class="text-sm">
+                    Der Klimawandel führt in Mitteleuropa zu einer Zunahme von Extremwetterlagen. Die Simulation bildet dies durch verschiedene Szenarien ab:
+                  </p>
+                  <ul class="list-disc list-outside ml-5 text-xs space-y-2">
+                    <li>
+                      <strong class="text-white">Frühsommertrockenheit:</strong> Kritisch für Getreide in der Bestockungsphase. Ertragsverluste von 20-30% sind in Trockenjahren (wie 2018) realistisch (Quelle: JKI/Thünen).
+                    </li>
+                    <li>
+                      <strong class="text-white">Spätfrost:</strong> Gefährdet besonders keimende Kulturen wie Mais und Zuckerrüben sowie die Blüte von Raps.
+                    </li>
+                    <li>
+                      <strong class="text-white">Staunässe/Hochwasser:</strong> Führt zu Sauerstoffmangel im Boden und Wurzelfäule, was insbesondere bei Hackfrüchten zu Totalausfällen führen kann.
+                    </li>
+                  </ul>
+                </div>
+                <div class="space-y-4">
+                  <h3 class="text-white font-bold flex items-center gap-2">
+                    <span class="text-emerald-500">🦗</span>
+                    <ng-container i18n="Heading|Pest dynamics@@info.pestsImpactTitle">Schädlingsdruck & Pflanzenschutz</ng-container>
+                  </h3>
+                  <p class="text-sm">
+                    Die Wahl der Schädlinge in SOIL basiert auf den ökonomisch bedeutendsten Arten in Deutschland:
+                  </p>
+                  <ul class="list-disc list-outside ml-5 text-xs space-y-2">
+                    <li>
+                      <strong class="text-white">Maiszünsler:</strong> Der bedeutendste Maisschädling in DE. Ohne Bekämpfung drohen bis zu 50% Ertragsverlust durch Stängelbruch.
+                    </li>
+                    <li>
+                      <strong class="text-white">Kartoffelkäfer:</strong> Ein klassischer Defoliator. Der Kahlfraß kann die Knollenbildung fast vollständig unterbinden.
+                    </li>
+                    <li>
+                      <strong class="text-white">Drahtwurm:</strong> Ein Boden-Schädling (Larve des Schnellkäfers), der Wurzeln und Knollen frisst. Besonders problematisch bei Kartoffeln und Rüben.
+                    </li>
+                    <li>
+                      <strong class="text-white">Getreideblattlaus:</strong> Schadet durch Saftentzug und als Vektor für Viren (z.B. Gelbverzwergungsvirus).
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="bg-emerald-900/10 border border-emerald-500/20 rounded-xl p-4 text-xs italic">
+                Hinweis: Die Simulation nutzt eine "Integrierte Strategie" (Nützlingsförderung), um den Einsatz chemisch-synthetischer Pflanzenschutzmittel ökologisch und ökonomisch abzuwägen.
+              </div>
+            </div>
+          </section>
+
           <!-- Main Reference -->
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">

@@ -3959,6 +3959,24 @@
         <source>Volltext auf eldorado</source>
       </segment>
     </unit>
+    <unit id="info.weatherImpactTitle">
+      <notes>
+        <note category="description">Weather impacts</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Einfluss extremer Wetterereignisse</source>
+      </segment>
+    </unit>
+    <unit id="info.weatherPestsTitle">
+      <notes>
+        <note category="description">Title for the weather and pests section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Wissenschaftlicher Hintergrund: Wetter &amp; Schädlinge</source>
+      </segment>
+    </unit>
     <unit id="info.weatherText">
       <notes>
         <note category="description">Explanation of weather impacts</note>
@@ -3975,6 +3993,15 @@
       </notes>
       <segment>
         <source>Wetter &amp; Klima</source>
+      </segment>
+    </unit>
+    <unit id="info.pestsImpactTitle">
+      <notes>
+        <note category="description">Pest dynamics</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Schädlingsdruck &amp; Pflanzenschutz</source>
       </segment>
     </unit>
     <unit id="info.pricingText">
@@ -4154,34 +4181,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source> Das Simulationsspiel &quot;Soil&quot; wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
-      </segment>
-    </unit>
-    <unit id="manual.sourcesData">
-      <notes>
-        <note category="description">Title for stats and price sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Statistiken &amp; Preise</source>
-      </segment>
-    </unit>
-    <unit id="manual.sourcesScience">
-      <notes>
-        <note category="description">Title for scientific background sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Wissenschaftlicher Hintergrund</source>
-      </segment>
-    </unit>
-    <unit id="manual.sourcesTitle">
-      <notes>
-        <note category="description">Title for the sources and references section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Quellen &amp; Referenzen</source>
+        <source> Das Simulationsspiel &quot;Soil&quot; wurde entwickelt, um dieses concept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
       </segment>
     </unit>
     <unit id="landing.footer">
@@ -4801,7 +4801,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source>SOIL ist als problemorientierte Simulation konzipiert. Die Lernenden sollen durch Versuch und Irrtum (Trial &amp; Error) die komplexen Zusammenhänge zwischen ökonomischem Erfolg und ökologischer Nachhaltigkeit begreifen.</source>
+        <source> SOIL ist als problemorientierte Simulation konzipiert. Die Lernenden sollen durch Versuch und Irrtum (Trial &amp; Error) die komplexen Zusammenhänge zwischen ökonomischem Erfolg und ökologischer Nachhaltigkeit begreifen. </source>
       </segment>
     </unit>
     <unit id="manual.teacher.concept.title">
@@ -4819,7 +4819,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source>Nutzen Sie die Rundenergebnisse für Reflexionen: Warum war Gruppe A erfolgreicher? Welchen Einfluss hatte das Wetter? Ist ein hoher Kontostand wichtiger als eine gute Bodenqualität?</source>
+        <source> Nutzen Sie die Rundenergebnisse für Reflexionen: Warum war Gruppe A erfolgreicher? Welchen Einfluss hatte das Wetter? Ist ein hoher Kontostand wichtiger als eine gute Bodenqualität? </source>
       </segment>
     </unit>
     <unit id="manual.teacher.discussion.title">
@@ -4837,7 +4837,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source>Es wird empfohlen, Schüler in Gruppen von 2-4 Personen als ein &apos;Farmer-Team&apos; spielen zu lassen. Dies fördert den Diskurs über die beste Strategie und zwingt zur Begründung von Entscheidungen.</source>
+        <source> Es wird empfohlen, Schüler in Gruppen von 2-4 Personen als ein &apos;Farmer-Team&apos; spielen zu lassen. Dies fördert den Diskurs über die beste Strategie und zwingt zur Begründung von Entscheidungen. </source>
       </segment>
     </unit>
     <unit id="manual.teacher.group.title">
