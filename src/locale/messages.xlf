@@ -3698,42 +3698,6 @@
         <source> Hintergrund </source>
       </segment>
     </unit>
-    <unit id="info.sourcesPrices">
-      <notes>
-        <note category="description">Title for price sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Marktpreise &amp; Wirtschaftlichkeit</source>
-      </segment>
-    </unit>
-    <unit id="info.sourcesResearch">
-      <notes>
-        <note category="description">Title for research sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Wissenschaftliche Basis</source>
-      </segment>
-    </unit>
-    <unit id="info.sourcesStats">
-      <notes>
-        <note category="description">Title for statistics sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Statistiken &amp; Anbauflächen</source>
-      </segment>
-    </unit>
-    <unit id="info.sourcesTitle">
-      <notes>
-        <note category="description">Title for the sources and references section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Quellen &amp; Referenzen</source>
-      </segment>
-    </unit>
     <unit id="info.subsidiesText">
       <notes>
         <note category="description">Explanation of subsidies</note>
@@ -3839,7 +3803,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source> Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne) repräsentiert die wichtigsten Anbaufrüchte in Deutschland. Raps ist die bedeutendste Ölsaat, während Leguminosen wie Erbsen und Ackerbohnen für die Stickstofffixierung und Bodenfruchtbarkeit essenziell sind. </source>
+        <source> Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne) repräsentiert die wichtigsten Anbaufrüchte in Deutschland (Quelle: <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfrüchte-Grünland/Tabellen/ackerlands-hauptfruchtgruppen.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Destatis</pc>). Raps ist die bedeutendste Ölsaat, während Leguminosen wie Erbsen und Ackerbohnen für die Stickstofffixierung und Bodenfruchtbarkeit essenziell sind (vgl. <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.bmel.de/DE/themen/landwirtschaft/pflanzenbau/ackerbau/ackerbau-in-deutschland.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">BMEL</pc>). </source>
       </segment>
     </unit>
     <unit id="info.cropsTitle">
@@ -3857,7 +3821,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source> Die Simulation SOIL wurde so gestaltet, dass sie einen hohen Realitätsbezug zur deutschen Landwirtschaft aufweist, dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert. </source>
+        <source> Die Simulation SOIL wurde so gestaltet, dass sie zentrale Aspekte der deutschen Landwirtschaft abbildet, dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert. </source>
       </segment>
     </unit>
     <unit id="info.designChoicesTitle">
@@ -3866,7 +3830,7 @@
         <note category="meaning">Heading</note>
       </notes>
       <segment>
-        <source>Design-Entscheidungen &amp; Realitätsbezug</source>
+        <source>Design-Entscheidungen &amp; Fachliche Grundlagen</source>
       </segment>
     </unit>
     <unit id="info.designPrinciplesComplexity">
@@ -4010,7 +3974,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Biologische Produkte erzielen signifikant höhere Preise (Marktprämie), haben jedoch oft geringere Erträge. Der „Fortgeschrittene Markt“ simuliert Preisänderungen durch Angebot und Nachfrage innerhalb der Spielgruppe. </source>
+        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Referenzen für konventionelle Preise stammen von der <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/ami-maerkte/ami-getreide/markt-aktuell&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, während Bio-Marktprämien auf Berichten von <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/erzeuger/markt/marktinformationen/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc> basieren. Betriebswirtschaftliche Datensammlungen des <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/themen/betriebswirtschaft&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> dienen als Grundlage für Saatgut- und Maschinenkosten. </source>
       </segment>
     </unit>
     <unit id="info.pricingTitle">

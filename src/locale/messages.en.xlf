@@ -2791,8 +2791,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source> Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne) repräsentiert die wichtigsten Anbaufrüchte in Deutschland. Raps ist die bedeutendste Ölsaat, während Leguminosen wie Erbsen und Ackerbohnen für die Stickstofffixierung und Bodenfruchtbarkeit essenziell sind. </source>
-        <target>The selection of crops (Wheat, Barley, Rye, Oat, Corn, Potato, Sugar Beet, Rapeseed, Pea, Field Bean) represents the most important crops in Germany. Rapeseed is the most significant oilseed, while legumes such as peas and field beans are essential for nitrogen fixation and soil fertility.</target>
+        <source> Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne) repräsentiert die wichtigsten Anbaufrüchte in Deutschland (Quelle: <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfrüchte-Grünland/Tabellen/ackerlands-hauptfruchtgruppen.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Destatis</pc>). Raps ist die bedeutendste Ölsaat, während Leguminosen wie Erbsen und Ackerbohnen für die Stickstofffixierung und Bodenfruchtbarkeit essenziell sind (vgl. <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.bmel.de/DE/themen/landwirtschaft/pflanzenbau/ackerbau/ackerbau-in-deutschland.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">BMEL</pc>). </source>
+        <target>The selection of crops (Wheat, Barley, Rye, Oat, Corn, Potato, Sugar Beet, Rapeseed, Pea, Field Bean) represents the most important crops in Germany (Source: <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfrüchte-Grünland/Tabellen/ackerlands-hauptfruchtgruppen.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Destatis</pc>). Rapeseed is the most significant oilseed, while legumes such as peas and field beans are essential for nitrogen fixation and soil fertility (cf. <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.bmel.de/DE/themen/landwirtschaft/pflanzenbau/ackerbau/ackerbau-in-deutschland.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">BMEL</pc>). </target>
       </segment>
     </unit>
     <unit id="info.cropsTitle">
@@ -2811,8 +2811,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source> Die Simulation SOIL wurde so gestaltet, dass sie einen hohen Realitätsbezug zur deutschen Landwirtschaft aufweist, dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert. </source>
-        <target>The SOIL simulation has been designed to have a high level of reality in relation to German agriculture, while reducing complexity to a manageable level for students.</target>
+        <source> Die Simulation SOIL wurde so gestaltet, dass sie zentrale Aspekte der deutschen Landwirtschaft abbildet, dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert. </source>
+        <target>The SOIL simulation was designed to reflect key aspects of German agriculture while reducing complexity to a level manageable for students.</target>
       </segment>
     </unit>
     <unit id="info.designChoicesTitle">
@@ -2821,8 +2821,8 @@
         <note category="meaning">Heading</note>
       </notes>
       <segment state="translated">
-        <source>Design-Entscheidungen &amp; Realitätsbezug</source>
-        <target>Design Choices &amp; Reality Reference</target>
+        <source>Design-Entscheidungen &amp; Fachliche Grundlagen</source>
+        <target>Design Decisions &amp; Scientific Basis</target>
       </segment>
     </unit>
     <unit id="info.designPrinciplesComplexity">
@@ -2991,8 +2991,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Biologische Produkte erzielen signifikant höhere Preise (Marktprämie), haben jedoch oft geringere Erträge. Der „Fortgeschrittene Markt“ simuliert Preisänderungen durch Angebot und Nachfrage innerhalb der Spielgruppe. </source>
-        <target>Seed and harvest prices are based on historical market data (approx. 2022-2024). Organic products achieve significantly higher prices (market premium), but often have lower yields. The &quot;Advanced Market&quot; simulates price changes through supply and demand within the play group.</target>
+        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Referenzen für konventionelle Preise stammen von der <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/ami-maerkte/ami-getreide/markt-aktuell&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, während Bio-Marktprämien auf Berichten von <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/erzeuger/markt/marktinformationen/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc> basieren. Betriebswirtschaftliche Datensammlungen des <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/themen/betriebswirtschaft&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> dienen als Grundlage für Saatgut- und Maschinenkosten. </source>
+        <target>Prices for seeds and harvests are based on historical market data (approx. 2022-2024). References for conventional prices come from the <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/ami-maerkte/ami-getreide/markt-aktuell&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, while organic market premiums are based on reports from <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/erzeuger/markt/marktinformationen/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc>. Economic data collections from the <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/themen/betriebswirtschaft&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> serve as the basis for seed and machinery costs.</target>
       </segment>
     </unit>
     <unit id="info.pricingTitle">
@@ -3013,46 +3013,6 @@
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;" dispEnd="&lt;/span&gt;">📚</pc> Weitere Publikationen </source>
         <target><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;" dispEnd="&lt;/span&gt;">📚</pc> Further Publications</target>
-      </segment>
-    </unit>
-    <unit id="info.sourcesPrices">
-      <notes>
-        <note category="description">Title for price sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source>Marktpreise &amp; Wirtschaftlichkeit</source>
-        <target>Market Prices &amp; Profitability</target>
-      </segment>
-    </unit>
-    <unit id="info.sourcesResearch">
-      <notes>
-        <note category="description">Title for research sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source>Wissenschaftliche Basis</source>
-        <target>Scientific Basis</target>
-      </segment>
-    </unit>
-    <unit id="info.sourcesStats">
-      <notes>
-        <note category="description">Title for statistics sources</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source>Statistiken &amp; Anbauflächen</source>
-        <target>Statistics &amp; Cultivation Areas</target>
-      </segment>
-    </unit>
-    <unit id="info.sourcesTitle">
-      <notes>
-        <note category="description">Title for the sources and references section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source>Quellen &amp; Referenzen</source>
-        <target>Sources &amp; References</target>
       </segment>
     </unit>
     <unit id="info.subsidiesText">

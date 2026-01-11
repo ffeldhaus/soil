@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AGRICULTURAL_REFERENCES } from '../references';
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 
 @Component({
@@ -73,11 +72,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎨</span>
-              <ng-container i18n="Heading|Title for the design choices section@@info.designChoicesTitle">Design-Entscheidungen & Realitätsbezug</ng-container>
+              <ng-container i18n="Heading|Title for the design choices section@@info.designChoicesTitle">Design-Entscheidungen & Fachliche Grundlagen</ng-container>
             </h2>
             <div class="space-y-6 text-gray-300 leading-relaxed">
               <p i18n="Info Text|Introduction to design choices@@info.designChoicesIntro">
-                Die Simulation SOIL wurde so gestaltet, dass sie einen hohen Realitätsbezug zur deutschen Landwirtschaft aufweist,
+                Die Simulation SOIL wurde so gestaltet, dass sie zentrale Aspekte der deutschen Landwirtschaft abbildet,
                 dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert.
               </p>
 
@@ -86,16 +85,24 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for crop selection logic@@info.cropsTitle">Pflanzenauswahl</h3>
                   <p class="text-sm" i18n="Info Text|Explanation of crop selection@@info.cropsText">
                     Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne)
-                    repräsentiert die wichtigsten Anbaufrüchte in Deutschland. Raps ist die bedeutendste Ölsaat, während Leguminosen
-                    wie Erbsen und Ackerbohnen für die Stickstofffixierung und Bodenfruchtbarkeit essenziell sind.
+                    repräsentiert die wichtigsten Anbaufrüchte in Deutschland (Quelle:
+                    <a href="https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfrüchte-Grünland/Tabellen/ackerlands-hauptfruchtgruppen.html" target="_blank" class="text-emerald-400 hover:underline">Destatis</a>).
+                    Raps ist die bedeutendste Ölsaat, während Leguminosen wie Erbsen und Ackerbohnen für die Stickstofffixierung
+                    und Bodenfruchtbarkeit essenziell sind (vgl.
+                    <a href="https://www.bmel.de/DE/themen/landwirtschaft/pflanzenbau/ackerbau/ackerbau-in-deutschland.html" target="_blank" class="text-emerald-400 hover:underline">BMEL</a>).
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
                   <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for pricing logic@@info.pricingTitle">Preise & Markt</h3>
                   <p class="text-sm" i18n="Info Text|Explanation of pricing@@info.pricingText">
                     Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024).
-                    Biologische Produkte erzielen signifikant höhere Preise (Marktprämie), haben jedoch oft geringere Erträge.
-                    Der „Fortgeschrittene Markt“ simuliert Preisänderungen durch Angebot und Nachfrage innerhalb der Spielgruppe.
+                    Referenzen für konventionelle Preise stammen von der
+                    <a href="https://www.ami-informiert.de/ami-maerkte/ami-getreide/markt-aktuell" target="_blank" class="text-emerald-400 hover:underline">AMI</a>,
+                    während Bio-Marktprämien auf Berichten von
+                    <a href="https://www.oekolandbau.de/erzeuger/markt/marktinformationen/" target="_blank" class="text-emerald-400 hover:underline">Ökolandbau.de</a>
+                    basieren. Betriebswirtschaftliche Datensammlungen des
+                    <a href="https://www.ktbl.de/themen/betriebswirtschaft" target="_blank" class="text-emerald-400 hover:underline">KTBL</a>
+                    dienen als Grundlage für Saatgut- und Maschinenkosten.
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
@@ -132,11 +139,13 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                     <ng-container i18n="Heading|Weather impacts@@info.weatherImpactTitle">Einfluss extremer Wetterereignisse</ng-container>
                   </h3>
                   <p class="text-sm">
-                    Der Klimawandel führt in Mitteleuropa zu einer Zunahme von Extremwetterlagen. Die Simulation bildet dies durch verschiedene Szenarien ab:
+                    Der Klimawandel führt in Mitteleuropa zu einer Zunahme von Extremwetterlagen. Die Simulation bildet dies durch
+                    verschiedene Szenarien ab (Hintergrundinformationen beim
+                    <a href="https://www.julius-kuehn.de/themen/klimawandel/" target="_blank" class="text-emerald-400 hover:underline">JKI</a>):
                   </p>
                   <ul class="list-disc list-outside ml-5 text-xs space-y-2">
                     <li>
-                      <strong class="text-white">Frühsommertrockenheit:</strong> Kritisch für Getreide in der Bestockungsphase. Ertragsverluste von 20-30% sind in Trockenjahren (wie 2018) realistisch (Quelle: JKI/Thünen).
+                      <strong class="text-white">Frühsommertrockenheit:</strong> Kritisch für Getreide in der Bestockungsphase. Ertragsverluste von 20-30% sind in Trockenjahren realistisch.
                     </li>
                     <li>
                       <strong class="text-white">Spätfrost:</strong> Gefährdet besonders keimende Kulturen wie Mais und Zuckerrüben sowie die Blüte von Raps.
@@ -152,7 +161,8 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                     <ng-container i18n="Heading|Pest dynamics@@info.pestsImpactTitle">Schädlingsdruck & Pflanzenschutz</ng-container>
                   </h3>
                   <p class="text-sm">
-                    Die Wahl der Schädlinge in SOIL basiert auf den ökonomisch bedeutendsten Arten in Deutschland:
+                    Die Wahl der Schädlinge in SOIL basiert auf den ökonomisch bedeutendsten Arten in Deutschland (Referenz:
+                    <a href="https://www.pflanzenkrankheiten.ch/ackerkulturen" target="_blank" class="text-emerald-400 hover:underline">pflanzenkrankheiten.ch</a>):
                   </p>
                   <ul class="list-disc list-outside ml-5 text-xs space-y-2">
                     <li>
@@ -289,57 +299,6 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </div>
           </section>
 
-          <!-- Sources & References -->
-          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8">
-            <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3">
-              <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🔗</span>
-              <ng-container i18n="Heading|Title for the sources and references section@@info.sourcesTitle">Quellen & Referenzen</ng-container>
-            </h2>
-            <div class="grid gap-6 text-sm text-gray-300">
-              <div class="space-y-2">
-                <h3 class="font-bold text-white uppercase tracking-wider text-xs" i18n="Heading|Title for statistics sources@@info.sourcesStats">Statistiken & Anbauflächen</h3>
-                <ul class="list-disc list-outside ml-5 space-y-1">
-                  @for (ref of agriRefs.stats; track ref.url) {
-                    <li>
-                      <a [href]="ref.url" target="_blank" class="text-emerald-400 hover:underline">
-                        {{ ref.name }}
-                      </a>
-                      <span class="block text-xs text-gray-500">{{ ref.description }}</span>
-                    </li>
-                  }
-                </ul>
-              </div>
-
-              <div class="space-y-2">
-                <h3 class="font-bold text-white uppercase tracking-wider text-xs" i18n="Heading|Title for price sources@@info.sourcesPrices">Marktpreise & Wirtschaftlichkeit</h3>
-                <ul class="list-disc list-outside ml-5 space-y-1">
-                  @for (ref of agriRefs.prices; track ref.url) {
-                    <li>
-                      <a [href]="ref.url" target="_blank" class="text-emerald-400 hover:underline">
-                        {{ ref.name }}
-                      </a>
-                      <span class="block text-xs text-gray-500">{{ ref.description }}</span>
-                    </li>
-                  }
-                </ul>
-              </div>
-
-              <div class="space-y-2">
-                <h3 class="font-bold text-white uppercase tracking-wider text-xs" i18n="Heading|Title for research sources@@info.sourcesResearch">Wissenschaftliche Basis</h3>
-                <ul class="list-disc list-outside ml-5 space-y-1">
-                  @for (ref of agriRefs.research; track ref.url) {
-                    <li>
-                      <a [href]="ref.url" target="_blank" class="text-emerald-400 hover:underline">
-                        {{ ref.name }}
-                      </a>
-                      <span class="block text-xs text-gray-500">{{ ref.description }}</span>
-                    </li>
-                  }
-                </ul>
-              </div>
-            </div>
-          </section>
-
           <!-- Publication List -->
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8">
             <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3" i18n="Heading|Title for the other publications section@@info.publicationsTitle">
@@ -392,7 +351,6 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 })
 export class InfoComponent implements OnInit {
   year = new Date().getFullYear();
-  agriRefs = AGRICULTURAL_REFERENCES;
 
   ngOnInit() {
     window.scrollTo(0, 0);
