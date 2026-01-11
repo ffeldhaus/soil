@@ -79,13 +79,14 @@ export class ManualCropCardComponent implements OnChanges {
       'crop.animals': $localize`:Crop Name|Animals (as a land use type)@@crop.animals:Tiere`,
       'crop.fallow': $localize`:Crop Name|Fallow land@@crop.fallow:Brachland`,
       'pest.label': $localize`:Label|Title for the main pest associated with a crop@@pest.label:Hauptschädling`,
-      'pest.aphid': $localize`:Pest Name|Aphid@@pest.aphid:Blattlaus`,
-      'pest.fritfly': $localize`:Pest Name|Frit fly@@pest.fritfly:Fritfliege`,
+      'pest.aphid-black': $localize`:Pest Name|Black bean aphid@@pest.aphid-black:Schwarze Bohnenlaus`,
+      'pest.aphid-cereal': $localize`:Pest Name|Cereal aphid@@pest.aphid-cereal:Getreideblattlaus`,
       'pest.potato-beetle': $localize`:Pest Name|Colorado potato beetle@@pest.potato-beetle:Kartoffelkäfer`,
       'pest.corn-borer': $localize`:Pest Name|European corn borer@@pest.corn-borer:Maiszünsler`,
-      'pest.wireworm': $localize`:Pest Name|Wireworm@@pest.wireworm:Drahtwurm`,
       'pest.pollen-beetle': $localize`:Pest Name|Pollen beetle@@pest.pollen-beetle:Rapsglanzkäfer`,
       'pest.pea-moth': $localize`:Pest Name|Pea moth@@pest.pea-moth:Erbsenwickler`,
+      'pest.oat-rust': $localize`:Pest Name|Oat crown rust@@pest.oat-rust:Haferkronenrost`,
+      'pest.nematode': $localize`:Pest Name|Beet nematode@@pest.nematode:Rübennematode`,
       'manual.crops.rotation': $localize`:Label|Title for the crop rotation impact section@@manual.crops.rotation:Fruchtfolgewirkung`,
       'manual.crops.rotationPrev': $localize`:Label|Indicator for the previous crop in rotation@@manual.crops.rotationPrev:Vorfrucht`,
       'manual.crops.current': $localize`:Label|Indicator for the current crop being viewed@@manual.crops.current:Aktuell`,
@@ -129,17 +130,16 @@ export class ManualCropCardComponent implements OnChanges {
 
   getPestKey(pest: string): string {
     const map: Record<string, string> = {
-      'Schwarze Bohnenlaus': 'aphid',
-      Getreideblattlaus: 'aphid',
-      Blattlaus: 'aphid',
-      Fritfliege: 'fritfly',
+      'Schwarze Bohnenlaus': 'aphid-black',
+      Getreideblattlaus: 'aphid-cereal',
       Kartoffelkäfer: 'potato-beetle',
       Maiszünsler: 'corn-borer',
-      Drahtwurm: 'wireworm',
       Rapsglanzkäfer: 'pollen-beetle',
       Erbsenwickler: 'pea-moth',
+      Haferkronenrost: 'oat-rust',
+      Rübennematode: 'nematode',
     };
-    return map[pest] || 'aphid';
+    return map[pest] || 'aphid-black';
   }
 
   getSensitivityKey(level: string): string {

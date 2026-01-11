@@ -24,6 +24,16 @@ export class RoundResultModal {
       Storm: $localize`:Weather Condition|Strong winds affecting yields@@weather.storm:Sturm`,
       None: $localize`:Vermin Status|No pest infestation present@@vermin.none:Keine`,
       Pests: $localize`:Vermin Status|Presence of crop-damaging insects@@vermin.pests:Schädlinge`,
+      'aphid-black': $localize`:Pest Name|Black bean aphid@@pest.aphid-black:Schwarze Bohnenlaus`,
+      'aphid-cereal': $localize`:Pest Name|Cereal aphid@@pest.aphid-cereal:Getreideblattlaus`,
+      'potato-beetle': $localize`:Pest Name|Colorado potato beetle@@pest.potato-beetle:Kartoffelkäfer`,
+      'corn-borer': $localize`:Pest Name|European corn borer@@pest.corn-borer:Maiszünsler`,
+      'pollen-beetle': $localize`:Pest Name|Pollen beetle@@pest.pollen-beetle:Rapsglanzkäfer`,
+      'pea-moth': $localize`:Pest Name|Pea moth@@pest.pea-moth:Erbsenwickler`,
+      'oat-rust': $localize`:Pest Name|Oat crown rust@@pest.oat-rust:Haferkronenrost`,
+      nematode: $localize`:Pest Name|Beet nematode@@pest.nematode:Rübennematode`,
+      fritfly: $localize`:Pest Name|Frit fly@@pest.fritfly:Fritfliege`,
+      wireworm: $localize`:Pest Name|Wireworm@@pest.wireworm:Drahtwurm`,
     };
     return translations[key] || key;
   }

@@ -15,7 +15,7 @@ describe('GameEngine', () => {
     };
     for (let i = 0; i < 40; i++) decision.parcels[i] = 'Fallow';
 
-    const events = { weather: 'Normal', vermin: 'None' };
+    const events = { weather: 'Normal', vermin: [] };
     const round = GameEngine.calculateRound(1, undefined, decision, events, 1000);
 
     expect(round.number).to.equal(1);
@@ -50,7 +50,7 @@ describe('GameEngine', () => {
       result: { machineRealLevel: 4 } as any, // Inject persistent machine state
     };
 
-    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: 'None' }, 1000, 20);
+    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 1000, 20);
     // Fallow -> Wheat is 'good' (+0.02). Machines level 4 (-0.10). Wheat loss (-0.005).
     // TotalRounds=20, timeScale=1.0.
     // Net: 1 + 0.02 - 0.10 - 0.005 = 0.915. 100 * 0.915 = 91.5 -> 92.
@@ -85,7 +85,7 @@ describe('GameEngine', () => {
       parcelsSnapshot: prevParcels,
     };
 
-    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: 'None' }, 1000);
+    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 1000);
     // Nutrition should increase due to animals
     expect(round.parcelsSnapshot[8].nutrition).to.be.greaterThan(50);
     expect(round.result?.bioSiegel).to.be.true;
@@ -114,13 +114,7 @@ describe('GameEngine', () => {
     const prevRound: Round = { number: 1, decision, parcelsSnapshot: prevParcels };
 
     // Test Drought
-    const roundDrought = GameEngine.calculateRound(
-      2,
-      prevRound,
-      decision,
-      { weather: 'Drought', vermin: 'None' },
-      1000,
-    );
+    const roundDrought = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Drought', vermin: [] }, 1000);
     // Wheat base yield is 115. Drought multiplier is 0.7.
     expect(roundDrought.parcelsSnapshot[0].yield).to.equal(81);
     // Drought soil impact: Fallow->Wheat (+0.02), Wheat (-0.005), Drought (-0.01). TotalRounds=20, timeScale=1.0.
@@ -155,7 +149,7 @@ describe('GameEngine', () => {
       2,
       prevRound,
       decisionNoPestControl,
-      { weather: 'Normal', vermin: 'Pests' },
+      { weather: 'Normal', vermin: ['potato-beetle'] },
       1000,
     );
     // Potato yield 370. Pests multiplier 0.7. Fallow->Potato is 'good' (+0.04).
@@ -170,7 +164,7 @@ describe('GameEngine', () => {
       2,
       prevRound,
       decisionPesticide,
-      { weather: 'Normal', vermin: 'Pests' },
+      { weather: 'Normal', vermin: ['potato-beetle'] },
       1000,
     );
     // Pesticide should mitigate pests (multiplier 0.95).
@@ -199,10 +193,48 @@ describe('GameEngine', () => {
       }));
     const prevRound: Round = { number: 1, decision, parcelsSnapshot: prevParcels };
 
-    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: 'None' }, 10000);
+    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 10000);
 
     expect(round.result?.expenses.total).to.be.greaterThan(0);
     expect(round.result?.income).to.be.greaterThan(0);
     expect(round.result?.capital).to.be.greaterThan(5000);
+  });
+
+  it('should lose Bio Siegel and benefits if synthetic inputs are used', () => {
+    const decision: RoundDecision = {
+      machines: 0,
+      organic: true,
+      fertilizer: true, // This should break Bio Siegel
+      pesticide: false,
+      organisms: false,
+      parcels: {},
+    };
+    for (let i = 0; i < 40; i++) decision.parcels[i] = 'Wheat';
+
+    const prevParcels: Parcel[] = Array(40)
+      .fill(null)
+      .map((_, i) => ({
+        index: i,
+        crop: 'Fallow',
+        soil: 80,
+        nutrition: 80,
+        yield: 0,
+      }));
+    const prevRound: Round = { number: 1, decision, parcelsSnapshot: prevParcels };
+
+    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 10000, 20, {
+      subsidiesEnabled: true,
+    });
+
+    expect(round.result?.bioSiegel).to.be.false;
+    // Organic subsidy is 200/parcel, base is 150/parcel. Total 40 parcels.
+    // If Bio Siegel is lost, subsidy should only be 150 * 40 = 6000.
+    // If Bio Siegel was present, it would be (150+200) * 40 = 14000.
+    expect(round.result?.subsidies).to.equal(6000);
+
+    // Income should use conventional prices
+    const wheatConvPrice = 25; // from constants
+    const totalYield = Object.values(round.result!.harvestSummary).reduce((a, b) => a + b, 0);
+    expect(round.result?.income).to.equal(totalYield * wheatConvPrice);
   });
 });

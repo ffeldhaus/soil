@@ -190,7 +190,7 @@ export class GameService {
           income: 1000,
           expenses: { seeds: 100, labor: 200, running: 100, investments: 100, total: 500 },
           harvestSummary: {} as any,
-          events: { weather: 'Normal', vermin: 'None' },
+          events: { weather: 'Normal', vermin: [] },
         },
       };
       this.currentRound = mockRound;

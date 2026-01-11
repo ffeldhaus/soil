@@ -223,9 +223,33 @@ async function performCalculation(
               ? 'Storm'
               : 'Normal';
 
+  const vermin: string[] = [];
+  const pestRoll = Math.random();
+  if (pestRoll > 0.8) {
+    // 20% chance of at least one pest
+    // Choose 1-3 random pests from the available ones
+    const availablePests = [
+      'aphid-black',
+      'aphid-cereal',
+      'fritfly',
+      'potato-beetle',
+      'corn-borer',
+      'wireworm',
+      'pollen-beetle',
+      'pea-moth',
+      'oat-rust',
+      'nematode',
+    ];
+    const numPests = Math.floor(Math.random() * 2) + 1; // 1-2 pests
+    for (let i = 0; i < numPests; i++) {
+      const p = availablePests[Math.floor(Math.random() * availablePests.length)];
+      if (!vermin.includes(p)) vermin.push(p);
+    }
+  }
+
   const events = {
     weather,
-    vermin: Math.random() > 0.9 ? 'Pests' : 'None',
+    vermin,
   };
 
   const allPlayerRounds: Record<string, Round> = {};

@@ -77,7 +77,15 @@
         </div>
         <div class="flex justify-between">
           <span i18n="Label|Vermin or pest situation@@roundResult.vermin" class="text-gray-400">Schädlinge</span>
-          <span class="text-white">{{ t(events?.vermin || 'None') }}</span>
+          <span class="text-white">
+            @if (events?.vermin?.length) {
+              @for (v of events?.vermin; track v; let last = $last) {
+                {{ t(v) }}{{ !last ? ', ' : '' }}
+              }
+            } @else {
+              {{ t('None') }}
+            }
+          </span>
         </div>
       </div>
     </div>

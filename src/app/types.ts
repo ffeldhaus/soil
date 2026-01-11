@@ -49,7 +49,7 @@ export interface RoundResult {
   marketPrices?: Record<string, number>;
   events: {
     weather: string;
-    vermin: string;
+    vermin: string[];
   };
   bioSiegel?: boolean;
   machineRealLevel?: number;

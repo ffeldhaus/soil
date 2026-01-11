@@ -1,6 +1,12 @@
 <div
-  class="bg-black/30 p-6 rounded-2xl border border-white/5 h-full print:bg-gray-50 print:border-gray-200 portrait:rounded-none portrait:border-0"
+  class="bg-black/30 p-6 rounded-2xl border border-white/5 h-full print:bg-gray-50 print:border-gray-200 portrait:rounded-none portrait:border-0 relative overflow-hidden"
 >
+  @if (concept === 'bio') {
+    <div class="absolute -right-4 -bottom-4 w-24 h-24 opacity-10 pointer-events-none print:hidden">
+      <img src="assets/images/Organic-Logo.svg" alt="Bio" class="w-full h-full grayscale invert" />
+    </div>
+  }
+
   <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2 print:text-black">
     <span class="text-emerald-500">{{ icon }}</span>
     {{ t('manual.concepts.' + concept + '.title') }}
@@ -9,4 +15,12 @@
     class="text-sm text-gray-400 leading-relaxed print:text-gray-600"
     [innerHTML]="t('manual.concepts.' + concept + '.text')"
   ></p>
+
+  @if (concept === 'bio') {
+    <div class="mt-4 flex items-center gap-4 print:mt-2">
+      <div class="h-10 w-16 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center p-1 print:bg-white print:border-gray-200">
+        <img src="assets/images/Organic-Logo.svg" alt="EU Organic Logo" class="h-full object-contain" />
+      </div>
+    </div>
+  }
 </div>

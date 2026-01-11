@@ -51,8 +51,8 @@ _Note: You can also use `ng serve` for rapid UI-only development, but it will no
 
 1. **Understand**: Thoroughly understand the codebase context before proposing changes.
 2. **Plan**: Formulate a clear, grounded plan and share a concise summary before implementation.
-3. **Implement**: Follow the plan iteratively.
-4. **Commit**: Always commit changes as soon as a task is completed. You **do not** need to run linting, formatting, or unit tests manually before committing.
+3. **Implement**: Follow the plan iteratively. Wait for explicit instructions to commit.
+4. **Commit**: You **do not** need to run linting, formatting, or unit tests manually before committing.
 5. **Verify (Automated)**:
    - **Pre-commit Hook**: Automatically runs linting, formatting, and unit tests. If any check fails, the commit will be blocked.
    - **Pre-push Hook**: Automatically runs the full E2E test suite. This ensures that no regressions are pushed to the repository.

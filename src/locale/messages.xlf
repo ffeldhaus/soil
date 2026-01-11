@@ -4292,6 +4292,24 @@
         <source>Maschinen</source>
       </segment>
     </unit>
+    <unit id="manual.concepts.bio.text">
+      <notes>
+        <note category="description">Explanation of the organic logo and its requirements</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
+      <segment>
+        <source>Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.bio.title">
+      <notes>
+        <note category="description">Title for Bio-Siegel section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
+      <segment>
+        <source>Bio-Siegel</source>
+      </segment>
+    </unit>
     <unit id="manual.concepts.machines.text">
       <notes>
         <note category="description">Explanation of machinery benefits and drawbacks</note>
@@ -4310,15 +4328,6 @@
         <source>Hauptschädling</source>
       </segment>
     </unit>
-    <unit id="pest.aphid">
-      <notes>
-        <note category="description">Aphid</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
-      <segment>
-        <source>Blattlaus</source>
-      </segment>
-    </unit>
     <unit id="pest.fritfly">
       <notes>
         <note category="description">Frit fly</note>
@@ -4326,6 +4335,24 @@
       </notes>
       <segment>
         <source>Fritfliege</source>
+      </segment>
+    </unit>
+    <unit id="pest.nematode">
+      <notes>
+        <note category="description">Beet nematode</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
+      <segment>
+        <source>Rübennematode</source>
+      </segment>
+    </unit>
+    <unit id="pest.oat-rust">
+      <notes>
+        <note category="description">Oat crown rust</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
+      <segment>
+        <source>Haferkronenrost</source>
       </segment>
     </unit>
     <unit id="pest.pea-moth">
@@ -4353,6 +4380,24 @@
       </notes>
       <segment>
         <source>Kartoffelkäfer</source>
+      </segment>
+    </unit>
+    <unit id="pest.aphid-black">
+      <notes>
+        <note category="description">Black bean aphid</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
+      <segment>
+        <source>Schwarze Bohnenlaus</source>
+      </segment>
+    </unit>
+    <unit id="pest.aphid-cereal">
+      <notes>
+        <note category="description">Cereal aphid</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
+      <segment>
+        <source>Getreideblattlaus</source>
       </segment>
     </unit>
     <unit id="pest.corn-borer">
@@ -4425,6 +4470,15 @@
       </notes>
       <segment>
         <source>Bodenqualität</source>
+      </segment>
+    </unit>
+    <unit id="manual.crops.title">
+      <notes>
+        <note category="description">Title for the crops section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Kulturen</source>
       </segment>
     </unit>
     <unit id="manual.crops.minerals">
@@ -4831,6 +4885,15 @@
         <source>Handbuch</source>
       </segment>
     </unit>
+    <unit id="manual.toc.title">
+      <notes>
+        <note category="description">Title for the table of contents</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Inhalt</source>
+      </segment>
+    </unit>
     <unit id="manual.subtitle">
       <notes>
         <note category="description">Description of the manual&apos;s content</note>
@@ -4864,7 +4927,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source>Erfolgreich wirtschaften und dabei den Boden schützen.</source>
+        <source>In Soil schlüpfst du in die Rolle einer Landwirtin oder eines Landwirts. Dein Ziel ist es, deinen Betrieb wirtschaftlich erfolgreich zu führen und gleichzeitig die langfristige Gesundheit deines Bodens zu erhalten. Du musst die richtige Balance zwischen Ertrag, Kosten und ökologischer Nachhaltigkeit finden.</source>
       </segment>
     </unit>
     <unit id="manual.intro.mechanics.title">
@@ -4882,7 +4945,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source>In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.</source>
+        <source>Du bewirtschaftest deine Felder über mehrere Jahre. In jeder Runde entscheidest du, welche Kulturen du anbaust und wie du sie pflegst. Dabei beeinflussen Faktoren wie Fruchtfolge, Düngung, Pflanzenschutz und das Wetter deinen Erfolg. Beachte: Ökologischer Anbau (Bio) führt zu ca. 20% geringeren Erträgen, wird aber durch höhere Marktpreise und staatliche Prämien ausgeglichen.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.title">

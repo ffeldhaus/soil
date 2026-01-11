@@ -2,6 +2,8 @@ import type { CropType } from './types';
 
 interface CropConfig {
   id: CropType;
+  name: string;
+  description: string;
   image: string;
   pest: string;
   yields: {

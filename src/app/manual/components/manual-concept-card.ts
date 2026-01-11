@@ -10,7 +10,7 @@ export class ManualConceptCardComponent {
   @Input() concept = '';
   @Input() index = 0;
 
-  private icons = ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰', '🚜'];
+  private icons = ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰', '🚜', '🌿'];
 
   get icon(): string {
     return this.icons[this.index] || '💡';
@@ -34,6 +34,8 @@ export class ManualConceptCardComponent {
       'manual.concepts.price.text': $localize`:Concept Text|Explanation of market price fluctuations@@manual.concepts.price.text:Marktpreise schwanken zwischen Konventionell und Bio.`,
       'manual.concepts.machines.title': $localize`:Concept Title|Title for machinery section@@manual.concepts.machines.title:Maschinen`,
       'manual.concepts.machines.text': $localize`:Concept Text|Explanation of machinery benefits and drawbacks@@manual.concepts.machines.text:Reduzieren Arbeitskosten, aber verschlechtern den Boden und verfallen ohne Investition.`,
+      'manual.concepts.bio.title': $localize`:Concept Title|Title for Bio-Siegel section@@manual.concepts.bio.title:Bio-Siegel`,
+      'manual.concepts.bio.text': $localize`:Concept Text|Explanation of the organic logo and its requirements@@manual.concepts.bio.text:Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie.`,
     };
     return translations[key] || key;
   }

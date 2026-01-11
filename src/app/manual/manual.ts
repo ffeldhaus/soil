@@ -33,10 +33,12 @@ export class ManualComponent {
       'manual.subtitle': $localize`:Subheading|Description of the manual's content@@manual.subtitle:Alles was Sie über nachhaltige Landwirtschaft in Soil wissen müssen`,
       'manual.intro.title': $localize`:Heading|Title for the introduction section@@manual.intro.title:Einleitung`,
       'manual.intro.goal.title': $localize`:Subheading|Title for the game goals section@@manual.intro.goal.title:Das Ziel`,
-      'manual.intro.goal.text': $localize`:Info Text|Description of the game's main goal@@manual.intro.goal.text:Erfolgreich wirtschaften und dabei den Boden schützen.`,
+      'manual.intro.goal.text': $localize`:Info Text|Description of the game's main goal@@manual.intro.goal.text:In Soil schlüpfst du in die Rolle einer Landwirtin oder eines Landwirts. Dein Ziel ist es, deinen Betrieb wirtschaftlich erfolgreich zu führen und gleichzeitig die langfristige Gesundheit deines Bodens zu erhalten. Du musst die richtige Balance zwischen Ertrag, Kosten und ökologischer Nachhaltigkeit finden.`,
       'manual.intro.mechanics.title': $localize`:Subheading|Title for the game mechanics section@@manual.intro.mechanics.title:Mechanik`,
-      'manual.intro.mechanics.text': $localize`:Info Text|Description of how the game works@@manual.intro.mechanics.text:In 10 Runden triffst du Entscheidungen über Anbau, Düngung und Schutz.`,
+      'manual.intro.mechanics.text': $localize`:Info Text|Description of how the game works@@manual.intro.mechanics.text:Du bewirtschaftest deine Felder über mehrere Jahre. In jeder Runde entscheidest du, welche Kulturen du anbaust und wie du sie pflegst. Dabei beeinflussen Faktoren wie Fruchtfolge, Düngung, Pflanzenschutz und das Wetter deinen Erfolg. Beachte: Ökologischer Anbau (Bio) führt zu ca. 20% geringeren Erträgen, wird aber durch höhere Marktpreise und staatliche Prämien ausgeglichen.`,
       'manual.concepts.title': $localize`:Heading|Title for the game concepts section@@manual.concepts.title:Konzepte`,
+      'manual.crops.title': $localize`:Heading|Title for the crops section@@manual.crops.title:Kulturen`,
+      'manual.toc.title': $localize`:Heading|Title for the table of contents@@manual.toc.title:Inhalt`,
       'manual.footer': $localize`:Footer Text|Copyright and project info@@landing.footer:© ${this.year}:INTERPOLATION: Soil Projekt. Entwickelt für Bildungszwecke.`,
     };
     return translations[key] || key;
