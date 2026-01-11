@@ -1,0 +1,58 @@
+# lychee configuration file
+
+# Root directory to use when checking absolute links in local files.
+root_dir = "public"
+
+# Test the specified file extensions for URIs when checking files locally.
+extensions = ["html", "ts", "md", "json", "scss", "css", "xlf"]
+
+# Exclude URLs and mail addresses from checking.
+exclude = [
+  'http://localhost',
+  'https://localhost',
+  'http://0.0.0.0',
+  'https://example.com',
+  '^mailto:.*',
+  '^tel:.*',
+  '^https://www.youtube.com/embed/.*', # Often blocked or requires JS
+  '^https://www.google.com/maps/.*',   # Often blocked
+  'http://link/',                      # Placeholder in tests
+  'https://iamcredentials.googleapis.com/v1/projects/.*', # Template URLs
+  'https://www.googleapis.com/oauth2/v4/token',           # Template URLs
+  'https://schule.de/',                                   # Often fails in CI
+  '&quot',                                                # Fix for XLF parsing issues
+  'assets/.*',                                            # Angular relative asset paths
+  'https://admin.google.com/',                            # Requires login
+  'site.webmanifest'                                      # Relative link in index.html
+]
+
+# Exclude paths from getting checked.
+exclude_path = [
+  'node_modules',
+  '.git',
+  '.angular',
+  'dist',
+  'coverage',
+  '.firebase',
+  '.cypress-cache',
+  'functions/node_modules',
+  'functions/lib'
+]
+
+# Do not show progress bar.
+no_progress = true
+
+# Use request cache stored on disk at `.lycheecache`
+cache = true
+
+# Maximum number of allowed redirects
+max_redirects = 5
+
+# Maximum number of retries per request
+max_retries = 3
+
+# Proceed for server connections considered insecure (invalid TLS)
+insecure = true
+
+# Skip missing input files
+skip_missing = true

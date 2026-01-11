@@ -74,4 +74,4 @@ functions/vite.config.ts.timestamp*
 
 # Linting caches
 .eslintcache
-.prettiercache
+.prettiercache.lycheecache

@@ -162,7 +162,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   </h3>
                   <p class="text-sm">
                     Die Wahl der Schädlinge in SOIL basiert auf den ökonomisch bedeutendsten Arten in Deutschland (Referenz:
-                    <a href="https://www.pflanzenkrankheiten.ch/ackerkulturen" target="_blank" class="text-emerald-400 hover:underline">pflanzenkrankheiten.ch</a>):
+                    <a href="https://www.pflanzenkrankheiten.ch/" target="_blank" class="text-emerald-400 hover:underline">pflanzenkrankheiten.ch</a>):
                   </p>
                   <ul class="list-disc list-outside ml-5 text-xs space-y-2">
                     <li>

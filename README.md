@@ -75,4 +75,4 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LIC
 
 ## 👥 Contributing
 
-For information on how to contribute to this project, please see the [DEVELOPER.md](DEVELOPER.md) file.
+For information on how to contribute to this project, please see the [DEVELOPMENT.md](DEVELOPMENT.md) file.
