@@ -19,6 +19,7 @@ import { DashboardGameListComponent } from './components/dashboard-game-list';
 import { DashboardHudComponent } from './components/dashboard-hud';
 import { DashboardPendingComponent } from './components/dashboard-pending';
 import { DashboardSuperAdminComponent } from './components/dashboard-super-admin';
+import { DashboardTeacherGuideComponent } from './components/dashboard-teacher-guide';
 import { QrOverlayComponent } from './components/qr-overlay';
 
 @Component({
@@ -36,6 +37,7 @@ import { QrOverlayComponent } from './components/qr-overlay';
     DashboardGameListComponent,
     DashboardDeleteModalComponent,
     DashboardFinanceModalComponent,
+    DashboardTeacherGuideComponent,
     FeedbackModal,
   ],
   templateUrl: './dashboard.html',

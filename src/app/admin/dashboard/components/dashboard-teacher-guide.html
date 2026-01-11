@@ -1,0 +1,39 @@
+<section
+  class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0 mt-8"
+>
+  <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3">
+    <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl">👨‍🏫</span>
+    <ng-container i18n="Heading|Title for the teacher guide section@@manual.teacher.title">Handreichung für Lehrende</ng-container>
+  </h2>
+  <div class="space-y-8 text-gray-300 leading-relaxed">
+    <div>
+      <h3 class="text-xl font-bold text-white mb-4">
+        <ng-container i18n="Subheading|Title for pedagogical concept@@manual.teacher.concept.title">Pädagogisches Konzept</ng-container>
+      </h3>
+      <p i18n="Info Text|Description of the pedagogical approach@@manual.teacher.concept.text">
+        SOIL ist als problemorientierte Simulation konzipiert. Die Lernenden sollen durch Versuch und Irrtum (Trial & Error)
+        die komplexen Zusammenhänge zwischen ökonomischem Erfolg und ökologischer Nachhaltigkeit begreifen.
+      </p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-gray-950/30 p-6 rounded-2xl border border-white/5">
+        <h4 class="font-bold text-emerald-300 mb-2">
+          <ng-container i18n="Subheading|Title for group play instructions@@manual.teacher.group.title">Gruppendynamik</ng-container>
+        </h4>
+        <p class="text-sm" i18n="Info Text|Instructions for group-based play@@manual.teacher.group.text">
+          Es wird empfohlen, Schüler in Gruppen von 2-4 Personen als ein 'Farmer-Team' spielen zu lassen. Dies fördert den
+          Diskurs über die beste Strategie und zwingt zur Begründung von Entscheidungen.
+        </p>
+      </div>
+      <div class="bg-gray-950/30 p-6 rounded-2xl border border-white/5">
+        <h4 class="font-bold text-emerald-300 mb-2">
+          <ng-container i18n="Subheading|Title for discussion prompts@@manual.teacher.discussion.title">Diskussionsanregungen</ng-container>
+        </h4>
+        <p class="text-sm" i18n="Info Text|Suggested topics for classroom discussion@@manual.teacher.discussion.text">
+          Nutzen Sie die Rundenergebnisse für Reflexionen: Warum war Gruppe A erfolgreicher? Welchen Einfluss hatte das
+          Wetter? Ist ein hoher Kontostand wichtiger als eine gute Bodenqualität?
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
