@@ -85,11 +85,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for crop selection logic@@info.cropsTitle">Pflanzenauswahl</h3>
                   <p class="text-sm" i18n="Info Text|Explanation of crop selection@@info.cropsText">
                     Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne)
-                    repräsentiert die wichtigsten Anbaufrüchte in Deutschland (Quelle:
-                    <a href="https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfrüchte-Grünland/Tabellen/ackerlands-hauptfruchtgruppen.html" target="_blank" class="text-emerald-400 hover:underline">Destatis</a>).
+                    repräsentiert die wichtigsten Anbaufrüchte in Deutschland (Quelle: 
+                    <a href="https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/ackerland-hauptnutzungsarten-kulturarten.html" target="_blank" class="text-emerald-400 hover:underline">Destatis</a>).
                     Raps ist die bedeutendste Ölsaat, während Leguminosen wie Erbsen und Ackerbohnen für die Stickstofffixierung
                     und Bodenfruchtbarkeit essenziell sind (vgl.
-                    <a href="https://www.bmel.de/DE/themen/landwirtschaft/pflanzenbau/ackerbau/ackerbau-in-deutschland.html" target="_blank" class="text-emerald-400 hover:underline">BMEL</a>).
+                    <a href="https://www.umweltbundesamt.de/daten/land-forstwirtschaft/stickstoffeintrag-aus-der-landwirtschaft#--3" target="_blank" class="text-emerald-400 hover:underline">Umweltbundesamt</a>).
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
@@ -97,11 +97,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   <p class="text-sm" i18n="Info Text|Explanation of pricing@@info.pricingText">
                     Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024).
                     Referenzen für konventionelle Preise stammen von der
-                    <a href="https://www.ami-informiert.de/ami-maerkte/ami-getreide/markt-aktuell" target="_blank" class="text-emerald-400 hover:underline">AMI</a>,
-                    während Bio-Marktprämien auf Berichten von
-                    <a href="https://www.oekolandbau.de/erzeuger/markt/marktinformationen/" target="_blank" class="text-emerald-400 hover:underline">Ökolandbau.de</a>
+                    <a href="https://www.ami-informiert.de/" target="_blank" class="text-emerald-400 hover:underline">AMI</a>,
+                    während Bio-Marktprämien auf Informationen von
+                    <a href="https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/" target="_blank" class="text-emerald-400 hover:underline">Ökolandbau.de</a>
                     basieren. Betriebswirtschaftliche Datensammlungen des
-                    <a href="https://www.ktbl.de/themen/betriebswirtschaft" target="_blank" class="text-emerald-400 hover:underline">KTBL</a>
+                    <a href="https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege" target="_blank" class="text-emerald-400 hover:underline">KTBL</a>
                     dienen als Grundlage für Saatgut- und Maschinenkosten.
                   </p>
                 </div>
@@ -141,7 +141,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   <p class="text-sm">
                     Der Klimawandel führt in Mitteleuropa zu einer Zunahme von Extremwetterlagen. Die Simulation bildet dies durch
                     verschiedene Szenarien ab (Hintergrundinformationen beim
-                    <a href="https://www.julius-kuehn.de/themen/klimawandel/" target="_blank" class="text-emerald-400 hover:underline">JKI</a>):
+                    <a href="https://www.julius-kuehn.de/pb/klimaanpassung" target="_blank" class="text-emerald-400 hover:underline">JKI</a>):
                   </p>
                   <ul class="list-disc list-outside ml-5 text-xs space-y-2">
                     <li>
