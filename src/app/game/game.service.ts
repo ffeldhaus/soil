@@ -48,7 +48,10 @@ export class GameService {
   }
 
   async getRoundData(gameId: string, roundNumber: number): Promise<Round> {
-    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number }, Round>(this.functions, 'getRoundData');
+    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number }, Round>(
+      this.functions,
+      'getRoundData',
+    );
     const result = await getRoundDataFn({ gameId, roundNumber });
     const round = result.data;
     if (round.parcelsSnapshot) {

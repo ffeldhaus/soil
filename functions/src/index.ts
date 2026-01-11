@@ -47,9 +47,9 @@ export const getGameState = onCall(async (request) => {
   if (!playerState) throw new HttpsError('not-found', 'Player not found in this game');
 
   const currentRoundNum = game.currentRoundNumber || 0;
-  
+
   // Fetch the full data for the last calculated round for this player
-  let lastRound: Round | undefined = undefined;
+  let lastRound: Round | undefined;
   if (currentRoundNum >= 0) {
     const roundRef = gameRef.collection('rounds').doc(`round_${currentRoundNum}`);
     const roundSnap = await roundRef.get();
@@ -98,7 +98,7 @@ export const getRoundData = onCall(async (request) => {
   } else if (roundNumber === 0) {
     return data; // Legacy/Global round 0
   }
-  
+
   throw new HttpsError('not-found', 'No data for player in this round');
 });
 
@@ -221,7 +221,7 @@ async function performCalculation(
     const player = players[uid];
     const playerDecision = player.pendingDecisions || decision;
 
-    let prevRoundData: Round | undefined = undefined;
+    let prevRoundData: Round | undefined;
     if (prevRoundGlobalData) {
       if (prevRoundGlobalData.playerData?.[uid]) {
         prevRoundData = prevRoundGlobalData.playerData[uid];
