@@ -44,10 +44,25 @@ export const getGameState = onCall(async (request) => {
   const uid = request.auth.uid;
   const playerState = game.players?.[uid];
 
-  // Fetch rounds for history
-  const roundsRef = gameRef.collection('rounds');
-  const roundsSnap = await roundsRef.orderBy('number', 'asc').get();
-  const rounds = roundsSnap.docs.map((doc) => doc.data() as Round);
+  if (!playerState) throw new HttpsError('not-found', 'Player not found in this game');
+
+  const currentRoundNum = game.currentRoundNumber || 0;
+  
+  // Fetch the full data for the last calculated round for this player
+  let lastRound: Round | undefined = undefined;
+  if (currentRoundNum >= 0) {
+    const roundRef = gameRef.collection('rounds').doc(`round_${currentRoundNum}`);
+    const roundSnap = await roundRef.get();
+    if (roundSnap.exists) {
+      const roundData = roundSnap.data();
+      if (roundData?.playerData?.[uid]) {
+        lastRound = roundData.playerData[uid];
+      } else if (currentRoundNum === 0) {
+        // Fallback for legacy round_0 or global round_0
+        lastRound = roundData as Round;
+      }
+    }
+  }
 
   return {
     game: {
@@ -55,15 +70,36 @@ export const getGameState = onCall(async (request) => {
       status: game.status,
       currentRoundNumber: game.currentRoundNumber,
       settings: game.settings,
-      players: game.players, // Include for Finance view
+      players: game.players,
     },
     playerState: {
       ...playerState,
       playerNumber: uid.startsWith('player-') ? uid.split('-')[2] : undefined,
-      history: rounds,
+      // history in playerState is already the lightweight version (parcelsSnapshot = [])
     },
-    lastRound: rounds[rounds.length - 1],
+    lastRound,
   };
+});
+
+export const getRoundData = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+  const { gameId, roundNumber, targetUid } = request.data;
+  if (!gameId || roundNumber === undefined) throw new HttpsError('invalid-argument', 'Missing gameId or roundNumber');
+
+  const uid = targetUid || request.auth.uid;
+  const roundRef = db.collection('games').doc(gameId).collection('rounds').doc(`round_${roundNumber}`);
+  const roundSnap = await roundRef.get();
+
+  if (!roundSnap.exists) throw new HttpsError('not-found', 'Round data not found');
+
+  const data = roundSnap.data();
+  if (data?.playerData?.[uid]) {
+    return data.playerData[uid];
+  } else if (roundNumber === 0) {
+    return data; // Legacy/Global round 0
+  }
+  
+  throw new HttpsError('not-found', 'No data for player in this round');
 });
 
 export const submitDecision = onCall(
@@ -108,16 +144,15 @@ export const submitDecision = onCall(
         // Process AI turns immediately (passes preloaded data to avoid internal reads)
         const updatedPlayers = (await internalProcessAiTurns(gameId, transaction, { ...game, players })) || players;
 
-        const calculationPerformed = await checkAndPerformCalculation(
+        const calculationResults = await checkAndPerformCalculation(
           gameId,
           transaction,
           { ...game, players: updatedPlayers },
           uid,
           decision,
         );
-        if (calculationPerformed) {
-          const myState = updatedPlayers[uid];
-          const myNewRound = myState.history[myState.history.length - 1];
+        if (calculationResults) {
+          const myNewRound = calculationResults.playerRounds[uid];
           return { status: 'calculated', nextRound: myNewRound };
         }
 
@@ -151,10 +186,9 @@ async function checkAndPerformCalculation(
   if (allSubmitted) {
     // We use the provided decision if available, or an empty object.
     // performCalculation prioritizes player.pendingDecisions anyway.
-    await performCalculation(gameId, fallbackDecision || {}, transaction, game);
-    return true;
+    return await performCalculation(gameId, fallbackDecision || {}, transaction, game);
   }
-  return false;
+  return null;
 }
 
 async function performCalculation(
@@ -165,7 +199,7 @@ async function performCalculation(
 ) {
   const gameRef = db.collection('games').doc(gameId);
   const game = preloadedGame || (await transaction.get(gameRef)).data();
-  if (!game) return;
+  if (!game) return null;
 
   const players = game.players || {};
   const nextRoundNumber = (game.currentRoundNumber || 0) + 1;
@@ -175,35 +209,54 @@ async function performCalculation(
     vermin: Math.random() > 0.9 ? 'Beetle' : 'None',
   };
 
+  const allPlayerRounds: Record<string, Round> = {};
+
+  // Fetch the full data for the previous round once
+  const prevRoundRef = gameRef.collection('rounds').doc(`round_${game.currentRoundNumber || 0}`);
+  const prevRoundSnap = await transaction.get(prevRoundRef);
+  const prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : null;
+
   // Calculate next round for EACH player
   for (const uid of Object.keys(players)) {
     const player = players[uid];
-    const playerDecision = player.pendingDecisions || decision; // Fallback to provided decision
+    const playerDecision = player.pendingDecisions || decision;
 
-    // Get last round from player history
-    const lastRound =
-      player.history && player.history.length > 0 ? player.history[player.history.length - 1] : undefined;
+    let prevRoundData: Round | undefined = undefined;
+    if (prevRoundGlobalData) {
+      if (prevRoundGlobalData.playerData?.[uid]) {
+        prevRoundData = prevRoundGlobalData.playerData[uid];
+      } else if (game.currentRoundNumber === 0) {
+        prevRoundData = prevRoundGlobalData as Round;
+      }
+    }
 
-    const currentCapital = lastRound?.result?.capital ?? player.capital ?? 1000;
+    const currentCapital = prevRoundData?.result?.capital ?? player.capital ?? 1000;
     const roundLimit = game.settings?.length || 20;
 
     const nextRound = GameEngine.calculateRound(
       nextRoundNumber,
-      lastRound,
+      prevRoundData,
       playerDecision,
       events,
       currentCapital,
       roundLimit,
     );
 
+    allPlayerRounds[uid] = nextRound;
+
     // Calculate player-specific averages
     const pAvgSoil = nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.soil, 0) / nextRound.parcelsSnapshot.length;
     const pAvgNutrition =
       nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.nutrition, 0) / nextRound.parcelsSnapshot.length;
 
-    // Update player state
+    // Update player state with lightweight history
+    const lightweightRound: Round = {
+      ...nextRound,
+      parcelsSnapshot: [], // Strip parcels for storage in main doc
+    };
+
     player.history = player.history || [];
-    player.history.push(nextRound);
+    player.history.push(lightweightRound);
     player.currentRound = nextRoundNumber;
     player.capital = nextRound.result?.capital; // Sync current capital
     player.avgSoil = Math.round(pAvgSoil);
@@ -212,6 +265,14 @@ async function performCalculation(
     // Reset pending decisions for next round (Firestore doesn't allow undefined)
     (player as any).pendingDecisions = undefined;
   }
+
+  // Save full rounds to subcollection
+  transaction.set(gameRef.collection('rounds').doc(`round_${nextRoundNumber}`), {
+    number: nextRoundNumber,
+    playerData: allPlayerRounds,
+    events,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
 
   // Update game state (current round pointer and all players)
   const roundLimit = game.settings?.length || 10;
@@ -223,7 +284,7 @@ async function performCalculation(
     players,
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
   });
-  return { number: nextRoundNumber };
+  return { number: nextRoundNumber, playerRounds: allPlayerRounds };
 }
 
 export const calculateNextRound = onCall(async (request) => {
@@ -391,16 +452,25 @@ export const createGame = onCall(async (request) => {
     const startSoil = Math.round(initialParcels.reduce((sum, p) => sum + p.soil, 0) / initialParcels.length);
     const startNutrition = Math.round(initialParcels.reduce((sum, p) => sum + p.nutrition, 0) / initialParcels.length);
 
-    const round0 = {
+    const lightweightRound0 = {
       number: 0,
-      parcelsSnapshot: initialParcels,
+      parcelsSnapshot: [],
       avgSoil: startSoil,
       avgNutrition: startNutrition,
     };
 
+    const playerData: Record<string, any> = {};
+
     for (const uid of Object.keys(newGame.players)) {
       newGame.players[uid].avgSoil = startSoil;
       newGame.players[uid].avgNutrition = startNutrition;
+      newGame.players[uid].history = [lightweightRound0];
+      playerData[uid] = {
+        number: 0,
+        parcelsSnapshot: initialParcels,
+        avgSoil: startSoil,
+        avgNutrition: startNutrition,
+      };
     }
 
     // Auto-process AI turns for the first round BEFORE any writes
@@ -408,8 +478,12 @@ export const createGame = onCall(async (request) => {
 
     t.set(db.collection('games').doc(gameId), newGame);
 
-    // Initialize Round 0 Doc (Global reference if needed)
-    await t.set(db.collection('games').doc(gameId).collection('rounds').doc('round_0'), round0);
+    // Initialize Round 0 Doc using the new format
+    await t.set(db.collection('games').doc(gameId).collection('rounds').doc('round_0'), {
+      number: 0,
+      playerData,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
 
     // Increment User Game Count
     if (userSnap.exists) {

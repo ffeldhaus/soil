@@ -72,6 +72,18 @@ describe('GameService', () => {
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'getGameState');
   });
 
+  it('should fetch round data and cache it', async () => {
+    const mockRound = { number: 1, parcelsSnapshot: [{ index: 0, crop: 'Wheat' }] };
+    const mockCallable = vi.fn(() => Promise.resolve({ data: mockRound }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    const result = await service.getRoundData('test-game-id', 1);
+
+    expect(result).toEqual(mockRound);
+    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'getRoundData');
+    expect(mockCallable).toHaveBeenCalledWith({ gameId: 'test-game-id', roundNumber: 1 });
+  });
+
   it('should submit round correctly', async () => {
     const mockRound = { parcelsSnapshot: service.getParcelsValue() };
     const mockCallable = vi.fn(() => Promise.resolve({ data: { status: 'calculated', nextRound: mockRound } }));

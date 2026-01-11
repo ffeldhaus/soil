@@ -34,6 +34,7 @@ export class GameService {
   private pendingDecisions: Record<number, CropType> = {};
   private draftSaveSubject = new Subject<string>();
   currentRound: Round | null = null;
+  private parcelCache: Record<number, Parcel[]> = {};
 
   constructor() {
     // Initialize debounced draft saving
@@ -44,6 +45,16 @@ export class GameService {
 
   getParcelsValue() {
     return this.parcelsSubject.value;
+  }
+
+  async getRoundData(gameId: string, roundNumber: number): Promise<Round> {
+    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number }, Round>(this.functions, 'getRoundData');
+    const result = await getRoundDataFn({ gameId, roundNumber });
+    const round = result.data;
+    if (round.parcelsSnapshot) {
+      this.parcelCache[roundNumber] = round.parcelsSnapshot;
+    }
+    return round;
   }
 
   async loadGame(gameId: string): Promise<GameState | null> {

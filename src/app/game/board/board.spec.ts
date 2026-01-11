@@ -162,4 +162,47 @@ describe('Board', () => {
     await component.nextRound();
     expect(component.showRoundSettingsModal).toBe(true);
   });
+
+  it('should fetch round data when switching to historical round without snapshots', async () => {
+    const mockFullRound = {
+      number: 1,
+      parcelsSnapshot: Array(40).fill({ index: 0, crop: 'Corn', soil: 80, nutrition: 80 }),
+    };
+    const gameService = TestBed.inject(GameService);
+    const getRoundDataSpy = vi.fn().mockResolvedValue(mockFullRound);
+    gameService.getRoundData = getRoundDataSpy;
+
+    component.gameId = 'test-game';
+    component.maxRoundNumber = 2;
+    component.history = [
+      { number: 0, decision: {} as any, parcelsSnapshot: [] },
+      { number: 1, decision: {} as any, parcelsSnapshot: [] }, // Missing snapshots
+    ];
+
+    component.goToRound(1);
+
+    expect(component.viewingRound).toBe(1);
+    // Use promise to wait for getRoundData
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(getRoundDataSpy).toHaveBeenCalledWith('test-game', 1);
+    expect(component.parcels[0].crop).toBe('Corn');
+  });
+
+  it('should use history directly when switching to historical round with snapshots', async () => {
+    const mockParcels = Array(40).fill({ index: 0, crop: 'Potato', soil: 80, nutrition: 80 });
+    component.maxRoundNumber = 2;
+    component.history = [
+      { number: 0, decision: {} as any, parcelsSnapshot: [] },
+      { number: 1, decision: {} as any, parcelsSnapshot: mockParcels },
+    ];
+
+    component.goToRound(1);
+
+    expect(component.viewingRound).toBe(1);
+    expect(component.parcels[0].crop).toBe('Potato');
+    const gameService = TestBed.inject(GameService);
+    // Should NOT have called getRoundData
+    expect(gameService.getRoundData).toBeUndefined();
+  });
 });

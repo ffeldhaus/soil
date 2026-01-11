@@ -153,6 +153,43 @@ export class Board implements OnInit, OnDestroy {
     if (round >= 0 && round <= this.maxRoundNumber) {
       this.viewingRound = round;
       this.updateReadOnly();
+      this.updateParcelsForViewingRound();
+    }
+  }
+
+  private updateParcelsForViewingRound() {
+    if (this.viewingRound === this.maxRoundNumber) {
+      // Current round: use parcels from gameService (which handles drafts)
+      this.gameService
+        .getParcels()
+        .pipe(take(1))
+        .subscribe((parcels) => {
+          this.parcels = parcels;
+          this.checkOrientation();
+          this.cdr.detectChanges();
+        });
+    } else {
+      // Historical round: use parcels from history
+      const histRound = this.history.find((r) => r.number === this.viewingRound);
+      if (histRound) {
+        if (histRound.parcelsSnapshot && histRound.parcelsSnapshot.length > 0) {
+          this.parcels = histRound.parcelsSnapshot;
+          this.checkOrientation();
+          this.cdr.detectChanges();
+        } else {
+          // Parcels missing (lightweight history), fetch them
+          this.gameService.getRoundData(this.gameId, this.viewingRound).then((fullRound) => {
+            // Update history with full data to cache it in the component
+            histRound.parcelsSnapshot = fullRound.parcelsSnapshot;
+            // Only update if we are still viewing this round
+            if (this.viewingRound === fullRound.number) {
+              this.parcels = fullRound.parcelsSnapshot;
+              this.checkOrientation();
+              this.cdr.detectChanges();
+            }
+          });
+        }
+      }
     }
   }
 
@@ -203,9 +240,20 @@ export class Board implements OnInit, OnDestroy {
             this.gameService.state$.subscribe((state) => {
               if (state?.game) {
                 this.maxRoundNumber = state.game.currentRoundNumber;
-                this.viewingRound = this.maxRoundNumber;
+                // Only move viewingRound to max if it was previously at the old max
+                const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
+
                 this.playerLabel = state.game.settings?.playerLabel || 'Player';
                 this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
+                this.history = state.playerState?.history || [];
+
+                if (wasAtMax || this.viewingRound === 0) {
+                  this.viewingRound = this.maxRoundNumber;
+                }
+
+                this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
+                this.updateReadOnly();
+                this.updateParcelsForViewingRound();
 
                 // Timer Logic
                 this.updateTimer(state.game);
@@ -224,9 +272,6 @@ export class Board implements OnInit, OnDestroy {
                 this.checkOrientation();
               }
             });
-            this.history = gameState.playerState?.history || [];
-            this.isSubmitted = gameState.playerState?.submittedRound === this.viewingRound;
-            this.updateReadOnly();
           }
         }
 
