@@ -268,6 +268,10 @@ export class GameService {
       advancedPricingEnabled?: boolean;
     },
   ): Promise<{ gameId: string; password?: string }> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      return { gameId: `test-game-${Math.random().toString(36).substr(2, 9)}`, password: '123' };
+    }
     const createGameFn = httpsCallable<
       {
         name: string;
@@ -303,6 +307,17 @@ export class GameService {
     showTrash = false,
     adminUid?: string,
   ): Promise<{ games: Game[]; total: number }> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      const mockGame = this.getMockGameState().game;
+      return {
+        games: [
+          { ...mockGame, id: 'test-game-1', name: 'Test Game 1', status: showTrash ? 'deleted' : 'in_progress' },
+          { ...mockGame, id: 'test-game-2', name: 'Test Game 2', status: showTrash ? 'deleted' : 'in_progress' },
+        ],
+        total: 2,
+      };
+    }
     const getAdminGamesFn = httpsCallable<
       { page: number; pageSize: number; showTrash: boolean; adminUid?: string },
       { games: Game[]; total: number }
@@ -317,16 +332,31 @@ export class GameService {
   }
 
   async getPendingUsers(): Promise<UserStatus[]> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      return [{ uid: 'pending-1', email: 'pending@example.com', role: 'pending', status: 'pending' } as any];
+    }
     const fn = httpsCallable<void, UserStatus[]>(this.functions, 'getPendingUsers');
     return (await fn()).data;
   }
 
   async getUserStatus(): Promise<UserStatus | null> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      const role = window.localStorage.getItem('soil_test_role') || 'admin';
+      return { uid: 'mock-uid', email: `mock-${role}@example.com`, role, status: 'active' } as any;
+    }
     const fn = httpsCallable<void, UserStatus | null>(this.functions, 'getUserStatus');
     return (await fn()).data;
   }
 
   async getAllAdmins(): Promise<(UserStatus & { gameCount: number; quota: number })[]> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      return [
+        { uid: 'admin-1', email: 'admin@example.com', role: 'admin', status: 'active', gameCount: 5, quota: 10 } as any,
+      ];
+    }
     const fn = httpsCallable<void, (UserStatus & { gameCount: number; quota: number })[]>(
       this.functions,
       'getAllAdmins',
@@ -335,6 +365,13 @@ export class GameService {
   }
 
   async getSystemStats(): Promise<SystemStats> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      return {
+        games: { total: 100, active: 80, deleted: 20 },
+        users: { total: 50, admins: 40, pending: 5, rejected: 3, banned: 2 },
+      };
+    }
     const fn = httpsCallable<void, SystemStats>(this.functions, 'getSystemStats');
     return (await fn()).data;
   }
@@ -347,6 +384,11 @@ export class GameService {
     institutionLink?: string;
     lang?: string;
   }): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Onboarding submitted', data);
+      return;
+    }
     const fn = httpsCallable<
       {
         firstName: string;
@@ -368,6 +410,11 @@ export class GameService {
     lang?: string,
     origin?: string,
   ): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Manage admin', { targetUid, action, value });
+      return;
+    }
     const fn = httpsCallable<
       {
         targetUid: string;
@@ -388,6 +435,11 @@ export class GameService {
     origin: string,
     lang?: string,
   ): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Player invite sent', { gameId, playerNumber, email });
+      return;
+    }
     const fn = httpsCallable<
       { gameId: string; playerNumber: number; email: string; origin: string; lang?: string },
       void
@@ -401,6 +453,11 @@ export class GameService {
   }
 
   async sendGameInvite(gameId: string, email: string, lang?: string): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Game invite sent', { gameId, email });
+      return;
+    }
     const fn = httpsCallable<{ gameId: string; email: string; lang?: string }, void>(this.functions, 'sendGameInvite');
     try {
       await fn({ gameId, email, lang });
@@ -411,6 +468,11 @@ export class GameService {
   }
 
   async deleteGames(gameIds: string[], force = false): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Games deleted', { gameIds, force });
+      return;
+    }
     const deleteGamesFn = httpsCallable<{ gameIds: string[]; force: boolean }, void>(this.functions, 'deleteGames');
     try {
       await deleteGamesFn({ gameIds, force });
@@ -421,6 +483,11 @@ export class GameService {
   }
 
   async undeleteGames(gameIds: string[]): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Games undeleted', { gameIds });
+      return;
+    }
     const undeleteGamesFn = httpsCallable<{ gameIds: string[] }, void>(this.functions, 'undeleteGames');
     try {
       await undeleteGamesFn({ gameIds });
@@ -431,6 +498,11 @@ export class GameService {
   }
 
   async updatePlayerType(gameId: string, playerNumber: number, type: 'human' | 'ai', aiLevel?: string): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Player type updated', { gameId, playerNumber, type, aiLevel });
+      return;
+    }
     const updatePlayerTypeFn = httpsCallable<
       { gameId: string; playerNumber: number; type: 'human' | 'ai'; aiLevel?: string },
       void
@@ -444,6 +516,11 @@ export class GameService {
   }
 
   async updateRoundDeadline(gameId: string, roundNumber: number, deadline: string): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Round deadline updated', { gameId, roundNumber, deadline });
+      return;
+    }
     const fn = httpsCallable<{ gameId: string; roundNumber: number; deadline: string }, void>(
       this.functions,
       'updateRoundDeadline',
@@ -457,6 +534,11 @@ export class GameService {
   }
 
   async submitFeedback(feedback: { category: string; rating: number; comment: string }): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Feedback submitted', feedback);
+      return;
+    }
     const fn = httpsCallable<{ category: string; rating: number; comment: string }, void>(
       this.functions,
       'submitFeedback',
@@ -470,6 +552,20 @@ export class GameService {
   }
 
   async getAllFeedback(): Promise<Feedback[]> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      return [
+        {
+          id: 'fb-1',
+          category: 'interface',
+          rating: 5,
+          comment: 'Great job!',
+          status: 'pending',
+          userEmail: 'user@example.com',
+          createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
+        } as any,
+      ];
+    }
     const fn = httpsCallable<void, Feedback[]>(this.functions, 'getAllFeedback');
     try {
       return (await fn()).data;
@@ -484,6 +580,11 @@ export class GameService {
     action: 'reply' | 'resolve' | 'reject',
     value?: { response?: string; externalReference?: string },
   ): Promise<void> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      if (window.console) console.warn('Mock: Manage feedback', { feedbackId, action, value });
+      return;
+    }
     const fn = httpsCallable<
       { feedbackId: string; action: string; value?: { response?: string; externalReference?: string } },
       void

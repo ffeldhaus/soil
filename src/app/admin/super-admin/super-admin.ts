@@ -128,6 +128,10 @@ export class SuperAdminComponent implements OnInit {
   async ngOnInit() {
     this.authService.user$.subscribe((user) => {
       if (user) {
+        if (localStorage.getItem('soil_test_mode') === 'true') {
+          this.loadData();
+          return;
+        }
         // User is authenticated
         this.loadData();
       } else {

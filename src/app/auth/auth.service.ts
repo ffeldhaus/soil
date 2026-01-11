@@ -46,16 +46,33 @@ export class AuthService {
   }
 
   async loginWithGoogle() {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const user = this.getMockUser();
+      this.userSubject.next(user);
+      return { user };
+    }
     const provider = new GoogleAuthProvider();
     return await signInWithPopup(this.auth, provider);
   }
 
   async registerWithEmail(email: string, pass: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const user = this.getMockUser();
+      this.userSubject.next(user);
+      return { user };
+    }
     return await createUserWithEmailAndPassword(this.auth, email, pass);
   }
 
   async sendVerificationEmail() {
     if (this.auth.currentUser) {
+      const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+      if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+        if (window.console) console.warn('Mock: Verification email sent');
+        return;
+      }
       const sendFn = httpsCallable(this.functions, 'sendVerificationEmail');
       await sendFn({
         lang: this.languageService.currentLang,
@@ -65,6 +82,11 @@ export class AuthService {
   }
 
   async sendPasswordResetEmail(email: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      if (window.console) console.warn('Mock: Password reset email sent to', email);
+      return;
+    }
     const sendFn = httpsCallable(this.functions, 'sendPasswordResetEmail');
     await sendFn({
       email,
@@ -74,14 +96,32 @@ export class AuthService {
   }
 
   async loginWithEmail(email: string, pass: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const user = this.getMockUser();
+      this.userSubject.next(user);
+      return { user };
+    }
     return await signInWithEmailAndPassword(this.auth, email, pass);
   }
 
   async registerPlayer(email: string, pass: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const user = this.getMockUser();
+      this.userSubject.next(user);
+      return { user };
+    }
     return await createUserWithEmailAndPassword(this.auth, email, pass);
   }
 
   async loginAsPlayer(gameId: string, pin: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const user = this.getMockUser();
+      this.userSubject.next(user);
+      return { user };
+    }
     // Call backend to get custom token for player login
     // Note: Function name is 'playerLogin' in backend
     const playerLoginFn = httpsCallable(this.functions, 'playerLogin');
@@ -100,6 +140,7 @@ export class AuthService {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode')) {
       window.localStorage.removeItem('soil_test_mode');
+      window.localStorage.removeItem('soil_test_role');
       this.userSubject.next(null);
       return Promise.resolve();
     }
@@ -109,6 +150,12 @@ export class AuthService {
 
   async updateDisplayName(name: string) {
     if (this.auth.currentUser) {
+      const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+      if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+        const user = this.getMockUser();
+        this.userSubject.next({ ...user, displayName: name } as any);
+        return;
+      }
       await updateProfile(this.auth.currentUser, { displayName: name });
       await this.auth.currentUser.reload();
       // Force emission of new user state if needed
@@ -119,10 +166,12 @@ export class AuthService {
   }
 
   private getMockUser(): User {
+    const role = (typeof window !== 'undefined' && window.localStorage.getItem('soil_test_role')) || 'player';
+    const uid = role === 'player' ? 'player-test-game-id-1' : `mock-${role}-uid`;
     return {
-      uid: 'player-test-game-id-1',
-      displayName: 'Test User',
-      email: 'test@example.com',
+      uid,
+      displayName: `Mock ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+      email: `mock-${role}@example.com`,
       isAnonymous: false,
       emailVerified: true,
       metadata: {},

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, isDevMode } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
@@ -138,7 +138,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.
                 </p>
                 <p i18n="Info Text|Development purpose of Soil simulation@@landing.backgroundText2">
-                  Das Simulationsspiel "Soil" wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu
+                  Das Simulationsspiel "Soil" wurde entwickelt, um dieses concept der Nachhaltigkeit begreifbar zu
                   machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen
                   ökonomischen Handelns spielerisch zu entdecken.
                 </p>
@@ -156,6 +156,19 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </a>
           </div>
 
+          <!-- Test Mode (Dev Only) -->
+          @if (showTestMode) {
+            <div class="mt-16 p-6 bg-red-900/20 border border-red-500/30 rounded-2xl max-w-xl mx-auto">
+              <h3 class="text-red-400 font-bold mb-4">Test Mode (Dev Only)</h3>
+              <div class="flex flex-wrap gap-4 justify-center">
+                <button (click)="enableTestMode('player')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Player</button>
+                <button (click)="enableTestMode('admin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Admin</button>
+                <button (click)="enableTestMode('superadmin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock SuperAdmin</button>
+              </div>
+              <p class="mt-2 text-xs text-gray-500">Enabling test mode will mock all backend calls and use local data.</p>
+            </div>
+          }
+
           <footer class="mt-24 text-center text-gray-500 text-sm">
             <p i18n="Footer Text|Copyright and project info@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
           </footer>
@@ -166,11 +179,19 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 })
 export class Landing {
   year = new Date().getFullYear();
+  showTestMode = isDevMode();
 
   scrollToInfo() {
     const element = document.getElementById('info-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
+
+  enableTestMode(role: string) {
+    localStorage.setItem('soil_test_mode', 'true');
+    localStorage.setItem('soil_test_role', role);
+    alert(`Test Mode enabled as ${role}. Please log in now.`);
+    window.location.reload();
   }
 }
