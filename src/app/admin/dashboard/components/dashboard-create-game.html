@@ -93,6 +93,31 @@
     </div>
   </div>
 
+  <div class="space-y-3 mb-6 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
+    <div class="flex items-center gap-3">
+      <input
+        type="checkbox"
+        id="subsidiesEnabled"
+        [(ngModel)]="newGameConfig.subsidiesEnabled"
+        class="w-5 h-5 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+      />
+      <label for="subsidiesEnabled" class="text-sm text-gray-200 cursor-pointer">
+        {{ t('dashboard.createGame.subsidies') }}
+      </label>
+    </div>
+    <div class="flex items-center gap-3">
+      <input
+        type="checkbox"
+        id="advancedPricingEnabled"
+        [(ngModel)]="newGameConfig.advancedPricingEnabled"
+        class="w-5 h-5 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+      />
+      <label for="advancedPricingEnabled" class="text-sm text-gray-200 cursor-pointer">
+        {{ t('dashboard.createGame.advancedPricing') }}
+      </label>
+    </div>
+  </div>
+
   <button
     (click)="onSubmit()"
     [disabled]="isCreatingGame || !newGameConfig.name || !newGameConfig.playerLabel"

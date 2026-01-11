@@ -152,7 +152,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-gray-900/80 backdrop-blur-md hover:bg-gray-900/40"
             >
               <span class="p-1 bg-emerald-900/30 rounded-lg">🎓</span>
-              <span i18n="Action Label|Link to scientific background details@@landing.scientificBackground">Wissenschaftlicher Hintergrund</span>
+              <span i18n="Action Label|Link to background details@@landing.background">Hintergrund</span>
             </a>
           </div>
 

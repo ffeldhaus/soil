@@ -111,6 +111,15 @@
         <source>KI-Bots</source>
       </segment>
     </unit>
+    <unit id="dashboard.createGame.advancedPricing">
+      <notes>
+        <note category="description">Label for advanced pricing checkbox</note>
+        <note category="meaning">Form Label</note>
+      </notes>
+      <segment>
+        <source>Fortgeschrittener Markt (Preisbildung durch Angebot &amp; Nachfrage)</source>
+      </segment>
+    </unit>
     <unit id="dashboard.createGame.aiLevel">
       <notes>
         <note category="description">Label for AI difficulty level input</note>
@@ -127,6 +136,15 @@
       </notes>
       <segment>
         <source>+ Neues Spiel erstellen</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.subsidies">
+      <notes>
+        <note category="description">Label for subsidies checkbox</note>
+        <note category="meaning">Form Label</note>
+      </notes>
+      <segment>
+        <source>Subventionen aktivieren (Basis-Einkommen)</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.creating">
@@ -3109,6 +3127,16 @@
         <source>Mais</source>
       </segment>
     </unit>
+    <unit id="crop.pea">
+      <segment>
+        <source>Erbse</source>
+      </segment>
+    </unit>
+    <unit id="crop.pea.desc">
+      <segment>
+        <source>Erbse</source>
+      </segment>
+    </unit>
     <unit id="crop.potato">
       <segment>
         <source>Kartoffel</source>
@@ -3137,6 +3165,16 @@
     <unit id="crop.oat.desc">
       <segment>
         <source>Hafer</source>
+      </segment>
+    </unit>
+    <unit id="crop.rapeseed">
+      <segment>
+        <source>Raps</source>
+      </segment>
+    </unit>
+    <unit id="crop.rapeseed.desc">
+      <segment>
+        <source>Raps</source>
       </segment>
     </unit>
     <unit id="crop.rye">
@@ -3208,6 +3246,24 @@
       </notes>
       <segment>
         <source>Rundenergebnis</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.totalExpenses">
+      <notes>
+        <note category="description">Total expenses</note>
+        <note category="meaning">Label</note>
+      </notes>
+      <segment>
+        <source>Ausgaben</source>
+      </segment>
+    </unit>
+    <unit id="roundResult.totalIncome">
+      <notes>
+        <note category="description">Total income</note>
+        <note category="meaning">Label</note>
+      </notes>
+      <segment>
+        <source>Einnahmen</source>
       </segment>
     </unit>
     <unit id="roundResult.profit">
@@ -3282,6 +3338,15 @@
         <source> Weiter </source>
       </segment>
     </unit>
+    <unit id="weather.lateFrost">
+      <notes>
+        <note category="description">Late frost in spring</note>
+        <note category="meaning">Weather Condition</note>
+      </notes>
+      <segment>
+        <source>Spätfrost</source>
+      </segment>
+    </unit>
     <unit id="weather.normal">
       <notes>
         <note category="description">Standard weather without special effects</note>
@@ -3316,6 +3381,15 @@
       </notes>
       <segment>
         <source>Sturm</source>
+      </segment>
+    </unit>
+    <unit id="weather.summerDrought">
+      <notes>
+        <note category="description">Severe summer drought</note>
+        <note category="meaning">Weather Condition</note>
+      </notes>
+      <segment>
+        <source>Sommerdürre</source>
       </segment>
     </unit>
     <unit id="vermin.none">
@@ -3415,6 +3489,24 @@
       </notes>
       <segment>
         <source>Schützt vor Schädlingen. Schadet den Bodenorganismen.</source>
+      </segment>
+    </unit>
+    <unit id="settings.priceFixing">
+      <notes>
+        <note category="description">Label for price fixing section</note>
+        <note category="meaning">Form Label</note>
+      </notes>
+      <segment>
+        <source>Preise fixieren</source>
+      </segment>
+    </unit>
+    <unit id="settings.priceFixing_desc">
+      <notes>
+        <note category="description">Explanation of price fixing impacts</note>
+        <note category="meaning">Description</note>
+      </notes>
+      <segment>
+        <source>Sichere dir jetzt den aktuellen Basispreis für deine Ernte. Schützt vor Preisschwankungen, kostet aber 5% Gebühr.</source>
       </segment>
     </unit>
     <unit id="settings.organisms">
@@ -3599,11 +3691,65 @@
     </unit>
     <unit id="info.title">
       <notes>
-        <note category="description">Title of the scientific background page</note>
+        <note category="description">Title of the background page</note>
         <note category="meaning">Main Heading</note>
       </notes>
       <segment>
-        <source> Wissenschaftlicher Hintergrund </source>
+        <source> Hintergrund </source>
+      </segment>
+    </unit>
+    <unit id="info.sourcesPrices">
+      <notes>
+        <note category="description">Title for price sources</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Marktpreise &amp; Wirtschaftlichkeit</source>
+      </segment>
+    </unit>
+    <unit id="info.sourcesResearch">
+      <notes>
+        <note category="description">Title for research sources</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Wissenschaftliche Basis</source>
+      </segment>
+    </unit>
+    <unit id="info.sourcesStats">
+      <notes>
+        <note category="description">Title for statistics sources</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Statistiken &amp; Anbauflächen</source>
+      </segment>
+    </unit>
+    <unit id="info.sourcesTitle">
+      <notes>
+        <note category="description">Title for the sources and references section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Quellen &amp; Referenzen</source>
+      </segment>
+    </unit>
+    <unit id="info.subsidiesText">
+      <notes>
+        <note category="description">Explanation of subsidies</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source> Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP). Die Basisprämie pro Hektar (Parzelle) sorgt für ein Grundauskommen, während die Öko-Prämie den Umstieg auf nachhaltige Bewirtschaftung finanziell unterstützt und Risiken abfedert. </source>
+      </segment>
+    </unit>
+    <unit id="info.subsidiesTitle">
+      <notes>
+        <note category="description">Title for subsidies logic</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Subventionen</source>
       </segment>
     </unit>
     <unit id="info.subtitle">
@@ -3685,6 +3831,42 @@
       </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong class=&quot;text-white&quot;&gt;" dispEnd="&lt;/strong&gt;">Erfahrungsorientiertes Lernen:</pc> Die Schüler beginnen mit einer gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion. </source>
+      </segment>
+    </unit>
+    <unit id="info.cropsText">
+      <notes>
+        <note category="description">Explanation of crop selection</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source> Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne) repräsentiert die wichtigsten Anbaufrüchte in Deutschland. Raps ist die bedeutendste Ölsaat, während Leguminosen wie Erbsen und Ackerbohnen für die Stickstofffixierung und Bodenfruchtbarkeit essenziell sind. </source>
+      </segment>
+    </unit>
+    <unit id="info.cropsTitle">
+      <notes>
+        <note category="description">Title for crop selection logic</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Pflanzenauswahl</source>
+      </segment>
+    </unit>
+    <unit id="info.designChoicesIntro">
+      <notes>
+        <note category="description">Introduction to design choices</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source> Die Simulation SOIL wurde so gestaltet, dass sie einen hohen Realitätsbezug zur deutschen Landwirtschaft aufweist, dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert. </source>
+      </segment>
+    </unit>
+    <unit id="info.designChoicesTitle">
+      <notes>
+        <note category="description">Title for the design choices section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Design-Entscheidungen &amp; Realitätsbezug</source>
       </segment>
     </unit>
     <unit id="info.designPrinciplesComplexity">
@@ -3775,6 +3957,42 @@
       </notes>
       <segment>
         <source>Volltext auf eldorado</source>
+      </segment>
+    </unit>
+    <unit id="info.weatherText">
+      <notes>
+        <note category="description">Explanation of weather impacts</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source> Das Wettersystem modelliert typische Herausforderungen wie Frühsommertrockenheit oder Spätfrost. Integrierte Landwirtschaft (Mischung aus Schutzmaßnahmen und angepasster Düngung) erweist sich oft als die stabilste Strategie gegenüber extremen Wetterereignissen. </source>
+      </segment>
+    </unit>
+    <unit id="info.weatherTitle">
+      <notes>
+        <note category="description">Title for weather logic</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Wetter &amp; Klima</source>
+      </segment>
+    </unit>
+    <unit id="info.pricingText">
+      <notes>
+        <note category="description">Explanation of pricing</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Biologische Produkte erzielen signifikant höhere Preise (Marktprämie), haben jedoch oft geringere Erträge. Der „Fortgeschrittene Markt“ simuliert Preisänderungen durch Angebot und Nachfrage innerhalb der Spielgruppe. </source>
+      </segment>
+    </unit>
+    <unit id="info.pricingTitle">
+      <notes>
+        <note category="description">Title for pricing logic</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Preise &amp; Markt</source>
       </segment>
     </unit>
     <unit id="info.publicationsTitle">
@@ -3912,6 +4130,15 @@
         <source> Hintergrund </source>
       </segment>
     </unit>
+    <unit id="landing.background">
+      <notes>
+        <note category="description">Link to background details</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Hintergrund</source>
+      </segment>
+    </unit>
     <unit id="landing.backgroundText1">
       <notes>
         <note category="description">Sustainability as a global development goal</note>
@@ -3930,13 +4157,31 @@
         <source> Das Simulationsspiel &quot;Soil&quot; wurde entwickelt, um dieses Konzept der Nachhaltigkeit begreifbar zu machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen ökonomischen Handelns spielerisch zu entdecken. </source>
       </segment>
     </unit>
-    <unit id="landing.scientificBackground">
+    <unit id="manual.sourcesData">
       <notes>
-        <note category="description">Link to scientific background details</note>
-        <note category="meaning">Action Label</note>
+        <note category="description">Title for stats and price sources</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Statistiken &amp; Preise</source>
+      </segment>
+    </unit>
+    <unit id="manual.sourcesScience">
+      <notes>
+        <note category="description">Title for scientific background sources</note>
+        <note category="meaning">Heading</note>
       </notes>
       <segment>
         <source>Wissenschaftlicher Hintergrund</source>
+      </segment>
+    </unit>
+    <unit id="manual.sourcesTitle">
+      <notes>
+        <note category="description">Title for the sources and references section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Quellen &amp; Referenzen</source>
       </segment>
     </unit>
     <unit id="landing.footer">
@@ -4117,6 +4362,24 @@
       </notes>
       <segment>
         <source>Fritfliege</source>
+      </segment>
+    </unit>
+    <unit id="pest.pea-moth">
+      <notes>
+        <note category="description">Pea moth</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
+      <segment>
+        <source>Erbsenwickler</source>
+      </segment>
+    </unit>
+    <unit id="pest.pollen-beetle">
+      <notes>
+        <note category="description">Pollen beetle</note>
+        <note category="meaning">Pest Name</note>
+      </notes>
+      <segment>
+        <source>Rapsglanzkäfer</source>
       </segment>
     </unit>
     <unit id="pest.potato-beetle">
@@ -4398,6 +4661,15 @@
         <source>Hoher Ertrag, aber anspruchsvoll für den Boden.</source>
       </segment>
     </unit>
+    <unit id="special.pea">
+      <notes>
+        <note category="description">Special properties of pea</note>
+        <note category="meaning">Description</note>
+      </notes>
+      <segment>
+        <source>Fixiert Stickstoff und lockert den Boden auf (Leguminose).</source>
+      </segment>
+    </unit>
     <unit id="special.potato">
       <notes>
         <note category="description">Special properties of potato</note>
@@ -4432,6 +4704,15 @@
       </notes>
       <segment>
         <source>Gute Vorfrucht, geringe Ansprüche.</source>
+      </segment>
+    </unit>
+    <unit id="special.rapeseed">
+      <notes>
+        <note category="description">Special properties of rapeseed</note>
+        <note category="meaning">Description</note>
+      </notes>
+      <segment>
+        <source>Wichtige Ölsaat, wertvoll für Bienen und Bodenstruktur.</source>
       </segment>
     </unit>
     <unit id="special.rye">
@@ -4512,6 +4793,69 @@
       </notes>
       <segment>
         <source>Drucken</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.concept.text">
+      <notes>
+        <note category="description">Description of the pedagogical approach</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source>SOIL ist als problemorientierte Simulation konzipiert. Die Lernenden sollen durch Versuch und Irrtum (Trial &amp; Error) die komplexen Zusammenhänge zwischen ökonomischem Erfolg und ökologischer Nachhaltigkeit begreifen.</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.concept.title">
+      <notes>
+        <note category="description">Title for pedagogical concept</note>
+        <note category="meaning">Subheading</note>
+      </notes>
+      <segment>
+        <source>Pädagogisches Konzept</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.discussion.text">
+      <notes>
+        <note category="description">Suggested topics for classroom discussion</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source>Nutzen Sie die Rundenergebnisse für Reflexionen: Warum war Gruppe A erfolgreicher? Welchen Einfluss hatte das Wetter? Ist ein hoher Kontostand wichtiger als eine gute Bodenqualität?</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.discussion.title">
+      <notes>
+        <note category="description">Title for discussion prompts</note>
+        <note category="meaning">Subheading</note>
+      </notes>
+      <segment>
+        <source>Diskussionsanregungen</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.group.text">
+      <notes>
+        <note category="description">Instructions for group-based play</note>
+        <note category="meaning">Info Text</note>
+      </notes>
+      <segment>
+        <source>Es wird empfohlen, Schüler in Gruppen von 2-4 Personen als ein &apos;Farmer-Team&apos; spielen zu lassen. Dies fördert den Diskurs über die beste Strategie und zwingt zur Begründung von Entscheidungen.</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.group.title">
+      <notes>
+        <note category="description">Title for group play instructions</note>
+        <note category="meaning">Subheading</note>
+      </notes>
+      <segment>
+        <source>Gruppendynamik</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.title">
+      <notes>
+        <note category="description">Title for the teacher guide section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Handreichung für Lehrende</source>
       </segment>
     </unit>
     <unit id="manual.title">

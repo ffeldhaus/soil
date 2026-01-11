@@ -80,8 +80,8 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     expect(player).toBeTruthy();
-    expect(player?.detailedExpenses?.seeds.Wheat).toBe(72); // Wheat conv
-    expect(player?.detailedExpenses?.seeds.Corn).toBe(70); // Corn conv
+    expect(player?.detailedExpenses?.seeds.Wheat).toBe(100); // Wheat conv
+    expect(player?.detailedExpenses?.seeds.Corn).toBe(100); // Corn conv
   });
 
   it('should calculate detailed seeds correctly for Round 2 (Organic)', () => {
@@ -89,17 +89,17 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     expect(player).toBeTruthy();
-    expect(player?.detailedExpenses?.seeds.Potato).toBe(133); // Potato organic
+    expect(player?.detailedExpenses?.seeds.Potato).toBe(1000); // Potato organic
   });
 
   it('should calculate detailed income correctly for Round 1', () => {
     component.currentViewingRound = 1;
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
-    // Wheat: 100 * 17 (Conv) = 1700
-    // Corn: 200 * 17 (Conv) = 3400
-    expect(player?.detailedIncome?.harvest.Wheat).toBe(1700);
-    expect(player?.detailedIncome?.harvest.Corn).toBe(3400);
+    // Wheat: 100 * 25 (Conv) = 2500
+    // Corn: 200 * 25 (Conv) = 5000
+    expect(player?.detailedIncome?.harvest.Wheat).toBe(2500);
+    expect(player?.detailedIncome?.harvest.Corn).toBe(5000);
   });
 
   it('should calculate detailed investments correctly', () => {
@@ -121,9 +121,9 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     // Round 1: fertilizer true, organic false
-    expect(player?.detailedExpenses?.running?.fertilize).toBe(40 * 50); // 2000
+    expect(player?.detailedExpenses?.running?.fertilize).toBe(40 * 100); // 4000
     expect(player?.detailedExpenses?.running?.organic_control).toBe(0);
-    expect(player?.detailedExpenses?.running?.base).toBe(500); // Conventional base
+    expect(player?.detailedExpenses?.running?.base).toBe(1000); // Conventional base
   });
 
   it('should calculate capital history correctly', () => {

@@ -1,12 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
+import { AGRICULTURAL_REFERENCES } from '../references';
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-info',
   standalone: true,
-  imports: [RouterLink, LanguageSwitcherComponent],
+  imports: [RouterLink, LanguageSwitcherComponent, CommonModule],
   template: `
     <div class="min-h-screen relative font-sans text-gray-100 overflow-x-hidden">
       <!-- Background Image -->
@@ -57,9 +58,9 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         <header class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl text-center space-y-4">
           <h1
             class="text-4xl md:text-6xl font-bold text-emerald-500 tracking-tight"
-            i18n="Main Heading|Title of the scientific background page@@info.title"
+            i18n="Main Heading|Title of the background page@@info.title"
           >
-            Wissenschaftlicher Hintergrund
+            Hintergrund
           </h1>
           <p class="text-xl text-gray-300 leading-relaxed font-light" i18n="Subheading|Short summary of the scientific basis@@info.subtitle">
             Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen
@@ -68,6 +69,55 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         </header>
 
         <div class="space-y-12">
+          <!-- Design Choices -->
+          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
+              <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎨</span>
+              <ng-container i18n="Heading|Title for the design choices section@@info.designChoicesTitle">Design-Entscheidungen & Realitätsbezug</ng-container>
+            </h2>
+            <div class="space-y-6 text-gray-300 leading-relaxed">
+              <p i18n="Info Text|Introduction to design choices@@info.designChoicesIntro">
+                Die Simulation SOIL wurde so gestaltet, dass sie einen hohen Realitätsbezug zur deutschen Landwirtschaft aufweist,
+                dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert.
+              </p>
+
+              <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for crop selection logic@@info.cropsTitle">Pflanzenauswahl</h3>
+                  <p class="text-sm" i18n="Info Text|Explanation of crop selection@@info.cropsText">
+                    Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne)
+                    repräsentiert die wichtigsten Anbaufrüchte in Deutschland. Raps ist die bedeutendste Ölsaat, während Leguminosen
+                    wie Erbsen und Ackerbohnen für die Stickstofffixierung und Bodenfruchtbarkeit essenziell sind.
+                  </p>
+                </div>
+                <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for pricing logic@@info.pricingTitle">Preise & Markt</h3>
+                  <p class="text-sm" i18n="Info Text|Explanation of pricing@@info.pricingText">
+                    Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024).
+                    Biologische Produkte erzielen signifikant höhere Preise (Marktprämie), haben jedoch oft geringere Erträge.
+                    Der „Fortgeschrittene Markt“ simuliert Preisänderungen durch Angebot und Nachfrage innerhalb der Spielgruppe.
+                  </p>
+                </div>
+                <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for weather logic@@info.weatherTitle">Wetter & Klima</h3>
+                  <p class="text-sm" i18n="Info Text|Explanation of weather impacts@@info.weatherText">
+                    Das Wettersystem modelliert typische Herausforderungen wie Frühsommertrockenheit oder Spätfrost.
+                    Integrierte Landwirtschaft (Mischung aus Schutzmaßnahmen und angepasster Düngung) erweist sich oft als
+                    die stabilste Strategie gegenüber extremen Wetterereignissen.
+                  </p>
+                </div>
+                <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
+                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for subsidies logic@@info.subsidiesTitle">Subventionen</h3>
+                  <p class="text-sm" i18n="Info Text|Explanation of subsidies@@info.subsidiesText">
+                    Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP).
+                    Die Basisprämie pro Hektar (Parzelle) sorgt für ein Grundauskommen, während die Öko-Prämie den Umstieg
+                    auf nachhaltige Bewirtschaftung finanziell unterstützt und Risiken abfedert.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <!-- Main Reference -->
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
@@ -181,6 +231,57 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </div>
           </section>
 
+          <!-- Sources & References -->
+          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8">
+            <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3">
+              <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🔗</span>
+              <ng-container i18n="Heading|Title for the sources and references section@@info.sourcesTitle">Quellen & Referenzen</ng-container>
+            </h2>
+            <div class="grid gap-6 text-sm text-gray-300">
+              <div class="space-y-2">
+                <h3 class="font-bold text-white uppercase tracking-wider text-xs" i18n="Heading|Title for statistics sources@@info.sourcesStats">Statistiken & Anbauflächen</h3>
+                <ul class="list-disc list-outside ml-5 space-y-1">
+                  @for (ref of agriRefs.stats; track ref.url) {
+                    <li>
+                      <a [href]="ref.url" target="_blank" class="text-emerald-400 hover:underline">
+                        {{ ref.name }}
+                      </a>
+                      <span class="block text-xs text-gray-500">{{ ref.description }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+
+              <div class="space-y-2">
+                <h3 class="font-bold text-white uppercase tracking-wider text-xs" i18n="Heading|Title for price sources@@info.sourcesPrices">Marktpreise & Wirtschaftlichkeit</h3>
+                <ul class="list-disc list-outside ml-5 space-y-1">
+                  @for (ref of agriRefs.prices; track ref.url) {
+                    <li>
+                      <a [href]="ref.url" target="_blank" class="text-emerald-400 hover:underline">
+                        {{ ref.name }}
+                      </a>
+                      <span class="block text-xs text-gray-500">{{ ref.description }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+
+              <div class="space-y-2">
+                <h3 class="font-bold text-white uppercase tracking-wider text-xs" i18n="Heading|Title for research sources@@info.sourcesResearch">Wissenschaftliche Basis</h3>
+                <ul class="list-disc list-outside ml-5 space-y-1">
+                  @for (ref of agriRefs.research; track ref.url) {
+                    <li>
+                      <a [href]="ref.url" target="_blank" class="text-emerald-400 hover:underline">
+                        {{ ref.name }}
+                      </a>
+                      <span class="block text-xs text-gray-500">{{ ref.description }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </section>
+
           <!-- Publication List -->
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8">
             <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3" i18n="Heading|Title for the other publications section@@info.publicationsTitle">
@@ -233,6 +334,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 })
 export class InfoComponent implements OnInit {
   year = new Date().getFullYear();
+  agriRefs = AGRICULTURAL_REFERENCES;
 
   ngOnInit() {
     window.scrollTo(0, 0);

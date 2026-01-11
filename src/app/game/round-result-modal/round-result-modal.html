@@ -6,9 +6,28 @@
       <!-- Profit -->
       <div class="flex justify-between items-center border-b border-gray-700 pb-4">
         <span i18n="Label|Profit earned in the current round@@roundResult.profit" class="text-gray-400">Rundengewinn</span>
-        <span class="text-xl font-bold" [class.text-emerald-400]="profit >= 0" [class.text-red-400]="profit < 0">
-          {{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
-        </span>
+        <div class="text-right">
+          <span class="text-xl font-bold block" [class.text-emerald-400]="profit >= 0" [class.text-red-400]="profit < 0">
+            {{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
+          </span>
+          @if (subsidies > 0) {
+            <span class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">
+              Inkl. {{ subsidies | number }} € Subventionen
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Financial Breakdown -->
+      <div class="grid grid-cols-2 gap-4 text-xs">
+        <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
+          <span class="text-gray-500 block uppercase tracking-tighter" i18n="Label|Total income@@roundResult.totalIncome">Einnahmen</span>
+          <span class="text-white font-mono">{{ income | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+        </div>
+        <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
+          <span class="text-gray-500 block uppercase tracking-tighter" i18n="Label|Total expenses@@roundResult.totalExpenses">Ausgaben</span>
+          <span class="text-white font-mono">{{ expenses | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+        </div>
       </div>
 
       <!-- Bio Siegel -->

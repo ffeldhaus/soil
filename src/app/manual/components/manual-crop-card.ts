@@ -74,6 +74,8 @@ export class ManualCropCardComponent implements OnChanges {
       'crop.oat': $localize`:Crop Name|Oat@@crop.oat:Hafer`,
       'crop.rye': $localize`:Crop Name|Rye@@crop.rye:Roggen`,
       'crop.fieldbean': $localize`:Crop Name|Field bean@@crop.fieldbean:Ackerbohne`,
+      'crop.rapeseed': $localize`:Crop Name|Rapeseed@@crop.rapeseed:Raps`,
+      'crop.pea': $localize`:Crop Name|Pea@@crop.pea:Erbse`,
       'crop.animals': $localize`:Crop Name|Animals (as a land use type)@@crop.animals:Tiere`,
       'crop.fallow': $localize`:Crop Name|Fallow land@@crop.fallow:Brachland`,
       'pest.label': $localize`:Label|Title for the main pest associated with a crop@@pest.label:Hauptschädling`,
@@ -82,6 +84,8 @@ export class ManualCropCardComponent implements OnChanges {
       'pest.potato-beetle': $localize`:Pest Name|Colorado potato beetle@@pest.potato-beetle:Kartoffelkäfer`,
       'pest.corn-borer': $localize`:Pest Name|European corn borer@@pest.corn-borer:Maiszünsler`,
       'pest.wireworm': $localize`:Pest Name|Wireworm@@pest.wireworm:Drahtwurm`,
+      'pest.pollen-beetle': $localize`:Pest Name|Pollen beetle@@pest.pollen-beetle:Rapsglanzkäfer`,
+      'pest.pea-moth': $localize`:Pest Name|Pea moth@@pest.pea-moth:Erbsenwickler`,
       'manual.crops.rotation': $localize`:Label|Title for the crop rotation impact section@@manual.crops.rotation:Fruchtfolgewirkung`,
       'manual.crops.rotationPrev': $localize`:Label|Indicator for the previous crop in rotation@@manual.crops.rotationPrev:Vorfrucht`,
       'manual.crops.current': $localize`:Label|Indicator for the current crop being viewed@@manual.crops.current:Aktuell`,
@@ -115,6 +119,8 @@ export class ManualCropCardComponent implements OnChanges {
       'special.oat': $localize`:Description|Special properties of oat@@special.oat:Gute Vorfrucht, geringe Ansprüche.`,
       'special.rye': $localize`:Description|Special properties of rye@@special.rye:Sehr widerstandsfähig gegen Kälte.`,
       'special.fieldbean': $localize`:Description|Special properties of field bean@@special.fieldbean:Baut Stickstoff im Boden auf (Leguminose).`,
+      'special.rapeseed': $localize`:Description|Special properties of rapeseed@@special.rapeseed:Wichtige Ölsaat, wertvoll für Bienen und Bodenstruktur.`,
+      'special.pea': $localize`:Description|Special properties of pea@@special.pea:Fixiert Stickstoff und lockert den Boden auf (Leguminose).`,
       'special.animals': $localize`:Description|Special properties of animal husbandry@@special.animals:Dauerkultur zur Viehhaltung.`,
       'special.fallow': $localize`:Description|Special properties of fallow land@@special.fallow:Regeneration für den Boden.`,
     };
@@ -128,6 +134,8 @@ export class ManualCropCardComponent implements OnChanges {
       Kartoffelkäfer: 'potato-beetle',
       Maiszünsler: 'corn-borer',
       Drahtwurm: 'wireworm',
+      Rapsglanzkäfer: 'pollen-beetle',
+      Erbsenwickler: 'pea-moth',
     };
     return map[pest] || 'aphid';
   }

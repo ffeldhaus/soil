@@ -17,7 +17,7 @@ import type { CropType } from '../../types';
       >
         <h2 i18n="Main Heading|Title of the planting selection modal@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
 
-        <div class="grid grid-cols-4 sm:grid-cols-5 gap-3">
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
           @for (crop of crops; track crop) {
             <button
               (click)="select(crop)"
@@ -71,6 +71,8 @@ export class PlantingModal {
       'crop.oat': $localize`:Crop Name|Oat@@crop.oat:Hafer`,
       'crop.rye': $localize`:Crop Name|Rye@@crop.rye:Roggen`,
       'crop.fieldbean': $localize`:Crop Name|Field bean@@crop.fieldbean:Ackerbohne`,
+      'crop.rapeseed': $localize`:Crop Name|Rapeseed@@crop.rapeseed:Raps`,
+      'crop.pea': $localize`:Crop Name|Pea@@crop.pea:Erbse`,
       'crop.animals': $localize`:Crop Name|Animals (as a land use type)@@crop.animals:Tiere`,
       'crop.fallow': $localize`:Crop Name|Fallow land@@crop.fallow:Brachland`,
     };
@@ -86,6 +88,8 @@ export class PlantingModal {
     Oat: { label: 'crop.oat', image: 'hafer.webp' },
     Rye: { label: 'crop.rye', image: 'roggen.webp' },
     Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
+    Rapeseed: { label: 'crop.rapeseed', image: 'raps.webp' },
+    Pea: { label: 'crop.pea', image: 'erbse.webp' },
     Grass: { label: 'crop.animals', image: 'hausschwein.webp' },
     Fallow: { label: 'crop.fallow', image: 'acker.webp' },
   };

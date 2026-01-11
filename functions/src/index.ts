@@ -4,8 +4,13 @@ import { setGlobalOptions } from 'firebase-functions/v2';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
+// Polyfill $localize for server-side use of shared constants
+(global as any).$localize = (parts: TemplateStringsArray, ...substitutions: any[]) => {
+  return parts.reduce((acc, part, i) => acc + (substitutions[i - 1] || '') + part);
+};
+
 import { AiAgent } from './ai-agent';
-import { APP_DOMAIN } from './constants';
+import { APP_DOMAIN, GAME_CONSTANTS } from './constants';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
 import type { Round } from './types';
@@ -204,19 +209,88 @@ async function performCalculation(
   const players = game.players || {};
   const nextRoundNumber = (game.currentRoundNumber || 0) + 1;
 
+  const weatherRoll = Math.random();
+  const weather =
+    weatherRoll > 0.9
+      ? 'SummerDrought'
+      : weatherRoll > 0.8
+        ? 'Drought'
+        : weatherRoll > 0.7
+          ? 'LateFrost'
+          : weatherRoll < 0.1
+            ? 'Flood'
+            : weatherRoll < 0.2
+              ? 'Storm'
+              : 'Normal';
+
   const events = {
-    weather: Math.random() > 0.8 ? 'Drought' : Math.random() < 0.2 ? 'Flood' : 'Normal',
-    vermin: Math.random() > 0.9 ? 'Beetle' : 'None',
+    weather,
+    vermin: Math.random() > 0.9 ? 'Pests' : 'None',
   };
 
   const allPlayerRounds: Record<string, Round> = {};
+  const totalYields: Record<string, number> = {};
+  const playerHarvests: Record<string, Record<string, number>> = {};
 
-  // Fetch the full data for the previous round once
-  const prevRoundRef = gameRef.collection('rounds').doc(`round_${game.currentRoundNumber || 0}`);
-  const prevRoundSnap = await transaction.get(prevRoundRef);
-  const prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : null;
+  // 1. First Pass: Calculate yields for all players to determine market prices
+  for (const uid of Object.keys(players)) {
+    const player = players[uid];
+    const playerDecision = player.pendingDecisions || decision;
 
-  // Calculate next round for EACH player
+    let prevRoundData: Round | undefined;
+    if (prevRoundGlobalData) {
+      if (prevRoundGlobalData.playerData?.[uid]) {
+        prevRoundData = prevRoundGlobalData.playerData[uid];
+      } else if (game.currentRoundNumber === 0) {
+        prevRoundData = prevRoundGlobalData as Round;
+      }
+    }
+
+    // We do a "dry run" of calculateRound to get the yields
+    const tempRound = GameEngine.calculateRound(
+      nextRoundNumber,
+      prevRoundData,
+      playerDecision,
+      events,
+      0, // capital doesn't matter for yields
+      game.settings?.length || 20,
+    );
+
+    playerHarvests[uid] = tempRound.result?.harvestSummary || {};
+    Object.entries(playerHarvests[uid]).forEach(([crop, amount]) => {
+      totalYields[crop] = (totalYields[crop] || 0) + (amount as number);
+    });
+  }
+
+  // 2. Calculate Market Prices if enabled
+  let marketPrices: Record<string, { organic: number; conventional: number }> | undefined;
+  if (game.config?.advancedPricingEnabled) {
+    marketPrices = {};
+    const numPlayers = Object.keys(players).length;
+
+    Object.keys(GAME_CONSTANTS.CROPS).forEach((crop) => {
+      const cropConfig = GAME_CONSTANTS.CROPS[crop];
+      if (!cropConfig || crop === 'Fallow' || crop === 'Grass') return;
+
+      const baseYieldPerPlayer = cropConfig.baseYield * 40; // 40 parcels
+      const totalExpectedYield = baseYieldPerPlayer * numPlayers;
+      const actualYield = totalYields[crop] || 0;
+
+      let priceFactor = 1.0;
+      if (totalExpectedYield > 0 && actualYield > 0) {
+        const yieldRatio = actualYield / totalExpectedYield;
+        priceFactor = 1.0 + (1.0 - yieldRatio) * 0.5;
+        priceFactor = Math.max(0.7, Math.min(1.3, priceFactor));
+      }
+
+      marketPrices![crop] = {
+        organic: Math.round(cropConfig.marketValue.organic * priceFactor * 10) / 10,
+        conventional: Math.round(cropConfig.marketValue.conventional * priceFactor * 10) / 10,
+      };
+    });
+  }
+
+  // 3. Second Pass: Calculate full round results with market prices and subsidies
   for (const uid of Object.keys(players)) {
     const player = players[uid];
     const playerDecision = player.pendingDecisions || decision;
@@ -240,6 +314,10 @@ async function performCalculation(
       events,
       currentCapital,
       roundLimit,
+      {
+        marketPrices,
+        subsidiesEnabled: game.config?.subsidiesEnabled,
+      },
     );
 
     allPlayerRounds[uid] = nextRound;
@@ -324,7 +402,7 @@ export const createGame = onCall(async (request) => {
     name,
     // password, // Unused
     settings = { length: 20, difficulty: 'normal', playerLabel: 'Player' },
-    config = { numPlayers: 1, numRounds: 20, numAi: 0 }, // Default config to 20 as requested
+    config = { numPlayers: 1, numRounds: 20, numAi: 0, subsidiesEnabled: false, advancedPricingEnabled: false }, // Default config
     retentionDays = 90,
   } = request.data;
 

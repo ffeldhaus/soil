@@ -1,4 +1,4 @@
-import { CROP_SEQUENCE_MATRIX } from './constants';
+import { GAME_CONSTANTS } from './constants';
 import type { CropType, Round, RoundDecision } from './types';
 
 export class AiAgent {
@@ -12,19 +12,8 @@ export class AiAgent {
       parcels: {},
     };
 
-    const crops: CropType[] = [
-      'Fieldbean',
-      'Barley',
-      'Oat',
-      'Potato',
-      'Corn',
-      'Rye',
-      'Wheat',
-      'Beet',
-      'Fallow',
-      'Grass',
-    ];
-    const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet'];
+    const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
+    const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
 
     // 1. Level Specific Strategy
     if (level === 'elementary') {
@@ -48,7 +37,7 @@ export class AiAgent {
         } else {
           const prevCrop = previousRound.parcelsSnapshot[i].crop;
           const goodNext = crops.filter(
-            (c) => CROP_SEQUENCE_MATRIX[prevCrop]?.[c] === 'good' && c !== 'Fallow' && c !== 'Grass',
+            (c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good' && c !== 'Fallow' && c !== 'Grass',
           );
           decision.parcels[i] = goodNext.length > 0 ? goodNext[0] : 'Wheat';
         }
@@ -70,7 +59,7 @@ export class AiAgent {
       for (let i = 0; i < 40; i++) {
         const prevParcel = previousRound
           ? previousRound.parcelsSnapshot[i]
-          : { soil: 80, nutrition: 80, crop: 'Fallow' };
+          : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
         const prevCrop = prevParcel.crop as string;
 
         if (prevParcel.soil < 70 || prevParcel.nutrition < 60) {
@@ -78,7 +67,7 @@ export class AiAgent {
         } else if (decision.organic && i < 8) {
           decision.parcels[i] = 'Grass'; // Needed for organic nutrition
         } else {
-          const goodNext = mainCrops.filter((c) => CROP_SEQUENCE_MATRIX[prevCrop]?.[c] === 'good');
+          const goodNext = mainCrops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good');
           if (goodNext.length > 0) {
             decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
           } else {

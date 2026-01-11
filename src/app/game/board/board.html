@@ -209,7 +209,8 @@
       }
 
       @if (showRoundSettingsModal) {
-      <app-round-settings-modal [settings]="currentRoundSettings" (save)="onRoundSettingsSaved($event)"
+      <app-round-settings-modal [settings]="currentRoundSettings" [config]="(gameState$ | async)?.game?.config"
+        [plantedCrops]="getPlantedCrops()" (save)="onRoundSettingsSaved($event)"
         (settingsCancelled)="cancelRoundSettings()">
       </app-round-settings-modal>
       }

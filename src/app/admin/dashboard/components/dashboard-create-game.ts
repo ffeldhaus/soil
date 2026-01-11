@@ -16,6 +16,8 @@ export class DashboardCreateGameComponent {
     numAi: number;
     playerLabel: string;
     aiLevel: 'elementary' | 'middle' | 'high';
+    subsidiesEnabled: boolean;
+    advancedPricingEnabled: boolean;
   }>();
   @Output() playersChange = new EventEmitter<void>();
 
@@ -26,6 +28,8 @@ export class DashboardCreateGameComponent {
     numAi: 0,
     playerLabel: 'Player',
     aiLevel: 'middle' as 'elementary' | 'middle' | 'high',
+    subsidiesEnabled: false,
+    advancedPricingEnabled: false,
   };
 
   t(key: string): string {
@@ -39,6 +43,8 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.rounds': $localize`:Form Label|Label for number of rounds input@@dashboard.createGame.rounds:Runden`,
       'dashboard.createGame.bots': $localize`:Form Label|Label for number of AI bots input@@dashboard.createGame.bots:KI-Bots`,
       'dashboard.createGame.aiLevel': $localize`:Form Label|Label for AI difficulty level input@@dashboard.createGame.aiLevel:KI-Niveau`,
+      'dashboard.createGame.subsidies': $localize`:Form Label|Label for subsidies checkbox@@dashboard.createGame.subsidies:Subventionen aktivieren (Basis-Einkommen)`,
+      'dashboard.createGame.advancedPricing': $localize`:Form Label|Label for advanced pricing checkbox@@dashboard.createGame.advancedPricing:Fortgeschrittener Markt (Preisbildung durch Angebot & Nachfrage)`,
       'dashboard.createGame.submit': $localize`:Action Label|Button to create a new game@@dashboard.createGame.submit:+ Neues Spiel erstellen`,
       'dashboard.createGame.creating': $localize`:Loading State|Text shown while game is being created@@dashboard.createGame.creating:Wird erstellt...`,
       'dashboard.createGame.required': $localize`:Form Error|Text indicating a field is required@@dashboard.createGame.required:Erforderlich`,

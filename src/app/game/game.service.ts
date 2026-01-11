@@ -147,6 +147,7 @@ export class GameService {
       pesticide: false,
       organisms: false,
       parcels: fullParcels,
+      priceFixing: {},
     };
 
     try {
@@ -159,7 +160,14 @@ export class GameService {
 
   async submitRound(
     gameId: string,
-    settings?: { machines: number; organic: boolean; fertilizer: boolean; pesticide: boolean; organisms: boolean },
+    settings?: {
+      machines: number;
+      organic: boolean;
+      fertilizer: boolean;
+      pesticide: boolean;
+      organisms: boolean;
+      priceFixing?: Record<string, boolean>;
+    },
   ): Promise<Round | { status: string }> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
@@ -208,6 +216,7 @@ export class GameService {
       fertilizer: settings?.fertilizer ?? false,
       pesticide: settings?.pesticide ?? false,
       organisms: settings?.organisms ?? false,
+      priceFixing: settings?.priceFixing ?? {},
       parcels: {},
     };
 
@@ -250,12 +259,26 @@ export class GameService {
 
   async createGame(
     name: string,
-    config: { numPlayers: number; numRounds: number; numAi: number; playerLabel: string },
+    config: {
+      numPlayers: number;
+      numRounds: number;
+      numAi: number;
+      playerLabel: string;
+      subsidiesEnabled?: boolean;
+      advancedPricingEnabled?: boolean;
+    },
   ): Promise<{ gameId: string; password?: string }> {
     const createGameFn = httpsCallable<
       {
         name: string;
-        config: { numPlayers: number; numRounds: number; numAi: number; playerLabel: string };
+        config: {
+          numPlayers: number;
+          numRounds: number;
+          numAi: number;
+          playerLabel: string;
+          subsidiesEnabled?: boolean;
+          advancedPricingEnabled?: boolean;
+        };
         settings: { length: number; difficulty: string; playerLabel: string };
       },
       { gameId: string; password?: string }

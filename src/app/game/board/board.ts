@@ -96,6 +96,8 @@ export class Board implements OnInit, OnDestroy {
     'Oat',
     'Rye',
     'Fieldbean',
+    'Rapeseed',
+    'Pea',
     'Grass',
     'Fallow',
   ];
@@ -538,6 +540,16 @@ export class Board implements OnInit, OnDestroy {
   cancelRoundSettings() {
     this.pendingNextRound = false;
     this.showRoundSettingsModal = false;
+  }
+
+  getPlantedCrops(): CropType[] {
+    const crops = new Set<CropType>();
+    this.parcels.forEach((p) => {
+      if (p.crop !== 'Fallow' && p.crop !== 'Grass') {
+        crops.add(p.crop);
+      }
+    });
+    return Array.from(crops);
   }
 
   async executeNextRound() {

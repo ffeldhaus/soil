@@ -9,7 +9,7 @@ describe('Game Balance Simulation', () => {
       name: 'Integrated Farming',
       logic: (round: number, lastRound?: Round) => {
         const avgNutrition = lastRound ? lastRound.parcelsSnapshot.reduce((acc, p) => acc + p.nutrition, 0) / 40 : 80;
-        const rotation: CropType[] = ['Fieldbean', 'Wheat', 'Beet', 'Barley', 'Oat', 'Rye'];
+        const rotation: CropType[] = ['Fieldbean', 'Wheat', 'Rapeseed', 'Barley', 'Pea', 'Rye'];
         return {
           machines: 2,
           organic: false,
@@ -25,7 +25,7 @@ describe('Game Balance Simulation', () => {
     {
       name: 'Organic Right',
       logic: (round: number) => {
-        const rotation: CropType[] = ['Fallow', 'Wheat', 'Fieldbean', 'Rye', 'Beet', 'Oat'];
+        const rotation: CropType[] = ['Fallow', 'Wheat', 'Pea', 'Rye', 'Rapeseed', 'Oat'];
         return {
           machines: 0, // Low tech for soil preservation
           organic: true,

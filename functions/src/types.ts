@@ -7,6 +7,8 @@ export type CropType =
   | 'Rye'
   | 'Wheat'
   | 'Beet'
+  | 'Rapeseed'
+  | 'Pea'
   | 'Fallow'
   | 'Grass';
 // Grass corresponds to 'Tiere' (Animals) usage in original game or similar fallow with animals.
@@ -28,6 +30,7 @@ export interface RoundDecision {
   pesticide: boolean;
   organisms: boolean; // Beneficial organisms
   parcels: Record<number, CropType>; // Map parcel index to chosen crop
+  priceFixing?: Record<string, boolean>;
 }
 
 export interface RoundResult {
@@ -42,6 +45,8 @@ export interface RoundResult {
     total: number;
   };
   income: number;
+  subsidies?: number;
+  marketPrices?: Record<string, number>;
   events: {
     weather: string;
     vermin: string;
@@ -82,6 +87,8 @@ export interface GameConfig {
   numPlayers: number;
   numRounds: number;
   numAi: number;
+  subsidiesEnabled?: boolean;
+  advancedPricingEnabled?: boolean;
 }
 
 export interface Game {
