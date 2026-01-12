@@ -17,6 +17,12 @@ export class App {
   protected readonly title = signal('soil');
   version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
 
+  get versionNumber(): number | null {
+    if (this.version === 'dev') return null;
+    const n = parseFloat(this.version);
+    return isNaN(n) ? null : n;
+  }
+
   constructor() {
     console.warn(`Soil Version ${this.version} (app.ts)`);
 
