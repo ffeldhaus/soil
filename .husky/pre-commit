@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Unset npm_config_prefix to avoid compatibility issues with nvm
+unset npm_config_prefix
+
 # Try to load nvm and use the version specified in .nvmrc
 export NVM_DIR="$HOME/.nvm"
 if [ -s "$NVM_DIR/nvm.sh" ]; then
