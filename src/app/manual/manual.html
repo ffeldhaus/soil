@@ -1,5 +1,5 @@
 <div
-  class="min-h-screen bg-gray-900 text-white font-sans relative flex flex-col overflow-x-hidden"
+  class="min-h-screen bg-gray-900 text-white font-sans relative flex flex-col"
   [ngClass]="{
     'print-a4': printSize === 'A4',
     'print-letter': printSize === 'Letter',
@@ -74,9 +74,9 @@
     <div class="relative flex flex-col gap-8">
       <!-- Table of Contents -->
       <aside
-        class="w-full xl:w-64 xl:absolute xl:-right-72 xl:top-0 xl:h-full print:hidden shrink-0 z-40"
+        class="w-full xl:w-64 xl:absolute xl:left-full xl:ml-12 xl:top-0 xl:h-full print:hidden shrink-0 z-40"
       >
-        <div class="xl:sticky xl:top-24 bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl">
+        <div class="xl:sticky xl:top-24 bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl h-fit">
           <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
             <span>📋</span>
             {{ t('manual.toc.title') }}
