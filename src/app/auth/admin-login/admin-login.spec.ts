@@ -1,6 +1,7 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideRouter, Router } from '@angular/router';
+import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AuthService } from '../auth.service';
@@ -14,6 +15,7 @@ describe('AdminLoginComponent', () => {
 
   beforeEach(async () => {
     authServiceMock = {
+      user$: of(null),
       loginWithEmail: vi.fn().mockResolvedValue(undefined),
       loginWithGoogle: vi.fn().mockResolvedValue(undefined),
       sendPasswordResetEmail: vi.fn().mockResolvedValue(undefined),

@@ -28,6 +28,8 @@ export class Parcel {
       'crop.oat': $localize`:Crop Name|Oat@@crop.oat:Hafer`,
       'crop.rye': $localize`:Crop Name|Rye@@crop.rye:Roggen`,
       'crop.fieldbean': $localize`:Crop Name|Field bean@@crop.fieldbean:Ackerbohne`,
+      'crop.rapeseed': $localize`:Crop Name|Rapeseed@@crop.rapeseed:Raps`,
+      'crop.pea': $localize`:Crop Name|Pea@@crop.pea:Erbse`,
       'crop.animals': $localize`:Crop Name|Animals (as a land use type)@@crop.animals:Tiere`,
       'crop.fallow': $localize`:Crop Name|Fallow land@@crop.fallow:Brachland`,
       'parcel.crop': $localize`:Asset Alt Text|Alternative text for the crop image on a parcel@@parcel.crop:Feldpflanze`,
@@ -44,6 +46,8 @@ export class Parcel {
     Oat: { label: 'crop.oat', image: 'hafer.webp' },
     Rye: { label: 'crop.rye', image: 'roggen.webp' },
     Fieldbean: { label: 'crop.fieldbean', image: 'ackerbohne.webp' },
+    Rapeseed: { label: 'crop.rapeseed', image: 'raps.webp' },
+    Pea: { label: 'crop.pea', image: 'erbse.webp' },
     Grass: { label: 'crop.animals', image: 'hausschwein.webp' },
     Fallow: { label: 'crop.fallow', image: 'acker.webp' },
   };

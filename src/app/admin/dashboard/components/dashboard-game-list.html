@@ -1,4 +1,3 @@
-<div class="mb-8">
   <div class="flex justify-between items-center mb-4 portrait:px-4">
     <div class="flex items-center gap-3">
       <h3 class="text-xl font-bold text-white">
@@ -297,10 +296,8 @@
                     [aiLevel]="aiLevel"
                     (convertPlayer)="convertPlayer.emit($event)"
                     (loginAsPlayer)="loginAsPlayer.emit($event)"
-                    (copyLoginUrl)="copyLoginUrl.emit($event)"
                     (generateQrCode)="generateQrCode.emit($event)"
                     (sharePlayer)="sharePlayer.emit($event)"
-                    (openFinance)="openFinance.emit($event)"
                     (printAllQrCodes)="printAllQrCodes.emit($event)"
                     (updateDeadline)="updateDeadline.emit($event)"
                   ></app-dashboard-game-detail>
@@ -326,11 +323,8 @@
   @if (totalGames > 0) {
     <div class="flex flex-col sm:flex-row justify-between items-center mt-4 text-sm text-gray-400 gap-4">
       <div>
-        <ng-container>{{ t('dashboard.pagination.showing') }}</ng-container>
-        <span class="text-white">{{ (currentPage - 1) * pageSize + 1 }}</span> -
-        <span class="text-white">{{ (currentPage - 1) * pageSize + games.length }}</span>
-        <ng-container>{{ t('dashboard.pagination.of') }}</ng-container>
-        <span class="text-white">{{ totalGames }}</span>
+        <ng-container>{{ t('dashboard.pagination.showing') }}</ng-container>&nbsp;<span class="text-white">{{ (currentPage - 1) * pageSize + 1 }}</span> -
+        <span class="text-white">{{ (currentPage - 1) * pageSize + games.length }}</span>&nbsp;<ng-container>{{ t('dashboard.pagination.of') }}</ng-container>&nbsp;<span class="text-white">{{ totalGames }}</span>
       </div>
       <div class="flex gap-2">
         <button
@@ -354,4 +348,4 @@
       </div>
     </div>
   }
-</div>
+

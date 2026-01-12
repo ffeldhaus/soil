@@ -41,20 +41,8 @@ export class DashboardGameListComponent {
   // Detail actions
   @Output() convertPlayer = new EventEmitter<{ game: Game; slot: { number: number; isAi: boolean } }>();
   @Output() loginAsPlayer = new EventEmitter<{ gameId: string; password: string }>();
-  @Output() copyLoginUrl = new EventEmitter<{ gameId: string; password: string }>();
   @Output() generateQrCode = new EventEmitter<{ gameId: string; playerNumber: number; password: string }>();
   @Output() sharePlayer = new EventEmitter<{
-    game: Game;
-    slot: {
-      number: number;
-      uid: string;
-      player: PlayerState | null;
-      isJoined: boolean;
-      isAi: boolean;
-      password: string;
-    };
-  }>();
-  @Output() openFinance = new EventEmitter<{
     game: Game;
     slot: {
       number: number;

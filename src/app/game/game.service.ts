@@ -343,7 +343,8 @@ export class GameService {
   async getUserStatus(): Promise<UserStatus | null> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
-      const role = window.localStorage.getItem('soil_test_role') || 'admin';
+      const fullRole = window.localStorage.getItem('soil_test_role') || 'admin';
+      const role = fullRole.startsWith('player') ? 'player' : fullRole;
       return { uid: 'mock-uid', email: `mock-${role}@example.com`, role, status: 'active' } as any;
     }
     const fn = httpsCallable<void, UserStatus | null>(this.functions, 'getUserStatus');
@@ -597,66 +598,146 @@ export class GameService {
     }
   }
 
-  private createInitialParcels(): Parcel[] {
+  private createInitialParcels(playerIndex = 0): Parcel[] {
     return Array(40)
       .fill(null)
       .map((_, i) => ({
         index: i,
         crop: 'Fallow',
-        soil: 80,
-        nutrition: 80,
+        soil: 75 + (playerIndex % 10) + Math.random() * 5,
+        nutrition: 70 + (playerIndex % 15) + Math.random() * 10,
         yield: 0,
       }));
   }
 
+  private createMockHistory(count: number, playerIndex = 0): Round[] {
+    const history: Round[] = [];
+    const parcels = this.createInitialParcels(playerIndex);
+    const weatherConditions = ['Normal', 'Sunny', 'Rainy', 'Drought', 'Cold', 'Flood'];
+    const possiblePests = [
+      'Kartoffelkäfer',
+      'Maiszünsler',
+      'Schwarze Bohnenlaus',
+      'Getreideblattlaus',
+      'Rapsglanzkäfer',
+      'Rübennematode',
+    ];
+    const availableCrops: CropType[] = [
+      'Wheat',
+      'Corn',
+      'Potato',
+      'Beet',
+      'Barley',
+      'Oat',
+      'Rye',
+      'Fieldbean',
+      'Rapeseed',
+      'Pea',
+      'Grass',
+      'Fallow',
+    ];
+
+    for (let i = 0; i <= count; i++) {
+      const pests = [];
+      if (i > 0 && (i + playerIndex) % 3 === 0) {
+        pests.push(possiblePests[(i + playerIndex) % possiblePests.length]);
+        if ((i + playerIndex) % 6 === 0) {
+          pests.push(possiblePests[(i + playerIndex + 1) % possiblePests.length]);
+        }
+      }
+
+      const profit = 400 + (playerIndex % 5) * 50 + Math.random() * 100;
+
+      // Update parcels for history to show variation and cover all crops
+      const roundParcels = parcels.map((p, idx) => ({
+        ...p,
+        crop: availableCrops[(idx + i + playerIndex) % availableCrops.length],
+        soil: Math.max(0, Math.min(100, p.soil + (Math.random() - 0.5) * 2 * i)),
+        nutrition: Math.max(0, Math.min(150, p.nutrition + (Math.random() - 0.5) * 5 * i)),
+        yield: i > 0 ? Math.random() * 100 : 0,
+      }));
+
+      history.push({
+        number: i,
+        decision: {
+          machines: playerIndex % 5,
+          organic: playerIndex % 2 === 0,
+          fertilizer: playerIndex % 3 === 0,
+          pesticide: playerIndex % 4 === 0,
+          organisms: playerIndex % 5 === 0,
+          parcels: {},
+        },
+        parcelsSnapshot: roundParcels,
+        result:
+          i > 0
+            ? {
+                profit: Math.round(profit),
+                capital: Math.round(5000 + i * profit),
+                income: Math.round(profit + 500),
+                expenses: { seeds: 100, labor: 200, running: 100, investments: 100, total: 500 },
+                harvestSummary: {} as any,
+                events: {
+                  weather: weatherConditions[(i + playerIndex) % weatherConditions.length],
+                  vermin: pests,
+                },
+              }
+            : undefined,
+      });
+    }
+    return history;
+  }
+
   private getMockGameState(): GameState {
-    const parcels = this.createInitialParcels();
+    const role = (typeof window !== 'undefined' && window.localStorage.getItem('soil_test_role')) || 'player';
+    const isRound6 = role === 'player_round_6';
+    const isEnd = role === 'player_end';
+
+    const numRounds = isRound6 ? 12 : 10;
+    const currentRound = isEnd ? 11 : isRound6 ? 6 : 1;
+    const historyCount = isEnd ? 10 : isRound6 ? 5 : 0;
+    const numPlayers = isRound6 ? 10 : isEnd ? 4 : 1;
+
+    const players: Record<string, PlayerState> = {};
+    for (let i = 1; i <= numPlayers; i++) {
+      const uid = `player-test-game-id-${i}`;
+      const playerHistory = this.createMockHistory(historyCount, i);
+      const lastRound = playerHistory[playerHistory.length - 1];
+
+      const avgSoil = lastRound?.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40;
+      const avgNutrition = lastRound?.parcelsSnapshot.reduce((acc, p) => acc + p.nutrition, 0) / 40;
+
+      players[uid] = {
+        uid,
+        displayName: `Player ${i}`,
+        isAi: false,
+        capital: lastRound?.result?.capital || 5000,
+        currentRound: currentRound,
+        submittedRound: isEnd ? 10 : historyCount,
+        history: playerHistory,
+        playerNumber: i,
+        avgSoil,
+        avgNutrition,
+      };
+    }
+
+    const firstPlayerUid = `player-test-game-id-1`;
+    const playerState = players[firstPlayerUid];
+    const lastRound = playerState.history[playerState.history.length - 1];
+
     return {
       game: {
         id: 'test-game-id',
-        name: 'Mock Test Game',
+        name: isEnd ? 'Finished Mock Game' : isRound6 ? 'Mid-Game Mock' : 'Mock Test Game',
         hostUid: 'mock-admin',
-        status: 'in_progress',
-        currentRoundNumber: 1,
-        config: { numPlayers: 1, numRounds: 20, numAi: 0 },
-        settings: { length: 20, difficulty: 'normal', playerLabel: 'Player' },
-        players: {},
+        status: isEnd ? 'finished' : 'in_progress',
+        currentRoundNumber: isEnd ? 10 : currentRound,
+        config: { numPlayers: numPlayers, numRounds, numAi: 0 },
+        settings: { length: numRounds, difficulty: 'normal', playerLabel: 'Player' },
+        players: players,
         createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
       },
-      playerState: {
-        uid: 'player-test-game-id-1',
-        displayName: 'Test User',
-        isAi: false,
-        capital: 5000,
-        currentRound: 1,
-        history: [
-          {
-            number: 0,
-            decision: {
-              machines: 0,
-              organic: false,
-              fertilizer: false,
-              pesticide: false,
-              organisms: false,
-              parcels: {},
-            },
-            parcelsSnapshot: parcels,
-          },
-        ],
-        playerNumber: 1,
-      },
-      lastRound: {
-        number: 0,
-        decision: {
-          machines: 0,
-          organic: false,
-          fertilizer: false,
-          pesticide: false,
-          organisms: false,
-          parcels: {},
-        },
-        parcelsSnapshot: parcels,
-      },
+      playerState: playerState,
+      lastRound: lastRound,
     };
   }
 }

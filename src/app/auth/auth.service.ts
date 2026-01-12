@@ -166,7 +166,8 @@ export class AuthService {
   }
 
   private getMockUser(): User {
-    const role = (typeof window !== 'undefined' && window.localStorage.getItem('soil_test_role')) || 'player';
+    const fullRole = (typeof window !== 'undefined' && window.localStorage.getItem('soil_test_role')) || 'player';
+    const role = fullRole.startsWith('player') ? 'player' : fullRole;
     const uid = role === 'player' ? 'player-test-game-id-1' : `mock-${role}-uid`;
     return {
       uid,
@@ -189,7 +190,11 @@ export class AuthService {
         expirationTime: '',
         signInProvider: 'google.com',
         signInSecondFactor: null,
-        claims: {},
+        claims: {
+          role: role,
+          gameId: role === 'player' ? 'test-game-id' : undefined,
+          playerNumber: role === 'player' ? 1 : undefined,
+        },
       }),
       reload: async () => {
         /* mock */

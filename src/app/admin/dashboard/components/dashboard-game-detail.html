@@ -19,33 +19,66 @@
     </button>
   </div>
 
-  <!-- Deadline Manager -->
-  <div class="mb-6 p-4 bg-gray-900/60 rounded-xl border border-blue-500/20 portrait:rounded-none portrait:border-x-0">
-    <h5 class="text-xs font-bold text-blue-400 mb-3 uppercase tracking-widest">
-      {{ t('dashboard.deadline.title') }}
-    </h5>
-    <div class="flex items-center gap-4">
-      <div>
-        <label for="deadline-{{ game.id }}" class="block text-[10px] text-gray-500 mb-1">{{
-          t('dashboard.deadline.round')
-        }}</label>
-        <input
-          #deadlineInput
-          id="deadline-{{ game.id }}"
-          type="datetime-local"
-          [value]="getDeadlineForRound(game, game.currentRoundNumber)"
-          class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:border-blue-500 outline-none"
-        />
-      </div>
-      <button
-        (click)="updateDeadline.emit({ gameId: game.id, round: game.currentRoundNumber, dateStr: deadlineInput.value })"
-        class="mt-4 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded transition shadow-lg"
+  <!-- Deadline Manager Toggle -->
+  <div class="mb-4">
+    <button
+      (click)="showDeadlineManager = !showDeadlineManager"
+      class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-widest flex items-center gap-2 transition-colors"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4 transition-transform duration-200"
+        [class.rotate-90]="showDeadlineManager"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
       >
-        {{ t('dashboard.deadline.set') }}
-      </button>
-    </div>
-    <p class="text-[10px] text-gray-500 mt-2 italic">{{ t('dashboard.deadline.hint') }}</p>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      {{ t('dashboard.deadline.toggle') }}
+    </button>
   </div>
+
+  <!-- Deadline Manager (Collapsible) -->
+  @if (showDeadlineManager) {
+    <div class="mb-6 p-4 bg-gray-900/60 rounded-xl border border-blue-500/20 portrait:rounded-none portrait:border-x-0 animate-fade-in">
+      <h5 class="text-xs font-bold text-blue-400 mb-3 uppercase tracking-widest">
+        {{ t('dashboard.deadline.title') }}
+      </h5>
+      <div class="flex flex-wrap items-end gap-4">
+        <div>
+          <label class="block text-[10px] text-gray-500 mb-1">Runde</label>
+          <select
+            [(ngModel)]="selectedDeadlineRound"
+            class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:border-blue-500 outline-none"
+          >
+            @for (r of getRounds(); track r) {
+              <option [value]="r">Runde {{ r }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label for="deadline-{{ game.id }}" class="block text-[10px] text-gray-500 mb-1">
+            {{ t('dashboard.deadline.round') }} {{ selectedDeadlineRound }}
+          </label>
+          <input
+            #deadlineInput
+            id="deadline-{{ game.id }}"
+            type="datetime-local"
+            [value]="getDeadlineForRound(game, selectedDeadlineRound)"
+            class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:border-blue-500 outline-none"
+          />
+        </div>
+        <button
+          (click)="updateDeadline.emit({ gameId: game.id, round: selectedDeadlineRound, dateStr: deadlineInput.value })"
+          class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded transition shadow-lg"
+        >
+          {{ t('dashboard.deadline.set') }}
+        </button>
+      </div>
+      <p class="text-[10px] text-gray-500 mt-2 italic">{{ t('dashboard.deadline.hint') }}</p>
+    </div>
+  }
 
   @if (!game.players || getPlayerKeys(game.players).length === 0) {
     <div class="text-gray-500 italic text-sm">
@@ -79,14 +112,6 @@
               @if (!slot.isAi && !slot.isJoined) {
                 <span class="text-gray-500">{{ t('dashboard.player.label') }} {{ slot.number }}</span>
               }
-            </div>
-            @if (slot.isJoined) {
-              <div class="text-xs text-gray-500 font-mono mt-0.5">{{ slot.uid | slice: 0 : 12 }}...</div>
-            }
-            <!-- Password Display -->
-            <div class="mt-1 flex items-center gap-2">
-              <span class="text-[10px] text-gray-500 uppercase tracking-widest">PIN</span>
-              <span class="font-mono text-emerald-400 font-bold select-all">{{ slot.password }}</span>
             </div>
           </div>
           @if (slot.isJoined) {
@@ -170,7 +195,7 @@
           <!-- Convert -->
           <button
             (click)="convertPlayer.emit({ game: game, slot: slot })"
-            class="flex-1 px-2 py-1.5 rounded text-[10px] font-bold uppercase transition flex items-center justify-center gap-1"
+            class="w-full px-2 py-1.5 rounded text-[10px] font-bold uppercase transition flex items-center justify-center gap-1 border border-transparent"
             [class.bg-emerald-800/30]="slot.isAi"
             [class.text-emerald-300]="slot.isAi"
             [class.hover:bg-emerald-800/50]="slot.isAi"
@@ -185,93 +210,65 @@
               <ng-container>{{ t('dashboard.player.toAi') }}</ng-container>
             }
           </button>
-          <!-- Login / URL -->
-          @if (slot.isJoined && !slot.isAi) {
-            <button
-              (click)="loginAsPlayer.emit({ gameId: game.id, password: slot.password })"
-              class="px-2 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded text-[10px] font-bold uppercase transition flex items-center justify-center gap-1.5"
-              title="Login as Player"
-            >
-              {{ t('dashboard.player.login') }}
-            </button>
-          }
-          @if (slot.isJoined && !slot.isAi) {
-            <button
-              (click)="copyLoginUrl.emit({ gameId: game.id, password: slot.password })"
-              class="px-2 py-1.5 bg-gray-700 hover:bg-white hover:text-black text-gray-300 rounded text-[10px] font-bold uppercase transition"
-              title="Copy Login URL"
-            >
-              {{ t('dashboard.player.copyUrl') }}
-            </button>
-          }
-          <!-- Finance (Only if joined) -->
-          @if (slot.isJoined) {
-            <button
-              (click)="openFinance.emit({ game: game, slot: slot })"
-              class="p-1.5 bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white rounded transition flex items-center justify-center"
-              title="View Finance"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+
+          <!-- Login, QR, Email (Only for humans) -->
+          @if (!slot.isAi) {
+            <div class="grid grid-cols-3 gap-2 w-full">
+              <button
+                (click)="loginAsPlayer.emit({ gameId: game.id, password: slot.password })"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-lg text-[10px] font-black transition flex flex-col items-center justify-center gap-1 shadow-lg"
+                title="Login as Player"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
-            </button>
-          }
-          <!-- QR / Link (Only for humans) -->
-          @if (slot.isJoined && !slot.isAi) {
-            <button
-              (click)="generateQrCode.emit({ gameId: game.id, playerNumber: slot.number, password: slot.password })"
-              class="p-1.5 bg-gray-700 hover:bg-white hover:text-black text-gray-300 rounded transition"
-              title="Show QR Code"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                {{ t('dashboard.player.login') }}
+              </button>
+
+              <button
+                (click)="generateQrCode.emit({ gameId: game.id, playerNumber: slot.number, password: slot.password })"
+                class="bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg text-[10px] font-black transition flex flex-col items-center justify-center gap-1 shadow-lg border border-gray-600"
+                title="Show QR Code"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
-                />
-              </svg>
-            </button>
-          }
-          <!-- Email (Only for humans) -->
-          @if (slot.isJoined && !slot.isAi) {
-            <button
-              (click)="sharePlayer.emit({ game: game, slot: slot })"
-              class="p-1.5 bg-gray-700 hover:bg-white hover:text-black text-gray-300 rounded transition"
-              title="Send Email"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+                  />
+                </svg>
+                {{ t('dashboard.player.qrCode') }}
+              </button>
+
+              <button
+                (click)="sharePlayer.emit({ game: game, slot: slot })"
+                class="bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg text-[10px] font-black transition flex flex-col items-center justify-center gap-1 shadow-lg border border-gray-600"
+                title="Send Email"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                {{ t('dashboard.player.email') }}
+              </button>
+            </div>
           }
         </div>
       </div>

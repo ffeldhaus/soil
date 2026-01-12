@@ -246,15 +246,6 @@ export class Dashboard implements OnInit, OnDestroy {
   selectedFinanceGame: Game | null = null;
   selectedFinancePlayer: PlayerState | null = null;
 
-  openFinance(
-    game: Game,
-    slot: { number: number; uid: string; player: PlayerState | null; isJoined: boolean; isAi: boolean },
-  ) {
-    this.selectedFinanceGame = game;
-    this.selectedFinancePlayer = slot.player;
-    this.showFinanceModal = true;
-  }
-
   closeFinance() {
     this.showFinanceModal = false;
     this.selectedFinanceGame = null;
@@ -280,7 +271,15 @@ export class Dashboard implements OnInit, OnDestroy {
       if (user) {
         if (localStorage.getItem('soil_test_mode') === 'true') {
           this.ngZone.run(() => {
-            this.userStatus = { uid: user.uid, role: 'admin', status: 'active', email: user.email || '' };
+            const fullRole = localStorage.getItem('soil_test_role') || 'admin';
+            const role = fullRole.startsWith('player') ? 'player' : fullRole;
+            this.userStatus = { uid: user.uid, role: role as any, status: 'active', email: user.email || '' };
+
+            if (role === 'superadmin') {
+              this.router.navigate(['/admin/super']);
+              return;
+            }
+
             this.isPendingApproval = false;
             this.isLoading = false;
             this.loadGames();
@@ -430,18 +429,6 @@ export class Dashboard implements OnInit, OnDestroy {
   loginAsPlayer(gameId: string, password: string) {
     const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
     window.open(url, '_blank');
-  }
-
-  copyLoginUrl(gameId: string, password: string) {
-    const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        // Maybe show a temporary toast or change button text
-      })
-      .catch((err) => {
-        console.error('Could not copy text: ', err);
-      });
   }
 
   closeError() {

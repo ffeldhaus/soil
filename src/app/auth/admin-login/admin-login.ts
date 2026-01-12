@@ -231,6 +231,11 @@ export class AdminLoginComponent implements OnInit {
   successMessage = '';
 
   ngOnInit() {
+    this.auth.user$.subscribe((user) => {
+      if (user) {
+        this.router.navigate(['/admin']);
+      }
+    });
     const email = this.route.snapshot.queryParamMap.get('email');
     if (email) {
       this.loginForm.patchValue({ email });

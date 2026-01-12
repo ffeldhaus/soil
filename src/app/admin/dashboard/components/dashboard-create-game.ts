@@ -39,7 +39,7 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.phName': $localize`:Form Placeholder|Placeholder for the game name input@@dashboard.createGame.phName:Spielname`,
       'dashboard.createGame.playerLabel': $localize`:Form Label|Label for the player designation input@@dashboard.createGame.playerLabel:Spieler-Bezeichnung (z. B. Team, Farmer)`,
       'dashboard.createGame.phPlayer': $localize`:Form Placeholder|Placeholder for the player designation input@@dashboard.createGame.phPlayer:Spieler`,
-      'dashboard.createGame.players': $localize`:Form Label|Label for number of players input@@dashboard.createGame.players:Spieler (1-50)`,
+      'dashboard.createGame.players': $localize`:Form Label|Label for number of players input@@dashboard.createGame.players:Spieler (1-10)`,
       'dashboard.createGame.rounds': $localize`:Form Label|Label for number of rounds input@@dashboard.createGame.rounds:Runden`,
       'dashboard.createGame.bots': $localize`:Form Label|Label for number of AI bots input@@dashboard.createGame.bots:KI-Bots`,
       'dashboard.createGame.aiLevel': $localize`:Form Label|Label for AI difficulty level input@@dashboard.createGame.aiLevel:KI-Niveau`,

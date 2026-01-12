@@ -230,11 +230,11 @@
       <div class="shrink-0 pt-2 pb-1 flex flex-col items-center gap-1 z-30">
         <!-- Round Selector (History) -->
         @if (viewingRound >= 0) {
-        <div class="flex items-center gap-3 pointer-events-auto">
+        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pointer-events-auto w-full max-w-md px-4">
           <!-- Pests (Left) -->
-          <div class="flex gap-1">
-            @for (icon of selectedRoundPestIcons; track $index) {
-              <span class="text-xl animate-bounce-slow" title="Pests">{{ icon }}</span>
+          <div class="flex gap-1 justify-end">
+            @for (pest of selectedRoundPestsData; track $index) {
+              <span class="text-xl animate-bounce-slow" [title]="pest.name">{{ pest.icon }}</span>
             }
           </div>
 
@@ -265,8 +265,8 @@
           </div>
 
           <!-- Weather (Right) -->
-          <div class="flex">
-            <span class="text-2xl" title="Weather">{{ selectedRoundWeatherIcon }}</span>
+          <div class="flex justify-start">
+            <span class="text-2xl" [title]="selectedRoundWeatherData.name">{{ selectedRoundWeatherData.icon }}</span>
           </div>
         </div>
         }
@@ -327,7 +327,7 @@
       class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-black/60 overflow-hidden">
       <!-- Confetti/Sparkles Container -->
       <div class="absolute inset-0 pointer-events-none celebration-container">
-        @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]; track i) {
+        @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]; track i) {
         <div class="confetti"></div>
         }
       </div>

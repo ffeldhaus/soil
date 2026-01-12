@@ -592,7 +592,7 @@ export class Board implements OnInit, OnDestroy {
     this.showRoundResultModal = false;
   }
 
-  get selectedRoundWeatherIcon(): string {
+  get selectedRoundWeatherData(): { icon: string; name: string } {
     const round = this.history.find((r) => r.number === this.viewingRound);
     const weather = round?.result?.events?.weather || 'Normal';
     const icons: Record<string, string> = {
@@ -603,16 +603,44 @@ export class Board implements OnInit, OnDestroy {
       Flood: '🌊',
       Storm: '💨',
     };
-    return icons[weather] || '☀️';
+
+    const names: Record<string, string> = {
+      Normal: $localize`:@@weather.normal:Normal`,
+      Drought: $localize`:@@weather.drought:Trockenheit`,
+      LateFrost: $localize`:@@weather.lateFrost:Spätfrost`,
+      SummerDrought: $localize`:@@weather.summerDrought:Sommerhitze`,
+      Flood: $localize`:@@weather.flood:Überschwemmung`,
+      Storm: $localize`:@@weather.storm:Sturm`,
+    };
+
+    return {
+      icon: icons[weather] || '☀️',
+      name: names[weather] || weather,
+    };
   }
 
-  get selectedRoundPestIcons(): string[] {
+  get selectedRoundPestsData(): { icon: string; name: string }[] {
     const round = this.history.find((r) => r.number === this.viewingRound);
     const pests = round?.result?.events?.vermin;
     if (!Array.isArray(pests) || pests.length === 0) return [];
-    // If there are pests, return a bug icon for now.
-    // In the future we might map specific pests to different icons.
-    return pests.map(() => '🐛');
+
+    const iconMap: Record<string, string> = {
+      Kartoffelkäfer: '🪲',
+      Maiszünsler: '🦋',
+      'Schwarze Bohnenlaus': '🐜',
+      Getreideblattlaus: '🦟',
+      Rapsglanzkäfer: '✨',
+      Rübennematode: '🐍',
+      Erbsenwickler: '🐛',
+      Haferkronenrost: '🍄',
+      Getreidehähnchen: '🐔',
+      Fritfliege: '🪰',
+    };
+
+    return pests.map((p) => ({
+      name: p,
+      icon: iconMap[p] || '🐛',
+    }));
   }
 
   private calculateWinners(game: Game) {

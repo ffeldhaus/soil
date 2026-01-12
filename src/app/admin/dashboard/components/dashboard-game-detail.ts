@@ -1,34 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, type OnInit, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import type { Game, PlayerState } from '../../../types';
 
 @Component({
   selector: 'app-dashboard-game-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard-game-detail.html',
 })
-export class DashboardGameDetailComponent {
+export class DashboardGameDetailComponent implements OnInit {
   @Input() game!: Game;
   @Input() aiLevel = 'middle';
 
   @Output() convertPlayer = new EventEmitter<{ game: Game; slot: { number: number; isAi: boolean } }>();
   @Output() loginAsPlayer = new EventEmitter<{ gameId: string; password: string }>();
-  @Output() copyLoginUrl = new EventEmitter<{ gameId: string; password: string }>();
   @Output() generateQrCode = new EventEmitter<{ gameId: string; playerNumber: number; password: string }>();
   @Output() sharePlayer = new EventEmitter<{
-    game: Game;
-    slot: {
-      number: number;
-      uid: string;
-      player: PlayerState | null;
-      isJoined: boolean;
-      isAi: boolean;
-      password: string;
-    };
-  }>();
-  @Output() openFinance = new EventEmitter<{
     game: Game;
     slot: {
       number: number;
@@ -42,14 +31,22 @@ export class DashboardGameDetailComponent {
   @Output() printAllQrCodes = new EventEmitter<Game>();
   @Output() updateDeadline = new EventEmitter<{ gameId: string; round: number; dateStr: string }>();
 
+  showDeadlineManager = false;
+  selectedDeadlineRound = 1;
+
+  ngOnInit() {
+    this.selectedDeadlineRound = this.game.currentRoundNumber || 1;
+  }
+
   t(key: string): string {
     const translations: Record<string, string> = {
       'dashboard.details.players': $localize`:Heading|Title for the players details section@@dashboard.details.players:Spieler`,
       'dashboard.details.noPlayers': $localize`:Info Message|Shown when no players have joined yet@@dashboard.details.noPlayers:Noch keine Spieler beigetreten.`,
       'dashboard.deadline.title': $localize`:Heading|Title for the round deadline manager@@dashboard.deadline.title:Runden-Frist-Manager`,
-      'dashboard.deadline.round': $localize`:Field Label|Label for round deadline input@@dashboard.deadline.round:Rundenfrist`,
+      'dashboard.deadline.round': $localize`:Field Label|Label for round deadline input@@dashboard.deadline.round:Frist für Runde`,
       'dashboard.deadline.set': $localize`:Action Label|Button to set the deadline@@dashboard.deadline.set:Frist setzen`,
       'dashboard.deadline.hint': $localize`:Info Hint|Explanation about what happens when deadline is reached@@dashboard.deadline.hint:* Wenn eine Frist gesetzt ist, übernimmt die KI automatisch für alle Spieler, die bis dahin nicht abgegeben haben.`,
+      'dashboard.deadline.toggle': $localize`:Action Label|Button to toggle deadline manager@@dashboard.deadline.toggle:Fristen verwalten`,
       'dashboard.player.label': $localize`:Field Label|Label for player information@@dashboard.player.label:Spieler`,
       'dashboard.player.capital': $localize`:Field Label|Label for player capital@@dashboard.player.capital:Kapital`,
       'dashboard.player.round': $localize`:Field Label|Label for player current round@@dashboard.player.round:Runde`,
@@ -59,10 +56,16 @@ export class DashboardGameDetailComponent {
       'dashboard.player.toHuman': $localize`:Action Label|Button to convert AI to human player@@dashboard.player.toHuman:ZU MENSCH`,
       'dashboard.player.toAi': $localize`:Action Label|Button to convert human to AI player@@dashboard.player.toAi:ZU KI`,
       'dashboard.player.login': $localize`:Action Label|Button to log in as player@@dashboard.player.login:LOGIN`,
-      'dashboard.player.copyUrl': $localize`:Action Label|Button to copy player login URL@@dashboard.player.copyUrl:URL KOPIEREN`,
+      'dashboard.player.qrCode': $localize`:Action Label|Button to show QR code@@dashboard.player.qrCode:QR-CODE`,
+      'dashboard.player.email': $localize`:Action Label|Button to send email@@dashboard.player.email:E-MAIL`,
       'dashboard.player.printAll': $localize`:Action Label|Button to print all player QR codes@@dashboard.player.printAll:ALLE QR-CODES DRUCKEN`,
     };
     return translations[key] || key;
+  }
+
+  getRounds(): number[] {
+    const count = this.game.config?.numRounds || 10;
+    return Array.from({ length: count }, (_, i) => i + 1);
   }
 
   getPlayerKeys(players: Record<string, PlayerState>): string[] {

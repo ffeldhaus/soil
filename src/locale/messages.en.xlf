@@ -5533,5 +5533,35 @@
         <target>Summer Drought</target>
       </segment>
     </unit>
+    <unit id="dashboard.deadline.toggle">
+      <notes>
+        <note category="description">Button to toggle deadline manager</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment state="translated">
+        <source>Fristen verwalten</source>
+        <target>Manage Deadlines</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.qrCode">
+      <notes>
+        <note category="description">Button to show QR code</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment state="translated">
+        <source>QR-CODE</source>
+        <target>QR CODE</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.email">
+      <notes>
+        <note category="description">Button to send email</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment state="translated">
+        <source>E-MAIL</source>
+        <target>EMAIL</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

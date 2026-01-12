@@ -440,6 +440,10 @@ export const createGame = onCall(async (request) => {
   config.numRounds = numRounds;
   settings.length = numRounds;
 
+  // Players range check: 1 minimum, 10 maximum.
+  const numPlayers = Math.min(10, Math.max(1, config.numPlayers || 1));
+  config.numPlayers = numPlayers;
+
   // Authorization & Quota Check
   const uid = request.auth.uid;
   const userRef = db.collection('users').doc(uid);
@@ -511,8 +515,11 @@ export const createGame = onCall(async (request) => {
 
   const gameId = db.collection('games').doc().id;
 
+  // Ensure numAi does not exceed numPlayers
+  const numAi = Math.min(numPlayers, Math.max(0, config.numAi || 0));
+  config.numAi = numAi;
+
   // Generate secrets for all players
-  const numPlayers = config.numPlayers || 1;
   const playerSecrets: Record<string, { password: string }> = {};
   for (let i = 1; i <= numPlayers; i++) {
     playerSecrets[String(i)] = {
@@ -529,7 +536,7 @@ export const createGame = onCall(async (request) => {
     settings, // Keep old settings structure for compatibility if needed, or merge
     config, // New explicit config
     players: {
-      ...Array(config.numPlayers || 1)
+      ...Array(numPlayers)
         .fill(0)
         .reduce((acc, _, i) => {
           const playerNumber = i + 1;
@@ -537,7 +544,7 @@ export const createGame = onCall(async (request) => {
           acc[playerId] = {
             uid: playerId,
             displayName: `Player ${playerNumber}`,
-            isAi: playerNumber <= (config.numAi || 0),
+            isAi: playerNumber <= numAi,
             capital: 1000,
             currentRound: 0,
             history: [],
@@ -992,6 +999,10 @@ export const updatePlayerType = onCall(
 
     if (!gameId || !playerNumber || !type) {
       throw new HttpsError('invalid-argument', 'Missing arguments');
+    }
+
+    if (playerNumber < 1 || playerNumber > 10) {
+      throw new HttpsError('invalid-argument', 'Invalid player number (max 10)');
     }
 
     const gameRef = db.collection('games').doc(gameId);
