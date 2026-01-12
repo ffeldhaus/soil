@@ -252,6 +252,11 @@ async function performCalculation(
     vermin,
   };
 
+  // Fetch previous round data once for all players
+  const prevRoundRef = gameRef.collection('rounds').doc(`round_${game.currentRoundNumber || 0}`);
+  const prevRoundSnap = await transaction.get(prevRoundRef);
+  const prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : undefined;
+
   const allPlayerRounds: Record<string, Round> = {};
   const totalYields: Record<string, number> = {};
   const playerHarvests: Record<string, Record<string, number>> = {};

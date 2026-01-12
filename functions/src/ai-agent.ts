@@ -60,7 +60,7 @@ export class AiAgent {
         const prevParcel = previousRound
           ? previousRound.parcelsSnapshot[i]
           : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
-        const prevCrop = prevParcel.crop as string;
+        const prevCrop = prevParcel.crop;
 
         if (prevParcel.soil < 70 || prevParcel.nutrition < 60) {
           decision.parcels[i] = 'Fieldbean'; // Recovery
