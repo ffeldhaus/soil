@@ -17,6 +17,7 @@ export class Parcel {
   @Input() showNutrition = false;
   @Input() showHarvest = false;
   @Input() showSoil = false;
+  @Input() isReadOnly = false;
 
   t(key: string): string {
     const translations: Record<string, string> = {

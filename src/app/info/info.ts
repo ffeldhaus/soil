@@ -342,8 +342,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
           </section>
         </div>
 
-        <footer class="mt-24 pt-12 border-t border-gray-800 text-center text-gray-500 text-sm">
-          <p i18n="Footer Text|Copyright and project info@@info.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
+                  <footer class="mt-24 py-12 bg-white/25 text-black text-center text-sm">          <p i18n="Footer Text|Copyright and project info@@info.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
         </footer>
       </div>
     </div>

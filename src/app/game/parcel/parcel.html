@@ -15,6 +15,7 @@
       [alt]="t('parcel.crop')"
       class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
       onerror="this.style.display = 'none'"
+      [attr.draggable]="!isReadOnly"
     />
   }
 

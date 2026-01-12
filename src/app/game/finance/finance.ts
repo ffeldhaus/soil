@@ -107,33 +107,28 @@ export class Finance implements OnChanges {
     this.processPlayerData();
   }
 
-  get selectedRoundWeatherIcon(): string {
-    // Find the result from any player for this round
-    for (const player of Object.values(this.game.players)) {
-      const round = player.history.find((r) => r.number === this.currentViewingRound);
-      if (round?.result?.events?.weather) {
-        const weather = round.result.events.weather;
-        const icons: Record<string, string> = {
-          Normal: '☀️',
-          Drought: '🏜️',
-          LateFrost: '❄️',
-          SummerDrought: '🔥',
-          Flood: '🌊',
-          Storm: '💨',
-        };
-        return icons[weather] || '☀️';
-      }
-    }
-    return '☀️';
-  }
-
-  get selectedRoundPestIcons(): string[] {
+  get selectedRoundPestsData(): { icon: string; name: string }[] {
     for (const player of Object.values(this.game.players)) {
       const round = player.history.find((r) => r.number === this.currentViewingRound);
       if (round?.result?.events?.vermin) {
         const pests = round.result.events.vermin;
         if (pests.length > 0) {
-          return pests.map(() => '🐛');
+          const iconMap: Record<string, string> = {
+            Kartoffelkäfer: '🪲',
+            Maiszünsler: '🦋',
+            'Schwarze Bohnenlaus': '🐜',
+            Getreideblattlaus: '🦟',
+            Rapsglanzkäfer: '✨',
+            Rübennematode: '🐍',
+            Erbsenwickler: '🐛',
+            Haferkronenrost: '🍄',
+            Getreidehähnchen: '🐔',
+            Fritfliege: '🪰',
+          };
+          return pests.map((p) => ({
+            name: p,
+            icon: iconMap[p] || '🐛',
+          }));
         }
       }
     }

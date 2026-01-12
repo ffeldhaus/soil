@@ -613,15 +613,8 @@ export class GameService {
   private createMockHistory(count: number, playerIndex = 0): Round[] {
     const history: Round[] = [];
     const parcels = this.createInitialParcels(playerIndex);
-    const weatherConditions = ['Normal', 'Sunny', 'Rainy', 'Drought', 'Cold', 'Flood'];
-    const possiblePests = [
-      'Kartoffelkäfer',
-      'Maiszünsler',
-      'Schwarze Bohnenlaus',
-      'Getreideblattlaus',
-      'Rapsglanzkäfer',
-      'Rübennematode',
-    ];
+    const weatherConditions = Object.keys(GAME_CONSTANTS.WEATHER_EFFECTS);
+    const possiblePests = Object.keys(GAME_CONSTANTS.VERMIN_EFFECTS);
     const availableCrops: CropType[] = [
       'Wheat',
       'Corn',

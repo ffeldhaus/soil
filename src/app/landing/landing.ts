@@ -146,13 +146,21 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </section>
           </div>
 
-          <div class="mt-16 text-center">
+          <div class="mt-16 flex flex-wrap justify-center gap-6">
             <a
               routerLink="/info"
-              class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-gray-900/80 backdrop-blur-md hover:bg-gray-900/40"
+              class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-gray-900/80 backdrop-blur-md hover:bg-gray-900/40 shadow-lg"
             >
               <span class="p-1 bg-emerald-900/30 rounded-lg">🎓</span>
               <span i18n="Action Label|Link to background details@@landing.background">Hintergrund</span>
+            </a>
+
+            <a
+              routerLink="/manual"
+              class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-medium border border-blue-500/30 px-6 py-2 rounded-xl bg-gray-900/80 backdrop-blur-md hover:bg-gray-900/40 shadow-lg"
+            >
+              <span class="p-1 bg-blue-900/30 rounded-lg">📖</span>
+              <span i18n="Action Label|Link to user manual@@landing.manual">Handbuch</span>
             </a>
           </div>
 
@@ -170,7 +178,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             </div>
           }
 
-          <footer class="mt-24 text-center text-gray-500 text-sm">
+          <footer class="mt-24 py-12 bg-white/25 text-black text-center text-sm">
             <p i18n="Footer Text|Copyright and project info@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
           </footer>
         </div>

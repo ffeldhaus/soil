@@ -294,7 +294,7 @@
           @for (parcel of parcels; track parcel.index; let i = $index) {
           <app-parcel [parcel]="parcel" [attr.data-index]="i" data-testid="parcel" class="aspect-square"
             [selected]="isSelected(parcel.index)" [showLabels]="showLabels" [showNutrition]="showNutritionOverlay"
-            [showHarvest]="showHarvestOverlay" [showSoil]="showSoilOverlay"
+            [showHarvest]="showHarvestOverlay" [showSoil]="showSoilOverlay" [isReadOnly]="isReadOnly"
             (mousedown)="onMouseDown(parcel.index, $event)" (mouseenter)="onMouseEnter(parcel.index)">
           </app-parcel>
           }

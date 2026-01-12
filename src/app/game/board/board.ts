@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
 import { combineLatest, take } from 'rxjs';
-
 import { AuthService } from '../../auth/auth.service';
+import { GAME_CONSTANTS } from '../../game-constants';
 import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import type { CropType, Game, Parcel as ParcelType, PlayerState, Round } from '../../types';
@@ -594,7 +594,7 @@ export class Board implements OnInit, OnDestroy {
 
   get selectedRoundWeatherData(): { icon: string; name: string } {
     const round = this.history.find((r) => r.number === this.viewingRound);
-    const weather = round?.result?.events?.weather || 'Normal';
+    const weather = (round?.result?.events?.weather || 'Normal') as keyof typeof GAME_CONSTANTS.WEATHER_EFFECTS;
     const icons: Record<string, string> = {
       Normal: '☀️',
       Drought: '🏜️',
@@ -604,18 +604,9 @@ export class Board implements OnInit, OnDestroy {
       Storm: '💨',
     };
 
-    const names: Record<string, string> = {
-      Normal: $localize`:@@weather.normal:Normal`,
-      Drought: $localize`:@@weather.drought:Trockenheit`,
-      LateFrost: $localize`:@@weather.lateFrost:Spätfrost`,
-      SummerDrought: $localize`:@@weather.summerDrought:Sommerhitze`,
-      Flood: $localize`:@@weather.flood:Überschwemmung`,
-      Storm: $localize`:@@weather.storm:Sturm`,
-    };
-
     return {
       icon: icons[weather] || '☀️',
-      name: names[weather] || weather,
+      name: GAME_CONSTANTS.WEATHER_EFFECTS[weather]?.name || weather,
     };
   }
 
@@ -625,20 +616,20 @@ export class Board implements OnInit, OnDestroy {
     if (!Array.isArray(pests) || pests.length === 0) return [];
 
     const iconMap: Record<string, string> = {
-      Kartoffelkäfer: '🪲',
-      Maiszünsler: '🦋',
-      'Schwarze Bohnenlaus': '🐜',
-      Getreideblattlaus: '🦟',
-      Rapsglanzkäfer: '✨',
-      Rübennematode: '🐍',
-      Erbsenwickler: '🐛',
-      Haferkronenrost: '🍄',
-      Getreidehähnchen: '🐔',
-      Fritfliege: '🪰',
+      'potato-beetle': '🪲',
+      'corn-borer': '🦋',
+      'aphid-black': '🐜',
+      'aphid-cereal': '🦟',
+      'pollen-beetle': '✨',
+      nematode: '🐍',
+      'pea-moth': '🐛',
+      'oat-rust': '🍄',
+      wireworm: '🐛',
+      fritfly: '🪰',
     };
 
     return pests.map((p) => ({
-      name: p,
+      name: GAME_CONSTANTS.VERMIN_EFFECTS[p as keyof typeof GAME_CONSTANTS.VERMIN_EFFECTS]?.name || p,
       icon: iconMap[p] || '🐛',
     }));
   }
