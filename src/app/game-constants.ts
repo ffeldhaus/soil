@@ -1,5 +1,7 @@
 import type { CropType } from './types';
 
+declare const $localize: (parts: TemplateStringsArray, ...substitutions: any[]) => string;
+
 interface CropConfig {
   id: CropType;
   name: string;
