@@ -90,7 +90,7 @@
         <note category="meaning">Form Label</note>
       </notes>
       <segment>
-        <source>Spieler (1-50)</source>
+        <source>Spieler (1-10)</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.rounds">
@@ -399,13 +399,22 @@
         <source>Runden-Frist-Manager</source>
       </segment>
     </unit>
+    <unit id="dashboard.deadline.toggle">
+      <notes>
+        <note category="description">Button to toggle deadline manager</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Fristen verwalten</source>
+      </segment>
+    </unit>
     <unit id="dashboard.deadline.round">
       <notes>
         <note category="description">Label for round deadline input</note>
         <note category="meaning">Field Label</note>
       </notes>
       <segment>
-        <source>Rundenfrist</source>
+        <source>Frist für Runde</source>
       </segment>
     </unit>
     <unit id="dashboard.deadline.set">
@@ -442,6 +451,15 @@
       </notes>
       <segment>
         <source>Kapital</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.qrCode">
+      <notes>
+        <note category="description">Button to show QR code</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>QR-CODE</source>
       </segment>
     </unit>
     <unit id="dashboard.player.round">
@@ -514,6 +532,15 @@
       </notes>
       <segment>
         <source>URL KOPIEREN</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.player.email">
+      <notes>
+        <note category="description">Button to send email</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>E-MAIL</source>
       </segment>
     </unit>
     <unit id="dashboard.player.printAll">
@@ -774,7 +801,7 @@
         <note category="meaning">Asset Path</note>
       </notes>
       <segment>
-        <source>assets/images/ok.jpg</source>
+        <source>assets/images/gut.jpg</source>
       </segment>
     </unit>
     <unit id="dashboard.pending.welcome">
@@ -2639,15 +2666,6 @@
         <source> Herausragende Leistung aller Landwirte. </source>
       </segment>
     </unit>
-    <unit id="board.gameEnd.financialTitle">
-      <notes>
-        <note category="description">Title for the player with the most capital</note>
-        <note category="meaning">Award Title</note>
-      </notes>
-      <segment>
-        <source> Finanz-Champion </source>
-      </segment>
-    </unit>
     <unit id="board.gameEnd.soilTitle">
       <notes>
         <note category="description">Title for the player with the best average soil quality</note>
@@ -3339,57 +3357,33 @@
       </segment>
     </unit>
     <unit id="weather.lateFrost">
-      <notes>
-        <note category="description">Late frost in spring</note>
-        <note category="meaning">Weather Condition</note>
-      </notes>
       <segment>
         <source>Spätfrost</source>
       </segment>
     </unit>
     <unit id="weather.normal">
-      <notes>
-        <note category="description">Standard weather without special effects</note>
-        <note category="meaning">Weather Condition</note>
-      </notes>
       <segment>
         <source>Normal</source>
       </segment>
     </unit>
     <unit id="weather.drought">
-      <notes>
-        <note category="description">Dry weather affecting yields</note>
-        <note category="meaning">Weather Condition</note>
-      </notes>
       <segment>
-        <source>Dürre</source>
+        <source>Trockenheit</source>
       </segment>
     </unit>
     <unit id="weather.flood">
-      <notes>
-        <note category="description">Excessive rain affecting yields</note>
-        <note category="meaning">Weather Condition</note>
-      </notes>
       <segment>
-        <source>Flut</source>
+        <source>Überschwemmung</source>
       </segment>
     </unit>
     <unit id="weather.storm">
-      <notes>
-        <note category="description">Strong winds affecting yields</note>
-        <note category="meaning">Weather Condition</note>
-      </notes>
       <segment>
         <source>Sturm</source>
       </segment>
     </unit>
     <unit id="weather.summerDrought">
-      <notes>
-        <note category="description">Severe summer drought</note>
-        <note category="meaning">Weather Condition</note>
-      </notes>
       <segment>
-        <source>Sommerdürre</source>
+        <source>Sommerhitze</source>
       </segment>
     </unit>
     <unit id="vermin.none">
@@ -4013,6 +4007,15 @@
         <source>Eine interaktive Simulation über</source>
       </segment>
     </unit>
+    <unit id="landing.manual">
+      <notes>
+        <note category="description">Link to user manual</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Handbuch</source>
+      </segment>
+    </unit>
     <unit id="landing.agriculture">
       <notes>
         <note category="description">Agriculture topic</note>
@@ -4329,91 +4332,51 @@
       </segment>
     </unit>
     <unit id="pest.fritfly">
-      <notes>
-        <note category="description">Frit fly</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Fritfliege</source>
       </segment>
     </unit>
     <unit id="pest.nematode">
-      <notes>
-        <note category="description">Beet nematode</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Rübennematode</source>
       </segment>
     </unit>
     <unit id="pest.oat-rust">
-      <notes>
-        <note category="description">Oat crown rust</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Haferkronenrost</source>
       </segment>
     </unit>
     <unit id="pest.pea-moth">
-      <notes>
-        <note category="description">Pea moth</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Erbsenwickler</source>
       </segment>
     </unit>
     <unit id="pest.pollen-beetle">
-      <notes>
-        <note category="description">Pollen beetle</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Rapsglanzkäfer</source>
       </segment>
     </unit>
     <unit id="pest.potato-beetle">
-      <notes>
-        <note category="description">Colorado potato beetle</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Kartoffelkäfer</source>
       </segment>
     </unit>
     <unit id="pest.aphid-black">
-      <notes>
-        <note category="description">Black bean aphid</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Schwarze Bohnenlaus</source>
       </segment>
     </unit>
     <unit id="pest.aphid-cereal">
-      <notes>
-        <note category="description">Cereal aphid</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Getreideblattlaus</source>
       </segment>
     </unit>
     <unit id="pest.corn-borer">
-      <notes>
-        <note category="description">European corn borer</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Maiszünsler</source>
       </segment>
     </unit>
     <unit id="pest.wireworm">
-      <notes>
-        <note category="description">Wireworm</note>
-        <note category="meaning">Pest Name</note>
-      </notes>
       <segment>
         <source>Drahtwurm</source>
       </segment>
@@ -4865,6 +4828,15 @@
       </notes>
       <segment>
         <source>Gruppendynamik</source>
+      </segment>
+    </unit>
+    <unit id="manual.teacher.openManual">
+      <notes>
+        <note category="description">Link to open the manual</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Handbuch öffnen</source>
       </segment>
     </unit>
     <unit id="manual.teacher.title">

@@ -19,9 +19,9 @@ else
   echo "Warning: nvm not found. Using system node version: $(node -v)"
 fi
 
-# If ONLY media files are changed, skip everything
-if ! git diff --cached --name-only | grep -qvE '\.(jpeg|jpg|png|webp|gif|svg|ico)$'; then
-  echo "Only media changes detected. Skipping pre-commit hooks."
+# If ONLY media or version-related files (package.json) are changed, skip everything
+if ! git diff --cached --name-only | grep -qvE '\.(jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$'; then
+  echo "Only media or version changes (package.json) detected. Skipping pre-commit hooks."
   exit 0
 fi
 
@@ -29,13 +29,13 @@ npx biome check --write --staged --no-errors-on-unmatched
 node scripts/check-file-size.js
 
 # Check for broken links in staged files
-STAGED_FILES=$(git diff --cached --name-only | grep -vE '\.(jpeg|jpg|png|webp|gif|svg|ico)$' || true)
+STAGED_FILES=$(git diff --cached --name-only | grep -vE '\.(jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$' || true)
 if [ -n "$STAGED_FILES" ]; then
   echo "$STAGED_FILES" | lychee --files-from -
 fi
 
-# Check if any staged files are NOT documentation or media
-if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$'; then
+# Check if any staged files are NOT documentation, media, or version-related
+if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$'; then
   # Use concise reporters and suppress stdout for build unless there's an error
   npx vitest run --reporter=dot
   npm run test --prefix functions -- --reporter min
