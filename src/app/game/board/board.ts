@@ -592,6 +592,29 @@ export class Board implements OnInit, OnDestroy {
     this.showRoundResultModal = false;
   }
 
+  get selectedRoundWeatherIcon(): string {
+    const round = this.history.find((r) => r.number === this.viewingRound);
+    const weather = round?.result?.events?.weather || 'Normal';
+    const icons: Record<string, string> = {
+      Normal: '☀️',
+      Drought: '🏜️',
+      LateFrost: '❄️',
+      SummerDrought: '🔥',
+      Flood: '🌊',
+      Storm: '💨',
+    };
+    return icons[weather] || '☀️';
+  }
+
+  get selectedRoundPestIcons(): string[] {
+    const round = this.history.find((r) => r.number === this.viewingRound);
+    const pests = round?.result?.events?.vermin || [];
+    if (pests.length === 0) return [];
+    // If there are pests, return a bug icon for now.
+    // In the future we might map specific pests to different icons.
+    return pests.map(() => '🐛');
+  }
+
   private calculateWinners(game: Game) {
     if (!game.players) return;
     const playerList = Object.values(game.players);

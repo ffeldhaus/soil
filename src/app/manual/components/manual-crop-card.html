@@ -239,7 +239,7 @@
                   t('manual.prices.seed')
                 }}</span>
                 <span class="font-bold text-white print:text-black print:text-xs"
-                  >{{ crop.seedPrice.conventional }}€</span
+                  >{{ crop.seedPrice.conventional | currency: 'EUR' : 'symbol' : '1.0-0' }}</span
                 >
               </div>
               <div class="flex justify-between items-center">
@@ -247,7 +247,7 @@
                   t('manual.prices.sale')
                 }}</span>
                 <span class="font-bold text-emerald-400 print:text-emerald-600 print:text-xs"
-                  >{{ crop.marketValue.conventional }}€</span
+                  >{{ crop.marketValue.conventional | currency: 'EUR' : 'symbol' : '1.0-2' }}</span
                 >
               </div>
             </div>
@@ -265,14 +265,14 @@
                 <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{
                   t('manual.prices.seed')
                 }}</span>
-                <span class="font-bold text-white print:text-black print:text-xs">{{ crop.seedPrice.organic }}€</span>
+                <span class="font-bold text-white print:text-black print:text-xs">{{ crop.seedPrice.organic | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-400 print:text-gray-500 print:text-xs">{{
                   t('manual.prices.sale')
                 }}</span>
                 <span class="font-bold text-emerald-400 print:text-emerald-600 print:text-xs"
-                  >{{ crop.marketValue.organic }}€</span
+                  >{{ crop.marketValue.organic | currency: 'EUR' : 'symbol' : '1.0-2' }}</span
                 >
               </div>
             </div>

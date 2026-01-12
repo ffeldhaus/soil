@@ -12,7 +12,7 @@
           </span>
           @if (subsidies > 0) {
             <span class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">
-              Inkl. {{ subsidies | number }} € Subventionen
+              Inkl. {{ subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }} Subventionen
             </span>
           }
         </div>

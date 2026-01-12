@@ -230,30 +230,44 @@
       <div class="shrink-0 pt-2 pb-1 flex flex-col items-center gap-1 z-30">
         <!-- Round Selector (History) -->
         @if (viewingRound >= 0) {
-        <div data-testid="round-indicator"
-          class="flex items-center gap-1 bg-gray-900/60 backdrop-blur rounded-full px-4 py-1 border border-gray-700 pointer-events-auto">
-          <button (click)="goToRound(viewingRound - 1)" [disabled]="viewingRound === 0"
-            class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clip-rule="evenodd" />
-            </svg>
-          </button>
-          <span class="text-xs font-mono px-2 min-w-[100px] text-center transition-colors"
-            [class.text-emerald-400]="viewingRound === maxRoundNumber"
-            [class.text-gray-400]="viewingRound < maxRoundNumber">
-            <ng-container i18n="Label|Prefix for the round number display@@board.round">Runde</ng-container> {{
-            viewingRound }}
-          </span>
-          <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
-            class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd" />
-            </svg>
-          </button>
+        <div class="flex items-center gap-3 pointer-events-auto">
+          <!-- Pests (Left) -->
+          <div class="flex gap-1">
+            @for (icon of selectedRoundPestIcons; track $index) {
+              <span class="text-xl animate-bounce-slow" title="Pests">{{ icon }}</span>
+            }
+          </div>
+
+          <div data-testid="round-indicator"
+            class="flex items-center gap-1 bg-gray-900/60 backdrop-blur rounded-full px-4 py-1 border border-gray-700">
+            <button (click)="goToRound(viewingRound - 1)" [disabled]="viewingRound === 0"
+              class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+            <span class="text-xs font-mono px-2 min-w-[100px] text-center transition-colors"
+              [class.text-emerald-400]="viewingRound === maxRoundNumber"
+              [class.text-gray-400]="viewingRound < maxRoundNumber">
+              <ng-container i18n="Label|Prefix for the round number display@@board.round">Runde</ng-container> {{
+              viewingRound }}
+            </span>
+            <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
+              class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Weather (Right) -->
+          <div class="flex">
+            <span class="text-2xl" title="Weather">{{ selectedRoundWeatherIcon }}</span>
+          </div>
         </div>
         }
 
@@ -333,16 +347,11 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8">
           <!-- Financial Champion -->
-          <div
-            class="bg-gradient-to-br from-amber-500/20 to-yellow-600/10 border border-amber-500/30 p-6 rounded-2xl shadow-lg transform hover:scale-105 transition-transform group">
-            <div class="text-4xl mb-3 group-hover:animate-bounce">💰</div>
-            <h3 i18n="Award Title|Title for the player with the most capital@@board.gameEnd.financialTitle"
-              class="text-amber-400 font-bold uppercase text-xs tracking-widest mb-1">
-              Finanz-Champion
-            </h3>
-            <div class="text-white text-xl font-black mb-1">{{ financialWinner?.name }}</div>
-            <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | number }} €</div>
-          </div>
+              <div class="flex flex-col items-center p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+                <div class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-2">Finanz-Sieger</div>
+                <div class="text-xl font-bold text-white mb-1">{{ financialWinner?.name }}</div>
+                <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
+              </div>
 
           <!-- Soil Guardian -->
           <div
@@ -353,7 +362,7 @@
               Boden-Wächter
             </h3>
             <div class="text-white text-xl font-black mb-1">{{ soilWinner?.name }}</div>
-            <div class="text-emerald-200/70 text-sm font-mono">{{ soilWinner?.avgSoil }} / 200</div>
+            <div class="text-emerald-200/70 text-sm font-mono">{{ soilWinner?.avgSoil | number: '1.0-1' }} / 200</div>
           </div>
         </div>
 

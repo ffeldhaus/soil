@@ -10,26 +10,40 @@
           </p>
         </div>
 
-        <div class="flex items-center gap-1 bg-gray-900/80 p-1.5 rounded-xl border border-gray-800 shadow-inner">
-          @for (r of availableRounds; track r) {
-            <button
-              (click)="setRound(r)"
-              class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300"
-              [class.bg-emerald-600]="currentViewingRound === r"
-              [class.text-white]="currentViewingRound === r"
-              [class.shadow-lg]="currentViewingRound === r"
-              [class.text-gray-400]="currentViewingRound !== r"
-              [class.hover:text-gray-200]="currentViewingRound !== r"
-              [class.hover:bg-gray-800]="currentViewingRound !== r"
-            >
-              {{ r }}
-            </button>
-          }
-          @if (availableRounds.length === 0) {
-            <span i18n="Empty State|Message shown when no rounds are available@@finance.noRounds" class="px-4 py-2 text-sm text-gray-500 font-mono"
-              >Keine Runden verfügbar</span
-            >
-          }
+        <div class="flex items-center gap-4">
+          <!-- Pests (Left) -->
+          <div class="flex gap-1">
+            @for (icon of selectedRoundPestIcons; track $index) {
+              <span class="text-xl animate-bounce-slow" title="Pests">{{ icon }}</span>
+            }
+          </div>
+
+          <div class="flex items-center gap-1 bg-gray-900/80 p-1.5 rounded-xl border border-gray-800 shadow-inner">
+            @for (r of availableRounds; track r) {
+              <button
+                (click)="setRound(r)"
+                class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-300"
+                [class.bg-emerald-600]="currentViewingRound === r"
+                [class.text-white]="currentViewingRound === r"
+                [class.shadow-lg]="currentViewingRound === r"
+                [class.text-gray-400]="currentViewingRound !== r"
+                [class.hover:text-gray-200]="currentViewingRound !== r"
+                [class.hover:bg-gray-800]="currentViewingRound !== r"
+              >
+                {{ r }}
+              </button>
+            }
+            @if (availableRounds.length === 0) {
+              <span i18n="Empty State|Message shown when no rounds are available@@finance.noRounds" class="px-4 py-2 text-sm text-gray-500 font-mono"
+                >Keine Runden verfügbar</span
+              >
+            }
+          </div>
+
+          <!-- Weather (Right) -->
+          <div class="flex">
+            <span class="text-2xl" title="Weather">{{ selectedRoundWeatherIcon }}</span>
+          </div>
         </div>
       </div>
 
@@ -79,15 +93,14 @@
                   vector-effect="non-scaling-stroke"
                   class="text-gray-800"
                 />
-                <text
-                  [attr.x]="GRAPH_MARGIN.left - 10"
-                  [attr.y]="GRAPH_MARGIN.top + (line / 100) * (100 - GRAPH_MARGIN.top - GRAPH_MARGIN.bottom) + 1"
-                  class="fill-gray-600 text-[10px] font-mono font-bold"
-                  text-anchor="end"
-                >
-                  {{ ((100 - line) / 100) * getMaxCapital() | number: '1.0-0' }} €
-                </text>
-              }
+                                  <text
+                                  [attr.x]="GRAPH_MARGIN.left - 10"
+                                  [attr.y]="GRAPH_MARGIN.top + (line / 100) * (100 - GRAPH_MARGIN.top - GRAPH_MARGIN.bottom) + 1"
+                                  class="fill-gray-600 text-[10px] font-mono font-bold"
+                                  text-anchor="end"
+                                >
+                                  {{ ((100 - line) / 100) * getMaxCapital() | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                                </text>              }
 
               <!-- Grid Lines (Vertical - Rounds) -->
               @for (r of availableRounds; track r; let i = $index) {
@@ -147,17 +160,16 @@
                 />
                 <!-- Points -->
                 @for (point of getGraphPoints(p.capitalHistory); track point.round) {
-                  <circle
-                    [attr.cx]="point.x"
-                    [attr.cy]="point.y"
-                    [attr.r]="p.isCurrentPlayer ? 4 : 2"
-                    [attr.fill]="p.isCurrentPlayer ? 'var(--color-emerald-400)' : 'var(--color-blue-400)'"
-                    [attr.opacity]="p.isCurrentPlayer ? 1 : 0.3"
-                    class="hover:r-6 transition-all cursor-crosshair"
-                  >
-                    <title>{{ p.name }} - R{{ point.round }}: {{ point.val | number }} €</title>
-                  </circle>
-                }
+                                      <circle
+                                      [attr.cx]="point.x"
+                                      [attr.cy]="point.y"
+                                      [attr.r]="p.isCurrentPlayer ? 4 : 2"
+                                      [attr.fill]="p.isCurrentPlayer ? 'var(--color-emerald-400)' : 'var(--color-blue-400)'"
+                                      [attr.opacity]="p.isCurrentPlayer ? 1 : 0.3"
+                                      class="hover:r-6 transition-all cursor-crosshair"
+                                    >
+                                      <title>{{ p.name }} - R{{ point.round }}: {{ point.val | currency: 'EUR' : 'symbol' : '1.0-0' }}</title>
+                                    </circle>                }
               }
             </svg>
           </div>

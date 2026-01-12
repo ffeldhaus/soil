@@ -107,6 +107,39 @@ export class Finance implements OnChanges {
     this.processPlayerData();
   }
 
+  get selectedRoundWeatherIcon(): string {
+    // Find the result from any player for this round
+    for (const player of Object.values(this.game.players)) {
+      const round = player.history.find((r) => r.number === this.currentViewingRound);
+      if (round?.result?.events?.weather) {
+        const weather = round.result.events.weather;
+        const icons: Record<string, string> = {
+          Normal: '☀️',
+          Drought: '🏜️',
+          LateFrost: '❄️',
+          SummerDrought: '🔥',
+          Flood: '🌊',
+          Storm: '💨',
+        };
+        return icons[weather] || '☀️';
+      }
+    }
+    return '☀️';
+  }
+
+  get selectedRoundPestIcons(): string[] {
+    for (const player of Object.values(this.game.players)) {
+      const round = player.history.find((r) => r.number === this.currentViewingRound);
+      if (round?.result?.events?.vermin) {
+        const pests = round.result.events.vermin;
+        if (pests.length > 0) {
+          return pests.map(() => '🐛');
+        }
+      }
+    }
+    return [];
+  }
+
   private processPlayerData() {
     this.players = Object.values(this.game.players)
       .map((player) => {

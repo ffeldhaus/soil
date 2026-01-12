@@ -151,6 +151,11 @@
       "interpolation": true
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "overrides": [
     {
       "includes": ["**/*.spec.ts", "**/*.test.ts", "src/test-setup.ts"],
