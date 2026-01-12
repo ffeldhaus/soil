@@ -14,5 +14,9 @@
     >Handbuch</a
   >
   <span class="text-gray-400">|</span>
-  <span class="text-gray-500">v{{ version | number: '1.0-3' }}</span>
+  @if (version === 'dev') {
+    <span class="text-gray-500">v{{ version }}</span>
+  } @else {
+    <span class="text-gray-500">v{{ version | number: '1.0-3' }}</span>
+  }
 </div>
