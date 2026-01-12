@@ -20,7 +20,7 @@ export class App {
   get versionNumber(): number | null {
     if (this.version === 'dev') return null;
     const n = parseFloat(this.version);
-    return isNaN(n) ? null : n;
+    return Number.isNaN(n) ? null : n;
   }
 
   constructor() {
