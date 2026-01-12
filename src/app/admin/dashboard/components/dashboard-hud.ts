@@ -13,5 +13,5 @@ export class DashboardHudComponent {
   @Input() user: User | null = null;
   @Output() logout = new EventEmitter<void>();
 
-  readonly photoURL = $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/ok.jpg`;
+  readonly photoURL = $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/gut.jpg`;
 }

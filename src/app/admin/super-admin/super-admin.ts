@@ -27,7 +27,7 @@ export class SuperAdminComponent implements OnInit {
   t(key: string): string {
     const translations: Record<string, string> = {
       'superadmin.title': $localize`:Main Heading|Title of the super admin dashboard@@superadmin.title:System-Administrator`,
-      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/ok.jpg`,
+      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/gut.jpg`,
       'superadmin.badge': $localize`:Badge Label|Label for system-level badge@@superadmin.badge:System`,
       'superadmin.logout': $localize`:Action Label|Logout button text for super admin@@superadmin.logout:Abmelden`,
       'superadmin.loading': $localize`:Loading State|Text shown while loading super admin data@@superadmin.loading:Daten werden geladen...`,

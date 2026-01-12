@@ -50,7 +50,7 @@ export class BoardHudComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/ok.jpg`,
+      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/gut.jpg`,
       'board.nav.names': $localize`:Nav Label|Toggle display of field names@@board.nav.names:Namen`,
       'board.nav.nutrition': $localize`:Nav Label|Toggle display of nutrition levels@@board.nav.nutrition:Mineralstoffe`,
       'board.nav.harvest': $localize`:Nav Label|Toggle display of harvest yields@@board.nav.harvest:Ernte`,

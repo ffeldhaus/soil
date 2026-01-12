@@ -138,7 +138,7 @@ export class Dashboard implements OnInit, OnDestroy {
       'ai.level.elementary': $localize`:Difficulty Label|Elementary level AI@@ai.level.elementary:Grundschule`,
       'ai.level.middle': $localize`:Difficulty Label|Middle level AI@@ai.level.middle:Mittelstufe`,
       'ai.level.high': $localize`:Difficulty Label|High level AI@@ai.level.high:Oberstufe`,
-      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/ok.jpg`,
+      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/gut.jpg`,
       'dashboard.adj.green': $localize`:Adjective|Part of random game name generation@@dashboard.adj.green:Grünes`,
       'dashboard.adj.sunny': $localize`:Adjective|Part of random game name generation@@dashboard.adj.sunny:Sonniges`,
       'dashboard.adj.golden': $localize`:Adjective|Part of random game name generation@@dashboard.adj.golden:Goldenes`,

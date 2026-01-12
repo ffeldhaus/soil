@@ -43,7 +43,7 @@ export class Board implements OnInit, OnDestroy {
       'board.login.phGameId': $localize`:Form Placeholder|Placeholder for game ID input@@board.login.phGameId:Game ID`,
       'board.login.phPlayerNum': $localize`:Form Placeholder|Placeholder for player number input@@board.login.phPlayerNum:Player Number`,
       'board.login.phPin': $localize`:Form Placeholder|Placeholder for PIN input@@board.login.phPin:PIN`,
-      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/ok.jpg`,
+      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/gut.jpg`,
       'board.nav.names': $localize`:Nav Label|Toggle display of field names@@board.nav.names:Namen`,
       'board.nav.nutrition': $localize`:Nav Label|Toggle display of nutrition levels@@board.nav.nutrition:Mineralstoffe`,
       'board.nav.harvest': $localize`:Nav Label|Toggle display of harvest yields@@board.nav.harvest:Ernte`,
@@ -608,8 +608,8 @@ export class Board implements OnInit, OnDestroy {
 
   get selectedRoundPestIcons(): string[] {
     const round = this.history.find((r) => r.number === this.viewingRound);
-    const pests = round?.result?.events?.vermin || [];
-    if (pests.length === 0) return [];
+    const pests = round?.result?.events?.vermin;
+    if (!Array.isArray(pests) || pests.length === 0) return [];
     // If there are pests, return a bug icon for now.
     // In the future we might map specific pests to different icons.
     return pests.map(() => '🐛');

@@ -71,48 +71,54 @@
       <p class="text-xl text-gray-400 max-w-2xl mx-auto">{{ t('manual.subtitle') }}</p>
     </header>
 
-    <div class="flex flex-col lg:flex-row gap-8 items-start">
+    <div class="relative flex flex-col gap-8">
       <!-- Table of Contents -->
       <aside
-        class="w-full lg:w-64 lg:sticky lg:top-24 bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl print:hidden shrink-0"
+        class="w-full xl:w-64 xl:absolute xl:-left-72 xl:top-0 xl:h-full bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl print:hidden shrink-0 z-40"
       >
-        <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
-          <span>📋</span>
-          {{ t('manual.toc.title') }}
-        </h2>
-        <nav class="flex flex-col gap-2">
-          <a
-            href="#intro"
-            class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
-          >
-            <span class="text-sm">📖</span>
-            {{ t('manual.intro.title') }}
-          </a>
-          <a
-            href="#concepts"
-            class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
-          >
-            <span class="text-sm">💡</span>
-            {{ t('manual.concepts.title') }}
-          </a>
-          <a
-            href="#crops"
-            class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
-          >
-            <span class="text-sm">🌾</span>
-            {{ t('manual.crops.title') }}
-          </a>
-          <div class="ml-4 flex flex-col gap-1 mt-1 border-l border-gray-800">
-            @for (crop of crops; track crop.id) {
-              <a
-                [href]="'#' + crop.id.toLowerCase()"
-                class="text-xs text-gray-500 hover:text-emerald-400 px-3 py-1 transition"
-              >
-                {{ crop.name }}
-              </a>
-            }
-          </div>
-        </nav>
+        <div class="xl:sticky xl:top-24">
+          <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+            <span>📋</span>
+            {{ t('manual.toc.title') }}
+          </h2>
+          <nav class="flex flex-col gap-2">
+            <a
+              routerLink="."
+              fragment="intro"
+              class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+            >
+              <span class="text-sm">📖</span>
+              {{ t('manual.intro.title') }}
+            </a>
+            <a
+              routerLink="."
+              fragment="concepts"
+              class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+            >
+              <span class="text-sm">💡</span>
+              {{ t('manual.concepts.title') }}
+            </a>
+            <a
+              routerLink="."
+              fragment="crops"
+              class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+            >
+              <span class="text-sm">🌾</span>
+              {{ t('manual.crops.title') }}
+            </a>
+            <div class="ml-4 flex flex-col gap-1 mt-1 border-l border-gray-800">
+              @for (crop of crops; track crop.id) {
+                <a
+                  routerLink="."
+                  [fragment]="crop.id.toLowerCase()"
+                  class="text-xs text-gray-500 hover:text-emerald-400 px-3 py-1 transition"
+                >
+                  {{ crop.name }}
+                </a>
+              }
+            </div>
+          </nav>
+        </div>
       </aside>
 
       <!-- Main Content -->
