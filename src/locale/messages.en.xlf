@@ -682,46 +682,6 @@
         <target>View results</target>
       </segment>
     </unit>
-    <unit id="board.login.adminDesc">
-      <notes>
-        <note category="description">Short explanation for administrator role</note>
-        <note category="meaning">Description</note>
-      </notes>
-      <segment state="translated">
-        <source>Spiel erstellen und verwalten</source>
-        <target>Create and manage game</target>
-      </segment>
-    </unit>
-    <unit id="board.login.adminTitle">
-      <notes>
-        <note category="description">Title for the administrator login section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source> Administrator </source>
-        <target>Administrator</target>
-      </segment>
-    </unit>
-    <unit id="board.login.btnGoogle">
-      <notes>
-        <note category="description">Button to sign in using Google as admin</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Mit Google anmelden</source>
-        <target>Sign in with Google</target>
-      </segment>
-    </unit>
-    <unit id="board.login.btnLogin">
-      <notes>
-        <note category="description">Button to log in as player</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Anmelden</source>
-        <target>Login</target>
-      </segment>
-    </unit>
     <unit id="board.login.phGameId">
       <notes>
         <note category="description">Placeholder for game ID input</note>
@@ -750,26 +710,6 @@
       <segment state="translated">
         <source>Player Number</source>
         <target>Player Number</target>
-      </segment>
-    </unit>
-    <unit id="board.login.playerDesc">
-      <notes>
-        <note category="description">Short explanation for player role</note>
-        <note category="meaning">Description</note>
-      </notes>
-      <segment state="translated">
-        <source>Einem bestehenden Spiel beitreten</source>
-        <target>Join an existing game</target>
-      </segment>
-    </unit>
-    <unit id="board.login.playerTitle">
-      <notes>
-        <note category="description">Title for the player login section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment state="translated">
-        <source> Spieler </source>
-        <target>Player</target>
       </segment>
     </unit>
     <unit id="board.logout">
@@ -2315,26 +2255,6 @@
         <target>Capital progression over rounds</target>
       </segment>
     </unit>
-    <unit id="finance.event.vermin">
-      <notes>
-        <note category="description">Influence of vermin on the results</note>
-        <note category="meaning">Label</note>
-      </notes>
-      <segment state="translated">
-        <source> Schädlings-Einfluss </source>
-        <target>Pest influence</target>
-      </segment>
-    </unit>
-    <unit id="finance.event.weather">
-      <notes>
-        <note category="description">Influence of weather on the results</note>
-        <note category="meaning">Label</note>
-      </notes>
-      <segment state="translated">
-        <source> Wetter-Einfluss </source>
-        <target>Weather influence</target>
-      </segment>
-    </unit>
     <unit id="finance.fertilizer">
       <notes>
         <note category="description">Usage of mineral fertilizer</note>
@@ -2365,16 +2285,6 @@
         <target>Expenses</target>
       </segment>
     </unit>
-    <unit id="finance.group.income">
-      <notes>
-        <note category="description">Income earned by players</note>
-        <note category="meaning">Group Header</note>
-      </notes>
-      <segment state="translated">
-        <source> Einnahmen </source>
-        <target>Income</target>
-      </segment>
-    </unit>
     <unit id="finance.header.category">
       <notes>
         <note category="description">Category of the financial entry</note>
@@ -2391,7 +2301,7 @@
         <note category="meaning">Row Header</note>
       </notes>
       <segment state="translated">
-        <source> Ernteverkauf </source>
+        <source>Ernteverkauf</source>
         <target>Harvest sale</target>
       </segment>
     </unit>
@@ -2403,6 +2313,16 @@
       <segment state="translated">
         <source>Investitionen</source>
         <target>Investments</target>
+      </segment>
+    </unit>
+    <unit id="finance.header.labor">
+      <notes>
+        <note category="description">Costs for labor</note>
+        <note category="meaning">Row Header</note>
+      </notes>
+      <segment state="initial">
+        <source>Personalkosten</source>
+        <target>Personalkosten</target>
       </segment>
     </unit>
     <unit id="finance.header.running">
@@ -2423,16 +2343,6 @@
       <segment state="translated">
         <source>Saatgut</source>
         <target>Seeds</target>
-      </segment>
-    </unit>
-    <unit id="finance.noRounds">
-      <notes>
-        <note category="description">Message shown when no rounds are available</note>
-        <note category="meaning">Empty State</note>
-      </notes>
-      <segment state="translated">
-        <source>Keine Runden verfügbar</source>
-        <target>No rounds available</target>
       </segment>
     </unit>
     <unit id="finance.organic">
@@ -2465,24 +2375,24 @@
         <target>Plant protection</target>
       </segment>
     </unit>
-    <unit id="finance.playerStatus">
-      <notes>
-        <note category="description">Player status indicator</note>
-        <note category="meaning">Label</note>
-      </notes>
-      <segment state="translated">
-        <source> Status </source>
-        <target>Status</target>
-      </segment>
-    </unit>
     <unit id="finance.result.capital">
       <notes>
         <note category="description">Total capital after the round</note>
         <note category="meaning">Row Header</note>
       </notes>
-      <segment state="translated">
-        <source>Neues Gesamtkapital</source>
+      <segment state="initial">
+        <source>Gesamtkapital</source>
         <target>New total capital</target>
+      </segment>
+    </unit>
+    <unit id="finance.result.margin">
+      <notes>
+        <note category="description">Profit margin for the current round</note>
+        <note category="meaning">Row Header</note>
+      </notes>
+      <segment state="initial">
+        <source>Umsatzrendite</source>
+        <target>Umsatzrendite</target>
       </segment>
     </unit>
     <unit id="finance.result.profit">
@@ -2523,6 +2433,26 @@
       <segment state="translated">
         <source>Grundkosten</source>
         <target>Basic costs</target>
+      </segment>
+    </unit>
+    <unit id="finance.sub.baseLabor">
+      <notes>
+        <note category="description">Base labor costs</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
+      <segment state="initial">
+        <source>Lohnkosten (Grundbetrag)</source>
+        <target>Lohnkosten (Grundbetrag)</target>
+      </segment>
+    </unit>
+    <unit id="finance.sub.laborReduction">
+      <notes>
+        <note category="description">Reduction in labor costs via machines</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
+      <segment state="initial">
+        <source>Einsparung durch Maschinen</source>
+        <target>Einsparung durch Maschinen</target>
       </segment>
     </unit>
     <unit id="finance.sub.machines">
@@ -2570,8 +2500,8 @@
         <note category="description">Description of the financial report analysis</note>
         <note category="meaning">Subheading</note>
       </notes>
-      <segment state="translated">
-        <source> Detaillierte Analyse Ihrer landwirtschaftlichen Leistung </source>
+      <segment state="initial">
+        <source> Detaillierte Analyse Ihrer landwirtschaftlichen Leistung in Runde <ph id="0" equiv="INTERPOLATION" disp="{{ currentViewingRound }}"/>. Vergleichen Sie Ihre Ergebnisse mit anderen Teilnehmern und verfolgen Sie Ihre Entwicklung. </source>
         <target>Detailed analysis of your agricultural performance</target>
       </segment>
     </unit>
@@ -2583,16 +2513,6 @@
       <segment state="translated">
         <source>Finanzbericht</source>
         <target>Financial Report</target>
-      </segment>
-    </unit>
-    <unit id="finance.you">
-      <notes>
-        <note category="description">Marker for the current player in the list</note>
-        <note category="meaning">User Indicator</note>
-      </notes>
-      <segment state="translated">
-        <source>DU</source>
-        <target>YOU</target>
       </segment>
     </unit>
     <unit id="footer.impressum">

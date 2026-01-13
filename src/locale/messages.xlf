@@ -2810,60 +2810,6 @@
         <source>Spiel beendet</source>
       </segment>
     </unit>
-    <unit id="board.login.adminTitle">
-      <notes>
-        <note category="description">Title for the administrator login section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source> Administrator </source>
-      </segment>
-    </unit>
-    <unit id="board.login.adminDesc">
-      <notes>
-        <note category="description">Short explanation for administrator role</note>
-        <note category="meaning">Description</note>
-      </notes>
-      <segment>
-        <source>Spiel erstellen und verwalten</source>
-      </segment>
-    </unit>
-    <unit id="board.login.btnGoogle">
-      <notes>
-        <note category="description">Button to sign in using Google as admin</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Mit Google anmelden</source>
-      </segment>
-    </unit>
-    <unit id="board.login.playerTitle">
-      <notes>
-        <note category="description">Title for the player login section</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source> Spieler </source>
-      </segment>
-    </unit>
-    <unit id="board.login.playerDesc">
-      <notes>
-        <note category="description">Short explanation for player role</note>
-        <note category="meaning">Description</note>
-      </notes>
-      <segment>
-        <source>Einem bestehenden Spiel beitreten</source>
-      </segment>
-    </unit>
-    <unit id="board.login.btnLogin">
-      <notes>
-        <note category="description">Button to log in as player</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Anmelden</source>
-      </segment>
-    </unit>
     <unit id="finance.title">
       <notes>
         <note category="description">Title of the financial report</note>
@@ -2879,16 +2825,7 @@
         <note category="meaning">Subheading</note>
       </notes>
       <segment>
-        <source> Detaillierte Analyse Ihrer landwirtschaftlichen Leistung </source>
-      </segment>
-    </unit>
-    <unit id="finance.noRounds">
-      <notes>
-        <note category="description">Message shown when no rounds are available</note>
-        <note category="meaning">Empty State</note>
-      </notes>
-      <segment>
-        <source>Keine Runden verfügbar</source>
+        <source> Detaillierte Analyse Ihrer landwirtschaftlichen Leistung in Runde <ph id="0" equiv="INTERPOLATION" disp="{{ currentViewingRound }}"/>. Vergleichen Sie Ihre Ergebnisse mit anderen Teilnehmern und verfolgen Sie Ihre Entwicklung. </source>
       </segment>
     </unit>
     <unit id="finance.charts.capital">
@@ -2907,15 +2844,6 @@
       </notes>
       <segment>
         <source> Kategorie </source>
-      </segment>
-    </unit>
-    <unit id="finance.you">
-      <notes>
-        <note category="description">Marker for the current player in the list</note>
-        <note category="meaning">User Indicator</note>
-      </notes>
-      <segment>
-        <source>DU</source>
       </segment>
     </unit>
     <unit id="finance.group.decisions">
@@ -2990,6 +2918,24 @@
         <source>Investitionen</source>
       </segment>
     </unit>
+    <unit id="finance.header.labor">
+      <notes>
+        <note category="description">Costs for labor</note>
+        <note category="meaning">Row Header</note>
+      </notes>
+      <segment>
+        <source>Personalkosten</source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.laborReduction">
+      <notes>
+        <note category="description">Reduction in labor costs via machines</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
+      <segment>
+        <source>Einsparung durch Maschinen</source>
+      </segment>
+    </unit>
     <unit id="finance.sub.machines">
       <notes>
         <note category="description">Costs for machines</note>
@@ -3024,6 +2970,15 @@
       </notes>
       <segment>
         <source>Grundkosten</source>
+      </segment>
+    </unit>
+    <unit id="finance.sub.baseLabor">
+      <notes>
+        <note category="description">Base labor costs</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
+      <segment>
+        <source>Lohnkosten (Grundbetrag)</source>
       </segment>
     </unit>
     <unit id="finance.sub.organicControl">
@@ -3062,22 +3017,22 @@
         <source> Tierhaltung </source>
       </segment>
     </unit>
-    <unit id="finance.group.income">
-      <notes>
-        <note category="description">Income earned by players</note>
-        <note category="meaning">Group Header</note>
-      </notes>
-      <segment>
-        <source> Einnahmen </source>
-      </segment>
-    </unit>
     <unit id="finance.header.harvest">
       <notes>
         <note category="description">Income from selling harvests</note>
         <note category="meaning">Row Header</note>
       </notes>
       <segment>
-        <source> Ernteverkauf </source>
+        <source>Ernteverkauf</source>
+      </segment>
+    </unit>
+    <unit id="finance.result.margin">
+      <notes>
+        <note category="description">Profit margin for the current round</note>
+        <note category="meaning">Row Header</note>
+      </notes>
+      <segment>
+        <source>Umsatzrendite</source>
       </segment>
     </unit>
     <unit id="finance.result.profit">
@@ -3095,34 +3050,7 @@
         <note category="meaning">Row Header</note>
       </notes>
       <segment>
-        <source>Neues Gesamtkapital</source>
-      </segment>
-    </unit>
-    <unit id="finance.playerStatus">
-      <notes>
-        <note category="description">Player status indicator</note>
-        <note category="meaning">Label</note>
-      </notes>
-      <segment>
-        <source> Status </source>
-      </segment>
-    </unit>
-    <unit id="finance.event.weather">
-      <notes>
-        <note category="description">Influence of weather on the results</note>
-        <note category="meaning">Label</note>
-      </notes>
-      <segment>
-        <source> Wetter-Einfluss </source>
-      </segment>
-    </unit>
-    <unit id="finance.event.vermin">
-      <notes>
-        <note category="description">Influence of vermin on the results</note>
-        <note category="meaning">Label</note>
-      </notes>
-      <segment>
-        <source> Schädlings-Einfluss </source>
+        <source>Gesamtkapital</source>
       </segment>
     </unit>
     <unit id="crop.wheat">
