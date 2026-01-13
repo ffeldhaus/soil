@@ -144,6 +144,6 @@ describe('Finance Component Logic', () => {
 
   it('should calculate max capital correctly for chart', () => {
     (component as any).processPlayerData();
-    expect(component.getMaxCapital()).toBe(13000);
+    expect(component.getMaxCapital()).toBe(16000);
   });
 });

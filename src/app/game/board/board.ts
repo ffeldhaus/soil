@@ -16,7 +16,6 @@ import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
 import { BoardHudComponent } from './components/board-hud';
-import { BoardLoginOverlayComponent } from './components/board-login-overlay';
 
 @Component({
   selector: 'app-board',
@@ -31,7 +30,6 @@ import { BoardLoginOverlayComponent } from './components/board-login-overlay';
     FormsModule,
     LanguageSwitcherComponent,
     Finance,
-    BoardLoginOverlayComponent,
     BoardHudComponent,
   ],
   templateUrl: './board.html',
@@ -222,6 +220,10 @@ export class Board implements OnInit, OnDestroy {
 
   ngOnInit() {
     combineLatest([this.route.queryParams, this.user$]).subscribe(async ([params, user]: [Params, User | null]) => {
+      if (!user) {
+        this.router.navigate(['/']);
+        return;
+      }
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
         const claims = idTokenResult.claims;

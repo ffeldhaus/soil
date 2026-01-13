@@ -1,25 +1,18 @@
-<div class="h-screen w-screen text-white select-none relative font-sans overflow-hidden flex flex-col">
+<div class="h-screen w-screen text-white select-none relative font-sans overflow-hidden flex flex-col bg-gray-950">
   <!-- Background Image -->
-  <div class="fixed inset-0 z-0 pointer-events-none print:hidden">
+  <div class="fixed inset-0 z-0 pointer-events-none print:hidden transition-opacity duration-500"
+    [class.opacity-100]="!showFinance" [class.opacity-40]="showFinance">
     <picture>
       <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
-      <img
-        src="assets/bauernhof-landscape-hd.webp"
-        alt="Farm Background"
-        class="w-full h-full object-cover portrait:object-center landscape:object-center"
-      />
+      <img src="assets/bauernhof-landscape-hd.webp" alt="Farm Background"
+        class="w-full h-full object-cover portrait:object-center landscape:object-center" />
     </picture>
   </div>
 
   <!-- Dark overlay for readability -->
   @if (user$ | async) {
-  <div class="absolute inset-0 bg-black/30 z-0 pointer-events-none"></div>
-  }
-
-  <!-- Login Overlay -->
-  @if ((user$ | async) === null) {
-  <app-board-login-overlay [authError]="authError" (adminLogin)="login()"
-    (playerLogin)="handlePlayerLogin($event)"></app-board-login-overlay>
+  <div class="absolute inset-0 z-0 pointer-events-none transition-colors duration-500"
+    [ngClass]="showFinance ? 'bg-black/60' : 'bg-black/30'"></div>
   }
 
   @if (user$ | async; as user) {
@@ -234,7 +227,7 @@
           <!-- Pests (Left) -->
           <div class="flex gap-1 justify-end">
             @for (pest of selectedRoundPestsData; track $index) {
-              <span class="text-xl animate-bounce-slow" [title]="pest.name">{{ pest.icon }}</span>
+            <span class="text-xl animate-bounce-slow" [title]="pest.name">{{ pest.icon }}</span>
             }
           </div>
 
@@ -285,41 +278,32 @@
         }
       </div>
 
-      <!-- Grid (Flex Grow) -->
-      <div class="flex-1 w-full min-h-0 pt-1 pb-16 flex items-center justify-center board-grid-wrapper">
-        <div class="game-grid grid gap-1 max-w-7xl touch-none" [style.--cols]="cols" [style.--rows]="rows"
-          (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
-          (click)="$event.stopPropagation()">
-          @defer (hydrate on idle) {
-          @for (parcel of parcels; track parcel.index; let i = $index) {
-          <app-parcel [parcel]="parcel" [attr.data-index]="i" data-testid="parcel" class="aspect-square"
-            [selected]="isSelected(parcel.index)" [showLabels]="showLabels" [showNutrition]="showNutritionOverlay"
-            [showHarvest]="showHarvestOverlay" [showSoil]="showSoilOverlay" [isReadOnly]="isReadOnly"
-            (mousedown)="onMouseDown(parcel.index, $event)" (mouseenter)="onMouseEnter(parcel.index)">
-          </app-parcel>
-          }
+      <!-- Grid or Finance (Flex Grow) -->
+      @if (!showFinance) {
+        <div class="flex-1 w-full min-h-0 pt-1 pb-16 flex items-center justify-center board-grid-wrapper">
+          <div class="game-grid grid gap-1 max-w-7xl touch-none" [style.--cols]="cols" [style.--rows]="rows"
+            (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
+            (click)="$event.stopPropagation()">
+            @defer (hydrate on idle) {
+            @for (parcel of parcels; track parcel.index; let i = $index) {
+            <app-parcel [parcel]="parcel" [attr.data-index]="i" data-testid="parcel" class="aspect-square"
+              [selected]="isSelected(parcel.index)" [showLabels]="showLabels" [showNutrition]="showNutritionOverlay"
+              [showHarvest]="showHarvestOverlay" [showSoil]="showSoilOverlay" [isReadOnly]="isReadOnly"
+              (mousedown)="onMouseDown(parcel.index, $event)" (mouseenter)="onMouseEnter(parcel.index)">
+            </app-parcel>
+            }
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="flex-1 w-full min-h-0 pt-1 pb-16 flex items-start justify-center overflow-y-auto">
+          @if (gameState$ | async; as state) {
+            <app-finance [game]="state.game" [viewingRound]="viewingRound" [playerUid]="(user$ | async)?.uid || ''">
+            </app-finance>
           }
         </div>
-      </div>
-    </div>
-
-    <!-- Finance View Overlay -->
-    @if (showFinance) {
-    <div class="fixed inset-0 z-[60] flex flex-col">
-      <div class="absolute top-4 right-4 z-[70]">
-        <button (click)="toggleFinance()"
-          class="p-4 bg-gray-800/80 hover:bg-gray-700 text-white rounded-full backdrop-blur-lg border border-gray-700 shadow-2xl transition transform hover:scale-110">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      @if (gameState$ | async; as state) {
-      <app-finance [game]="state.game" [viewingRound]="viewingRound" [playerUid]="(user$ | async)?.uid || ''"
-        class="flex-1"></app-finance>
       }
     </div>
-    }
 
     <!-- Game End Celebration Modal -->
     @if (showGameEndModal) {
@@ -327,7 +311,8 @@
       class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-black/60 overflow-hidden">
       <!-- Confetti/Sparkles Container -->
       <div class="absolute inset-0 pointer-events-none celebration-container">
-        @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]; track i) {
+        @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+        28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]; track i) {
         <div class="confetti"></div>
         }
       </div>
@@ -347,11 +332,12 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8">
           <!-- Financial Champion -->
-              <div class="flex flex-col items-center p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-                <div class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-2">Finanz-Sieger</div>
-                <div class="text-xl font-bold text-white mb-1">{{ financialWinner?.name }}</div>
-                <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
-              </div>
+          <div class="flex flex-col items-center p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+            <div class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-2">Finanz-Sieger</div>
+            <div class="text-xl font-bold text-white mb-1">{{ financialWinner?.name }}</div>
+            <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | currency: 'EUR' : 'symbol' :
+              '1.0-0' }}</div>
+          </div>
 
           <!-- Soil Guardian -->
           <div

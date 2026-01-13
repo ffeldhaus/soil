@@ -18,6 +18,7 @@ interface DetailedExpenses {
     animals: number;
     base: number;
   };
+  labor: number;
   total: number;
 }
 
@@ -41,6 +42,7 @@ interface PlayerFinanceData {
   detailedExpenses?: DetailedExpenses;
   detailedIncome?: DetailedIncome;
   capitalHistory: number[]; // History up to currentViewingRound
+  profitMargin: number;
   isCurrentPlayer: boolean;
 }
 
@@ -51,6 +53,7 @@ interface PlayerFinanceData {
   templateUrl: './finance.html',
 })
 export class Finance implements OnChanges {
+  readonly GAME_CONSTANTS = GAME_CONSTANTS;
   t(key: string): string {
     const translations: Record<string, string> = {
       'crop.wheat': $localize`:@@crop.wheat:Weizen`,
@@ -79,15 +82,14 @@ export class Finance implements OnChanges {
     seeds: false,
     investments: false,
     running: false,
+    labor: false,
     harvest: false,
   };
 
   ngOnChanges() {
     if (!this.game) return;
 
-    if (this.currentViewingRound === 0 || this.currentViewingRound > this.game.currentRoundNumber) {
-      this.currentViewingRound = this.viewingRound || this.game.currentRoundNumber || 1;
-    }
+    this.currentViewingRound = this.viewingRound || this.game.currentRoundNumber;
 
     this.updateAvailableRounds();
     this.processPlayerData();
@@ -134,14 +136,17 @@ export class Finance implements OnChanges {
     }
     return [];
   }
-
   private processPlayerData() {
     this.players = Object.values(this.game.players)
       .map((player) => {
-        // Capital history should start at 1000 for Round 0, then follow results
+        // Capital history should represent capital at the START of each round
+        // history[0] = starting capital (start of round 1)
+        // history[1] = result of round 1 (start of round 2)
+        // ...
+        // history[N] = result of round N (start of round N+1)
         const historyData = [1000];
         player.history.forEach((r) => {
-          if (r.number <= this.currentViewingRound && r.result) {
+          if (r.result) {
             historyData.push(r.result.capital);
           }
         });
@@ -150,6 +155,7 @@ export class Finance implements OnChanges {
           uid: player.uid,
           name: player.displayName || `Player ${player.uid.substring(0, 4)}`,
           capitalHistory: historyData,
+          profitMargin: 0,
           isCurrentPlayer: player.uid === this.playerUid,
         };
 
@@ -228,6 +234,7 @@ export class Finance implements OnChanges {
             ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC
             : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL) * costScale,
       },
+      labor: result.expenses.labor || 0,
       total: result.expenses.total,
     };
 
@@ -235,11 +242,21 @@ export class Finance implements OnChanges {
       harvest: harvestIncome,
       total: result.income,
     };
+
+    if (result.income > 0) {
+      data.profitMargin = (result.profit / result.income) * 100;
+    } else if (result.profit < 0) {
+      data.profitMargin = -100;
+    } else {
+      data.profitMargin = 0;
+    }
   }
 
   // --- Graph Helpers ---
 
-  readonly GRAPH_MARGIN = { top: 10, right: 20, bottom: 20, left: 80 };
+  readonly VIEWBOX_WIDTH = 1000;
+  readonly VIEWBOX_HEIGHT = 300;
+  readonly GRAPH_MARGIN = { top: 30, right: 40, bottom: 60, left: 120 };
 
   getMaxCapital(): number {
     let max = 1000;
@@ -248,32 +265,54 @@ export class Finance implements OnChanges {
         if (c > max) max = c;
       });
     });
+    // Add 20% headroom
+    max = max * 1.2;
     return Math.ceil(max / 500) * 500; // Round to nearest 500
   }
 
   getGraphPath(history: number[]): string {
     if (history.length < 2) return '';
     const maxCap = this.getMaxCapital();
-    const maxRound = this.availableRounds.length;
+    const maxRound = this.availableRounds.length || 1;
 
     return history
       .map((cap, roundIdx) => {
         const x =
-          this.GRAPH_MARGIN.left + (roundIdx / maxRound) * (1000 - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right);
-        const y = this.GRAPH_MARGIN.top + (1 - cap / maxCap) * (100 - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom);
+          this.GRAPH_MARGIN.left +
+          (roundIdx / maxRound) * (this.VIEWBOX_WIDTH - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right);
+        const y =
+          this.GRAPH_MARGIN.top +
+          (1 - cap / maxCap) * (this.VIEWBOX_HEIGHT - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom);
         return `${roundIdx === 0 ? 'M' : 'L'} ${x} ${y}`;
       })
       .join(' ');
   }
 
+  getGraphAreaPath(history: number[]): string {
+    const linePath = this.getGraphPath(history);
+    if (!linePath) return '';
+
+    const maxRound = this.availableRounds.length || 1;
+    const xEnd =
+      this.GRAPH_MARGIN.left +
+      ((history.length - 1) / maxRound) * (this.VIEWBOX_WIDTH - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right);
+    const yBottom = this.VIEWBOX_HEIGHT - this.GRAPH_MARGIN.bottom;
+
+    return `${linePath} L ${xEnd} ${yBottom} L ${this.GRAPH_MARGIN.left} ${yBottom} Z`;
+  }
+
   getGraphPoints(history: number[]) {
     const maxCap = this.getMaxCapital();
-    const maxRound = this.availableRounds.length;
+    const maxRound = this.availableRounds.length || 1;
     return history.map((cap, roundIdx) => ({
-      x: this.GRAPH_MARGIN.left + (roundIdx / maxRound) * (1000 - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right),
-      y: this.GRAPH_MARGIN.top + (1 - cap / maxCap) * (100 - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom),
+      x:
+        this.GRAPH_MARGIN.left +
+        (roundIdx / maxRound) * (this.VIEWBOX_WIDTH - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right),
+      y:
+        this.GRAPH_MARGIN.top +
+        (1 - cap / maxCap) * (this.VIEWBOX_HEIGHT - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom),
       val: cap,
-      round: roundIdx,
+      round: roundIdx + 1,
     }));
   }
 }
