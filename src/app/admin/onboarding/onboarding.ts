@@ -9,19 +9,16 @@ import { RouterLink } from '@angular/router';
     <div
       class="min-h-screen relative font-sans text-gray-100 overflow-hidden flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8"
     >
-      <!-- Background Image with Overlay -->
+      <!-- Background Image -->
       <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
         <picture>
-          <source srcset="assets/bauernhof-portrait-hd.webp" media="(orientation: portrait)" />
+          <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
           <img
-            src="assets/bauernhof-landscape-hd.webp"
+            src="assets/images/bauernhof-landscape-dunkel.webp"
             alt="Farm Background"
             class="w-full h-full object-cover portrait:object-center landscape:object-center"
           />
         </picture>
-        <div
-          class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900/90 backdrop-blur-[2px]"
-        ></div>
       </div>
 
       <div class="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">

@@ -27,6 +27,12 @@ This document outlines the local development strategy, testing procedures, and c
 - Java (required for Firebase Emulators)
 - [lychee](https://github.com/lycheeverse/lychee) (required for link checking)
 
+## Search Efficiency
+
+- NEVER run a `grep` recursively in the project without excluding files/folders from `.gitignore` (e.g., using `--exclude-dir` or similar flags).
+- PREFER using `ripgrep` (`rg`) as it automatically respects `.gitignore` and is significantly faster.
+- Avoid searching through large generated directories like `dist/`, `node_modules/`, `.angular/`, or `coverage/`.
+
 ## Local Development Environment
 
 We use the **Firebase Emulator Suite** to mirror the production environment locally. This ensures that our local testing is accurate and safe.
