@@ -62,7 +62,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.1",
-    "@types/node": "^22.19.3",
+    "@types/node": "^24.10.8",
     "@types/qrcode-generator": "^0.0.16",
     "@vitest/coverage-v8": "^4.0.16",
     "autoprefixer": "^10.4.19",
