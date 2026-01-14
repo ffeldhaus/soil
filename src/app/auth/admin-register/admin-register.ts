@@ -126,7 +126,7 @@ export class AdminRegisterComponent implements OnInit {
         return;
       }
 
-      this.router.navigate(['/admin/dashboard']);
+      this.router.navigate(['/admin']);
     } catch (error: unknown) {
       console.error('Registration error:', error);
       this.errorMessage =

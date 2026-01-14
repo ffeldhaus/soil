@@ -374,8 +374,9 @@ export class Dashboard implements OnInit, OnDestroy {
                     return;
                   }
 
-                  this.isPendingApproval = true;
+                  // If no document found, the user needs to complete onboarding/registration
                   this.isLoading = false;
+                  this.router.navigate(['/admin/register']);
                 }
                 this.cdr.detectChanges();
               });
