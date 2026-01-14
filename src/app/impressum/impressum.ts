@@ -52,9 +52,9 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         </div>
       </nav>
 
-      <div class="relative z-10 max-w-4xl mx-auto p-6 md:p-12 space-y-8 animate-fade-in">
+      <div class="relative z-10 max-w-5xl mx-auto pt-[72px] pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
         <!-- Header -->
-        <header class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl flex justify-between items-center">
+        <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl flex justify-between items-center portrait:rounded-none portrait:border-x-0">
           <div>
             <h1 i18n="Main Heading|Title of the imprint page@@impressum.title" class="text-4xl font-serif font-bold text-emerald-500 mb-2">Impressum</h1>
             <p i18n="Subheading|Legal information and contact subtitle@@impressum.subtitle" class="text-gray-400">Rechtliche Informationen & Kontakt</p>
@@ -62,17 +62,15 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         </header>
 
         <!-- Projekt -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-4">
+        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 i18n="Heading|Project information section@@impressum.project" class="text-2xl font-bold text-white">Projekt</h2>
-          <div class="bg-gray-950/50 p-6 rounded-xl border border-white/5">
-            <p i18n="Footer Text|Copyright and project info@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
-          </div>
+          <p i18n="Footer Text|Copyright and project info@@landing.footer" class="text-gray-300">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
         </section>
 
         <!-- Kontakt -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-4">
+        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 i18n="Heading|Contact information section@@impressum.contact" class="text-2xl font-bold text-white">Kontakt</h2>
-          <div class="bg-gray-950/50 p-6 rounded-xl border border-white/5">
+          <div class="text-gray-300 space-y-1">
             <p class="font-bold text-white">Florian Feldhaus</p>
             <p>Kanonikerweg 2</p>
             <p>59494 Soest</p>
@@ -86,9 +84,9 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         </section>
 
         <!-- Verantwortlich -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-4">
+        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 i18n="Heading|Section identifying the person responsible for content@@impressum.responsible" class="text-2xl font-bold text-white">Verantwortlich</h2>
-          <div class="bg-gray-950/50 p-6 rounded-xl border border-white/5">
+          <div class="text-gray-300 space-y-1">
             <p class="font-bold text-white">Nina Wolf</p>
             <p>Kanonikerweg 2</p>
             <p>59494 Soest</p>
@@ -102,9 +100,9 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
         </section>
 
         <!-- Disclaimer -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-4">
+        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 i18n="Heading|Title for the disclaimer section@@impressum.disclaimer.title" class="text-2xl font-bold text-white">Haftungsausschluss</h2>
-          <div class="bg-gray-950/50 p-6 rounded-xl border border-white/5 text-sm leading-relaxed space-y-4">
+          <div class="text-sm leading-relaxed space-y-4 text-gray-300">
             <p i18n="Legal Text|Disclaimer regarding external links@@impressum.disclaimer.p1">
               Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für
               den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.

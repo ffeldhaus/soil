@@ -80,20 +80,6 @@ These run automatically on every `git commit`:
 These run automatically on `git push`:
 - **Cypress**: Runs the complete E2E test suite.
 
-### Manual Commands (If needed)
-While hooks handle the heavy lifting, you can still run checks manually:
-- **Frontend Unit Tests**: `npm run test:unit`
-- **Backend Unit Tests**: `npm run test:functions`
-- **E2E Tests**: `npm run test:e2e`
-- **Linting**: `npm run lint`
-
-### 3. Continuous Integration (CI) & Standards
-
-Before pushing code, you can ensure everything is perfect with the full suite.
-
-- **Full Test Suite**: `npm run test:ci`
-- **Linting (Functions)**: `npm run lint --prefix functions`
-
 ## Performance, SEO & Accessibility
 
 - **Performance**: Ensure fast load times and smooth interactions.

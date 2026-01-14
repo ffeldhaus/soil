@@ -23,7 +23,8 @@ exclude = [
   '&quot',                                                # Fix for XLF parsing issues
   'assets/.*',                                            # Angular relative asset paths
   'https://admin.google.com/',                            # Requires login
-  'site.webmanifest'                                      # Relative link in index.html
+  'site.webmanifest',                                     # Relative link in index.html
+  'https://mcp.context7.com/mcp'                          # MCP Server URL
 ]
 
 # Exclude paths from getting checked.
