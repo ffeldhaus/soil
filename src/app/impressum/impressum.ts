@@ -23,10 +23,10 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
       <!-- Navigation Bar -->
       <nav
-        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
+        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
       >
         <div class="flex items-center gap-4">
-          <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL IMPRESSUM</h1>
+          <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider">SOIL</h1>
         </div>
 
         <div class="flex items-center gap-3">
@@ -36,11 +36,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
           <a
             routerLink="/"
-            class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+            class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
             title="Back to Landing Page"
             i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"

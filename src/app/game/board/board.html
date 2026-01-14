@@ -1,4 +1,4 @@
-<div class="h-screen w-screen text-white select-none relative font-sans overflow-hidden flex flex-col bg-gray-950">
+<div class="h-screen w-screen text-white select-none relative font-sans overflow-hidden flex flex-col bg-gray-950 no-overscroll">
   <!-- Background Image -->
   <div class="fixed inset-0 z-0 pointer-events-none print:hidden transition-opacity duration-500">
     <picture>
@@ -162,7 +162,7 @@
 
     <!-- Main Board Area -->
     <div
-      class="relative flex-1 w-full min-h-0 flex flex-col items-center justify-center overflow-hidden board-container"
+      class="relative flex-1 w-full min-h-0 flex flex-col items-center justify-center overflow-hidden board-container no-overscroll"
       (click)="onBackgroundClick($event)">
       <!-- Read Only Banner -->
       @if (showReadOnlyBanner) {

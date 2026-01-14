@@ -13,10 +13,10 @@ import { AuthService } from '../auth.service';
     <div class="min-h-screen relative bg-gray-900 text-gray-100 font-sans overflow-hidden flex flex-col">
       <!-- Navigation Bar -->
       <nav
-        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
+        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
       >
         <div class="flex items-center gap-4">
-          <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL ADMIN LOGIN</h1>
+          <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider">SOIL</h1>
         </div>
 
         <div class="flex items-center gap-3">
@@ -26,11 +26,11 @@ import { AuthService } from '../auth.service';
 
           <a
             routerLink="/"
-            class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+            class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
             title="Back to Landing Page"
             i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -94,13 +94,32 @@ import { AuthService } from '../auth.service';
                   {{ t('adminLogin.forgotPassword') }}
                 </button>
               </div>
-              <input
-                formControlName="password"
-                type="password"
-                autocomplete="current-password"
-                class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-                placeholder="••••••••"
-              />
+              <div class="relative">
+                <input
+                  formControlName="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  autocomplete="current-password"
+                  class="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white pr-12"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  (click)="togglePassword()"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition p-1"
+                  [title]="showPassword ? 'Hide password' : 'Show password'"
+                >
+                  @if (showPassword) {
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                    </svg>
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  }
+                </button>
+              </div>
             </div>
 
             <button
@@ -224,6 +243,7 @@ export class AdminLoginComponent implements OnInit {
 
   isLoading = false;
   showErrorModal = false;
+  showPassword = false;
   errorMessage = '';
   successMessage = '';
 
@@ -237,6 +257,10 @@ export class AdminLoginComponent implements OnInit {
     if (email) {
       this.loginForm.patchValue({ email });
     }
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   async onSubmit() {

@@ -36,6 +36,7 @@ export class AdminRegisterComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   showErrorModal = false;
+  showPassword = false;
   isGoogleUser = false;
   currentUser: User | null = null;
 
@@ -84,6 +85,10 @@ export class AdminRegisterComponent implements OnInit {
         }
       }
     });
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   async onSubmit() {

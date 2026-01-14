@@ -8,7 +8,7 @@
   }"
 >
   <!-- Background Image -->
-  <div class="fixed inset-0 z-0 pointer-events-none print:hidden">
+  <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none print:hidden">
     <picture>
       <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
       <img src="assets/images/bauernhof-landscape-dunkel.webp" alt="Farm background" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
@@ -17,26 +17,26 @@
 
   <!-- Navigation Bar -->
   <nav
-    class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 sticky top-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
+    class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
   >
     <div class="flex items-center gap-4">
-      <h1 class="text-xl font-bold font-serif text-emerald-500 tracking-wider">SOIL MANUAL</h1>
+      <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider">SOIL</h1>
     </div>
 
     <div class="flex items-center gap-3">
       <button
         (click)="showPrintModal = true"
-        class="flex items-center gap-2 px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-xs print:hidden"
+        class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
+        [title]="t('manual.print')"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
           />
         </svg>
-        {{ t('manual.print') }}
       </button>
 
       @defer (hydrate on interaction) {
@@ -45,11 +45,11 @@
 
       <a
         routerLink="/"
-        class="p-2 hover:bg-gray-800 rounded-lg text-white hover:text-white transition"
+        class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
         title="Back to Landing Page"
         i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"

@@ -1,11 +1,19 @@
 @import "tailwindcss";
 
+html {
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   font-family: "Noto Sans", sans-serif;
   min-height: 100vh;
-  overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
+  color-scheme: dark;
+}
+
+.no-overscroll {
+  overscroll-behavior-y: none;
 }
 
 @theme {
