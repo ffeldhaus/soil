@@ -138,15 +138,6 @@
         <source>+ Neues Spiel erstellen</source>
       </segment>
     </unit>
-    <unit id="dashboard.createGame.subsidies">
-      <notes>
-        <note category="description">Label for subsidies checkbox</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment>
-        <source>Subventionen aktivieren (Basis-Einkommen)</source>
-      </segment>
-    </unit>
     <unit id="dashboard.createGame.creating">
       <notes>
         <note category="description">Text shown while game is being created</note>
@@ -2999,6 +2990,15 @@
         <source> Pflanzenschutzmittel </source>
       </segment>
     </unit>
+    <unit id="finance.sub.subsidies">
+      <notes>
+        <note category="description">Subsidies received</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
+      <segment>
+        <source> Subventionen </source>
+      </segment>
+    </unit>
     <unit id="finance.sub.organisms">
       <notes>
         <note category="description">Costs for using beneficial organisms</note>
@@ -3023,7 +3023,7 @@
         <note category="meaning">Row Header</note>
       </notes>
       <segment>
-        <source>Ernteverkauf</source>
+        <source>Einnahmen</source>
       </segment>
     </unit>
     <unit id="finance.result.margin">
@@ -3554,7 +3554,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source> Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP). Die Basisprämie pro Hektar (Parzelle) sorgt für ein Grundauskommen, während die Öko-Prämie den Umstieg auf nachhaltige Bewirtschaftung finanziell unterstützt und Risiken abfedert. </source>
+        <source> Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP). Es setzt sich aus der Einkommensgrundstützung (Basisprämie inkl. Umverteilung von ca. 220 €/ha) und einer zusätzlichen Öko-Prämie (ca. 210 €/ha) zusammen. Letztere unterstützt den Umstieg auf ökologische Bewirtschaftung finanziell und federt die Risiken geringerer Erträge ab (Quellen: <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.bmleh.de/DE/themen/landwirtschaft/eu-agrarpolitik-und-foerderung/direktzahlung/direktzahlungen.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">BMEL</pc>, <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.agrarheute.com/management/finanzen/agrarfoerderung-2024-so-viel-geld-pro-hektar-bekommen-landwirte-618981&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Agrarheute</pc>). </source>
       </segment>
     </unit>
     <unit id="info.subsidiesTitle">
@@ -3824,7 +3824,7 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Referenzen für konventionelle Preise stammen von der <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, während Bio-Marktprämien auf Informationen von <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc> basieren. Betriebswirtschaftliche Datensammlungen des <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> dienen als Grundlage für Saatgut- und Maschinenkosten. </source>
+        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Referenzen für konventionelle Preise stammen von der <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, während Bio-Marktprämien auf Informationen von <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc> basieren. Im optionalen &quot;Fortgeschrittenen Markt&quot; werden die Preise dynamisch berechnet: Ein hohes Gesamtangebot aller Spieler führt zu sinkenden Preisen, während Knappheit die Preise steigen lässt. Betriebswirtschaftliche Datensammlungen des <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> dienen als Grundlage für Saatgut- und Maschinenkosten. </source>
       </segment>
     </unit>
     <unit id="info.pricingTitle">
@@ -4058,7 +4058,7 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment>
-        <source>Der Vorfruchtwert bestimmt die Bodengesundheit.</source>
+        <source>Der Vorfruchtwert bestimmt die Bodengesundheit. Brachen helfen dem Boden, sich zu regenerieren.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.requirements.title">
@@ -4130,7 +4130,7 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment>
-        <source>Marktpreise schwanken zwischen Konventionell und Bio.</source>
+        <source>Marktpreise schwanken zwischen Konventionell und Bio. Im fortgeschrittenen Markt werden die Preise dynamisch durch das Angebot aller Spieler und die Nachfrage bestimmt.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.machines.title">
@@ -4148,7 +4148,7 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment>
-        <source>Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie.</source>
+        <source>Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie. Tiere (Gras) sind für den organischen Dünger im Bio-Anbau essenziell.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.bio.title">
@@ -4764,7 +4764,25 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment>
-        <source>Du bewirtschaftest deine Felder über mehrere Jahre. In jeder Runde entscheidest du, welche Kulturen du anbaust und wie du sie pflegst. Dabei beeinflussen Faktoren wie Fruchtfolge, Düngung, Pflanzenschutz und das Wetter deinen Erfolg. Beachte: Ökologischer Anbau (Bio) führt zu ca. 20% geringeren Erträgen, wird aber durch höhere Marktpreise und staatliche Prämien ausgeglichen.</source>
+        <source>Du bewirtschaftest deine Felder über mehrere Jahre. In jeder Runde entscheidest du, welche Kulturen du anbaust und wie du sie pflegst. Dabei beeinflussen Faktoren wie Fruchtfolge, Düngung, Pflanzenschutz und das Wetter deinen Erfolg. Beachte: Ökologischer Anbau (Bio) führt zu signifikant geringeren Erträgen, wird aber durch höhere Marktpreise und staatliche Prämien ausgeglichen.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.subsidies.text">
+      <notes>
+        <note category="description">Explanation of government subsidies</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
+      <segment>
+        <source>Staatliche Zahlungen (GAP) unterstützen die Landwirte. Bio-Betriebe erhalten zusätzliche Prämien.</source>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.subsidies.title">
+      <notes>
+        <note category="description">Title for subsidies section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
+      <segment>
+        <source>Subventionen</source>
       </segment>
     </unit>
     <unit id="manual.concepts.title">

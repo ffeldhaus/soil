@@ -223,14 +223,13 @@ describe('GameEngine', () => {
     const prevRound: Round = { number: 1, decision, parcelsSnapshot: prevParcels };
 
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 10000, 20, {
-      subsidiesEnabled: true,
     });
 
     expect(round.result?.bioSiegel).to.be.false;
-    // Organic subsidy is 200/parcel, base is 150/parcel. Total 40 parcels.
-    // If Bio Siegel is lost, subsidy should only be 150 * 40 = 6000.
-    // If Bio Siegel was present, it would be (150+200) * 40 = 14000.
-    expect(round.result?.subsidies).to.equal(6000);
+    // Conventional subsidy is 220/parcel. Total 40 parcels.
+    // If Bio Siegel is lost, subsidy should only be 220 * 40 = 8800.
+    // If Bio Siegel was present, it would be (220+210) * 40 = 17200.
+    expect(round.result?.subsidies).to.equal(8800);
 
     // Income should use conventional prices
     const wheatConvPrice = 25; // from constants

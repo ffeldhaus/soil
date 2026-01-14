@@ -493,13 +493,13 @@
               <div class="flex items-center gap-2">
                 <span class="text-[10px] transition-transform duration-300"
                   [class.rotate-90]="expandedSections['harvest']">▶</span>
-                <span i18n="Row Header|Income from selling harvests@@finance.header.harvest">Ernteverkauf</span>
+                <span i18n="Row Header|Income from selling harvests@@finance.header.harvest">Einnahmen</span>
               </div>
             </td>
             @for (p of players; track p) {
             <td class="p-3 border-b border-gray-800/50 text-center font-black text-emerald-500/80">
               @if (!expandedSections['harvest']) {
-              +{{ p.result?.income | currency: 'EUR' : 'symbol' : '1.0-0' }}
+              +{{ p.detailedIncome?.total | currency: 'EUR' : 'symbol' : '1.0-0' }}
               }
             </td>
             }
@@ -509,17 +509,42 @@
             <td class="p-3 pl-12 text-sm font-bold text-emerald-400">Gesamt</td>
             @for (p of players; track p) {
             <td class="p-3 text-center font-black text-emerald-500">
-              +{{ p.result?.income | currency: 'EUR' : 'symbol' : '1.0-0' }}
+              +{{ p.detailedIncome?.total | currency: 'EUR' : 'symbol' : '1.0-0' }}
             </td>
+            }
+          </tr>
+          <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
+            <td i18n="Sub-category Label|Subsidies received@@finance.sub.subsidies"
+              class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">
+              Subventionen
+            </td>
+            @for (p of players; track p) {
+            <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
+              {{ p.detailedIncome?.subsidies || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            </td>
+            }
+          </tr>
+          <tr class="bg-black/5 text-[10px] uppercase font-bold text-gray-500">
+            <td class="p-1 pl-12 border-b border-gray-800/20">Ernteverkauf</td>
+            @for (p of players; track p) {
+            <td class="p-1 border-b border-gray-800/20 text-center"></td>
             }
           </tr>
           @for (crop of ['Wheat', 'Corn', 'Potato', 'Beet', 'Barley', 'Oat', 'Rye', 'Fieldbean']; track crop) {
           <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
-            <td class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">{{ t('crop.' + crop.toLowerCase()) }}
+            <td class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">
+              {{ t('crop.' + crop.toLowerCase()) }}
             </td>
             @for (p of players; track p) {
             <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
-              {{ p.detailedIncome?.harvest?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+              <div class="flex flex-col items-center">
+                <span>{{ p.detailedIncome?.harvest?.[crop] || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+                @if (p.result?.marketPrices?.[crop]) {
+                  <span class="text-[9px] text-emerald-500/40 font-bold">
+                    @ {{ p.result?.marketPrices?.[crop] | currency: 'EUR' : 'symbol' : '1.0-2' }}
+                  </span>
+                }
+              </div>
             </td>
             }
           </tr>

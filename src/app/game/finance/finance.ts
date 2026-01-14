@@ -24,6 +24,7 @@ interface DetailedExpenses {
 
 interface DetailedIncome {
   harvest: Record<string, number>;
+  subsidies: number;
   total: number;
 }
 
@@ -210,9 +211,12 @@ export class Finance implements OnChanges {
     const harvestIncome: Record<string, number> = {};
     Object.entries(result.harvestSummary).forEach(([crop, amount]) => {
       if (crop !== 'Fallow' && crop !== 'Grass' && GAME_CONSTANTS.CROPS[crop]) {
-        const price = decision.organic
-          ? GAME_CONSTANTS.CROPS[crop].marketValue.organic
-          : GAME_CONSTANTS.CROPS[crop].marketValue.conventional;
+        let price = result.marketPrices?.[crop];
+        if (price === undefined) {
+          price = decision.organic
+            ? GAME_CONSTANTS.CROPS[crop].marketValue.organic
+            : GAME_CONSTANTS.CROPS[crop].marketValue.conventional;
+        }
         harvestIncome[crop] = (harvestIncome[crop] || 0) + amount * price;
       }
     });
@@ -240,7 +244,8 @@ export class Finance implements OnChanges {
 
     data.detailedIncome = {
       harvest: harvestIncome,
-      total: result.income,
+      subsidies: result.subsidies || 0,
+      total: result.income + (result.subsidies || 0),
     };
 
     if (result.income > 0) {

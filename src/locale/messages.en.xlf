@@ -1340,16 +1340,6 @@
         <target>+ Create new game</target>
       </segment>
     </unit>
-    <unit id="dashboard.createGame.subsidies">
-      <notes>
-        <note category="description">Label for subsidies checkbox</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Subventionen aktivieren (Basis-Einkommen)</source>
-        <target>Enable Subsidies (Base Income)</target>
-      </segment>
-    </unit>
     <unit id="dashboard.createGame.title">
       <notes>
         <note category="description">Title for the game creation form</note>
@@ -2301,8 +2291,8 @@
         <note category="meaning">Row Header</note>
       </notes>
       <segment state="translated">
-        <source>Ernteverkauf</source>
-        <target>Harvest sale</target>
+        <source>Einnahmen</source>
+        <target>Income</target>
       </segment>
     </unit>
     <unit id="finance.header.investments">
@@ -2320,9 +2310,9 @@
         <note category="description">Costs for labor</note>
         <note category="meaning">Row Header</note>
       </notes>
-      <segment state="initial">
+      <segment state="translated">
         <source>Personalkosten</source>
-        <target>Personalkosten</target>
+        <target>Labor Costs</target>
       </segment>
     </unit>
     <unit id="finance.header.running">
@@ -2380,9 +2370,9 @@
         <note category="description">Total capital after the round</note>
         <note category="meaning">Row Header</note>
       </notes>
-      <segment state="initial">
+      <segment state="translated">
         <source>Gesamtkapital</source>
-        <target>New total capital</target>
+        <target>Total Capital</target>
       </segment>
     </unit>
     <unit id="finance.result.margin">
@@ -2390,9 +2380,9 @@
         <note category="description">Profit margin for the current round</note>
         <note category="meaning">Row Header</note>
       </notes>
-      <segment state="initial">
+      <segment state="translated">
         <source>Umsatzrendite</source>
-        <target>Umsatzrendite</target>
+        <target>Profit Margin</target>
       </segment>
     </unit>
     <unit id="finance.result.profit">
@@ -2440,9 +2430,9 @@
         <note category="description">Base labor costs</note>
         <note category="meaning">Sub-category Label</note>
       </notes>
-      <segment state="initial">
+      <segment state="translated">
         <source>Lohnkosten (Grundbetrag)</source>
-        <target>Lohnkosten (Grundbetrag)</target>
+        <target>Labor Costs (Base)</target>
       </segment>
     </unit>
     <unit id="finance.sub.laborReduction">
@@ -2450,9 +2440,9 @@
         <note category="description">Reduction in labor costs via machines</note>
         <note category="meaning">Sub-category Label</note>
       </notes>
-      <segment state="initial">
+      <segment state="translated">
         <source>Einsparung durch Maschinen</source>
-        <target>Einsparung durch Maschinen</target>
+        <target>Savings via Machines</target>
       </segment>
     </unit>
     <unit id="finance.sub.machines">
@@ -2495,14 +2485,24 @@
         <target>Pesticides</target>
       </segment>
     </unit>
+    <unit id="finance.sub.subsidies">
+      <notes>
+        <note category="description">Subsidies received</note>
+        <note category="meaning">Sub-category Label</note>
+      </notes>
+      <segment state="translated">
+        <source> Subventionen </source>
+        <target> Subsidies </target>
+      </segment>
+    </unit>
     <unit id="finance.subtitle">
       <notes>
         <note category="description">Description of the financial report analysis</note>
         <note category="meaning">Subheading</note>
       </notes>
-      <segment state="initial">
+      <segment state="translated">
         <source> Detaillierte Analyse Ihrer landwirtschaftlichen Leistung in Runde <ph id="0" equiv="INTERPOLATION" disp="{{ currentViewingRound }}"/>. Vergleichen Sie Ihre Ergebnisse mit anderen Teilnehmern und verfolgen Sie Ihre Entwicklung. </source>
-        <target>Detailed analysis of your agricultural performance</target>
+        <target>Detailed analysis of your agricultural performance in Round <ph id="0" equiv="INTERPOLATION" disp="{{ currentViewingRound }}"/>. Compare your results with other participants and track your development.</target>
       </segment>
     </unit>
     <unit id="finance.title">
@@ -2811,8 +2811,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Referenzen für konventionelle Preise stammen von der <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, während Bio-Marktprämien auf Informationen von <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc> basieren. Betriebswirtschaftliche Datensammlungen des <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> dienen als Grundlage für Saatgut- und Maschinenkosten. </source>
-        <target>Prices for seeds and harvests are based on historical market data (approx. 2022-2024). References for conventional prices come from the <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, while organic market premiums are based on information from <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc>. Economic data collections from the <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> serve as the basis for seed and machinery costs.</target>
+        <source> Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024). Referenzen für konventionelle Preise stammen von der <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, während Bio-Marktprämien auf Informationen von <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc> basieren. Im optionalen &quot;Fortgeschrittenen Markt&quot; werden die Preise dynamisch berechnet: Ein hohes Gesamtangebot aller Spieler führt zu sinkenden Preisen, während Knappheit die Preise steigen lässt. Betriebswirtschaftliche Datensammlungen des <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> dienen als Grundlage für Saatgut- und Maschinenkosten. </source>
+        <target>Prices for seeds and harvests are based on historical market data (approx. 2022-2024). References for conventional prices come from the <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ami-informiert.de/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">AMI</pc>, while organic market premiums are based on information from <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Ökolandbau.de</pc>. In the optional &quot;Advanced Market&quot;, prices are calculated dynamically: a high total supply from all players leads to falling prices, while scarcity causes prices to rise. Economic data collections from the <pc id="2" equivStart="START_LINK_2" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">KTBL</pc> serve as the basis for seed and machinery costs.</target>
       </segment>
     </unit>
     <unit id="info.pricingTitle">
@@ -2841,8 +2841,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source> Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP). Die Basisprämie pro Hektar (Parzelle) sorgt für ein Grundauskommen, während die Öko-Prämie den Umstieg auf nachhaltige Bewirtschaftung finanziell unterstützt und Risiken abfedert. </source>
-        <target>The simplified subsidy model is based on the EU agricultural policy (CAP). The basic premium per hectare (parcel) ensures a basic income, while the eco-premium provides financial support for the transition to sustainable management and cushions risks.</target>
+        <source> Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP). Es setzt sich aus der Einkommensgrundstützung (Basisprämie inkl. Umverteilung von ca. 220 €/ha) und einer zusätzlichen Öko-Prämie (ca. 210 €/ha) zusammen. Letztere unterstützt den Umstieg auf ökologische Bewirtschaftung finanziell und federt die Risiken geringerer Erträge ab (Quellen: <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.bmleh.de/DE/themen/landwirtschaft/eu-agrarpolitik-und-foerderung/direktzahlung/direktzahlungen.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">BMEL</pc>, <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.agrarheute.com/management/finanzen/agrarfoerderung-2024-so-viel-geld-pro-hektar-bekommen-landwirte-618981&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Agrarheute</pc>). </source>
+        <target>The simplified subsidy model is based on the EU agricultural policy (CAP). It consists of basic income support (basic premium including redistribution of approx. 220 €/ha) and an additional eco-premium (approx. 210 €/ha). The latter provides financial support for the transition to organic farming and cushions the risks of lower yields (Sources: <pc id="0" equivStart="START_LINK" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.bmleh.de/DE/themen/landwirtschaft/eu-agrarpolitik-und-foerderung/direktzahlung/direktzahlungen.html&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">BMEL</pc>, <pc id="1" equivStart="START_LINK_1" equivEnd="CLOSE_LINK" type="link" dispStart="&lt;a href=&quot;https://www.agrarheute.com/management/finanzen/agrarfoerderung-2024-so-viel-geld-pro-hektar-bekommen-landwirte-618981&quot; target=&quot;_blank&quot; class=&quot;text-emerald-400 hover:underline&quot;&gt;" dispEnd="&lt;/a&gt;">Agrarheute</pc>).</target>
       </segment>
     </unit>
     <unit id="info.subsidiesTitle">
@@ -3141,8 +3141,8 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment state="translated">
-        <source>Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie.</source>
-        <target>The EU organic logo is only awarded if synthetic fertilizers and pesticides are consistently avoided. Only then will you receive the higher organic market prices and the eco-premium.</target>
+        <source>Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie. Tiere (Gras) sind für den organischen Dünger im Bio-Anbau essenziell.</source>
+        <target>The EU organic logo is only awarded if synthetic fertilizers and pesticides are consistently avoided. Only then will you receive the higher organic market prices and the eco-premium. Animals (grass) are essential for organic fertilizer in organic farming.</target>
       </segment>
     </unit>
     <unit id="manual.concepts.bio.title">
@@ -3201,8 +3201,8 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment state="translated">
-        <source>Marktpreise schwanken zwischen Konventionell und Bio.</source>
-        <target>Market prices fluctuate between conventional and organic.</target>
+        <source>Marktpreise schwanken zwischen Konventionell und Bio. Im fortgeschrittenen Markt werden die Preise dynamisch durch das Angebot aller Spieler und die Nachfrage bestimmt.</source>
+        <target>Market prices fluctuate between conventional and organic. In the advanced market, prices are determined dynamically by the supply of all players and the demand.</target>
       </segment>
     </unit>
     <unit id="manual.concepts.price.title">
@@ -3241,8 +3241,8 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment state="translated">
-        <source>Der Vorfruchtwert bestimmt die Bodengesundheit.</source>
-        <target>The pre-crop value determines soil health.</target>
+        <source>Der Vorfruchtwert bestimmt die Bodengesundheit. Brachen helfen dem Boden, sich zu regenerieren.</source>
+        <target>The previous crop value determines the soil health. Fallow land helps the soil to regenerate.</target>
       </segment>
     </unit>
     <unit id="manual.concepts.rotation.title">
@@ -3253,6 +3253,26 @@
       <segment state="translated">
         <source>Fruchtfolge</source>
         <target>Crop Rotation</target>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.subsidies.text">
+      <notes>
+        <note category="description">Explanation of government subsidies</note>
+        <note category="meaning">Concept Text</note>
+      </notes>
+      <segment state="translated">
+        <source>Staatliche Zahlungen (GAP) unterstützen die Landwirte. Bio-Betriebe erhalten zusätzliche Prämien.</source>
+        <target>Government payments (CAP) support farmers. Organic farms receive additional premiums.</target>
+      </segment>
+    </unit>
+    <unit id="manual.concepts.subsidies.title">
+      <notes>
+        <note category="description">Title for subsidies section</note>
+        <note category="meaning">Concept Title</note>
+      </notes>
+      <segment state="translated">
+        <source>Subventionen</source>
+        <target>Subsidies</target>
       </segment>
     </unit>
     <unit id="manual.concepts.title">
@@ -3481,8 +3501,8 @@
         <note category="meaning">Info Text</note>
       </notes>
       <segment state="translated">
-        <source>Du bewirtschaftest deine Felder über mehrere Jahre. In jeder Runde entscheidest du, welche Kulturen du anbaust und wie du sie pflegst. Dabei beeinflussen Faktoren wie Fruchtfolge, Düngung, Pflanzenschutz und das Wetter deinen Erfolg. Beachte: Ökologischer Anbau (Bio) führt zu ca. 20% geringeren Erträgen, wird aber durch höhere Marktpreise und staatliche Prämien ausgeglichen.</source>
-        <target>You manage your fields over several years. In each round, you decide which crops to grow and how to care for them. Factors such as crop rotation, fertilization, plant protection, and the weather influence your success. Note: Organic cultivation (Bio) leads to approx. 20% lower yields but is offset by higher market prices and government premiums.</target>
+        <source>Du bewirtschaftest deine Felder über mehrere Jahre. In jeder Runde entscheidest du, welche Kulturen du anbaust und wie du sie pflegst. Dabei beeinflussen Faktoren wie Fruchtfolge, Düngung, Pflanzenschutz und das Wetter deinen Erfolg. Beachte: Ökologischer Anbau (Bio) führt zu signifikant geringeren Erträgen, wird aber durch höhere Marktpreise und staatliche Prämien ausgeglichen.</source>
+        <target>You manage your fields over several years. In each round, you decide which crops to grow and how to care for them. Factors such as crop rotation, fertilization, plant protection, and the weather influence your success. Note: Organic cultivation (Bio) leads to significantly lower yields but is offset by higher market prices and government premiums.</target>
       </segment>
     </unit>
     <unit id="manual.intro.mechanics.title">

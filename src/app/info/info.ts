@@ -99,7 +99,9 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                     <a href="https://www.ami-informiert.de/" target="_blank" class="text-emerald-400 hover:underline">AMI</a>,
                     während Bio-Marktprämien auf Informationen von
                     <a href="https://www.oekolandbau.de/bio-in-der-praxis/oekologische-landwirtschaft/" target="_blank" class="text-emerald-400 hover:underline">Ökolandbau.de</a>
-                    basieren. Betriebswirtschaftliche Datensammlungen des
+                    basieren. Im optionalen "Fortgeschrittenen Markt" werden die Preise dynamisch berechnet: 
+                    Ein hohes Gesamtangebot aller Spieler führt zu sinkenden Preisen, während Knappheit die Preise steigen lässt.
+                    Betriebswirtschaftliche Datensammlungen des
                     <a href="https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege" target="_blank" class="text-emerald-400 hover:underline">KTBL</a>
                     dienen als Grundlage für Saatgut- und Maschinenkosten.
                   </p>
@@ -116,8 +118,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
                   <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for subsidies logic@@info.subsidiesTitle">Subventionen</h3>
                   <p class="text-sm" i18n="Info Text|Explanation of subsidies@@info.subsidiesText">
                     Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP).
-                    Die Basisprämie pro Hektar (Parzelle) sorgt für ein Grundauskommen, während die Öko-Prämie den Umstieg
-                    auf nachhaltige Bewirtschaftung finanziell unterstützt und Risiken abfedert.
+                    Es setzt sich aus der Einkommensgrundstützung (Basisprämie inkl. Umverteilung von ca. 220 €/ha) und
+                    einer zusätzlichen Öko-Prämie (ca. 210 €/ha) zusammen. Letztere unterstützt den Umstieg auf
+                    ökologische Bewirtschaftung finanziell und federt die Risiken geringerer Erträge ab (Quellen:
+                    <a href="https://www.bmleh.de/DE/themen/landwirtschaft/eu-agrarpolitik-und-foerderung/direktzahlung/direktzahlungen.html" target="_blank" class="text-emerald-400 hover:underline">BMEL</a>,
+                    <a href="https://www.agrarheute.com/management/finanzen/agrarfoerderung-2024-so-viel-geld-pro-hektar-bekommen-landwirte-618981" target="_blank" class="text-emerald-400 hover:underline">Agrarheute</a>).
                   </p>
                 </div>
               </div>

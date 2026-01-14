@@ -22,7 +22,7 @@
       <div class="grid grid-cols-2 gap-4 text-xs">
         <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
           <span class="text-gray-500 block uppercase tracking-tighter" i18n="Label|Total income@@roundResult.totalIncome">Einnahmen</span>
-          <span class="text-white font-mono">{{ income | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+          <span class="text-white font-mono">{{ income + subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
         </div>
         <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
           <span class="text-gray-500 block uppercase tracking-tighter" i18n="Label|Total expenses@@roundResult.totalExpenses">Ausgaben</span>

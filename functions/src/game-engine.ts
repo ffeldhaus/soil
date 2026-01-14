@@ -282,7 +282,7 @@ export class GameEngine {
 
     let yieldAmount =
       cropConfig.baseYield * soilEffect * nutritionEffect * weatherYieldEffect * pestImpact * (1 + machineYieldBonus);
-    if (decision.organic) yieldAmount *= 0.8;
+    if (decision.organic) yieldAmount *= 0.6;
     return yieldAmount;
   }
 
@@ -327,10 +327,7 @@ export class GameEngine {
       (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0);
     const totalExpenses = seedCost + laborCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
 
-    let subsidies = 0;
-    if (options?.subsidiesEnabled) {
-      subsidies = 150 * numParcels + (bioSiegel ? 200 * numParcels : 0);
-    }
+    const subsidies = 220 * numParcels + (bioSiegel ? 210 * numParcels : 0);
 
     let income = 0;
     const marketPricesUsed: Record<string, number> = {};

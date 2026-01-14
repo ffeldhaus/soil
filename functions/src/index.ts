@@ -345,7 +345,6 @@ async function performCalculation(
       roundLimit,
       {
         marketPrices,
-        subsidiesEnabled: game.config?.subsidiesEnabled,
       },
     );
 
@@ -431,7 +430,7 @@ export const createGame = onCall(async (request) => {
     name,
     // password, // Unused
     settings = { length: 20, difficulty: 'normal', playerLabel: 'Player' },
-    config = { numPlayers: 1, numRounds: 20, numAi: 0, subsidiesEnabled: false, advancedPricingEnabled: false }, // Default config
+    config = { numPlayers: 1, numRounds: 20, numAi: 0, advancedPricingEnabled: false }, // Default config
     retentionDays = 90,
   } = request.data;
 
