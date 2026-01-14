@@ -155,7 +155,7 @@ export class ManualCropCardComponent implements OnChanges {
 
   getWeatherColor(level: string): string {
     if (level === 'Stark') return 'bg-red-500';
-    if (level === 'Mäßig') return 'bg-orange-500';
+    if (level === 'Mäßig') return 'bg-yellow-500';
     return 'bg-green-500';
   }
 
