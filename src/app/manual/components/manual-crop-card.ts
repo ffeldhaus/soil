@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, type OnChanges, type SimpleChanges } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType } from '../../types';
@@ -45,7 +46,7 @@ interface RotationItem {
 @Component({
   selector: 'app-manual-crop-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './manual-crop-card.html',
   host: {
     class: 'block',

@@ -24,13 +24,28 @@
     </div>
 
     <div class="flex items-center gap-3">
+      <button
+        (click)="showPrintModal = true"
+        class="flex items-center gap-2 px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-xs print:hidden"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+          />
+        </svg>
+        {{ t('manual.print') }}
+      </button>
+
       @defer (hydrate on interaction) {
         <app-language-switcher></app-language-switcher>
       }
 
       <a
         routerLink="/"
-        class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition"
+        class="p-2 hover:bg-gray-800 rounded-lg text-white hover:text-white transition"
         title="Back to Landing Page"
         i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
       >
@@ -48,79 +63,64 @@
 
   <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 portrait:px-0 portrait:max-w-none flex flex-col gap-8">
     <header
-      class="text-center bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0 relative"
+      class="order-1 text-center bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0 relative"
     >
-      <button
-        (click)="showPrintModal = true"
-        class="absolute top-8 right-8 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-sm flex items-center gap-2 print:hidden"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-          />
-        </svg>
-        {{ t('manual.print') }}
-      </button>
-
       <h1 class="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight">
         {{ t('manual.title') }}
       </h1>
-      <p class="text-xl text-gray-400 max-w-2xl mx-auto">{{ t('manual.subtitle') }}</p>
+      <p class="text-xl text-white max-w-2xl mx-auto">{{ t('manual.subtitle') }}</p>
     </header>
 
-    <div class="relative flex flex-col gap-8">
-      <!-- Table of Contents -->
-      <aside
-        class="w-full xl:w-64 xl:absolute xl:left-full xl:ml-12 xl:top-0 xl:h-full print:hidden shrink-0 z-40"
-      >
-        <div class="xl:sticky xl:top-24 bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl h-fit">
-          <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
-            <span>📋</span>
-            {{ t('manual.toc.title') }}
-          </h2>
-          <nav class="flex flex-col gap-2">
-            <a
-              routerLink="."
-              fragment="intro"
-              class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
-            >
-              <span class="text-sm">📖</span>
-              {{ t('manual.intro.title') }}
-            </a>
-            <a
-              routerLink="."
-              fragment="concepts"
-              class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
-            >
-              <span class="text-sm">💡</span>
-              {{ t('manual.concepts.title') }}
-            </a>
-            <a
-              routerLink="."
-              fragment="crops"
-              class="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
-            >
-              <span class="text-sm">🌾</span>
-              {{ t('manual.crops.title') }}
-            </a>
-            <div class="ml-4 flex flex-col gap-1 mt-1 border-l border-gray-800">
-              @for (crop of crops; track crop.id) {
-                <a
-                  routerLink="."
-                  [fragment]="crop.id.toLowerCase()"
-                  class="text-xs text-gray-500 hover:text-emerald-400 px-3 py-1 transition"
-                >
-                  {{ crop.name }}
-                </a>
-              }
-            </div>
-          </nav>
-        </div>
-      </aside>
+    <!-- Table of Contents -->
+    <aside
+      class="order-2 w-full min-[1400px]:w-52 min-[1400px]:absolute min-[1400px]:left-full min-[1400px]:ml-2 min-[1400px]:top-12 min-[1400px]:h-full min-[1400px]:order-none print:hidden shrink-0 z-40 portrait:border-x-0"
+    >
+      <div class="min-[1400px]:sticky min-[1400px]:top-14 bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl h-fit portrait:rounded-none portrait:border-x-0">
+        <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+          <span>📋</span>
+          {{ t('manual.toc.title') }}
+        </h2>
+        <nav class="flex flex-col gap-2">
+          <a
+            routerLink="."
+            fragment="intro"
+            class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+          >
+            <span class="text-sm">📖</span>
+            {{ t('manual.intro.title') }}
+          </a>
+          <a
+            routerLink="."
+            fragment="concepts"
+            class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+          >
+            <span class="text-sm">💡</span>
+            {{ t('manual.concepts.title') }}
+          </a>
+          <a
+            routerLink="."
+            fragment="crops"
+            class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+          >
+            <span class="text-sm">🌾</span>
+            {{ t('manual.crops.title') }}
+          </a>
+          <div class="ml-4 flex flex-col gap-1 mt-1 border-l border-gray-800">
+            @for (crop of crops; track crop.id) {
+              <a
+                routerLink="."
+                [fragment]="crop.id.toLowerCase()"
+                class="text-sm text-white hover:text-emerald-400 px-3 py-1 transition"
+              >
+                {{ crop.name }}
+              </a>
+            }
+          </div>
+        </nav>
+      </div>
+    </aside>
 
+    <div class="order-3 relative flex flex-col gap-8">
       <!-- Main Content -->
       <div class="flex-1 flex flex-col gap-8 w-full min-w-0">
         <!-- General Section -->
@@ -132,7 +132,7 @@
             <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">📖</span>
             {{ t('manual.intro.title') }}
           </h2>
-          <div class="grid md:grid-cols-2 gap-12 text-gray-300 leading-relaxed print:text-gray-700">
+          <div class="grid md:grid-cols-2 gap-12 text-white leading-relaxed print:text-gray-700">
             <div>
               <h3 class="text-xl font-bold text-white mb-4 print:text-black">{{ t('manual.intro.goal.title') }}</h3>
               <p>{{ t('manual.intro.goal.text') }}</p>

@@ -11,7 +11,7 @@
     <div class="space-y-6">
       <!-- Paper Size -->
       <div>
-        <label class="block text-sm font-medium text-gray-400 mb-3">{{ t('manual.printModal.size') }}</label>
+        <label class="block text-sm font-medium text-white mb-3">{{ t('manual.printModal.size') }}</label>
         <div class="grid grid-cols-2 gap-3">
           @for (size of ['A4', 'Letter']; track size) {
             <button
@@ -20,7 +20,7 @@
               [ngClass]="
                 printSize === size
                   ? 'bg-emerald-600 border-emerald-500 text-white'
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                  : 'bg-gray-800 border-gray-700 text-white hover:border-gray-600'
               "
             >
               {{ size }}
@@ -31,7 +31,7 @@
 
       <!-- Orientation -->
       <div>
-        <label class="block text-sm font-medium text-gray-400 mb-3">{{ t('manual.printModal.orientation') }}</label>
+        <label class="block text-sm font-medium text-white mb-3">{{ t('manual.printModal.orientation') }}</label>
         <div class="grid grid-cols-2 gap-3">
           @for (orient of ['portrait', 'landscape']; track orient) {
             <button
@@ -40,7 +40,7 @@
               [ngClass]="
                 printOrientation === orient
                   ? 'bg-emerald-600 border-emerald-500 text-white'
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                  : 'bg-gray-800 border-gray-700 text-white hover:border-gray-600'
               "
             >
               {{ t('manual.printModal.' + orient) }}
@@ -51,7 +51,7 @@
     </div>
 
     <div class="flex justify-end gap-3 mt-10">
-      <button (click)="cancelPrint.emit()" class="px-6 py-2 text-gray-400 hover:text-white transition font-medium">
+      <button (click)="cancelPrint.emit()" class="px-6 py-2 text-white hover:text-white transition font-medium">
         {{ t('manual.printModal.cancel') }}
       </button>
       <button
