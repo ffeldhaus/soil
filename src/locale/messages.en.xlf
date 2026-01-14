@@ -2565,16 +2565,6 @@
         <target>All data, yields, and calculations used in this game (SOIL) are for educational purposes and game mechanics only. They do not represent professional agricultural advice.</target>
       </segment>
     </unit>
-    <unit id="impressum.disclaimer.p3">
-      <notes>
-        <note category="description">Disclaimer regarding copyrights and open source nature</note>
-        <note category="meaning">Legal Text</note>
-      </notes>
-      <segment state="translated">
-        <source> Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt. </source>
-        <target>The copyrights for the graphics used in the game lie with the respective authors (see image credits). The game itself is an open-source project.</target>
-      </segment>
-    </unit>
     <unit id="impressum.disclaimer.title">
       <notes>
         <note category="description">Title for the disclaimer section</note>
@@ -2585,14 +2575,14 @@
         <target>Disclaimer</target>
       </segment>
     </unit>
-    <unit id="impressum.imageSources">
+    <unit id="impressum.project">
       <notes>
-        <note category="description">Section for image source credits</note>
+        <note category="description">Project information section</note>
         <note category="meaning">Heading</note>
       </notes>
       <segment state="translated">
-        <source>Bildnachweise</source>
-        <target>Image Credits</target>
+        <source>Projekt</source>
+        <target>Project</target>
       </segment>
     </unit>
     <unit id="impressum.responsible">
@@ -2603,76 +2593,6 @@
       <segment state="translated">
         <source>Verantwortlich</source>
         <target>Responsible</target>
-      </segment>
-    </unit>
-    <unit id="impressum.source.bioSiegel">
-      <notes>
-        <note category="description">Credit for Bio-Siegel.de</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment state="translated">
-        <source>Bio-Siegel.de</source>
-        <target>Bio-Siegel.de</target>
-      </segment>
-    </unit>
-    <unit id="impressum.source.borer">
-      <notes>
-        <note category="description">Credit for corn borer image</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment state="translated">
-        <source>Maiszünsler by Keith Weller (Public Domain)</source>
-        <target>Corn borer by Keith Weller (Public Domain)</target>
-      </segment>
-    </unit>
-    <unit id="impressum.source.chamber">
-      <notes>
-        <note category="description">Credit for Landwirtschaftskammer NRW</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment state="translated">
-        <source>Landwirtschaftskammer NRW</source>
-        <target>Chamber of Agriculture NRW</target>
-      </segment>
-    </unit>
-    <unit id="impressum.source.drought">
-      <notes>
-        <note category="description">Credit for drought image</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment state="translated">
-        <source>Drought by USDA (Public Domain)</source>
-        <target>Drought by USDA (Public Domain)</target>
-      </segment>
-    </unit>
-    <unit id="impressum.source.ladybug">
-      <notes>
-        <note category="description">Credit for ladybug image</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment state="translated">
-        <source>Marienkäfer by Olei (CC BY-SA 3.0)</source>
-        <target>Ladybug by Olei (CC BY-SA 3.0)</target>
-      </segment>
-    </unit>
-    <unit id="impressum.source.logo">
-      <notes>
-        <note category="description">Credit for Organic Logo</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment state="translated">
-        <source>Organic Logo (Public Domain)</source>
-        <target>Organic Logo (Public Domain)</target>
-      </segment>
-    </unit>
-    <unit id="impressum.source.oekolandbau">
-      <notes>
-        <note category="description">Credit for Oekolandbau.de</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment state="translated">
-        <source>Oekolandbau.de</source>
-        <target>Oekolandbau.de</target>
       </segment>
     </unit>
     <unit id="impressum.subtitle">
@@ -2843,16 +2763,6 @@
       <segment state="translated">
         <source><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ökologie für Ökonomie:</pc> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</source>
         <target><pc id="0" equivStart="START_TAG_STRONG" equivEnd="CLOSE_TAG_STRONG" type="other" dispStart="&lt;strong&gt;" dispEnd="&lt;/strong&gt;">Ecology for Economy:</pc> Realization that ecological health is the prerequisite for economic success.</target>
-      </segment>
-    </unit>
-    <unit id="info.footer">
-      <notes>
-        <note category="description">Copyright and project info</note>
-        <note category="meaning">Footer Text</note>
-      </notes>
-      <segment state="translated">
-        <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
-        <target>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Project. Developed for educational purposes.</target>
       </segment>
     </unit>
     <unit id="info.mainReferenceTitle">

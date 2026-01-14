@@ -3494,6 +3494,15 @@
         <source>Kontakt</source>
       </segment>
     </unit>
+    <unit id="impressum.project">
+      <notes>
+        <note category="description">Project information section</note>
+        <note category="meaning">Heading</note>
+      </notes>
+      <segment>
+        <source>Projekt</source>
+      </segment>
+    </unit>
     <unit id="impressum.responsible">
       <notes>
         <note category="description">Section identifying the person responsible for content</note>
@@ -3501,78 +3510,6 @@
       </notes>
       <segment>
         <source>Verantwortlich</source>
-      </segment>
-    </unit>
-    <unit id="impressum.imageSources">
-      <notes>
-        <note category="description">Section for image source credits</note>
-        <note category="meaning">Heading</note>
-      </notes>
-      <segment>
-        <source>Bildnachweise</source>
-      </segment>
-    </unit>
-    <unit id="impressum.source.drought">
-      <notes>
-        <note category="description">Credit for drought image</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment>
-        <source>Drought by USDA (Public Domain)</source>
-      </segment>
-    </unit>
-    <unit id="impressum.source.borer">
-      <notes>
-        <note category="description">Credit for corn borer image</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment>
-        <source>Maiszünsler by Keith Weller (Public Domain)</source>
-      </segment>
-    </unit>
-    <unit id="impressum.source.ladybug">
-      <notes>
-        <note category="description">Credit for ladybug image</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment>
-        <source>Marienkäfer by Olei (CC BY-SA 3.0)</source>
-      </segment>
-    </unit>
-    <unit id="impressum.source.oekolandbau">
-      <notes>
-        <note category="description">Credit for Oekolandbau.de</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment>
-        <source>Oekolandbau.de</source>
-      </segment>
-    </unit>
-    <unit id="impressum.source.logo">
-      <notes>
-        <note category="description">Credit for Organic Logo</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment>
-        <source>Organic Logo (Public Domain)</source>
-      </segment>
-    </unit>
-    <unit id="impressum.source.chamber">
-      <notes>
-        <note category="description">Credit for Landwirtschaftskammer NRW</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment>
-        <source>Landwirtschaftskammer NRW</source>
-      </segment>
-    </unit>
-    <unit id="impressum.source.bioSiegel">
-      <notes>
-        <note category="description">Credit for Bio-Siegel.de</note>
-        <note category="meaning">Source Info</note>
-      </notes>
-      <segment>
-        <source>Bio-Siegel.de</source>
       </segment>
     </unit>
     <unit id="impressum.disclaimer.title">
@@ -3600,15 +3537,6 @@
       </notes>
       <segment>
         <source> Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung dar. </source>
-      </segment>
-    </unit>
-    <unit id="impressum.disclaimer.p3">
-      <notes>
-        <note category="description">Disclaimer regarding copyrights and open source nature</note>
-        <note category="meaning">Legal Text</note>
-      </notes>
-      <segment>
-        <source> Die Urheberrechte für die im Spiel verwendeten Grafiken liegen bei den jeweiligen Urhebern (siehe Bildnachweise). Das Spiel selbst ist ein Open-Source-Projekt. </source>
       </segment>
     </unit>
     <unit id="info.title">
@@ -3915,15 +3843,6 @@
       </notes>
       <segment>
         <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;p-2 bg-emerald-900/30 rounded-xl text-xl&quot;&gt;" dispEnd="&lt;/span&gt;">📚</pc> Weitere Publikationen </source>
-      </segment>
-    </unit>
-    <unit id="info.footer">
-      <notes>
-        <note category="description">Copyright and project info</note>
-        <note category="meaning">Footer Text</note>
-      </notes>
-      <segment>
-        <source>© <ph id="0" equiv="INTERPOLATION" disp="{{ year }}"/> Soil Projekt. Entwickelt für Bildungszwecke.</source>
       </segment>
     </unit>
     <unit id="landing.intro">

@@ -174,10 +174,6 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
               <p class="mt-2 text-xs text-gray-500">Enabling test mode will mock all backend calls and use local data.</p>
             </div>
           }
-
-          <footer class="mt-24 py-12 bg-white/25 text-black text-center text-sm">
-            <p i18n="Footer Text|Copyright and project info@@landing.footer">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
-          </footer>
         </div>
       }
     </div>

@@ -39,7 +39,6 @@ export class ManualComponent {
       'manual.concepts.title': $localize`:Heading|Title for the game concepts section@@manual.concepts.title:Konzepte`,
       'manual.crops.title': $localize`:Heading|Title for the crops section@@manual.crops.title:Kulturen`,
       'manual.toc.title': $localize`:Heading|Title for the table of contents@@manual.toc.title:Inhalt`,
-      'manual.footer': $localize`:Footer Text|Copyright and project info@@landing.footer:© ${this.year}:INTERPOLATION: Soil Projekt. Entwickelt für Bildungszwecke.`,
     };
     return translations[key] || key;
   }
