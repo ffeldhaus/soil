@@ -1,10 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, type OnDestroy, type OnInit } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { Observable, type Subscription } from 'rxjs';
+import { type Subscription, interval, startWith, switchMap, takeWhile } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
@@ -160,7 +158,6 @@ export class Dashboard implements OnInit, OnDestroy {
   private gameService = inject(GameService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private db = inject(Firestore);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
@@ -291,38 +288,20 @@ export class Dashboard implements OnInit, OnDestroy {
         this.isLoading = true;
         this.errorMessage = null;
 
-        // Safety Timeout
-        const timeoutId = setTimeout(() => {
-          if (this.isLoading) {
-            console.error('Dashboard: Timed out waiting for user status.');
-            this.ngZone.run(() => {
-              this.isLoading = false;
-              this.errorMessage = 'Connection timed out. Please check your internet or try refreshing.';
-              this.cdr.detectChanges();
-            });
-          }
-        }, 10000); // 10 seconds
+        if (this.userStatusSub) {
+          this.userStatusSub.unsubscribe();
+        }
 
-        try {
-          const userRef = doc(this.db, 'users', user.uid);
-
-          const statusObservable = new Observable<UserStatus | undefined>((observer) => {
-            const unsubscribe = onSnapshot(
-              userRef,
-              { includeMetadataChanges: true },
-              (snapshot) => {
-                observer.next(snapshot.data() as UserStatus | undefined);
-              },
-              (error) => {
-                observer.error(error);
-              },
-            );
-            return () => unsubscribe();
-          });
-
-          this.userStatusSub = statusObservable.subscribe({
+        // Poll user status until it's active or until destroyed
+        this.userStatusSub = interval(30000) // Poll every 30 seconds
+          .pipe(
+            startWith(0),
+            switchMap(() => this.gameService.getUserStatus()),
+            // Continue polling if pending or not found
+            takeWhile((userData) => !userData || userData.role === 'pending' || userData.status === 'pending', true),
+          )
+          .subscribe({
             next: (userData) => {
-              clearTimeout(timeoutId); // Clear timeout on first response
               this.ngZone.run(() => {
                 if (userData) {
                   this.userStatus = userData;
@@ -335,14 +314,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
                   if (userData.role === 'superadmin') {
                     this.isLoading = false;
-                    this.router
-                      .navigate(['/admin/super'])
-                      .then((success) => {
-                        if (!success) {
-                          console.error('Dashboard: Navigation failed!');
-                        }
-                      })
-                      .catch((err) => console.error('Dashboard: Navigation error:', err));
+                    this.router.navigate(['/admin/super']);
                     return;
                   }
 
@@ -355,9 +327,7 @@ export class Dashboard implements OnInit, OnDestroy {
                     this.loadGames();
                   }
                 } else {
-                  console.warn('Dashboard: User document not found for UID:', user.uid);
-
-                  // Fallback for bootstrap Super Admin (matches backend logic)
+                  // Fallback for bootstrap Super Admin
                   if (user.email === 'florian.feldhaus@gmail.com') {
                     this.userStatus = { uid: user.uid, role: 'superadmin', status: 'active', email: user.email || '' };
                     this.isLoading = false;
@@ -365,16 +335,6 @@ export class Dashboard implements OnInit, OnDestroy {
                     return;
                   }
 
-                  if (localStorage.getItem('soil_test_mode') === 'true') {
-                    this.userStatus = { uid: user.uid, role: 'admin', status: 'active', email: user.email || '' };
-                    this.isPendingApproval = false;
-                    this.isLoading = false;
-                    this.loadGames();
-                    this.cdr.detectChanges();
-                    return;
-                  }
-
-                  // If no document found, the user needs to complete onboarding/registration
                   this.isLoading = false;
                   this.router.navigate(['/admin/register']);
                 }
@@ -382,23 +342,14 @@ export class Dashboard implements OnInit, OnDestroy {
               });
             },
             error: (error) => {
-              clearTimeout(timeoutId);
               this.ngZone.run(() => {
-                console.error('Dashboard: Subscription error:', error);
+                console.error('Dashboard: Error fetching user status:', error);
                 this.errorMessage = `Error loading account status: ${error.message || error}`;
                 this.isLoading = false;
                 this.cdr.detectChanges();
               });
             },
           });
-        } catch (e: unknown) {
-          clearTimeout(timeoutId);
-          console.error('Dashboard: Sync Error:', e);
-          const error = e as Error;
-          this.errorMessage = `Critical Error: ${error.message}`;
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
       } else {
         this.games = [];
         this.userStatus = null;

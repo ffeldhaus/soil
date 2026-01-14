@@ -36,6 +36,14 @@ const performDeployment = async (newVersion) => {
     packageJson.version = newVersion;
     fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
     execSync(`git add ${packageJsonPath}`, { stdio: 'inherit' });
+
+    // Update angular.json
+    const angularJsonPath = 'angular.json';
+    const angularJson = JSON.parse(fs.readFileSync(angularJsonPath, 'utf8'));
+    angularJson.projects.soil.architect.build.options.define['import.meta.env.APP_VERSION'] = `"${newVersion}"`;
+    fs.writeFileSync(angularJsonPath, `${JSON.stringify(angularJson, null, 2)}\n`);
+    execSync(`git add ${angularJsonPath}`, { stdio: 'inherit' });
+
     execSync(`git commit -m "v${newVersion}"`, { stdio: 'inherit' });
     execSync(`git tag -a v${newVersion} -m "v${newVersion}"`, { stdio: 'inherit' });
     execSync('git push origin main --tags', { stdio: 'inherit' });

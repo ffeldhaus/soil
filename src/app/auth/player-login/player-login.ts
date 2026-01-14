@@ -51,6 +51,7 @@ import { AuthService } from '../auth.service';
             <img
               src="assets/images/bauernhof-landscape-dunkel.webp"
               alt="Farm Background"
+              fetchpriority="high"
               class="w-full h-full object-cover portrait:object-center landscape:object-center"
             />
           </picture>

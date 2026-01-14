@@ -29,7 +29,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
       <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
         <picture>
           <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
-          <img src="assets/images/bauernhof-landscape-dunkel.webp" alt="Farm Background" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
+          <img src="assets/images/bauernhof-landscape-dunkel.webp" alt="Farm Background" fetchpriority="high" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
         </picture>
       </div>
 

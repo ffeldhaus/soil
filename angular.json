@@ -37,9 +37,9 @@
             "inlineStyleLanguage": "scss",
             "i18nMissingTranslation": "error",
             "i18nDuplicateTranslation": "error",
-            "allowedCommonJsDependencies": ["dijkstrajs", "@grpc/grpc-js", "@grpc/proto-loader", "undici"],
+            "allowedCommonJsDependencies": ["dijkstrajs"],
             "define": {
-              "import.meta.env.APP_VERSION": "\"1.1.4\""
+              "import.meta.env.APP_VERSION": "\"1.11.8\""
             },
             "assets": [
               {
@@ -71,8 +71,10 @@
                   "maximumError": "100kB"
                 }
               ],
+              "optimization": true,
               "outputHashing": "all",
-              "sourceMap": true
+              "sourceMap": false,
+              "extractLicenses": true
             },
             "development": {
               "optimization": false,

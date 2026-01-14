@@ -4,7 +4,7 @@
     <picture>
       <source [srcset]="showFinance ? 'assets/images/bauernhof-portrait-dunkel.webp' : 'assets/images/bauernhof-portrait-hd.webp'" media="(orientation: portrait)" />
       <img [src]="showFinance ? 'assets/images/bauernhof-landscape-dunkel.webp' : 'assets/images/bauernhof-landscape-hd.webp'" alt="Farm Background"
-        class="w-full h-full object-cover portrait:object-center landscape:object-center" />
+        fetchpriority="high" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
     </picture>
   </div>
 

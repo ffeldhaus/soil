@@ -1,5 +1,4 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
-import { Firestore } from '@angular/fire/firestore';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
@@ -22,6 +21,7 @@ describe('Dashboard Component', () => {
     };
     gameServiceMock = {
       getAdminGames: vi.fn().mockResolvedValue({ games: [], total: 0 }),
+      getUserStatus: vi.fn().mockResolvedValue({ role: 'admin', status: 'active' }),
       createGame: vi.fn().mockResolvedValue({ gameId: 'new-game', password: 'pass' }),
       deleteGames: vi.fn().mockResolvedValue(undefined),
       undeleteGames: vi.fn().mockResolvedValue(undefined),
@@ -35,7 +35,6 @@ describe('Dashboard Component', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },
-        { provide: Firestore, useValue: {} },
         {
           provide: ActivatedRoute,
           useValue: {

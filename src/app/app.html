@@ -13,9 +13,5 @@
     >Handbuch</a
   >
   <span class="text-gray-400">|</span>
-  @if (versionNumber !== null) {
-    <span class="text-gray-500">v{{ versionNumber | number: '1.0-3' }}</span>
-  } @else {
-    <span class="text-gray-500">v{{ version }}</span>
-  }
+  <span class="text-gray-500">v{{ version }}</span>
 </div>

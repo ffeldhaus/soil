@@ -2,14 +2,12 @@ import { provideHttpClient } from '@angular/common/http';
 import { type ApplicationConfig, isDevMode } from '@angular/core';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth } from '@angular/fire/auth';
-import { provideFirestore } from '@angular/fire/firestore';
 import { provideFunctions } from '@angular/fire/functions';
 import { provideClientHydration, withEventReplay, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
@@ -48,13 +46,6 @@ export const appConfig: ApplicationConfig = {
         connectAuthEmulator(auth, 'http://localhost:9099');
       }
       return auth;
-    }),
-    provideFirestore(() => {
-      const firestore = getFirestore(app);
-      if (isDevMode()) {
-        connectFirestoreEmulator(firestore, 'localhost', 8080);
-      }
-      return firestore;
     }),
     provideFunctions(() => {
       const functions = getFunctions(app, 'europe-west4');
