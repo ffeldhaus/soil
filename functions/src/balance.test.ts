@@ -102,8 +102,7 @@ describe('Game Balance Simulation', () => {
         for (let r = 1; r <= count; r++) {
           const decision: RoundDecision = strat.logic(r, lastRound);
           const events = { weather: 'Normal', vermin: [] };
-          const round = GameEngine.calculateRound(r, lastRound, decision, events, capital, count, {
-          });
+          const round = GameEngine.calculateRound(r, lastRound, decision, events, capital, count, {});
           capital = round.result?.capital || capital;
           lastRound = round;
         }

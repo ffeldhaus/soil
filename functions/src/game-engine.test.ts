@@ -222,8 +222,7 @@ describe('GameEngine', () => {
       }));
     const prevRound: Round = { number: 1, decision, parcelsSnapshot: prevParcels };
 
-    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 10000, 20, {
-    });
+    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 10000, 20, {});
 
     expect(round.result?.bioSiegel).to.be.false;
     // Conventional subsidy is 220/parcel. Total 40 parcels.
