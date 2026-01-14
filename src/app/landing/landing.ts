@@ -21,7 +21,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <app-language-switcher></app-language-switcher>
           }
           <!-- Spacer to match the back/logout button present on other pages -->
-          <div class="w-9 h-9"></div>
+          <div class="w-10 h-10"></div>
         </div>
       </nav>
 

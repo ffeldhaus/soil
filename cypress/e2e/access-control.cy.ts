@@ -1,8 +1,8 @@
 describe('Access Control', () => {
-  it('should show login options on game page when not logged in', () => {
+  it('should redirect to landing page when visiting game page while not logged in', () => {
     cy.visit('/game');
-    cy.get('[data-testid="login-google"]').should('be.visible');
-    cy.get('[data-testid="login-player-submit"]').should('be.visible');
+    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    cy.get('[data-testid="landing-enter-game"]').should('be.visible');
   });
 
   it('should show action buttons on landing page', () => {
