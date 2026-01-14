@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { type Subscription, interval, startWith, switchMap, takeWhile } from 'rxjs';
+import { interval, type Subscription, startWith, switchMap, takeWhile } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
