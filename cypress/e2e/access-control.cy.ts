@@ -1,7 +1,7 @@
 describe('Access Control', () => {
   it('should redirect to landing page when visiting game page while not logged in', () => {
     cy.visit('/game');
-    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
     cy.get('[data-testid="landing-enter-game"]').should('be.visible');
   });
 

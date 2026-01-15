@@ -1005,15 +1005,21 @@ export const updatePlayerType = onCall(
     }
 
     const gameRef = db.collection('games').doc(gameId);
+    const callerRef = db.collection('users').doc(request.auth.uid);
     const uid = `player-${gameId}-${playerNumber}`;
 
     await db.runTransaction(async (t) => {
       // 1. ALL READS FIRST
-      const doc = await t.get(gameRef);
+      const [doc, callerSnap] = await Promise.all([t.get(gameRef), t.get(callerRef)]);
+
       if (!doc.exists) throw new HttpsError('not-found', 'Game not found');
 
       const game = doc.data()!;
-      if (game.hostUid !== request.auth?.uid) {
+      const isSuper =
+        callerSnap.exists &&
+        (callerSnap.data()?.role === 'superadmin' || request.auth.token.email === 'florian.feldhaus@gmail.com');
+
+      if (game.hostUid !== request.auth?.uid && !isSuper) {
         throw new HttpsError('permission-denied', 'Not your game');
       }
 

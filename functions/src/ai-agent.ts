@@ -32,7 +32,7 @@ export class AiAgent {
       decision.pesticide = true;
 
       for (let i = 0; i < 40; i++) {
-        if (!previousRound) {
+        if (!previousRound || !previousRound.parcelsSnapshot || previousRound.parcelsSnapshot.length === 0) {
           decision.parcels[i] = mainCrops[i % mainCrops.length];
         } else {
           const prevCrop = previousRound.parcelsSnapshot[i].crop;
@@ -44,7 +44,8 @@ export class AiAgent {
       }
     } else if (level === 'high') {
       // High: Strategic. Uses rotation, optimizes machines, considers organic if soil allows.
-      const averageSoil = previousRound ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
+      const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
+      const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
 
       decision.organic = averageSoil > 100; // Go organic if soil is excellent
       decision.machines = averageSoil > 90 ? 2 : 1;
@@ -57,8 +58,8 @@ export class AiAgent {
       }
 
       for (let i = 0; i < 40; i++) {
-        const prevParcel = previousRound
-          ? previousRound.parcelsSnapshot[i]
+        const prevParcel = hasParcels
+          ? previousRound!.parcelsSnapshot[i]
           : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
         const prevCrop = prevParcel.crop;
 
