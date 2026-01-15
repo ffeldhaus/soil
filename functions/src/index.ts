@@ -1017,7 +1017,7 @@ export const updatePlayerType = onCall(
       const game = doc.data()!;
       const isSuper =
         callerSnap.exists &&
-        (callerSnap.data()?.role === 'superadmin' || request.auth.token.email === 'florian.feldhaus@gmail.com');
+        (callerSnap.data()?.role === 'superadmin' || request.auth?.token.email === 'florian.feldhaus@gmail.com');
 
       if (game.hostUid !== request.auth?.uid && !isSuper) {
         throw new HttpsError('permission-denied', 'Not your game');
