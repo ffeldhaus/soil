@@ -15,6 +15,7 @@
       "!.cypress-cache",
       "!functions/lib",
       "!package-lock.json",
+      "!angular.json",
       "!public",
       "!src/app/admin/dashboard/components/dashboard-game-detail.html"
     ]
