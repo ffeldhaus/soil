@@ -597,6 +597,39 @@ export class GameService {
     }
   }
 
+  async exportFullGameState(gameId: string): Promise<any> {
+    const state = this.stateSubject.value;
+    if (!state) return null;
+
+    const game = JSON.parse(JSON.stringify(state.game));
+    const players = Object.values(game.players) as PlayerState[];
+
+    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number; targetUid?: string }, Round>(
+      this.functions,
+      'getRoundData',
+    );
+
+    // Fetch all rounds for all players
+    for (const player of players) {
+      const fullHistory: Round[] = [];
+      for (let r = 0; r <= game.currentRoundNumber; r++) {
+        try {
+          const result = await getRoundDataFn({ gameId, roundNumber: r, targetUid: player.uid });
+          fullHistory.push(result.data);
+        } catch (error) {
+          if (window.console) console.error(`Failed to fetch round ${r} for player ${player.uid}`, error);
+          // If it fails, we keep what we have (lightweight or nothing)
+          const existing = player.history.find((h) => h.number === r);
+          if (existing) fullHistory.push(existing);
+        }
+      }
+      player.history = fullHistory;
+      game.players[player.uid] = player;
+    }
+
+    return game;
+  }
+
   private createInitialParcels(playerIndex = 0): Parcel[] {
     return Array(40)
       .fill(null)

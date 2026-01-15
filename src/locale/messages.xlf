@@ -900,7 +900,7 @@
         <note category="meaning">Welcome Message</note>
       </notes>
       <segment>
-        <source> Willkommen, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/></pc>! </source>
+        <source> Willkommen, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + &apos; &apos; + userStatus!.lastName : user.email) }}"/></pc>! </source>
       </segment>
     </unit>
     <unit id="dashboard.btnFeedback">
@@ -1108,11 +1108,6 @@
       </notes>
       <segment>
         <source>Vielen Dank für dein Feedback!</source>
-      </segment>
-    </unit>
-    <unit id="onboarding.welcome">
-      <segment>
-        <source>Willkommen!</source>
       </segment>
     </unit>
     <unit id="onboarding.emailVerified">
@@ -2217,11 +2212,11 @@
     </unit>
     <unit id="adminRegister.success.verificationSent">
       <notes>
-        <note category="description">Notification that registration was successful and email sent</note>
+        <note category="description">Notification that registration was successful and account verification is pending</note>
         <note category="meaning">Success Message</note>
       </notes>
       <segment>
-        <source>Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.</source>
+        <source>Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.</source>
       </segment>
     </unit>
     <unit id="adminRegister.error.title">
@@ -2302,7 +2297,7 @@
         <note category="meaning">Action Label</note>
       </notes>
       <segment>
-        <source> Zum Login </source>
+        <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;relative z-10&quot;&gt;" dispEnd="&lt;/span&gt;">Zum Login</pc></source>
       </segment>
     </unit>
     <unit id="authAction.backToHome">
@@ -2311,7 +2306,7 @@
         <note category="meaning">Action Label</note>
       </notes>
       <segment>
-        <source> Zurück zur Startseite </source>
+        <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;relative z-10&quot;&gt;" dispEnd="&lt;/span&gt;">Zurück zur Startseite</pc></source>
       </segment>
     </unit>
     <unit id="authAction.error.invalidParams">
@@ -2790,6 +2785,15 @@
       </notes>
       <segment>
         <source>Abmelden</source>
+      </segment>
+    </unit>
+    <unit id="board.nav.copyState">
+      <notes>
+        <note category="description">Button to copy game state as JSON</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>JSON</source>
       </segment>
     </unit>
     <unit id="board.nav.endGame">
@@ -4076,7 +4080,7 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment>
-        <source>Mineralienbedarf und Bodenanspruch variieren.</source>
+        <source>Der Bedarf an Stickstoff (N), Phosphor (P) und Kalium (K) sowie der Bodenanspruch variieren je nach Kultur. Eine ausgewogene Nährstoffversorgung ist entscheidend für die Pflanzengesundheit und den Ertrag.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.weather.title">
@@ -4103,7 +4107,7 @@
         <note category="meaning">Concept Title</note>
       </notes>
       <segment>
-        <source>Ertrag</source>
+        <source>Ertrag &amp; Subventionen</source>
       </segment>
     </unit>
     <unit id="manual.concepts.yield.text">
@@ -4112,7 +4116,7 @@
         <note category="meaning">Concept Text</note>
       </notes>
       <segment>
-        <source>Abhängig von Bodenqualität und Wetter.</source>
+        <source>Abhängig von Bodenqualität, Wetter und Bewirtschaftung. Zusätzlich zum Ernteverkauf erhältst du staatliche Flächenzahlungen (GAP) und ggf. eine Öko-Prämie.</source>
       </segment>
     </unit>
     <unit id="manual.concepts.price.title">

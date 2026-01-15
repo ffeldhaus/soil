@@ -150,6 +150,15 @@
   </div>
 
   <div class="flex items-center gap-3">
+    @if (isDev) {
+      <button
+        (click)="copyGameState()"
+        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white font-bold rounded-lg border border-gray-700 transition text-[10px]"
+        title="Copy Game State JSON"
+      >
+        {{ t('board.nav.copyState') }}
+      </button>
+    }
     @defer (hydrate on interaction) {
       <app-language-switcher></app-language-switcher>
     }

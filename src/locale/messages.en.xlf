@@ -354,11 +354,11 @@
     </unit>
     <unit id="adminRegister.success.verificationSent">
       <notes>
-        <note category="description">Notification that registration was successful and email sent</note>
+        <note category="description">Notification that registration was successful and account verification is pending</note>
         <note category="meaning">Success Message</note>
       </notes>
-      <segment state="translated">
-        <source>Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.</source>
+      <segment state="initial">
+        <source>Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.</source>
         <target>Registration successful! Please check your emails to verify your account.</target>
       </segment>
     </unit>
@@ -427,8 +427,8 @@
         <note category="description">Link to return to home page</note>
         <note category="meaning">Action Label</note>
       </notes>
-      <segment state="translated">
-        <source> Zurück zur Startseite </source>
+      <segment state="initial">
+        <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;relative z-10&quot;&gt;" dispEnd="&lt;/span&gt;">Zurück zur Startseite</pc></source>
         <target>Back to home</target>
       </segment>
     </unit>
@@ -557,8 +557,8 @@
         <note category="description">Link to return to login page</note>
         <note category="meaning">Action Label</note>
       </notes>
-      <segment state="translated">
-        <source> Zum Login </source>
+      <segment state="initial">
+        <source><pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;relative z-10&quot;&gt;" dispEnd="&lt;/span&gt;">Zum Login</pc></source>
         <target>To login</target>
       </segment>
     </unit>
@@ -832,6 +832,16 @@
         <target>Waiting for others...</target>
       </segment>
     </unit>
+    <unit id="board.nav.copyState">
+      <notes>
+        <note category="description">Button to copy game state as JSON</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment state="initial">
+        <source>JSON</source>
+        <target>JSON</target>
+      </segment>
+    </unit>
     <unit id="board.nav.endGame">
       <notes>
         <note category="description">Indicates the game has ended</note>
@@ -842,7 +852,14 @@
         <target>Game ended</target>
       </segment>
     </unit>
-    <unit id="board.nav.finance">
+          <unit id="board.nav.copyState">
+            <segment>
+              <source>JSON</source>
+              <target>JSON</target>
+            </segment>
+          </unit>
+          <unit id="board.nav.finance">
+    
       <notes>
         <note category="description">Toggle display of financial report</note>
         <note category="meaning">Nav Label</note>
@@ -2175,8 +2192,8 @@
         <note category="description">Greeting for the logged-in user</note>
         <note category="meaning">Welcome Message</note>
       </notes>
-      <segment state="translated">
-        <source> Willkommen, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/></pc>! </source>
+      <segment state="initial">
+        <source> Willkommen, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + &apos; &apos; + userStatus!.lastName : user.email) }}"/></pc>! </source>
         <target>Welcome, <pc id="0" equivStart="START_TAG_SPAN" equivEnd="CLOSE_TAG_SPAN" type="other" dispStart="&lt;span class=&quot;font-bold text-white&quot;&gt;" dispEnd="&lt;/span &gt;"><ph id="1" equiv="INTERPOLATION" disp="{{ user.displayName || user.email }}"/></pc>!</target>
       </segment>
     </unit>
@@ -3220,8 +3237,8 @@
         <note category="description">Explanation of mineral and soil requirements for plants</note>
         <note category="meaning">Concept Text</note>
       </notes>
-      <segment state="translated">
-        <source>Mineralienbedarf und Bodenanspruch variieren.</source>
+      <segment state="initial">
+        <source>Der Bedarf an Stickstoff (N), Phosphor (P) und Kalium (K) sowie der Bodenanspruch variieren je nach Kultur. Eine ausgewogene Nährstoffversorgung ist entscheidend für die Pflanzengesundheit und den Ertrag.</source>
         <target>Mineral requirements and soil demands vary.</target>
       </segment>
     </unit>
@@ -3330,8 +3347,8 @@
         <note category="description">Explanation of what determines the harvest yield</note>
         <note category="meaning">Concept Text</note>
       </notes>
-      <segment state="translated">
-        <source>Abhängig von Bodenqualität und Wetter.</source>
+      <segment state="initial">
+        <source>Abhängig von Bodenqualität, Wetter und Bewirtschaftung. Zusätzlich zum Ernteverkauf erhältst du staatliche Flächenzahlungen (GAP) und ggf. eine Öko-Prämie.</source>
         <target>Dependent on soil quality and weather.</target>
       </segment>
     </unit>
@@ -3340,8 +3357,8 @@
         <note category="description">Title for yield section</note>
         <note category="meaning">Concept Title</note>
       </notes>
-      <segment state="translated">
-        <source>Ertrag</source>
+      <segment state="initial">
+        <source>Ertrag &amp; Subventionen</source>
         <target>Yield</target>
       </segment>
     </unit>
@@ -3815,12 +3832,6 @@
       <segment state="translated">
         <source> Dies dauert in der Regel weniger als 24 Stunden. </source>
         <target>This usually takes less than 24 hours.</target>
-      </segment>
-    </unit>
-    <unit id="onboarding.welcome">
-      <segment state="translated">
-        <source>Willkommen!</source>
-        <target>Welcome!</target>
       </segment>
     </unit>
     <unit id="parcel.crop">

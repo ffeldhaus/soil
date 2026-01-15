@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, inject, isDevMode, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { User } from 'firebase/auth';
 
 import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher';
 import type { Game, PlayerState } from '../../../types';
+import { GameService } from '../../game.service';
 
 @Component({
   selector: 'app-board-hud',
@@ -13,6 +14,7 @@ import type { Game, PlayerState } from '../../../types';
   templateUrl: './board-hud.html',
 })
 export class BoardHudComponent {
+  private gameService = inject(GameService);
   @Input() user: User | null = null;
   @Input() gameState: { game: Game | null; playerState: PlayerState | null } | null = null;
   @Input() isPlayer = false;
@@ -47,6 +49,7 @@ export class BoardHudComponent {
 
   isEditingName = false;
   tempName = '';
+  isDev = isDevMode();
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -60,6 +63,7 @@ export class BoardHudComponent {
       'board.nav.waiting': $localize`:Status Message|Wait message after round submission@@board.nav.waiting:Warten...`,
       'board.nav.nextRound': $localize`:Action Label|Button to submit round and proceed@@board.nav.nextRound:Nächste Runde`,
       'board.logout': $localize`:Action Label|Logout button text@@board.logout:Abmelden`,
+      'board.nav.copyState': $localize`:Action Label|Button to copy game state as JSON@@board.nav.copyState:JSON`,
     };
     return translations[key] || key;
   }
@@ -72,5 +76,16 @@ export class BoardHudComponent {
   saveName() {
     this.updateName.emit(this.tempName);
     this.isEditingName = false;
+  }
+
+  async copyGameState() {
+    if (!this.gameState?.game) return;
+
+    const fullGame = await this.gameService.exportFullGameState(this.gameState.game.id);
+    const json = JSON.stringify(fullGame, null, 2);
+
+    navigator.clipboard.writeText(json).then(() => {
+      alert('Full game state copied to clipboard!');
+    });
   }
 }
