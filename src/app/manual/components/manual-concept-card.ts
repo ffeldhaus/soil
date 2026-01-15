@@ -10,7 +10,7 @@ export class ManualConceptCardComponent {
   @Input() concept = '';
   @Input() index = 0;
 
-  private icons = ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰', '🇪🇺', '🚜', '🌿'];
+  private icons = ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰', '🚜', '🌿'];
 
   get icon(): string {
     return this.icons[this.index] || '💡';
@@ -25,11 +25,11 @@ export class ManualConceptCardComponent {
       'manual.concepts.rotation.title': $localize`:Concept Title|Title for crop rotation section@@manual.concepts.rotation.title:Fruchtfolge`,
       'manual.concepts.rotation.text': $localize`:Concept Text|Explanation of crop rotation and soil health@@manual.concepts.rotation.text:Der Vorfruchtwert bestimmt die Bodengesundheit. Brachen helfen dem Boden, sich zu regenerieren.`,
       'manual.concepts.requirements.title': $localize`:Concept Title|Title for plant requirements section@@manual.concepts.requirements.title:Anforderungen`,
-      'manual.concepts.requirements.text': $localize`:Concept Text|Explanation of mineral and soil requirements for plants@@manual.concepts.requirements.text:Mineralienbedarf und Bodenanspruch variieren.`,
+      'manual.concepts.requirements.text': $localize`:Concept Text|Explanation of mineral and soil requirements for plants@@manual.concepts.requirements.text:Der Bedarf an Stickstoff (N), Phosphor (P) und Kalium (K) sowie der Bodenanspruch variieren je nach Kultur. Eine ausgewogene Nährstoffversorgung ist entscheidend für die Pflanzengesundheit und den Ertrag.`,
       'manual.concepts.weather.title': $localize`:Concept Title|Title for weather section@@manual.concepts.weather.title:Wetter`,
       'manual.concepts.weather.text': $localize`:Concept Text|Explanation of weather impacts on agriculture@@manual.concepts.weather.text:Trockenheit, Kälte oder Nässe beeinflussen den Ertrag.`,
-      'manual.concepts.yield.title': $localize`:Concept Title|Title for yield section@@manual.concepts.yield.title:Ertrag`,
-      'manual.concepts.yield.text': $localize`:Concept Text|Explanation of what determines the harvest yield@@manual.concepts.yield.text:Abhängig von Bodenqualität und Wetter.`,
+      'manual.concepts.yield.title': $localize`:Concept Title|Title for yield section@@manual.concepts.yield.title:Ertrag & Subventionen`,
+      'manual.concepts.yield.text': $localize`:Concept Text|Explanation of what determines the harvest yield@@manual.concepts.yield.text:Abhängig von Bodenqualität, Wetter und Bewirtschaftung. Zusätzlich zum Ernteverkauf erhältst du staatliche Flächenzahlungen (GAP) und ggf. eine Öko-Prämie.`,
       'manual.concepts.price.title': $localize`:Concept Title|Title for market prices section@@manual.concepts.price.title:Preise`,
       'manual.concepts.price.text': $localize`:Concept Text|Explanation of market price fluctuations@@manual.concepts.price.text:Marktpreise schwanken zwischen Konventionell und Bio. Im fortgeschrittenen Markt werden die Preise dynamisch durch das Angebot aller Spieler und die Nachfrage bestimmt.`,
       'manual.concepts.subsidies.title': $localize`:Concept Title|Title for subsidies section@@manual.concepts.subsidies.title:Subventionen`,

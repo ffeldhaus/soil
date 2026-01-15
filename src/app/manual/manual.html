@@ -157,7 +157,7 @@
           </h2>
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 portrait:gap-8 portrait:divide-y-0">
             @for (
-              concept of ['units', 'pest', 'rotation', 'requirements', 'weather', 'yield', 'price', 'subsidies', 'machines', 'bio'];
+              concept of ['units', 'pest', 'rotation', 'requirements', 'weather', 'yield', 'price', 'machines', 'bio'];
               track concept;
               let i = $index
             ) {
@@ -169,17 +169,27 @@
         </section>
 
         <!-- Crops Section -->
-        <div id="crops" class="flex flex-col gap-8 scroll-mt-24">
-          <h2 class="text-3xl font-bold text-emerald-400 px-8 sm:px-12 flex items-center gap-3 print:text-emerald-700">
+        <section
+          id="crops"
+          class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl scroll-mt-24 print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
+        >
+          <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
             <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">🌾</span>
             {{ t('manual.crops.title') }}
           </h2>
-          @for (crop of crops; track crop.id) {
-            @defer (hydrate on viewport) {
-              <app-manual-crop-card [id]="crop.id.toLowerCase()" [crop]="crop"></app-manual-crop-card>
+          <div class="flex flex-col gap-12 sm:gap-20">
+            @for (crop of crops; track crop.id) {
+              <div class="flex flex-col gap-12 sm:gap-20">
+                @defer (hydrate on viewport) {
+                  <app-manual-crop-card [id]="crop.id.toLowerCase()" [crop]="crop"></app-manual-crop-card>
+                }
+                @if (!$last) {
+                  <div class="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+                }
+              </div>
             }
-          }
-        </div>
+          </div>
+        </section>
       </div>
     </div>
   </div>

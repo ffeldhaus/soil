@@ -1,6 +1,6 @@
 <div
   [id]="crop.id.toLowerCase()"
-  class="bg-gray-900/90 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-gray-700 shadow-2xl group break-inside-avoid print-page-break-before print:bg-white print:border-gray-200 print:shadow-none print:p-8 portrait:rounded-none portrait:border-x-0"
+  class="group break-inside-avoid print-page-break-before print:bg-white print:p-8 portrait:rounded-none"
 >
   <div class="flex flex-col lg:flex-row gap-10 items-start">
     <!-- Crop Image & Title -->
@@ -141,37 +141,46 @@
       >
         <!-- Requirements -->
         <div
-          class="bg-black/40 p-6 rounded-3xl border border-white/5 print:bg-white print:border-gray-200 print:p-4 portrait:rounded-none portrait:border-0"
+          class="bg-black/40 p-6 rounded-3xl border border-white/5 hover:border-emerald-500/30 transition-colors print:bg-white print:border-gray-200 print:p-4 portrait:rounded-none portrait:border-0"
         >
-          <h4 class="text-[10px] font-bold text-white uppercase tracking-widest mb-4 print:mb-2">
-            {{ t('manual.crops.requirements') }}
-          </h4>
-          <div class="space-y-4 print:space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-white print:text-gray-500 print:text-xs">{{ t('manual.crops.soil') }}</span>
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold print:text-black print:text-[10px]">{{
-                  t(crop.soilSensitivity > 1.1 ? 'sensitivity.high' : 'sensitivity.moderate')
-                }}</span>
-                <div
-                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none print:w-4 print:h-4"
-                  [ngClass]="crop.soilSensitivity > 1.1 ? 'bg-red-500' : 'bg-yellow-500'"
-                ></div>
+          <div class="flex justify-between items-center mb-6 print:mb-2">
+            <h4 class="text-[10px] font-bold text-white uppercase tracking-widest">
+              {{ t('manual.crops.requirements') }}
+            </h4>
+            <span class="text-[10px] text-gray-500 italic">N • P • K</span>
+          </div>
+          <div class="space-y-6 print:space-y-2">
+            <div class="flex flex-col gap-2">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white print:text-gray-500 print:text-xs">{{ t('manual.crops.soil') }}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold print:text-black print:text-[10px]">{{
+                    t(crop.soilSensitivity > 1.1 ? 'sensitivity.high' : 'sensitivity.moderate')
+                  }}</span>
+                  <div
+                    class="w-6 h-6 rounded-lg shadow-inner print:shadow-none print:w-4 print:h-4"
+                    [ngClass]="crop.soilSensitivity > 1.1 ? 'bg-red-500' : 'bg-yellow-500'"
+                  ></div>
+                </div>
               </div>
+              <p class="text-[10px] text-gray-400 leading-tight print:hidden">Bodenqualität (Humusgehalt) und -struktur.</p>
             </div>
-            <div class="flex justify-between items-center">
-              <span class="text-sm text-white print:text-gray-500 print:text-xs">{{
-                t('manual.crops.minerals')
-              }}</span>
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold print:text-black print:text-[10px]">{{
-                  t(crop.nutritionSensitivity > 1.1 ? 'sensitivity.high' : 'sensitivity.moderate')
+            <div class="flex flex-col gap-2">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white print:text-gray-500 print:text-xs">{{
+                  t('manual.crops.minerals')
                 }}</span>
-                <div
-                  class="w-6 h-6 rounded-lg shadow-inner print:shadow-none print:w-4 print:h-4"
-                  [ngClass]="crop.nutritionSensitivity > 1.1 ? 'bg-red-500' : 'bg-yellow-500'"
-                ></div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold print:text-black print:text-[10px]">{{
+                    t(crop.nutritionSensitivity > 1.1 ? 'sensitivity.high' : 'sensitivity.moderate')
+                  }}</span>
+                  <div
+                    class="w-6 h-6 rounded-lg shadow-inner print:shadow-none print:w-4 print:h-4"
+                    [ngClass]="crop.nutritionSensitivity > 1.1 ? 'bg-red-500' : 'bg-yellow-500'"
+                  ></div>
+                </div>
               </div>
+              <p class="text-[10px] text-gray-400 leading-tight print:hidden">Bedarf an pflanzenverfügbaren Nährstoffen.</p>
             </div>
           </div>
         </div>
