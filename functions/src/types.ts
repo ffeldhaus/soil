@@ -87,7 +87,6 @@ export interface GameConfig {
   numPlayers: number;
   numRounds: number;
   numAi: number;
-  subsidiesEnabled?: boolean;
   advancedPricingEnabled?: boolean;
 }
 

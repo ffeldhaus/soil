@@ -25,7 +25,7 @@ export class DashboardCreateGameComponent {
     numPlayers: 1,
     numRounds: 20,
     numAi: 0,
-    playerLabel: 'Player',
+    playerLabel: 'Team',
     aiLevel: 'middle' as 'elementary' | 'middle' | 'high',
     advancedPricingEnabled: false,
   };

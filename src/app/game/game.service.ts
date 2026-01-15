@@ -265,7 +265,6 @@ export class GameService {
       numRounds: number;
       numAi: number;
       playerLabel: string;
-      subsidiesEnabled?: boolean;
       advancedPricingEnabled?: boolean;
     },
   ): Promise<{ gameId: string; password?: string }> {
@@ -281,7 +280,6 @@ export class GameService {
           numRounds: number;
           numAi: number;
           playerLabel: string;
-          subsidiesEnabled?: boolean;
           advancedPricingEnabled?: boolean;
         };
         settings: { length: number; difficulty: string; playerLabel: string };
@@ -320,11 +318,11 @@ export class GameService {
       };
     }
     const getAdminGamesFn = httpsCallable<
-      { page: number; pageSize: number; showTrash: boolean; adminUid?: string },
+      { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
       { games: Game[]; total: number }
     >(this.functions, 'getAdminGames');
     try {
-      const result = await getAdminGamesFn({ page, pageSize, showTrash, adminUid });
+      const result = await getAdminGamesFn({ page, pageSize, showDeleted: showTrash, adminUid });
       return result.data;
     } catch (error: unknown) {
       if (window.console) console.error('Failed to fetch games:', error);

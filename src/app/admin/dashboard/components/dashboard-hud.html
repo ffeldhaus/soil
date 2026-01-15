@@ -6,21 +6,11 @@
   </div>
 
   <div class="flex items-center gap-3">
-    @if (user) {
-      <div class="flex items-center gap-3">
-        @if (user.photoURL) {
-          <img [src]="user.photoURL" alt="Profile" class="w-8 h-8 rounded-full border border-gray-700" />
-        }
-        @if (!user.photoURL) {
-          <div
-            class="w-8 h-8 rounded-full border border-gray-600 bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-300"
-          >
-            {{ user.displayName?.charAt(0) || user.email?.charAt(0) }}
-          </div>
-        }
-        <span class="text-sm font-medium text-gray-300 hidden md:block">{{ user.displayName || user.email }}</span>
-      </div>
-    }
+    <div class="flex items-center gap-3">
+      <span class="text-sm font-medium text-gray-300 hidden md:block">
+        {{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user?.email) }}
+      </span>
+    </div>
 
     <app-language-switcher></app-language-switcher>
 

@@ -215,9 +215,8 @@ export class Dashboard implements OnInit, OnDestroy {
     numPlayers: 1,
     numRounds: 20,
     numAi: 0,
-    playerLabel: 'Player',
-    aiLevel: 'middle' as 'elementary' | 'middle' | 'high',
-    subsidiesEnabled: false,
+    playerLabel: 'Team',
+    aiLevel: 'middle',
     advancedPricingEnabled: false,
   };
 
@@ -459,7 +458,6 @@ export class Dashboard implements OnInit, OnDestroy {
       numRounds: this.newGameConfig.numRounds,
       numAi: this.newGameConfig.numAi,
       playerLabel: this.newGameConfig.playerLabel,
-      subsidiesEnabled: this.newGameConfig.subsidiesEnabled,
       advancedPricingEnabled: this.newGameConfig.advancedPricingEnabled,
     };
 

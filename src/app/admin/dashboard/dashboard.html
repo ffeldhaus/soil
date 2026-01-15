@@ -13,7 +13,7 @@
   </div>
 
   <div class="relative z-10">
-    <app-dashboard-hud [user]="user$ | async" (logout)="logout()"></app-dashboard-hud>
+    <app-dashboard-hud [user]="user$ | async" [userStatus]="userStatus" (logout)="logout()"></app-dashboard-hud>
 
     <!-- Main Content -->
     <main class="pt-16 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none pb-12">
@@ -59,7 +59,11 @@
                     {{ t('dashboard.controls.title') }}
                   </h2>
                   <p class="text-gray-300" i18n="Welcome Message|Greeting for the logged-in user@@dashboard.welcome">
-                    Willkommen, <span class="font-bold text-white">{{ user.displayName || user.email }}</span
+                    Willkommen,
+                    <span class="font-bold text-white">{{
+                      userStatus?.displayName ||
+                        (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user.email)
+                    }}</span
                     >!
                   </p>
                 </div>

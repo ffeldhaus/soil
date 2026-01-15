@@ -542,7 +542,7 @@ export const createGame = onCall(async (request) => {
           const playerId = `player-${gameId}-${playerNumber}`;
           acc[playerId] = {
             uid: playerId,
-            displayName: `Player ${playerNumber}`,
+            displayName: `Team ${playerNumber}`,
             isAi: playerNumber <= numAi,
             capital: 1000,
             currentRound: 0,
@@ -1031,7 +1031,7 @@ export const updatePlayerType = onCall(
         players[uid] = {
           ...(existingPlayer || {}),
           uid: uid,
-          displayName: existingPlayer?.displayName || `AI Player ${playerNumber}`,
+          displayName: existingPlayer?.displayName || `KI Team ${playerNumber}`,
           isAi: true,
           aiLevel: aiLevel || 'middle',
           capital: existingPlayer?.capital ?? 1000,
@@ -1043,11 +1043,11 @@ export const updatePlayerType = onCall(
         if (existingPlayer) {
           players[uid].isAi = false;
           players[uid].aiLevel = undefined;
-          players[uid].displayName = `Player ${playerNumber}`;
+          players[uid].displayName = `Team ${playerNumber}`;
         } else {
           players[uid] = {
             uid,
-            displayName: `Player ${playerNumber}`,
+            displayName: `Team ${playerNumber}`,
             isAi: false,
             capital: 1000,
             currentRound: 0,

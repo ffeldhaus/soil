@@ -89,7 +89,6 @@ export interface GameConfig {
   numPlayers: number;
   numRounds: number;
   numAi: number;
-  subsidiesEnabled?: boolean;
   advancedPricingEnabled?: boolean;
 }
 
@@ -114,6 +113,9 @@ export interface UserStatus {
   role: 'pending' | 'admin' | 'superadmin' | 'player' | 'rejected' | 'new' | 'banned';
   status: 'active' | 'rejected' | 'pending' | 'banned';
   email: string;
+  displayName?: string;
+  firstName?: string;
+  lastName?: string;
   onboarding?: {
     explanation: string;
     institution: string;

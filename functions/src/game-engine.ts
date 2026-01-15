@@ -11,7 +11,6 @@ export class GameEngine {
     totalRounds = 20, // Default to 20
     options?: {
       marketPrices?: Record<string, { organic: number; conventional: number }>;
-      subsidiesEnabled?: boolean;
     },
   ): Round {
     const previousParcels = previousRound ? previousRound.parcelsSnapshot : GameEngine.createInitialParcels();
@@ -298,7 +297,7 @@ export class GameEngine {
     bioSiegel: boolean,
     costScale: number,
     currentCapital: number,
-    options?: { marketPrices?: Record<string, { organic: number; conventional: number }>; subsidiesEnabled?: boolean },
+    options?: { marketPrices?: Record<string, { organic: number; conventional: number }> },
   ): RoundResult {
     let seedCost = 0;
     parcelupdates.forEach((p) => {
