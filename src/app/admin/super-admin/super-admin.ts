@@ -122,7 +122,11 @@ export class SuperAdminComponent implements OnInit {
   isLoadingGames = false;
 
   showQuotaModal = false;
+
+  isSavingQuota = false;
+
   selectedUserForQuota: (UserStatus & { gameCount: number; quota: number }) | null = null;
+
   newQuotaValue = 0;
 
   async ngOnInit() {
@@ -130,19 +134,30 @@ export class SuperAdminComponent implements OnInit {
       if (user) {
         if (localStorage.getItem('soil_test_mode') === 'true') {
           this.loadData();
+
           return;
         }
+
         // User is authenticated
+
         this.loadData();
       } else {
         // Wait a bit or check if we are truly logged out?
+
         // For now, we respect the original logic but adding a log.
+
         if (window.console) console.warn('SuperAdmin: No user, possible redirect needed');
+
         // We only redirect if we are sure. This logic was arguably aggressive
+
         // (redirecting on initial null) but if it works for the user generally,
+
         // I will leave the strict redirect for now, focused on the DATA LOADING issue.
+
         // However, if the user IS logged in, this block shouldn't persist.
+
         if (localStorage.getItem('soil_test_mode')) return; // Avoid redirect in test mode if applicable
+
         this.router.navigate(['/admin/login']);
       }
     });
@@ -150,65 +165,96 @@ export class SuperAdminComponent implements OnInit {
 
   async logout() {
     await this.authService.logout();
+
     this.router.navigate(['/']);
   }
 
   stats: SystemStats | null = null;
+
   isLoadingData = false;
 
   async loadData() {
     this.isLoadingData = true;
+
     if (window.console) console.warn('SuperAdmin: Loading data...');
+
     try {
       const [pendingUsers, admins, stats, feedback] = await Promise.all([
         this.gameService.getPendingUsers(),
+
         this.gameService.getAllAdmins(),
+
         this.gameService.getSystemStats(),
+
         this.gameService.getAllFeedback(),
       ]);
 
       this.ngZone.run(() => {
         this.pendingUsers = pendingUsers;
+
         this.admins = admins;
+
         this.stats = stats;
+
         this.feedback = feedback;
+
         if (window.console)
           console.warn('SuperAdmin: Data loaded', {
             pending: this.pendingUsers.length,
+
             admins: this.admins.length,
+
             feedback: this.feedback.length,
           });
+
         this.cdr.detectChanges();
       });
     } catch (err) {
       if (window.console) console.error('SuperAdmin: Error loading data', err);
     } finally {
       this.isLoadingData = false;
+
       this.cdr.detectChanges();
     }
   }
 
   // Feedback Management
+
   feedbackToManage: Feedback | null = null;
+
   feedbackAction: 'reply' | 'resolve' | 'reject' | null = null;
+
   feedbackValue = '';
+
+  isManagingFeedback = false;
 
   initiateFeedbackAction(item: Feedback, action: 'reply' | 'resolve' | 'reject') {
     this.feedbackToManage = item;
+
     this.feedbackAction = action;
+
     this.feedbackValue = '';
+
+    this.isManagingFeedback = false;
   }
 
   cancelFeedbackAction() {
     this.feedbackToManage = null;
+
     this.feedbackAction = null;
+
     this.feedbackValue = '';
+
+    this.isManagingFeedback = false;
   }
 
   async confirmFeedbackAction() {
     if (!this.feedbackToManage || !this.feedbackAction) return;
 
+    this.isManagingFeedback = true;
+
     const value: { response?: string; externalReference?: string } = {};
+
     if (this.feedbackAction === 'reply') {
       value.response = this.feedbackValue;
     } else if (this.feedbackAction === 'resolve') {
@@ -217,56 +263,107 @@ export class SuperAdminComponent implements OnInit {
 
     try {
       await this.gameService.manageFeedback(this.feedbackToManage.id, this.feedbackAction, value);
+
+      this.isManagingFeedback = false;
+
       this.cancelFeedbackAction();
+
       this.loadData();
     } catch (e: unknown) {
+      this.isManagingFeedback = false;
+
       if (window.console) console.error(e);
+
       const error = e as Error;
+
       alert(`Failed to manage feedback: ${error.message}`);
     }
   }
 
   userToApprove: UserStatus | null = null;
 
+  isApproving = false;
+
   initiateApprove(user: UserStatus) {
     this.userToApprove = user;
+
+    this.isApproving = false;
   }
 
   cancelApprove() {
     this.userToApprove = null;
+
+    this.isApproving = false;
   }
 
   async confirmApprove() {
     if (!this.userToApprove) return;
 
+    this.isApproving = true;
+
     const user = this.userToApprove;
-    await this.gameService.manageAdmin(
-      user.uid,
-      'approve',
-      undefined,
-      this.languageService.currentLang,
-      window.location.origin,
-    );
-    this.loadData();
+
+    try {
+      await this.gameService.manageAdmin(
+        user.uid,
+
+        'approve',
+
+        undefined,
+
+        this.languageService.currentLang,
+
+        window.location.origin,
+      );
+
+      this.isApproving = false;
+
+      this.userToApprove = null;
+
+      this.loadData();
+    } catch (e: unknown) {
+      this.isApproving = false;
+
+      if (window.console) console.error(e);
+
+      const error = e as Error;
+
+      alert(`Failed to approve user: ${error.message}`);
+    }
   }
 
   userToReject: UserStatus | null = null;
+
   showRejectModal = false;
+
+  isRejecting = false;
+
   rejectionReasons: string[] = [];
+
   customRejectionMessage = '';
+
   banEmailOnReject = false;
 
   initiateReject(user: UserStatus) {
     this.userToReject = user;
+
     this.rejectionReasons = [];
+
     this.customRejectionMessage = '';
+
     this.banEmailOnReject = false;
+
     this.showRejectModal = true;
+
+    this.isRejecting = false;
   }
 
   cancelReject() {
     this.showRejectModal = false;
+
     this.userToReject = null;
+
+    this.isRejecting = false;
   }
 
   toggleRejectionReason(reason: string) {
@@ -280,72 +377,134 @@ export class SuperAdminComponent implements OnInit {
   async confirmReject() {
     if (!this.userToReject) return;
 
-    const user = this.userToReject;
-    this.showRejectModal = false;
+    this.isRejecting = true;
 
-    await this.gameService.manageAdmin(
-      user.uid,
-      'reject',
-      {
-        rejectionReasons: this.rejectionReasons,
-        customMessage: this.customRejectionMessage,
-        banEmail: this.banEmailOnReject,
-      },
-      this.languageService.currentLang,
-      window.location.origin,
-    );
-    this.loadData();
-    this.userToReject = null;
+    const user = this.userToReject;
+
+    try {
+      await this.gameService.manageAdmin(
+        user.uid,
+
+        'reject',
+
+        {
+          rejectionReasons: this.rejectionReasons,
+
+          customMessage: this.customRejectionMessage,
+
+          banEmail: this.banEmailOnReject,
+        },
+
+        this.languageService.currentLang,
+
+        window.location.origin,
+      );
+
+      this.isRejecting = false;
+
+      this.showRejectModal = false;
+
+      this.userToReject = null;
+
+      this.loadData();
+    } catch (e: unknown) {
+      this.isRejecting = false;
+
+      if (window.console) console.error(e);
+
+      const error = e as Error;
+
+      alert(`Failed to reject user: ${error.message}`);
+    }
   }
 
   // Old method kept for reference or direct calls if needed, but unused by template now
+
   async approveUser(user: UserStatus) {
     if (!confirm(`Approve ${user.email}?`)) return;
+
     await this.gameService.manageAdmin(
       user.uid,
+
       'approve',
+
       undefined,
+
       this.languageService.currentLang,
+
       window.location.origin,
     );
+
     this.loadData();
   }
 
   async rejectUser(user: UserStatus) {
     const ban = confirm(`Reject ${user.email}?\n\nPress OK to REJECT only.\nPress CANCEL to consider other options.`);
+
     if (ban) {
       await this.gameService.manageAdmin(user.uid, 'reject');
+
       this.loadData();
+
       return;
     }
 
     // If they cancelled, maybe they want to BAN?
+
     // A bit clunky with native alerts. Let's try:
+
     const reallyBan = confirm(`Do you want to BAN ${user.email} and block this email from future usage?`);
+
     if (reallyBan) {
       await this.gameService.manageAdmin(user.uid, 'reject', { banEmail: true });
+
       this.loadData();
     }
   }
 
   // Open the modal
+
   setQuota(user: UserStatus & { quota: number }) {
     this.selectedUserForQuota = user as UserStatus & { gameCount: number; quota: number };
+
     this.newQuotaValue = user.quota;
+
     this.showQuotaModal = true;
+
+    this.isSavingQuota = false;
   }
 
   closeQuotaModal() {
     this.showQuotaModal = false;
+
     this.selectedUserForQuota = null;
+
+    this.isSavingQuota = false;
   }
 
   async saveQuota() {
     if (this.selectedUserForQuota && this.newQuotaValue >= 0) {
-      this.showQuotaModal = false; // Optimistic close
-      await this.gameService.manageAdmin(this.selectedUserForQuota.uid, 'setQuota', this.newQuotaValue);
-      this.loadData();
-      this.selectedUserForQuota = null;
+      this.isSavingQuota = true;
+
+      try {
+        await this.gameService.manageAdmin(this.selectedUserForQuota.uid, 'setQuota', this.newQuotaValue);
+
+        this.isSavingQuota = false;
+
+        this.showQuotaModal = false;
+
+        this.loadData();
+
+        this.selectedUserForQuota = null;
+      } catch (e: unknown) {
+        this.isSavingQuota = false;
+
+        if (window.console) console.error(e);
+
+        const error = e as Error;
+
+        alert(`Failed to save quota: ${error.message}`);
+      }
     }
   }
 

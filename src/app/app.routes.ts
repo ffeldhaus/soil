@@ -26,10 +26,6 @@ const baseRoutes: Routes = [
     loadComponent: () => import('./admin/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
-    path: 'onboarding',
-    loadComponent: () => import('./admin/onboarding/onboarding').then((m) => m.Onboarding),
-  },
-  {
     path: 'auth/action',
     loadComponent: () => import('./auth/auth-action/auth-action').then((m) => m.AuthActionComponent),
   },

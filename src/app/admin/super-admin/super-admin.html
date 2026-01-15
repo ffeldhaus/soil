@@ -736,24 +736,30 @@
           <div class="p-6 bg-gray-800/50 border-t border-gray-800 flex justify-end gap-3">
             <button
               (click)="closeQuotaModal()"
-              class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition"
+              [disabled]="isSavingQuota"
+              class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition disabled:opacity-50"
             >
               {{ t('superadmin.modal.cancel') }}
             </button>
             <button
               (click)="saveQuota()"
-              class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/20 transition flex items-center gap-2"
+              [disabled]="isSavingQuota"
+              class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/20 transition flex items-center justify-center gap-2 min-w-[100px]"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              {{ t('superadmin.quota.modal.save') }}
+              @if (!isSavingQuota) {
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ t('superadmin.quota.modal.save') }}</span>
+              } @else {
+                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              }
             </button>
           </div>
         </div>
@@ -807,9 +813,14 @@
             </button>
             <button
               (click)="confirmApprove()"
-              class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
+              [disabled]="isApproving"
+              class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
             >
-              {{ t('superadmin.approve.modal.confirm') }}
+              @if (!isApproving) {
+                <span>{{ t('superadmin.approve.modal.confirm') }}</span>
+              } @else {
+                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              }
             </button>
           </div>
         </div>
@@ -919,15 +930,21 @@
           <div class="flex gap-3 mt-4">
             <button
               (click)="cancelReject()"
-              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+              [disabled]="isRejecting"
+              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition disabled:opacity-50"
             >
               {{ t('superadmin.modal.cancel') }}
             </button>
             <button
               (click)="confirmReject()"
-              class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
+              [disabled]="isRejecting"
+              class="flex-1 py-2 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
             >
-              {{ t('superadmin.reject.modal.send') }}
+              @if (!isRejecting) {
+                <span>{{ t('superadmin.reject.modal.send') }}</span>
+              } @else {
+                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              }
             </button>
           </div>
         </div>
@@ -1027,28 +1044,35 @@
           <div class="flex gap-3 mt-4">
             <button
               (click)="cancelFeedbackAction()"
-              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+              [disabled]="isManagingFeedback"
+              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition disabled:opacity-50"
             >
               {{ t('superadmin.modal.cancel') }}
             </button>
             <button
               (click)="confirmFeedbackAction()"
-              [disabled]="feedbackAction === 'reply' && !feedbackValue"
+              [disabled]="(feedbackAction === 'reply' && !feedbackValue) || isManagingFeedback"
               class="flex-1 py-2 font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
               [ngClass]="{
                 'bg-blue-600 hover:bg-blue-500 text-white': feedbackAction === 'reply',
                 'bg-emerald-600 hover:bg-emerald-500 text-white': feedbackAction === 'resolve',
                 'bg-red-600 hover:bg-red-500 text-white': feedbackAction === 'reject',
-                'opacity-50 cursor-not-allowed': feedbackAction === 'reply' && !feedbackValue,
+                'opacity-50 cursor-not-allowed': (feedbackAction === 'reply' && !feedbackValue) || isManagingFeedback,
               }"
             >
-              {{
-                feedbackAction === 'reply'
-                  ? t('superadmin.feedback.modal.reply.send')
-                  : feedbackAction === 'resolve'
-                    ? t('superadmin.feedback.modal.resolve.confirm')
-                    : t('superadmin.actions.reject')
-              }}
+              @if (!isManagingFeedback) {
+                <span>
+                  {{
+                    feedbackAction === 'reply'
+                      ? t('superadmin.feedback.modal.reply.send')
+                      : feedbackAction === 'resolve'
+                        ? t('superadmin.feedback.modal.resolve.confirm')
+                        : t('superadmin.actions.reject')
+                  }}
+                </span>
+              } @else {
+                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              }
             </button>
           </div>
         </div>

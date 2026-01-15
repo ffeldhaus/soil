@@ -61,7 +61,7 @@ export class AdminRegisterComponent implements OnInit {
       'adminRegister.placeholder.website': $localize`:Form Placeholder|Placeholder for institution website@@adminRegister.placeholder.website:https://schule.de`,
       'adminRegister.explanation': $localize`:Form Label|Label for usage explanation textarea@@adminRegister.explanation:Warum möchten Sie SOIL nutzen?`,
       'adminRegister.placeholder.explanation': $localize`:Form Placeholder|Placeholder for usage explanation@@adminRegister.placeholder.explanation:Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht`,
-      'adminRegister.success.verificationSent': $localize`:Success Message|Notification that registration was successful and email sent@@adminRegister.success.verificationSent:Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihr Konto zu verifizieren.`,
+      'adminRegister.success.verificationSent': $localize`:Success Message|Notification that registration was successful and account verification is pending@@adminRegister.success.verificationSent:Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.`,
       'adminRegister.error.title': $localize`:Heading|Title for registration error modal@@adminRegister.error.title:Registrierung fehlgeschlagen`,
       'adminRegister.error.retry': $localize`:Action Label|Button to retry registration@@adminRegister.error.retry:Erneut versuchen`,
     };
@@ -126,7 +126,14 @@ export class AdminRegisterComponent implements OnInit {
         return;
       }
 
-      this.router.navigate(['/admin']);
+      // Google users are already verified, show success and maybe redirect to home after a delay
+      this.successMessage = this.t('adminRegister.success.verificationSent').replace(
+        ' Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.',
+        '',
+      );
+      this.isLoading = false;
+      this.cdr.detectChanges();
+      setTimeout(() => this.router.navigate(['/']), 5000);
     } catch (error: unknown) {
       console.error('Registration error:', error);
       this.errorMessage =
