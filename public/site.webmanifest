@@ -2,7 +2,7 @@
   "name": "Soil - Multiplayer Resource Management",
   "short_name": "SOIL",
   "description": "A multiplayer game about resource management and soil quality.",
-  "start_url": "/",
+  "start_url": "https://soil.app",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -12,7 +12,8 @@
     {
       "src": "/favicon-96x96.png",
       "sizes": "96x96",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/web-app-manifest-192x192.png",
@@ -30,6 +31,13 @@
       "src": "/apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/SOIL-screenshot.jpg",
+      "sizes": "1920x1377",
+      "type": "image/jpeg"
     }
   ]
 }
