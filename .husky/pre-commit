@@ -46,25 +46,117 @@ if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ic
 
 
 
-  if git diff --cached --name-only | grep -qvE '^functions/'; then
+    if git diff --cached --name-only | grep -qvE '^functions/'; then
 
-    # Frontend changed if anything outside functions/ (excluding pure docs/media) changed
 
-    if git diff --cached --name-only | grep -vE '^functions/' | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/'; then
 
-      FRONTEND_CHANGED=true
+      # Frontend changed if anything outside functions/ (excluding pure docs/media/version/husky) changed
+
+
+
+      if git diff --cached --name-only | grep -vE '^functions/' | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|^package-lock\.json
+
+
+
+  if [ "$FRONTEND_CHANGED" = true ]; then
+
+    echo "Frontend changes detected. Running frontend tests and build..."
+
+    npx vitest run --reporter=dot
+
+    ng build --define "import.meta.env.APP_VERSION='$(node scripts/get-version.js)'" --progress=false > /dev/null
+
+  fi
+
+
+
+  if [ "$BACKEND_CHANGED" = true ]; then
+
+    echo "Backend changes detected. Running backend tests..."
+
+    npm run test --prefix functions -- --reporter min
+
+  fi
+
+else
+
+  echo "Only media or documentation changes detected. Skipping tests and build."
+
+fi
+; then
+
+
+
+        FRONTEND_CHANGED=true
+
+
+
+      fi
+
+
 
     fi
 
+
+
+  
+
+
+
+    if git diff --cached --name-only | grep -qE '^functions/'; then
+
+
+
+      # Only consider it a backend change if it's not just the lock file (optional, but consistent)
+
+
+
+      if git diff --cached --name-only | grep -E '^functions/' | grep -qvE 'package-lock\.json
+
+
+
+  if [ "$FRONTEND_CHANGED" = true ]; then
+
+    echo "Frontend changes detected. Running frontend tests and build..."
+
+    npx vitest run --reporter=dot
+
+    ng build --define "import.meta.env.APP_VERSION='$(node scripts/get-version.js)'" --progress=false > /dev/null
+
   fi
 
 
 
-  if git diff --cached --name-only | grep -qE '^functions/'; then
+  if [ "$BACKEND_CHANGED" = true ]; then
 
-    BACKEND_CHANGED=true
+    echo "Backend changes detected. Running backend tests..."
+
+    npm run test --prefix functions -- --reporter min
 
   fi
+
+else
+
+  echo "Only media or documentation changes detected. Skipping tests and build."
+
+fi
+; then
+
+
+
+        BACKEND_CHANGED=true
+
+
+
+      fi
+
+
+
+    fi
+
+
+
+  
 
 
 
