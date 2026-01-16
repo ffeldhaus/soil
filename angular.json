@@ -48,7 +48,7 @@
               "dijkstrajs"
             ],
             "define": {
-              "import.meta.env.APP_VERSION": "\"1.11.13\""
+              "import.meta.env.APP_VERSION": "\"1.11.14\""
             },
             "assets": [
               {
