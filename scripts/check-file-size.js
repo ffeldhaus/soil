@@ -5,7 +5,7 @@ const { execSync } = require('node:child_process');
 const warnSize = 128 * 1024; // 128KB
 const errorSize = 256 * 1024; // 256KB
 
-const exceptions = ['package-lock.json', 'dist/', '.angular/', 'coverage/'];
+const exceptions = ['package-lock.json', 'dist/', '.angular/', 'coverage/', '.xlf'];
 
 const includedExtensions = ['.ts', '.html', '.scss', '.css', '.js', '.md', '.json', '.xlf'];
 
