@@ -1,5 +1,35 @@
 #!/bin/sh
 
+# Check for outdated packages in frontend (root) and backend (functions)
+# Fail if any package's "current" version is behind "wanted" version
+check_outdated() {
+  DIR=$1
+  NAME=$2
+  echo "Checking for outdated packages in $NAME..."
+  OUTDATED=$(npm outdated --prefix "$DIR" --json)
+  if [ -n "$OUTDATED" ] && [ "$OUTDATED" != "{}" ]; then
+    # Check if any package has current != wanted
+    # We use node to parse the JSON as it is more reliable than grep/sed
+    UPDATABLE=$(echo "$OUTDATED" | node -e "
+      const data = JSON.parse(require('fs').readFileSync(0, 'utf8'));
+      const updatable = Object.entries(data).filter(([name, info]) => info.current !== info.wanted);
+      if (updatable.length > 0) {
+        console.log('Updatable packages found in $NAME:');
+        updatable.forEach(([name, info]) => console.log('  ' + name + ': ' + info.current + ' -> ' + info.wanted));
+        process.exit(1);
+      }
+    ")
+    if [ $? -ne 0 ]; then
+      echo "$UPDATABLE"
+      echo "Error: Please update packages in $NAME according to package.json constraints (npm update) before pushing."
+      exit 1
+    fi
+  fi
+}
+
+check_outdated "." "Frontend"
+check_outdated "functions" "Backend"
+
 # If we can compare against origin/main, do it. Otherwise just run tests.
 if git rev-parse --verify origin/main >/dev/null 2>&1; then
   # If ONLY media, version-related files (package.json, angular.json), or husky files are changed since origin/main, skip everything

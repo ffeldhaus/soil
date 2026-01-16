@@ -35,11 +35,61 @@ if [ -n "$STAGED_FILES" ]; then
 fi
 
 # Check if any staged files are NOT documentation, media, version-related, or husky-related
+
 if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/'; then
-  # Use concise reporters and suppress stdout for build unless there's an error
-  npx vitest run --reporter=dot
-  npm run test --prefix functions -- --reporter min
-  ng build --define "import.meta.env.APP_VERSION='$(node scripts/get-version.js)'" --progress=false > /dev/null
+
+  # Determine what to run based on changed files
+
+  FRONTEND_CHANGED=false
+
+  BACKEND_CHANGED=false
+
+
+
+  if git diff --cached --name-only | grep -qvE '^functions/'; then
+
+    # Frontend changed if anything outside functions/ (excluding pure docs/media) changed
+
+    if git diff --cached --name-only | grep -vE '^functions/' | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/'; then
+
+      FRONTEND_CHANGED=true
+
+    fi
+
+  fi
+
+
+
+  if git diff --cached --name-only | grep -qE '^functions/'; then
+
+    BACKEND_CHANGED=true
+
+  fi
+
+
+
+  if [ "$FRONTEND_CHANGED" = true ]; then
+
+    echo "Frontend changes detected. Running frontend tests and build..."
+
+    npx vitest run --reporter=dot
+
+    ng build --define "import.meta.env.APP_VERSION='$(node scripts/get-version.js)'" --progress=false > /dev/null
+
+  fi
+
+
+
+  if [ "$BACKEND_CHANGED" = true ]; then
+
+    echo "Backend changes detected. Running backend tests..."
+
+    npm run test --prefix functions -- --reporter min
+
+  fi
+
 else
+
   echo "Only media or documentation changes detected. Skipping tests and build."
+
 fi
