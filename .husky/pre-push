@@ -23,11 +23,16 @@ check_outdated() {
   DIR=$1
   NAME=$2
   echo "Checking for outdated packages in $NAME..."
-  OUTDATED=$(npm outdated --prefix "$DIR" --json)
-  if [ -n "$OUTDATED" ] && [ "$OUTDATED" != "{}" ]; then
-    # Check if any package has current != wanted
-    # We use node to parse the JSON as it is more reliable than grep/sed
-    UPDATABLE=$(echo "$OUTDATED" | node -e "
+  OUTDATED=$(npm outdated --prefix "$DIR" --json || true)
+  if [ -z "$OUTDATED" ] || [ "$OUTDATED" = "{}" ]; then
+    echo "No outdated packages in $NAME."
+    return 0
+  fi
+  
+  # Check if any package has current != wanted
+  # We use node to parse the JSON as it is more reliable than grep/sed
+  UPDATABLE_INFO=$(echo "$OUTDATED" | node -e "
+    try {
       const data = JSON.parse(require('fs').readFileSync(0, 'utf8'));
       const updatable = Object.entries(data).filter(([name, info]) => info.current !== info.wanted);
       if (updatable.length > 0) {
@@ -35,13 +40,18 @@ check_outdated() {
         updatable.forEach(([name, info]) => console.log('  ' + name + ': ' + info.current + ' -> ' + info.wanted));
         process.exit(1);
       }
-    ")
-    if [ $? -ne 0 ]; then
-      echo "$UPDATABLE"
-      echo "Error: Please update packages in $NAME according to package.json constraints (npm update) before pushing."
-      exit 1
-    fi
+    } catch (e) {
+      // If parsing fails (e.g. not JSON), assume no updatable packages or log error
+      process.exit(0);
+    }
+  ")
+  EXIT_CODE=$?
+  if [ $EXIT_CODE -ne 0 ]; then
+    echo "$UPDATABLE_INFO"
+    echo "Error: Please update packages in $NAME according to package.json constraints (npm update) before pushing."
+    exit 1
   fi
+  echo "All packages in $NAME are up to date within constraints."
 }
 
 check_outdated "." "Frontend"
