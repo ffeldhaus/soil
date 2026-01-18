@@ -7,7 +7,7 @@
 - [x] Task: Expand Authentication to include Google - [~] Task: Expand Authentication to include Google & Apple Sign-In Apple Sign-In [592ca0d]
     - [ ] Write tests for multi-provider auth service
     - [ ] Implement Google and Apple sign-in flows
-- [ ] Task: Implement Email/Password authentication with verification
+- [x] Task: Implement Email/Password authentication with verification [422b2d1]
     - [ ] Write tests for email verification flow
     - [ ] Implement registration, login, and verification screens
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Authentication & Guest Access' (Protocol in workflow.md)
