@@ -4,6 +4,7 @@ import { Functions } from '@angular/fire/functions';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  OAuthProvider,
   onAuthStateChanged,
   signInWithCustomToken,
   signInWithEmailAndPassword,
@@ -83,6 +84,17 @@ export class AuthService {
       return { user };
     }
     const provider = new GoogleAuthProvider();
+    return await signInWithPopup(this.auth, provider);
+  }
+
+  async loginWithApple() {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const user = this.getMockUser();
+      this.userSubject.next(user);
+      return { user };
+    }
+    const provider = new OAuthProvider('apple.com');
     return await signInWithPopup(this.auth, provider);
   }
 
