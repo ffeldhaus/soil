@@ -4,7 +4,7 @@
 - [x] Task: Implement "Guest" mode for instant access without registration [c00a9f3]
     - [ ] Write unit tests for anonymous/guest session management
     - [ ] Implement local-only guest session logic
-- [ ] Task: Expand Authentication to include Google & Apple Sign-In
+- [x] Task: Expand Authentication to include Google - [~] Task: Expand Authentication to include Google & Apple Sign-In Apple Sign-In [592ca0d]
     - [ ] Write tests for multi-provider auth service
     - [ ] Implement Google and Apple sign-in flows
 - [ ] Task: Implement Email/Password authentication with verification
