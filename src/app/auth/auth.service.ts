@@ -42,7 +42,37 @@ export class AuthService {
     // Check for test mode immediate override
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
       this.userSubject.next(this.getMockUser());
+    } else if (isBrowser && window.localStorage.getItem('soil_guest_uid')) {
+      const guestUid = window.localStorage.getItem('soil_guest_uid')!;
+      this.userSubject.next(this.createGuestUser(guestUid));
     }
+  }
+
+  private createGuestUser(uid: string): User {
+    return {
+      uid,
+      displayName: 'Guest',
+      isAnonymous: true,
+      email: null,
+      emailVerified: false,
+      metadata: {},
+      providerData: [],
+      refreshToken: '',
+      tenantId: null,
+      delete: async () => {},
+      getIdToken: async () => 'guest-token',
+      getIdTokenResult: async () => ({
+        token: 'guest-token',
+        authTime: '',
+        issuedAtTime: '',
+        expirationTime: '',
+        signInProvider: 'anonymous',
+        signInSecondFactor: null,
+        claims: { role: 'guest' },
+      }),
+      reload: async () => {},
+      toJSON: () => ({}),
+    } as unknown as User;
   }
 
   async loginWithGoogle() {
@@ -136,13 +166,33 @@ export class AuthService {
     }
   }
 
+  async signInAsGuest() {
+    const guestUid = `guest-${Math.random().toString(36).substring(2, 15)}`;
+    const guestUser = this.createGuestUser(guestUid);
+
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser) {
+      window.localStorage.setItem('soil_guest_uid', guestUid);
+    }
+
+    this.ngZone.run(() => this.userSubject.next(guestUser));
+    return { user: guestUser };
+  }
+
   async logout() {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode')) {
-      window.localStorage.removeItem('soil_test_mode');
-      window.localStorage.removeItem('soil_test_role');
-      this.userSubject.next(null);
-      return Promise.resolve();
+    if (isBrowser) {
+      if (window.localStorage.getItem('soil_test_mode')) {
+        window.localStorage.removeItem('soil_test_mode');
+        window.localStorage.removeItem('soil_test_role');
+        this.userSubject.next(null);
+        return Promise.resolve();
+      }
+      if (window.localStorage.getItem('soil_guest_uid')) {
+        window.localStorage.removeItem('soil_guest_uid');
+        this.userSubject.next(null);
+        return Promise.resolve();
+      }
     }
 
     return await signOut(this.auth);
