@@ -455,14 +455,11 @@ export const createGame = onCall(async (request) => {
 
   let userRole = request.auth.token.role;
   let quota = 5;
-  // let gameCount = 0; // Legacy counter, ignored for quota check
 
   if (userSnap.exists) {
     const userData = userSnap.data();
     userRole = userData?.role || 'pending';
     quota = userData?.quota || 5;
-    quota = userData?.quota || 5;
-    // gameCount = userData?.gameCount || 0; // Legacy
   } else {
     // Bootstrap: If email is florian.feldhaus@gmail.com, make superadmin
     if (request.auth.token.email === 'florian.feldhaus@gmail.com') {
@@ -478,21 +475,18 @@ export const createGame = onCall(async (request) => {
         gameCount: 0,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
+    } else if (request.auth.token.role === 'guest') {
+      userRole = 'guest';
+      quota = 1; // Guests can only have 1 active game
     }
   }
 
-  if (userRole !== 'admin' && userRole !== 'superadmin') {
-    throw new HttpsError('permission-denied', 'You must be an approved admin to create games.');
-  }
+  // Allow guests to create games, but they are limited to local-style games (1 human + AI)
+  // if (userRole !== 'admin' && userRole !== 'superadmin' && userRole !== 'guest') {
+  //   throw new HttpsError('permission-denied', 'You must be logged in to create games.');
+  // }
 
   // Dynamic Quota Check
-  // Count games where hostUid == uid AND status != 'deleted' AND status != 'expired'
-  // Since we don't have a composite index for everything, and status can be multiple values,
-  // let's just count games where hostUid == uid and deletedAt == null.
-  // This assumes 'status' is kept in sync with 'deletedAt' for soft checking.
-  // Ideally we filter status 'in' ['waiting', 'in_progress', 'finished'] but that requires an index.
-  // 'deletedAt == null' is a good proxy for active games.
-
   const activeGamesCountSnap = await db
     .collection('games')
     .where('hostUid', '==', uid)
@@ -514,49 +508,65 @@ export const createGame = onCall(async (request) => {
 
   const gameId = db.collection('games').doc().id;
 
-  // Ensure numAi does not exceed numPlayers
-  const numAi = Math.min(numPlayers, Math.max(0, config.numAi || 0));
+  // For Guest/Local games, strictly enforce 1 human player
+  if (userRole === 'guest') {
+    config.numAi = numPlayers - 1;
+  }
+
+  // Ensure numAi does not exceed numPlayers - 1 (since host is always a player now)
+  const numAi = Math.min(numPlayers - 1, Math.max(0, config.numAi || 0));
   config.numAi = numAi;
 
   // Generate secrets for all players
   const playerSecrets: Record<string, { password: string }> = {};
   for (let i = 1; i <= numPlayers; i++) {
-    playerSecrets[String(i)] = {
-      password: generateRandomPassword(6),
+    playerSecrets[String(i)] = { password: generateRandomPassword(4) };
+  }
+
+  const players: Record<string, any> = {};
+  // Player 1 is ALWAYS the host
+  const hostPlayerUid = `player-${gameId}-1`;
+  players[hostPlayerUid] = {
+    uid: hostPlayerUid,
+    displayName: `${settings.playerLabel} 1`,
+    isAi: false,
+    capital: 1000,
+    currentRound: 0,
+    history: [],
+    joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+    hostUid: uid, // Link to the actual auth user
+  };
+
+  // Remaining players are either AI or human placeholders
+  for (let i = 2; i <= numPlayers; i++) {
+    const pUid = `player-${gameId}-${i}`;
+    const isAi = i > numPlayers - numAi;
+    players[pUid] = {
+      uid: pUid,
+      displayName: `${settings.playerLabel} ${i}`,
+      isAi: isAi,
+      aiLevel: isAi ? config.aiLevel || 'middle' : undefined,
+      capital: 1000,
+      currentRound: 0,
+      history: [],
     };
   }
 
   const newGame = {
     id: gameId,
     name: name || `Game ${gameId.substr(0, 6)}`,
-    // password: finalPassword, // Removed global password
-    hostUid: request.auth.uid,
+    hostUid: uid,
+    hostRole: userRole,
     status: 'waiting',
-    settings, // Keep old settings structure for compatibility if needed, or merge
-    config, // New explicit config
-    players: {
-      ...Array(numPlayers)
-        .fill(0)
-        .reduce((acc, _, i) => {
-          const playerNumber = i + 1;
-          const playerId = `player-${gameId}-${playerNumber}`;
-          acc[playerId] = {
-            uid: playerId,
-            displayName: `Team ${playerNumber}`,
-            isAi: playerNumber <= numAi,
-            capital: 1000,
-            currentRound: 0,
-            history: [],
-          };
-          return acc;
-        }, {} as any),
-    },
-
     currentRoundNumber: 0,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    retentionDays: validRetention,
-    deletedAt: null,
+    settings,
+    config,
     playerSecrets,
+    players,
+    retentionDays: validRetention,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    deletedAt: null,
   };
 
   await db.runTransaction(async (t) => {

@@ -18,6 +18,8 @@ describe('Dashboard Component', () => {
       user$: of({ uid: 'admin', displayName: 'Admin' }),
       logout: vi.fn().mockResolvedValue(undefined),
       loginWithGoogle: vi.fn(),
+      loginAsPlayer: vi.fn().mockResolvedValue({ user: { uid: 'player-uid' } }),
+      signInAsGuest: vi.fn().mockResolvedValue({ user: { uid: 'guest-uid', isAnonymous: true } }),
     };
     gameServiceMock = {
       getAdminGames: vi.fn().mockResolvedValue({ games: [], total: 0 }),

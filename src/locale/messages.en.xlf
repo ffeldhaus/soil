@@ -1271,9 +1271,15 @@
         <note category="description">Label for number of AI bots input</note>
         <note category="meaning">Form Label</note>
       </notes>
-      <segment state="translated">
-        <source>KI-Bots</source>
+      <segment state="initial">
+        <source>Davon KI-Bots</source>
         <target>AI Bots</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.botsHint">
+      <segment state="initial">
+        <source>Restliche Slots (<ph id="0" equiv="INTERPOLATION" disp="{{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}"/>) sind für andere menschliche Spieler.</source>
+        <target>Restliche Slots (<ph id="0" equiv="INTERPOLATION" disp="{{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}"/>) sind für andere menschliche Spieler.</target>
       </segment>
     </unit>
     <unit id="dashboard.createGame.creating">
@@ -1376,6 +1382,12 @@
         <target>Rounds</target>
       </segment>
     </unit>
+    <unit id="dashboard.createGame.slotsHint">
+      <segment state="initial">
+        <source>Du bist automatisch Spieler 1.</source>
+        <target>Du bist automatisch Spieler 1.</target>
+      </segment>
+    </unit>
     <unit id="dashboard.createGame.submit">
       <notes>
         <note category="description">Button to create a new game</note>
@@ -1394,6 +1406,12 @@
       <segment state="translated">
         <source>Neues Spiel erstellen</source>
         <target>Create new game</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.totalSlots">
+      <segment state="initial">
+        <source>Gesamtanzahl Slots</source>
+        <target>Gesamtanzahl Slots</target>
       </segment>
     </unit>
     <unit id="dashboard.deadline.hint">
@@ -1686,6 +1704,36 @@
         <target>Trash</target>
       </segment>
     </unit>
+    <unit id="dashboard.guestUser">
+      <segment state="initial">
+        <source>Gast-Modus</source>
+        <target>Gast-Modus</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.joinGame.id">
+      <segment state="initial">
+        <source>Spiel-ID</source>
+        <target>Spiel-ID</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.joinGame.pin">
+      <segment state="initial">
+        <source>PIN (optional)</source>
+        <target>PIN (optional)</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.joinGame.submit">
+      <segment state="initial">
+        <source>Spiel beitreten</source>
+        <target>Spiel beitreten</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.joinGame.title">
+      <segment state="initial">
+        <source>Einem Spiel beitreten</source>
+        <target>Einem Spiel beitreten</target>
+      </segment>
+    </unit>
     <unit id="dashboard.list.active">
       <notes>
         <note category="description">Title for the active games list</note>
@@ -1754,6 +1802,12 @@
       <segment state="translated">
         <source>Bitte melde dich an, um auf das Dashboard zuzugreifen.</source>
         <target>Please log in to access the dashboard.</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.loginBtn">
+      <segment state="initial">
+        <source>Anmelden</source>
+        <target>Anmelden</target>
       </segment>
     </unit>
     <unit id="dashboard.logout">
@@ -2074,6 +2128,12 @@
       <segment state="translated">
         <source>Scannen zum automatischen Anmelden.</source>
         <target>Scan to log in automatically.</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.registerBtn">
+      <segment state="initial">
+        <source>Registrieren</source>
+        <target>Registrieren</target>
       </segment>
     </unit>
     <unit id="dashboard.super.btnGo">

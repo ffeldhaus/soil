@@ -15,6 +15,7 @@ import { DashboardErrorModalComponent } from './components/dashboard-error-modal
 import { DashboardFinanceModalComponent } from './components/dashboard-finance-modal';
 import { DashboardGameListComponent } from './components/dashboard-game-list';
 import { DashboardHudComponent } from './components/dashboard-hud';
+import { DashboardJoinGameComponent } from './components/dashboard-join-game';
 import { DashboardPendingComponent } from './components/dashboard-pending';
 import { DashboardSuperAdminComponent } from './components/dashboard-super-admin';
 import { DashboardTeacherGuideComponent } from './components/dashboard-teacher-guide';
@@ -32,6 +33,7 @@ import { QrOverlayComponent } from './components/qr-overlay';
     QrOverlayComponent,
     DashboardSuperAdminComponent,
     DashboardCreateGameComponent,
+    DashboardJoinGameComponent,
     DashboardGameListComponent,
     DashboardDeleteModalComponent,
     DashboardFinanceModalComponent,
@@ -305,7 +307,7 @@ export class Dashboard implements OnInit, OnDestroy {
                 if (userData) {
                   this.userStatus = userData;
 
-                  if (userData.role === 'new') {
+                  if (userData.role === 'new' && !user.isAnonymous) {
                     this.isLoading = false;
                     this.router.navigate(['/admin/register']);
                     return;
@@ -334,8 +336,15 @@ export class Dashboard implements OnInit, OnDestroy {
                     return;
                   }
 
-                  this.isLoading = false;
-                  this.router.navigate(['/admin/register']);
+                  if (user.isAnonymous) {
+                    this.userStatus = { uid: user.uid, role: 'player', status: 'active', email: '' };
+                    this.isPendingApproval = false;
+                    this.isLoading = false;
+                    this.loadGames();
+                  } else {
+                    this.isLoading = false;
+                    this.router.navigate(['/admin/register']);
+                  }
                 }
                 this.cdr.detectChanges();
               });
@@ -350,10 +359,12 @@ export class Dashboard implements OnInit, OnDestroy {
             },
           });
       } else {
-        this.games = [];
-        this.userStatus = null;
-        this.isLoading = false;
-        this.router.navigate(['/admin/login']);
+        this.isLoading = true;
+        this.authService.signInAsGuest().catch((err) => {
+          console.error('Auto guest login failed:', err);
+          this.isLoading = false;
+          this.router.navigate(['/admin/login']);
+        });
       }
     });
 
@@ -443,6 +454,16 @@ export class Dashboard implements OnInit, OnDestroy {
     await this.createNewGame();
   }
 
+  async onJoinGame(event: { gameId: string; pin: string }) {
+    try {
+      await this.authService.loginAsPlayer(event.gameId, event.pin);
+      this.router.navigate(['/game']);
+    } catch (error: unknown) {
+      console.error('Error joining game', error);
+      this.errorMessage = `Failed to join game: ${(error as Error).message}`;
+    }
+  }
+
   async onUpdateDeadline(event: { gameId: string; round: number; dateStr: string }) {
     await this.updateDeadline(event.gameId, event.round, event.dateStr);
   }
@@ -464,7 +485,11 @@ export class Dashboard implements OnInit, OnDestroy {
     try {
       const result = await this.gameService.createGame(name, config);
       this.createdGame = { id: result.gameId, password: result.password };
-      // alert('Game created successfully!'); // Removed per request
+
+      // Auto-join the created game as first player
+      await this.authService.loginAsPlayer(result.gameId, result.password!);
+      this.router.navigate(['/game']);
+
       this.loadGames(); // Refresh list
       this.expandedGameId = result.gameId;
       this.cdr.detectChanges();

@@ -264,6 +264,7 @@ export class GameService {
       numPlayers: number;
       numRounds: number;
       numAi: number;
+      aiLevel?: string;
       playerLabel: string;
       advancedPricingEnabled?: boolean;
     },

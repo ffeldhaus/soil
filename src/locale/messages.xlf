@@ -48,6 +48,11 @@
         <source>Neues Spiel erstellen</source>
       </segment>
     </unit>
+    <unit id="dashboard.createGame.totalSlots">
+      <segment>
+        <source>Gesamtanzahl Slots</source>
+      </segment>
+    </unit>
     <unit id="dashboard.createGame.name">
       <notes>
         <note category="description">Label for the game name input</note>
@@ -108,7 +113,12 @@
         <note category="meaning">Form Label</note>
       </notes>
       <segment>
-        <source>KI-Bots</source>
+        <source>Davon KI-Bots</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.botsHint">
+      <segment>
+        <source>Restliche Slots (<ph id="0" equiv="INTERPOLATION" disp="{{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}"/>) sind für andere menschliche Spieler.</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.advancedPricing">
@@ -127,6 +137,11 @@
       </notes>
       <segment>
         <source>KI-Niveau</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.slotsHint">
+      <segment>
+        <source>Du bist automatisch Spieler 1.</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.submit">
@@ -552,6 +567,26 @@
         <source>Papierkorb (Gelöschte Spiele)</source>
       </segment>
     </unit>
+    <unit id="dashboard.joinGame.id">
+      <segment>
+        <source>Spiel-ID</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.joinGame.pin">
+      <segment>
+        <source>PIN (optional)</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.joinGame.submit">
+      <segment>
+        <source>Spiel beitreten</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.joinGame.title">
+      <segment>
+        <source>Einem Spiel beitreten</source>
+      </segment>
+    </unit>
     <unit id="dashboard.list.active">
       <notes>
         <note category="description">Title for the active games list</note>
@@ -586,6 +621,11 @@
       </notes>
       <segment>
         <source>Papierkorb</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.guestUser">
+      <segment>
+        <source>Gast-Modus</source>
       </segment>
     </unit>
     <unit id="dashboard.actions.restoreSelected">
@@ -876,6 +916,11 @@
         <source>Scannen zum automatischen Anmelden.</source>
       </segment>
     </unit>
+    <unit id="dashboard.registerBtn">
+      <segment>
+        <source>Registrieren</source>
+      </segment>
+    </unit>
     <unit id="dashboard.qr.print">
       <notes>
         <note category="description">Button to print the QR code</note>
@@ -964,6 +1009,11 @@
       </notes>
       <segment>
         <source>Bitte melde dich an, um auf das Dashboard zuzugreifen.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.loginBtn">
+      <segment>
+        <source>Anmelden</source>
       </segment>
     </unit>
     <unit id="dashboard.login.btn">

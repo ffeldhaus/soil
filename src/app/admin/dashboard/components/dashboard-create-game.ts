@@ -39,7 +39,7 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.phPlayer': $localize`:Form Placeholder|Placeholder for the player designation input@@dashboard.createGame.phPlayer:Spieler`,
       'dashboard.createGame.players': $localize`:Form Label|Label for number of players input@@dashboard.createGame.players:Spieler (1-10)`,
       'dashboard.createGame.rounds': $localize`:Form Label|Label for number of rounds input@@dashboard.createGame.rounds:Runden`,
-      'dashboard.createGame.bots': $localize`:Form Label|Label for number of AI bots input@@dashboard.createGame.bots:KI-Bots`,
+      'dashboard.createGame.bots': $localize`:Form Label|Label for number of AI bots input@@dashboard.createGame.bots:Davon KI-Bots`,
       'dashboard.createGame.aiLevel': $localize`:Form Label|Label for AI difficulty level input@@dashboard.createGame.aiLevel:KI-Niveau`,
       'dashboard.createGame.advancedPricing': $localize`:Form Label|Label for advanced pricing checkbox@@dashboard.createGame.advancedPricing:Fortgeschrittener Markt (Preisbildung durch Angebot & Nachfrage)`,
       'dashboard.createGame.submit': $localize`:Action Label|Button to create a new game@@dashboard.createGame.submit:+ Neues Spiel erstellen`,

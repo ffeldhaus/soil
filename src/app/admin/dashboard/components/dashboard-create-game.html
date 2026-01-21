@@ -38,7 +38,7 @@
     </div>
     <div>
       <div class="flex justify-between items-center mb-1">
-        <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.players') }}</label>
+        <label class="block text-xs text-gray-200" i18n="@@dashboard.createGame.totalSlots">Gesamtanzahl Slots</label>
         <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numPlayers }}</span>
       </div>
       <input
@@ -49,7 +49,25 @@
         max="10"
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
+      <p class="text-[10px] text-gray-500 mt-1" i18n="@@dashboard.createGame.slotsHint">Du bist automatisch Spieler 1.</p>
     </div>
+    <div>
+      <div class="flex justify-between items-center mb-1">
+        <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.bots') }}</label>
+        <span class="text-xs font-bold text-blue-400 font-mono">{{ newGameConfig.numAi }}</span>
+      </div>
+      <input
+        [(ngModel)]="newGameConfig.numAi"
+        type="range"
+        min="0"
+        [max]="newGameConfig.numPlayers - 1"
+        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+      />
+      <p class="text-[10px] text-gray-500 mt-1" i18n="@@dashboard.createGame.botsHint">Restliche Slots ({{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}) sind für andere menschliche Spieler.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
     <div>
       <div class="flex justify-between items-center mb-1">
         <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.rounds') }}</label>
@@ -63,22 +81,6 @@
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
     </div>
-    <div>
-      <div class="flex justify-between items-center mb-1">
-        <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.bots') }}</label>
-        <span class="text-xs font-bold text-blue-400 font-mono">{{ newGameConfig.numAi }}</span>
-      </div>
-      <input
-        [(ngModel)]="newGameConfig.numAi"
-        type="range"
-        min="0"
-        [max]="newGameConfig.numPlayers"
-        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-      />
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
     <div>
       <label class="block text-xs text-gray-200 mb-1">{{ t('dashboard.createGame.aiLevel') }}</label>
       <select

@@ -7,9 +7,15 @@
 
   <div class="flex items-center gap-3">
     <div class="flex items-center gap-3">
-      <span class="text-sm font-medium text-gray-300 hidden md:block">
-        {{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user?.email) }}
-      </span>
+      @if (user?.isAnonymous) {
+        <span class="text-sm font-medium text-blue-400 hidden md:block" i18n="@@dashboard.guestUser">Gast-Modus</span>
+        <a routerLink="/admin/register" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg transition" i18n="@@dashboard.registerBtn">Registrieren</a>
+        <a routerLink="/admin/login" class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg transition" i18n="@@dashboard.loginBtn">Anmelden</a>
+      } @else {
+        <span class="text-sm font-medium text-gray-300 hidden md:block">
+          {{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user?.email) }}
+        </span>
+      }
     </div>
 
     <app-language-switcher></app-language-switcher>
