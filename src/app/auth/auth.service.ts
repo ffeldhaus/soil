@@ -113,7 +113,7 @@ export class AuthService {
   }
 
   async sendVerificationEmail() {
-    if (this.auth.currentUser) {
+    if (this.auth?.currentUser) {
       const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
       if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
         if (window.console) console.warn('Mock: Verification email sent');
@@ -216,22 +216,25 @@ export class AuthService {
       this.userSubject.next(null);
     }
 
-    return await signOut(this.auth);
+    if (this.auth) {
+      return await signOut(this.auth);
+    }
+    return Promise.resolve();
   }
 
   async updateDisplayName(name: string) {
-    if (this.auth.currentUser) {
+    if (this.auth?.currentUser) {
       const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
       if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
         const user = this.getMockUser();
         this.userSubject.next({ ...user, displayName: name } as any);
         return;
       }
-      await updateProfile(this.auth.currentUser, { displayName: name });
-      await this.auth.currentUser.reload();
+      await updateProfile(this.auth.currentUser!, { displayName: name });
+      await this.auth.currentUser!.reload();
       // Force emission of new user state if needed
       // onAuthStateChanged should pick up changes or reload might trigger it
-      const currentUser = this.auth.currentUser;
+      const currentUser = this.auth.currentUser!;
       this.ngZone.run(() => this.userSubject.next(currentUser));
     }
   }

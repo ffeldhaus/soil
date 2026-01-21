@@ -10,7 +10,28 @@ import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
-...
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
+  authDomain: 'soil-602ea.firebaseapp.com',
+  projectId: 'soil-602ea',
+  storageBucket: 'soil-602ea.firebasestorage.app',
+  messagingSenderId: '167590574128',
+  appId: '1:167590574128:web:38c2ffb37bcbc5164f95f5',
+  measurementId: 'G-6WGVY5SL49',
+};
+
+// Initialize Firebase strictly once
+const app = initializeApp(firebaseConfig);
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      }),
       withEnabledBlockingInitialNavigation(),
     ),
     provideFirebaseApp(() => app),

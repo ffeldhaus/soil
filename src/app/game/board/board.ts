@@ -8,7 +8,14 @@ import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
 import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
-import type { CropType, Game, Parcel as ParcelType, PlayerState, Round } from '../../types';
+import type {
+  CropType,
+  Game,
+  Parcel as ParcelType,
+  PlayerState,
+  Round,
+  RoundDecision,
+} from '../../types';
 import { Finance } from '../finance/finance';
 import { GameService } from '../game.service';
 import { Parcel } from '../parcel/parcel';
@@ -556,10 +563,20 @@ export class Board implements OnInit, OnDestroy {
 
   async executeNextRound() {
     try {
-      // Keep pendingNextRound true while submitting
-      const result = await this.gameService.submitRound(this.gameId, this.currentRoundSettings);
+      const parcels: Record<number, CropType> = {};
+      this.parcels.forEach((p, i) => {
+        parcels[i] = p.crop;
+      });
 
-      if ('status' in result && result.status === 'submitted') {
+      const decision: RoundDecision = {
+        ...this.currentRoundSettings,
+        parcels,
+      };
+
+      // Keep pendingNextRound true while submitting
+      const result: any = await this.gameService.submitDecision(this.gameId, decision);
+
+      if (result && 'status' in result && result.status === 'submitted') {
         this.isSubmitted = true;
         this.updateReadOnly();
       } else {

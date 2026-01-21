@@ -74,12 +74,16 @@ export class LocalGameService {
       hostUid: 'local-host',
       status: 'in_progress',
       currentRoundNumber: 0,
-      settings: { length: config.numRounds || 20, difficulty: 'normal', playerLabel: config.playerLabel || 'Team' },
+      settings: {
+        length: config.numRounds || 20,
+        difficulty: 'normal',
+        playerLabel: config.playerLabel || 'Team',
+      },
       config: config,
       players: players,
       createdAt: new Date(),
       updatedAt: new Date(),
-      deletedAt: null
+      deletedAt: null,
     };
 
     const state: LocalGameState = {
@@ -156,20 +160,20 @@ export class LocalGameService {
         );
 
         state.allRounds[uid].push(newRound);
-        
+
         // Update player state
-        p.capital = newRound.result.capital;
+        p.capital = newRound.result!.capital;
         p.currentRound = nextRoundNum;
         p.avgSoil = newRound.avgSoil || 0;
         p.avgNutrition = newRound.avgNutrition || 0;
         p.history.push({ ...newRound, parcelsSnapshot: [] });
         delete p.pendingDecisions;
-    }
+      }
 
-    state.game.currentRoundNumber = nextRoundNum;
-    state.game.updatedAt = new Date();
-    state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
-  }
+      state.game.currentRoundNumber = nextRoundNum;
+      state.game.updatedAt = new Date();
+      state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
+    }
 
   private saveToStorage(state: LocalGameState) {
     localStorage.setItem(`soil_game_${state.game.id}`, JSON.stringify(state));

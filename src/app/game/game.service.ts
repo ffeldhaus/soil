@@ -4,6 +4,7 @@ import { BehaviorSubject, debounceTime, type Observable, Subject, map } from 'rx
 
 import { GAME_CONSTANTS } from '../game-constants';
 import { LocalGameService } from './engine/local-game.service';
+import { AuthService } from '../auth/auth.service';
 import type {
   CropType,
   Feedback,
@@ -28,6 +29,7 @@ export interface GameState {
 export class GameService {
   private functions = inject(Functions);
   private localGame = inject(LocalGameService);
+  private authService = inject(AuthService);
 
   private parcelsSubject = new BehaviorSubject<Parcel[]>(this.createInitialParcels());
   parcels$ = this.parcelsSubject.asObservable();
@@ -176,7 +178,7 @@ export class GameService {
     }
   }
 
-  async submitDecision(gameId: string, decision: RoundDecision): Promise<void> {
+  async submitDecision(gameId: string, decision: RoundDecision): Promise<any> {
     if (gameId.startsWith('local-')) {
       await this.localGame.submitDecision(gameId, decision);
       // LocalGameService updates its own stateSubject, but we need to refresh our local state$
@@ -189,8 +191,9 @@ export class GameService {
           playerState: localState.playerState,
           lastRound: localState.lastRound,
         });
+        return localState.lastRound;
       }
-      return;
+      return { status: 'submitted' };
     }
 
     const submitDecisionFn = httpsCallable<
@@ -291,7 +294,7 @@ export class GameService {
 
     // 1. Fetch Cloud Games (Skip for guests)
     let cloudResponse = { games: [] as Game[], total: 0 };
-    if (!this.isAnonymous) {
+    if (!this.authService.isAnonymous) {
       const getAdminGamesFn = httpsCallable<
         { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
         { games: Game[]; total: number }

@@ -3,6 +3,7 @@ document.querySelector('meta[name="app-version"]')?.setAttribute('content', vers
 
 import { bootstrapApplication } from '@angular/platform-browser';
 import { Workbox } from 'workbox-window';
+import { isDevMode } from '@angular/core';
 
 import { App } from './app/app';
 import { appConfig } from './app/app.config';
@@ -10,7 +11,7 @@ import { appConfig } from './app/app.config';
 bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 
 // Register Workbox Service Worker
-if ('serviceWorker' in navigator && !import.meta.env.DEV) {
+if ('serviceWorker' in navigator && !isDevMode()) {
   const wb = new Workbox('/service-worker.js');
 
   wb.addEventListener('installed', (event) => {

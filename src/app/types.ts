@@ -60,6 +60,8 @@ export interface Round {
   decision: RoundDecision;
   result?: RoundResult;
   parcelsSnapshot: Parcel[]; // State of parcels AFTER the round calculation
+  avgSoil?: number;
+  avgNutrition?: number;
 }
 
 export interface PlayerState {
@@ -102,10 +104,11 @@ export interface Game {
   config: GameConfig;
   players: Record<string, PlayerState>; // Keyed by UID
   currentRoundNumber: number;
-  createdAt: { seconds: number; nanoseconds: number }; // Firestore Timestamp
-  deletedAt?: { seconds: number; nanoseconds: number } | null;
+  createdAt: { seconds: number; nanoseconds: number } | Date; // Firestore Timestamp or Date
+  updatedAt?: { seconds: number; nanoseconds: number } | Date;
+  deletedAt?: { seconds: number; nanoseconds: number } | Date | null;
   playerSecrets?: Record<string, { password: string }>;
-  roundDeadlines?: Record<number, { seconds: number; nanoseconds: number }>;
+  roundDeadlines?: Record<number, { seconds: number; nanoseconds: number } | Date>;
 }
 
 export interface UserStatus {
