@@ -261,7 +261,7 @@ export class AdminLoginComponent implements OnInit {
 
   ngOnInit() {
     this.auth.user$.subscribe((user) => {
-      if (user) {
+      if (user && !user.isAnonymous) {
         this.router.navigate(['/admin']);
       }
     });
