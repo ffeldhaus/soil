@@ -1,6 +1,6 @@
 # Implementation Plan - PWA & Mobile Restructure (Revised)
 
-## Phase 1: Authentication, Guest Access ## Phase 1: Authentication, Guest Access & Unified Hub Unified Hub [checkpoint: 806f714]
+## Phase 1: Authentication, Guest Access & Unified Hub [checkpoint: 806f714]
 - [x] Task: Implement "Guest" mode for instant access without registration [c00a9f3]
 - [x] Task: Expand Authentication to include Google & Apple Sign-In [592ca0d]
 - [x] Task: Refactor Landing Page to single "Create and manage games" button [c487d5e]
@@ -8,16 +8,11 @@
 - [x] Task: Update "Create Game" Flow [c4d8929]
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Unified Entry & Auth' [806f714] (Protocol in workflow.md)
 
-## Phase 2: Hybrid Game Engine (Frontend/Backend)
-- [ ] Task: Implement Local Frontend Game Engine
-    - [ ] Port core game logic to run in-browser for single-player/Guest games
-    - [ ] Create state management for local games (IndexedDB/Workbox)
-- [ ] Task: Logic Switcher (Frontend vs Backend)
-    - [ ] Detect if game has multiple human players
-    - [ ] Route game actions to local engine or Firebase Functions accordingly
-- [ ] Task: Replace Angular Service Worker with Workbox
-    - [ ] Configure Workbox for asset caching and offline fallback
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Hybrid Engine' (Protocol in workflow.md)
+## Phase 2: Hybrid Game Engine (Frontend/Backend) [checkpoint: 6a36df3]
+- [x] Task: Implement Local Frontend Game Engine [ad34634]
+- [x] Task: Logic Switcher (Frontend vs Backend) [0ec904f]
+- [x] Task: Replace Angular Service Worker with Workbox [9d25d0e]
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Hybrid Engine' [6a36df3] (Protocol in workflow.md)
 
 ## Phase 3: Single-Player & AI Improvements
 - [ ] Task: Integrate AI players for local execution
@@ -36,6 +31,10 @@
 - [ ] Task: Audit and optimize for App Store/Play Store requirements
     - [ ] Verify accessibility compliance (WCAG)
     - [ ] Optimize assets and loading performance
+- [ ] Task: SEO & Prerendering Optimization
+    - [ ] Fix dependency injection issues during static generation
+    - [ ] Re-enable prerendering for static pages (Landing, Manual, Info)
+    - [ ] Verify metadata and schema.org markup for SEO
 - [ ] Task: Final PWA/Mobile UI Polish
     - [ ] Ensure unified aesthetic across all screen sizes
 - [ ] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' (Protocol in workflow.md)
