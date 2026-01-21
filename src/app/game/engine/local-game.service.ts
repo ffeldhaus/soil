@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { GameEngine } from './game-engine';
+import { AiAgent } from './ai-agent';
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { Game, PlayerState, Round, Parcel, RoundDecision } from '../../types';
 
@@ -121,12 +122,18 @@ export class LocalGameService {
 
     // 2. Process AI Decisions
     for (const uid in state.game.players) {
-        const p = state.game.players[uid];
-        if (p.isAi && (p.submittedRound === undefined || p.submittedRound < currentRound)) {
-            // Simple AI logic placeholder
-            p.pendingDecisions = { parcels: {}, machines: 0 } as any; 
-            p.submittedRound = currentRound;
-        }
+      const p = state.game.players[uid];
+      if (p.isAi && (p.submittedRound === undefined || p.submittedRound < currentRound)) {
+        // Use player's own history for decision context
+        const lastRound =
+          state.allRounds[uid] && state.allRounds[uid].length > 0
+            ? state.allRounds[uid][state.allRounds[uid].length - 1]
+            : undefined;
+        const aiLevel = p.aiLevel || 'middle';
+        const decision = AiAgent.makeDecision(aiLevel as any, lastRound);
+        p.pendingDecisions = decision;
+        p.submittedRound = currentRound;
+      }
     }
 
     // 3. Check if all human players submitted (in local mode usually only 1)
