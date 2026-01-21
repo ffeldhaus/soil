@@ -15,10 +15,9 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Hybrid Engine' [6a36df3] (Protocol in workflow.md)
 
 ## Phase 3: Single-Player & AI Improvements
-- [ ] Task: Integrate AI players for local execution
-    - [ ] Adapt existing AI logic for local execution
-- [ ] Task: Progress tracking and cataloging
-    - [ ] Unify progress tracking for local and cloud games
+- [x] Task: Integrate AI players for local execution [d8cc437]
+- [x] Task: Progress tracking and cataloging [d8cc437]
+    - [x] Unify progress tracking for local and cloud games
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Single-Player & AI' (Protocol in workflow.md)
 
 ## Phase 4: Background Synchronization
