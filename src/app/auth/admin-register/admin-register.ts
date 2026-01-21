@@ -149,4 +149,26 @@ export class AdminRegisterComponent implements OnInit {
   closeModal() {
     this.showErrorModal = false;
   }
+
+  async loginWithGoogle() {
+    try {
+      await this.authService.loginWithGoogle();
+    } catch (err: unknown) {
+      console.error(err);
+      this.errorMessage = $localize`:@@adminRegister.error.failed:Anmeldung fehlgeschlagen`;
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async loginWithApple() {
+    try {
+      await this.authService.loginWithApple();
+    } catch (err: unknown) {
+      console.error(err);
+      this.errorMessage = $localize`:@@adminRegister.error.failed:Anmeldung fehlgeschlagen`;
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
+    }
+  }
 }

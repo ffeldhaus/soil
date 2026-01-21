@@ -1901,6 +1901,11 @@
         <source>Zugang zum Soil-Dashboard</source>
       </segment>
     </unit>
+    <unit id="adminLogin.appleSignIn">
+      <segment>
+        <source>Mit Apple anmelden</source>
+      </segment>
+    </unit>
     <unit id="adminLogin.email">
       <segment>
         <source>E-Mail</source>
@@ -2030,6 +2035,11 @@
         <source>Wird verarbeitet...</source>
       </segment>
     </unit>
+    <unit id="adminRegister.appleSignUp">
+      <segment>
+        <source>Mit Apple registrieren</source>
+      </segment>
+    </unit>
     <unit id="adminRegister.btnSubmit">
       <notes>
         <note category="description">Button to submit the registration request</note>
@@ -2073,6 +2083,11 @@
       </notes>
       <segment>
         <source>Vorname</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.googleSignUp">
+      <segment>
+        <source>Mit Google registrieren</source>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.firstName">
@@ -2127,6 +2142,16 @@
       </notes>
       <segment>
         <source>Bitte geben Sie eine gültige E-Mail-Adresse ein</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.error.failed">
+      <segment>
+        <source>Anmeldung fehlgeschlagen</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.or">
+      <segment>
+        <source>oder</source>
       </segment>
     </unit>
     <unit id="adminRegister.password">
@@ -3919,6 +3944,15 @@
       </notes>
       <segment>
         <source>Lehrkräfte</source>
+      </segment>
+    </unit>
+    <unit id="landing.playGuest">
+      <notes>
+        <note category="description">Button to play as guest</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Als Gast spielen</source>
       </segment>
     </unit>
     <unit id="landing.register">

@@ -1,5 +1,11 @@
 <xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="de" trgLang="en">
   <file id="ngi18n" original="ng.template">
+    <unit id="adminLogin.appleSignIn">
+      <segment state="initial">
+        <source>Mit Apple anmelden</source>
+        <target>Mit Apple anmelden</target>
+      </segment>
+    </unit>
     <unit id="adminLogin.email">
       <segment state="translated">
         <source>E-Mail</source>
@@ -102,6 +108,12 @@
         <target>Teacher Login</target>
       </segment>
     </unit>
+    <unit id="adminRegister.appleSignUp">
+      <segment state="initial">
+        <source>Mit Apple registrieren</source>
+        <target>Mit Apple registrieren</target>
+      </segment>
+    </unit>
     <unit id="adminRegister.btnSubmit">
       <notes>
         <note category="description">Button to submit the registration request</note>
@@ -150,6 +162,12 @@
       <segment state="translated">
         <source>Bitte geben Sie eine gültige E-Mail-Adresse ein</source>
         <target>Please enter a valid email address</target>
+      </segment>
+    </unit>
+    <unit id="adminRegister.error.failed">
+      <segment state="initial">
+        <source>Anmeldung fehlgeschlagen</source>
+        <target>Anmeldung fehlgeschlagen</target>
       </segment>
     </unit>
     <unit id="adminRegister.error.password">
@@ -212,6 +230,12 @@
         <target>First name</target>
       </segment>
     </unit>
+    <unit id="adminRegister.googleSignUp">
+      <segment state="initial">
+        <source>Mit Google registrieren</source>
+        <target>Mit Google registrieren</target>
+      </segment>
+    </unit>
     <unit id="adminRegister.institution">
       <notes>
         <note category="description">Label for school or institution name</note>
@@ -230,6 +254,12 @@
       <segment state="translated">
         <source>Nachname</source>
         <target>Last name</target>
+      </segment>
+    </unit>
+    <unit id="adminRegister.or">
+      <segment state="initial">
+        <source>oder</source>
+        <target>oder</target>
       </segment>
     </unit>
     <unit id="adminRegister.password">
@@ -837,7 +867,13 @@
         <note category="description">Button to copy game state as JSON</note>
         <note category="meaning">Action Label</note>
       </notes>
-      <segment state="initial">
+      <segment>
+        <source>JSON</source>
+        <target>JSON</target>
+      </segment>
+    </unit>
+    <unit id="board.nav.copyState">
+      <segment>
         <source>JSON</source>
         <target>JSON</target>
       </segment>
@@ -852,14 +888,7 @@
         <target>Game ended</target>
       </segment>
     </unit>
-          <unit id="board.nav.copyState">
-            <segment>
-              <source>JSON</source>
-              <target>JSON</target>
-            </segment>
-          </unit>
-          <unit id="board.nav.finance">
-    
+    <unit id="board.nav.finance">
       <notes>
         <note category="description">Toggle display of financial report</note>
         <note category="meaning">Nav Label</note>
@@ -3120,6 +3149,16 @@
       <segment state="translated">
         <source>Handbuch</source>
         <target>Manual</target>
+      </segment>
+    </unit>
+    <unit id="landing.playGuest">
+      <notes>
+        <note category="description">Button to play as guest</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment state="initial">
+        <source>Als Gast spielen</source>
+        <target>Als Gast spielen</target>
       </segment>
     </unit>
     <unit id="landing.register">

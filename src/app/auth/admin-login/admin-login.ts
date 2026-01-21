@@ -162,6 +162,17 @@ import { AuthService } from '../auth.service';
               </svg>
               <span i18n="@@adminLogin.googleSignIn">Mit Google anmelden</span>
             </button>
+
+            <button
+              (click)="loginWithApple()"
+              class="w-full py-3 bg-black text-white font-bold rounded-lg hover:bg-gray-900 flex items-center justify-center gap-3 transition shadow-md"
+            >
+              <!-- Apple Logo -->
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 172 172">
+                <path d="M127.35156,104.78125 C127.140625,83.984375 144.175781,73.800781 145.019531,73.285156 C135.410156,59.273438 120.484375,57.257812 115.226562,57.039062 C102.613281,55.765625 90.621094,64.492188 84.222656,64.492188 C77.824219,64.492188 67.925781,57.214844 57.347656,57.410156 C43.46875,57.613281 30.730469,65.464844 23.582031,77.894531 C9.085938,103.058594 19.867188,140.238281 33.921875,160.523438 C40.800781,170.4375 48.972656,181.542969 59.710938,181.144531 C69.945312,180.746094 73.847656,174.527344 86.257812,174.527344 C98.667969,174.527344 102.167969,181.144531 113.007812,180.941406 C124.234375,180.746094 131.25,170.832031 138.109375,160.917969 C146.035156,149.339844 149.320312,138.15625 149.5,137.59375 C149.128906,137.433594 127.5625,129.085938 127.35156,104.78125 Z M105.742188,40.910156 C111.382812,34.09375 115.179688,24.636719 114.136719,15.214844 C106.050781,15.539062 96.265625,20.597656 90.460938,27.359375 C85.253906,33.371094 80.703125,42.992188 81.933594,52.226562 C90.960938,52.925781 100.101562,47.726562 105.742188,40.910156 Z"></path>
+              </svg>
+              <span i18n="@@adminLogin.appleSignIn">Mit Apple anmelden</span>
+            </button>
             <p class="text-sm text-gray-500">
               <ng-container i18n="@@adminLogin.noAccount">Noch kein Konto?</ng-container>&nbsp;<a
                 routerLink="/admin/register"
@@ -292,6 +303,18 @@ export class AdminLoginComponent implements OnInit {
   async loginWithGoogle() {
     try {
       await this.auth.loginWithGoogle();
+      this.router.navigate(['/admin']);
+    } catch (err: unknown) {
+      console.error(err);
+      this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async loginWithApple() {
+    try {
+      await this.auth.loginWithApple();
       this.router.navigate(['/admin']);
     } catch (err: unknown) {
       console.error(err);

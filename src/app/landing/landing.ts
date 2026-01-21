@@ -1,7 +1,8 @@
-import { Component, isDevMode } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, isDevMode } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -64,17 +65,29 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <a
               routerLink="/game-login"
               data-testid="landing-enter-game"
-              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
+              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden flex-1"
             >
               <span class="relative z-10 flex items-center justify-center gap-2" i18n="Action Label|Button to join a game@@landing.enterGame"
                 >Spiel beitreten</span
               >
             </a>
 
+            <button
+              (click)="playAsGuest()"
+              data-testid="landing-play-guest"
+              class="group relative px-8 py-5 bg-blue-800 hover:bg-blue-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(30,58,138,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(30,58,138,0.6)] overflow-hidden flex-1"
+            >
+              <span class="relative z-10 flex items-center justify-center gap-2" i18n="Action Label|Button to play as guest@@landing.playGuest"
+                >Als Gast spielen</span
+              >
+            </button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6 w-full max-w-lg mx-auto">
             <a
               routerLink="/admin/login"
               data-testid="landing-admin-login"
-              class="flex items-center justify-center px-8 py-5 bg-gray-800/80 hover:bg-gray-700/90 backdrop-blur-md border border-white/20 text-white text-lg font-semibold rounded-2xl transition-all hover:border-white/40 transform hover:-translate-y-1"
+              class="flex-1 flex items-center justify-center px-6 py-4 bg-gray-800/80 hover:bg-gray-700/90 backdrop-blur-md border border-white/20 text-white text-md font-semibold rounded-2xl transition-all hover:border-white/40 transform hover:-translate-y-1"
               i18n="Action Label|Link for teachers to log in@@landing.teacherAdmin"
               >Lehrkräfte</a
             >
@@ -82,7 +95,7 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <a
               routerLink="/admin/register"
               data-testid="landing-register"
-              class="flex items-center justify-center px-8 py-5 bg-emerald-900/80 hover:bg-emerald-800/90 backdrop-blur-md border border-emerald-500/40 text-emerald-100 text-lg font-semibold rounded-2xl transition-all hover:border-emerald-500/60 transform hover:-translate-y-1"
+              class="flex-1 flex items-center justify-center px-6 py-4 bg-emerald-900/80 hover:bg-emerald-800/90 backdrop-blur-md border border-emerald-500/40 text-emerald-100 text-md font-semibold rounded-2xl transition-all hover:border-emerald-500/60 transform hover:-translate-y-1"
               i18n="Action Label|Link to register as a new teacher@@landing.register"
               >Registrieren</a
             >
@@ -189,6 +202,8 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
   `,
 })
 export class Landing {
+  private auth = inject(AuthService);
+  private router = inject(Router);
   year = new Date().getFullYear();
   showTestMode = isDevMode();
 
@@ -196,6 +211,15 @@ export class Landing {
     const element = document.getElementById('info-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  async playAsGuest() {
+    try {
+      await this.auth.signInAsGuest();
+      this.router.navigate(['/game']);
+    } catch (err) {
+      console.error('Guest login failed:', err);
     }
   }
 
