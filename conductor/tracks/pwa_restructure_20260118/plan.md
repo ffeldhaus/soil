@@ -35,6 +35,10 @@
     - [ ] Fix dependency injection issues during static generation
     - [ ] Re-enable prerendering for static pages (Landing, Manual, Info)
     - [ ] Verify metadata and schema.org markup for SEO
+- [ ] Task: SEO: Indexing & Canonicalization
+    - [ ] Add `noindex` meta tag to Impressum page to prevent indexing
+    - [ ] Implement canonical URL logic for root path `/` and default locale `/de`
+    - [ ] Ensure consistent use of canonical tags across all public routes according to Google guidelines
 - [ ] Task: Final PWA/Mobile UI Polish
     - [ ] Ensure unified aesthetic across all screen sizes
 - [ ] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' (Protocol in workflow.md)
