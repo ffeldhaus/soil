@@ -22,8 +22,8 @@ import { LanguageService } from '../services/language.service';
   providedIn: 'root',
 })
 export class AuthService {
-  private functions = inject(Functions);
-  private auth = inject(Auth); // Injected instance is native due to app.config
+  private functions = inject(Functions, { optional: true });
+  private auth = inject(Auth, { optional: true }); // Injected instance is native due to app.config
   private ngZone = inject(NgZone);
   private languageService = inject(LanguageService);
   private userSubject = new BehaviorSubject<User | null>(null);
@@ -36,13 +36,15 @@ export class AuthService {
   constructor() {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     // Subscribe to real auth state using native SDK
-    onAuthStateChanged(this.auth, (u) => {
-      this.ngZone.run(() => {
-        if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
-          this.userSubject.next(u);
-        }
+    if (this.auth!) {
+      onAuthStateChanged(this.auth!, (u) => {
+        this.ngZone.run(() => {
+          if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
+            this.userSubject.next(u);
+          }
+        });
       });
-    });
+    }
 
     // Check for test mode immediate override
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
@@ -88,7 +90,7 @@ export class AuthService {
       return { user };
     }
     const provider = new GoogleAuthProvider();
-    return await signInWithPopup(this.auth, provider);
+    return await signInWithPopup(this.auth!, provider);
   }
 
   async loginWithApple() {
@@ -99,7 +101,7 @@ export class AuthService {
       return { user };
     }
     const provider = new OAuthProvider('apple.com');
-    return await signInWithPopup(this.auth, provider);
+    return await signInWithPopup(this.auth!, provider);
   }
 
   async registerWithEmail(email: string, pass: string) {
@@ -109,7 +111,7 @@ export class AuthService {
       this.userSubject.next(user);
       return { user };
     }
-    return await createUserWithEmailAndPassword(this.auth, email, pass);
+    return await createUserWithEmailAndPassword(this.auth!, email, pass);
   }
 
   async sendVerificationEmail() {
@@ -119,7 +121,7 @@ export class AuthService {
         if (window.console) console.warn('Mock: Verification email sent');
         return;
       }
-      const sendFn = httpsCallable(this.functions, 'sendVerificationEmail');
+      const sendFn = httpsCallable(this.functions!, 'sendVerificationEmail');
       await sendFn({
         lang: this.languageService.currentLang,
         origin: window.location.origin,
@@ -133,7 +135,7 @@ export class AuthService {
       if (window.console) console.warn('Mock: Password reset email sent to', email);
       return;
     }
-    const sendFn = httpsCallable(this.functions, 'sendPasswordResetEmail');
+    const sendFn = httpsCallable(this.functions!, 'sendPasswordResetEmail');
     await sendFn({
       email,
       lang: this.languageService.currentLang,
@@ -148,7 +150,7 @@ export class AuthService {
       this.userSubject.next(user);
       return { user };
     }
-    return await signInWithEmailAndPassword(this.auth, email, pass);
+    return await signInWithEmailAndPassword(this.auth!, email, pass);
   }
 
   async registerPlayer(email: string, pass: string) {
@@ -158,14 +160,28 @@ export class AuthService {
       this.userSubject.next(user);
       return { user };
     }
-    return await createUserWithEmailAndPassword(this.auth, email, pass);
+    return await createUserWithEmailAndPassword(this.auth!, email, pass);
   }
 
   async loginAsPlayer(gameId: string, pin: string) {
     if (gameId.startsWith('local-')) {
-      // For local games, we just ensure the mock "guest" or current user state is kept
-      // We don't actually need a Firebase token for local engine games.
-      return { user: this.userSubject.value };
+      const currentUser = this.userSubject.value;
+      if (currentUser) {
+        // Wrap user to include local claims
+        const localUser = {
+          ...currentUser,
+          getIdTokenResult: async () => ({
+            claims: {
+              role: 'player',
+              gameId: gameId,
+              playerNumber: 1,
+            },
+          }),
+        };
+        this.userSubject.next(localUser as any);
+        return { user: localUser };
+      }
+      return { user: currentUser };
     }
 
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
@@ -176,12 +192,12 @@ export class AuthService {
     }
     // Call backend to get custom token for player login
     // Note: Function name is 'playerLogin' in backend
-    const playerLoginFn = httpsCallable(this.functions, 'playerLogin');
+    const playerLoginFn = httpsCallable(this.functions!, 'playerLogin');
 
     try {
       const result = await playerLoginFn({ gameId, password: pin });
       const { customToken } = result.data as { customToken: string };
-      return await signInWithCustomToken(this.auth, customToken);
+      return await signInWithCustomToken(this.auth!, customToken);
     } catch (error) {
       console.error('Player login failed:', error);
       throw error;
@@ -216,8 +232,8 @@ export class AuthService {
       this.userSubject.next(null);
     }
 
-    if (this.auth) {
-      return await signOut(this.auth);
+    if (this.auth!) {
+      return await signOut(this.auth!);
     }
     return Promise.resolve();
   }
@@ -230,11 +246,11 @@ export class AuthService {
         this.userSubject.next({ ...user, displayName: name } as any);
         return;
       }
-      await updateProfile(this.auth.currentUser!, { displayName: name });
-      await this.auth.currentUser!.reload();
+      await updateProfile(this.auth!.currentUser!, { displayName: name });
+      await this.auth!.currentUser!.reload();
       // Force emission of new user state if needed
       // onAuthStateChanged should pick up changes or reload might trigger it
-      const currentUser = this.auth.currentUser!;
+      const currentUser = this.auth!.currentUser!;
       this.ngZone.run(() => this.userSubject.next(currentUser));
     }
   }

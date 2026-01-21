@@ -463,6 +463,17 @@ export class GameService {
   }
 
   async deleteGames(gameIds: string[], force = false): Promise<void> {
+    const localIds = gameIds.filter((id) => id.startsWith('local-'));
+    const cloudIds = gameIds.filter((id) => !id.startsWith('local-'));
+
+    if (localIds.length > 0) {
+      for (const id of localIds) {
+        await this.localGame.deleteGame(id);
+      }
+    }
+
+    if (cloudIds.length === 0) return;
+
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       if (window.console) console.warn('Mock: Games deleted', { gameIds, force });

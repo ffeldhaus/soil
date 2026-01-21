@@ -237,10 +237,14 @@ export class Board implements OnInit, OnDestroy {
 
         // Extract Game ID
         let activeGameId = params.gameId || (claims.gameId as string);
-        if (!activeGameId && user.uid.startsWith('player-')) {
-          const parts = user.uid.split('-');
-          if (parts.length >= 3) {
-            activeGameId = parts[1];
+        if (!activeGameId) {
+          if (user.uid.startsWith('player-')) {
+            const parts = user.uid.split('-');
+            if (parts.length >= 3) {
+              activeGameId = parts[1];
+            }
+          } else if (claims.gameId) {
+            activeGameId = claims.gameId as string;
           }
         }
 
@@ -291,9 +295,7 @@ export class Board implements OnInit, OnDestroy {
             this.isPlayer = true;
           });
         } else {
-          if (claims.role !== 'player' && !user.uid.startsWith('player-')) {
-            this.router.navigate(['/admin']);
-          }
+          this.router.navigate(['/admin']);
         }
       }
     });

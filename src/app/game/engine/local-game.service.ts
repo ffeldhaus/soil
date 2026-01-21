@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, take } from 'rxjs';
 import { GameEngine } from './game-engine';
 import { AiAgent } from './ai-agent';
+import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { Game, PlayerState, Round, Parcel, RoundDecision } from '../../types';
 
@@ -22,6 +23,7 @@ export interface LocalCreateResponse {
 })
 export class LocalGameService {
   private stateSubject = new BehaviorSubject<LocalGameState | null>(null);
+  private auth = inject(AuthService);
   state$ = this.stateSubject.asObservable();
 
   async createGame(name: string, config: any): Promise<LocalCreateResponse> {
@@ -29,13 +31,19 @@ export class LocalGameService {
     const numPlayers = config.numPlayers || 1;
     const numAi = config.numAi || 0;
     
+    // Get current user UID for hosting
+    let currentUserUid = 'local-host';
+    this.auth.user$.pipe(take(1)).subscribe(u => {
+        if (u) currentUserUid = u.uid;
+    });
+    
     const players: Record<string, PlayerState> = {};
     const allRounds: Record<string, Round[]> = {};
     const playerSecrets: Record<string, { password: string }> = {};
 
     for (let i = 1; i <= numPlayers; i++) {
       const pUid = `player-${gameId}-${i}`;
-      const isAi = i > numPlayers - numAi;
+      const isAi = i > (numPlayers - numAi);
       const pin = Math.floor(1000 + Math.random() * 9000).toString();
       playerSecrets[String(i)] = { password: pin };
       
@@ -80,7 +88,7 @@ export class LocalGameService {
     const game: Game = {
       id: gameId,
       name: name,
-      hostUid: 'local-host',
+      hostUid: currentUserUid,
       status: 'in_progress',
       currentRoundNumber: 0,
       settings: {
@@ -207,11 +215,18 @@ export class LocalGameService {
     const ids = JSON.parse(listData);
     const games: Game[] = [];
     for (const id of ids) {
-        const data = localStorage.getItem(`soil_game_${id}`);
-        if (data) {
-            games.push(JSON.parse(data).game);
-        }
+      const data = localStorage.getItem(`soil_game_${id}`);
+      if (data) {
+        games.push(JSON.parse(data).game);
+      }
     }
     return games;
+  }
+
+  async deleteGame(gameId: string): Promise<void> {
+    localStorage.removeItem(`soil_game_${gameId}`);
+    const listData = localStorage.getItem('soil_local_games') || '[]';
+    const list = JSON.parse(listData).filter((id: string) => id !== gameId);
+    localStorage.setItem('soil_local_games', JSON.stringify(list));
   }
 }
