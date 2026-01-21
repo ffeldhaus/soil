@@ -195,7 +195,7 @@ export class PlayerLoginComponent implements OnInit {
   }
 
   loginForm = this.fb.group({
-    gameId: ['', [Validators.required, Validators.minLength(20)]],
+    gameId: ['', [Validators.required, Validators.minLength(4)]],
     password: ['', [Validators.required, Validators.minLength(4)]],
   });
 
