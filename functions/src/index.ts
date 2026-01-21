@@ -477,30 +477,30 @@ export const createGame = onCall(async (request) => {
       });
     } else if (request.auth.token.role === 'guest') {
       userRole = 'guest';
-      quota = 1; // Guests can only have 1 active game
+      quota = 100; // Increase guest quota significantly, basically "unlimited" for a single user
     }
   }
 
-  // Allow guests to create games, but they are limited to local-style games (1 human + AI)
-  // if (userRole !== 'admin' && userRole !== 'superadmin' && userRole !== 'guest') {
-  //   throw new HttpsError('permission-denied', 'You must be logged in to create games.');
-  // }
+  // Determine if this is a "local" game (only 1 human player)
+  const isLocalGame = config.numPlayers - config.numAi === 1;
 
-  // Dynamic Quota Check
-  const activeGamesCountSnap = await db
-    .collection('games')
-    .where('hostUid', '==', uid)
-    .where('deletedAt', '==', null)
-    .count()
-    .get();
+  // Dynamic Quota Check (Skip for local games)
+  if (!isLocalGame) {
+    const activeGamesCountSnap = await db
+      .collection('games')
+      .where('hostUid', '==', uid)
+      .where('deletedAt', '==', null)
+      .count()
+      .get();
 
-  const currentActiveGames = activeGamesCountSnap.data().count;
+    const currentActiveGames = activeGamesCountSnap.data().count;
 
-  if (currentActiveGames >= quota) {
-    throw new HttpsError(
-      'resource-exhausted',
-      `Game quota exceeded (${currentActiveGames}/${quota}). Request an increase or delete old games.`,
-    );
+    if (currentActiveGames >= quota) {
+      throw new HttpsError(
+        'resource-exhausted',
+        `Game quota exceeded (${currentActiveGames}/${quota}). Request an increase or delete old games.`,
+      );
+    }
   }
 
   // Validate retention
@@ -1208,8 +1208,9 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   activeGamesSnap.forEach((doc) => {
     const data = doc.data();
     const retentionDays = data.retentionDays || 90;
-    const createdAt = data.createdAt.toMillis();
-    const expiresAt = createdAt + retentionDays * oneDayMs;
+    // Use updatedAt if available, otherwise fallback to createdAt
+    const lastPlayed = (data.updatedAt || data.createdAt).toMillis();
+    const expiresAt = lastPlayed + retentionDays * oneDayMs;
 
     if (nowMillis > expiresAt) {
       softDeleteBatch.update(doc.ref, {
