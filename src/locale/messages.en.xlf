@@ -3111,16 +3111,6 @@
         <target>The game is designed for educational purposes and is permanently free. Registration is required for teachers to create their own games. During registration, affiliation with an educational institution is verified.</target>
       </segment>
     </unit>
-    <unit id="landing.enterGame">
-      <notes>
-        <note category="description">Button to join a game</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Spiel beitreten</source>
-        <target>Join Game</target>
-      </segment>
-    </unit>
     <unit id="landing.footer">
       <notes>
         <note category="description">Copyright and project info</note>
@@ -3141,6 +3131,16 @@
         <target>An interactive simulation about</target>
       </segment>
     </unit>
+    <unit id="landing.manageGames">
+      <notes>
+        <note category="description">Button to manage games</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment state="initial">
+        <source>Spiele erstellen &amp; verwalten</source>
+        <target>Spiele erstellen &amp; verwalten</target>
+      </segment>
+    </unit>
     <unit id="landing.manual">
       <notes>
         <note category="description">Link to user manual</note>
@@ -3151,26 +3151,6 @@
         <target>Manual</target>
       </segment>
     </unit>
-    <unit id="landing.playGuest">
-      <notes>
-        <note category="description">Button to play as guest</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment state="initial">
-        <source>Als Gast spielen</source>
-        <target>Als Gast spielen</target>
-      </segment>
-    </unit>
-    <unit id="landing.register">
-      <notes>
-        <note category="description">Link to register as a new teacher</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Registrieren</source>
-        <target>Register</target>
-      </segment>
-    </unit>
     <unit id="landing.sustainability">
       <notes>
         <note category="description">Sustainability topic</note>
@@ -3179,16 +3159,6 @@
       <segment state="translated">
         <source>Nachhaltigkeit</source>
         <target>Sustainability</target>
-      </segment>
-    </unit>
-    <unit id="landing.teacherAdmin">
-      <notes>
-        <note category="description">Link for teachers to log in</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Lehrkräfte</source>
-        <target>Teachers</target>
       </segment>
     </unit>
     <unit id="manual.concepts.bio.text">

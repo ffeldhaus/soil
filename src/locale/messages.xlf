@@ -3883,6 +3883,15 @@
         <source>Eine interaktive Simulation über</source>
       </segment>
     </unit>
+    <unit id="landing.manageGames">
+      <notes>
+        <note category="description">Button to manage games</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Spiele erstellen &amp; verwalten</source>
+      </segment>
+    </unit>
     <unit id="landing.manual">
       <notes>
         <note category="description">Link to user manual</note>
@@ -3926,42 +3935,6 @@
       </notes>
       <segment>
         <source>Nachhaltigkeit</source>
-      </segment>
-    </unit>
-    <unit id="landing.enterGame">
-      <notes>
-        <note category="description">Button to join a game</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Spiel beitreten</source>
-      </segment>
-    </unit>
-    <unit id="landing.teacherAdmin">
-      <notes>
-        <note category="description">Link for teachers to log in</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Lehrkräfte</source>
-      </segment>
-    </unit>
-    <unit id="landing.playGuest">
-      <notes>
-        <note category="description">Button to play as guest</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Als Gast spielen</source>
-      </segment>
-    </unit>
-    <unit id="landing.register">
-      <notes>
-        <note category="description">Link to register as a new teacher</note>
-        <note category="meaning">Action Label</note>
-      </notes>
-      <segment>
-        <source>Registrieren</source>
       </segment>
     </unit>
     <unit id="landing.aboutTitle">
