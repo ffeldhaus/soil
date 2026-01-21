@@ -413,7 +413,7 @@ export class Dashboard implements OnInit, OnDestroy {
     this.loadGames();
   }
 
-  async loadGames() {
+  async loadGames(retryCount = 0) {
     this.isLoadingGames = true;
     this.loadingError = null;
     this.cdr.detectChanges(); // Ensure UI updates immediately
@@ -428,9 +428,17 @@ export class Dashboard implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     } catch (e: unknown) {
-      this.ngZone.run(() => {
+      this.ngZone.run(async () => {
         console.error('Dashboard: Error loading games', e);
         const error = e as Error;
+
+        if (error.message?.includes('deadline-exceeded') && retryCount < 1) {
+          console.warn('Dashboard: Game listing timeout, retrying...');
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          this.loadGames(retryCount + 1);
+          return;
+        }
+
         this.loadingError = `Failed to load games: ${error.message || error}`;
         this.isLoadingGames = false;
         this.cdr.detectChanges();
