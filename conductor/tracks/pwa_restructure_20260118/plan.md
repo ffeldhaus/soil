@@ -14,11 +14,10 @@
 - [x] Task: Replace Angular Service Worker with Workbox [9d25d0e]
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Hybrid Engine' [6a36df3] (Protocol in workflow.md)
 
-## Phase 3: Single-Player & AI Improvements
+## Phase 3: Single-Player ## Phase 3: Single-Player & AI Improvements [checkpoint: 3b77c0f] AI Improvements [checkpoint: aeef10d]
 - [x] Task: Integrate AI players for local execution [d8cc437]
-- [x] Task: Progress tracking and cataloging [d8cc437]
-    - [x] Unify progress tracking for local and cloud games
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Single-Player & AI' (Protocol in workflow.md)
+- [x] Task: Progress tracking and cataloging [3b77c0f]
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Single-Player & AI' [aeef10d] (Protocol in workflow.md)
 
 ## Phase 4: Background Synchronization
 - [ ] Task: Implement background sync for local games
