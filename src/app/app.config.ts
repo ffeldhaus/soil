@@ -32,7 +32,6 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled',
         scrollPositionRestoration: 'enabled',
       }),
-      withEnabledBlockingInitialNavigation(),
     ),
     provideFirebaseApp(() => app),
     provideAuth(() => {
@@ -50,6 +49,5 @@ export const appConfig: ApplicationConfig = {
       return functions;
     }),
     provideHttpClient(),
-    provideClientHydration(withIncrementalHydration(), withEventReplay()),
   ],
 };
