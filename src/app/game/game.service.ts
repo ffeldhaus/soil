@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { BehaviorSubject, debounceTime, type Observable, Subject } from 'rxjs';
+import { BehaviorSubject, debounceTime, type Observable, Subject, map } from 'rxjs';
 
 import { GAME_CONSTANTS } from '../game-constants';
+import { LocalGameService } from './engine/local-game.service';
 import type {
   CropType,
   Feedback,
@@ -26,6 +27,7 @@ export interface GameState {
 })
 export class GameService {
   private functions = inject(Functions);
+  private localGame = inject(LocalGameService);
 
   private parcelsSubject = new BehaviorSubject<Parcel[]>(this.createInitialParcels());
   parcels$ = this.parcelsSubject.asObservable();
@@ -62,6 +64,21 @@ export class GameService {
   }
 
   async loadGame(gameId: string): Promise<GameState | null> {
+    if (gameId.startsWith('local-')) {
+      const localState = await this.localGame.loadGame(gameId);
+      if (localState) {
+        this.currentRound = localState.lastRound || null;
+        this.parcelsSubject.next(localState.lastRound?.parcelsSnapshot || this.createInitialParcels());
+        this.stateSubject.next({
+          game: localState.game,
+          playerState: localState.playerState,
+          lastRound: localState.lastRound,
+        });
+        return this.stateSubject.value;
+      }
+      return null;
+    }
+
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       const mockState = this.getMockGameState();
@@ -159,72 +176,27 @@ export class GameService {
     }
   }
 
-  async submitRound(
-    gameId: string,
-    settings?: {
-      machines: number;
-      organic: boolean;
-      fertilizer: boolean;
-      pesticide: boolean;
-      organisms: boolean;
-      priceFixing?: Record<string, boolean>;
-    },
-  ): Promise<Round | { status: string }> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
-      const currentParcels = this.parcelsSubject.value;
-      const nextRoundNum = (this.currentRound?.number || 0) + 1;
-      const mockRound: Round = {
-        number: nextRoundNum,
-        decision: {
-          machines: settings?.machines ?? 0,
-          organic: settings?.organic ?? false,
-          fertilizer: settings?.fertilizer ?? false,
-          pesticide: settings?.pesticide ?? false,
-          organisms: settings?.organisms ?? false,
-          parcels: { ...this.pendingDecisions },
-        },
-        parcelsSnapshot: currentParcels.map((p) => ({ ...p, yield: Math.random() * 100 })),
-        result: {
-          profit: 500,
-          capital: 5500,
-          income: 1000,
-          expenses: { seeds: 100, labor: 200, running: 100, investments: 100, total: 500 },
-          harvestSummary: {} as any,
-          events: { weather: 'Normal', vermin: [] },
-        },
-      };
-      this.currentRound = mockRound;
-      this.parcelsSubject.next(mockRound.parcelsSnapshot);
-      const state = this.stateSubject.value;
-      if (state) {
-        state.game.currentRoundNumber = nextRoundNum;
-        state.lastRound = mockRound;
-        state.playerState.history.push(mockRound);
-        this.stateSubject.next({ ...state });
+  async submitDecision(gameId: string, decision: RoundDecision): Promise<void> {
+    if (gameId.startsWith('local-')) {
+      await this.localGame.submitDecision(gameId, decision);
+      // LocalGameService updates its own stateSubject, but we need to refresh our local state$
+      const localState = await this.localGame.loadGame(gameId);
+      if (localState) {
+        this.currentRound = localState.lastRound || null;
+        this.parcelsSubject.next(localState.lastRound?.parcelsSnapshot || this.createInitialParcels());
+        this.stateSubject.next({
+          game: localState.game,
+          playerState: localState.playerState,
+          lastRound: localState.lastRound,
+        });
       }
-      return mockRound;
+      return;
     }
 
     const submitDecisionFn = httpsCallable<
       { gameId: string; decision: RoundDecision },
       { status: string; nextRound?: Round }
     >(this.functions, 'submitDecision');
-
-    const decision: RoundDecision = {
-      machines: settings?.machines ?? 0,
-      organic: settings?.organic ?? false,
-      fertilizer: settings?.fertilizer ?? false,
-      pesticide: settings?.pesticide ?? false,
-      organisms: settings?.organisms ?? false,
-      priceFixing: settings?.priceFixing ?? {},
-      parcels: {},
-    };
-
-    const currentParcels = this.parcelsSubject.value;
-    for (let i = 0; i < 40; i++) {
-      decision.parcels[i] = this.pendingDecisions[i] || currentParcels[i].crop || 'Fallow';
-    }
 
     try {
       const result = await submitDecisionFn({
@@ -273,18 +245,16 @@ export class GameService {
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       return { gameId: `test-game-${Math.random().toString(36).substr(2, 9)}`, password: '123' };
     }
+    const numHumanPlayers = config.numPlayers - (config.numAi || 0);
+    if (numHumanPlayers === 1) {
+      // Create local game
+      const gameId = await this.localGame.createGame(name, config);
+      // Local games don't have global passwords, but we can return a placeholder
+      return { gameId, password: 'local' };
+    }
+
     const createGameFn = httpsCallable<
-      {
-        name: string;
-        config: {
-          numPlayers: number;
-          numRounds: number;
-          numAi: number;
-          playerLabel: string;
-          advancedPricingEnabled?: boolean;
-        };
-        settings: { length: number; difficulty: string; playerLabel: string };
-      },
+      { name: string; config: any; settings: any },
       { gameId: string; password?: string }
     >(this.functions, 'createGame');
     try {
@@ -318,17 +288,37 @@ export class GameService {
         total: 2,
       };
     }
+
+    // 1. Fetch Cloud Games
     const getAdminGamesFn = httpsCallable<
       { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
       { games: Game[]; total: number }
     >(this.functions, 'getAdminGames');
+
+    let cloudResponse = { games: [] as Game[], total: 0 };
     try {
       const result = await getAdminGamesFn({ page, pageSize, showDeleted: showTrash, adminUid });
-      return result.data;
-    } catch (error: unknown) {
-      if (window.console) console.error('Failed to fetch games:', error);
-      throw error;
+      cloudResponse = result.data;
+    } catch (e) {
+      console.error('Error fetching cloud games:', e);
     }
+
+    // 2. Fetch Local Games (if not in trash, local games currently don't support trash)
+    let localGames: Game[] = [];
+    if (!showTrash) {
+      localGames = await this.localGame.getLocalGames();
+    }
+
+    // 3. Merge and Paginate
+    const allGames = [...localGames, ...cloudResponse.games];
+    // Simple client-side pagination for merged list
+    const startIndex = (page - 1) * pageSize;
+    const paginatedGames = allGames.slice(startIndex, startIndex + pageSize);
+
+    return {
+      games: paginatedGames,
+      total: allGames.length,
+    };
   }
 
   async getPendingUsers(): Promise<UserStatus[]> {

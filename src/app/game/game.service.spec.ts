@@ -89,15 +89,17 @@ describe('GameService', () => {
     const mockCallable = vi.fn(() => Promise.resolve({ data: { status: 'calculated', nextRound: mockRound } }));
     vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
 
-    // Mock loadGame which is called inside submitRound
+    // Mock loadGame which is called inside submitDecision
     vi.spyOn(service, 'loadGame').mockResolvedValue({} as any);
 
-    const result = await service.submitRound('test-game-id', {
+    const result = await service.submitDecision('test-game-id', {
       machines: 1,
       organic: true,
       fertilizer: false,
       pesticide: false,
       organisms: false,
+      parcels: {},
+      priceFixing: {},
     });
 
     expect(result).toEqual(mockRound);
@@ -108,7 +110,7 @@ describe('GameService', () => {
     const mockCallable = vi.fn(() => Promise.resolve({ data: { gameId: 'new-game-id' } }));
     vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
 
-    const result = await service.createGame('New Game', { numRounds: 10 });
+    const result = await service.createGame('New Game', { numRounds: 10, numPlayers: 5, numAi: 0, playerLabel: 'Team' });
 
     expect(result.gameId).toBe('new-game-id');
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'createGame');
