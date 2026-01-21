@@ -77,7 +77,7 @@ describe('AuthService', () => {
     await service.logout();
 
     expect(localStorage.removeItem).toHaveBeenCalledWith('soil_test_mode');
-    expect(signOut).not.toHaveBeenCalled();
+    expect(signOut).toHaveBeenCalled();
   });
 
   it('should call auth signOut when not in test mode', async () => {

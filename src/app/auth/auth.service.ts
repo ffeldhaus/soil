@@ -198,17 +198,16 @@ export class AuthService {
   async logout() {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser) {
-      if (window.localStorage.getItem('soil_test_mode')) {
-        window.localStorage.removeItem('soil_test_mode');
-        window.localStorage.removeItem('soil_test_role');
-        this.userSubject.next(null);
-        return Promise.resolve();
-      }
+      window.localStorage.removeItem('soil_test_mode');
+      window.localStorage.removeItem('soil_test_role');
+      
       if (window.localStorage.getItem('soil_guest_uid')) {
         window.localStorage.removeItem('soil_guest_uid');
         this.userSubject.next(null);
         return Promise.resolve();
       }
+      
+      this.userSubject.next(null);
     }
 
     return await signOut(this.auth);

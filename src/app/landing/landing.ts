@@ -159,8 +159,6 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
             <div class="mt-16 p-6 bg-red-900/20 border border-red-500/30 rounded-2xl max-w-xl mx-auto">
               <h3 class="text-red-400 font-bold mb-4">Test Mode (Dev Only)</h3>
               <div class="flex flex-wrap gap-4 justify-center">
-                <button (click)="enableTestMode('player_round_6')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Player (R6/12)</button>
-                <button (click)="enableTestMode('player_end')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Player (End)</button>
                 <button (click)="enableTestMode('admin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Admin</button>
                 <button (click)="enableTestMode('superadmin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Super Admin</button>
               </div>
