@@ -514,9 +514,12 @@ export class Dashboard implements OnInit, OnDestroy {
       const result = await this.gameService.createGame(name, config);
       this.createdGame = { id: result.gameId, password: result.password };
 
-      // Auto-join the created game as first player
-      await this.authService.loginAsPlayer(result.gameId, result.password!);
-      this.router.navigate(['/game']);
+      const numHumanPlayers = config.numPlayers - (config.numAi || 0);
+      if (numHumanPlayers === 1) {
+        // Auto-join the created game as first player
+        await this.authService.loginAsPlayer(result.gameId, result.password!);
+        this.router.navigate(['/game']);
+      }
 
       this.loadGames(); // Refresh list
       this.expandedGameId = result.gameId;

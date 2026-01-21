@@ -14,7 +14,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, take } from 'rxjs';
 
 import { LanguageService } from '../services/language.service';
 
@@ -36,9 +36,17 @@ export class AuthService {
   constructor() {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     // Subscribe to real auth state using native SDK
-    if (this.auth!) {
-      onAuthStateChanged(this.auth!, (u) => {
+    if (this.auth) {
+      onAuthStateChanged(this.auth, (u) => {
         this.ngZone.run(() => {
+          const guestUid = isBrowser ? window.localStorage.getItem('soil_guest_uid') : null;
+          const activeLocalGame = isBrowser ? window.localStorage.getItem('soil_active_local_game') : null;
+
+          if (guestUid || activeLocalGame) {
+            // Respect the local session, do not overwrite with null/stale Firebase state
+            return;
+          }
+
           if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
             this.userSubject.next(u);
           }
@@ -49,9 +57,77 @@ export class AuthService {
     // Check for test mode immediate override
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
       this.userSubject.next(this.getMockUser());
+    } else if (isBrowser && window.localStorage.getItem('soil_active_local_game')) {
+      const gameId = window.localStorage.getItem('soil_active_local_game')!;
+      const pin = window.localStorage.getItem('soil_active_local_pin') || '';
+      // We don't call this.loginAsPlayer here because it would trigger nested logic,
+      // instead we just initialize the user state if needed.
+      // For now, let the guest logic below handle it if guest_uid is present.
+      if (window.localStorage.getItem('soil_guest_uid')) {
+        const guestUid = window.localStorage.getItem('soil_guest_uid')!;
+        const guestUser = this.createGuestUser(guestUid);
+        const localUser = {
+            ...guestUser,
+            getIdTokenResult: async () => ({
+              claims: {
+                role: 'player',
+                gameId: gameId,
+                playerNumber: 1,
+              },
+            }),
+          };
+        this.userSubject.next(localUser as any);
+      }
     } else if (isBrowser && window.localStorage.getItem('soil_guest_uid')) {
       const guestUid = window.localStorage.getItem('soil_guest_uid')!;
       this.userSubject.next(this.createGuestUser(guestUid));
+    }
+  }
+
+  async loginAsPlayer(gameId: string, pin: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+
+    if (gameId.startsWith('local-')) {
+      if (isBrowser) {
+        window.localStorage.setItem('soil_active_local_game', gameId);
+        window.localStorage.setItem('soil_active_local_pin', pin);
+      }
+
+      const currentUser = this.userSubject.value || (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp') : null);
+      if (currentUser) {
+        // Wrap user to include local claims
+        const localUser = {
+          ...currentUser,
+          getIdTokenResult: async () => ({
+            claims: {
+              role: 'player',
+              gameId: gameId,
+              playerNumber: 1,
+            },
+          }),
+        };
+        this.userSubject.next(localUser as any);
+        return { user: localUser };
+      }
+      return { user: currentUser };
+    }
+
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      const user = this.getMockUser();
+      this.userSubject.next(user);
+      return { user };
+    }
+    // Call backend to get custom token for player login
+    // Note: Function name is 'playerLogin' in backend
+    const playerLoginFn = httpsCallable(this.functions!, 'playerLogin');
+
+    try {
+      const result = await playerLoginFn({ gameId, password: pin });
+      const { customToken } = result.data as { customToken: string };
+      return await signInWithCustomToken(this.auth!, customToken);
+    } catch (error) {
+      console.error('Player login failed:', error);
+      throw error;
     }
   }
 
@@ -163,47 +239,6 @@ export class AuthService {
     return await createUserWithEmailAndPassword(this.auth!, email, pass);
   }
 
-  async loginAsPlayer(gameId: string, pin: string) {
-    if (gameId.startsWith('local-')) {
-      const currentUser = this.userSubject.value;
-      if (currentUser) {
-        // Wrap user to include local claims
-        const localUser = {
-          ...currentUser,
-          getIdTokenResult: async () => ({
-            claims: {
-              role: 'player',
-              gameId: gameId,
-              playerNumber: 1,
-            },
-          }),
-        };
-        this.userSubject.next(localUser as any);
-        return { user: localUser };
-      }
-      return { user: currentUser };
-    }
-
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
-      const user = this.getMockUser();
-      this.userSubject.next(user);
-      return { user };
-    }
-    // Call backend to get custom token for player login
-    // Note: Function name is 'playerLogin' in backend
-    const playerLoginFn = httpsCallable(this.functions!, 'playerLogin');
-
-    try {
-      const result = await playerLoginFn({ gameId, password: pin });
-      const { customToken } = result.data as { customToken: string };
-      return await signInWithCustomToken(this.auth!, customToken);
-    } catch (error) {
-      console.error('Player login failed:', error);
-      throw error;
-    }
-  }
-
   async signInAsGuest() {
     const guestUid = `guest-${Math.random().toString(36).substring(2, 15)}`;
     const guestUser = this.createGuestUser(guestUid);
@@ -222,18 +257,20 @@ export class AuthService {
     if (isBrowser) {
       window.localStorage.removeItem('soil_test_mode');
       window.localStorage.removeItem('soil_test_role');
-      
+      window.localStorage.removeItem('soil_active_local_game');
+      window.localStorage.removeItem('soil_active_local_pin');
+
       if (window.localStorage.getItem('soil_guest_uid')) {
         window.localStorage.removeItem('soil_guest_uid');
         this.userSubject.next(null);
         return Promise.resolve();
       }
-      
+
       this.userSubject.next(null);
     }
 
-    if (this.auth!) {
-      return await signOut(this.auth!);
+    if (this.auth) {
+      return await signOut(this.auth);
     }
     return Promise.resolve();
   }
