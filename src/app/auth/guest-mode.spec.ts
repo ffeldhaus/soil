@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { AuthService } from './auth.service';
 import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
-import { LanguageService } from '../services/language.service';
+import { filter, firstValueFrom } from 'rxjs';
 import { vi } from 'vitest';
-import { firstValueFrom, filter } from 'rxjs';
+import { LanguageService } from '../services/language.service';
+import { AuthService } from './auth.service';
 
 describe('AuthService Guest Mode', () => {
   let service: AuthService;
@@ -25,8 +25,8 @@ describe('AuthService Guest Mode', () => {
         AuthService,
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
-        { provide: LanguageService, useValue: languageServiceSpy }
-      ]
+        { provide: LanguageService, useValue: languageServiceSpy },
+      ],
     });
     service = TestBed.inject(AuthService);
   });
@@ -39,15 +39,11 @@ describe('AuthService Guest Mode', () => {
   });
 
   it('should emit guest user on user$ when signed in as guest', async () => {
-    const guestUserPromise = firstValueFrom(
-      service.user$.pipe(
-        filter(user => !!user && user.isAnonymous)
-      )
-    );
-    
+    const guestUserPromise = firstValueFrom(service.user$.pipe(filter((user) => !!user && user.isAnonymous)));
+
     await service.signInAsGuest();
     const user = await guestUserPromise;
-    
+
     expect(user?.uid).toContain('guest-');
     expect(user?.isAnonymous).toBe(true);
   });

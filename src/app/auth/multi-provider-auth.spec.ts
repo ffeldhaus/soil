@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { AuthService } from './auth.service';
 import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LanguageService } from '../services/language.service';
-import { vi, beforeEach, afterEach, describe, it, expect } from 'vitest';
+import { AuthService } from './auth.service';
 
 describe('AuthService Multi-Provider', () => {
   let service: AuthService;
@@ -21,8 +21,8 @@ describe('AuthService Multi-Provider', () => {
 
     // Set test mode in localStorage
     if (typeof window !== 'undefined') {
-        window.localStorage.setItem('soil_test_mode', 'true');
-        window.localStorage.setItem('soil_test_role', 'player');
+      window.localStorage.setItem('soil_test_mode', 'true');
+      window.localStorage.setItem('soil_test_role', 'player');
     }
 
     TestBed.configureTestingModule({
@@ -30,16 +30,16 @@ describe('AuthService Multi-Provider', () => {
         AuthService,
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
-        { provide: LanguageService, useValue: languageServiceSpy }
-      ]
+        { provide: LanguageService, useValue: languageServiceSpy },
+      ],
     });
     service = TestBed.inject(AuthService);
   });
 
   afterEach(() => {
     if (typeof window !== 'undefined') {
-        window.localStorage.removeItem('soil_test_mode');
-        window.localStorage.removeItem('soil_test_role');
+      window.localStorage.removeItem('soil_test_mode');
+      window.localStorage.removeItem('soil_test_role');
     }
   });
 
