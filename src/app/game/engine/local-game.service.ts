@@ -12,6 +12,11 @@ export interface LocalGameState {
   allRounds: Record<string, Round[]>; // playerUid -> Round[]
 }
 
+export interface LocalCreateResponse {
+  gameId: string;
+  password?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,17 +24,20 @@ export class LocalGameService {
   private stateSubject = new BehaviorSubject<LocalGameState | null>(null);
   state$ = this.stateSubject.asObservable();
 
-  async createGame(name: string, config: any): Promise<string> {
+  async createGame(name: string, config: any): Promise<LocalCreateResponse> {
     const gameId = `local-${Math.random().toString(36).substring(2, 11)}`;
     const numPlayers = config.numPlayers || 1;
     const numAi = config.numAi || 0;
     
     const players: Record<string, PlayerState> = {};
     const allRounds: Record<string, Round[]> = {};
+    const playerSecrets: Record<string, { password: string }> = {};
 
     for (let i = 1; i <= numPlayers; i++) {
       const pUid = `player-${gameId}-${i}`;
-      const isAi = i > (numPlayers - numAi);
+      const isAi = i > numPlayers - numAi;
+      const pin = Math.floor(1000 + Math.random() * 9000).toString();
+      playerSecrets[String(i)] = { password: pin };
       
       const initialParcels = GameEngine.createInitialParcels();
       const startSoil = Math.round(initialParcels.reduce((sum, p) => sum + p.soil, 0) / initialParcels.length);
@@ -82,6 +90,7 @@ export class LocalGameService {
       },
       config: config,
       players: players,
+      playerSecrets: playerSecrets,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
@@ -96,7 +105,7 @@ export class LocalGameService {
 
     this.saveToStorage(state);
     this.stateSubject.next(state);
-    return gameId;
+    return { gameId, password: playerSecrets['1'].password };
   }
 
   async loadGame(gameId: string): Promise<LocalGameState | null> {

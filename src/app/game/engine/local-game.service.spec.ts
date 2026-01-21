@@ -15,9 +15,11 @@ describe('LocalGameService', () => {
 
   it('should create a local game', async () => {
     const config = { numPlayers: 1, numAi: 0, numRounds: 20, playerLabel: 'Farmer' };
-    const gameId = await service.createGame('Test Local', config);
+    const response = await service.createGame('Test Local', config);
+    const gameId = response.gameId;
     
     expect(gameId).toContain('local-');
+    expect(response.password).toBeDefined();
     const state = await service.loadGame(gameId);
     expect(state).toBeDefined();
     expect(state?.game.name).toBe('Test Local');
@@ -26,7 +28,8 @@ describe('LocalGameService', () => {
 
   it('should submit a decision and calculate next round in single player', async () => {
     const config = { numPlayers: 1, numAi: 0, numRounds: 20, playerLabel: 'Farmer' };
-    const gameId = await service.createGame('Test Local', config);
+    const response = await service.createGame('Test Local', config);
+    const gameId = response.gameId;
     
     const decision = {
         parcels: { 0: 'Wheat' as any },
