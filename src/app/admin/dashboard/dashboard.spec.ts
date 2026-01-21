@@ -15,7 +15,8 @@ describe('Dashboard Component', () => {
 
   beforeEach(async () => {
     authServiceMock = {
-      user$: of({ uid: 'admin', displayName: 'Admin' }),
+      user$: of({ uid: 'admin', displayName: 'Admin', isAnonymous: false }),
+      isAnonymous: false,
       logout: vi.fn().mockResolvedValue(undefined),
       loginWithGoogle: vi.fn(),
       loginAsPlayer: vi.fn().mockResolvedValue({ user: { uid: 'player-uid' } }),

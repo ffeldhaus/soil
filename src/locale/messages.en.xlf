@@ -1282,6 +1282,12 @@
         <target>Restliche Slots (<ph id="0" equiv="INTERPOLATION" disp="{{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}"/>) sind für andere menschliche Spieler.</target>
       </segment>
     </unit>
+    <unit id="dashboard.createGame.btnJoin">
+      <segment state="initial">
+        <source>Anmelden zum Erstellen</source>
+        <target>Anmelden zum Erstellen</target>
+      </segment>
+    </unit>
     <unit id="dashboard.createGame.creating">
       <notes>
         <note category="description">Text shown while game is being created</note>
@@ -1290,6 +1296,12 @@
       <segment state="translated">
         <source>Wird erstellt...</source>
         <target>Creating...</target>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.loginRequired">
+      <segment state="initial">
+        <source> Für Spiele mit mehreren menschlichen Spielern ist ein kostenloses Konto erforderlich. </source>
+        <target> Für Spiele mit mehreren menschlichen Spielern ist ein kostenloses Konto erforderlich. </target>
       </segment>
     </unit>
     <unit id="dashboard.createGame.name">

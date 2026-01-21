@@ -82,6 +82,7 @@
 
               <app-dashboard-create-game
                 [isCreatingGame]="isCreatingGame"
+                [isGuest]="(user$ | async)?.isAnonymous ?? false"
                 (createGame)="onGameCreate($event)"
                 (playersChange)="onPlayersChange()"
               ></app-dashboard-create-game>

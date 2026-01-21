@@ -29,6 +29,10 @@ export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
+  get isAnonymous(): boolean {
+    return !!this.userSubject.value?.isAnonymous;
+  }
+
   constructor() {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     // Subscribe to real auth state using native SDK

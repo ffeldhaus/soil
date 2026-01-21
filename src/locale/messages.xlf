@@ -53,6 +53,11 @@
         <source>Gesamtanzahl Slots</source>
       </segment>
     </unit>
+    <unit id="dashboard.createGame.loginRequired">
+      <segment>
+        <source> Für Spiele mit mehreren menschlichen Spielern ist ein kostenloses Konto erforderlich. </source>
+      </segment>
+    </unit>
     <unit id="dashboard.createGame.name">
       <notes>
         <note category="description">Label for the game name input</note>
@@ -119,6 +124,11 @@
     <unit id="dashboard.createGame.botsHint">
       <segment>
         <source>Restliche Slots (<ph id="0" equiv="INTERPOLATION" disp="{{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}"/>) sind für andere menschliche Spieler.</source>
+      </segment>
+    </unit>
+    <unit id="dashboard.createGame.btnJoin">
+      <segment>
+        <source>Anmelden zum Erstellen</source>
       </segment>
     </unit>
     <unit id="dashboard.createGame.advancedPricing">

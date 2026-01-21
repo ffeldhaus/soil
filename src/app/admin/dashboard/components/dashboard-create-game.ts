@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class DashboardCreateGameComponent {
   @Input() isCreatingGame = false;
+  @Input() isGuest = false;
   @Output() createGame = new EventEmitter<{
     name: string;
     numPlayers: number;
@@ -59,9 +60,19 @@ export class DashboardCreateGameComponent {
   }
 
   onPlayersChange() {
-    if (this.newGameConfig.numAi > this.newGameConfig.numPlayers) {
-      this.newGameConfig.numAi = this.newGameConfig.numPlayers;
+    // If we increased players, make the new ones AI by default
+    // We always keep 1 human (the creator)
+    if (this.newGameConfig.numAi < this.newGameConfig.numPlayers - 1) {
+      this.newGameConfig.numAi = this.newGameConfig.numPlayers - 1;
+    }
+
+    if (this.newGameConfig.numAi > this.newGameConfig.numPlayers - 1) {
+      this.newGameConfig.numAi = this.newGameConfig.numPlayers - 1;
     }
     this.playersChange.emit();
+  }
+
+  get numHumanPlayers(): number {
+    return this.newGameConfig.numPlayers - this.newGameConfig.numAi;
   }
 }

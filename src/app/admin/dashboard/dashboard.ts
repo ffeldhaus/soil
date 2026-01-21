@@ -356,8 +356,8 @@ export class Dashboard implements OnInit, OnDestroy {
                 console.error('Dashboard: Error fetching user status:', error);
                 // For deadline exceeded, retry once after a delay or just ignore if it's polling
                 if (error.message?.includes('deadline-exceeded')) {
-                   // Silence the error for the user if we're still polling, it will retry in 30s
-                   return;
+                  // Silence the error for the user if we're still polling, it will retry in 30s
+                  return;
                 }
                 this.errorMessage = `Error loading account status: ${error.message || error}`;
                 this.isLoading = false;
@@ -456,8 +456,21 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  async onGameCreate(config: { numPlayers: number; numRounds: number; numAi: number; playerLabel: string }) {
+  async onGameCreate(config: {
+    name: string;
+    numPlayers: number;
+    numRounds: number;
+    numAi: number;
+    playerLabel: string;
+  }) {
     this.newGameConfig = { ...this.newGameConfig, ...config };
+
+    const numHumanPlayers = config.numPlayers - config.numAi;
+    if (numHumanPlayers > 1 && this.authService.isAnonymous) {
+      this.router.navigate(['/admin/login']);
+      return;
+    }
+
     await this.createNewGame();
   }
 
