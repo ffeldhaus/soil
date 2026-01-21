@@ -162,6 +162,12 @@ export class AuthService {
   }
 
   async loginAsPlayer(gameId: string, pin: string) {
+    if (gameId.startsWith('local-')) {
+      // For local games, we just ensure the mock "guest" or current user state is kept
+      // We don't actually need a Firebase token for local engine games.
+      return { user: this.userSubject.value };
+    }
+
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
       const user = this.getMockUser();

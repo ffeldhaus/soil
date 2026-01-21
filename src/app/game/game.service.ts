@@ -289,18 +289,20 @@ export class GameService {
       };
     }
 
-    // 1. Fetch Cloud Games
-    const getAdminGamesFn = httpsCallable<
-      { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
-      { games: Game[]; total: number }
-    >(this.functions, 'getAdminGames');
-
+    // 1. Fetch Cloud Games (Skip for guests)
     let cloudResponse = { games: [] as Game[], total: 0 };
-    try {
-      const result = await getAdminGamesFn({ page, pageSize, showDeleted: showTrash, adminUid });
-      cloudResponse = result.data;
-    } catch (e) {
-      console.error('Error fetching cloud games:', e);
+    if (!this.isAnonymous) {
+      const getAdminGamesFn = httpsCallable<
+        { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
+        { games: Game[]; total: number }
+      >(this.functions, 'getAdminGames');
+
+      try {
+        const result = await getAdminGamesFn({ page, pageSize, showDeleted: showTrash, adminUid });
+        cloudResponse = result.data;
+      } catch (e) {
+        console.error('Error fetching cloud games:', e);
+      }
     }
 
     // 2. Fetch Local Games (if not in trash, local games currently don't support trash)
