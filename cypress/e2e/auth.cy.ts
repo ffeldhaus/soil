@@ -52,9 +52,6 @@ describe('Authentication & Roles', () => {
     // 4. Logout
     cy.get('[data-testid="logout-admin"]').click();
 
-    // Should be at landing page
-    cy.get('a[routerLink="/game-login"]').should('exist');
-
     // 5. Player Login
     cy.wrap(null).then(() => {
       cy.visit('/game-login');

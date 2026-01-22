@@ -9,7 +9,7 @@ describe('PWA Restructure & Offline-First Scenarios', () => {
   it('should play a full local game from creation to finish', () => {
     // 1. Landing Page
     cy.visit('/');
-    cy.get('[data-testid="create-manage-btn"]').should('be.visible').click();
+    cy.get('[data-testid="landing-manage-games"]').should('be.visible').click();
 
     // 2. Dashboard - Create Game
     cy.url().should('include', '/admin');
@@ -49,7 +49,7 @@ describe('PWA Restructure & Offline-First Scenarios', () => {
   it('should migrate a local guest game to cloud upon login', () => {
     // 1. Create a local game as guest
     cy.visit('/');
-    cy.get('[data-testid="create-manage-btn"]').click();
+    cy.get('[data-testid="landing-manage-games"]').click();
     cy.get('[data-testid="game-name-input"]').clear().type('Guest Game');
     cy.get('[data-testid="create-game-submit"]').click();
     cy.url().should('include', '/game');
