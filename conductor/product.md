@@ -16,9 +16,10 @@ Soil is an immersive, educational agricultural simulation that empowers players 
 - **Accessibility First:** Low-friction entry with no mandatory registration, supporting offline play, and a seamless experience across web and mobile platforms.
 
 ## Key Features
-- **Cross-Platform PWA/Mobile:** A unified experience installable from the web or app stores (iOS/Android).
-- **Single-Player Offline Mode:** Playable without internet connectivity using local state and AI players, with background syncing to the backend for progress tracking and improvement analysis.
-- **Flexible Authentication:** Supporting Google Sign-In, Apple Sign-In, and traditional Email/Password (verified), while allowing guest play.
+- **Cross-Platform PWA/Mobile:** A unified experience installable from the web or app stores (iOS/Android) using advanced PWA features like Web Share and App Badging.
+- **Hybrid Game Engine:** Dual execution logic (Local Frontend vs Cloud Backend) ensures seamless offline play while maintaining authoritative multiplayer states.
+- **Single-Player Offline Mode:** Playable without internet connectivity using local state and AI players, with background syncing to the backend via SyncService.
+- **Flexible Authentication:** Supporting Google Sign-In, Apple Sign-In, and traditional Email/Password (verified), while allowing guest play with easy migration to registered accounts.
 - **Environmental Impact Tracking:** Real-time feedback and data visualization on how farming decisions affect biodiversity, soil health, and water quality.
 - **Multiplayer Hub:** Create and share game IDs for real-time human-to-human interaction.
 

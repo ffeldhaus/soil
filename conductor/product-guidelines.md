@@ -11,6 +11,7 @@
 
 ## UX & Interaction Principles
 - **Offline-First Resilience:** Core gameplay must be available without an internet connection. State synchronization should be handled seamlessly in the background when connectivity is restored.
+- **Hybrid Execution Logic:** Maintain identical game engine logic in both Frontend (for immediate offline feedback) and Backend (for authoritative multiplayer state), ensuring a consistent experience regardless of connectivity.
 - **Inclusive Accessibility:** Continuous adherence to WCAG standards. This includes high-contrast ratios, screen reader compatibility, and large touch targets to support a diverse range of students and players.
 - **Direct Feedback:** Use in-game overlays (e.g., changes in soil color) to provide immediate, intuitive feedback on ecological impact.
 - **Analytical Depth:** Supplement direct feedback with visual dashboards (charts, heatmaps) for in-depth analysis of financial and ecological trends.
