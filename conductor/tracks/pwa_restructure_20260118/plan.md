@@ -37,6 +37,6 @@
     - [x] Add `noindex` meta tag to Impressum page to prevent indexing
     - [x] Implement canonical URL logic for root path `/` and default locale `/de`
     - [x] Ensure consistent use of canonical tags across all public routes according to Google guidelines
-- [x] Task: Final PWA/Mobile UI Polish [c74353c]
+- [x] Task: Final PWA/Mobile UI Polish [cab5239]
     - [x] Ensure unified aesthetic across all screen sizes
 - [ ] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' (Protocol in workflow.md)
