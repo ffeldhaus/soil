@@ -33,6 +33,20 @@ describe('PlantingModal', () => {
     expect(config.image).toBe('weizen.webp');
   });
 
+  it('should emit select event', () => {
+    const { vi } = import.meta.vitest;
+    const emitSpy = vi.spyOn(component.cropSelected, 'emit');
+    component.select('Wheat');
+    expect(emitSpy).toHaveBeenCalledWith('Wheat');
+  });
+
+  it('should emit cancel event', () => {
+    const { vi } = import.meta.vitest;
+    const emitSpy = vi.spyOn(component.plantingCancelled, 'emit');
+    component.plantingCancelled.emit();
+    expect(emitSpy).toHaveBeenCalled();
+  });
+
   it('should fallback to default for unknown crop', () => {
     const config = component.getConfig('Unknown' as any);
     expect(config.label).toBe('Unknown');

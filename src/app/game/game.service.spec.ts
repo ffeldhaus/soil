@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { AuthService } from '../auth/auth.service';
+import { LocalGameService } from './engine/local-game.service';
 import { GameService } from './game.service';
 
 // Mock @angular/fire/functions
@@ -18,13 +20,46 @@ describe('GameService', () => {
   let functionsInstance: any;
 
   beforeEach(() => {
-    functionsInstance = {};
+    mockLocalStorage = {};
+    // Mock localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: (key: string) => mockLocalStorage[key] || null,
+        setItem: (key: string, val: string) => {
+          mockLocalStorage[key] = val;
+        },
+        removeItem: (key: string) => {
+          delete mockLocalStorage[key];
+        },
+        clear: () => {
+          mockLocalStorage = {};
+        },
+      },
+      writable: true,
+    });
+
+    // Mock navigator badge methods
+    if (typeof navigator !== 'undefined') {
+      Object.defineProperty(navigator, 'setAppBadge', {
+        value: vi.fn().mockResolvedValue(undefined),
+        configurable: true,
+        writable: true,
+      });
+      Object.defineProperty(navigator, 'clearAppBadge', {
+        value: vi.fn().mockResolvedValue(undefined),
+        configurable: true,
+        writable: true,
+      });
+    }
 
     TestBed.configureTestingModule({
-      providers: [GameService, { provide: Functions, useValue: functionsInstance }],
+      providers: [
+        GameService,
+        { provide: Functions, useValue: {} },
+        { provide: AuthService, useValue: { isAnonymous: false } },
+      ],
     });
     service = TestBed.inject(GameService);
-    vi.clearAllMocks();
   });
 
   it('should perform optimistic update when parcel decision is updated', async () => {
@@ -162,6 +197,36 @@ describe('GameService', () => {
     expect(mockCallable).toHaveBeenCalledWith({ targetUid: 'user1', action: 'approve', value: undefined });
   });
 
+  it('should load local game if gameId starts with local-', async () => {
+    const mockLocalState = {
+      game: { id: 'local-123', currentRoundNumber: 0 },
+      playerState: { uid: 'p1' },
+      allRounds: { p1: [] },
+    };
+    const localGameMock = TestBed.inject(LocalGameService);
+    vi.spyOn(localGameMock, 'loadGame').mockResolvedValue(mockLocalState as any);
+
+    const result = await service.loadGame('local-123');
+
+    expect(result?.game.id).toBe('local-123');
+    expect(localGameMock.loadGame).toHaveBeenCalledWith('local-123');
+  });
+
+  it('should submit local decision if gameId starts with local-', async () => {
+    const localGameMock = TestBed.inject(LocalGameService);
+    vi.spyOn(localGameMock, 'submitDecision').mockResolvedValue(undefined);
+    vi.spyOn(localGameMock, 'loadGame').mockResolvedValue({
+      game: { id: 'local-123' },
+      playerState: {},
+      lastRound: { parcelsSnapshot: [] },
+    } as any);
+
+    const decision: any = { parcels: {} };
+    await service.submitDecision('local-123', decision);
+
+    expect(localGameMock.submitDecision).toHaveBeenCalledWith('local-123', decision);
+  });
+
   it('should update player type', async () => {
     const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
     vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
@@ -182,14 +247,94 @@ describe('GameService', () => {
     expect(mockCallable).toHaveBeenCalledWith({ gameId: 'game1', roundNumber: 2, deadline: '2026-01-01' });
   });
 
-  it('should submit onboarding', async () => {
+  it('should submit feedback', async () => {
     const mockCallable = vi.fn(() => Promise.resolve({ data: { success: true } }));
     vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
 
-    const data = { firstName: 'John', lastName: 'Doe', explanation: 'Test', institution: 'School' };
-    await service.submitOnboarding(data);
+    const feedback = { category: 'interface', rating: 5, comment: 'Good' };
+    await service.submitFeedback(feedback);
 
-    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'submitOnboarding');
-    expect(mockCallable).toHaveBeenCalledWith(data);
+    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'submitFeedback');
+    expect(mockCallable).toHaveBeenCalledWith(feedback);
+  });
+
+  it('should get all feedback', async () => {
+    const mockCallable = vi.fn(() => Promise.resolve({ data: [] }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    await service.getAllFeedback();
+
+    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'getAllFeedback');
+  });
+
+  it('should manage feedback', async () => {
+    const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    await service.manageFeedback('fb1', 'resolve');
+
+    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'manageFeedback');
+    expect(mockCallable).toHaveBeenCalledWith({ feedbackId: 'fb1', action: 'resolve', value: undefined });
+  });
+
+  it('should export full game state', async () => {
+    const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    // Mock stateSubject value
+    (service as any).stateSubject.next({ game: { id: 'test', players: { p1: { uid: 'p1', history: [] } } } });
+
+    await service.exportFullGameState('test');
+
+    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'getRoundData');
+  });
+
+  it('should handle submit onboarding', async () => {
+    const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    const onboardingData = { firstName: 'F', lastName: 'L', explanation: 'E', institution: 'I' };
+    await service.submitOnboarding(onboardingData);
+
+    expect(mockCallable).toHaveBeenCalledWith(onboardingData);
+  });
+
+  it('should handle errors in loadGame', async () => {
+    const mockCallable = vi.fn(() => Promise.reject(new Error('Load failed')));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    await expect(service.loadGame('fail-id')).rejects.toThrow('Load failed');
+  });
+
+  it('should handle errors in submitDecision', async () => {
+    const mockCallable = vi.fn(() => Promise.reject(new Error('Submit failed')));
+    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+
+    const decision: any = { parcels: {} };
+    await expect(service.submitDecision('game1', decision)).rejects.toThrow('Submit failed');
+  });
+
+  it('should update badge based on game state', () => {
+    const state: any = {
+      game: { currentRoundNumber: 1, status: 'in_progress' },
+      playerState: { submittedRound: 0 },
+    };
+    const setAppBadgeSpy = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'setAppBadge', { value: setAppBadgeSpy, configurable: true });
+
+    (service as any).stateSubject.next(state);
+    expect(setAppBadgeSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('should clear badge if already submitted', () => {
+    const state: any = {
+      game: { currentRoundNumber: 1, status: 'in_progress' },
+      playerState: { submittedRound: 1 },
+    };
+    const clearAppBadgeSpy = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clearAppBadge', { value: clearAppBadgeSpy, configurable: true });
+
+    (service as any).stateSubject.next(state);
+    expect(clearAppBadgeSpy).toHaveBeenCalled();
   });
 });

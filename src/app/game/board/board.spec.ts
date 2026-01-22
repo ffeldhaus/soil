@@ -71,6 +71,7 @@ describe('Board', () => {
             yield: 0,
           })),
       updateParcelDecision: () => {},
+      submitDecision: (_gameId: string, _decision: any) => Promise.resolve({ status: 'calculated' }),
       submitRound: (_gameId: string) => Promise.resolve(),
       loadGame: (_gameId: string) =>
         Promise.resolve({
@@ -101,6 +102,79 @@ describe('Board', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should toggle overlays', () => {
+    component.toggleNutrition();
+    expect(component.showNutritionOverlay).toBe(true);
+    component.toggleHarvest();
+    expect(component.showHarvestOverlay).toBe(true);
+    component.toggleSoil();
+    expect(component.showSoilOverlay).toBe(true);
+  });
+
+  it('should handle round navigation', () => {
+    component.maxRoundNumber = 5;
+    component.goToRound(2);
+    expect(component.viewingRound).toBe(2);
+    expect(component.isReadOnly).toBe(true);
+  });
+
+  it('should open planting modal if parcels selected', () => {
+    component.selectedIndices.add(0);
+    component.openPlantingModal();
+    expect(component.showPlantingModal).toBe(true);
+  });
+
+  it('should handle crop selection', () => {
+    const gameService = TestBed.inject(GameService);
+    vi.spyOn(gameService, 'updateParcelDecision');
+
+    component.selectedIndices.add(0);
+    component.selectedIndices.add(1);
+    component.onCropSelected('Wheat');
+
+    expect(gameService.updateParcelDecision).toHaveBeenCalledTimes(2);
+    expect(component.selectedIndices.size).toBe(0);
+    expect(component.showPlantingModal).toBe(false);
+  });
+
+  it('should handle round settings', () => {
+    const settings = { machines: 1, organic: true, fertilizer: false, pesticide: false, organisms: false };
+    component.onRoundSettingsSaved(settings);
+    expect(component.currentRoundSettings).toEqual(settings);
+    expect(component.showRoundSettingsModal).toBe(false);
+  });
+
+  it('should handle round submission', async () => {
+    const gameService = TestBed.inject(GameService);
+    vi.spyOn(gameService, 'submitDecision').mockResolvedValue({ status: 'calculated' } as any);
+
+    component.gameId = 'test-game';
+    component.currentRoundSettings = {
+      machines: 0,
+      organic: false,
+      fertilizer: false,
+      pesticide: false,
+      organisms: false,
+    };
+
+    await component.executeNextRound();
+
+    expect(gameService.submitDecision).toHaveBeenCalled();
+    expect(component.showRoundResultModal).toBe(true);
+  });
+
+  it('should toggle labels', () => {
+    component.showLabels = false;
+    component.toggleLabels();
+    expect(component.showLabels).toBe(true);
+  });
+
+  it('should clear selection on background click', () => {
+    component.selectedIndices.add(1);
+    component.onBackgroundClick(new MouseEvent('click'));
+    expect(component.selectedIndices.size).toBe(0);
   });
 
   it('should identify player correctly', async () => {

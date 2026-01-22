@@ -87,6 +87,71 @@ describe('AuthService', () => {
     expect(signOut).toHaveBeenCalled();
   });
 
+  it('should sign in as guest', async () => {
+    const result = await service.signInAsGuest();
+    expect(result.user.isAnonymous).toBe(true);
+    expect(localStorage.setItem).toHaveBeenCalledWith('soil_guest_uid', expect.any(String));
+  });
+
+  it('should login with Google', async () => {
+    const { signInWithPopup } = await import('firebase/auth');
+    await service.loginWithGoogle();
+    expect(signInWithPopup).toHaveBeenCalled();
+  });
+
+  it('should register with email', async () => {
+    const { createUserWithEmailAndPassword } = await import('firebase/auth');
+    await service.registerWithEmail('test@example.com', 'pass123');
+    expect(createUserWithEmailAndPassword).toHaveBeenCalledWith(authSpy, 'test@example.com', 'pass123');
+  });
+
+  it('should update display name', async () => {
+    const { updateProfile } = await import('firebase/auth');
+    const mockUser = { reload: vi.fn().mockResolvedValue(undefined) };
+    authSpy.currentUser = mockUser;
+
+    await service.updateDisplayName('New Name');
+
+    expect(updateProfile).toHaveBeenCalledWith(mockUser, { displayName: 'New Name' });
+    expect(mockUser.reload).toHaveBeenCalled();
+  });
+
+  it('should handle local session in constructor', () => {
+    mockLocalStorage.soil_guest_uid = 'guest-123';
+
+    // Reset and reconfigure to get a fresh instance with new localStorage state
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: Auth, useValue: authSpy },
+        { provide: Functions, useValue: functionsSpy },
+        { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
+        { provide: LanguageService, useValue: { currentLang: 'de' } },
+      ],
+    });
+    const freshService = TestBed.inject(AuthService);
+    expect(freshService.isAnonymous).toBe(true);
+  });
+
+  it('should handle active local game in constructor', () => {
+    mockLocalStorage.soil_active_local_game = 'local-123';
+    mockLocalStorage.soil_guest_uid = 'guest-123';
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: Auth, useValue: authSpy },
+        { provide: Functions, useValue: functionsSpy },
+        { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
+        { provide: LanguageService, useValue: { currentLang: 'de' } },
+      ],
+    });
+    const freshService = TestBed.inject(AuthService);
+    expect(freshService.isAnonymous).toBe(true);
+  });
+
   it('should call auth signOut when not in test mode', async () => {
     await service.logout();
     expect(signOut).toHaveBeenCalled();

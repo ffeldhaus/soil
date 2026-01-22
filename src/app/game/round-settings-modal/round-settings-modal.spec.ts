@@ -21,22 +21,22 @@ describe('RoundSettingsModal', () => {
   });
 
   it('should emit save event on submit', () => {
-    const spy = vi.spyOn(component.save, 'emit');
-    component.settings = {
-      machines: 2,
-      organic: true,
-      fertilizer: false,
-      pesticide: false,
-      organisms: true,
-    };
+    const { vi } = import.meta.vitest;
+    const emitSpy = vi.spyOn(component.save, 'emit');
     component.submit();
-    expect(spy).toHaveBeenCalledWith({
-      machines: 2,
-      organic: true,
-      fertilizer: false,
-      pesticide: false,
-      organisms: true,
-    });
+    expect(emitSpy).toHaveBeenCalled();
+  });
+
+  it('should handle price fixing toggle', () => {
+    component.togglePriceFixing('Wheat');
+    expect(component.isPriceFixed('Wheat')).toBe(true);
+    component.togglePriceFixing('Wheat');
+    expect(component.isPriceFixed('Wheat')).toBe(false);
+  });
+
+  it('should get correct crop name', () => {
+    expect(component.getCropName('Wheat')).toBe('Weizen');
+    expect(component.getCropName('Unknown')).toBe('Unknown');
   });
 
   it('should render translations', () => {

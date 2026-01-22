@@ -47,7 +47,7 @@ describe('LocalGameService', () => {
     expect(state?.playerState.history.length).toBe(2); // Round 0 and Round 1
   });
 
-  it('should list local games', async () => {
+  it('should get local games list', async () => {
     await service.createGame('Game 1', { numPlayers: 1 });
     await service.createGame('Game 2', { numPlayers: 1 });
 
@@ -55,5 +55,18 @@ describe('LocalGameService', () => {
     expect(games.length).toBe(2);
     expect(games.map((g) => g.name)).toContain('Game 1');
     expect(games.map((g) => g.name)).toContain('Game 2');
+  });
+
+  it('should delete local game', async () => {
+    const response = await service.createGame('To Delete', { numPlayers: 1 });
+    await service.deleteGame(response.gameId);
+
+    const games = await service.getLocalGames();
+    expect(games.find((g) => g.id === response.gameId)).toBeUndefined();
+  });
+
+  it('should return null if game not found', async () => {
+    const result = await service.loadGame('non-existent');
+    expect(result).toBeNull();
   });
 });

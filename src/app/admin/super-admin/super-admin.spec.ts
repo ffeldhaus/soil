@@ -85,4 +85,47 @@ describe('SuperAdminComponent', () => {
 
     expect(gameServiceMock.deleteGames).toHaveBeenCalledWith(['game123'], false);
   });
+
+  it('should handle feedback management', async () => {
+    gameServiceMock.manageFeedback = vi.fn().mockResolvedValue({});
+    const mockFeedback = { id: 'fb1' };
+    component.initiateFeedbackAction(mockFeedback as any, 'resolve');
+    await component.confirmFeedbackAction();
+    expect(gameServiceMock.manageFeedback).toHaveBeenCalledWith('fb1', 'resolve', { externalReference: '' });
+  });
+
+  it('should handle admin rejection', async () => {
+    gameServiceMock.manageAdmin = vi.fn().mockResolvedValue({});
+    const mockUser = { uid: 'a1', email: 'a@ex.com' };
+
+    component.initiateReject(mockUser as any);
+    component.rejectionReasons = ['missing_info'];
+    component.customRejectionMessage = 'Sorry';
+
+    await component.confirmReject();
+
+    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith(
+      'a1',
+      'reject',
+      {
+        rejectionReasons: ['missing_info'],
+        customMessage: 'Sorry',
+        banEmail: false,
+      },
+      'de',
+      expect.any(String),
+    );
+  });
+
+  it('should handle quota update', async () => {
+    gameServiceMock.manageAdmin = vi.fn().mockResolvedValue({});
+    const mockUser = { uid: 'a1', email: 'a@ex.com', quota: 10 };
+
+    component.setQuota(mockUser as any);
+    component.newQuotaValue = 50;
+
+    await component.saveQuota();
+
+    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('a1', 'setQuota', 50);
+  });
 });

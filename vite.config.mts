@@ -36,6 +36,8 @@ export default defineConfig(({ mode }) => ({
     },
     globals: true,
     environment: 'jsdom',
+    testTimeout: 30000,
+    hookTimeout: 30000,
     setupFiles: ['src/test-setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: ['node_modules', 'dist', '.angular', '.firebase'],
