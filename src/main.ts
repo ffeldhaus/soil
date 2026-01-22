@@ -14,12 +14,14 @@ bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 if ('serviceWorker' in navigator && !isDevMode()) {
   const wb = new Workbox('/service-worker.js');
 
-  wb.addEventListener('installed', (event) => {
-    if (event.isUpdate) {
-      if (confirm('New update available! Reload to update?')) {
-        window.location.reload();
-      }
-    }
+  wb.addEventListener('waiting', () => {
+    // A new service worker is waiting to take over.
+    // In a real app, we should show a nice toast/banner here.
+    // For now, we automatically skip waiting to apply the update on next reload.
+    wb.addEventListener('controlling', () => {
+      window.location.reload();
+    });
+    wb.messageSkipWaiting();
   });
 
   wb.register();
