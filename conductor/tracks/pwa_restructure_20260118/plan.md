@@ -29,11 +29,11 @@
 - [~] Task: Audit and optimize for App Store/Play Store requirements
     - [x] Verify accessibility compliance (WCAG) [c74353c]
     - [x] Optimize assets and loading performance [34366e4]
-- [x] Task: SEO & Prerendering Optimization [c74353c]
+- [x] Task: SEO & Prerendering Optimization [e81d98f]
     - [x] Fix dependency injection issues during static generation
     - [x] Re-enable prerendering for static pages (Landing, Manual, Info)
     - [x] Verify metadata and schema.org markup for SEO
-- [x] Task: SEO: Indexing & Canonicalization [c74353c]
+- [x] Task: SEO: Indexing & Canonicalization [e81d98f]
     - [x] Add `noindex` meta tag to Impressum page to prevent indexing
     - [x] Implement canonical URL logic for root path `/` and default locale `/de`
     - [x] Ensure consistent use of canonical tags across all public routes according to Google guidelines
