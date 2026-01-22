@@ -47,7 +47,7 @@
 - [x] Task: Code cleanup and architectural refactoring [dba4264]
     - [x] Remove unused components and services
     - [x] Align with project naming conventions and style guides
-- [x] Task: Implementation of extensive and meaningful unit tests [2ba1972]
+- [x] Task: Implementation of extensive and meaningful unit tests [69523d1]
     - [x] Reach >80% coverage for critical modules (Engine, AI, Sync)
     - [x] Test edge cases and error handling in Game and Auth services
 - [~] Task: Implementation of comprehensive E2E tests (Cypress)
