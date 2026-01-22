@@ -50,7 +50,7 @@
 - [x] Task: Implementation of extensive and meaningful unit tests [69523d1]
     - [x] Reach >80% coverage for critical modules (Engine, AI, Sync)
     - [x] Test edge cases and error handling in Game and Auth services
-- [x] Task: Implementation of comprehensive E2E tests (Cypress) [69523d1]
+- [x] Task: Implementation of comprehensive E2E tests (Cypress) [c34deba]
     - [x] Full playthrough scenario (creation to finished state)
     - [x] Verify offline-to-online synchronization flow
 - [ ] Task: Conductor - User Manual Verification 'Phase 6: Quality Assurance' (Protocol in workflow.md)
