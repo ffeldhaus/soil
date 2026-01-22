@@ -37,7 +37,7 @@
     - [x] Add `noindex` meta tag to Impressum page to prevent indexing
     - [x] Implement canonical URL logic for root path `/` and default locale `/de`
     - [x] Ensure consistent use of canonical tags across all public routes according to Google guidelines
-- [x] Task: Final PWA/Mobile UI Polish [cab5239]
+- [x] Task: Final PWA/Mobile UI Polish [2ba1972]
     - [x] Ensure unified aesthetic across all screen sizes
     - [x] Implement Web Share API for sharing logins
     - [x] Implement Badging API for new round notifications
