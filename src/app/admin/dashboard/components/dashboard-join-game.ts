@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [FormsModule],
   template: `
-    <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-6 portrait:rounded-none portrait:border-x-0">
+    <div class="space-y-6">
       <h2 class="text-2xl font-bold text-emerald-400" i18n="@@dashboard.joinGame.title">Einem Spiel beitreten</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

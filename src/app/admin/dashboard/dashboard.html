@@ -95,12 +95,6 @@
                 (playersChange)="onPlayersChange()"
               ></app-dashboard-create-game>
 
-              <div class="mt-8 pt-8 border-t border-gray-700/50">
-                <app-dashboard-join-game
-                  (joinGame)="onJoinGame($event)"
-                ></app-dashboard-join-game>
-              </div>
-
               @if (createdGame) {
                 <div
                   class="mt-6 p-6 bg-emerald-900 border border-emerald-500/50 rounded-2xl animate-pulse-once"
@@ -116,6 +110,13 @@
                   </div>
                 </div>
               }
+            </div>
+
+            <!-- Join Game Box -->
+            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
+              <app-dashboard-join-game
+                (joinGame)="onJoinGame($event)"
+              ></app-dashboard-join-game>
             </div>
 
             <!-- List Games Box -->
