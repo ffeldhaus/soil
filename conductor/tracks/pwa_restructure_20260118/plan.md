@@ -29,14 +29,14 @@
 - [~] Task: Audit and optimize for App Store/Play Store requirements
     - [x] Verify accessibility compliance (WCAG) [c74353c]
     - [x] Optimize assets and loading performance [34366e4]
-- [ ] Task: SEO & Prerendering Optimization
-    - [ ] Fix dependency injection issues during static generation
-    - [ ] Re-enable prerendering for static pages (Landing, Manual, Info)
-    - [ ] Verify metadata and schema.org markup for SEO
-- [ ] Task: SEO: Indexing & Canonicalization
-    - [ ] Add `noindex` meta tag to Impressum page to prevent indexing
-    - [ ] Implement canonical URL logic for root path `/` and default locale `/de`
-    - [ ] Ensure consistent use of canonical tags across all public routes according to Google guidelines
+- [x] Task: SEO & Prerendering Optimization [c74353c]
+    - [x] Fix dependency injection issues during static generation
+    - [x] Re-enable prerendering for static pages (Landing, Manual, Info)
+    - [x] Verify metadata and schema.org markup for SEO
+- [x] Task: SEO: Indexing & Canonicalization [c74353c]
+    - [x] Add `noindex` meta tag to Impressum page to prevent indexing
+    - [x] Implement canonical URL logic for root path `/` and default locale `/de`
+    - [x] Ensure consistent use of canonical tags across all public routes according to Google guidelines
 - [ ] Task: Final PWA/Mobile UI Polish
     - [ ] Ensure unified aesthetic across all screen sizes
 - [ ] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' (Protocol in workflow.md)

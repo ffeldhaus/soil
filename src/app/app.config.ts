@@ -53,5 +53,6 @@ export const appConfig: ApplicationConfig = {
       return functions;
     }),
     provideHttpClient(),
+    provideClientHydration(withIncrementalHydration(), withEventReplay()),
   ],
 };

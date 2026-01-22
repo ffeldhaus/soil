@@ -1,9 +1,9 @@
 const version = import.meta.env.APP_VERSION || 'dev';
 document.querySelector('meta[name="app-version"]')?.setAttribute('content', version);
 
+import { isDevMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { Workbox } from 'workbox-window';
-import { isDevMode } from '@angular/core';
 
 import { App } from './app/app';
 import { appConfig } from './app/app.config';

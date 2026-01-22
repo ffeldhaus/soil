@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, type OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Meta } from '@angular/platform-browser';
 
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 
@@ -118,6 +119,11 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
     </div>
   `,
 })
-export class ImpressumComponent {
+export class ImpressumComponent implements OnInit {
+  private meta = inject(Meta);
   year = new Date().getFullYear();
+
+  ngOnInit() {
+    this.meta.addTag({ name: 'robots', content: 'noindex' });
+  }
 }
