@@ -224,10 +224,34 @@ export class LocalGameService {
     return games;
   }
 
-  async deleteGame(gameId: string): Promise<void> {
-    localStorage.removeItem(`soil_game_${gameId}`);
-    const listData = localStorage.getItem('soil_local_games') || '[]';
-    const list = JSON.parse(listData).filter((id: string) => id !== gameId);
-    localStorage.setItem('soil_local_games', JSON.stringify(list));
+  async deleteGame(gameId: string, force = false): Promise<void> {
+    if (force) {
+      localStorage.removeItem(`soil_game_${gameId}`);
+      const listData = localStorage.getItem('soil_local_games') || '[]';
+      const list = JSON.parse(listData).filter((id: string) => id !== gameId);
+      localStorage.setItem('soil_local_games', JSON.stringify(list));
+    } else {
+      const data = localStorage.getItem(`soil_game_${gameId}`);
+      if (data) {
+        const state: LocalGameState = JSON.parse(data);
+        state.game.status = 'deleted';
+        state.game.deletedAt = new Date();
+        this.saveToStorage(state);
+      }
+    }
+  }
+
+  async undeleteGame(gameId: string): Promise<void> {
+    const data = localStorage.getItem(`soil_game_${gameId}`);
+    if (data) {
+      const state: LocalGameState = JSON.parse(data);
+      state.game.status = 'finished'; // Or in_progress, but finished is safer if we don't know
+      // Check if it was in_progress or finished
+      // Actually, let's look at rounds to decide
+      const isFinished = state.game.currentRoundNumber >= (state.game.config?.numRounds || 20);
+      state.game.status = isFinished ? 'finished' : 'in_progress';
+      state.game.deletedAt = null;
+      this.saveToStorage(state);
+    }
   }
 }

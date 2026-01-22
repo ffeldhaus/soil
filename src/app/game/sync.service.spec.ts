@@ -71,7 +71,7 @@ describe('SyncService', () => {
     expect(localGameService.loadGame).toHaveBeenCalledWith('local-123');
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'migrateLocalGame');
     expect(mockMigrateFn).toHaveBeenCalledWith({ gameData: mockFullState });
-    expect(localGameService.deleteGame).toHaveBeenCalledWith('local-123');
+    expect(localGameService.deleteGame).toHaveBeenCalledWith('local-123', true);
   });
 
   it('should not sync if user is anonymous', async () => {

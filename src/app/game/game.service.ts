@@ -96,7 +96,7 @@ export class GameService {
   async loadGame(gameId: string): Promise<GameState | null> {
     if (gameId.startsWith('local-')) {
       const localState = await this.localGame.loadGame(gameId);
-      if (localState) {
+      if (localState && localState.game.status !== 'deleted') {
         this.currentRound = localState.lastRound || null;
         this.parcelsSubject.next(localState.lastRound?.parcelsSnapshot || this.createInitialParcels());
         this.stateSubject.next({
@@ -335,14 +335,16 @@ export class GameService {
       }
     }
 
-    // 2. Fetch Local Games (if not in trash, local games currently don't support trash)
-    let localGames: Game[] = [];
-    if (!showTrash) {
-      localGames = await this.localGame.getLocalGames();
-    }
+    // 2. Fetch Local Games
+    const allLocalGames = await this.localGame.getLocalGames();
+    const localGames = allLocalGames.filter((g) => (showTrash ? g.status === 'deleted' : g.status !== 'deleted'));
 
     // 3. Merge and Paginate
-    const allGames = [...localGames, ...cloudResponse.games];
+    const allGames = [...localGames, ...cloudResponse.games].sort((a, b) => {
+      const dateA = this.formatDate(a.createdAt);
+      const dateB = this.formatDate(b.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
     // Simple client-side pagination for merged list
     const startIndex = (page - 1) * pageSize;
     const paginatedGames = allGames.slice(startIndex, startIndex + pageSize);
@@ -351,6 +353,14 @@ export class GameService {
       games: paginatedGames,
       total: allGames.length,
     };
+  }
+
+  private formatDate(d: any): Date {
+    if (!d) return new Date(0);
+    if (d instanceof Date) return d;
+    if (typeof d === 'string') return new Date(d);
+    if (d.seconds) return new Date(d.seconds * 1000);
+    return new Date(0);
   }
 
   async getPendingUsers(): Promise<UserStatus[]> {
@@ -496,7 +506,7 @@ export class GameService {
 
     if (localIds.length > 0) {
       for (const id of localIds) {
-        await this.localGame.deleteGame(id);
+        await this.localGame.deleteGame(id, force);
       }
     }
 
@@ -517,6 +527,17 @@ export class GameService {
   }
 
   async undeleteGames(gameIds: string[]): Promise<void> {
+    const localIds = gameIds.filter((id) => id.startsWith('local-'));
+    const cloudIds = gameIds.filter((id) => !id.startsWith('local-'));
+
+    if (localIds.length > 0) {
+      for (const id of localIds) {
+        await this.localGame.undeleteGame(id);
+      }
+    }
+
+    if (cloudIds.length === 0) return;
+
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       if (window.console) console.warn('Mock: Games undeleted', { gameIds });

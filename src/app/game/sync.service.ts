@@ -40,7 +40,8 @@ export class SyncService {
   async syncLocalGames() {
     if (!this.functions) return;
 
-    const localGames = await this.localGameService.getLocalGames();
+    const allLocalGames = await this.localGameService.getLocalGames();
+    const localGames = allLocalGames.filter((g) => g.status !== 'deleted');
     if (localGames.length === 0) return;
 
     const migrateLocalGameFn = httpsCallable<{ gameData: any }, { success: boolean }>(
@@ -53,7 +54,7 @@ export class SyncService {
         const fullState = await this.localGameService.loadGame(game.id);
         if (fullState) {
           await migrateLocalGameFn({ gameData: fullState });
-          await this.localGameService.deleteGame(game.id);
+          await this.localGameService.deleteGame(game.id, true);
           if (window.console) console.warn(`Successfully migrated game ${game.id} to cloud`);
         }
       } catch (error) {

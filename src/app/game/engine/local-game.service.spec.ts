@@ -57,12 +57,35 @@ describe('LocalGameService', () => {
     expect(games.map((g) => g.name)).toContain('Game 2');
   });
 
-  it('should delete local game', async () => {
+  it('should soft delete local game', async () => {
     const response = await service.createGame('To Delete', { numPlayers: 1 });
     await service.deleteGame(response.gameId);
 
     const games = await service.getLocalGames();
+    const deletedGame = games.find((g) => g.id === response.gameId);
+    expect(deletedGame).toBeDefined();
+    expect(deletedGame?.status).toBe('deleted');
+    expect(deletedGame?.deletedAt).toBeDefined();
+  });
+
+  it('should hard delete local game', async () => {
+    const response = await service.createGame('To Hard Delete', { numPlayers: 1 });
+    await service.deleteGame(response.gameId, true);
+
+    const games = await service.getLocalGames();
     expect(games.find((g) => g.id === response.gameId)).toBeUndefined();
+    expect(localStorage.getItem(`soil_game_${response.gameId}`)).toBeNull();
+  });
+
+  it('should undelete local game', async () => {
+    const response = await service.createGame('To Undelete', { numPlayers: 1, numRounds: 10 });
+    await service.deleteGame(response.gameId);
+    await service.undeleteGame(response.gameId);
+
+    const games = await service.getLocalGames();
+    const restoredGame = games.find((g) => g.id === response.gameId);
+    expect(restoredGame?.status).toBe('in_progress');
+    expect(restoredGame?.deletedAt).toBeNull();
   });
 
   it('should return null if game not found', async () => {
