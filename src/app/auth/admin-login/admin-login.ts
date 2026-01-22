@@ -60,7 +60,7 @@ import { AuthService } from '../auth.service';
           class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
         >
           <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Anmeldung für Lehrkräfte</h1>
+            <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Anmeldung</h1>
             <p class="text-gray-400" i18n="@@adminLogin.subtitle">Zugang zum Soil-Dashboard</p>
           </div>
 
@@ -137,41 +137,34 @@ import { AuthService } from '../auth.service';
           </form>
 
           <div class="mt-8 pt-6 border-t border-gray-700 text-center space-y-4">
-            <button
-              (click)="loginWithGoogle()"
-              class="w-full py-3 bg-white text-gray-700 font-bold rounded-lg hover:bg-gray-100 flex items-center justify-center gap-3 transition shadow-md"
-            >
-              <!-- Google G Icon -->
-              <svg class="w-5 h-5" viewBox="0 0 48 48">
-                <path
-                  fill="#EA4335"
-                  d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
-                ></path>
-                <path
-                  fill="#4285F4"
-                  d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
-                ></path>
-                <path
-                  fill="#FBBC05"
-                  d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
-                ></path>
-                <path
-                  fill="#34A853"
-                  d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
-                ></path>
-              </svg>
-              <span i18n="@@adminLogin.googleSignIn">Mit Google anmelden</span>
+            <button (click)="loginWithGoogle()" class="gsi-material-button google-style focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+              <div class="gsi-material-button-state"></div>
+              <div class="gsi-material-button-content-wrapper">
+                <div class="gsi-material-button-icon">
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display: block; width: 100%; height: 100%;">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                    <path fill="none" d="M0 0h48v48H0z"></path>
+                  </svg>
+                </div>
+                <div class="gsi-material-button-contents" i18n="@@adminLogin.googleSignIn">Mit Google anmelden</div>
+              </div>
             </button>
 
-            <button
-              (click)="loginWithApple()"
-              class="w-full py-3 bg-black text-white font-bold rounded-lg hover:bg-gray-900 flex items-center justify-center gap-3 transition shadow-md"
-            >
-              <!-- Apple Logo -->
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 172 172">
-                <path d="M127.35156,104.78125 C127.140625,83.984375 144.175781,73.800781 145.019531,73.285156 C135.410156,59.273438 120.484375,57.257812 115.226562,57.039062 C102.613281,55.765625 90.621094,64.492188 84.222656,64.492188 C77.824219,64.492188 67.925781,57.214844 57.347656,57.410156 C43.46875,57.613281 30.730469,65.464844 23.582031,77.894531 C9.085938,103.058594 19.867188,140.238281 33.921875,160.523438 C40.800781,170.4375 48.972656,181.542969 59.710938,181.144531 C69.945312,180.746094 73.847656,174.527344 86.257812,174.527344 C98.667969,174.527344 102.167969,181.144531 113.007812,180.941406 C124.234375,180.746094 131.25,170.832031 138.109375,160.917969 C146.035156,149.339844 149.320312,138.15625 149.5,137.59375 C149.128906,137.433594 127.5625,129.085938 127.35156,104.78125 Z M105.742188,40.910156 C111.382812,34.09375 115.179688,24.636719 114.136719,15.214844 C106.050781,15.539062 96.265625,20.597656 90.460938,27.359375 C85.253906,33.371094 80.703125,42.992188 81.933594,52.226562 C90.960938,52.925781 100.101562,47.726562 105.742188,40.910156 Z"></path>
-              </svg>
-              <span i18n="@@adminLogin.appleSignIn">Mit Apple anmelden</span>
+            <button (click)="loginWithApple()" class="gsi-material-button apple-style focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
+              <div class="gsi-material-button-state"></div>
+              <div class="gsi-material-button-content-wrapper">
+                <div class="gsi-material-button-icon">
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 44" style="display: block; width: 100%; height: 100%; transform: scale(1.5);">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                      <path d="M12.2337427,16.9879688 C12.8896607,16.9879688 13.7118677,16.5445313 14.2014966,15.9532812 C14.6449341,15.4174609 14.968274,14.6691602 14.968274,13.9208594 C14.968274,13.8192383 14.9590357,13.7176172 14.9405591,13.6344727 C14.2107349,13.6621875 13.3330982,14.1241016 12.8065162,14.7430664 C12.3907935,15.2142188 12.012024,15.9532812 12.012024,16.7108203 C12.012024,16.8216797 12.0305005,16.9325391 12.0397388,16.9694922 C12.0859302,16.9787305 12.1598365,16.9879688 12.2337427,16.9879688 Z M9.92417241,28.1662891 C10.8202857,28.1662891 11.2175318,27.5658008 12.3353638,27.5658008 C13.4716724,27.5658008 13.721106,28.1478125 14.7188404,28.1478125 C15.6980982,28.1478125 16.3540162,27.2424609 16.972981,26.3555859 C17.6658521,25.339375 17.9522388,24.3416406 17.9707154,24.2954492 C17.9060474,24.2769727 16.0306763,23.5101953 16.0306763,21.3576758 C16.0306763,19.491543 17.5088013,18.6508594 17.5919459,18.5861914 C16.612688,17.1819727 15.1253248,17.1450195 14.7188404,17.1450195 C13.6194849,17.1450195 12.7233716,17.8101758 12.1598365,17.8101758 C11.5501099,17.8101758 10.7463794,17.1819727 9.79483648,17.1819727 C7.98413335,17.1819727 6.14571538,18.6785742 6.14571538,21.5054883 C6.14571538,23.2607617 6.8293482,25.1176563 7.67003179,26.3186328 C8.39061773,27.3348438 9.01882085,28.1662891 9.92417241,28.1662891 Z" fill="white" fill-rule="nonzero"></path>
+                    </g>
+                  </svg>
+                </div>
+                <div class="gsi-material-button-contents" i18n="@@adminLogin.appleSignIn">Mit Apple anmelden</div>
+              </div>
             </button>
             <p class="text-sm text-gray-500">
               <ng-container i18n="@@adminLogin.noAccount">Noch kein Konto?</ng-container>&nbsp;<a

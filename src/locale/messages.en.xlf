@@ -103,8 +103,8 @@
       </segment>
     </unit>
     <unit id="adminLogin.title">
-      <segment state="translated">
-        <source>Anmeldung für Lehrkräfte</source>
+      <segment state="initial">
+        <source>Anmeldung</source>
         <target>Teacher Login</target>
       </segment>
     </unit>
@@ -180,6 +180,16 @@
         <target>The password must be at least 6 characters long</target>
       </segment>
     </unit>
+    <unit id="adminRegister.error.required">
+      <notes>
+        <note category="description">Error shown for required fields</note>
+        <note category="meaning">Error Message</note>
+      </notes>
+      <segment state="initial">
+        <source>Dieses Feld ist ein Pflichtfeld</source>
+        <target>Dieses Feld ist ein Pflichtfeld</target>
+      </segment>
+    </unit>
     <unit id="adminRegister.error.retry">
       <notes>
         <note category="description">Button to retry registration</note>
@@ -200,26 +210,6 @@
         <target>Registration failed</target>
       </segment>
     </unit>
-    <unit id="adminRegister.explanation">
-      <notes>
-        <note category="description">Label for usage explanation textarea</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Warum möchten Sie SOIL nutzen?</source>
-        <target>Why do you want to use SOIL?</target>
-      </segment>
-    </unit>
-    <unit id="adminRegister.explanationRequirement">
-      <notes>
-        <note category="description">Requirement for explanation length</note>
-        <note category="meaning">Form Hint</note>
-      </notes>
-      <segment state="translated">
-        <source> Erforderlich: Mindestens 20 Zeichen </source>
-        <target>Required: At least 20 characters</target>
-      </segment>
-    </unit>
     <unit id="adminRegister.firstName">
       <notes>
         <note category="description">Label for first name input</note>
@@ -234,16 +224,6 @@
       <segment state="initial">
         <source>Mit Google registrieren</source>
         <target>Mit Google registrieren</target>
-      </segment>
-    </unit>
-    <unit id="adminRegister.institution">
-      <notes>
-        <note category="description">Label for school or institution name</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Institution / Schule</source>
-        <target>Institution / School</target>
       </segment>
     </unit>
     <unit id="adminRegister.lastName">
@@ -292,16 +272,6 @@
         <target>admin@school.com</target>
       </segment>
     </unit>
-    <unit id="adminRegister.placeholder.explanation">
-      <notes>
-        <note category="description">Placeholder for usage explanation</note>
-        <note category="meaning">Form Placeholder</note>
-      </notes>
-      <segment state="translated">
-        <source>Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht</source>
-        <target>Briefly describe your planned use in class</target>
-      </segment>
-    </unit>
     <unit id="adminRegister.placeholder.firstName">
       <notes>
         <note category="description">Placeholder for first name</note>
@@ -310,16 +280,6 @@
       <segment state="translated">
         <source>Max</source>
         <target>Max</target>
-      </segment>
-    </unit>
-    <unit id="adminRegister.placeholder.institution">
-      <notes>
-        <note category="description">Placeholder for school name</note>
-        <note category="meaning">Form Placeholder</note>
-      </notes>
-      <segment state="translated">
-        <source>z.B. Humboldt Gymnasium</source>
-        <target>e.g. Humboldt High School</target>
       </segment>
     </unit>
     <unit id="adminRegister.placeholder.lastName">
@@ -340,16 +300,6 @@
       <segment state="translated">
         <source>Mindestens 6 Zeichen</source>
         <target>At least 6 characters</target>
-      </segment>
-    </unit>
-    <unit id="adminRegister.placeholder.website">
-      <notes>
-        <note category="description">Placeholder for institution website</note>
-        <note category="meaning">Form Placeholder</note>
-      </notes>
-      <segment state="translated">
-        <source>https://schule.de</source>
-        <target>https://school.com</target>
       </segment>
     </unit>
     <unit id="adminRegister.processing">
@@ -394,11 +344,11 @@
     </unit>
     <unit id="adminRegister.title">
       <notes>
-        <note category="description">Title of the teacher registration page</note>
+        <note category="description">Title of the registration page</note>
         <note category="meaning">Main Heading</note>
       </notes>
-      <segment state="translated">
-        <source>Registrierung für Lehrkräfte</source>
+      <segment state="initial">
+        <source>Registrierung</source>
         <target>Teacher Registration</target>
       </segment>
     </unit>
@@ -410,16 +360,6 @@
       <segment state="translated">
         <source>über Google</source>
         <target>via Google</target>
-      </segment>
-    </unit>
-    <unit id="adminRegister.website">
-      <notes>
-        <note category="description">Label for institution website URL</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment state="translated">
-        <source>Website der Institution</source>
-        <target>Institution website</target>
       </segment>
     </unit>
     <unit id="ai.level.elementary">
@@ -5451,9 +5391,9 @@
         <target>EMAIL</target>
       </segment>
     </unit>
-      <unit id="adminRegister.error.offline">
+    <unit id="adminRegister.error.offline">
       <notes>
-        <note category="description">Error Message shown when trying to register while offline</note>
+        <note category="description">Error shown when trying to register while offline</note>
         <note category="meaning">Error Message</note>
       </notes>
       <segment state="translated">
@@ -5461,7 +5401,7 @@
         <target>Registration is only possible in online mode.</target>
       </segment>
     </unit>
-      <unit id="board.logout.title">
+    <unit id="board.logout.title">
       <notes>
         <note category="description">Tooltip for the logout button</note>
         <note category="meaning">Action Label</note>

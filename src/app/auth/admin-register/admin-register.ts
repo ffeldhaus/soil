@@ -52,6 +52,7 @@ export class AdminRegisterComponent implements OnInit {
       'adminRegister.password': $localize`:Form Label|Label for password input@@adminRegister.password:Passwort`,
       'adminRegister.placeholder.password': $localize`:Form Placeholder|Placeholder for password field@@adminRegister.placeholder.password:Mindestens 6 Zeichen`,
       'adminRegister.error.password': $localize`:Error Message|Error shown for short password@@adminRegister.error.password:Das Passwort muss mindestens 6 Zeichen lang sein`,
+      'adminRegister.error.required': $localize`:Error Message|Error shown for required fields@@adminRegister.error.required:Dieses Feld ist ein Pflichtfeld`,
       'adminRegister.success.verificationSent': $localize`:Success Message|Notification that registration was successful and account verification is pending@@adminRegister.success.verificationSent:Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.`,
       'adminRegister.error.title': $localize`:Heading|Title for registration error modal@@adminRegister.error.title:Registrierung fehlgeschlagen`,
       'adminRegister.error.retry': $localize`:Action Label|Button to retry registration@@adminRegister.error.retry:Erneut versuchen`,

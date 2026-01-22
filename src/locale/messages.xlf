@@ -1953,7 +1953,7 @@
     </unit>
     <unit id="adminLogin.title">
       <segment>
-        <source>Anmeldung für Lehrkräfte</source>
+        <source>Anmeldung</source>
       </segment>
     </unit>
     <unit id="adminLogin.subtitle">
@@ -2043,11 +2043,11 @@
     </unit>
     <unit id="adminRegister.title">
       <notes>
-        <note category="description">Title of the teacher registration page</note>
+        <note category="description">Title of the registration page</note>
         <note category="meaning">Main Heading</note>
       </notes>
       <segment>
-        <source>Registrierung für Lehrkräfte</source>
+        <source>Registrierung</source>
       </segment>
     </unit>
     <unit id="adminRegister.subtitle">
@@ -2075,15 +2075,6 @@
       </notes>
       <segment>
         <source> Erforderlich: Mindestens 6 Zeichen </source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.explanationRequirement">
-      <notes>
-        <note category="description">Requirement for explanation length</note>
-        <note category="meaning">Form Hint</note>
-      </notes>
-      <segment>
-        <source> Erforderlich: Mindestens 20 Zeichen </source>
       </segment>
     </unit>
     <unit id="adminRegister.processing">
@@ -2232,6 +2223,15 @@
         <source>Mindestens 6 Zeichen</source>
       </segment>
     </unit>
+    <unit id="adminRegister.error.offline">
+      <notes>
+        <note category="description">Error shown when trying to register while offline</note>
+        <note category="meaning">Error Message</note>
+      </notes>
+      <segment>
+        <source>Registrierung ist nur im Online-Modus möglich.</source>
+      </segment>
+    </unit>
     <unit id="adminRegister.error.password">
       <notes>
         <note category="description">Error shown for short password</note>
@@ -2239,60 +2239,6 @@
       </notes>
       <segment>
         <source>Das Passwort muss mindestens 6 Zeichen lang sein</source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.institution">
-      <notes>
-        <note category="description">Label for school or institution name</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment>
-        <source>Institution / Schule</source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.placeholder.institution">
-      <notes>
-        <note category="description">Placeholder for school name</note>
-        <note category="meaning">Form Placeholder</note>
-      </notes>
-      <segment>
-        <source>z.B. Humboldt Gymnasium</source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.website">
-      <notes>
-        <note category="description">Label for institution website URL</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment>
-        <source>Website der Institution</source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.placeholder.website">
-      <notes>
-        <note category="description">Placeholder for institution website</note>
-        <note category="meaning">Form Placeholder</note>
-      </notes>
-      <segment>
-        <source>https://schule.de</source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.explanation">
-      <notes>
-        <note category="description">Label for usage explanation textarea</note>
-        <note category="meaning">Form Label</note>
-      </notes>
-      <segment>
-        <source>Warum möchten Sie SOIL nutzen?</source>
-      </segment>
-    </unit>
-    <unit id="adminRegister.placeholder.explanation">
-      <notes>
-        <note category="description">Placeholder for usage explanation</note>
-        <note category="meaning">Form Placeholder</note>
-      </notes>
-      <segment>
-        <source>Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht</source>
       </segment>
     </unit>
     <unit id="adminRegister.success.verificationSent">
@@ -2311,6 +2257,15 @@
       </notes>
       <segment>
         <source>Registrierung fehlgeschlagen</source>
+      </segment>
+    </unit>
+    <unit id="adminRegister.error.required">
+      <notes>
+        <note category="description">Error shown for required fields</note>
+        <note category="meaning">Error Message</note>
+      </notes>
+      <segment>
+        <source>Dieses Feld ist ein Pflichtfeld</source>
       </segment>
     </unit>
     <unit id="adminRegister.error.retry">
@@ -2870,6 +2825,15 @@
       </notes>
       <segment>
         <source>Abmelden</source>
+      </segment>
+    </unit>
+    <unit id="board.logout.title">
+      <notes>
+        <note category="description">Tooltip for the logout button</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment>
+        <source>Logout</source>
       </segment>
     </unit>
     <unit id="board.nav.copyState">
