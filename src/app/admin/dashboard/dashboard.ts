@@ -267,6 +267,10 @@ export class Dashboard implements OnInit, OnDestroy {
     this.newGameConfig.name = this.getRandomName();
     this.authService.user$.subscribe(async (user) => {
       if (user) {
+        // Reset state for new user
+        this.userStatus = null;
+        this.isPendingApproval = false;
+
         if (localStorage.getItem('soil_test_mode') === 'true') {
           this.ngZone.run(() => {
             const fullRole = localStorage.getItem('soil_test_role') || 'admin';
@@ -297,6 +301,24 @@ export class Dashboard implements OnInit, OnDestroy {
           this.cdr.detectChanges();
           return;
         }
+
+        // For non-anonymous users, fetch status
+        const initialUserData = await this.gameService.getUserStatus();
+        this.ngZone.run(() => {
+          if (initialUserData) {
+            this.userStatus = initialUserData;
+            if (initialUserData.role === 'superadmin') {
+              this.isLoading = false;
+              this.router.navigate(['/admin/super']);
+              return;
+            }
+            if (initialUserData.role === 'new') {
+              this.isLoading = false;
+              this.router.navigate(['/admin/register']);
+              return;
+            }
+          }
+        });
 
         if (this.userStatusSub) {
           this.userStatusSub.unsubscribe();
@@ -641,6 +663,22 @@ export class Dashboard implements OnInit, OnDestroy {
   private languageService = inject(LanguageService);
 
   async shareGame(game: Game) {
+    const url = `${window.location.origin}/game-login?gameId=${game.id}`;
+    const text = `Join my SOIL game: ${game.name}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'SOIL Game',
+          text: text,
+          url: url,
+        });
+        return;
+      } catch (err) {
+        console.error('Web Share failed, falling back to prompt:', err);
+      }
+    }
+
     const email = prompt(`Enter email address to send game details:`);
     if (!email) return;
 
@@ -654,8 +692,24 @@ export class Dashboard implements OnInit, OnDestroy {
 
   async sharePlayer(
     game: Game,
-    slot: { number: number; uid: string; player: PlayerState | null; isJoined: boolean; isAi: boolean },
+    slot: { number: number; uid: string; player: PlayerState | null; isJoined: boolean; isAi: boolean; password?: string },
   ) {
+    const url = `${window.location.origin}/game-login?gameId=${game.id}&pin=${slot.password}`;
+    const text = `Log in to SOIL game "${game.name}" as Player ${slot.number}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'SOIL Player Login',
+          text: text,
+          url: url,
+        });
+        return;
+      } catch (err) {
+        console.error('Web Share failed, falling back to prompt:', err);
+      }
+    }
+
     const email = prompt(`Enter email address for Player ${slot.number}:`);
     if (!email) return;
 

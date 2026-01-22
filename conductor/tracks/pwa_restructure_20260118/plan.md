@@ -39,4 +39,6 @@
     - [x] Ensure consistent use of canonical tags across all public routes according to Google guidelines
 - [x] Task: Final PWA/Mobile UI Polish [cab5239]
     - [x] Ensure unified aesthetic across all screen sizes
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' (Protocol in workflow.md)
+    - [x] Implement Web Share API for sharing logins
+    - [x] Implement Badging API for new round notifications
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' [564f8e6] (Protocol in workflow.md)

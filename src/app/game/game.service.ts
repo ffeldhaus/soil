@@ -46,6 +46,35 @@ export class GameService {
     this.draftSaveSubject.pipe(debounceTime(2000)).subscribe((gameId) => {
       this.saveDraft(gameId);
     });
+
+    // Handle PWA Badging
+    this.state$.subscribe((state) => {
+      this.updateBadge(state);
+    });
+  }
+
+  private updateBadge(state: GameState | null) {
+    if (typeof navigator === 'undefined' || !('setAppBadge' in navigator)) return;
+
+    if (!state) {
+      (navigator as any).clearAppBadge();
+      return;
+    }
+
+    const currentRoundNum = state.game.currentRoundNumber;
+    const isSubmitted = state.playerState?.submittedRound === currentRoundNum;
+    const isFinished = state.game.status === 'finished';
+
+    if (!isSubmitted && !isFinished && currentRoundNum > 0) {
+      // Show badge if action is needed (new round ready)
+      (navigator as any).setAppBadge(1).catch((err: any) => {
+        console.error('Failed to set app badge:', err);
+      });
+    } else {
+      (navigator as any).clearAppBadge().catch((err: any) => {
+        console.error('Failed to clear app badge:', err);
+      });
+    }
   }
 
   getParcelsValue() {
