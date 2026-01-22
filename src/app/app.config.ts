@@ -4,7 +4,7 @@ import { provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth } from '@angular/fire/auth';
 import { provideFunctions } from '@angular/fire/functions';
 import { provideClientHydration, withEventReplay, withIncrementalHydration } from '@angular/platform-browser';
-import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';

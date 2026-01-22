@@ -1,5 +1,5 @@
+import { describe, expect, it } from 'vitest';
 import { AiAgent } from './ai-agent';
-import { describe, it, expect } from 'vitest';
 
 describe('AiAgent', () => {
   it('should make an elementary level decision', () => {
@@ -24,14 +24,16 @@ describe('AiAgent', () => {
 
   it('should follow rotation logic in middle level', () => {
     const mockRound: any = {
-      parcelsSnapshot: Array(40).fill(null).map((_, i) => ({
-        index: i,
-        crop: 'Wheat',
-        soil: 80,
-        nutrition: 80
-      }))
+      parcelsSnapshot: Array(40)
+        .fill(null)
+        .map((_, i) => ({
+          index: i,
+          crop: 'Wheat',
+          soil: 80,
+          nutrition: 80,
+        })),
     };
-    
+
     const decision = AiAgent.makeDecision('middle', mockRound);
     // Wheat -> Barley is good rotation in many matrix configurations
     // The agent picks the first 'good' rotation it finds

@@ -110,7 +110,12 @@ describe('GameService', () => {
     const mockCallable = vi.fn(() => Promise.resolve({ data: { gameId: 'new-game-id' } }));
     vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
 
-    const result = await service.createGame('New Game', { numRounds: 10, numPlayers: 5, numAi: 0, playerLabel: 'Team' });
+    const result = await service.createGame('New Game', {
+      numRounds: 10,
+      numPlayers: 5,
+      numAi: 0,
+      playerLabel: 'Team',
+    });
 
     expect(result.gameId).toBe('new-game-id');
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'createGame');

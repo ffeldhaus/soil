@@ -44,9 +44,9 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' [564f8e6] (Protocol in workflow.md)
 
 ## Phase 6: Quality Assurance & Technical Debt
-- [ ] Task: Code cleanup and architectural refactoring
-    - [ ] Remove unused components and services
-    - [ ] Align with project naming conventions and style guides
+- [x] Task: Code cleanup and architectural refactoring [cab5239]
+    - [x] Remove unused components and services
+    - [x] Align with project naming conventions and style guides
 - [ ] Task: Implementation of extensive and meaningful unit tests
     - [ ] Reach >80% coverage for all new modules
     - [ ] Test edge cases and error handling in Game and Auth services

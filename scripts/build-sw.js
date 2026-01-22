@@ -7,11 +7,9 @@ injectManifest({
   swSrc: 'src/service-worker.js',
   swDest: swDest,
   globDirectory: 'dist/soil/browser',
-  globPatterns: [
-    '**/*.{js,css,html,png,svg,jpg,webp,ico,webmanifest}'
-  ],
-}).then(({ count, size }) => {
-  console.log(`Generated ${swDest}, which will precache ${count} files, totaling ${size} bytes.`);
-}).catch((err) => {
-  console.error('Service worker generation failed:', err);
-});
+  globPatterns: ['**/*.{js,css,html,png,svg,jpg,webp,ico,webmanifest}'],
+})
+  .then(({ count, size }) => {})
+  .catch((err) => {
+    console.error('Service worker generation failed:', err);
+  });

@@ -1,10 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { BehaviorSubject, debounceTime, type Observable, Subject, map } from 'rxjs';
-
-import { GAME_CONSTANTS } from '../game-constants';
-import { LocalGameService } from './engine/local-game.service';
+import { BehaviorSubject, debounceTime, type Observable, Subject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { GAME_CONSTANTS } from '../game-constants';
 import type {
   CropType,
   Feedback,
@@ -16,6 +14,7 @@ import type {
   SystemStats,
   UserStatus,
 } from '../types';
+import { LocalGameService } from './engine/local-game.service';
 
 export interface GameState {
   game: Game;

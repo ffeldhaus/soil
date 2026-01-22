@@ -23,6 +23,8 @@ exclude = [
   '&quot',                                                # Fix for XLF parsing issues
   'assets/.*',                                            # Angular relative asset paths
   'https://admin.google.com/',                            # Requires login
+  'https://fonts.googleapis.com/.*',                      # Google Fonts API
+  'https://fonts.gstatic.com/.*',                         # Google Fonts Assets
   'site.webmanifest',                                     # Relative link in index.html
   'https://mcp.context7.com/mcp'                          # MCP Server URL
 ]

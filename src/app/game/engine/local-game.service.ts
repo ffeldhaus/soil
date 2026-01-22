@@ -1,10 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, take } from 'rxjs';
-import { GameEngine } from './game-engine';
-import { AiAgent } from './ai-agent';
+import { BehaviorSubject, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
-import { GAME_CONSTANTS } from '../../game-constants';
-import type { Game, PlayerState, Round, Parcel, RoundDecision } from '../../types';
+import type { Game, PlayerState, Round, RoundDecision } from '../../types';
+import { AiAgent } from './ai-agent';
+import { GameEngine } from './game-engine';
 
 export interface LocalGameState {
   game: Game;
@@ -30,26 +29,28 @@ export class LocalGameService {
     const gameId = `local-${Math.random().toString(36).substring(2, 11)}`;
     const numPlayers = config.numPlayers || 1;
     const numAi = config.numAi || 0;
-    
+
     // Get current user UID for hosting
     let currentUserUid = 'local-host';
-    this.auth.user$.pipe(take(1)).subscribe(u => {
-        if (u) currentUserUid = u.uid;
+    this.auth.user$.pipe(take(1)).subscribe((u) => {
+      if (u) currentUserUid = u.uid;
     });
-    
+
     const players: Record<string, PlayerState> = {};
     const allRounds: Record<string, Round[]> = {};
     const playerSecrets: Record<string, { password: string }> = {};
 
     for (let i = 1; i <= numPlayers; i++) {
       const pUid = `player-${gameId}-${i}`;
-      const isAi = i > (numPlayers - numAi);
+      const isAi = i > numPlayers - numAi;
       const pin = Math.floor(1000 + Math.random() * 9000).toString();
       playerSecrets[String(i)] = { password: pin };
-      
+
       const initialParcels = GameEngine.createInitialParcels();
       const startSoil = Math.round(initialParcels.reduce((sum, p) => sum + p.soil, 0) / initialParcels.length);
-      const startNutrition = Math.round(initialParcels.reduce((sum, p) => sum + p.nutrition, 0) / initialParcels.length);
+      const startNutrition = Math.round(
+        initialParcels.reduce((sum, p) => sum + p.nutrition, 0) / initialParcels.length,
+      );
 
       const round0: Round = {
         number: 0,
@@ -58,17 +59,17 @@ export class LocalGameService {
         avgNutrition: startNutrition,
         decision: { parcels: {} } as any,
         result: {
-            profit: 0,
-            capital: 1000,
-            harvestSummary: {} as any,
-            expenses: { seeds: 0, labor: 0, running: 0, investments: 0, total: 0 },
-            income: 0,
-            subsidies: 0,
-            marketPrices: {},
-            events: { weather: 'Normal', vermin: [] },
-            bioSiegel: false,
-            machineRealLevel: 0
-        }
+          profit: 0,
+          capital: 1000,
+          harvestSummary: {} as any,
+          expenses: { seeds: 0, labor: 0, running: 0, investments: 0, total: 0 },
+          income: 0,
+          subsidies: 0,
+          marketPrices: {},
+          events: { weather: 'Normal', vermin: [] },
+          bioSiegel: false,
+          machineRealLevel: 0,
+        },
       };
 
       players[pUid] = {
@@ -79,7 +80,7 @@ export class LocalGameService {
         currentRound: 0,
         history: [{ ...round0, parcelsSnapshot: [] }], // Lightweight history
         avgSoil: startSoil,
-        avgNutrition: startNutrition
+        avgNutrition: startNutrition,
       };
 
       allRounds[pUid] = [round0];
@@ -108,7 +109,7 @@ export class LocalGameService {
       game,
       playerState: players[`player-${gameId}-1`],
       lastRound: allRounds[`player-${gameId}-1`][0],
-      allRounds
+      allRounds,
     };
 
     this.saveToStorage(state);
@@ -154,10 +155,10 @@ export class LocalGameService {
     }
 
     // 3. Check if all human players submitted (in local mode usually only 1)
-    const allSubmitted = Object.values(state.game.players).every(p => p.submittedRound === currentRound);
+    const allSubmitted = Object.values(state.game.players).every((p) => p.submittedRound === currentRound);
 
     if (allSubmitted) {
-        this.calculateNextRound(state);
+      this.calculateNextRound(state);
     }
 
     this.saveToStorage(state);
@@ -171,33 +172,33 @@ export class LocalGameService {
     const events = { weather, vermin: [] };
 
     for (const uid in state.game.players) {
-        const p = state.game.players[uid];
-        const prevRound = state.allRounds[uid][state.game.currentRoundNumber];
-        
-        const newRound = GameEngine.calculateRound(
-            nextRoundNum,
-            prevRound,
-            p.pendingDecisions!,
-            events,
-            p.capital,
-            state.game.settings?.length
-        );
+      const p = state.game.players[uid];
+      const prevRound = state.allRounds[uid][state.game.currentRoundNumber];
 
-        state.allRounds[uid].push(newRound);
+      const newRound = GameEngine.calculateRound(
+        nextRoundNum,
+        prevRound,
+        p.pendingDecisions!,
+        events,
+        p.capital,
+        state.game.settings?.length,
+      );
 
-        // Update player state
-        p.capital = newRound.result!.capital;
-        p.currentRound = nextRoundNum;
-        p.avgSoil = newRound.avgSoil || 0;
-        p.avgNutrition = newRound.avgNutrition || 0;
-        p.history.push({ ...newRound, parcelsSnapshot: [] });
-        delete p.pendingDecisions;
-      }
+      state.allRounds[uid].push(newRound);
 
-      state.game.currentRoundNumber = nextRoundNum;
-      state.game.updatedAt = new Date();
-      state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
+      // Update player state
+      p.capital = newRound.result!.capital;
+      p.currentRound = nextRoundNum;
+      p.avgSoil = newRound.avgSoil || 0;
+      p.avgNutrition = newRound.avgNutrition || 0;
+      p.history.push({ ...newRound, parcelsSnapshot: [] });
+      p.pendingDecisions = undefined;
     }
+
+    state.game.currentRoundNumber = nextRoundNum;
+    state.game.updatedAt = new Date();
+    state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
+  }
 
   private saveToStorage(state: LocalGameState) {
     localStorage.setItem(`soil_game_${state.game.id}`, JSON.stringify(state));
@@ -205,8 +206,8 @@ export class LocalGameService {
     const listData = localStorage.getItem('soil_local_games') || '[]';
     const list = JSON.parse(listData);
     if (!list.includes(state.game.id)) {
-        list.push(state.game.id);
-        localStorage.setItem('soil_local_games', JSON.stringify(list));
+      list.push(state.game.id);
+      localStorage.setItem('soil_local_games', JSON.stringify(list));
     }
   }
 

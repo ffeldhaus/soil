@@ -692,7 +692,14 @@ export class Dashboard implements OnInit, OnDestroy {
 
   async sharePlayer(
     game: Game,
-    slot: { number: number; uid: string; player: PlayerState | null; isJoined: boolean; isAi: boolean; password?: string },
+    slot: {
+      number: number;
+      uid: string;
+      player: PlayerState | null;
+      isJoined: boolean;
+      isAi: boolean;
+      password?: string;
+    },
   ) {
     const url = `${window.location.origin}/game-login?gameId=${game.id}&pin=${slot.password}`;
     const text = `Log in to SOIL game "${game.name}" as Player ${slot.number}`;
