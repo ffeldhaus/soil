@@ -1,8 +1,0 @@
-{
-  "track_id": "pwa_restructure_20260118",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-01-18T21:27:42Z",
-  "updated_at": "2026-01-18T21:27:43Z",
-  "description": "Restructure application for PWA and Mobile deployment with Offline-First architecture, including expanded Auth and Single-player mode."
-}
