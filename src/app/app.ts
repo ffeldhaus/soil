@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-
-import { LanguageService } from './services/language.service';
 import { SyncService } from './game/sync.service';
+import { LanguageService } from './services/language.service';
 
 @Component({
   selector: 'app-root',

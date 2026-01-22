@@ -5451,5 +5451,15 @@
         <target>EMAIL</target>
       </segment>
     </unit>
+      <unit id="adminRegister.error.offline">
+      <notes>
+        <note category="description">Error Message shown when trying to register while offline</note>
+        <note category="meaning">Error Message</note>
+      </notes>
+      <segment state="translated">
+        <source>Registrierung ist nur im Online-Modus möglich.</source>
+        <target>Registration is only possible in online mode.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

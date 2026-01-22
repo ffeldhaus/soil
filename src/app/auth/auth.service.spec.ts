@@ -71,6 +71,13 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
   });
 
+  it('should return the current user', () => {
+    // In actual app, userSubject is updated via onAuthStateChanged
+    // We can trigger it by mocking the behavior if needed, but since it's a private field,
+    // we mostly rely on it being initialized to null.
+    expect(service.currentUser).toBeNull();
+  });
+
   it('should handle logout when in test mode', async () => {
     mockLocalStorage.soil_test_mode = 'true';
 

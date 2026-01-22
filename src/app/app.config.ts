@@ -24,6 +24,9 @@ const firebaseConfig = {
 // Initialize Firebase strictly once
 const app = initializeApp(firebaseConfig);
 
+const isLocalhost = typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(
@@ -36,14 +39,14 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => app),
     provideAuth(() => {
       const auth = getAuth(app);
-      if (isDevMode()) {
+      if (isDevMode() || isLocalhost) {
         connectAuthEmulator(auth, 'http://localhost:9099');
       }
       return auth;
     }),
     provideFunctions(() => {
       const functions = getFunctions(app, 'europe-west4');
-      if (isDevMode()) {
+      if (isDevMode() || isLocalhost) {
         connectFunctionsEmulator(functions, 'localhost', 5001);
       }
       return functions;

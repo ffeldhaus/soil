@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import * as admin from 'firebase-admin';
+import { Timestamp } from 'firebase-admin/firestore';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
@@ -97,7 +98,7 @@ export const migrateLocalGame = onCall(async (request) => {
       ...p,
       uid: newUid,
       hostUid: newUid === uid ? uid : undefined,
-      joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+      joinedAt: Timestamp.now(),
       history: p.history.map((h: any) => ({
         ...h,
         parcelsSnapshot: [],
@@ -110,13 +111,13 @@ export const migrateLocalGame = onCall(async (request) => {
     id: targetGameId,
     hostUid: uid,
     players: newPlayers,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: Timestamp.now(),
     migratedFrom: oldGameId,
     status: game.status || 'in_progress',
   };
 
   if (startRound === 0) {
-    gameUpdate.createdAt = admin.firestore.FieldValue.serverTimestamp();
+    gameUpdate.createdAt = Timestamp.now();
   }
 
   // 4. Write in transaction
@@ -144,7 +145,7 @@ export const migrateLocalGame = onCall(async (request) => {
         number: r,
         playerData,
         events: roundEvents,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: Timestamp.now(),
       });
     }
   });
@@ -280,7 +281,7 @@ export const submitDecision = onCall(
         // 3. WRITES (only if not calculating, since calculation does its own update)
         transaction.update(gameRef, {
           players: updatedPlayers,
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: Timestamp.now(),
         });
 
         return { status: 'submitted' };
@@ -493,7 +494,7 @@ async function performCalculation(
     number: nextRoundNumber,
     playerData: allPlayerRounds,
     events,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: Timestamp.now(),
   });
 
   // Update game state (current round pointer and all players)
@@ -504,7 +505,7 @@ async function performCalculation(
     currentRoundNumber: nextRoundNumber,
     status: isFinished ? 'finished' : game.status,
     players,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: Timestamp.now(),
   });
   return { number: nextRoundNumber, playerRounds: allPlayerRounds };
 }
@@ -589,7 +590,7 @@ export const createGame = onCall(async (request) => {
         status: 'active',
         quota: 999,
         gameCount: 0,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: Timestamp.now(),
       });
     } else if (request.auth.token.role === 'guest') {
       userRole = 'guest';
@@ -649,7 +650,7 @@ export const createGame = onCall(async (request) => {
     capital: 1000,
     currentRound: 0,
     history: [],
-    joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+    joinedAt: Timestamp.now(),
     hostUid: uid, // Link to the actual auth user
   };
 
@@ -680,8 +681,8 @@ export const createGame = onCall(async (request) => {
     playerSecrets,
     players,
     retentionDays: validRetention,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
     deletedAt: null,
   };
 
@@ -721,7 +722,7 @@ export const createGame = onCall(async (request) => {
     await t.set(db.collection('games').doc(gameId).collection('rounds').doc('round_0'), {
       number: 0,
       playerData,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: Timestamp.now(),
     });
 
     // Increment User Game Count
@@ -767,7 +768,7 @@ export const submitOnboarding = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-    const { firstName, lastName, explanation, institution, institutionLink, lang } = request.data;
+    const { firstName, lastName, lang } = request.data;
     const email = request.auth.token.email || '';
 
     // Check Banned Emails
@@ -778,7 +779,7 @@ export const submitOnboarding = onCall(
     }
 
     // Basic Validation
-    if (!explanation || !institution || !firstName || !lastName) {
+    if (!firstName || !lastName) {
       console.warn(`submitOnboarding: Missing fields for ${email}.`, request.data);
       throw new HttpsError('invalid-argument', 'Missing fields');
     }
@@ -797,13 +798,7 @@ export const submitOnboarding = onCall(
       quota: 5,
       gameCount: 0,
       lang: lang || 'de',
-      onboarding: {
-        explanation,
-        institution,
-        institutionLink: institutionLink || '',
-        submittedAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: Timestamp.now(),
     };
 
     await userRef.set(userData, { merge: true });
@@ -893,7 +888,7 @@ export const manageAdmin = onCall(
       if (value?.banEmail) {
         if (targetEmail) {
           await db.collection('banned_emails').doc(targetEmail).set({
-            bannedAt: admin.firestore.FieldValue.serverTimestamp(),
+            bannedAt: Timestamp.now(),
             bannedBy: request.auth.uid,
             reason: 'Rejected by System-Administrator',
           });
@@ -910,7 +905,7 @@ export const manageAdmin = onCall(
       const targetEmail = targetDoc.data()?.email;
       if (targetEmail) {
         await db.collection('banned_emails').doc(targetEmail).set({
-          bannedAt: admin.firestore.FieldValue.serverTimestamp(),
+          bannedAt: Timestamp.now(),
           bannedBy: request.auth.uid,
           reason: 'Banned by System-Administrator',
         });
@@ -1191,14 +1186,14 @@ export const updatePlayerType = onCall(
         if (!calculationPerformed) {
           t.update(gameRef, {
             players: updatedPlayers,
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: Timestamp.now(),
           });
         }
       } else {
         // 3. WRITES
         t.update(gameRef, {
           players,
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: Timestamp.now(),
         });
       }
     });
@@ -1243,7 +1238,7 @@ export const deleteGames = onCall(async (request) => {
         } else {
           // Soft Delete
           batch.update(gameRef, {
-            deletedAt: admin.firestore.FieldValue.serverTimestamp(),
+            deletedAt: Timestamp.now(),
             status: 'deleted',
           });
           batchCount++;
@@ -1297,7 +1292,7 @@ export const undeleteGames = onCall(async (request) => {
 
 // europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
 export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: 'europe-west3' }, async (_event) => {
-  const now = admin.firestore.Timestamp.now();
+  const now = Timestamp.now();
   const nowMillis = now.toMillis();
   const oneDayMs = 24 * 60 * 60 * 1000;
   const thirtyDaysMs = 30 * oneDayMs;
@@ -1343,7 +1338,7 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
 
   // 2. Hard delete old soft-deleted games
   // deletedAt < now - 30 days
-  const purgeThreshold = admin.firestore.Timestamp.fromMillis(nowMillis - thirtyDaysMs);
+  const purgeThreshold = Timestamp.fromMillis(nowMillis - thirtyDaysMs);
   const trashSnap = await db.collection('games').where('deletedAt', '<', purgeThreshold).get();
 
   for (const doc of trashSnap.docs) {
@@ -1452,8 +1447,8 @@ export const submitFeedback = onCall(
       rating,
       comment,
       status: 'new',
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     };
 
     // 1. Save feedback
@@ -1485,7 +1480,7 @@ export const submitFeedback = onCall(
         const analysis = JSON.parse(responseText);
         await feedbackRef.update({
           aiAnalysis: analysis,
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: Timestamp.now(),
         });
         feedbackData.aiAnalysis = analysis;
       }
@@ -1577,7 +1572,7 @@ export const updateRoundDeadline = onCall(async (request) => {
 
   const deadlines = gameSnap.data()?.roundDeadlines || {};
   if (deadline) {
-    deadlines[roundNumber] = admin.firestore.Timestamp.fromDate(new Date(deadline));
+    deadlines[roundNumber] = Timestamp.fromDate(new Date(deadline));
   } else {
     delete deadlines[roundNumber];
   }
@@ -1588,7 +1583,7 @@ export const updateRoundDeadline = onCall(async (request) => {
 
 // europe-west4 does not support Cloud Scheduler, so we use europe-west3 for scheduled functions
 export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region: 'europe-west3' }, async (_event) => {
-  const now = admin.firestore.Timestamp.now();
+  const now = Timestamp.now();
 
   // Find games in progress
   const activeGames = await db.collection('games').where('status', '==', 'in_progress').get();
@@ -1668,7 +1663,7 @@ export const saveDraft = onCall(async (request) => {
   try {
     await gameRef.update({
       [fieldPath]: decision,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: Timestamp.now(),
     });
   } catch (error: any) {
     // If error is NOT FOUND, throw.
@@ -1733,9 +1728,20 @@ export const sendVerificationEmail = onCall(
     }
 
     try {
-      const link = await admin.auth().generateEmailVerificationLink(email, {
+      let link = await admin.auth().generateEmailVerificationLink(email, {
         url: `${appOrigin}/${finalLang}/onboarding`,
       });
+
+      // If in emulator, the link might point to 127.0.0.1:9099/emulator/action
+      // Point it directly to our app's handler instead for a better experience
+      if (process.env.FUNCTIONS_EMULATOR === 'true') {
+        const url = new URL(link);
+        const mode = url.searchParams.get('mode');
+        const oobCode = url.searchParams.get('oobCode');
+        const apiKey = url.searchParams.get('apiKey');
+        link = `${appOrigin}/auth/action?mode=${mode}&oobCode=${oobCode}&apiKey=${apiKey}`;
+      }
+
       await mailService.sendVerificationEmail(email, link, finalLang);
       return { success: true };
     } catch (error: any) {
@@ -1803,7 +1809,7 @@ export const manageFeedback = onCall(
 
     const feedback = feedbackSnap.data() as any;
     const updates: any = {
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: Timestamp.now(),
     };
 
     if (action === 'reply') {

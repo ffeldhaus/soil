@@ -27,9 +27,6 @@ export class AdminRegisterComponent implements OnInit {
     password: ['', [Validators.required, Validators.minLength(6)]],
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
-    institution: ['', Validators.required],
-    institutionLink: ['', [Validators.required, Validators.pattern('https?://.+')]],
-    explanation: ['', [Validators.required, Validators.minLength(20)]],
   });
 
   isLoading = false;
@@ -55,15 +52,10 @@ export class AdminRegisterComponent implements OnInit {
       'adminRegister.password': $localize`:Form Label|Label for password input@@adminRegister.password:Passwort`,
       'adminRegister.placeholder.password': $localize`:Form Placeholder|Placeholder for password field@@adminRegister.placeholder.password:Mindestens 6 Zeichen`,
       'adminRegister.error.password': $localize`:Error Message|Error shown for short password@@adminRegister.error.password:Das Passwort muss mindestens 6 Zeichen lang sein`,
-      'adminRegister.institution': $localize`:Form Label|Label for school or institution name@@adminRegister.institution:Institution / Schule`,
-      'adminRegister.placeholder.institution': $localize`:Form Placeholder|Placeholder for school name@@adminRegister.placeholder.institution:z.B. Humboldt Gymnasium`,
-      'adminRegister.website': $localize`:Form Label|Label for institution website URL@@adminRegister.website:Website der Institution`,
-      'adminRegister.placeholder.website': $localize`:Form Placeholder|Placeholder for institution website@@adminRegister.placeholder.website:https://schule.de`,
-      'adminRegister.explanation': $localize`:Form Label|Label for usage explanation textarea@@adminRegister.explanation:Warum möchten Sie SOIL nutzen?`,
-      'adminRegister.placeholder.explanation': $localize`:Form Placeholder|Placeholder for usage explanation@@adminRegister.placeholder.explanation:Beschreiben Sie kurz Ihren geplanten Einsatz im Unterricht`,
       'adminRegister.success.verificationSent': $localize`:Success Message|Notification that registration was successful and account verification is pending@@adminRegister.success.verificationSent:Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.`,
       'adminRegister.error.title': $localize`:Heading|Title for registration error modal@@adminRegister.error.title:Registrierung fehlgeschlagen`,
       'adminRegister.error.retry': $localize`:Action Label|Button to retry registration@@adminRegister.error.retry:Erneut versuchen`,
+      'adminRegister.error.offline': $localize`:Error Message|Error shown when trying to register while offline@@adminRegister.error.offline:Registrierung ist nur im Online-Modus möglich.`,
     };
     return translations[key] || key;
   }
@@ -99,6 +91,13 @@ export class AdminRegisterComponent implements OnInit {
   async onSubmit() {
     if (this.registerForm.invalid) return;
 
+    if (typeof window !== 'undefined' && !window.navigator.onLine) {
+      this.errorMessage = this.t('adminRegister.error.offline');
+      this.showErrorModal = true;
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.isLoading = true;
     this.errorMessage = null;
     this.successMessage = null;
@@ -118,9 +117,8 @@ export class AdminRegisterComponent implements OnInit {
       await this.gameService.submitOnboarding({
         firstName: formData.firstName as string,
         lastName: formData.lastName as string,
-        institution: formData.institution as string,
-        institutionLink: formData.institutionLink as string,
-        explanation: formData.explanation as string,
+        explanation: 'Simplified registration',
+        institution: 'N/A',
         lang: this.languageService.currentLang,
       });
 

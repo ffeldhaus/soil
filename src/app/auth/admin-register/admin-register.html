@@ -224,69 +224,6 @@
           </div>
         }
 
-        <!-- Onboarding Section -->
-        <div class="space-y-6 pt-2 border-t border-gray-700/50">
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">
-              {{ t('adminRegister.institution') }} <span class="text-emerald-500">*</span>
-            </label>
-            <input
-              formControlName="institution"
-              type="text"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-              [class.border-red-500]="
-                registerForm.get('institution')?.touched && registerForm.get('institution')?.errors?.['required']
-              "
-              placeholder="e.g. Humboldt High School"
-              [placeholder]="t('adminRegister.placeholder.institution')"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">
-              {{ t('adminRegister.website') }} <span class="text-emerald-500">*</span>
-            </label>
-            <input
-              formControlName="institutionLink"
-              type="url"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
-              [class.border-red-500]="
-                registerForm.get('institutionLink')?.touched && registerForm.get('institutionLink')?.invalid
-              "
-              placeholder="https://school.edu"
-              [placeholder]="t('adminRegister.placeholder.website')"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-400 mb-2">
-              {{ t('adminRegister.explanation') }} <span class="text-emerald-500">*</span>
-            </label>
-            <textarea
-              formControlName="explanation"
-              rows="3"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white resize-none"
-              [class.border-red-500]="
-                registerForm.get('explanation')?.touched && registerForm.get('explanation')?.invalid
-              "
-              placeholder="How do you plan to use SOIL?"
-              [placeholder]="t('adminRegister.placeholder.explanation')"
-            ></textarea>
-            <div class="flex justify-between mt-1">
-              <p class="text-xs text-gray-500" i18n="Form Hint|Requirement for explanation length@@adminRegister.explanationRequirement">
-                Erforderlich: Mindestens 20 Zeichen
-              </p>
-              <p
-                class="text-xs"
-                [class.text-emerald-500]="(registerForm.get('explanation')?.value?.length || 0) >= 20"
-                [class.text-gray-500]="(registerForm.get('explanation')?.value?.length || 0) < 20"
-              >
-                {{ registerForm.get('explanation')?.value?.length || 0 }}
-              </p>
-            </div>
-          </div>
-        </div>
-
         <div class="pt-2">
           <button
             type="submit"

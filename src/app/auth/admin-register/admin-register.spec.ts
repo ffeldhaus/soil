@@ -53,9 +53,6 @@ describe('AdminRegisterComponent', () => {
       password: 'password123',
       firstName: 'Max',
       lastName: 'Mustermann',
-      institution: 'Schule',
-      institutionLink: 'https://schule.de',
-      explanation: 'Ich möchte SOIL im Unterricht einsetzen, um Bodenkunde zu lehren.',
     });
 
     await component.onSubmit();
@@ -73,9 +70,6 @@ describe('AdminRegisterComponent', () => {
       password: 'password123',
       firstName: 'Max',
       lastName: 'Mustermann',
-      institution: 'Schule',
-      institutionLink: 'https://schule.de',
-      explanation: 'Ich möchte SOIL im Unterricht einsetzen, um Bodenkunde zu lehren.',
     });
 
     await component.onSubmit();
