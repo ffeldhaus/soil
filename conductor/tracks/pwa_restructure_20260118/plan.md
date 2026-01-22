@@ -42,3 +42,15 @@
     - [x] Implement Web Share API for sharing logins
     - [x] Implement Badging API for new round notifications
 - [x] Task: Conductor - User Manual Verification 'Phase 5: Optimization & Store Readiness' [564f8e6] (Protocol in workflow.md)
+
+## Phase 6: Quality Assurance & Technical Debt
+- [ ] Task: Code cleanup and architectural refactoring
+    - [ ] Remove unused components and services
+    - [ ] Align with project naming conventions and style guides
+- [ ] Task: Implementation of extensive and meaningful unit tests
+    - [ ] Reach >80% coverage for all new modules
+    - [ ] Test edge cases and error handling in Game and Auth services
+- [ ] Task: Implementation of comprehensive E2E tests (Cypress)
+    - [ ] Full playthrough scenario (creation to finished state)
+    - [ ] Verify offline-to-online synchronization flow
+- [ ] Task: Conductor - User Manual Verification 'Phase 6: Quality Assurance' (Protocol in workflow.md)
