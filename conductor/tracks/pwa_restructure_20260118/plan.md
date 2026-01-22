@@ -26,8 +26,8 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 4: Background Synchronization' [352ea9f] (Protocol in workflow.md)
 
 ## Phase 5: Optimization & Store Readiness
-- [ ] Task: Audit and optimize for App Store/Play Store requirements
-    - [ ] Verify accessibility compliance (WCAG)
+- [~] Task: Audit and optimize for App Store/Play Store requirements
+    - [x] Verify accessibility compliance (WCAG) [3fefc47]
     - [ ] Optimize assets and loading performance
 - [ ] Task: SEO & Prerendering Optimization
     - [ ] Fix dependency injection issues during static generation

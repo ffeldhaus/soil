@@ -1,6 +1,9 @@
 <div
   class="h-full w-full border bg-gray-800/80 relative cursor-pointer select-none group border-gray-700/50 transition-all duration-200"
   [class.selected-border]="selected"
+  role="button"
+  [attr.aria-label]="t(getConfig(parcel.crop).label) + ' field'"
+  [attr.aria-pressed]="selected"
 >
   <!-- Color Overlay -->
   <div

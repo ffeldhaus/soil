@@ -9,19 +9,18 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
   imports: [RouterLink, LanguageSwitcherComponent, CommonModule],
   template: `
     <div class="min-h-screen relative font-sans text-gray-100 overflow-x-hidden">
-      <!-- Background Image -->
-      <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
-        <picture>
-          <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
-          <img
-            src="assets/images/bauernhof-landscape-dunkel.webp"
-            alt="Farm Background"
-            fetchpriority="high"
-            class="w-full h-full object-cover portrait:object-center landscape:object-center"
-          />
-        </picture>
-      </div>
-
+          <!-- Background Image -->
+          <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+            <picture>
+              <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
+              <img
+                src="assets/images/bauernhof-landscape-dunkel.webp"
+                alt=""
+                fetchpriority="high"
+                class="w-full h-full object-cover portrait:object-center landscape:object-center"
+              />
+            </picture>
+          </div>
       <!-- Navigation Bar -->
       <nav
         class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"

@@ -3,7 +3,7 @@
   <div class="fixed inset-0 z-0 pointer-events-none print:hidden transition-opacity duration-500">
     <picture>
       <source [srcset]="showFinance ? 'assets/images/bauernhof-portrait-dunkel.webp' : 'assets/images/bauernhof-portrait-hd.webp'" media="(orientation: portrait)" />
-      <img [src]="showFinance ? 'assets/images/bauernhof-landscape-dunkel.webp' : 'assets/images/bauernhof-landscape-hd.webp'" alt="Farm Background"
+      <img [src]="showFinance ? 'assets/images/bauernhof-landscape-dunkel.webp' : 'assets/images/bauernhof-landscape-hd.webp'" alt=""
         fetchpriority="high" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
     </picture>
   </div>
@@ -37,7 +37,7 @@
         class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900 shadow-2xl flex flex-col border-r border-gray-700 animate-slide-in-left">
         <div class="p-6 border-b border-gray-800 flex justify-between items-center">
           <h2 class="text-xl font-bold font-serif text-emerald-500">MENU</h2>
-          <button (click)="toggleMobileMenu()" class="text-gray-400">
+          <button (click)="toggleMobileMenu()" class="text-gray-400" aria-label="Close menu">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -133,7 +133,7 @@
           @if (user$ | async; as user) {
           <div class="flex items-center gap-3">
             @if (!isPlayer) {
-            <img [src]="t('user.photoURL')" alt="User photo" class="w-8 h-8 rounded-full border border-gray-700" />
+            <img [src]="t('user.photoURL')" alt="Profile picture" class="w-8 h-8 rounded-full border border-gray-700" />
             }
             <div class="flex flex-col">
               @if (!isEditingName) {
@@ -280,11 +280,13 @@
       @if (!showFinance) {
         <div class="flex-1 w-full min-h-0 pt-1 pb-16 flex items-center justify-center board-grid-wrapper">
           <div class="game-grid grid gap-1 max-w-7xl touch-none" [style.--cols]="cols" [style.--rows]="rows"
+            role="grid" aria-label="Game board"
             (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
             (click)="$event.stopPropagation()">
             @defer (hydrate on idle) {
             @for (parcel of parcels; track parcel.index; let i = $index) {
             <app-parcel [parcel]="parcel" [attr.data-index]="i" data-testid="parcel" class="aspect-square"
+              role="gridcell"
               [selected]="isSelected(parcel.index)" [showLabels]="showLabels" [showNutrition]="showNutritionOverlay"
               [showHarvest]="showHarvestOverlay" [showSoil]="showSoilOverlay" [isReadOnly]="isReadOnly"
               (mousedown)="onMouseDown(parcel.index, $event)" (mouseenter)="onMouseEnter(parcel.index)">

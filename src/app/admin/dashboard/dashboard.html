@@ -5,7 +5,7 @@
       <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
       <img
         src="assets/images/bauernhof-landscape-dunkel.webp"
-        alt="Farm Background"
+        alt=""
         fetchpriority="high"
         class="w-full h-full object-cover portrait:object-center landscape:object-center"
       />
@@ -207,7 +207,7 @@
         <h2 class="text-3xl font-bold text-black border-b-2 border-black pb-2 mb-2 w-full text-center">
           {{ item.name }}
         </h2>
-        <img [src]="item.qrData" class="w-64 h-64" alt="QR Code for player access" />
+        <img [src]="item.qrData" class="w-64 h-64" [alt]="'QR Code for access to ' + item.name" />
         <div class="mt-4 p-2 bg-gray-100 rounded text-[10px] text-gray-800 font-mono text-center w-full break-all">
           {{ item.url }}
         </div>

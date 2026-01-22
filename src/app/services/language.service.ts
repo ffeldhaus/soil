@@ -13,6 +13,12 @@ export class LanguageService {
     return this.localeId.split('-')[0];
   }
 
+  constructor() {
+    if (this.document) {
+      this.document.documentElement.lang = this.currentLang;
+    }
+  }
+
   setLanguage(lang: string) {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(this.STORAGE_KEY, lang);

@@ -49,7 +49,7 @@ import { AuthService } from '../auth.service';
             <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
             <img
               src="assets/images/bauernhof-landscape-dunkel.webp"
-              alt="Farm Background"
+              alt=""
               fetchpriority="high"
               class="w-full h-full object-cover portrait:object-center landscape:object-center"
             />

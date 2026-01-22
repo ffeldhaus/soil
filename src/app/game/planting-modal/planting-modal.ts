@@ -14,8 +14,11 @@ import type { CropType } from '../../types';
       <div
         class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-2xl w-full"
         (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="planting-title"
       >
-        <h2 i18n="Main Heading|Title of the planting selection modal@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
+        <h2 id="planting-title" i18n="Main Heading|Title of the planting selection modal@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
 
         <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
           @for (crop of crops; track crop) {
