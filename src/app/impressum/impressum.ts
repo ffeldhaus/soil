@@ -1,6 +1,6 @@
 import { Component, inject, type OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Meta } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
 
 import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 

@@ -5461,5 +5461,15 @@
         <target>Registration is only possible in online mode.</target>
       </segment>
     </unit>
+      <unit id="board.logout.title">
+      <notes>
+        <note category="description">Tooltip for the logout button</note>
+        <note category="meaning">Action Label</note>
+      </notes>
+      <segment state="translated">
+        <source>Logout</source>
+        <target>Logout</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

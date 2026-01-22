@@ -15,7 +15,7 @@
       <img
         [src]="qrCodeUrl"
         class="w-64 h-64 shadow-lg border-4 border-white rounded-lg"
-        alt="QR Code for player login"
+        [alt]="'QR Code for access by ' + qrCodePlayer"
       />
       <button
         (click)="closeModal.emit()"

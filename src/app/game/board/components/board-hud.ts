@@ -63,6 +63,7 @@ export class BoardHudComponent {
       'board.nav.waiting': $localize`:Status Message|Wait message after round submission@@board.nav.waiting:Warten...`,
       'board.nav.nextRound': $localize`:Action Label|Button to submit round and proceed@@board.nav.nextRound:Nächste Runde`,
       'board.logout': $localize`:Action Label|Logout button text@@board.logout:Abmelden`,
+      'board.logout.title': $localize`:Action Label|Tooltip for the logout button@@board.logout.title:Logout`,
       'board.nav.copyState': $localize`:Action Label|Button to copy game state as JSON@@board.nav.copyState:JSON`,
     };
     return translations[key] || key;

@@ -8,14 +8,7 @@ import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
 import { LanguageService } from '../../services/language.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
-import type {
-  CropType,
-  Game,
-  Parcel as ParcelType,
-  PlayerState,
-  Round,
-  RoundDecision,
-} from '../../types';
+import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
 import { Finance } from '../finance/finance';
 import { GameService } from '../game.service';
 import { Parcel } from '../parcel/parcel';
@@ -58,6 +51,7 @@ export class Board implements OnInit, OnDestroy {
       'board.nav.waiting': $localize`:Status Message|Wait message after round submission@@board.nav.waiting:Warten...`,
       'board.nav.nextRound': $localize`:Action Label|Button to submit round and proceed@@board.nav.nextRound:Nächste Runde`,
       'board.logout': $localize`:Action Label|Logout button text@@board.logout:Abmelden`,
+      'board.logout.title': $localize`:Action Label|Tooltip for the logout button@@board.logout.title:Logout`,
     };
     return translations[key] || key;
   }

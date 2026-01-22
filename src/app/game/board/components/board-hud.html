@@ -181,8 +181,8 @@
       (click)="logout.emit()"
       data-testid="logout-button"
       class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-10 h-10 flex items-center justify-center"
-      [title]="t('board.logout')"
-      aria-label="Logout"
+      [title]="t('board.logout.title')"
+      [attr.aria-label]="t('board.logout.title')"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
