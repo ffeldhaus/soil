@@ -14,7 +14,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { LanguageService } from '../services/language.service';
 
@@ -31,6 +31,10 @@ export class AuthService {
 
   get isAnonymous(): boolean {
     return !!this.userSubject.value?.isAnonymous;
+  }
+
+  get currentUser(): User | null {
+    return this.userSubject.value;
   }
 
   constructor() {
@@ -59,7 +63,6 @@ export class AuthService {
       this.userSubject.next(this.getMockUser());
     } else if (isBrowser && window.localStorage.getItem('soil_active_local_game')) {
       const gameId = window.localStorage.getItem('soil_active_local_game')!;
-      const pin = window.localStorage.getItem('soil_active_local_pin') || '';
       // We don't call this.loginAsPlayer here because it would trigger nested logic,
       // instead we just initialize the user state if needed.
       // For now, let the guest logic below handle it if guest_uid is present.
@@ -67,15 +70,15 @@ export class AuthService {
         const guestUid = window.localStorage.getItem('soil_guest_uid')!;
         const guestUser = this.createGuestUser(guestUid);
         const localUser = {
-            ...guestUser,
-            getIdTokenResult: async () => ({
-              claims: {
-                role: 'player',
-                gameId: gameId,
-                playerNumber: 1,
-              },
-            }),
-          };
+          ...guestUser,
+          getIdTokenResult: async () => ({
+            claims: {
+              role: 'player',
+              gameId: gameId,
+              playerNumber: 1,
+            },
+          }),
+        };
         this.userSubject.next(localUser as any);
       }
     } else if (isBrowser && window.localStorage.getItem('soil_guest_uid')) {
@@ -93,7 +96,9 @@ export class AuthService {
         window.localStorage.setItem('soil_active_local_pin', pin);
       }
 
-      const currentUser = this.userSubject.value || (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp') : null);
+      const currentUser =
+        this.userSubject.value ||
+        (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp') : null);
       if (currentUser) {
         // Wrap user to include local claims
         const localUser = {

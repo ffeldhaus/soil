@@ -36,6 +36,122 @@ const ai = new GoogleGenAI({
 
 // --- Sync and Game State ---
 
+export const migrateLocalGame = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  const { gameData } = request.data;
+  if (!gameData || !gameData.game || !gameData.allRounds) {
+    throw new HttpsError('invalid-argument', 'Missing gameData');
+  }
+
+  const { game, allRounds } = gameData;
+  const uid = request.auth.uid;
+  const oldGameId = game.id;
+
+  // 1. Check for existing migration
+  const existingMigratedSnap = await db
+    .collection('games')
+    .where('migratedFrom', '==', oldGameId)
+    .where('hostUid', '==', uid)
+    .limit(1)
+    .get();
+
+  let targetGameId: string;
+  let startRound = 0;
+
+  if (!existingMigratedSnap.empty) {
+    const existingGame = existingMigratedSnap.docs[0].data();
+    if (game.currentRoundNumber <= (existingGame.currentRoundNumber || 0)) {
+      return { success: true, gameId: existingMigratedSnap.docs[0].id, status: 'already_synced' };
+    }
+    targetGameId = existingMigratedSnap.docs[0].id;
+    startRound = (existingGame.currentRoundNumber || 0) + 1;
+  } else {
+    targetGameId = db.collection('games').doc().id;
+  }
+
+  // 2. Map UIDs
+  const oldHostUid =
+    Object.keys(game.players).find((key) => game.players[key].playerNumber === 1) ||
+    game.players[Object.keys(game.players)[0]]?.uid;
+
+  if (!oldHostUid) throw new HttpsError('invalid-argument', 'Invalid local game state: no host player found');
+
+  const uidMap: Record<string, string> = {};
+  for (const playerUid in game.players) {
+    if (playerUid === oldHostUid) {
+      uidMap[playerUid] = uid;
+    } else {
+      const p = game.players[playerUid];
+      const playerNum = p.playerNumber || playerUid.split('-').pop();
+      uidMap[playerUid] = `player-${targetGameId}-${playerNum}`;
+    }
+  }
+
+  // 3. Prepare Game Document
+  const newPlayers: Record<string, any> = {};
+  for (const oldUid in game.players) {
+    const newUid = uidMap[oldUid];
+    const p = game.players[oldUid];
+    newPlayers[newUid] = {
+      ...p,
+      uid: newUid,
+      hostUid: newUid === uid ? uid : undefined,
+      joinedAt: admin.firestore.FieldValue.serverTimestamp(),
+      history: p.history.map((h: any) => ({
+        ...h,
+        parcelsSnapshot: [],
+      })),
+    };
+  }
+
+  const gameUpdate: any = {
+    ...game,
+    id: targetGameId,
+    hostUid: uid,
+    players: newPlayers,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    migratedFrom: oldGameId,
+    status: game.status || 'in_progress',
+  };
+
+  if (startRound === 0) {
+    gameUpdate.createdAt = admin.firestore.FieldValue.serverTimestamp();
+  }
+
+  // 4. Write in transaction
+  await db.runTransaction(async (t) => {
+    t.set(db.collection('games').doc(targetGameId), gameUpdate, { merge: true });
+
+    // Write all rounds from startRound to currentRound
+    const currentRound = game.currentRoundNumber || 0;
+    for (let r = startRound; r <= currentRound; r++) {
+      const playerData: Record<string, any> = {};
+      let roundEvents = { weather: 'Normal', vermin: [] };
+
+      for (const oldUid in allRounds) {
+        const newUid = uidMap[oldUid];
+        const round = allRounds[oldUid][r];
+        if (round) {
+          playerData[newUid] = round;
+          if (round.result?.events) {
+            roundEvents = round.result.events;
+          }
+        }
+      }
+
+      t.set(db.collection('games').doc(targetGameId).collection('rounds').doc(`round_${r}`), {
+        number: r,
+        playerData,
+        events: roundEvents,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+  });
+
+  return { success: true, gameId: targetGameId, status: startRound === 0 ? 'created' : 'updated' };
+});
+
 export const getGameState = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
   const { gameId } = request.data;
