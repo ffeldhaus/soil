@@ -58,13 +58,21 @@
                   <h2 class="text-2xl font-bold text-emerald-400" data-testid="admin-controls">
                     {{ t('dashboard.controls.title') }}
                   </h2>
-                  <p class="text-gray-300" i18n="Welcome Message|Greeting for the logged-in user@@dashboard.welcome">
-                    Willkommen,
-                    <span class="font-bold text-white">{{
-                      userStatus?.displayName ||
-                        (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user.email)
-                    }}</span
-                    >!
+                  <p class="text-gray-300">
+                    @if (userStatus?.displayName || userStatus?.firstName || user.email) {
+                      <ng-container i18n="Welcome Message|Greeting for the logged-in user with name@@dashboard.welcome">
+                        Willkommen,
+                        <span class="font-bold text-white">{{
+                          userStatus?.displayName ||
+                            (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user.email)
+                        }}</span
+                        >!
+                      </ng-container>
+                    } @else {
+                      <ng-container i18n="Generic Welcome Message|Greeting for user without name@@dashboard.welcomeGeneric">
+                        Willkommen!
+                      </ng-container>
+                    }
                   </p>
                 </div>
                 <button
