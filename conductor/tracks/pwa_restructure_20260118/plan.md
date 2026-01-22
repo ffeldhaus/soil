@@ -28,7 +28,7 @@
 ## Phase 5: Optimization & Store Readiness
 - [~] Task: Audit and optimize for App Store/Play Store requirements
     - [x] Verify accessibility compliance (WCAG) [c74353c]
-    - [x] Optimize assets and loading performance [3fefc47]
+    - [x] Optimize assets and loading performance [34366e4]
 - [ ] Task: SEO & Prerendering Optimization
     - [ ] Fix dependency injection issues during static generation
     - [ ] Re-enable prerendering for static pages (Landing, Manual, Info)
