@@ -136,7 +136,7 @@ app.use(
  */
 let angularApp: AngularNodeAppEngine | undefined;
 
-app.use('/**', (req, res, next) => {
+app.use('*path', (req, res, next) => {
   if (!angularApp) {
     angularApp = new AngularNodeAppEngine();
   }

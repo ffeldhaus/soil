@@ -23,7 +23,7 @@
     "format": "biome format --write .",
     "prettier:check": "biome format .",
     "prepare": "husky",
-    "serve:ssr:soil": "node dist/soil/server/de/server.mjs"
+    "serve:ssr:soil": "node dist/soil/server/server.mjs"
   },
   "private": true,
   "engines": {

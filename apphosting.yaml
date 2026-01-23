@@ -6,5 +6,6 @@ runConfig:
   concurrency: 80
   cpu: 1
   memoryMiB: 512
+  command: node dist/soil/server/server.mjs
 scripts:
   build: npm run build
