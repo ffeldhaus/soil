@@ -1,5 +1,5 @@
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import {
   AngularNodeAppEngine,
@@ -136,18 +136,60 @@ app.use(
  */
 let angularApp: AngularNodeAppEngine | undefined;
 
-app.use('*path', (req, res, next) => {
+app.use('*path', async (req, res, next) => {
   if (!angularApp) {
+    try {
+      const { ɵsetAngularAppEngineManifest: setAngularAppEngineManifest, AngularAppEngine } = (await import(
+        '@angular/ssr'
+      )) as any;
+
+      if (AngularAppEngine) {
+        AngularAppEngine.ɵallowStaticRouteRender = true;
+      }
+
+      const manifestPath = pathToFileURL(join(serverDistFolder, 'angular-app-engine-manifest.mjs'));
+      const localeManifestPath = pathToFileURL(join(serverDistFolder, 'angular-app-manifest.mjs'));
+
+      let manifest: any;
+      try {
+        manifest = (await import(manifestPath.href)).default;
+      } catch (_e) {
+        try {
+          manifest = (await import(localeManifestPath.href)).default;
+        } catch (_e2) {
+          // Ignore if no manifest is found
+        }
+      }
+
+      if (manifest) {
+        setAngularAppEngineManifest(manifest);
+      }
+    } catch (err) {
+      console.error('Failed to initialize Angular app engine:', err);
+    }
     angularApp = new AngularNodeAppEngine();
   }
+
+  // biome-ignore lint/suspicious/noConsole: used for production logging
+  console.log(`Handling request: ${req.method} ${req.originalUrl}`);
+
   angularApp
     .handle(req)
-    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
-    .catch(next);
+    .then((response) => {
+      if (response) {
+        writeResponseToNodeResponse(response, res);
+      } else {
+        next();
+      }
+    })
+    .catch((err) => {
+      console.error(`Error handling request ${req.originalUrl}:`, err);
+      next(err);
+    });
 });
 
 /**
- * Start the server if this module is the main entry point, or it is ran via PM2.
+ * Start the server if this module is main entry point, or it is ran via PM2.
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
 if (isMainModule(import.meta.url)) {
@@ -157,7 +199,6 @@ if (isMainModule(import.meta.url)) {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
   server.on('error', (err) => {
-    // biome-ignore lint/suspicious/noConsole: used for production logging
     console.error('Server error:', err);
   });
 }
