@@ -16,6 +16,40 @@ app.use(compression());
 const angularApp = new AngularNodeAppEngine();
 
 /**
+ * Add hreflang Link headers
+ */
+app.use((req, res, next) => {
+  const host = req.get('host') || 'soil.app';
+  const protocol = (req.headers['x-forwarded-proto'] as string) || req.protocol || 'https';
+  const baseUrl = `${protocol}://${host}`;
+  const path = req.path;
+
+  // Strip locale from path if it exists to find the base page path
+  let basePagePath = path;
+  if (path.startsWith('/de/') || path === '/de') {
+    basePagePath = path.substring(3) || '/';
+  } else if (path.startsWith('/en/') || path === '/en') {
+    basePagePath = path.substring(3) || '/';
+  }
+
+  if (!basePagePath.startsWith('/')) {
+    basePagePath = `/${basePagePath}`;
+  }
+
+  const deUrl = `${baseUrl}/de${basePagePath}`;
+  const enUrl = `${baseUrl}/en${basePagePath}`;
+
+  const langLinks = [
+    `<${deUrl}>; rel="alternate"; hreflang="de"`,
+    `<${enUrl}>; rel="alternate"; hreflang="en"`,
+    `<${deUrl}>; rel="alternate"; hreflang="x-default"`,
+  ];
+
+  res.setHeader('Link', langLinks.join(', '));
+  next();
+});
+
+/**
  * Serve static files from the root (robots.txt, sitemap.xml, etc.)
  */
 const rootStaticFiles = [
@@ -74,7 +108,7 @@ app.use((req, res, next) => {
 
   // Construct new URL with locale
   const localizedUrl = `/${lang}${url.startsWith('/') ? '' : '/'}${url}`;
-  res.redirect(302, localizedUrl);
+  res.redirect(301, localizedUrl);
 });
 
 /**

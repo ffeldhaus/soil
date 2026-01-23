@@ -42,6 +42,11 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "ssr": {
+              "entry": "src/server.ts"
+            },
+            "server": "src/main.server.ts",
+            "prerender": false,
             "i18nMissingTranslation": "error",
             "i18nDuplicateTranslation": "error",
             "allowedCommonJsDependencies": [

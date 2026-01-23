@@ -13,21 +13,7 @@
   ],
   "hosting": {
     "public": "dist/soil/browser",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "/de/**",
-        "destination": "/de/index.html"
-      },
-      {
-        "source": "/en/**",
-        "destination": "/en/index.html"
-      },
-      {
-        "source": "**",
-        "destination": "/de/index.html"
-      }
-    ]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   },
   "storage": {
     "rules": "storage.rules"
