@@ -11,7 +11,10 @@ import compression from 'compression';
 import express from 'express';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-const browserDistFolder = resolve(serverDistFolder, '../browser');
+const browserDistFolder = resolve(
+  serverDistFolder,
+  serverDistFolder.endsWith('de') || serverDistFolder.endsWith('en') ? '../../browser' : '../browser',
+);
 
 const app = express();
 app.use(compression());
@@ -148,8 +151,15 @@ app.use('/**', (req, res, next) => {
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
 if (isMainModule(import.meta.url)) {
-  const port = process.env.PORT || 4000;
-  app.listen(port);
+  const port = Number(process.env.PORT || 4000);
+  const server = app.listen(port, () => {
+    // biome-ignore lint/suspicious/noConsole: used for production logging
+    console.log(`Node Express server listening on http://localhost:${port}`);
+  });
+  server.on('error', (err) => {
+    // biome-ignore lint/suspicious/noConsole: used for production logging
+    console.error('Server error:', err);
+  });
 }
 
 /**
