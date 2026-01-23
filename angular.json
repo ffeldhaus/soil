@@ -53,7 +53,7 @@
               "dijkstrajs"
             ],
             "define": {
-              "import.meta.env.APP_VERSION": "\"2.0.4\""
+              "import.meta.env.APP_VERSION": "\"2.0.5\""
             },
             "assets": [
               {
