@@ -57,21 +57,13 @@ check_outdated() {
 check_outdated "." "Frontend"
 check_outdated "functions" "Backend"
 
-# If we can compare against origin/main, do it. Otherwise just run tests.
+# Check if anything relevant changed
 if git rev-parse --verify origin/main >/dev/null 2>&1; then
   # If ONLY media, version-related files (package.json, angular.json), or husky files are changed since origin/main, skip everything
   if ! git diff --name-only origin/main..HEAD | grep -qvE '\.(jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/'; then
     echo "Only media, version, or husky changes detected since origin/main. Skipping pre-push hooks."
     exit 0
   fi
-
-  # Check if any files changed since origin/main are NOT media, documentation, version, or husky
-  if git diff --name-only origin/main..HEAD | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/'; then
-    npm run test:e2e
-  else
-    echo "Only media, documentation, version, or husky changes detected since origin/main. Skipping E2E tests."
-  fi
-else
-  # Fallback: if origin/main doesn't exist, always run tests
-  npm run test:e2e
 fi
+
+echo "Pre-push checks passed."

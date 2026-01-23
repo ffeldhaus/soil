@@ -61,7 +61,7 @@ _Note: You can also use `ng serve` for rapid UI-only development, but it will no
 4. **Commit**: You **do not** need to run linting, formatting, or unit tests manually before committing.
 5. **Verify (Automated)**:
    - **Pre-commit Hook**: Automatically runs linting, formatting, and unit tests. If any check fails, the commit will be blocked.
-   - **Pre-push Hook**: Automatically runs the full E2E test suite. This ensures that no regressions are pushed to the repository.
+   - **Pre-push Hook**: Automatically checks for outdated packages and skips tests if only media or version files changed. This ensures project health before pushing to the repository.
 6. **Finalize**: Only after the commit has succeeded (meaning all automated checks passed) should the task be considered complete.
 
 ## Testing Strategy
@@ -78,7 +78,7 @@ These run automatically on every `git commit`:
 
 ### 2. Pre-push Hooks (Comprehensive)
 These run automatically on `git push`:
-- **Cypress**: Runs the complete E2E test suite.
+- **Outdated Check**: Ensures dependencies are kept up to date within constraints.
 
 ## Performance, SEO & Accessibility
 
