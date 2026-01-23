@@ -17,11 +17,11 @@
     "rewrites": [
       {
         "source": "/de/**",
-        "destination": "/de/index.html"
+        "destination": "/de/index.csr.html"
       },
       {
         "source": "/en/**",
-        "destination": "/en/index.html"
+        "destination": "/en/index.csr.html"
       }
     ]
   },
