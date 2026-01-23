@@ -1,6 +1,6 @@
 const { injectManifest } = require('workbox-build');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Change this to match your build directory
 const swDest = 'dist/soil/browser/service-worker.js';
@@ -12,10 +12,7 @@ const defaultLocale = 'de';
 
 if (fs.existsSync(path.join(browserDir, defaultLocale, 'index.html'))) {
   console.log(`Copying ${defaultLocale} index.html to browser root for App Hosting compatibility...`);
-  fs.copyFileSync(
-    path.join(browserDir, defaultLocale, 'index.html'),
-    path.join(browserDir, 'index.html')
-  );
+  fs.copyFileSync(path.join(browserDir, defaultLocale, 'index.html'), path.join(browserDir, 'index.html'));
 }
 
 if (fs.existsSync(path.join(serverDir, defaultLocale))) {
