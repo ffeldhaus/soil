@@ -1,4 +1,5 @@
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   AngularNodeAppEngine,
@@ -9,11 +10,11 @@ import {
 import compression from 'compression';
 import express from 'express';
 
-const browserDistFolder = join(import.meta.dirname, '../browser');
+const serverDistFolder = dirname(fileURLToPath(import.meta.url));
+const browserDistFolder = resolve(serverDistFolder, '../browser');
 
 const app = express();
 app.use(compression());
-const angularApp = new AngularNodeAppEngine();
 
 /**
  * Add hreflang Link headers
@@ -66,6 +67,7 @@ const rootStaticFiles = [
 
 app.use((req, res, next) => {
   if (rootStaticFiles.includes(req.path)) {
+    // Try to serve from 'de' folder as default for root static files
     res.sendFile(join(browserDistFolder, 'de', req.path));
     return;
   }
@@ -83,12 +85,6 @@ app.use((req, res, next) => {
   }
 
   const path = req.path;
-
-  // Skip if it's a root static file
-  if (rootStaticFiles.includes(path)) {
-    next();
-    return;
-  }
 
   // Skip Firebase reserved paths
   if (path.startsWith('/__')) {
@@ -135,7 +131,12 @@ app.use(
 /**
  * Handle all other requests by rendering the Angular application.
  */
-app.use((req, res, next) => {
+let angularApp: AngularNodeAppEngine | undefined;
+
+app.use('/**', (req, res, next) => {
+  if (!angularApp) {
+    angularApp = new AngularNodeAppEngine();
+  }
   angularApp
     .handle(req)
     .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
@@ -146,13 +147,9 @@ app.use((req, res, next) => {
  * Start the server if this module is the main entry point, or it is ran via PM2.
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
-if (isMainModule(import.meta.url) || process.env.pm_id) {
+if (isMainModule(import.meta.url)) {
   const port = process.env.PORT || 4000;
-  app.listen(port, (error) => {
-    if (error) {
-      throw error;
-    }
-  });
+  app.listen(port);
 }
 
 /**
