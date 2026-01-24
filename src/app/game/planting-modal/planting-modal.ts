@@ -18,7 +18,7 @@ import type { CropType } from '../../types';
         aria-modal="true"
         aria-labelledby="planting-title"
       >
-        <h2 id="planting-title" i18n="Main Heading|Title of the planting selection modal@@planting.title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
+        <h2 id="planting-title" class="text-2xl font-bold text-white mb-6 font-serif">Was möchtest du anbauen?</h2>
 
         <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
           @for (crop of crops; track crop) {
@@ -49,7 +49,7 @@ import type { CropType } from '../../types';
         <div class="flex justify-end gap-3 mt-8">
           <button
             (click)="plantingCancelled.emit()"
-            i18n="Action Label|Button to cancel planting and close the modal@@planting.cancel"
+
             class="px-4 py-2 text-gray-400 hover:text-white transition"
           >
             Abbrechen

@@ -12,7 +12,7 @@
 
       <a routerLink="/"
         class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
-        title="Back to Landing Page" i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding">
+        title="Back to Landing Page">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -35,10 +35,10 @@
       class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 my-8 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:my-0">
       <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-emerald-400 mb-2">
-                  <ng-container i18n="Main Heading|Title of the registration page@@adminRegister.title">Registrierung</ng-container>
+                  <ng-container>Registrierung</ng-container>
                 </h1>
         <p class="text-gray-400">
-          <ng-container i18n="Subheading|Invitation to join the SOIL community@@adminRegister.subtitle">Treten Sie der
+          <ng-container>Treten Sie der
             SOIL-Community bei</ng-container>
         </p>
       </div>
@@ -46,7 +46,7 @@
       @if (isGoogleUser) {
       <h2 class="text-xl font-bold text-center mb-6 text-white">
         <ng-container
-          i18n="Subheading|Title for completing the registration for Google users@@adminRegister.completeTitle">Registrierung
+>Registrierung
           abschließen</ng-container>
       </h2>
 
@@ -82,7 +82,7 @@
                 <path fill="none" d="M0 0h48v48H0z"></path>
               </svg>
             </div>
-            <div class="gsi-material-button-contents" i18n="@@adminRegister.googleSignUp">Mit Google registrieren</div>
+            <div class="gsi-material-button-contents">Mit Google registrieren</div>
           </div>
         </button>
 
@@ -100,12 +100,12 @@
                           </g>
                         </svg>
                       </div>
-                      <div class="gsi-material-button-contents" i18n="@@adminRegister.appleSignUp">Mit Apple registrieren</div>
+                      <div class="gsi-material-button-contents">Mit Apple registrieren</div>
                     </div>
                   </button>
                   <div class="flex items-center gap-4 my-4">
                     <div class="flex-1 border-t border-gray-700"></div>
-                    <span class="text-sm text-gray-500 uppercase tracking-wider" i18n="@@adminRegister.or">oder</span>
+                    <span class="text-sm text-gray-500 uppercase tracking-wider">oder</span>
                     <div class="flex-1 border-t border-gray-700"></div>
                   </div>      </div>
       }
@@ -196,7 +196,7 @@
               </button>
             </div>
             <p class="text-xs text-gray-500 mt-1"
-              i18n="Form Hint|Requirement for password length@@adminRegister.passwordRequirement">
+>
               Erforderlich: Mindestens 6 Zeichen
             </p>
             <div class="text-red-400 text-xs mt-1 min-h-[1rem]"
@@ -219,11 +219,11 @@
               </path>
             </svg>
             <ng-container
-              i18n="Status Message|Indicates the registration is being processed@@adminRegister.processing">Wird
+>Wird
               verarbeitet...</ng-container>
             } @else {
             <ng-container
-              i18n="Action Label|Button to submit the registration request@@adminRegister.btnSubmit">Registrierung
+>Registrierung
               beantragen</ng-container>
             }
           </button>

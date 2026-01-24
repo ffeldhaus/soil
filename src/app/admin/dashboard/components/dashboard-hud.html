@@ -8,9 +8,9 @@
   <div class="flex items-center gap-3">
     <div class="flex items-center gap-3">
       @if (user?.isAnonymous) {
-        <span class="text-sm font-medium text-blue-400 hidden md:block" i18n="@@dashboard.guestUser">Gast-Modus</span>
-        <a routerLink="/admin/register" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg transition" i18n="@@dashboard.registerBtn">Registrieren</a>
-        <a routerLink="/admin/login" class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg transition" i18n="@@dashboard.loginBtn">Anmelden</a>
+        <span class="text-sm font-medium text-blue-400 hidden md:block">Gast-Modus</span>
+        <a routerLink="/admin/register" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg transition">Registrieren</a>
+        <a routerLink="/admin/login" class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg transition">Anmelden</a>
       } @else {
         <span class="text-sm font-medium text-gray-300 hidden md:block">
           {{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user?.email) }}
@@ -24,7 +24,7 @@
       data-testid="logout-admin"
       class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition w-10 h-10 flex items-center justify-center"
       title="Logout"
-      i18n-title="Action Label|Tooltip for the logout button@@dashboard.logout.title"
+
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path

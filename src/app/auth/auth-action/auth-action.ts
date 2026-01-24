@@ -42,17 +42,17 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
           @if (status === 'loading') {
             <div class="text-center py-8">
               <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-400 mb-4"></div>
-              <p class="text-gray-300" i18n="Status Message|Indicates processing is in progress@@authAction.loading">Verarbeitung läuft...</p>
+              <p class="text-gray-300">Verarbeitung läuft...</p>
             </div>
           }
 
           @if (status === 'resetPassword') {
             <form [formGroup]="resetForm" (ngSubmit)="onResetPassword()" class="space-y-6 text-left py-4">
               <div>
-                <p class="text-sm text-gray-300 mb-6" i18n="Instruction|Instruction for resetting the password@@authAction.resetPassword.instruction">
+                <p class="text-sm text-gray-300 mb-6">
                   Geben Sie ein neues Passwort für <strong>{{ resetEmail }}</strong> ein.
                 </p>
-                <label for="password" class="block text-sm font-medium text-gray-300 mb-2" i18n="Form Label|Label for the new password input@@authAction.resetPassword.label">Neues Passwort</label>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Neues Passwort</label>
                 <input
                   id="password"
                   formControlName="password"
@@ -62,7 +62,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
                   class="appearance-none block w-full px-4 py-3 bg-gray-900/50 border border-white/10 rounded-xl shadow-sm placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm transition-all"
                 />
                 @if (resetForm.get('password')?.touched && resetForm.get('password')?.invalid) {
-                  <p class="mt-2 text-sm text-red-400" i18n="Form Error|Requirement for minimum password length@@authAction.resetPassword.error.minLength">Das Passwort muss mindestens 6 Zeichen lang sein.</p>
+                  <p class="mt-2 text-sm text-red-400">Das Passwort muss mindestens 6 Zeichen lang sein.</p>
                 }
               </div>
 
@@ -72,9 +72,9 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
                 class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 disabled:bg-gray-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden disabled:transform-none disabled:shadow-none"
               >
                 @if (isSubmitting) {
-                  <span class="relative z-10" i18n="Status Message|Indicates the new password is being saved@@authAction.resetPassword.saving">Wird gespeichert...</span>
+                  <span class="relative z-10">Wird gespeichert...</span>
                 } @else {
-                  <span class="relative z-10" i18n="Action Label|Button to save the new password@@authAction.resetPassword.saveButton">Passwort speichern</span>
+                  <span class="relative z-10">Passwort speichern</span>
                 }
               </button>
             </form>
@@ -91,29 +91,29 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
                       </svg>
                     </div>
                     <div class="ml-3">
-                      <p class="text-sm font-medium text-emerald-200" i18n="@@onboarding.emailVerified">
+                      <p class="text-sm font-medium text-emerald-200">
                         Ihre E-Mail-Adresse wurde verifiziert.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <h3 class="text-xl font-semibold text-white mb-4" i18n="@@onboarding.nextSteps">Wie geht es weiter?</h3>
+                <h3 class="text-xl font-semibold text-white mb-4">Wie geht es weiter?</h3>
 
-                <p class="text-gray-300 mb-6 leading-relaxed" i18n="@@onboarding.checkingRegistration">
+                <p class="text-gray-300 mb-6 leading-relaxed">
                   Ihre Registrierung als Lehrkraft wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde,
                   informieren wir Sie per E-Mail.
                 </p>
 
                 <div class="space-y-6">
-                  <p class="text-sm text-emerald-300/70" i18n="@@onboarding.usuallyLess24h">
+                  <p class="text-sm text-emerald-300/70">
                     Dies dauert in der Regel weniger als 24 Stunden.
                   </p>
 
                   <a
                     routerLink="/"
                     class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
-                    i18n="@@onboarding.backToHome"
+
                   >
                     <span class="relative z-10">Zur Startseite</span>
                   </a>
@@ -134,7 +134,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
                 <a
                   routerLink="/admin/login"
                   class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
-                  i18n="Action Label|Link to return to login page@@authAction.toLogin"
+
                 >
                   <span class="relative z-10">Zum Login</span>
                 </a>
@@ -157,7 +157,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
               <a
                 routerLink="/"
                 class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white text-lg font-bold rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 overflow-hidden"
-                i18n="Action Label|Link to return to home page@@authAction.backToHome"
+
               >
                 <span class="relative z-10">Zurück zur Startseite</span>
               </a>

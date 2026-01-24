@@ -7,11 +7,11 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule],
   template: `
     <div class="space-y-6">
-      <h2 class="text-2xl font-bold text-emerald-400" i18n="@@dashboard.joinGame.title">Einem Spiel beitreten</h2>
+      <h2 class="text-2xl font-bold text-emerald-400">Einem Spiel beitreten</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs text-gray-200 mb-1" i18n="@@dashboard.joinGame.id">Spiel-ID</label>
+          <label class="block text-xs text-gray-200 mb-1">Spiel-ID</label>
           <input
             [(ngModel)]="joinConfig.gameId"
             placeholder="z.B. abc-123"
@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
           />
         </div>
         <div>
-          <label class="block text-xs text-gray-200 mb-1" i18n="@@dashboard.joinGame.pin">PIN (optional)</label>
+          <label class="block text-xs text-gray-200 mb-1">PIN (optional)</label>
           <input
             [(ngModel)]="joinConfig.pin"
             type="password"
@@ -34,7 +34,7 @@ import { FormsModule } from '@angular/forms';
         [disabled]="!joinConfig.gameId"
         class="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
       >
-        <span i18n="@@dashboard.joinGame.submit">Spiel beitreten</span>
+        <span>Spiel beitreten</span>
       </button>
     </div>
   `,

@@ -36,7 +36,7 @@ import { RouterLink } from '@angular/router';
             routerLink="/"
             class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
             title="Back to Landing Page"
-            i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
+
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -54,11 +54,11 @@ import { RouterLink } from '@angular/router';
         <header class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl text-center space-y-4">
           <h1
             class="text-4xl md:text-6xl font-bold text-emerald-500 tracking-tight"
-            i18n="Main Heading|Title of the background page@@info.title"
+
           >
             Hintergrund
           </h1>
-          <p class="text-xl text-gray-300 leading-relaxed font-light" i18n="Subheading|Short summary of the scientific basis@@info.subtitle">
+          <p class="text-xl text-gray-300 leading-relaxed font-light">
             Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen
             Handelns.
           </p>
@@ -69,18 +69,18 @@ import { RouterLink } from '@angular/router';
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎨</span>
-              <ng-container i18n="Heading|Title for the design choices section@@info.designChoicesTitle">Design-Entscheidungen & Fachliche Grundlagen</ng-container>
+              <ng-container>Design-Entscheidungen & Fachliche Grundlagen</ng-container>
             </h2>
             <div class="space-y-6 text-gray-300 leading-relaxed">
-              <p i18n="Info Text|Introduction to design choices@@info.designChoicesIntro">
+              <p>
                 Die Simulation SOIL wurde so gestaltet, dass sie zentrale Aspekte der deutschen Landwirtschaft abbildet,
                 dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert.
               </p>
 
               <div class="grid md:grid-cols-2 gap-8">
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for crop selection logic@@info.cropsTitle">Pflanzenauswahl</h3>
-                  <p class="text-sm" i18n="Info Text|Explanation of crop selection@@info.cropsText">
+                  <h3 class="text-emerald-300 font-bold mb-2">Pflanzenauswahl</h3>
+                  <p class="text-sm">
                     Die Auswahl der Kulturen (Weizen, Gerste, Roggen, Hafer, Mais, Kartoffel, Zuckerrübe, Raps, Erbse, Ackerbohne)
                     repräsentiert die wichtigsten Anbaufrüchte in Deutschland (Quelle: 
                     <a href="https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/ackerland-hauptnutzungsarten-kulturarten.html" target="_blank" class="text-emerald-400 hover:underline">Destatis</a>).
@@ -90,8 +90,8 @@ import { RouterLink } from '@angular/router';
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for pricing logic@@info.pricingTitle">Preise & Markt</h3>
-                  <p class="text-sm" i18n="Info Text|Explanation of pricing@@info.pricingText">
+                  <h3 class="text-emerald-300 font-bold mb-2">Preise & Markt</h3>
+                  <p class="text-sm">
                     Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024).
                     Referenzen für konventionelle Preise stammen von der
                     <a href="https://www.ami-informiert.de/" target="_blank" class="text-emerald-400 hover:underline">AMI</a>,
@@ -105,16 +105,16 @@ import { RouterLink } from '@angular/router';
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for weather logic@@info.weatherTitle">Wetter & Klima</h3>
-                  <p class="text-sm" i18n="Info Text|Explanation of weather impacts@@info.weatherText">
+                  <h3 class="text-emerald-300 font-bold mb-2">Wetter & Klima</h3>
+                  <p class="text-sm">
                     Das Wettersystem modelliert typische Herausforderungen wie Frühsommertrockenheit oder Spätfrost.
                     Integrierte Landwirtschaft (Mischung aus Schutzmaßnahmen und angepasster Düngung) erweist sich oft als
                     die stabilste Strategie gegenüber extremen Wetterereignissen.
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for subsidies logic@@info.subsidiesTitle">Subventionen</h3>
-                  <p class="text-sm" i18n="Info Text|Explanation of subsidies@@info.subsidiesText">
+                  <h3 class="text-emerald-300 font-bold mb-2">Subventionen</h3>
+                  <p class="text-sm">
                     Das vereinfachte Subventionsmodell orientiert sich an der EU-Agrarpolitik (GAP).
                     Es setzt sich aus der Einkommensgrundstützung (Basisprämie inkl. Umverteilung von ca. 220 €/ha) und
                     einer zusätzlichen Öko-Prämie (ca. 210 €/ha) zusammen. Letztere unterstützt den Umstieg auf
@@ -131,14 +131,14 @@ import { RouterLink } from '@angular/router';
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🐛</span>
-              <ng-container i18n="Heading|Title for the weather and pests section@@info.weatherPestsTitle">Wissenschaftlicher Hintergrund: Wetter & Schädlinge</ng-container>
+              <ng-container>Wissenschaftlicher Hintergrund: Wetter & Schädlinge</ng-container>
             </h2>
             <div class="space-y-8 text-gray-300 leading-relaxed">
               <div class="grid md:grid-cols-2 gap-8">
                 <div class="space-y-4">
                   <h3 class="text-white font-bold flex items-center gap-2">
                     <span class="text-emerald-500">⛅</span>
-                    <ng-container i18n="Heading|Weather impacts@@info.weatherImpactTitle">Einfluss extremer Wetterereignisse</ng-container>
+                    <ng-container>Einfluss extremer Wetterereignisse</ng-container>
                   </h3>
                   <p class="text-sm">
                     Der Klimawandel führt in Mitteleuropa zu einer Zunahme von Extremwetterlagen. Die Simulation bildet dies durch
@@ -160,7 +160,7 @@ import { RouterLink } from '@angular/router';
                 <div class="space-y-4">
                   <h3 class="text-white font-bold flex items-center gap-2">
                     <span class="text-emerald-500">🦗</span>
-                    <ng-container i18n="Heading|Pest dynamics@@info.pestsImpactTitle">Schädlingsdruck & Pflanzenschutz</ng-container>
+                    <ng-container>Schädlingsdruck & Pflanzenschutz</ng-container>
                   </h3>
                   <p class="text-sm">
                     Die Wahl der Schädlinge in SOIL basiert auf den ökonomisch bedeutendsten Arten in Deutschland (Referenz:
@@ -192,7 +192,7 @@ import { RouterLink } from '@angular/router';
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎓</span>
-              <ng-container i18n="Heading|Title for the main research reference section@@info.mainReferenceTitle">Zentrale Forschungsarbeit</ng-container>
+              <ng-container>Zentrale Forschungsarbeit</ng-container>
             </h2>
             <div class="space-y-6">
               <div>
@@ -205,8 +205,8 @@ import { RouterLink } from '@angular/router';
 
               <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5 space-y-6">
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the objective section@@info.objectiveTitle">1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</h3>
-                  <p class="text-gray-300 leading-relaxed" i18n="Info Text|Description of the main goal of the research@@info.objectiveText">
+                  <h3 class="text-emerald-300 font-bold mb-2">1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</h3>
+                  <p class="text-gray-300 leading-relaxed">
                     Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen
                     der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige
                     Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht
@@ -217,15 +217,15 @@ import { RouterLink } from '@angular/router';
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the theoretical framework section@@info.theoreticalFrameworkTitle">2. Theoretischer Rahmen</h3>
+                  <h3 class="text-emerald-300 font-bold mb-2">2. Theoretischer Rahmen</h3>
                   <ul class="list-disc list-outside ml-5 text-gray-300 space-y-2">
-                    <li i18n="Info Text|Explanation of subjective theories in research context@@info.theoreticalFrameworkSubjectiveTheories">
+                    <li>
                       <strong class="text-white">Subjektive Theorien:</strong> Die Forschung unterscheidet zwischen weitreichenden
                       Theorien (abstraktes Wissen, beeinflusst selten das Verhalten) und nahreichweiten Theorien (praktische
                       Handlungsskripte). Nachhaltiges Handeln erfordert die Aktivierung und Modifizierung dieser
                       nahreichweiten Theorien durch Erfahrung.
                     </li>
-                    <li i18n="Info Text|Explanation of the Dust Bowl syndrome in research context@@info.theoreticalFrameworkDustBowl">
+                    <li>
                       <strong class="text-white">Dust-Bowl-Syndrom:</strong> Das Spiel modelliert die nicht nachhaltige
                       Intensivierung der Landwirtschaft, die zu Bodendegradation, Erosion und wirtschaftlichem Zusammenbruch führt
                       und stellt so eine klare Verbindung zwischen Gewinnstreben und ökologischer Zerstörung her.
@@ -234,14 +234,14 @@ import { RouterLink } from '@angular/router';
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the design principles section@@info.designPrinciplesTitle">3. Gestaltungsprinzipien</h3>
+                  <h3 class="text-emerald-300 font-bold mb-2">3. Gestaltungsprinzipien</h3>
                   <ul class="list-disc list-outside ml-5 text-gray-300 space-y-2">
-                    <li i18n="Info Text|Explanation of experience-oriented learning principle@@info.designPrinciplesExperience">
+                    <li>
                       <strong class="text-white">Erfahrungsorientiertes Lernen:</strong> Die Schüler beginnen mit einer
                       gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die
                       „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion.
                     </li>
-                    <li i18n="Info Text|Explanation of balanced complexity principle@@info.designPrinciplesComplexity">
+                    <li>
                       <strong class="text-white">Ausgewogene Komplexität:</strong> Um eine kognitive Überlastung zu vermeiden,
                       konzentriert sich das Spiel auf die Pedosphäre (Boden), bleibt aber komplex genug (Wetter, Schädlinge,
                       Marktpreise), um einfache lineare Logik zu verhindern.
@@ -250,24 +250,24 @@ import { RouterLink } from '@angular/router';
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the research results section@@info.findingsTitle">4. Wichtige Forschungsergebnisse</h3>
-                  <p class="text-gray-300 leading-relaxed mb-2" i18n="Info Text|Introduction to identification of argumentation types@@info.findingsText">
+                  <h3 class="text-emerald-300 font-bold mb-2">4. Wichtige Forschungsergebnisse</h3>
+                  <p class="text-gray-300 leading-relaxed mb-2">
                     Die Studie identifizierte drei Argumentationstypen:
                   </p>
                   <ol class="list-decimal list-outside ml-5 text-gray-300 space-y-1">
-                    <li i18n="Info Text|Description of argumentation type 1@@info.findingsType1"><strong>Ökonomie über Ökologie:</strong> Pessimismus, Glaube, dass man nichts ändern kann.</li>
-                    <li i18n="Info Text|Description of argumentation type 2@@info.findingsType2"><strong>Ökologie über Ökonomie:</strong> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</li>
-                    <li i18n="Info Text|Description of argumentation type 3@@info.findingsType3"><strong>Ökologie für Ökonomie:</strong> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</li>
+                    <li><strong>Ökonomie über Ökologie:</strong> Pessimismus, Glaube, dass man nichts ändern kann.</li>
+                    <li><strong>Ökologie über Ökonomie:</strong> Ablehnung wirtschaftlicher Nutzung, Schutz wird als Verzicht gesehen.</li>
+                    <li><strong>Ökologie für Ökonomie:</strong> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</li>
                   </ol>
-                  <p class="text-gray-300 leading-relaxed mt-2" i18n="Info Text|Conclusion of the research findings@@info.findingsConclusion">
+                  <p class="text-gray-300 leading-relaxed mt-2">
                     <strong>Fazit:</strong> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt
                     als „Partner“ und nicht als Gegner sahen.
                   </p>
                 </section>
 
                 <section>
-                  <h3 class="text-emerald-300 font-bold mb-2" i18n="Heading|Title for the evolution section@@info.evolutionTitle">5. Weiterentwicklung zu soil.app</h3>
-                  <p class="text-gray-300 leading-relaxed" i18n="Info Text|Description of the evolution from research to digital app@@info.evolutionText">
+                  <h3 class="text-emerald-300 font-bold mb-2">5. Weiterentwicklung zu soil.app</h3>
+                  <p class="text-gray-300 leading-relaxed">
                     Die digitale Version automatisiert komplexe Berechnungen, bietet visuelle Daten (Wirkungsdiagramme) und
                     erleichtert präzise „Debriefing“- und Reflexionsphasen, wodurch abstraktes Bewusstsein in funktionale
                     Kompetenzen für nachhaltiges Management umgewandelt wird.
@@ -281,7 +281,7 @@ import { RouterLink } from '@angular/router';
                   target="_blank"
                   class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-800/50 hover:bg-emerald-700/50 text-emerald-100 rounded-2xl border border-emerald-500/30 transition-all group"
                 >
-                  <span i18n="Action Label|Link to view the full dissertation online@@info.viewDissertation">Volltext auf eldorado</span>
+                  <span>Volltext auf eldorado</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-4 w-4 transform group-hover:translate-x-1 transition-transform"
@@ -303,7 +303,7 @@ import { RouterLink } from '@angular/router';
 
           <!-- Publication List -->
           <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8">
-            <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3" i18n="Heading|Title for the other publications section@@info.publicationsTitle">
+            <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">📚</span>
               Weitere Publikationen
             </h2>

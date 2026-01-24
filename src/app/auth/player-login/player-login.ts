@@ -27,7 +27,7 @@ import { AuthService } from '../auth.service';
             routerLink="/"
             class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
             title="Back to Landing Page"
-            i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
+
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -59,13 +59,13 @@ import { AuthService } from '../auth.service';
           class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
         >
           <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
-            <ng-container i18n="Main Heading|Title of the player login page@@playerLogin.title">Spiel beitreten</ng-container>
+            <ng-container>Spiel beitreten</ng-container>
           </h2>
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
             <div>
               <label class="block text-sm font-medium text-gray-400 mb-2"
-                ><ng-container i18n="Form Label|Label for the game ID input@@playerLogin.gameId">Spiel-ID</ng-container></label
+                ><ng-container>Spiel-ID</ng-container></label
               >
               <input
                 formControlName="gameId"
@@ -80,7 +80,7 @@ import { AuthService } from '../auth.service';
 
             <div>
               <label class="block text-sm font-medium text-gray-400 mb-2"
-                ><ng-container i18n="Form Label|Label for the player PIN input@@playerLogin.pin">PIN</ng-container></label
+                ><ng-container>PIN</ng-container></label
               >
               <div class="relative">
                 <input
@@ -121,7 +121,7 @@ import { AuthService } from '../auth.service';
               @if (isLoading) {
                 <ng-container>{{ t('playerLogin.enteringGame') }}</ng-container>
               } @else {
-                <ng-container i18n="Action Label|Button to enter the game@@playerLogin.startGame">Spiel starten</ng-container>
+                <ng-container>Spiel starten</ng-container>
               }
             </button>
           </form>

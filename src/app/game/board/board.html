@@ -53,7 +53,7 @@
               }
             </div>
             <div class="h-px bg-gray-800 mx-2 my-2"></div>
-            <label i18n="Label|Group header for map overlays in mobile menu@@board.mobile.overlays"
+            <label
               class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Einblendungen</label>
             <div class="grid grid-cols-1 gap-2">
               <button (click)="toggleLabels(); toggleMobileMenu()"
@@ -61,7 +61,7 @@
                 [class.border-emerald-500]="showLabels" [class.bg-gray-800]="!showLabels"
                 [class.border-gray-700]="!showLabels">
                 <ng-container
-                  i18n="Button Label|Toggle display of field names@@board.mobile.names">Feldnamen</ng-container>
+>Feldnamen</ng-container>
               </button>
               <button (click)="toggleNutrition(); toggleMobileMenu()"
                 class="w-full text-left px-4 py-3 rounded-xl border transition"
@@ -69,7 +69,7 @@
                 [class.bg-gray-800]="!showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay"
                 [class.border-gray-700]="!showNutritionOverlay">
                 <ng-container
-                  i18n="Button Label|Toggle display of nutrition levels@@board.mobile.nutrition">Nährstoffe</ng-container>
+>Nährstoffe</ng-container>
               </button>
               <button (click)="toggleHarvest(); toggleMobileMenu()"
                 class="w-full text-left px-4 py-3 rounded-xl border transition"
@@ -77,43 +77,43 @@
                 [class.bg-gray-800]="!showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay"
                 [class.border-gray-700]="!showHarvestOverlay">
                 <ng-container
-                  i18n="Button Label|Toggle display of harvest yields@@board.mobile.harvest">Ertrag</ng-container>
+>Ertrag</ng-container>
               </button>
               <button (click)="toggleSoil(); toggleMobileMenu()"
                 class="w-full text-left px-4 py-3 rounded-xl border transition" [class.bg-emerald-700]="showSoilOverlay"
                 [class.border-emerald-600]="showSoilOverlay" [class.bg-gray-800]="!showSoilOverlay"
                 [class.text-gray-400]="!showSoilOverlay" [class.border-gray-700]="!showSoilOverlay">
                 <ng-container
-                  i18n="Button Label|Toggle display of soil quality@@board.mobile.soil">Bodenqualität</ng-container>
+>Bodenqualität</ng-container>
               </button>
               <button (click)="toggleFinance(); toggleMobileMenu()" [disabled]="maxRoundNumber === 0"
                 class="w-full text-left px-4 py-3 rounded-xl border transition" [class.bg-emerald-600]="showFinance"
                 [class.border-emerald-500]="showFinance" [class.bg-gray-800]="!showFinance"
                 [class.border-gray-700]="!showFinance" [class.opacity-50]="maxRoundNumber === 0">
                 <ng-container
-                  i18n="Button Label|Toggle display of financial report@@board.mobile.finance">Finanzen</ng-container>
+>Finanzen</ng-container>
               </button>
             </div>
           </nav>
 
           <!-- Game Actions Section -->
           <div class="space-y-3">
-            <label i18n="Label|Group header for game actions in mobile menu@@board.mobile.actions"
+            <label
               class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Aktionen</label>
             <button (click)="openRoundSettings(); toggleMobileMenu()" [disabled]="isReadOnly"
               class="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl border border-gray-700 transition flex items-center justify-center gap-2">
               <ng-container
-                i18n="Button Label|Open modal for round-specific settings@@board.mobile.roundOptions">Runden-Optionen</ng-container>
+>Runden-Optionen</ng-container>
             </button>
             @if ((gameState$ | async)?.game?.status !== 'finished') {
             <button (click)="nextRound(); toggleMobileMenu()"
               [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
               class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl border border-emerald-500 transition shadow-lg flex items-center justify-center">
               @if (isSubmitted) {
-              <ng-container i18n="Status Message|Wait message for round submission@@board.mobile.waiting">Warten auf
+              <ng-container>Warten auf
                 andere...</ng-container>
               } @else {
-              <ng-container i18n="Action Label|Submit round and proceed to next@@board.mobile.nextRound">Nächste
+              <ng-container>Nächste
                 Runde</ng-container>
               }
             </button>
@@ -121,7 +121,7 @@
             @if ((gameState$ | async)?.game?.status === 'finished') {
             <button (click)="showGameEndModal = true; toggleMobileMenu()"
               class="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl border border-amber-500 transition shadow-lg flex items-center justify-center">
-              <ng-container i18n="Status Message|Indicates the game has ended@@board.mobile.endGame">Spiel
+              <ng-container>Spiel
                 beendet</ng-container>
             </button>
             }
@@ -149,7 +149,7 @@
               <input [(ngModel)]="tempName" (keyup.enter)="saveName()" (blur)="saveName()"
                 class="bg-gray-900 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1" />
               }
-              <span i18n="Label|Indicates the current active player@@board.activePlayer"
+              <span
                 class="text-[10px] text-gray-500">Aktiver Spieler</span>
             </div>
           </div>
@@ -168,7 +168,7 @@
       <div class="absolute top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
         <div
           class="bg-amber-500/90 text-black px-6 py-2 rounded-full font-bold shadow-lg border-2 border-amber-300 backdrop-blur-sm animate-pulse">
-          <ng-container i18n="Status Message|Banner shown when in admin preview mode@@board.banner.readOnly">Nur
+          <ng-container>Nur
             Lesezugriff (Admin-Vorschau)</ng-container>
         </div>
       </div>
@@ -187,10 +187,10 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h3 i18n="Heading|Title for error modal@@board.error.title" class="text-xl font-bold text-white mb-2">Fehler
+          <h3 class="text-xl font-bold text-white mb-2">Fehler
           </h3>
           <p class="text-red-100 mb-6">{{ errorMessage }}</p>
-          <button (click)="errorMessage = ''" i18n="Action Label|Button to close the error modal@@board.error.close"
+          <button (click)="errorMessage = ''"
             class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors">
             Schließen
           </button>
@@ -241,7 +241,7 @@
             <span class="text-xs font-mono px-2 min-w-[100px] text-center transition-colors"
               [class.text-emerald-400]="viewingRound === maxRoundNumber"
               [class.text-gray-400]="viewingRound < maxRoundNumber">
-              <ng-container i18n="Label|Prefix for the round number display@@board.round">Runde</ng-container> {{
+              <ng-container>Runde</ng-container> {{
               viewingRound }}
             </span>
             <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
@@ -319,11 +319,11 @@
       <div
         class="relative bg-gray-900 border border-gray-700 shadow-2xl rounded-3xl max-w-2xl w-full p-8 text-center transform transition-all animate-modal-entrance">
         <div class="mb-6">
-          <h2 i18n="Main Heading|Title shown when the game is finished@@board.gameEnd.title"
+          <h2
             class="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight">
             Spiel beendet!
           </h2>
-          <p i18n="Subheading|Congratulations message at the end of the game@@board.gameEnd.subtitle"
+          <p
             class="text-gray-400 text-lg sm:text-xl">
             Herausragende Leistung aller Landwirte.
           </p>
@@ -342,7 +342,7 @@
           <div
             class="bg-gradient-to-br from-emerald-500/20 to-teal-600/10 border border-emerald-500/30 p-6 rounded-2xl shadow-lg transform hover:scale-105 transition-transform group">
             <div class="text-4xl mb-3 group-hover:animate-bounce">🌿</div>
-            <h3 i18n="Award Title|Title for the player with the best average soil quality@@board.gameEnd.soilTitle"
+            <h3
               class="text-emerald-400 font-bold uppercase text-xs tracking-widest mb-1">
               Boden-Wächter
             </h3>
@@ -353,12 +353,12 @@
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
           <button (click)="closeGameEndModal()"
-            i18n="Action Label|Button to close the celebration modal and view results@@board.gameEnd.viewResults"
+
             class="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition border border-gray-600 shadow-lg">
             Ergebnisse ansehen
           </button>
           <button routerLink="/admin"
-            i18n="Action Label|Button to return to the teacher dashboard@@board.gameEnd.backToDashboard"
+
             class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-900/40">
             Zum Dashboard
           </button>

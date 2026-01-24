@@ -36,7 +36,7 @@ import { RouterLink } from '@angular/router';
             routerLink="/"
             class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
             title="Back to Landing Page"
-            i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
+
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -54,20 +54,20 @@ import { RouterLink } from '@angular/router';
         <!-- Header -->
         <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl flex justify-between items-center portrait:rounded-none portrait:border-x-0">
           <div>
-            <h1 i18n="Main Heading|Title of the imprint page@@impressum.title" class="text-4xl font-serif font-bold text-emerald-500 mb-2">Impressum</h1>
-            <p i18n="Subheading|Legal information and contact subtitle@@impressum.subtitle" class="text-gray-400">Rechtliche Informationen & Kontakt</p>
+            <h1 class="text-4xl font-serif font-bold text-emerald-500 mb-2">Impressum</h1>
+            <p class="text-gray-400">Rechtliche Informationen & Kontakt</p>
           </div>
         </header>
 
         <!-- Projekt -->
         <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 i18n="Heading|Project information section@@impressum.project" class="text-2xl font-bold text-white">Projekt</h2>
-          <p i18n="Footer Text|Copyright and project info@@landing.footer" class="text-gray-300">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
+          <h2 class="text-2xl font-bold text-white">Projekt</h2>
+          <p class="text-gray-300">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
         </section>
 
         <!-- Kontakt -->
         <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 i18n="Heading|Contact information section@@impressum.contact" class="text-2xl font-bold text-white">Kontakt</h2>
+          <h2 class="text-2xl font-bold text-white">Kontakt</h2>
           <div class="text-gray-300 space-y-1">
             <p class="font-bold text-white">Florian Feldhaus</p>
             <p>Kanonikerweg 2</p>
@@ -83,7 +83,7 @@ import { RouterLink } from '@angular/router';
 
         <!-- Verantwortlich -->
         <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 i18n="Heading|Section identifying the person responsible for content@@impressum.responsible" class="text-2xl font-bold text-white">Verantwortlich</h2>
+          <h2 class="text-2xl font-bold text-white">Verantwortlich</h2>
           <div class="text-gray-300 space-y-1">
             <p class="font-bold text-white">Nina Wolf</p>
             <p>Kanonikerweg 2</p>
@@ -99,13 +99,13 @@ import { RouterLink } from '@angular/router';
 
         <!-- Disclaimer -->
         <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 i18n="Heading|Title for the disclaimer section@@impressum.disclaimer.title" class="text-2xl font-bold text-white">Haftungsausschluss</h2>
+          <h2 class="text-2xl font-bold text-white">Haftungsausschluss</h2>
           <div class="text-sm leading-relaxed space-y-4 text-gray-300">
-            <p i18n="Legal Text|Disclaimer regarding external links@@impressum.disclaimer.p1">
+            <p>
               Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für
               den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
             </p>
-            <p i18n="Legal Text|Disclaimer regarding game data and pedagogical purpose@@impressum.disclaimer.p2">
+            <p>
               Alle in diesem Spiel (SOIL) verwendeten Daten, Erträge und Berechnungen dienen ausschließlich dem
               pädagogischen Zweck und der Spielmechanik. Sie stellen keine professionelle landwirtschaftliche Beratung
               dar.

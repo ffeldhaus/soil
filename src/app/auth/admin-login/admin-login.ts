@@ -26,7 +26,7 @@ import { AuthService } from '../auth.service';
             routerLink="/"
             class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
             title="Back to Landing Page"
-            i18n-title="Action Label|Tooltip to go back to landing page@@nav.backToLanding"
+
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -58,8 +58,8 @@ import { AuthService } from '../auth.service';
           class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
         >
           <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-emerald-400 mb-2" i18n="@@adminLogin.title">Anmeldung</h1>
-            <p class="text-gray-400" i18n="@@adminLogin.subtitle">Zugang zum Soil-Dashboard</p>
+            <h1 class="text-3xl font-bold text-emerald-400 mb-2">Anmeldung</h1>
+            <p class="text-gray-400">Zugang zum Soil-Dashboard</p>
           </div>
 
           @if (successMessage) {
@@ -72,7 +72,7 @@ import { AuthService } from '../auth.service';
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2" i18n="@@adminLogin.email">E-Mail</label>
+              <label class="block text-sm font-medium text-gray-400 mb-2">E-Mail</label>
               <input
                 formControlName="email"
                 type="email"
@@ -84,7 +84,7 @@ import { AuthService } from '../auth.service';
 
             <div>
               <div class="flex items-center justify-between mb-2">
-                <label class="block text-sm font-medium text-gray-400" i18n="@@adminLogin.password">Passwort</label>
+                <label class="block text-sm font-medium text-gray-400">Passwort</label>
                 <button
                   type="button"
                   (click)="forgotPassword()"
@@ -127,9 +127,9 @@ import { AuthService } from '../auth.service';
               class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
             >
               @if (isLoading) {
-                <ng-container i18n="@@adminLogin.loggingIn">Anmeldung läuft...</ng-container>
+                <ng-container>Anmeldung läuft...</ng-container>
               } @else {
-                <ng-container i18n="@@adminLogin.loginButton">Anmelden</ng-container>
+                <ng-container>Anmelden</ng-container>
               }
             </button>
           </form>
@@ -147,7 +147,7 @@ import { AuthService } from '../auth.service';
                     <path fill="none" d="M0 0h48v48H0z"></path>
                   </svg>
                 </div>
-                <div class="gsi-material-button-contents" i18n="@@adminLogin.googleSignIn">Mit Google anmelden</div>
+                <div class="gsi-material-button-contents">Mit Google anmelden</div>
               </div>
             </button>
 
@@ -161,14 +161,14 @@ import { AuthService } from '../auth.service';
                     </g>
                   </svg>
                 </div>
-                <div class="gsi-material-button-contents" i18n="@@adminLogin.appleSignIn">Mit Apple anmelden</div>
+                <div class="gsi-material-button-contents">Mit Apple anmelden</div>
               </div>
             </button>
             <p class="text-sm text-gray-500">
-              <ng-container i18n="@@adminLogin.noAccount">Noch kein Konto?</ng-container>&nbsp;<a
+              <ng-container>Noch kein Konto?</ng-container>&nbsp;<a
                 routerLink="/admin/register"
                 class="text-emerald-400 hover:underline"
-                i18n="@@adminLogin.registerLink"
+
                 >Hier registrieren</a
               >
             </p>
@@ -204,7 +204,7 @@ import { AuthService } from '../auth.service';
                 </svg>
               </div>
               <div>
-                <h3 class="text-xl font-bold text-white mb-2" i18n="@@adminLogin.error.title">
+                <h3 class="text-xl font-bold text-white mb-2">
                   Anmeldung fehlgeschlagen
                 </h3>
                 <p class="text-gray-300">{{ errorMessage }}</p>
@@ -212,7 +212,7 @@ import { AuthService } from '../auth.service';
               <button
                 (click)="closeModal()"
                 class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition"
-                i18n="@@adminLogin.error.retry"
+
               >
                 Erneut versuchen
               </button>

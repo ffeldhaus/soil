@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
         tabindex="0"
       >
         <div class="flex justify-between items-center mb-6">
-          <h2 i18n="The title for the feedback modal@@feedback.title" class="text-2xl font-bold text-white font-serif">Feedback & Vorschläge</h2>
+          <h2 class="text-2xl font-bold text-white font-serif">Feedback & Vorschläge</h2>
           <button (click)="closeModal.emit()" class="text-gray-400 hover:text-white transition">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -30,7 +30,7 @@ import { FormsModule } from '@angular/forms';
         <form (submit)="submitFeedback()" #feedbackForm="ngForm" class="space-y-6">
           <!-- Rating -->
           <div>
-            <span class="block text-sm font-medium text-gray-400 mb-2" i18n="@@feedback.rating">Bewertung</span>
+            <span class="block text-sm font-medium text-gray-400 mb-2">Bewertung</span>
             <div class="flex items-center gap-3">
               <div class="flex gap-1">
                 @for (star of [1, 2, 3, 4, 5]; track star) {
@@ -54,7 +54,7 @@ import { FormsModule } from '@angular/forms';
 
           <!-- Comment -->
           <div>
-            <label for="comment" class="block text-sm font-medium text-gray-400 mb-2" i18n="@@feedback.comment"
+            <label for="comment" class="block text-sm font-medium text-gray-400 mb-2"
               >Dein Feedback</label
             >
             <textarea
@@ -63,7 +63,7 @@ import { FormsModule } from '@angular/forms';
               name="comment"
               required
               rows="4"
-              i18n-placeholder="@@feedback.commentPlaceholder"
+
               placeholder="Erzähl uns mehr..."
               class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none"
             ></textarea>
@@ -73,7 +73,7 @@ import { FormsModule } from '@angular/forms';
             <button
               type="button"
               (click)="closeModal.emit()"
-              i18n="@@feedback.cancel"
+
               class="px-6 py-3 text-gray-400 hover:text-white transition font-medium"
             >
               Abbrechen
@@ -84,10 +84,10 @@ import { FormsModule } from '@angular/forms';
               class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:text-gray-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-900/20 flex items-center gap-2"
             >
               @if (!isSubmitting) {
-                <span i18n="@@feedback.submit">Feedback senden</span>
+                <span>Feedback senden</span>
               }
               @if (isSubmitting) {
-                <span i18n="@@feedback.submitting">Wird gesendet...</span>
+                <span>Wird gesendet...</span>
               }
               @if (isSubmitting) {
                 <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
