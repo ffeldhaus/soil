@@ -27,7 +27,7 @@
     <!-- Text Overlay (Name) -->
     @if (showLabels) {
       <div
-        class="bg-gray-300/90 text-gray-900 text-[9px] sm:text-xs font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap"
+        class="bg-gray-300/90 text-gray-900 text-[11px] sm:text-sm font-bold px-1.5 rounded shadow-sm border border-gray-400/50 whitespace-nowrap"
       >
         {{ t(getConfig(parcel.crop).label) }}
       </div>
@@ -36,7 +36,7 @@
     <!-- Soil Overlay -->
     @if (showSoil) {
       <div
-        class="bg-emerald-700/90 text-white text-[9px] sm:text-xs font-bold px-1 rounded shadow-sm border border-emerald-400/50"
+        class="bg-emerald-700/90 text-white text-[11px] sm:text-sm font-bold px-1.5 rounded shadow-sm border border-emerald-400/50"
       >
         {{ parcel.soil | number: '1.0-0' }}
       </div>
@@ -45,7 +45,7 @@
     <!-- Harvest Overlay (Yield) -->
     @if (showHarvest) {
       <div
-        class="bg-yellow-500/90 text-black text-[9px] sm:text-xs font-bold px-1 rounded shadow-sm border border-yellow-300"
+        class="bg-yellow-500/90 text-black text-[11px] sm:text-sm font-bold px-1.5 rounded shadow-sm border border-yellow-300"
       >
         {{ parcel.yield || 0 | number: '1.0-0' }}
       </div>
@@ -54,7 +54,7 @@
     <!-- Nutrition Overlay -->
     @if (showNutrition) {
       <div
-        class="bg-blue-600/90 text-white text-[9px] sm:text-xs font-bold px-1 rounded shadow-sm border border-blue-400/50"
+        class="bg-blue-600/90 text-white text-[11px] sm:text-sm font-bold px-1.5 rounded shadow-sm border border-blue-400/50"
       >
         {{ parcel.nutrition | number: '1.0-0' }}
       </div>
