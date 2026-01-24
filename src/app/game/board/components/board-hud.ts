@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, inject, isDevMode, Output, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, inject, isDevMode, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { User } from 'firebase/auth';
 
@@ -61,17 +61,17 @@ export class BoardHudComponent {
     // If we are viewing a historical round, try to get the capital from that round's result
     if (this.viewingRound < currentRoundNum) {
       const histRound = this.gameState.playerState.history?.find((r) => r.number === this.viewingRound);
-      
+
       // If we have the round but no result (lightweight history), or no round at all, fetch it
       if (!histRound || !histRound.result) {
         this.lazyFetchRound(this.viewingRound);
         // Fallback: search for the last available round in history that HAS a result
         const lastWithResult = [...(this.gameState.playerState.history || [])]
           .reverse()
-          .find(r => r.number <= this.viewingRound && r.result);
+          .find((r) => r.number <= this.viewingRound && r.result);
         return lastWithResult?.result?.capital || 0;
       }
-      
+
       if (histRound.result.capital !== undefined) {
         return histRound.result.capital;
       }
@@ -82,16 +82,16 @@ export class BoardHudComponent {
 
   private async lazyFetchRound(roundNum: number) {
     if (this.fetchingRound === roundNum || !this.gameState?.game?.id) return;
-    
+
     this.fetchingRound = roundNum;
     try {
       const fullRound = await this.gameService.getRoundData(this.gameState.game.id, roundNum);
-      
+
       // Inject the full round into the local history if missing or lightweight
       if (this.gameState.playerState) {
         const history = this.gameState.playerState.history || [];
-        const index = history.findIndex(r => r.number === roundNum);
-        
+        const index = history.findIndex((r) => r.number === roundNum);
+
         if (index >= 0) {
           history[index] = fullRound;
         } else {
