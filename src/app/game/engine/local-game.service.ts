@@ -138,6 +138,7 @@ export class LocalGameService {
     // 1. Store player decision
     state.game.players[playerUid].pendingDecisions = decision;
     state.game.players[playerUid].submittedRound = currentRound;
+    state.playerState = state.game.players[playerUid];
 
     // 2. Process AI Decisions
     for (const uid in state.game.players) {
@@ -202,6 +203,7 @@ export class LocalGameService {
       state.game.status = 'finished';
     }
     state.game.updatedAt = new Date();
+    state.playerState = state.game.players[state.playerState.uid];
     state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
   }
 
