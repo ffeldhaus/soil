@@ -1,5 +1,5 @@
 <div
-  class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 flex items-center justify-between h-10"
+  class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-2 sm:px-6 py-1 flex items-center justify-between h-10"
 >
   <button
     (click)="toggleMobileMenu.emit()"
@@ -12,14 +12,52 @@
     </svg>
   </button>
   <!-- Left Side: Logo & Stats -->
-  <div class="flex items-center gap-4">
-    <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider hidden sm:block">SOIL</h1>
+  <div class="flex items-center gap-2 sm:gap-4">
+    <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider hidden md:block">SOIL</h1>
     @if (gameState) {
-      <div class="flex gap-4 text-gray-200 font-mono text-sm md:text-base">
+      <div class="flex gap-4 text-gray-200 font-mono text-sm md:text-base hidden sm:flex">
         <span class="text-yellow-400" data-testid="hud-capital">{{
           gameState.playerState?.capital ?? 0 | currency: 'EUR' : 'symbol' : '1.0-0'
         }}</span>
       </div>
+    }
+  </div>
+
+  <!-- Mobile Controls (Visible on small screens) -->
+  <div class="flex lg:hidden items-center gap-0.5 sm:gap-1">
+    <button (click)="toggleLabels.emit()" class="p-1.5 rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-400]="!showLabels" title="Feldnamen">
+      <span class="text-base">🏷️</span>
+    </button>
+    <button (click)="toggleNutrition.emit()" class="p-1.5 rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay" title="Nährstoffe">
+      <span class="text-base">🧪</span>
+    </button>
+    <button (click)="toggleHarvest.emit()" class="p-1.5 rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay" title="Ertrag">
+      <span class="text-base">🌾</span>
+    </button>
+    <button (click)="toggleSoil.emit()" class="p-1.5 rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-400]="!showSoilOverlay" title="Bodenqualität">
+      <span class="text-base">🌿</span>
+    </button>
+    <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="p-1.5 rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-400]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
+      <span class="text-base">📊</span>
+    </button>
+
+    <div class="w-px h-6 bg-gray-700 mx-1"></div>
+
+    @if (gameState?.game?.status !== 'finished') {
+      <button (click)="nextRound.emit()" 
+        [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound" 
+        class="p-1.5 bg-emerald-600 rounded-lg text-white disabled:bg-gray-700 disabled:text-gray-500 shadow-sm"
+        [title]="isSubmitted ? 'Warten auf andere...' : 'Nächste Runde'">
+        @if (isSubmitted || pendingNextRound) {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          </svg>
+        }
+      </button>
     }
   </div>
 

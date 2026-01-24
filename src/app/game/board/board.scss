@@ -21,8 +21,6 @@
   width: min(calc(100vw - 16px), calc((100vh - #{$overhead}) * (var(--cols) / var(--rows))));
   max-height: calc(100vh - #{$overhead});
   max-width: calc(100vw - 16px);
-
-  margin: auto;
 }
 
 @keyframes modal-entrance {

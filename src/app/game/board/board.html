@@ -161,7 +161,7 @@
 
     <!-- Main Board Area -->
     <div
-      class="relative flex-1 w-full min-h-0 flex flex-col items-center justify-center overflow-hidden board-container no-overscroll"
+      class="relative flex-1 w-full min-h-0 flex flex-col items-center justify-start overflow-hidden board-container no-overscroll"
       (click)="onBackgroundClick($event)">
       <!-- Read Only Banner -->
       @if (showReadOnlyBanner) {
@@ -277,8 +277,8 @@
 
       <!-- Grid or Finance (Flex Grow) -->
       @if (!showFinance) {
-        <div class="flex-1 w-full min-h-0 pt-1 pb-16 flex items-center justify-center board-grid-wrapper">
-          <div class="game-grid grid gap-1 max-w-7xl touch-none" [style.--cols]="cols" [style.--rows]="rows"
+        <div class="flex-1 w-full min-h-0 pt-1 pb-16 flex items-start justify-center board-grid-wrapper">
+          <div class="game-grid grid gap-1 max-w-7xl touch-none sm:mt-0" [style.--cols]="cols" [style.--rows]="rows"
             role="grid" aria-label="Game board"
             (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
             (click)="$event.stopPropagation()">
