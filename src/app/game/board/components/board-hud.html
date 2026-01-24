@@ -15,7 +15,7 @@
   <div class="flex items-center gap-2 sm:gap-4">
     <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider hidden md:block">SOIL</h1>
     @if (gameState) {
-      <div class="flex gap-4 text-gray-200 font-mono text-xs sm:text-base">
+      <div class="hidden sm:flex gap-4 text-gray-200 font-mono text-sm md:text-base">
         <span class="text-yellow-400 whitespace-nowrap" data-testid="hud-capital">{{
           getDisplayCapital() | currency: 'EUR' : 'symbol' : '1.0-0'
         }}</span>
