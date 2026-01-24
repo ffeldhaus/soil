@@ -1,5 +1,6 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
@@ -13,20 +14,29 @@ describe('PlayerLoginComponent', () => {
   let authServiceMock: any;
 
   beforeEach(async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
     authServiceMock = {
       loginAsPlayer: vi.fn().mockResolvedValue(undefined),
       user$: of(null),
     };
-    const languageServiceMock = { currentLang: 'de' };
 
     await TestBed.configureTestingModule({
       imports: [PlayerLoginComponent, ReactiveFormsModule],
-      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
+      providers: [
+        provideRouter([]),
+        provideClientHydration(withIncrementalHydration()),
+        { provide: AuthService, useValue: authServiceMock },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayerLoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should create', () => {

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { Functions } from '@angular/fire/functions';
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
@@ -86,6 +87,7 @@ describe('Board', () => {
     await TestBed.configureTestingModule({
       imports: [Board],
       providers: [
+        provideClientHydration(withIncrementalHydration()),
         { provide: AuthService, useValue: authSpy },
         { provide: GameService, useValue: gameSpy },
         { provide: Functions, useValue: functionsSpy },

@@ -1,5 +1,6 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { Functions } from '@angular/fire/functions';
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { vi } from 'vitest';
 import { GameService } from '../../game.service';
 import { BoardHudComponent } from './board-hud';
@@ -15,6 +16,7 @@ describe('BoardHudComponent', () => {
     await TestBed.configureTestingModule({
       imports: [BoardHudComponent],
       providers: [
+        provideClientHydration(withIncrementalHydration()),
         { provide: GameService, useValue: mockGameService },
         { provide: Functions, useValue: {} },
       ],

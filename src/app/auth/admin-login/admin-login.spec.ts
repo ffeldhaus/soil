@@ -1,5 +1,6 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
@@ -14,6 +15,8 @@ describe('AdminLoginComponent', () => {
   let routerMock: any;
 
   beforeEach(async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
     authServiceMock = {
       user$: of(null),
       loginWithEmail: vi.fn().mockResolvedValue(undefined),
@@ -27,7 +30,11 @@ describe('AdminLoginComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [AdminLoginComponent, ReactiveFormsModule],
-      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
+      providers: [
+        provideRouter([]),
+        provideClientHydration(withIncrementalHydration()),
+        { provide: AuthService, useValue: authServiceMock },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminLoginComponent);
@@ -35,6 +42,10 @@ describe('AdminLoginComponent', () => {
     routerMock = TestBed.inject(Router);
     vi.spyOn(routerMock, 'navigate').mockResolvedValue(true);
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should create', () => {

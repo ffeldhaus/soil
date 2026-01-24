@@ -1,4 +1,5 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { ImpressumComponent } from './impressum';
@@ -10,7 +11,7 @@ describe('ImpressumComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ImpressumComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideClientHydration(withIncrementalHydration())],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImpressumComponent);

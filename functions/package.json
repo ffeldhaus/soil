@@ -9,7 +9,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "TS_NODE_TRANSPILE_ONLY=true mocha -r ts-node/register --extension ts src/**/*.test.ts",
+    "test": "NODE_OPTIONS='--no-deprecation' TS_NODE_TRANSPILE_ONLY=true mocha -r ts-node/register --extension ts src/**/*.test.ts",
     "test:coverage": "nyc npm run test"
   },
   "nyc": {

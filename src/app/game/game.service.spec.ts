@@ -20,6 +20,9 @@ describe('GameService', () => {
   let functionsInstance: any;
 
   beforeEach(() => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
     mockLocalStorage = {};
     // Mock localStorage
     Object.defineProperty(window, 'localStorage', {

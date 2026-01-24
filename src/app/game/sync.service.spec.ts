@@ -23,6 +23,9 @@ describe('SyncService', () => {
   let userSubject: BehaviorSubject<any>;
 
   beforeEach(() => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
     userSubject = new BehaviorSubject(null);
     authService = {
       user$: userSubject.asObservable(),

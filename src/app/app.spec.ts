@@ -1,11 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [

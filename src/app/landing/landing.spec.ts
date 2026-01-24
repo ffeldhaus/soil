@@ -1,6 +1,7 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import { AuthService } from '../auth/auth.service';
@@ -27,6 +28,7 @@ describe('Landing', () => {
       imports: [Landing],
       providers: [
         provideRouter([]),
+        provideClientHydration(withIncrementalHydration()),
         { provide: Auth, useValue: authMock },
         { provide: Functions, useValue: functionsMock },
         { provide: AuthService, useValue: authServiceMock },

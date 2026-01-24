@@ -21,3 +21,50 @@ if (typeof ReadableStream === 'undefined') {
 }
 
 getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
+
+// Global console filtering to suppress expected Angular warnings and verbose logs in JSDOM
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  const message = args[0]?.toString() || '';
+  if (
+    message.includes('NG0500') ||
+    message.includes('NG0502') ||
+    message.includes('NG0505') ||
+    message.includes('NG0508')
+  ) {
+    return;
+  }
+  originalConsoleError.apply(console, args);
+};
+
+const originalConsoleWarn = console.warn;
+console.warn = (...args) => {
+  const message = args[0]?.toString() || '';
+  if (
+    message.includes('NG0500') ||
+    message.includes('NG0502') ||
+    message.includes('NG0505') ||
+    message.includes('NG0508') ||
+    message.includes('Draft saved') ||
+    message.includes('Soil Version') ||
+    message.includes('Successfully migrated') ||
+    message.includes('Mock:') ||
+    message.includes('SuperAdmin:')
+  ) {
+    return;
+  }
+  originalConsoleWarn.apply(console, args);
+};
+
+const originalConsoleLog = console.log;
+console.log = (...args) => {
+  const message = args[0]?.toString() || '';
+  if (
+    message.includes('Soil Version') ||
+    message.includes('Mock:') ||
+    message.includes('SuperAdmin:')
+  ) {
+    return;
+  }
+  originalConsoleLog.apply(console, args);
+};

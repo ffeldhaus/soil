@@ -19,9 +19,14 @@ describe('SuperAdminComponent', () => {
     manageAdmin?: any;
     deleteGames?: any;
     getAdminGames?: any;
+    manageFeedback?: any;
   };
 
   beforeEach(async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+
     authServiceMock = {
       user$: of({ uid: 'admin', displayName: 'Admin' }),
       logout: vi.fn().mockResolvedValue(undefined),

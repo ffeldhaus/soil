@@ -11,6 +11,9 @@ describe('AuthService Email Auth', () => {
   let languageServiceSpy: any;
 
   beforeEach(() => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+
     authSpy = {
       currentUser: { email: 'test@example.com', reload: vi.fn() },
       onAuthStateChanged: vi.fn(),
