@@ -1,5 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
-import { type ApplicationConfig, isDevMode } from '@angular/core';
+import { type ApplicationConfig, isDevMode, LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth } from '@angular/fire/auth';
 import { provideFunctions } from '@angular/fire/functions';
@@ -10,6 +12,8 @@ import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
+
+registerLocaleData(localeDe);
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
@@ -54,5 +58,6 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(),
     provideClientHydration(withIncrementalHydration(), withEventReplay()),
+    { provide: LOCALE_ID, useValue: 'de-DE' },
   ],
 };
