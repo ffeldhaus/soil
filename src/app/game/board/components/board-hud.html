@@ -17,7 +17,7 @@
     @if (gameState) {
       <div class="flex gap-4 text-gray-200 font-mono text-sm md:text-base hidden sm:flex">
         <span class="text-yellow-400" data-testid="hud-capital">{{
-          gameState.playerState?.capital ?? 0 | currency: 'EUR' : 'symbol' : '1.0-0'
+          getDisplayCapital() | currency: 'EUR' : 'symbol' : '1.0-0'
         }}</span>
       </div>
     }

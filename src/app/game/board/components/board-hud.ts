@@ -50,6 +50,20 @@ export class BoardHudComponent {
   tempName = '';
   isDev = isDevMode();
 
+  getDisplayCapital(): number {
+    if (!this.gameState?.playerState) return 0;
+
+    // If we are viewing a historical round, try to get the capital from that round's result
+    if (this.viewingRound < (this.gameState.game?.currentRoundNumber || 0)) {
+      const histRound = this.gameState.playerState.history?.find((r) => r.number === this.viewingRound);
+      if (histRound?.result?.capital !== undefined) {
+        return histRound.result.capital;
+      }
+    }
+
+    return this.gameState.playerState.capital || 0;
+  }
+
   t(key: string): string {
     const translations: Record<string, string> = {
       'user.photoURL': 'assets/images/gut.jpg',
