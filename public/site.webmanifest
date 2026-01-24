@@ -1,13 +1,24 @@
 {
+  "id": "soil-simulation-game",
   "name": "Soil - Multiplayer Resource Management",
   "short_name": "SOIL",
   "description": "A multiplayer game about resource management and soil quality.",
-  "start_url": "https://soil.app",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "minimal-ui"],
   "background_color": "#ffffff",
   "theme_color": "#065f46",
   "lang": "de",
+  "dir": "ltr",
+  "orientation": "any",
+  "categories": ["games", "education", "productivity"],
+  "iarc_rating_id": "",
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "icons": [
     {
       "src": "/favicon-96x96.png",
@@ -25,7 +36,7 @@
       "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "maskable any"
     },
     {
       "src": "/apple-touch-icon.png",
@@ -37,7 +48,25 @@
     {
       "src": "/SOIL-screenshot.jpg",
       "sizes": "1920x1377",
-      "type": "image/jpeg"
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Soil Simulation Game Dashboard"
+    },
+    {
+      "src": "/assets/images/bauernhof-portrait-hd.webp",
+      "sizes": "1288x1920",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Soil Simulation Game Mobile View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Game",
+      "short_name": "Play",
+      "description": "Start a new game of Soil",
+      "url": "/",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
     }
   ]
 }
