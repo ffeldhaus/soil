@@ -194,7 +194,7 @@ export class AuthActionComponent implements OnInit {
 
       if (!this.mode || !this.oobCode) {
         this.status = 'error';
-        this.errorMessage = $localize`:Error Message|Link is invalid because of missing parameters@@authAction.error.invalidParams:Ungültiger Link.`;
+        this.errorMessage = 'Ungültiger Link.';
         return;
       }
 
@@ -207,29 +207,29 @@ export class AuthActionComponent implements OnInit {
           break;
         default:
           this.status = 'error';
-          this.errorMessage = $localize`:Error Message|Action requested is unknown@@authAction.error.unknownMode:Unbekannte Aktion.`;
+          this.errorMessage = 'Unbekannte Aktion.';
       }
     });
   }
 
   private async handleVerifyEmail() {
-    this.title = $localize`:Heading|Title for email verification action@@authAction.verifyEmail.title:E-Mail-Verifizierung`;
+    this.title = 'E-Mail-Verifizierung';
     try {
       await applyActionCode(this.auth, this.oobCode);
       this.status = 'success';
-      this.successMessage = $localize`:Success Message|Notification that email was verified@@authAction.verifyEmail.success:Ihre E-Mail-Adresse wurde erfolgreich verifiziert.`;
+      this.successMessage = 'Ihre E-Mail-Adresse wurde erfolgreich verifiziert.';
       this.cdr.detectChanges();
       // No redirect, we show the onboarding info here!
     } catch (error: unknown) {
       console.error('Email verification error:', error);
       this.status = 'error';
-      this.errorMessage = $localize`:Error Message|Email verification link is invalid or expired@@authAction.verifyEmail.error:Der Verifizierungslink ist ungültig oder abgelaufen.`;
+      this.errorMessage = 'Der Verifizierungslink ist ungültig oder abgelaufen.';
       this.cdr.detectChanges();
     }
   }
 
   private async handleResetPassword() {
-    this.title = $localize`:Heading|Title for password reset action@@authAction.resetPassword.title:Passwort zurücksetzen`;
+    this.title = 'Passwort zurücksetzen';
     try {
       this.resetEmail = await verifyPasswordResetCode(this.auth, this.oobCode);
       this.status = 'resetPassword';
@@ -237,7 +237,7 @@ export class AuthActionComponent implements OnInit {
     } catch (error: unknown) {
       console.error('Password reset code error:', error);
       this.status = 'error';
-      this.errorMessage = $localize`:Error Message|Password reset link is invalid or expired@@authAction.resetPassword.error:Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.`;
+      this.errorMessage = 'Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.';
       this.cdr.detectChanges();
     }
   }
@@ -254,11 +254,11 @@ export class AuthActionComponent implements OnInit {
 
       await confirmPasswordReset(this.auth, this.oobCode, newPassword);
       this.status = 'success';
-      this.successMessage = $localize`:Success Message|Notification that password was reset@@authAction.resetPassword.success:Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.`;
+      this.successMessage = 'Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.';
       this.cdr.detectChanges();
     } catch (error: unknown) {
       console.error('Confirm password reset error:', error);
-      this.errorMessage = $localize`:Error Message|Password reset failed@@authAction.resetPassword.confirmError:Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.`;
+      this.errorMessage = 'Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.';
       this.status = 'error';
       this.cdr.detectChanges();
     } finally {

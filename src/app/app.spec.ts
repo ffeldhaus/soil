@@ -3,17 +3,9 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { App } from './app';
-import { LanguageService } from './services/language.service';
 
 describe('App', () => {
-  let languageServiceMock: any;
-
   beforeEach(async () => {
-    languageServiceMock = {
-      init: vi.fn(),
-      getLanguage: vi.fn().mockReturnValue('en-US'),
-    };
-
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
@@ -26,7 +18,6 @@ describe('App', () => {
             queryParams: of({}),
           },
         },
-        { provide: LanguageService, useValue: languageServiceMock },
       ],
     }).compileComponents();
   });

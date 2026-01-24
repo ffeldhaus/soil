@@ -1,44 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <!-- German version -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://soil.app/de/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://soil.app/de/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://soil.app/en/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://soil.app/de/"/>
+    <loc>https://soil.app/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://soil.app/de/impressum</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://soil.app/de/impressum"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://soil.app/en/impressum"/>
+    <loc>https://soil.app/impressum</loc>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://soil.app/de/manual</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://soil.app/de/manual"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://soil.app/en/manual"/>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- English version -->
-  <url>
-    <loc>https://soil.app/en/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://soil.app/de/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://soil.app/en/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://soil.app/de/"/>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://soil.app/en/impressum</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://soil.app/de/impressum"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://soil.app/en/impressum"/>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://soil.app/en/manual</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://soil.app/de/manual"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://soil.app/en/manual"/>
+    <loc>https://soil.app/manual</loc>
     <priority>0.5</priority>
   </url>
 </urlset>

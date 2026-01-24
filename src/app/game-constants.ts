@@ -1,7 +1,5 @@
 import type { CropType } from './types';
 
-declare const $localize: (parts: TemplateStringsArray, ...substitutions: any[]) => string;
-
 interface CropConfig {
   id: CropType;
   name: string;
@@ -84,30 +82,30 @@ export const GAME_CONSTANTS = {
     INVESTMENT_COST: [0, 400, 1500, 4000, 10000],
   },
   WEATHER_EFFECTS: {
-    Normal: { yield: 1.0, soil: 0, name: $localize`:@@weather.normal:Normal` },
-    Drought: { yield: 0.7, soil: -0.01, name: $localize`:@@weather.drought:Trockenheit` },
-    LateFrost: { yield: 0.8, soil: 0, name: $localize`:@@weather.lateFrost:Spätfrost` },
-    SummerDrought: { yield: 0.6, soil: -0.02, name: $localize`:@@weather.summerDrought:Sommerhitze` },
-    Flood: { yield: 0.6, soil: -0.02, name: $localize`:@@weather.flood:Überschwemmung` },
-    Storm: { yield: 0.8, soil: -0.01, name: $localize`:@@weather.storm:Sturm` },
+    Normal: { yield: 1.0, soil: 0, name: 'Normal' },
+    Drought: { yield: 0.7, soil: -0.01, name: 'Trockenheit' },
+    LateFrost: { yield: 0.8, soil: 0, name: 'Spätfrost' },
+    SummerDrought: { yield: 0.6, soil: -0.02, name: 'Sommerhitze' },
+    Flood: { yield: 0.6, soil: -0.02, name: 'Überschwemmung' },
+    Storm: { yield: 0.8, soil: -0.01, name: 'Sturm' },
   } as Record<string, { yield: number; soil: number; name: string }>,
   VERMIN_EFFECTS: {
-    'aphid-black': { name: $localize`:@@pest.aphid-black:Schwarze Bohnenlaus` },
-    'aphid-cereal': { name: $localize`:@@pest.aphid-cereal:Getreideblattlaus` },
-    fritfly: { name: $localize`:@@pest.fritfly:Fritfliege` },
-    'potato-beetle': { name: $localize`:@@pest.potato-beetle:Kartoffelkäfer` },
-    'corn-borer': { name: $localize`:@@pest.corn-borer:Maiszünsler` },
-    wireworm: { name: $localize`:@@pest.wireworm:Drahtwurm` },
-    'pollen-beetle': { name: $localize`:@@pest.pollen-beetle:Rapsglanzkäfer` },
-    'pea-moth': { name: $localize`:@@pest.pea-moth:Erbsenwickler` },
-    'oat-rust': { name: $localize`:@@pest.oat-rust:Haferkronenrost` },
-    nematode: { name: $localize`:@@pest.nematode:Rübennematode` },
+    'aphid-black': { name: 'Schwarze Bohnenlaus' },
+    'aphid-cereal': { name: 'Getreideblattlaus' },
+    fritfly: { name: 'Fritfliege' },
+    'potato-beetle': { name: 'Kartoffelkäfer' },
+    'corn-borer': { name: 'Maiszünsler' },
+    wireworm: { name: 'Drahtwurm' },
+    'pollen-beetle': { name: 'Rapsglanzkäfer' },
+    'pea-moth': { name: 'Erbsenwickler' },
+    'oat-rust': { name: 'Haferkronenrost' },
+    nematode: { name: 'Rübennematode' },
   } as Record<string, { name: string }>,
   CROPS: {
     Fieldbean: {
       id: 'Fieldbean',
-      name: $localize`:@@crop.fieldbean:Ackerbohne`,
-      description: $localize`:@@crop.fieldbean.desc:Ackerbohne`,
+      name: 'Ackerbohne',
+      description: 'Ackerbohne',
       image: 'ackerbohne.webp',
       pest: 'Schwarze Bohnenlaus',
       yields: { veryHigh: '≥ 48', high: '36-47', moderate: '24-35', low: '13-23', veryLow: '< 13' },
@@ -121,8 +119,8 @@ export const GAME_CONSTANTS = {
     },
     Barley: {
       id: 'Barley',
-      name: $localize`:@@crop.barley:Gerste`,
-      description: $localize`:@@crop.barley.desc:Gerste`,
+      name: 'Gerste',
+      description: 'Gerste',
       image: 'gerste.webp',
       baseYield: 95,
       soilSensitivity: 1.5,
@@ -136,8 +134,8 @@ export const GAME_CONSTANTS = {
     },
     Oat: {
       id: 'Oat',
-      name: $localize`:@@crop.oat:Hafer`,
-      description: $localize`:@@crop.oat.desc:Hafer`,
+      name: 'Hafer',
+      description: 'Hafer',
       image: 'hafer.webp',
       pest: 'Haferkronenrost',
       yields: { veryHigh: '≥ 56', high: '42-55', moderate: '28-41', low: '15-27', veryLow: '< 15' },
@@ -151,8 +149,8 @@ export const GAME_CONSTANTS = {
     },
     Potato: {
       id: 'Potato',
-      name: $localize`:@@crop.potato:Kartoffel`,
-      description: $localize`:@@crop.potato.desc:Kartoffel`,
+      name: 'Kartoffel',
+      description: 'Kartoffel',
       image: 'kartoffel.webp',
       pest: 'Kartoffelkäfer',
       yields: { veryHigh: '≥ 296', high: '222-295', moderate: '148-221', low: '75-147', veryLow: '< 75' },
@@ -165,8 +163,8 @@ export const GAME_CONSTANTS = {
     },
     Corn: {
       id: 'Corn',
-      name: $localize`:@@crop.corn:Mais`,
-      description: $localize`:@@crop.corn.desc:Mais`,
+      name: 'Mais',
+      description: 'Mais',
       image: 'mais.webp',
       pest: 'Maiszünsler',
       yields: { veryHigh: '≥ 88', high: '66-87', moderate: '44-65', low: '23-43', veryLow: '< 23' },
@@ -179,8 +177,8 @@ export const GAME_CONSTANTS = {
     },
     Rye: {
       id: 'Rye',
-      name: $localize`:@@crop.rye:Roggen`,
-      description: $localize`:@@crop.rye.desc:Roggen`,
+      name: 'Roggen',
+      description: 'Roggen',
       image: 'roggen.webp',
       pest: 'Getreideblattlaus',
       yields: { veryHigh: '≥ 80', high: '60-79', moderate: '40-59', low: '20-39', veryLow: '< 20' },
@@ -194,8 +192,8 @@ export const GAME_CONSTANTS = {
     },
     Wheat: {
       id: 'Wheat',
-      name: $localize`:@@crop.wheat:Weizen`,
-      description: $localize`:@@crop.wheat.desc:Weizen`,
+      name: 'Weizen',
+      description: 'Weizen',
       image: 'weizen.webp',
       pest: 'Getreideblattlaus',
       yields: { veryHigh: '≥ 92', high: '69-91', moderate: '46-68', low: '24-45', veryLow: '< 24' },
@@ -208,8 +206,8 @@ export const GAME_CONSTANTS = {
     },
     Beet: {
       id: 'Beet',
-      name: $localize`:@@crop.beet:Zuckerrübe`,
-      description: $localize`:@@crop.beet.desc:Zuckerrübe`,
+      name: 'Zuckerrübe',
+      description: 'Zuckerrübe',
       image: 'zuckerruebe.webp',
       pest: 'Rübennematode',
       yields: { veryHigh: '≥ 456', high: '342-455', moderate: '228-341', low: '115-227', veryLow: '< 115' },
@@ -223,8 +221,8 @@ export const GAME_CONSTANTS = {
     },
     Rapeseed: {
       id: 'Rapeseed',
-      name: $localize`:@@crop.rapeseed:Raps`,
-      description: $localize`:@@crop.rapeseed.desc:Raps`,
+      name: 'Raps',
+      description: 'Raps',
       image: 'raps.webp',
       pest: 'Rapsglanzkäfer',
       yields: { veryHigh: '≥ 44', high: '34-43', moderate: '24-33', low: '14-23', veryLow: '< 14' },
@@ -237,8 +235,8 @@ export const GAME_CONSTANTS = {
     },
     Pea: {
       id: 'Pea',
-      name: $localize`:@@crop.pea:Erbse`,
-      description: $localize`:@@crop.pea.desc:Erbse`,
+      name: 'Erbse',
+      description: 'Erbse',
       image: 'erbse.webp',
       pest: 'Erbsenwickler',
       yields: { veryHigh: '≥ 40', high: '30-39', moderate: '20-29', low: '10-19', veryLow: '< 10' },

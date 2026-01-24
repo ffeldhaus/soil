@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { LanguageService } from '../services/language.service';
 import { AuthService } from './auth.service';
 
 describe('AuthService Multi-Provider', () => {
@@ -30,8 +29,7 @@ describe('AuthService Multi-Provider', () => {
         AuthService,
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
-        { provide: LanguageService, useValue: languageServiceSpy },
-      ],
+              ],
     });
     service = TestBed.inject(AuthService);
   });

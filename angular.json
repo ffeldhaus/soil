@@ -19,16 +19,6 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
-      "i18n": {
-        "sourceLocale": "de",
-        "locales": {
-          "en": {
-            "translation": [
-              "src/locale/messages.en.xlf"
-            ]
-          }
-        }
-      },
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -37,8 +27,7 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
+              "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -47,8 +36,6 @@
             },
             "server": "src/main.server.ts",
             "prerender": false,
-            "i18nMissingTranslation": "error",
-            "i18nDuplicateTranslation": "error",
             "allowedCommonJsDependencies": [
               "dijkstrajs"
             ],
@@ -68,10 +55,6 @@
           "defaultConfiguration": "production",
           "configurations": {
             "production": {
-              "localize": [
-                "de",
-                "en"
-              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -93,20 +76,6 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
-            },
-            "de": {
-              "localize": [
-                "de"
-              ],
-              "baseHref": "/de/",
-              "outputHashing": "all"
-            },
-            "en": {
-              "localize": [
-                "en"
-              ],
-              "baseHref": "/en/",
-              "outputHashing": "all"
             }
           }
         },
@@ -118,12 +87,6 @@
             },
             "development": {
               "buildTarget": "soil:build:development"
-            },
-            "de": {
-              "buildTarget": "soil:build:de"
-            },
-            "en": {
-              "buildTarget": "soil:build:en"
             }
           },
           "defaultConfiguration": "development"
@@ -134,17 +97,6 @@
             "lintFilePatterns": [
               "src/**/*.ts",
               "src/**/*.html"
-            ]
-          }
-        },
-        "extract-i18n": {
-          "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
-          "options": {
-            "buildTarget": "soil:build",
-            "format": "xlf2",
-            "outputPath": "src/locale",
-            "targetFiles": [
-              "messages.en.xlf"
             ]
           }
         }

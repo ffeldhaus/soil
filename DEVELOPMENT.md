@@ -125,19 +125,6 @@ We use semantic versioning managed in `package.json` and tagged in Git. For a fu
 - **Cloud Build**: Monitor CI/CD builds for success; fix errors and address warnings promptly.
 - **Post-Deployment**: Verify the live version matches the intended `package.json` version.
 
-## Localization Check
-
-Periodically run `ng extract-i18n` to update `messages.xlf` and `messages.en.xlf`.
-
-### I18N Metadata
-
-Always provide **meaning** and **description** for I18N strings if they provide crucial context for translators. Use the following format for metadata:
-
-- **In HTML templates**: `i18n="meaning|description@@custom_id"`
-- **In TypeScript files**: `$localize \`:meaning|description@@custom_id:German Text\``
-
-Example: `i18n="Main Heading|Title of the dashboard@@dashboard.title"`
-
 ## Future Improvements & TODOs
 
 - **Cognitive Complexity**: Refactor `functions/src/game-engine.ts` (specifically `calculateRound`) to reduce cognitive complexity from ~54 to below 15.

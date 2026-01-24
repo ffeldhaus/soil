@@ -3,14 +3,13 @@ import { Component, EventEmitter, Input, inject, isDevMode, Output } from '@angu
 import { FormsModule } from '@angular/forms';
 import type { User } from 'firebase/auth';
 
-import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher';
 import type { Game, PlayerState } from '../../../types';
 import { GameService } from '../../game.service';
 
 @Component({
   selector: 'app-board-hud',
   standalone: true,
-  imports: [CommonModule, FormsModule, LanguageSwitcherComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './board-hud.html',
 })
 export class BoardHudComponent {
@@ -53,18 +52,18 @@ export class BoardHudComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/gut.jpg`,
-      'board.nav.names': $localize`:Nav Label|Toggle display of field names@@board.nav.names:Namen`,
-      'board.nav.nutrition': $localize`:Nav Label|Toggle display of nutrition levels@@board.nav.nutrition:Mineralstoffe`,
-      'board.nav.harvest': $localize`:Nav Label|Toggle display of harvest yields@@board.nav.harvest:Ernte`,
-      'board.nav.soil': $localize`:Nav Label|Toggle display of soil quality@@board.nav.soil:Bodenqualität`,
-      'board.nav.finance': $localize`:Nav Label|Toggle display of financial report@@board.nav.finance:Finanzen`,
-      'board.nav.options': $localize`:Nav Label|Open round options@@board.nav.options:Optionen`,
-      'board.nav.waiting': $localize`:Status Message|Wait message after round submission@@board.nav.waiting:Warten...`,
-      'board.nav.nextRound': $localize`:Action Label|Button to submit round and proceed@@board.nav.nextRound:Nächste Runde`,
-      'board.logout': $localize`:Action Label|Logout button text@@board.logout:Abmelden`,
-      'board.logout.title': $localize`:Action Label|Tooltip for the logout button@@board.logout.title:Logout`,
-      'board.nav.copyState': $localize`:Action Label|Button to copy game state as JSON@@board.nav.copyState:JSON`,
+      'user.photoURL': 'assets/images/gut.jpg',
+      'board.nav.names': 'Namen',
+      'board.nav.nutrition': 'Mineralstoffe',
+      'board.nav.harvest': 'Ernte',
+      'board.nav.soil': 'Bodenqualität',
+      'board.nav.finance': 'Finanzen',
+      'board.nav.options': 'Optionen',
+      'board.nav.waiting': 'Warten...',
+      'board.nav.nextRound': 'Nächste Runde',
+      'board.logout': 'Abmelden',
+      'board.logout.title': 'Logout',
+      'board.nav.copyState': 'JSON',
     };
     return translations[key] || key;
   }

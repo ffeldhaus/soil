@@ -4,7 +4,6 @@ import { Functions } from '@angular/fire/functions';
 import { provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import { AuthService } from '../auth/auth.service';
-import { LanguageService } from '../services/language.service';
 import { Landing } from './landing';
 
 describe('Landing', () => {
@@ -28,8 +27,7 @@ describe('Landing', () => {
       imports: [Landing],
       providers: [
         provideRouter([]),
-        { provide: LanguageService, useValue: languageServiceMock },
-        { provide: Auth, useValue: authMock },
+                { provide: Auth, useValue: authMock },
         { provide: Functions, useValue: functionsMock },
         { provide: AuthService, useValue: authServiceMock },
       ],

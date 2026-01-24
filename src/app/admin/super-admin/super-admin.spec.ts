@@ -5,7 +5,6 @@ import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
-import { LanguageService } from '../../services/language.service';
 import { SuperAdminComponent } from './super-admin';
 
 describe('SuperAdminComponent', () => {
@@ -43,8 +42,7 @@ describe('SuperAdminComponent', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },
-        { provide: LanguageService, useValue: languageServiceMock },
-      ],
+              ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SuperAdminComponent);

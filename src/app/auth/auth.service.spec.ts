@@ -4,7 +4,6 @@ import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { LanguageService } from '../services/language.service';
 import { AuthService } from './auth.service';
 
 // Mock the firebase/auth module
@@ -65,8 +64,7 @@ describe('AuthService', () => {
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
         { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
-        { provide: LanguageService, useValue: languageServiceMock },
-      ],
+              ],
     });
     service = TestBed.inject(AuthService);
   });
@@ -119,7 +117,6 @@ describe('AuthService', () => {
   it('should handle local session in constructor', () => {
     mockLocalStorage.soil_guest_uid = 'guest-123';
 
-    // Reset and reconfigure to get a fresh instance with new localStorage state
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
@@ -127,7 +124,6 @@ describe('AuthService', () => {
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
         { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
-        { provide: LanguageService, useValue: { currentLang: 'de' } },
       ],
     });
     const freshService = TestBed.inject(AuthService);
@@ -145,7 +141,6 @@ describe('AuthService', () => {
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
         { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
-        { provide: LanguageService, useValue: { currentLang: 'de' } },
       ],
     });
     const freshService = TestBed.inject(AuthService);

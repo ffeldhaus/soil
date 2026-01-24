@@ -16,8 +16,6 @@ import {
 import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject } from 'rxjs';
 
-import { LanguageService } from '../services/language.service';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -25,7 +23,6 @@ export class AuthService {
   private functions = inject(Functions, { optional: true });
   private auth = inject(Auth, { optional: true }); // Injected instance is native due to app.config
   private ngZone = inject(NgZone);
-  private languageService = inject(LanguageService);
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
@@ -204,7 +201,7 @@ export class AuthService {
       }
       const sendFn = httpsCallable(this.functions!, 'sendVerificationEmail');
       await sendFn({
-        lang: this.languageService.currentLang,
+        lang: 'de',
         origin: window.location.origin,
       });
     }
@@ -219,7 +216,7 @@ export class AuthService {
     const sendFn = httpsCallable(this.functions!, 'sendPasswordResetEmail');
     await sendFn({
       email,
-      lang: this.languageService.currentLang,
+      lang: 'de',
       origin: window.location.origin,
     });
   }

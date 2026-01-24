@@ -57,17 +57,17 @@ export class Finance implements OnChanges {
   readonly GAME_CONSTANTS = GAME_CONSTANTS;
   t(key: string): string {
     const translations: Record<string, string> = {
-      'crop.wheat': $localize`:@@crop.wheat:Weizen`,
-      'crop.corn': $localize`:@@crop.corn:Mais`,
-      'crop.potato': $localize`:@@crop.potato:Kartoffel`,
-      'crop.beet': $localize`:@@crop.beet:Zuckerrübe`,
-      'crop.barley': $localize`:@@crop.barley:Gerste`,
-      'crop.oat': $localize`:@@crop.oat:Hafer`,
-      'crop.rye': $localize`:@@crop.rye:Roggen`,
-      'crop.fieldbean': $localize`:@@crop.fieldbean:Ackerbohne`,
-      'crop.animals': $localize`:@@crop.animals:Tiere`,
-      'crop.fallow': $localize`:@@crop.fallow:Brachland`,
-      'crop.grass': $localize`:@@crop.grass:Tiere`,
+      'crop.wheat': 'Weizen',
+      'crop.corn': 'Mais',
+      'crop.potato': 'Kartoffel',
+      'crop.beet': 'Zuckerrübe',
+      'crop.barley': 'Gerste',
+      'crop.oat': 'Hafer',
+      'crop.rye': 'Roggen',
+      'crop.fieldbean': 'Ackerbohne',
+      'crop.animals': 'Tiere',
+      'crop.fallow': 'Brachland',
+      'crop.grass': 'Tiere',
     };
     return translations[key] || key;
   }

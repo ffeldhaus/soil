@@ -4,7 +4,6 @@ import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { GameService } from '../../game/game.service';
-import { LanguageService } from '../../services/language.service';
 import { AuthService } from '../auth.service';
 import { AdminRegisterComponent } from './admin-register';
 
@@ -34,8 +33,7 @@ describe('AdminRegisterComponent', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },
-        { provide: LanguageService, useValue: languageServiceMock },
-      ],
+              ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminRegisterComponent);

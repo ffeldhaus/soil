@@ -4,21 +4,18 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { GameService } from '../../game/game.service';
-import { LanguageService } from '../../services/language.service';
-import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-admin-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './admin-register.html',
 })
 export class AdminRegisterComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private gameService = inject(GameService);
-  private languageService = inject(LanguageService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
@@ -39,24 +36,25 @@ export class AdminRegisterComponent implements OnInit {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'adminRegister.signedInAs': $localize`:Status Message|Indicates who the user is signed in as@@adminRegister.signedInAs:Angemeldet als`,
-      'adminRegister.viaGoogle': $localize`:Status Message|Indicates the authentication provider@@adminRegister.viaGoogle:über Google`,
-      'adminRegister.completeApp': $localize`:Instruction|Request to complete the registration application@@adminRegister.completeApp:Bitte vervollständigen Sie Ihren Antrag`,
-      'adminRegister.firstName': $localize`:Form Label|Label for first name input@@adminRegister.firstName:Vorname`,
-      'adminRegister.placeholder.firstName': $localize`:Form Placeholder|Placeholder for first name@@adminRegister.placeholder.firstName:Max`,
-      'adminRegister.lastName': $localize`:Form Label|Label for last name input@@adminRegister.lastName:Nachname`,
-      'adminRegister.placeholder.lastName': $localize`:Form Placeholder|Placeholder for last name@@adminRegister.placeholder.lastName:Mustermann`,
-      'adminRegister.email': $localize`:Form Label|Label for email input@@adminRegister.email:E-Mail-Adresse`,
-      'adminRegister.placeholder.email': $localize`:Form Placeholder|Placeholder for email address@@adminRegister.placeholder.email:admin@schule.de`,
-      'adminRegister.error.email': $localize`:Error Message|Error shown for invalid email@@adminRegister.error.email:Bitte geben Sie eine gültige E-Mail-Adresse ein`,
-      'adminRegister.password': $localize`:Form Label|Label for password input@@adminRegister.password:Passwort`,
-      'adminRegister.placeholder.password': $localize`:Form Placeholder|Placeholder for password field@@adminRegister.placeholder.password:Mindestens 6 Zeichen`,
-      'adminRegister.error.password': $localize`:Error Message|Error shown for short password@@adminRegister.error.password:Das Passwort muss mindestens 6 Zeichen lang sein`,
-      'adminRegister.error.required': $localize`:Error Message|Error shown for required fields@@adminRegister.error.required:Dieses Feld ist ein Pflichtfeld`,
-      'adminRegister.success.verificationSent': $localize`:Success Message|Notification that registration was successful and account verification is pending@@adminRegister.success.verificationSent:Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.`,
-      'adminRegister.error.title': $localize`:Heading|Title for registration error modal@@adminRegister.error.title:Registrierung fehlgeschlagen`,
-      'adminRegister.error.retry': $localize`:Action Label|Button to retry registration@@adminRegister.error.retry:Erneut versuchen`,
-      'adminRegister.error.offline': $localize`:Error Message|Error shown when trying to register while offline@@adminRegister.error.offline:Registrierung ist nur im Online-Modus möglich.`,
+      'adminRegister.signedInAs': 'Angemeldet als',
+      'adminRegister.viaGoogle': 'über Google',
+      'adminRegister.completeApp': 'Bitte vervollständigen Sie Ihren Antrag',
+      'adminRegister.firstName': 'Vorname',
+      'adminRegister.placeholder.firstName': 'Max',
+      'adminRegister.lastName': 'Nachname',
+      'adminRegister.placeholder.lastName': 'Mustermann',
+      'adminRegister.email': 'E-Mail-Adresse',
+      'adminRegister.placeholder.email': 'admin@schule.de',
+      'adminRegister.error.email': 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
+      'adminRegister.password': 'Passwort',
+      'adminRegister.placeholder.password': 'Mindestens 6 Zeichen',
+      'adminRegister.error.password': 'Das Passwort muss mindestens 6 Zeichen lang sein',
+      'adminRegister.error.required': 'Dieses Feld ist ein Pflichtfeld',
+      'adminRegister.success.verificationSent':
+        'Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.',
+      'adminRegister.error.title': 'Registrierung fehlgeschlagen',
+      'adminRegister.error.retry': 'Erneut versuchen',
+      'adminRegister.error.offline': 'Registrierung ist nur im Online-Modus möglich.',
     };
     return translations[key] || key;
   }
@@ -120,7 +118,7 @@ export class AdminRegisterComponent implements OnInit {
         lastName: formData.lastName as string,
         explanation: 'Simplified registration',
         institution: 'N/A',
-        lang: this.languageService.currentLang,
+        lang: 'de',
       });
 
       if (!this.isGoogleUser) {
@@ -159,7 +157,7 @@ export class AdminRegisterComponent implements OnInit {
       await this.authService.loginWithGoogle();
     } catch (err: unknown) {
       console.error(err);
-      this.errorMessage = $localize`:@@adminRegister.error.failed:Anmeldung fehlgeschlagen`;
+      this.errorMessage = 'Anmeldung fehlgeschlagen';
       this.showErrorModal = true;
       this.cdr.detectChanges();
     }
@@ -170,7 +168,7 @@ export class AdminRegisterComponent implements OnInit {
       await this.authService.loginWithApple();
     } catch (err: unknown) {
       console.error(err);
-      this.errorMessage = $localize`:@@adminRegister.error.failed:Anmeldung fehlgeschlagen`;
+      this.errorMessage = 'Anmeldung fehlgeschlagen';
       this.showErrorModal = true;
       this.cdr.detectChanges();
     }

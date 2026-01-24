@@ -2,13 +2,12 @@ import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [ReactiveFormsModule, RouterLink],
   template: `
     <div class="min-h-screen relative bg-gray-900 text-gray-100 font-sans overflow-hidden flex flex-col">
       <!-- Navigation Bar -->
@@ -21,7 +20,6 @@ import { AuthService } from '../auth.service';
 
         <div class="flex items-center gap-3">
           @defer (hydrate on interaction) {
-            <app-language-switcher></app-language-switcher>
           }
 
           <a
@@ -228,10 +226,10 @@ import { AuthService } from '../auth.service';
 export class AdminLoginComponent implements OnInit {
   t(key: string): string {
     const translations: Record<string, string> = {
-      'adminLogin.placeholder.email': $localize`:@@adminLogin.placeholder.email:admin@schule.de`,
-      'adminLogin.forgotPassword': $localize`:@@adminLogin.forgotPassword:Passwort vergessen?`,
-      'adminLogin.resetEmailSent': $localize`:@@adminLogin.resetEmailSent:E-Mail zum Zurücksetzen des Passworts wurde gesendet.`,
-      'adminLogin.resetEmailError': $localize`:@@adminLogin.resetEmailError:Fehler beim Senden der E-Mail zum Zurücksetzen des Passworts.`,
+      'adminLogin.placeholder.email': 'admin@schule.de',
+      'adminLogin.forgotPassword': 'Passwort vergessen?',
+      'adminLogin.resetEmailSent': 'E-Mail zum Zurücksetzen des Passworts wurde gesendet.',
+      'adminLogin.resetEmailError': 'Fehler beim Senden der E-Mail zum Zurücksetzen des Passworts.',
     };
     return translations[key] || key;
   }
@@ -284,7 +282,7 @@ export class AdminLoginComponent implements OnInit {
       this.router.navigate(['/admin']);
     } catch (err: unknown) {
       console.error(err);
-      this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
+      this.errorMessage = 'Anmeldung fehlgeschlagen';
       this.showErrorModal = true;
       this.cdr.detectChanges();
     } finally {
@@ -299,7 +297,7 @@ export class AdminLoginComponent implements OnInit {
       this.router.navigate(['/admin']);
     } catch (err: unknown) {
       console.error(err);
-      this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
+      this.errorMessage = 'Anmeldung fehlgeschlagen';
       this.showErrorModal = true;
       this.cdr.detectChanges();
     }
@@ -311,7 +309,7 @@ export class AdminLoginComponent implements OnInit {
       this.router.navigate(['/admin']);
     } catch (err: unknown) {
       console.error(err);
-      this.errorMessage = $localize`:@@adminLogin.error.failed:Anmeldung fehlgeschlagen`;
+      this.errorMessage = 'Anmeldung fehlgeschlagen';
       this.showErrorModal = true;
       this.cdr.detectChanges();
     }
@@ -320,7 +318,7 @@ export class AdminLoginComponent implements OnInit {
   async forgotPassword() {
     const email = this.loginForm.get('email')?.value;
     if (!email) {
-      this.errorMessage = $localize`:@@adminLogin.error.emailRequired:Bitte geben Sie Ihre E-Mail-Adresse ein.`;
+      this.errorMessage = 'Bitte geben Sie Ihre E-Mail-Adresse ein.';
       this.showErrorModal = true;
       this.cdr.detectChanges();
       return;

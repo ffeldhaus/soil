@@ -3,13 +3,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { first } from 'rxjs/operators';
 
-import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-player-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LanguageSwitcherComponent],
+  imports: [ReactiveFormsModule, RouterLink],
   template: `
     <div class="min-h-screen relative bg-gray-900 text-gray-100 font-sans overflow-hidden flex flex-col">
       <!-- Navigation Bar -->
@@ -22,7 +21,6 @@ import { AuthService } from '../auth.service';
 
         <div class="flex items-center gap-3">
           @defer (hydrate on interaction) {
-            <app-language-switcher></app-language-switcher>
           }
 
           <a
@@ -184,12 +182,12 @@ export class PlayerLoginComponent implements OnInit {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'playerLogin.placeholder.gameId': $localize`:Form Placeholder|Placeholder for game ID@@playerLogin.placeholder.gameId:Game ID`,
-      'playerLogin.placeholder.pin': $localize`:Form Placeholder|Placeholder for player PIN@@playerLogin.placeholder.pin:Unique Player PIN`,
-      'playerLogin.enteringGame': $localize`:Loading State|Text shown while entering the game@@playerLogin.enteringGame:Betrete Spiel...`,
-      'playerLogin.backToHome': $localize`:Action Label|Link to return to home page@@playerLogin.backToHome:Zurück zur Startseite`,
-      'playerLogin.error.title': $localize`:Heading|Title for login error modal@@playerLogin.error.title:Anmeldung fehlgeschlagen`,
-      'playerLogin.error.retry': $localize`:Action Label|Button to retry login@@playerLogin.error.retry:Erneut versuchen`,
+      'playerLogin.placeholder.gameId': 'Game ID',
+      'playerLogin.placeholder.pin': 'Unique Player PIN',
+      'playerLogin.enteringGame': 'Betrete Spiel...',
+      'playerLogin.backToHome': 'Zurück zur Startseite',
+      'playerLogin.error.title': 'Anmeldung fehlgeschlagen',
+      'playerLogin.error.retry': 'Erneut versuchen',
     };
     return translations[key] || key;
   }

@@ -18,13 +18,13 @@ export class ManualPrintModalComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'manual.printModal.title': $localize`:@@manual.printModal.title:Druckeinstellungen`,
-      'manual.printModal.size': $localize`:@@manual.printModal.size:Papierformat`,
-      'manual.printModal.orientation': $localize`:@@manual.printModal.orientation:Ausrichtung`,
-      'manual.printModal.portrait': $localize`:@@manual.printModal.portrait:Hochformat`,
-      'manual.printModal.landscape': $localize`:@@manual.printModal.landscape:Querformat`,
-      'manual.printModal.cancel': $localize`:@@manual.printModal.cancel:Abbrechen`,
-      'manual.printModal.print': $localize`:@@manual.printModal.print:Drucken starten`,
+      'manual.printModal.title': 'Druckeinstellungen',
+      'manual.printModal.size': 'Papierformat',
+      'manual.printModal.orientation': 'Ausrichtung',
+      'manual.printModal.portrait': 'Hochformat',
+      'manual.printModal.landscape': 'Querformat',
+      'manual.printModal.cancel': 'Abbrechen',
+      'manual.printModal.print': 'Drucken starten',
     };
     return translations[key] || key;
   }

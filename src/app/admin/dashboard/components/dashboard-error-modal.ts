@@ -12,8 +12,8 @@ export class DashboardErrorModalComponent {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'dashboard.error.title': $localize`:Heading|Title for error messages@@dashboard.error.title:Fehler`,
-      'dashboard.error.close': $localize`:Action Label|Button to close the error modal@@dashboard.error.close:Schließen`,
+      'dashboard.error.title': 'Fehler',
+      'dashboard.error.close': 'Schließen',
     };
     return translations[key] || key;
   }

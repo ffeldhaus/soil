@@ -2,12 +2,10 @@ import { Component, inject, type OnInit } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
-import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
-
 @Component({
   selector: 'app-impressum',
   standalone: true,
-  imports: [RouterLink, LanguageSwitcherComponent],
+  imports: [RouterLink],
   template: `
     <div class="min-h-screen relative font-sans text-gray-100 overflow-hidden">
           <!-- Background Image -->
@@ -32,7 +30,6 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <div class="flex items-center gap-3">
           @defer (hydrate on interaction) {
-            <app-language-switcher></app-language-switcher>
           }
 
           <a

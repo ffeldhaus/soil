@@ -66,18 +66,18 @@ export class PlantingModal {
 
   t(key: string): string {
     const translations: Record<string, string> = {
-      'crop.wheat': $localize`:Crop Name|Wheat@@crop.wheat:Weizen`,
-      'crop.corn': $localize`:Crop Name|Corn@@crop.corn:Mais`,
-      'crop.potato': $localize`:Crop Name|Potato@@crop.potato:Kartoffel`,
-      'crop.beet': $localize`:Crop Name|Sugar beet@@crop.beet:Zuckerrübe`,
-      'crop.barley': $localize`:Crop Name|Barley@@crop.barley:Gerste`,
-      'crop.oat': $localize`:Crop Name|Oat@@crop.oat:Hafer`,
-      'crop.rye': $localize`:Crop Name|Rye@@crop.rye:Roggen`,
-      'crop.fieldbean': $localize`:Crop Name|Field bean@@crop.fieldbean:Ackerbohne`,
-      'crop.rapeseed': $localize`:Crop Name|Rapeseed@@crop.rapeseed:Raps`,
-      'crop.pea': $localize`:Crop Name|Pea@@crop.pea:Erbse`,
-      'crop.animals': $localize`:Crop Name|Animals (as a land use type)@@crop.animals:Tiere`,
-      'crop.fallow': $localize`:Crop Name|Fallow land@@crop.fallow:Brachland`,
+      'crop.wheat': 'Weizen',
+      'crop.corn': 'Mais',
+      'crop.potato': 'Kartoffel',
+      'crop.beet': 'Zuckerrübe',
+      'crop.barley': 'Gerste',
+      'crop.oat': 'Hafer',
+      'crop.rye': 'Roggen',
+      'crop.fieldbean': 'Ackerbohne',
+      'crop.rapeseed': 'Raps',
+      'crop.pea': 'Erbse',
+      'crop.animals': 'Tiere',
+      'crop.fallow': 'Brachland',
     };
     return translations[key] || key;
   }

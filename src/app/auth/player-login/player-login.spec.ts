@@ -4,7 +4,6 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
-import { LanguageService } from '../../services/language.service';
 import { AuthService } from '../auth.service';
 import { PlayerLoginComponent } from './player-login';
 
@@ -25,8 +24,7 @@ describe('PlayerLoginComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
-        { provide: LanguageService, useValue: languageServiceMock },
-      ],
+              ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayerLoginComponent);

@@ -1,19 +1,11 @@
 User-agent: *
 # Disallow administrative and private routes
 Disallow: /admin/
-Disallow: /de/admin/
-Disallow: /en/admin/
 Disallow: /game
-Disallow: /de/game
-Disallow: /en/game
 Disallow: /game-login
-Disallow: /de/game-login
-Disallow: /en/game-login
 
 # Disallow Impressum to protect contact data from indexing
 Disallow: /impressum
-Disallow: /de/impressum
-Disallow: /en/impressum
 
 # Allow public content
 Allow: /

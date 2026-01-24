@@ -3,7 +3,6 @@ import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import { filter, firstValueFrom } from 'rxjs';
 import { vi } from 'vitest';
-import { LanguageService } from '../services/language.service';
 import { AuthService } from './auth.service';
 
 describe('AuthService Guest Mode', () => {
@@ -25,8 +24,7 @@ describe('AuthService Guest Mode', () => {
         AuthService,
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
-        { provide: LanguageService, useValue: languageServiceSpy },
-      ],
+              ],
     });
     service = TestBed.inject(AuthService);
   });

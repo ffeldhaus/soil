@@ -5,11 +5,6 @@ import { setGlobalOptions } from 'firebase-functions/v2';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
-// Polyfill $localize for server-side use of shared constants
-(global as any).$localize = (parts: TemplateStringsArray, ...substitutions: any[]) => {
-  return parts.reduce((acc, part, i) => acc + (substitutions[i - 1] || '') + part);
-};
-
 import { AiAgent } from './ai-agent';
 import { APP_DOMAIN, GAME_CONSTANTS } from './constants';
 import { GameEngine } from './game-engine';

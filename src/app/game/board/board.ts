@@ -6,8 +6,6 @@ import type { User } from 'firebase/auth';
 import { combineLatest, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
-import { LanguageService } from '../../services/language.service';
-import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher';
 import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
 import { Finance } from '../finance/finance';
 import { GameService } from '../game.service';
@@ -28,7 +26,7 @@ import { BoardHudComponent } from './components/board-hud';
     RoundResultModal,
     RouterLink,
     FormsModule,
-    LanguageSwitcherComponent,
+
     Finance,
     BoardHudComponent,
   ],
@@ -38,20 +36,20 @@ import { BoardHudComponent } from './components/board-hud';
 export class Board implements OnInit, OnDestroy {
   t(key: string): string {
     const translations: Record<string, string> = {
-      'board.login.phGameId': $localize`:Form Placeholder|Placeholder for game ID input@@board.login.phGameId:Game ID`,
-      'board.login.phPlayerNum': $localize`:Form Placeholder|Placeholder for player number input@@board.login.phPlayerNum:Player Number`,
-      'board.login.phPin': $localize`:Form Placeholder|Placeholder for PIN input@@board.login.phPin:PIN`,
-      'user.photoURL': $localize`:Asset Path|Default user photo path@@user.photoURL:assets/images/gut.jpg`,
-      'board.nav.names': $localize`:Nav Label|Toggle display of field names@@board.nav.names:Namen`,
-      'board.nav.nutrition': $localize`:Nav Label|Toggle display of nutrition levels@@board.nav.nutrition:Mineralstoffe`,
-      'board.nav.harvest': $localize`:Nav Label|Toggle display of harvest yields@@board.nav.harvest:Ernte`,
-      'board.nav.soil': $localize`:Nav Label|Toggle display of soil quality@@board.nav.soil:Bodenqualität`,
-      'board.nav.finance': $localize`:Nav Label|Toggle display of financial report@@board.nav.finance:Finanzen`,
-      'board.nav.options': $localize`:Nav Label|Open round options@@board.nav.options:Optionen`,
-      'board.nav.waiting': $localize`:Status Message|Wait message after round submission@@board.nav.waiting:Warten...`,
-      'board.nav.nextRound': $localize`:Action Label|Button to submit round and proceed@@board.nav.nextRound:Nächste Runde`,
-      'board.logout': $localize`:Action Label|Logout button text@@board.logout:Abmelden`,
-      'board.logout.title': $localize`:Action Label|Tooltip for the logout button@@board.logout.title:Logout`,
+      'board.login.phGameId': 'Game ID',
+      'board.login.phPlayerNum': 'Player Number',
+      'board.login.phPin': 'PIN',
+      'user.photoURL': 'assets/images/gut.jpg',
+      'board.nav.names': 'Namen',
+      'board.nav.nutrition': 'Mineralstoffe',
+      'board.nav.harvest': 'Ernte',
+      'board.nav.soil': 'Bodenqualität',
+      'board.nav.finance': 'Finanzen',
+      'board.nav.options': 'Optionen',
+      'board.nav.waiting': 'Warten...',
+      'board.nav.nextRound': 'Nächste Runde',
+      'board.logout': 'Abmelden',
+      'board.logout.title': 'Logout',
     };
     return translations[key] || key;
   }
@@ -68,7 +66,6 @@ export class Board implements OnInit, OnDestroy {
   isDragging = false;
   selectionStart: number | null = null;
   private cdr = inject(ChangeDetectorRef);
-  protected languageService = inject(LanguageService);
   user$ = this.authService.user$;
 
   showPlantingModal = false;

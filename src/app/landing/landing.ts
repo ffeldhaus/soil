@@ -1,12 +1,11 @@
 import { Component, inject, isDevMode } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { LanguageSwitcherComponent } from '../shared/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink, LanguageSwitcherComponent],
+  imports: [RouterLink],
   template: `
     <div class="min-h-screen relative font-sans text-gray-100 overflow-hidden">
       <!-- Navigation Bar (Matching other pages for consistent switcher position) -->
@@ -18,7 +17,6 @@ import { LanguageSwitcherComponent } from '../shared/language-switcher/language-
 
         <div class="flex items-center gap-3">
           @defer (hydrate on interaction) {
-            <app-language-switcher></app-language-switcher>
           }
           <!-- Spacer to match the back/logout button present on other pages -->
           <div class="w-10 h-10"></div>
