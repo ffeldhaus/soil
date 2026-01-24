@@ -21,10 +21,7 @@ describe('PlayerLoginComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [PlayerLoginComponent, ReactiveFormsModule],
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceMock },
-              ],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayerLoginComponent);

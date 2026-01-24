@@ -42,7 +42,7 @@ describe('SuperAdminComponent', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },
-              ],
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SuperAdminComponent);

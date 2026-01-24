@@ -27,7 +27,7 @@ describe('Landing', () => {
       imports: [Landing],
       providers: [
         provideRouter([]),
-                { provide: Auth, useValue: authMock },
+        { provide: Auth, useValue: authMock },
         { provide: Functions, useValue: functionsMock },
         { provide: AuthService, useValue: authServiceMock },
       ],

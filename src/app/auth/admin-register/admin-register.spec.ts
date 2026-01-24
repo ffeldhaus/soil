@@ -33,7 +33,7 @@ describe('AdminRegisterComponent', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
         { provide: GameService, useValue: gameServiceMock },
-              ],
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminRegisterComponent);

@@ -64,7 +64,7 @@ describe('AuthService', () => {
         { provide: Auth, useValue: authSpy },
         { provide: Functions, useValue: functionsSpy },
         { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
-              ],
+      ],
     });
     service = TestBed.inject(AuthService);
   });

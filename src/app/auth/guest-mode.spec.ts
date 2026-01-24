@@ -20,11 +20,7 @@ describe('AuthService Guest Mode', () => {
     languageServiceSpy = { currentLang: 'en' };
 
     TestBed.configureTestingModule({
-      providers: [
-        AuthService,
-        { provide: Auth, useValue: authSpy },
-        { provide: Functions, useValue: functionsSpy },
-              ],
+      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: functionsSpy }],
     });
     service = TestBed.inject(AuthService);
   });
