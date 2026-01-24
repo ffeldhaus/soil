@@ -25,20 +25,20 @@
 
   <!-- Mobile Controls (Visible on small screens) -->
   <div class="flex lg:hidden items-center gap-0.5 sm:gap-1">
-    <button (click)="toggleLabels.emit()" class="p-1.5 rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-400]="!showLabels" title="Feldnamen">
-      <span class="text-base">🏷️</span>
+    <button (click)="toggleLabels.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-400]="!showLabels" title="Feldnamen">
+      <span class="text-sm">🏷️</span>
     </button>
-    <button (click)="toggleNutrition.emit()" class="p-1.5 rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay" title="Nährstoffe">
-      <span class="text-base">🧪</span>
+    <button (click)="toggleNutrition.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay" title="Nährstoffe">
+      <span class="text-sm">🧪</span>
     </button>
-    <button (click)="toggleHarvest.emit()" class="p-1.5 rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay" title="Ertrag">
-      <span class="text-base">🌾</span>
+    <button (click)="toggleHarvest.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay" title="Ertrag">
+      <span class="text-sm">🌾</span>
     </button>
-    <button (click)="toggleSoil.emit()" class="p-1.5 rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-400]="!showSoilOverlay" title="Bodenqualität">
-      <span class="text-base">🌿</span>
+    <button (click)="toggleSoil.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-400]="!showSoilOverlay" title="Bodenqualität">
+      <span class="text-sm">🌿</span>
     </button>
-    <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="p-1.5 rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-400]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
-      <span class="text-base">📊</span>
+    <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-400]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
+      <span class="text-sm">📊</span>
     </button>
 
     <div class="w-px h-6 bg-gray-700 mx-1"></div>
@@ -46,7 +46,7 @@
     @if (gameState?.game?.status !== 'finished') {
       <button (click)="nextRound.emit()" 
         [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound" 
-        class="p-1.5 bg-emerald-600 rounded-lg text-white disabled:bg-gray-700 disabled:text-gray-500 shadow-sm"
+        class="w-8 h-8 flex items-center justify-center bg-emerald-600 rounded-lg text-white disabled:bg-gray-700 disabled:text-gray-500 shadow-sm"
         [title]="isSubmitted ? 'Warten auf andere...' : 'Nächste Runde'">
         @if (isSubmitted || pendingNextRound) {
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
