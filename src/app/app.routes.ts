@@ -53,6 +53,10 @@ const baseRoutes: Routes = [
     path: 'info',
     loadComponent: () => import('./info/info').then((m) => m.InfoComponent),
   },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
 
 export const routes: Routes = [...baseRoutes];

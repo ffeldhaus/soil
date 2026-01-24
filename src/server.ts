@@ -11,122 +11,18 @@ import compression from 'compression';
 import express from 'express';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-const browserDistFolder = resolve(
-  serverDistFolder,
-  serverDistFolder.endsWith('de') || serverDistFolder.endsWith('en') ? '../../browser' : '../browser',
-);
+const browserDistFolder = resolve(serverDistFolder, '../browser');
 
 const app = express();
 app.use(compression());
 
 /**
- * Add hreflang Link headers
- */
-app.use((req, res, next) => {
-  const host = req.get('host') || 'soil.app';
-  const protocol = (req.headers['x-forwarded-proto'] as string) || req.protocol || 'https';
-  const baseUrl = `${protocol}://${host}`;
-  const path = req.path;
-
-  // Strip locale from path if it exists to find the base page path
-  let basePagePath = path;
-  if (path.startsWith('/de/') || path === '/de') {
-    basePagePath = path.substring(3) || '/';
-  } else if (path.startsWith('/en/') || path === '/en') {
-    basePagePath = path.substring(3) || '/';
-  }
-
-  if (!basePagePath.startsWith('/')) {
-    basePagePath = `/${basePagePath}`;
-  }
-
-  const deUrl = `${baseUrl}/de${basePagePath}`;
-  const enUrl = `${baseUrl}/en${basePagePath}`;
-
-  const langLinks = [
-    `<${deUrl}>; rel="alternate"; hreflang="de"`,
-    `<${enUrl}>; rel="alternate"; hreflang="en"`,
-    `<${deUrl}>; rel="alternate"; hreflang="x-default"`,
-  ];
-
-  res.setHeader('Link', langLinks.join(', '));
-  next();
-});
-
-/**
- * Serve static files from the root (robots.txt, sitemap.xml, etc.)
- */
-const rootStaticFiles = [
-  '/robots.txt',
-  '/sitemap.xml',
-  '/favicon.ico',
-  '/favicon.svg',
-  '/apple-touch-icon.png',
-  '/site.webmanifest',
-  '/favicon-96x96.png',
-  '/web-app-manifest-192x192.png',
-  '/web-app-manifest-512x512.png',
-];
-
-app.use((req, res, next) => {
-  if (rootStaticFiles.includes(req.path)) {
-    // Try to serve from 'de' folder as default for root static files
-    res.sendFile(join(browserDistFolder, 'de', req.path));
-    return;
-  }
-  next();
-});
-
-/**
- * Detect language and redirect to localized path
- */
-app.use((req, res, next) => {
-  // Skip redirect during local development with ng serve
-  if (req.headers.host?.includes('localhost:4200')) {
-    next();
-    return;
-  }
-
-  const path = req.path;
-
-  // Skip Firebase reserved paths
-  if (path.startsWith('/__')) {
-    next();
-    return;
-  }
-
-  // Check if it already has a locale prefix
-  if (path.startsWith('/de/') || path === '/de' || path.startsWith('/en/') || path === '/en') {
-    next();
-    return;
-  }
-
-  // Detect language and redirect
-  const lang = req.acceptsLanguages('de', 'en') || 'de';
-  const url = req.originalUrl || req.url;
-
-  // Construct new URL with locale
-  const localizedUrl = `/${lang}${url.startsWith('/') ? '' : '/'}${url}`;
-  res.redirect(301, localizedUrl);
-});
-
-/**
- * Serve static files for each locale
+ * Serve static files from the browser distribution folder.
  */
 app.use(
-  '/de',
-  express.static(join(browserDistFolder, 'de'), {
+  express.static(browserDistFolder, {
     maxAge: '1y',
-    index: 'index.html',
-    redirect: false,
-  }),
-);
-
-app.use(
-  '/en',
-  express.static(join(browserDistFolder, 'en'), {
-    maxAge: '1y',
-    index: 'index.html',
+    index: false,
     redirect: false,
   }),
 );
