@@ -59,11 +59,7 @@ console.warn = (...args) => {
 const originalConsoleLog = console.log;
 console.log = (...args) => {
   const message = args[0]?.toString() || '';
-  if (
-    message.includes('Soil Version') ||
-    message.includes('Mock:') ||
-    message.includes('SuperAdmin:')
-  ) {
+  if (message.includes('Soil Version') || message.includes('Mock:') || message.includes('SuperAdmin:')) {
     return;
   }
   originalConsoleLog.apply(console, args);
