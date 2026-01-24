@@ -3,7 +3,7 @@
   "version": "2.1.2",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "NODE_OPTIONS='--no-deprecation' ng serve",
     "build": "ng build",
     "postbuild": "node scripts/build-sw.js",
     "watch": "ng build --watch --configuration development",
