@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { GAME_CONSTANTS } from '../../game-constants';
 import type { Game, PlayerState, Round, RoundDecision } from '../../types';
 import { AiAgent } from './ai-agent';
 import { GameEngine } from './game-engine';
@@ -93,7 +94,7 @@ export class LocalGameService {
       status: 'in_progress',
       currentRoundNumber: 0,
       settings: {
-        length: config.numRounds || 20,
+        length: config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS,
         difficulty: 'normal',
         playerLabel: config.playerLabel || 'Team',
       },
@@ -129,7 +130,7 @@ export class LocalGameService {
 
   async submitDecision(gameId: string, decision: RoundDecision): Promise<void> {
     const state = this.stateSubject.value;
-    if (!state || state.game.id !== gameId) return;
+    if (!state || state.game.id !== gameId || state.game.status === 'finished') return;
 
     const currentRound = state.game.currentRoundNumber;
     const playerUid = state.playerState.uid;
@@ -196,6 +197,10 @@ export class LocalGameService {
     }
 
     state.game.currentRoundNumber = nextRoundNum;
+    const roundLimit = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+    if (nextRoundNum >= roundLimit) {
+      state.game.status = 'finished';
+    }
     state.game.updatedAt = new Date();
     state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
   }
@@ -248,7 +253,8 @@ export class LocalGameService {
       state.game.status = 'finished'; // Or in_progress, but finished is safer if we don't know
       // Check if it was in_progress or finished
       // Actually, let's look at rounds to decide
-      const isFinished = state.game.currentRoundNumber >= (state.game.config?.numRounds || 20);
+      const isFinished =
+        state.game.currentRoundNumber >= (state.game.config?.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS);
       state.game.status = isFinished ? 'finished' : 'in_progress';
       state.game.deletedAt = null;
       this.saveToStorage(state);

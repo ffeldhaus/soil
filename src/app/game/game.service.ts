@@ -279,6 +279,7 @@ export class GameService {
     const numHumanPlayers = config.numPlayers - (config.numAi || 0);
     if (numHumanPlayers === 1) {
       // Create local game
+      config.numRounds = config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS;
       const result = await this.localGame.createGame(name, config);
       return result;
     }
@@ -289,7 +290,7 @@ export class GameService {
     >(this.functions!, 'createGame');
     try {
       const settings = {
-        length: config.numRounds || 20,
+        length: config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS,
         difficulty: 'normal',
         playerLabel: config.playerLabel || 'Player',
       };
@@ -783,7 +784,7 @@ export class GameService {
     const isRound6 = role === 'player_round_6';
     const isEnd = role === 'player_end';
 
-    const numRounds = isRound6 ? 12 : 10;
+    const numRounds = isRound6 ? 12 : GAME_CONSTANTS.DEFAULT_ROUNDS / 2;
     const currentRound = isEnd ? 11 : isRound6 ? 6 : 1;
     const historyCount = isEnd ? 10 : isRound6 ? 5 : 0;
     const numPlayers = isRound6 ? 10 : isEnd ? 4 : 1;

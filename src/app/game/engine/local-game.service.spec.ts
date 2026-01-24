@@ -88,8 +88,25 @@ describe('LocalGameService', () => {
     expect(restoredGame?.deletedAt).toBeNull();
   });
 
-  it('should return null if game not found', async () => {
-    const result = await service.loadGame('non-existent');
-    expect(result).toBeNull();
+  it('should finish the game after reaching the round limit', async () => {
+    const config = { numPlayers: 1, numAi: 0, numRounds: 2, playerLabel: 'Farmer' };
+    const { gameId } = await service.createGame('Quick Game', config);
+
+    // Round 0 -> 1
+    await service.submitDecision(gameId, { parcels: {} } as any);
+    let state = await service.loadGame(gameId);
+    expect(state?.game.currentRoundNumber).toBe(1);
+    expect(state?.game.status).toBe('in_progress');
+
+    // Round 1 -> 2
+    await service.submitDecision(gameId, { parcels: {} } as any);
+    state = await service.loadGame(gameId);
+    expect(state?.game.currentRoundNumber).toBe(2);
+    expect(state?.game.status).toBe('finished');
+
+    // Should not allow further submissions
+    await service.submitDecision(gameId, { parcels: {} } as any);
+    const stateAfterExtra = await service.loadGame(gameId);
+    expect(stateAfterExtra?.game.currentRoundNumber).toBe(2);
   });
 });

@@ -8,7 +8,7 @@ export class GameEngine {
     decision: RoundDecision,
     events: { weather: string; vermin: string[] },
     currentCapital: number,
-    totalRounds = 20, // Default to 20
+    totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS,
     options?: {
       marketPrices?: Record<string, { organic: number; conventional: number }>;
     },
@@ -32,8 +32,8 @@ export class GameEngine {
       decision.machines || 0,
     );
 
-    const timeScale = 20 / totalRounds;
-    const costScale = totalRounds / 20;
+    const timeScale = GAME_CONSTANTS.DEFAULT_ROUNDS / totalRounds;
+    const costScale = totalRounds / GAME_CONSTANTS.DEFAULT_ROUNDS;
 
     const bioSiegel = decision.organic && !decision.fertilizer && !decision.pesticide;
 

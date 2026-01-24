@@ -35,6 +35,7 @@ interface CropConfig {
 export const APP_DOMAIN = 'https://soil.app';
 
 export const GAME_CONSTANTS = {
+  DEFAULT_ROUNDS: 20,
   SOIL: {
     START: 80,
     FALLOW_RECOVERY: 0.3,

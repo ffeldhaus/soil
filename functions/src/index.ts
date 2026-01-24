@@ -249,7 +249,7 @@ export const submitDecision = onCall(
         }
 
         const currentRound = game.currentRoundNumber || 0;
-        const roundLimit = game.settings?.length || 10;
+        const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
 
         if (currentRound >= roundLimit) {
           throw new HttpsError('failed-precondition', 'Game has reached the round limit.');
@@ -319,7 +319,15 @@ async function performCalculation(
   if (!game) return null;
 
   const players = game.players || {};
-  const nextRoundNumber = (game.currentRoundNumber || 0) + 1;
+  const currentRound = game.currentRoundNumber || 0;
+  const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+
+  if (currentRound >= roundLimit) {
+    console.warn(`performCalculation: Game ${gameId} already at or above limit (${currentRound}/${roundLimit})`);
+    return null;
+  }
+
+  const nextRoundNumber = currentRound + 1;
 
   const weatherRoll = Math.random();
   const weather =
@@ -394,7 +402,7 @@ async function performCalculation(
       playerDecision,
       events,
       0, // capital doesn't matter for yields
-      game.settings?.length || 20,
+      game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS,
     );
 
     playerHarvests[uid] = tempRound.result?.harvestSummary || {};
@@ -446,7 +454,6 @@ async function performCalculation(
     }
 
     const currentCapital = prevRoundData?.result?.capital ?? player.capital ?? 1000;
-    const roundLimit = game.settings?.length || 20;
 
     const nextRound = GameEngine.calculateRound(
       nextRoundNumber,
@@ -493,7 +500,6 @@ async function performCalculation(
   });
 
   // Update game state (current round pointer and all players)
-  const roundLimit = game.settings?.length || 10;
   const isFinished = nextRoundNumber >= roundLimit;
 
   transaction.update(gameRef, {
@@ -541,13 +547,13 @@ export const createGame = onCall(async (request) => {
   const {
     name,
     // password, // Unused
-    settings = { length: 20, difficulty: 'normal', playerLabel: 'Player' },
-    config = { numPlayers: 1, numRounds: 20, numAi: 0, advancedPricingEnabled: false }, // Default config
+    settings = { length: GAME_CONSTANTS.DEFAULT_ROUNDS, difficulty: 'normal', playerLabel: 'Player' },
+    config = { numPlayers: 1, numRounds: GAME_CONSTANTS.DEFAULT_ROUNDS, numAi: 0, advancedPricingEnabled: false }, // Default config
     retentionDays = 90,
   } = request.data;
 
   // Rounds range check: 10 minimum, 50 maximum.
-  const numRounds = Math.min(50, Math.max(10, config.numRounds || 20));
+  const numRounds = Math.min(50, Math.max(10, config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS));
   config.numRounds = numRounds;
   settings.length = numRounds;
 
