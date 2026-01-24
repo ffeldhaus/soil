@@ -13,7 +13,7 @@ import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
 
-registerLocaleData(localeDe);
+registerLocaleData(localeDe, 'de-DE');
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
