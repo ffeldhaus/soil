@@ -12,7 +12,7 @@ bootstrapApplication(App, appConfig).catch((err) => console.error(err));
 
 // Register Workbox Service Worker
 if ('serviceWorker' in navigator && !isDevMode()) {
-  const wb = new Workbox('/service-worker.js');
+  const wb = new Workbox('/sw.js');
 
   wb.addEventListener('waiting', () => {
     // A new service worker is waiting to take over.

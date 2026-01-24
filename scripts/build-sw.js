@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 // Change this to match your build directory
-const swDest = 'dist/soil/browser/service-worker.js';
+const swDest = 'dist/soil/browser/sw.js';
 
 // Preparation for App Hosting (handling localized build structure)
 const browserDir = 'dist/soil/browser';
@@ -37,7 +37,7 @@ if (fs.existsSync(path.join(serverDir, defaultLocale))) {
 }
 
 injectManifest({
-  swSrc: 'src/service-worker.js',
+  swSrc: 'src/sw.js',
   swDest: swDest,
   globDirectory: browserDir,
   globPatterns: ['**/*.{js,css,html,png,svg,jpg,webp,ico,webmanifest}'],

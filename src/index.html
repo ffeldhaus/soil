@@ -26,7 +26,14 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
-    <meta name="app-version" content="2.1.0" />
+    <meta name="app-version" content="2.1.2" />
+    <script>
+      if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
   <style>
     .firebase-emulator-warning {
       display: none !important;
