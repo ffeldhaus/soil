@@ -1,4 +1,5 @@
 const { injectManifest } = require('workbox-build');
+const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -36,8 +37,22 @@ if (fs.existsSync(path.join(serverDir, defaultLocale))) {
   }
 }
 
+// Bundle the service worker using esbuild to handle ES module imports
+const tempSwSrc = 'src/sw.bundled.js';
+try {
+  // biome-ignore lint/suspicious/noConsole: used for build logging
+  console.log('Bundling service worker with esbuild...');
+  execSync(
+    `node_modules/.bin/esbuild src/sw.js --bundle --platform=browser --format=iife --target=es2020 --minify --outfile=${tempSwSrc}`,
+    { stdio: 'inherit' },
+  );
+} catch (err) {
+  console.error('Service worker bundling failed:', err);
+  process.exit(1);
+}
+
 injectManifest({
-  swSrc: 'src/sw.js',
+  swSrc: tempSwSrc,
   swDest: swDest,
   globDirectory: browserDir,
   globPatterns: ['**/*.{js,css,html,png,svg,jpg,webp,ico,webmanifest}'],
@@ -48,4 +63,10 @@ injectManifest({
   })
   .catch((err) => {
     console.error('Service worker generation failed:', err);
+  })
+  .finally(() => {
+    // Clean up temporary bundled file
+    if (fs.existsSync(tempSwSrc)) {
+      fs.unlinkSync(tempSwSrc);
+    }
   });
