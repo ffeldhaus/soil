@@ -20,7 +20,7 @@ app.use(compression());
  * Security headers for Firebase Auth popups.
  */
 app.use((req, res, next) => {
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   next();
 });
 
@@ -41,6 +41,12 @@ app.use(
 let angularApp: AngularNodeAppEngine | undefined;
 
 app.use('*path', async (req, res, next) => {
+  // Skip Firebase reserved paths
+  if (req.originalUrl.startsWith('/__/')) {
+    next();
+    return;
+  }
+
   if (!angularApp) {
     try {
       const { ɵsetAngularAppEngineManifest: setAngularAppEngineManifest, AngularAppEngine } = (await import(
