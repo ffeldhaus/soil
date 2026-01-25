@@ -20,7 +20,7 @@ app.use(compression());
  * Security headers for Firebase Auth popups.
  */
 app.use((req, res, next) => {
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   next();
 });
 
