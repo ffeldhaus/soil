@@ -12,7 +12,6 @@ describe('SuperAdminComponent', () => {
   let fixture: ComponentFixture<SuperAdminComponent>;
   let authServiceMock: { user$: any; logout: any };
   let gameServiceMock: {
-    getPendingUsers: any;
     getAllAdmins: any;
     getSystemStats: any;
     getAllFeedback: any;
@@ -32,11 +31,8 @@ describe('SuperAdminComponent', () => {
       logout: vi.fn().mockResolvedValue(undefined),
     };
     gameServiceMock = {
-      getPendingUsers: vi.fn().mockResolvedValue([]),
       getAllAdmins: vi.fn().mockResolvedValue([]),
-      getSystemStats: vi
-        .fn()
-        .mockResolvedValue({ games: { total: 0, deleted: 0 }, users: { total: 0, admins: 0, pending: 0 } }),
+      getSystemStats: vi.fn().mockResolvedValue({ games: { total: 0, deleted: 0 }, users: { total: 0, admins: 0 } }),
       getAllFeedback: vi.fn().mockResolvedValue([]),
     };
     const languageServiceMock = { currentLang: 'de' };
@@ -61,20 +57,8 @@ describe('SuperAdminComponent', () => {
 
   it('should load data on init', async () => {
     await component.ngOnInit();
-    expect(gameServiceMock.getPendingUsers).toHaveBeenCalled();
     expect(gameServiceMock.getAllAdmins).toHaveBeenCalled();
     expect(gameServiceMock.getSystemStats).toHaveBeenCalled();
-  });
-
-  it('should call manageAdmin when confirming approval', async () => {
-    const mockUser = { uid: 'user123', email: 'user@example.com' };
-    gameServiceMock.manageAdmin = vi.fn().mockResolvedValue({});
-
-    component.initiateApprove(mockUser);
-    await component.confirmApprove();
-
-    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('user123', 'approve', undefined, 'de', expect.any(String));
-    expect(gameServiceMock.getPendingUsers).toHaveBeenCalled();
   });
 
   it('should call deleteGames when confirming delete', async () => {
@@ -95,29 +79,6 @@ describe('SuperAdminComponent', () => {
     component.initiateFeedbackAction(mockFeedback as any, 'resolve');
     await component.confirmFeedbackAction();
     expect(gameServiceMock.manageFeedback).toHaveBeenCalledWith('fb1', 'resolve', { externalReference: '' });
-  });
-
-  it('should handle admin rejection', async () => {
-    gameServiceMock.manageAdmin = vi.fn().mockResolvedValue({});
-    const mockUser = { uid: 'a1', email: 'a@ex.com' };
-
-    component.initiateReject(mockUser as any);
-    component.rejectionReasons = ['missing_info'];
-    component.customRejectionMessage = 'Sorry';
-
-    await component.confirmReject();
-
-    expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith(
-      'a1',
-      'reject',
-      {
-        rejectionReasons: ['missing_info'],
-        customMessage: 'Sorry',
-        banEmail: false,
-      },
-      'de',
-      expect.any(String),
-    );
   });
 
   it('should handle quota update', async () => {

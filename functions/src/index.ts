@@ -576,7 +576,7 @@ export const createGame = onCall(async (request) => {
 
   if (userSnap.exists) {
     const userData = userSnap.data();
-    userRole = userData?.role || 'pending';
+    userRole = userData?.role || 'player';
     quota = userData?.quota || 5;
   } else {
     // Bootstrap: If email is florian.feldhaus@gmail.com, make superadmin
@@ -794,8 +794,8 @@ export const submitOnboarding = onCall(
       firstName,
       lastName,
       displayName: `${firstName} ${lastName}`,
-      role: 'pending',
-      status: 'pending',
+      role: 'admin',
+      status: 'active',
       quota: 5,
       gameCount: 0,
       lang: lang || 'de',
@@ -834,68 +834,13 @@ export const manageAdmin = onCall(
       throw new HttpsError('permission-denied', 'System-Administratoren only');
     }
 
-    const { targetUid, action, value, lang, origin } = request.data;
+    const { targetUid, action, value } = request.data;
     if (!targetUid || !action) throw new HttpsError('invalid-argument', 'Missing args');
 
     const targetRef = db.collection('users').doc(targetUid);
     const updates: any = {};
 
-    if (action === 'approve') {
-      updates.role = 'admin';
-      updates.status = 'active';
-
-      // Send email notification
-      const targetDoc = await targetRef.get();
-      const targetData = targetDoc.data();
-      const targetEmail = targetData?.email;
-      const targetLang = lang || targetData?.lang || 'de';
-
-      if (targetEmail) {
-        try {
-          const appOrigin = origin || APP_DOMAIN;
-          const isGoogleUser = (await admin.auth().getUser(targetUid)).providerData.some(
-            (p) => p.providerId === 'google.com',
-          );
-          const loginLink = isGoogleUser
-            ? `${appOrigin}/${targetLang}/admin/login`
-            : `${appOrigin}/${targetLang}/admin/login?email=${encodeURIComponent(targetEmail)}`;
-
-          await mailService.sendAdminRegistrationApproved(targetEmail, loginLink, targetLang);
-        } catch (e) {
-          console.error('Failed to send approval email', e);
-          // Don't fail the operation just because email failed
-        }
-      }
-    } else if (action === 'reject') {
-      updates.status = 'rejected';
-      updates.role = 'rejected'; // Move out of pending list
-
-      const targetDoc = await targetRef.get();
-      const targetData = targetDoc.data();
-      const targetEmail = targetData?.email;
-      const targetLang = lang || targetData?.lang || 'de';
-
-      if (targetEmail) {
-        try {
-          const reasons = value?.rejectionReasons || ['other'];
-          const customMessage = value?.customMessage;
-          await mailService.sendAdminRegistrationRejected(targetEmail, reasons, customMessage, targetLang);
-        } catch (e) {
-          console.error('Failed to send rejection email', e);
-        }
-      }
-
-      // Optional: Ban email if requested
-      if (value?.banEmail) {
-        if (targetEmail) {
-          await db.collection('banned_emails').doc(targetEmail).set({
-            bannedAt: Timestamp.now(),
-            bannedBy: request.auth.uid,
-            reason: 'Rejected by System-Administrator',
-          });
-        }
-      }
-    } else if (action === 'setQuota') {
+    if (action === 'setQuota') {
       updates.quota = Number(value);
     } else if (action === 'ban') {
       // Full Ban
@@ -988,7 +933,6 @@ export const getSystemStats = onCall(async (request) => {
 
   // For users, we want specific role counts
   const totalUsersSnap = await usersColl.count().get();
-  const pendingUsersSnap = await usersColl.where('role', '==', 'pending').count().get();
   const adminUsersSnap = await usersColl.where('role', 'in', ['admin', 'superadmin']).count().get();
   const rejectedUsersSnap = await usersColl.where('role', '==', 'rejected').count().get();
   const bannedUsersSnap = await usersColl.where('role', '==', 'banned').count().get();
@@ -1001,28 +945,11 @@ export const getSystemStats = onCall(async (request) => {
     },
     users: {
       total: totalUsersSnap.data().count,
-      pending: pendingUsersSnap.data().count,
       admins: adminUsersSnap.data().count,
       rejected: rejectedUsersSnap.data().count,
       banned: bannedUsersSnap.data().count,
     },
   };
-});
-
-export const getPendingUsers = onCall(async (request) => {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
-
-  // Super Check
-  const callerRef = db.collection('users').doc(request.auth.uid);
-  const callerSnap = await callerRef.get();
-  const isSuper =
-    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
-    request.auth.token.email === 'florian.feldhaus@gmail.com';
-
-  if (!isSuper) throw new HttpsError('permission-denied', 'System-Administratoren only');
-
-  const snap = await db.collection('users').where('role', '==', 'pending').get();
-  return snap.docs.map((d) => d.data());
 });
 
 export const getAllAdmins = onCall(async (request) => {
@@ -1347,10 +1274,10 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   }
 
   // 3. Purge unverified admin registrations
-  // Pending users older than 24h who haven't verified their email
-  const pendingUsersSnap = await db.collection('users').where('role', '==', 'pending').get();
+  // Admin users older than 24h who haven't verified their email
+  const adminUsersSnap = await db.collection('users').where('role', '==', 'admin').get();
 
-  for (const doc of pendingUsersSnap.docs) {
+  for (const doc of adminUsersSnap.docs) {
     const userData = doc.data();
     const createdAt = userData.createdAt?.toMillis() || 0;
 

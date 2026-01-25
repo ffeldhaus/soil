@@ -194,10 +194,10 @@ describe('GameService', () => {
     const mockCallable = vi.fn(() => Promise.resolve({ data: { success: true } }));
     vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
 
-    await service.manageAdmin('user1', 'approve');
+    await service.manageAdmin('user1', 'ban');
 
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'manageAdmin');
-    expect(mockCallable).toHaveBeenCalledWith({ targetUid: 'user1', action: 'approve', value: undefined });
+    expect(mockCallable).toHaveBeenCalledWith({ targetUid: 'user1', action: 'ban', value: undefined });
   });
 
   it('should load local game if gameId starts with local-', async () => {

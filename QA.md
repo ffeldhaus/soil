@@ -26,8 +26,7 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 
 | Feature | Steps | Expected Result | E2E Covered |
 |---------|-------|-----------------|-------------|
-| Teacher Registration | Fill out the registration form (Name, Institution, Reason). | Upon submission, user is informed that the account is pending approval. | No |
-| Pending State | Log in with a "New" account. | Dashboard shows "Konto wartet auf Genehmigung" message. | No |
+| Teacher Registration | Fill out the registration form (Name, Institution, Reason). | Registration successful; user is prompted to verify email. | No |
 
 ---
 
@@ -53,7 +52,6 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 | Feature | Steps | Expected Result | E2E Covered |
 |---------|-------|-----------------|-------------|
 | System Stats | Observe the statistics cards at the top. | Displays counts for total games, users, teachers, etc. | No |
-| User Approval | Find a "Pending" user and click "Genehmigen". | User moves from Pending to the Teacher list. | No |
 | Quota Management | Click "Limit" on a teacher and change it to 20. | The new quota is saved and displayed. | No |
 | Feedback Management | View feedback list, click "Antworten". | Modal opens to type a response. | No |
 | Global Game View | Click "Spiele" on a teacher to see all their games. | List of games for that specific teacher is displayed below. | No |
@@ -79,7 +77,6 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 
 | Notification | Trigger | What to check |
 |--------------|---------|---------------|
-| Teacher Approval | Super Admin approves a teacher. | Email sent to teacher with a link to the dashboard. |
 | Game Invite | Admin sends game details to an email. | Email contains Game ID and Login URL. |
 | Player Invite | Admin sends player-specific invite. | Email contains personal PIN and Login URL. |
 | Password Reset | User requests password reset. | Email contains reset link. |

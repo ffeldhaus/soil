@@ -65,25 +65,6 @@ describe('MailService', () => {
       expect(args.text).to.contain('Willkommen bei Soil!');
     });
 
-    it('sendAdminRegistrationApproved should use correct language (de)', async () => {
-      await mailService.sendAdminRegistrationApproved('test@example.com', 'http://link', 'de');
-      const args = sendEmailStub.firstCall.args[0];
-      expect(args.subject).to.equal('Soil-Registrierung bestätigt');
-      expect(args.text).to.contain('Glückwunsch!');
-    });
-
-    it('sendAdminRegistrationRejected should include reasons (en)', async () => {
-      await mailService.sendAdminRegistrationRejected(
-        'test@example.com',
-        ['institution_not_verified'],
-        'Custom Msg',
-        'en',
-      );
-      const args = sendEmailStub.firstCall.args[0];
-      expect(args.text).to.contain('The educational institution could not be verified.');
-      expect(args.text).to.contain('Additional information: Custom Msg');
-    });
-
     it('sendGameInvite should include game info', async () => {
       await mailService.sendGameInvite('test@example.com', 'My Game', 'ID123', 'en');
       const args = sendEmailStub.firstCall.args[0];

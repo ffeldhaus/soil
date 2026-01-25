@@ -111,8 +111,8 @@ export interface UserData {
   uid: string;
   email: string;
   displayName?: string;
-  role: 'pending' | 'admin' | 'superadmin' | 'player' | 'rejected';
-  status: 'active' | 'rejected' | 'pending';
+  role: 'admin' | 'superadmin' | 'player' | 'banned';
+  status: 'active' | 'banned';
   quota: number;
   gameCount: number;
   lang?: string;

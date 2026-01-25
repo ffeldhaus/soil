@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { interval, type Subscription, startWith, switchMap, takeWhile } from 'rxjs';
+import type { Subscription } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
@@ -15,7 +15,6 @@ import { DashboardFinanceModalComponent } from './components/dashboard-finance-m
 import { DashboardGameListComponent } from './components/dashboard-game-list';
 import { DashboardHudComponent } from './components/dashboard-hud';
 import { DashboardJoinGameComponent } from './components/dashboard-join-game';
-import { DashboardPendingComponent } from './components/dashboard-pending';
 import { DashboardSuperAdminComponent } from './components/dashboard-super-admin';
 import { DashboardTeacherGuideComponent } from './components/dashboard-teacher-guide';
 import { QrOverlayComponent } from './components/qr-overlay';
@@ -27,7 +26,6 @@ import { QrOverlayComponent } from './components/qr-overlay';
     CommonModule,
     FormsModule,
     DashboardHudComponent,
-    DashboardPendingComponent,
     DashboardErrorModalComponent,
     QrOverlayComponent,
     DashboardSuperAdminComponent,
@@ -46,9 +44,6 @@ export class Dashboard implements OnInit, OnDestroy {
   t(key: string): string {
     const translations: Record<string, string> = {
       'dashboard.title': 'Dashboard für Lehrkräfte',
-      'dashboard.pending.title': 'Konto wartet auf Genehmigung',
-      'dashboard.pending.message':
-        'Ihr Konto wird derzeit von einem Super-Admin überprüft. Sie erhalten eine E-Mail, sobald Ihr Konto genehmigt wurde.',
       'dashboard.logout': 'Abmelden',
       'dashboard.loading.verifying': 'Konto-Status wird geprüft...',
       'dashboard.loading.games': 'Spiele werden geladen...',
@@ -170,7 +165,6 @@ export class Dashboard implements OnInit, OnDestroy {
   userStatus: UserStatus | null = null; // Contains role and status
   private userStatusSub: Subscription | null = null;
 
-  isPendingApproval = false;
   isLoading = true; // Initial loading state for auth check
   showFeedbackModal = false;
 
@@ -270,7 +264,6 @@ export class Dashboard implements OnInit, OnDestroy {
       if (user) {
         // Reset state for new user
         this.userStatus = null;
-        this.isPendingApproval = false;
 
         if (localStorage.getItem('soil_test_mode') === 'true') {
           this.ngZone.run(() => {
@@ -283,7 +276,6 @@ export class Dashboard implements OnInit, OnDestroy {
               return;
             }
 
-            this.isPendingApproval = false;
             this.isLoading = false;
             this.loadGames();
             this.cdr.detectChanges();
@@ -296,7 +288,6 @@ export class Dashboard implements OnInit, OnDestroy {
 
         if (user.isAnonymous) {
           this.userStatus = { uid: user.uid, role: 'player', status: 'active', email: '' };
-          this.isPendingApproval = false;
           this.isLoading = false;
           this.loadGames();
           this.cdr.detectChanges();
@@ -318,76 +309,22 @@ export class Dashboard implements OnInit, OnDestroy {
               this.router.navigate(['/admin/register']);
               return;
             }
+            this.isLoading = false;
+            this.loadGames();
+          } else {
+            // Fallback for bootstrap Super Admin
+            if (user.email === 'florian.feldhaus@gmail.com') {
+              this.userStatus = { uid: user.uid, role: 'superadmin', status: 'active', email: user.email || '' };
+              this.isLoading = false;
+              this.router.navigate(['/admin/super']);
+              return;
+            }
+
+            this.isLoading = false;
+            this.router.navigate(['/admin/register']);
           }
+          this.cdr.detectChanges();
         });
-
-        if (this.userStatusSub) {
-          this.userStatusSub.unsubscribe();
-        }
-
-        // Poll user status until it's active or until destroyed
-        this.userStatusSub = interval(30000) // Poll every 30 seconds
-          .pipe(
-            startWith(0),
-            switchMap(() => this.gameService.getUserStatus()),
-            // Continue polling if pending or not found
-            takeWhile((userData) => !userData || userData.role === 'pending' || userData.status === 'pending', true),
-          )
-          .subscribe({
-            next: (userData) => {
-              this.ngZone.run(() => {
-                if (userData) {
-                  this.userStatus = userData;
-
-                  if (userData.role === 'new') {
-                    this.isLoading = false;
-                    this.router.navigate(['/admin/register']);
-                    return;
-                  }
-
-                  if (userData.role === 'superadmin') {
-                    this.isLoading = false;
-                    this.router.navigate(['/admin/super']);
-                    return;
-                  }
-
-                  if (userData.role === 'pending' || userData.status === 'pending') {
-                    this.isPendingApproval = true;
-                    this.isLoading = false;
-                  } else {
-                    this.isPendingApproval = false;
-                    this.isLoading = false;
-                    this.loadGames();
-                  }
-                } else {
-                  // Fallback for bootstrap Super Admin
-                  if (user.email === 'florian.feldhaus@gmail.com') {
-                    this.userStatus = { uid: user.uid, role: 'superadmin', status: 'active', email: user.email || '' };
-                    this.isLoading = false;
-                    this.router.navigate(['/admin/super']);
-                    return;
-                  }
-
-                  this.isLoading = false;
-                  this.router.navigate(['/admin/register']);
-                }
-                this.cdr.detectChanges();
-              });
-            },
-            error: (error) => {
-              this.ngZone.run(() => {
-                console.error('Dashboard: Error fetching user status:', error);
-                // For deadline exceeded, retry once after a delay or just ignore if it's polling
-                if (error.message?.includes('deadline-exceeded')) {
-                  // Silence the error for the user if we're still polling, it will retry in 30s
-                  return;
-                }
-                this.errorMessage = `Error loading account status: ${error.message || error}`;
-                this.isLoading = false;
-                this.cdr.detectChanges();
-              });
-            },
-          });
       } else {
         this.isLoading = true;
         this.authService.signInAsGuest().catch((err) => {

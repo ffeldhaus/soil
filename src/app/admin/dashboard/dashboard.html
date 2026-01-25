@@ -19,11 +19,6 @@
     <main class="pt-16 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none pb-12">
       @if (user$ | async; as user) {
         <div class="space-y-6">
-          <!-- Pending Approval State -->
-          @if (!isLoading && (userStatus?.role === 'pending' || userStatus?.status === 'pending')) {
-            <app-dashboard-pending [user]="user$ | async" (logout)="logout()"></app-dashboard-pending>
-          }
-
           <!-- Loading State -->
           @if (isLoading) {
             <div class="p-12 bg-gray-900/80 backdrop-blur-md rounded-3xl border border-gray-700 shadow-2xl flex flex-col items-center justify-center text-gray-400 animate-fade-in portrait:rounded-none">
@@ -50,7 +45,7 @@
           }
 
           <!-- Active Dashboard -->
-          @if (!isLoading && !isPendingApproval && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin') {
+          @if (!isLoading && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin') {
             <!-- Create Game Box (includes Welcome & Feedback) -->
             <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
               <div class="flex justify-between items-start">

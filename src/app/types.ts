@@ -113,8 +113,8 @@ export interface Game {
 
 export interface UserStatus {
   uid: string;
-  role: 'pending' | 'admin' | 'superadmin' | 'player' | 'rejected' | 'new' | 'banned';
-  status: 'active' | 'rejected' | 'pending' | 'banned';
+  role: 'admin' | 'superadmin' | 'player' | 'new' | 'banned';
+  status: 'active' | 'banned';
   email: string;
   displayName?: string;
   firstName?: string;
@@ -155,8 +155,6 @@ export interface SystemStats {
   users: {
     total: number;
     admins: number;
-    pending: number;
-    rejected: number;
     banned: number;
   };
 }

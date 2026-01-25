@@ -39,10 +39,8 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.stats.totalUsers': 'Gesamt Benutzer',
       'superadmin.stats.registered': 'registriert',
       'superadmin.stats.teachers': 'Lehrkräfte',
-      'superadmin.stats.pending': 'Ausstehend',
       'superadmin.stats.rejected': 'Abgelehnt',
       'superadmin.stats.banned': 'Gesperrt',
-      'superadmin.pending.title': 'Ausstehende Genehmigungen',
       'superadmin.admins.title': 'Lehrkräfte (Administratoren)',
       'superadmin.table.user': 'Benutzer / E-Mail',
       'superadmin.table.role': 'Rolle',
@@ -50,16 +48,10 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.table.quota': 'Limit',
       'superadmin.table.games': 'Spiele',
       'superadmin.table.actions': 'Aktionen',
-      'superadmin.actions.approve': 'Genehmigen',
-      'superadmin.actions.reject': 'Ablehnen',
       'superadmin.actions.ban': 'Sperren',
       'superadmin.actions.delete': 'Löschen',
       'superadmin.actions.games': 'Spiele',
       'superadmin.actions.quota': 'Limit',
-      'superadmin.pending.card.institution': 'Institution',
-      'superadmin.pending.card.website': 'Website',
-      'superadmin.pending.card.why': 'Warum Soil?',
-      'superadmin.pending.card.pending': 'Ausstehend',
       'superadmin.games.title': 'Spiele von',
       'superadmin.games.close': 'Schließen',
       'superadmin.games.loading': 'Spiele werden geladen...',
@@ -78,20 +70,6 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.quota.modal.desc': '',
       'superadmin.quota.modal.label': 'Limit',
       'superadmin.quota.modal.save': 'Speichern',
-      'superadmin.approve.modal.title': 'Benutzer genehmigen',
-      'superadmin.approve.modal.desc': 'Bist du sicher, dass du diesen Benutzer genehmigen möchtest?',
-      'superadmin.approve.modal.info': 'Dies gewährt vollen administrativen Zugriff auf das Dashboard.',
-      'superadmin.approve.modal.confirm': 'Genehmigung bestätigen',
-      'superadmin.reject.modal.title': 'Registrierung ablehnen',
-      'superadmin.reject.modal.desc': 'Bist du sicher, dass du die Registrierung ablehnen möchtest?',
-      'superadmin.reject.modal.reasons': 'Gründe (werden dem Benutzer per E-Mail mitgeteilt)',
-      'superadmin.reject.modal.reason.institution': 'Institution konnte nicht verifiziert werden',
-      'superadmin.reject.modal.reason.insufficient': 'Grund für die Nutzung nicht ausreichend',
-      'superadmin.reject.modal.reason.other': 'Andere Gründe',
-      'superadmin.reject.modal.custom': 'Zusätzliche Nachricht (optional)',
-      'superadmin.reject.modal.ban': 'E-Mail-Adresse sperren',
-      'superadmin.reject.modal.banInfo': 'Blockiert diese E-Mail-Adresse für zukünftige Registrierungen.',
-      'superadmin.reject.modal.send': 'Ablehnung senden',
       'superadmin.modal.cancel': 'Abbrechen',
       'superadmin.feedback.title': 'Feedback & Vorschläge',
       'superadmin.feedback.none': 'Kein Feedback gefunden.',
@@ -112,7 +90,6 @@ export class SuperAdminComponent implements OnInit {
     return translations[key] || key;
   }
 
-  pendingUsers: UserStatus[] = [];
   admins: (UserStatus & { gameCount: number; quota: number })[] = [];
   feedback: Feedback[] = [];
 
@@ -178,9 +155,7 @@ export class SuperAdminComponent implements OnInit {
     if (window.console) console.warn('SuperAdmin: Loading data...');
 
     try {
-      const [pendingUsers, admins, stats, feedback] = await Promise.all([
-        this.gameService.getPendingUsers(),
-
+      const [admins, stats, feedback] = await Promise.all([
         this.gameService.getAllAdmins(),
 
         this.gameService.getSystemStats(),
@@ -189,8 +164,6 @@ export class SuperAdminComponent implements OnInit {
       ]);
 
       this.ngZone.run(() => {
-        this.pendingUsers = pendingUsers;
-
         this.admins = admins;
 
         this.stats = stats;
@@ -199,8 +172,6 @@ export class SuperAdminComponent implements OnInit {
 
         if (window.console)
           console.warn('SuperAdmin: Data loaded', {
-            pending: this.pendingUsers.length,
-
             admins: this.admins.length,
 
             feedback: this.feedback.length,
@@ -279,189 +250,7 @@ export class SuperAdminComponent implements OnInit {
     }
   }
 
-  userToApprove: UserStatus | null = null;
-
-  isApproving = false;
-
-  initiateApprove(user: UserStatus) {
-    this.userToApprove = user;
-
-    this.isApproving = false;
-  }
-
-  cancelApprove() {
-    this.userToApprove = null;
-
-    this.isApproving = false;
-  }
-
-  async confirmApprove() {
-    if (!this.userToApprove) return;
-
-    this.isApproving = true;
-
-    const user = this.userToApprove;
-
-    try {
-      await this.gameService.manageAdmin(
-        user.uid,
-
-        'approve',
-
-        undefined,
-
-        'de',
-
-        window.location.origin,
-      );
-
-      this.isApproving = false;
-
-      this.userToApprove = null;
-
-      this.loadData();
-    } catch (e: unknown) {
-      this.isApproving = false;
-
-      if (window.console) console.error(e);
-
-      const error = e as Error;
-
-      alert(`Failed to approve user: ${error.message}`);
-    }
-  }
-
-  userToReject: UserStatus | null = null;
-
-  showRejectModal = false;
-
-  isRejecting = false;
-
-  rejectionReasons: string[] = [];
-
-  customRejectionMessage = '';
-
-  banEmailOnReject = false;
-
-  initiateReject(user: UserStatus) {
-    this.userToReject = user;
-
-    this.rejectionReasons = [];
-
-    this.customRejectionMessage = '';
-
-    this.banEmailOnReject = false;
-
-    this.showRejectModal = true;
-
-    this.isRejecting = false;
-  }
-
-  cancelReject() {
-    this.showRejectModal = false;
-
-    this.userToReject = null;
-
-    this.isRejecting = false;
-  }
-
-  toggleRejectionReason(reason: string) {
-    if (this.rejectionReasons.includes(reason)) {
-      this.rejectionReasons = this.rejectionReasons.filter((r) => r !== reason);
-    } else {
-      this.rejectionReasons.push(reason);
-    }
-  }
-
-  async confirmReject() {
-    if (!this.userToReject) return;
-
-    this.isRejecting = true;
-
-    const user = this.userToReject;
-
-    try {
-      await this.gameService.manageAdmin(
-        user.uid,
-
-        'reject',
-
-        {
-          rejectionReasons: this.rejectionReasons,
-
-          customMessage: this.customRejectionMessage,
-
-          banEmail: this.banEmailOnReject,
-        },
-
-        'de',
-
-        window.location.origin,
-      );
-
-      this.isRejecting = false;
-
-      this.showRejectModal = false;
-
-      this.userToReject = null;
-
-      this.loadData();
-    } catch (e: unknown) {
-      this.isRejecting = false;
-
-      if (window.console) console.error(e);
-
-      const error = e as Error;
-
-      alert(`Failed to reject user: ${error.message}`);
-    }
-  }
-
-  // Old method kept for reference or direct calls if needed, but unused by template now
-
-  async approveUser(user: UserStatus) {
-    if (!confirm(`Approve ${user.email}?`)) return;
-
-    await this.gameService.manageAdmin(
-      user.uid,
-
-      'approve',
-
-      undefined,
-
-      'de',
-
-      window.location.origin,
-    );
-
-    this.loadData();
-  }
-
-  async rejectUser(user: UserStatus) {
-    const ban = confirm(`Reject ${user.email}?\n\nPress OK to REJECT only.\nPress CANCEL to consider other options.`);
-
-    if (ban) {
-      await this.gameService.manageAdmin(user.uid, 'reject');
-
-      this.loadData();
-
-      return;
-    }
-
-    // If they cancelled, maybe they want to BAN?
-
-    // A bit clunky with native alerts. Let's try:
-
-    const reallyBan = confirm(`Do you want to BAN ${user.email} and block this email from future usage?`);
-
-    if (reallyBan) {
-      await this.gameService.manageAdmin(user.uid, 'reject', { banEmail: true });
-
-      this.loadData();
-    }
-  }
-
-  // Open the modal
+  // Quota Management
 
   setQuota(user: UserStatus & { quota: number }) {
     this.selectedUserForQuota = user as UserStatus & { gameCount: number; quota: number };

@@ -260,6 +260,10 @@ export class AdminLoginComponent implements OnInit {
     if (email) {
       this.loginForm.patchValue({ email });
     }
+    const verified = this.route.snapshot.queryParamMap.get('verified');
+    if (verified === 'true') {
+      this.successMessage = 'E-Mail-Adresse erfolgreich verifiziert. Sie können sich nun anmelden.';
+    }
   }
 
   togglePassword() {

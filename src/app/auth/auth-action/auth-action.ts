@@ -1,7 +1,13 @@
 import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
-import { Auth, applyActionCode, confirmPasswordReset, verifyPasswordResetCode } from '@angular/fire/auth';
+import {
+  Auth,
+  applyActionCode,
+  checkActionCode,
+  confirmPasswordReset,
+  verifyPasswordResetCode,
+} from '@angular/fire/auth';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-auth-action',
@@ -81,65 +87,25 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
           }
 
           @if (status === 'success') {
-            @if (mode === 'verifyEmail') {
-              <div class="py-4">
-                <div class="rounded-2xl bg-emerald-900/30 border border-emerald-500/20 p-4 mb-6">
-                  <div class="flex items-center justify-center">
-                    <div class="flex-shrink-0">
-                      <svg class="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div class="ml-3">
-                      <p class="text-sm font-medium text-emerald-200">
-                        Ihre E-Mail-Adresse wurde verifiziert.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <h3 class="text-xl font-semibold text-white mb-4">Wie geht es weiter?</h3>
-
-                <p class="text-gray-300 mb-6 leading-relaxed">
-                  Ihre Registrierung als Lehrkraft wird nun von uns geprüft. Sobald Ihr Konto freigeschaltet wurde,
-                  informieren wir Sie per E-Mail.
-                </p>
-
-                <div class="space-y-6">
-                  <p class="text-sm text-emerald-300/70">
-                    Dies dauert in der Regel weniger als 24 Stunden.
+            <div class="text-center py-8">
+              <div class="rounded-2xl bg-emerald-900/30 border border-emerald-500/20 p-4 mb-6">
+                <div class="flex items-center justify-center">
+                  <svg class="h-6 w-6 text-emerald-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-sm font-medium text-emerald-200">
+                    {{ successMessage }}
                   </p>
-
-                  <a
-                    routerLink="/"
-                    class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
-
-                  >
-                    <span class="relative z-10">Zur Startseite</span>
-                  </a>
                 </div>
               </div>
-            } @else {
-              <div class="text-center py-8">
-                <div class="rounded-2xl bg-emerald-900/30 border border-emerald-500/20 p-4 mb-6">
-                  <div class="flex items-center justify-center">
-                    <svg class="h-6 w-6 text-emerald-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p class="text-sm font-medium text-emerald-200">
-                      {{ successMessage }}
-                    </p>
-                  </div>
-                </div>
-                <a
-                  routerLink="/admin/login"
-                  class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
+              <a
+                routerLink="/admin/login"
+                class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
 
-                >
-                  <span class="relative z-10">Zum Login</span>
-                </a>
-              </div>
-            }
+              >
+                <span class="relative z-10">Zum Login</span>
+              </a>
+            </div>
           }
 
           @if (status === 'error') {
@@ -171,6 +137,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 export class AuthActionComponent implements OnInit {
   private auth = inject(Auth);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
 
@@ -215,11 +182,16 @@ export class AuthActionComponent implements OnInit {
   private async handleVerifyEmail() {
     this.title = 'E-Mail-Verifizierung';
     try {
+      const info = await checkActionCode(this.auth, this.oobCode);
       await applyActionCode(this.auth, this.oobCode);
-      this.status = 'success';
-      this.successMessage = 'Ihre E-Mail-Adresse wurde erfolgreich verifiziert.';
-      this.cdr.detectChanges();
-      // No redirect, we show the onboarding info here!
+
+      // Successfully verified, redirect to login with email prefilled
+      this.router.navigate(['/admin/login'], {
+        queryParams: {
+          email: info.data.email,
+          verified: 'true',
+        },
+      });
     } catch (error: unknown) {
       console.error('Email verification error:', error);
       this.status = 'error';

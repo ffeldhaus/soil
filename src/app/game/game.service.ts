@@ -364,15 +364,6 @@ export class GameService {
     return new Date(0);
   }
 
-  async getPendingUsers(): Promise<UserStatus[]> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
-      return [{ uid: 'pending-1', email: 'pending@example.com', role: 'pending', status: 'pending' } as any];
-    }
-    const fn = httpsCallable<void, UserStatus[]>(this.functions!, 'getPendingUsers');
-    return (await fn()).data;
-  }
-
   async getUserStatus(): Promise<UserStatus | null> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
@@ -403,7 +394,7 @@ export class GameService {
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       return {
         games: { total: 100, active: 80, deleted: 20 },
-        users: { total: 50, admins: 40, pending: 5, rejected: 3, banned: 2 },
+        users: { total: 50, admins: 40, banned: 2 },
       };
     }
     const fn = httpsCallable<void, SystemStats>(this.functions!, 'getSystemStats');
@@ -439,7 +430,7 @@ export class GameService {
 
   async manageAdmin(
     targetUid: string,
-    action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete',
+    action: 'setQuota' | 'ban' | 'delete',
     value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number,
     lang?: string,
     origin?: string,
@@ -452,7 +443,7 @@ export class GameService {
     const fn = httpsCallable<
       {
         targetUid: string;
-        action: 'approve' | 'reject' | 'setQuota' | 'ban' | 'delete';
+        action: 'setQuota' | 'ban' | 'delete';
         value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number;
         lang?: string;
         origin?: string;
@@ -616,7 +607,7 @@ export class GameService {
           category: 'interface',
           rating: 5,
           comment: 'Great job!',
-          status: 'pending',
+          status: 'new',
           userEmail: 'user@example.com',
           createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
         } as any,

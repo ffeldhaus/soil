@@ -51,7 +51,7 @@ export class AdminRegisterComponent implements OnInit {
       'adminRegister.error.password': 'Das Passwort muss mindestens 6 Zeichen lang sein',
       'adminRegister.error.required': 'Dieses Feld ist ein Pflichtfeld',
       'adminRegister.success.verificationSent':
-        'Registrierung erfolgreich! Ihr Antrag wird nun geprüft. Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.',
+        'Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.',
       'adminRegister.error.title': 'Registrierung fehlgeschlagen',
       'adminRegister.error.retry': 'Erneut versuchen',
       'adminRegister.error.offline': 'Registrierung ist nur im Online-Modus möglich.',

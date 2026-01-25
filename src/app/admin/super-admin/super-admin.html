@@ -71,84 +71,6 @@
         <app-super-admin-stats [stats]="stats"></app-super-admin-stats>
       }
 
-      <!-- Pending Users Section -->
-      @if (pendingUsers.length > 0) {
-        <section class="space-y-4 animate-fade-in">
-          <h2 class="text-2xl font-bold text-yellow-500 flex items-center gap-2 portrait:px-4">
-            <div class="p-2 bg-yellow-900/30 rounded-full">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
-            {{ t('superadmin.pending.title') }} ({{ pendingUsers.length }})
-          </h2>
-          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 portrait:gap-0 portrait:divide-y portrait:divide-gray-800">
-            @for (user of pendingUsers; track user) {
-              <div
-                class="bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-2xl hover:border-yellow-500/50 transition portrait:rounded-none portrait:border-x-0"
-              >
-                <div class="flex justify-between items-start mb-4">
-                  <div class="overflow-hidden">
-                    <h3 class="font-bold text-lg text-white truncate" title="{{ user.email }}">{{ user.email }}</h3>
-                    <span class="text-xs text-gray-500 font-mono truncate block" title="{{ user.uid }}"
-                      >UID: {{ user.uid }}</span
-                    >
-                  </div>
-                  <span
-                    class="px-2 py-1 bg-yellow-900/50 text-yellow-200 text-xs rounded border border-yellow-700 flex-shrink-0"
-                    >{{ t('superadmin.pending.card.pending') }}</span
-                  >
-                </div>
-                <div class="space-y-2 text-sm text-gray-300 mb-6 bg-gray-950/50 p-4 rounded-lg border border-white/5">
-                  <p class="flex flex-col">
-                    <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
-                      t('superadmin.pending.card.institution')
-                    }}</strong>
-                    {{ user.onboarding?.institution }}
-                  </p>
-                  <p class="flex flex-col">
-                    <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
-                      t('superadmin.pending.card.website')
-                    }}</strong>
-                    <a
-                      [href]="user.onboarding?.institutionLink"
-                      target="_blank"
-                      class="text-blue-400 hover:underline truncate block"
-                      >{{ user.onboarding?.institutionLink }}</a
-                    >
-                  </p>
-                  <p class="flex flex-col">
-                    <strong class="text-gray-500 text-xs uppercase tracking-wide mb-1">{{
-                      t('superadmin.pending.card.why')
-                    }}</strong>
-                    <span class="italic text-gray-400">"{{ user.onboarding?.explanation }}"</span>
-                  </p>
-                </div>
-                <div class="flex gap-3">
-                  <button
-                    (click)="initiateApprove(user)"
-                    class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition shadow-lg"
-                  >
-                    {{ t('superadmin.actions.approve') }}
-                  </button>
-                  <button
-                    (click)="initiateReject(user)"
-                    class="flex-1 py-2 bg-red-900/50 border border-red-700 hover:bg-red-900 text-red-200 font-bold rounded-lg transition"
-                  >
-                    {{ t('superadmin.actions.reject') }}
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
-        </section>
-      }
-
       <!-- All Admins Section -->
       <section class="space-y-4">
         <h2 class="text-2xl font-bold text-blue-400 flex items-center gap-2 portrait:px-4">
@@ -192,9 +114,7 @@
                         [ngClass]="{
                           'bg-purple-900/20 text-purple-300 border-purple-800': admin.role === 'superadmin',
                           'bg-blue-900/20 text-blue-300 border-blue-800': admin.role === 'admin',
-                          'bg-yellow-900/20 text-yellow-300 border-yellow-800': admin.role === 'pending',
-                          'bg-orange-900/20 text-orange-300 border-orange-800': admin.role === 'rejected',
-                          'bg-red-900/20 text-red-300 border-red-800': admin.role === 'banned',
+                          'bg-red-900/20 text-red-300 border-red-800': admin.role === 'banned'
                         }"
                       >
                         {{ admin.role | titlecase }}
@@ -206,9 +126,7 @@
                           class="h-2 w-2 rounded-full"
                           [ngClass]="{
                             'bg-emerald-500': admin.status === 'active',
-                            'bg-red-500': admin.status === 'rejected',
-                            'bg-yellow-500': admin.status === 'pending',
-                            'bg-gray-500': admin.status === 'banned',
+                            'bg-gray-500': admin.status === 'banned'
                           }"
                         ></span>
                         <span class="text-gray-300">{{ admin.status | titlecase }}</span>
@@ -757,191 +675,6 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
                 <span>{{ t('superadmin.quota.modal.save') }}</span>
-              } @else {
-                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-              }
-            </button>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Approval Confirmation Modal -->
-    @if (userToApprove) {
-      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="cancelApprove()"></div>
-        <div
-          class="relative bg-gray-800 border border-emerald-500/50 p-6 rounded-xl flex flex-col gap-4 max-w-sm w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
-          (click)="$event.stopPropagation()"
-        >
-          <div class="flex items-center gap-3 text-emerald-400 mb-2">
-            <div class="p-2 bg-emerald-900/30 rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-white">
-              {{ t('superadmin.approve.modal.title') }}
-            </h3>
-          </div>
-
-          <p class="text-gray-300">
-            {{ t('superadmin.approve.modal.desc') }} <span class="font-bold text-white">{{ userToApprove.email }}</span
-            >?
-          </p>
-          <p class="text-xs text-gray-500 bg-gray-900/50 p-3 rounded border border-gray-700">
-            {{ t('superadmin.approve.modal.info') }}
-          </p>
-
-          <div class="flex gap-3 mt-2">
-            <button
-              (click)="cancelApprove()"
-              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
-            >
-              {{ t('superadmin.modal.cancel') }}
-            </button>
-            <button
-              (click)="confirmApprove()"
-              [disabled]="isApproving"
-              class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
-            >
-              @if (!isApproving) {
-                <span>{{ t('superadmin.approve.modal.confirm') }}</span>
-              } @else {
-                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-              }
-            </button>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Rejection Modal -->
-    @if (showRejectModal) {
-      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="cancelReject()"></div>
-        <div
-          class="relative bg-gray-800 border border-red-500/50 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
-          (click)="$event.stopPropagation()"
-        >
-          <div class="flex items-center gap-3 text-red-400 mb-2">
-            <div class="p-2 bg-red-900/30 rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-white">{{ t('superadmin.reject.modal.title') }}</h3>
-          </div>
-
-          <p class="text-gray-300">
-            {{ t('superadmin.reject.modal.desc') }} <span class="font-bold text-white">{{ userToReject?.email }}</span
-            >?
-          </p>
-
-          <div class="space-y-3 mt-2">
-            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">
-              {{ t('superadmin.reject.modal.reasons') }}
-            </p>
-            <div class="space-y-2">
-              <label
-                class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
-              >
-                <input
-                  type="checkbox"
-                  (change)="toggleRejectionReason('institution_not_verified')"
-                  [checked]="rejectionReasons.includes('institution_not_verified')"
-                  class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
-                />
-                <span class="text-sm text-gray-300">{{ t('superadmin.reject.modal.reason.institution') }}</span>
-              </label>
-              <label
-                class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
-              >
-                <input
-                  type="checkbox"
-                  (change)="toggleRejectionReason('insufficient_reason')"
-                  [checked]="rejectionReasons.includes('insufficient_reason')"
-                  class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
-                />
-                <span class="text-sm text-gray-300">{{ t('superadmin.reject.modal.reason.insufficient') }}</span>
-              </label>
-              <label
-                class="flex items-center gap-3 p-3 bg-gray-900/50 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/50 transition"
-              >
-                <input
-                  type="checkbox"
-                  (change)="toggleRejectionReason('other')"
-                  [checked]="rejectionReasons.includes('other')"
-                  class="w-4 h-4 rounded text-emerald-500 bg-gray-700 border-gray-600"
-                />
-                <span class="text-sm text-gray-300">{{ t('superadmin.reject.modal.reason.other') }}</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{
-              t('superadmin.reject.modal.custom')
-            }}</label>
-            <textarea
-              [(ngModel)]="customRejectionMessage"
-              rows="3"
-              class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
-              placeholder="Politely explain the decision..."
-            ></textarea>
-          </div>
-
-          <label
-            class="flex items-center gap-3 p-3 bg-orange-900/20 border border-orange-900/50 rounded-lg cursor-pointer hover:bg-orange-900/30 transition mt-2"
-          >
-            <input
-              type="checkbox"
-              [(ngModel)]="banEmailOnReject"
-              class="w-4 h-4 rounded text-orange-500 bg-gray-700 border-gray-600"
-            />
-            <div class="flex flex-col">
-              <span class="text-sm font-bold text-orange-200">{{ t('superadmin.reject.modal.ban') }}</span>
-              <span class="text-[10px] text-orange-300/70">{{ t('superadmin.reject.modal.banInfo') }}</span>
-            </div>
-          </label>
-
-          <div class="flex gap-3 mt-4">
-            <button
-              (click)="cancelReject()"
-              [disabled]="isRejecting"
-              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition disabled:opacity-50"
-            >
-              {{ t('superadmin.modal.cancel') }}
-            </button>
-            <button
-              (click)="confirmReject()"
-              [disabled]="isRejecting"
-              class="flex-1 py-2 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
-            >
-              @if (!isRejecting) {
-                <span>{{ t('superadmin.reject.modal.send') }}</span>
               } @else {
                 <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
               }

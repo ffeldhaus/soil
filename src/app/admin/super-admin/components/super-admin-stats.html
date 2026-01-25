@@ -64,10 +64,6 @@
     </div>
     <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono">
       <span class="text-purple-400">{{ stats?.users?.admins || 0 }} {{ t('superadmin.stats.teachers') }}</span>
-      <span class="text-yellow-400">{{ stats?.users?.pending || 0 }} {{ t('superadmin.stats.pending') }}</span>
-      @if (stats?.users?.rejected) {
-        <span class="text-orange-400">{{ stats?.users?.rejected || 0 }} {{ t('superadmin.stats.rejected') }}</span>
-      }
       @if (stats?.users?.banned) {
         <span class="text-red-500">{{ stats?.users?.banned || 0 }} {{ t('superadmin.stats.banned') }}</span>
       }
