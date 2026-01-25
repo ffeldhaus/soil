@@ -17,6 +17,14 @@ const app = express();
 app.use(compression());
 
 /**
+ * Security headers for Firebase Auth popups.
+ */
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  next();
+});
+
+/**
  * Serve static files from the browser distribution folder.
  */
 app.use(
