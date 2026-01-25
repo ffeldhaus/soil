@@ -16,8 +16,7 @@ vi.mock('firebase/auth', async (importOriginal) => {
     signInWithCustomToken: vi.fn(() => Promise.resolve()),
     signInWithEmailAndPassword: vi.fn(() => Promise.resolve()),
     createUserWithEmailAndPassword: vi.fn(() => Promise.resolve()),
-    signInWithRedirect: vi.fn(() => Promise.resolve()),
-    getRedirectResult: vi.fn(() => Promise.resolve(null)),
+    signInWithPopup: vi.fn(() => Promise.resolve()),
     updateProfile: vi.fn(() => Promise.resolve()),
   };
 });
@@ -93,9 +92,9 @@ describe('AuthService', () => {
   });
 
   it('should login with Google', async () => {
-    const { signInWithRedirect } = await import('firebase/auth');
+    const { signInWithPopup } = await import('firebase/auth');
     await service.loginWithGoogle();
-    expect(signInWithRedirect).toHaveBeenCalled();
+    expect(signInWithPopup).toHaveBeenCalled();
   });
 
   it('should register with email', async () => {

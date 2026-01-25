@@ -3,13 +3,12 @@ import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
 import {
   createUserWithEmailAndPassword,
-  getRedirectResult,
   GoogleAuthProvider,
   OAuthProvider,
   onAuthStateChanged,
   signInWithCustomToken,
   signInWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithPopup,
   signOut,
   type User,
   updateProfile,
@@ -39,11 +38,6 @@ export class AuthService {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     // Subscribe to real auth state using native SDK
     if (this.auth) {
-      if (isBrowser) {
-        getRedirectResult(this.auth).catch((err) => {
-          console.error('Redirect sign-in error:', err);
-        });
-      }
       onAuthStateChanged(this.auth, (u) => {
         this.ngZone.run(() => {
           const guestUid = isBrowser ? window.localStorage.getItem('soil_guest_uid') : null;
@@ -174,7 +168,7 @@ export class AuthService {
       return { user };
     }
     const provider = new GoogleAuthProvider();
-    return await signInWithRedirect(this.auth!, provider);
+    return await signInWithPopup(this.auth!, provider);
   }
 
   async loginWithApple() {
@@ -185,7 +179,7 @@ export class AuthService {
       return { user };
     }
     const provider = new OAuthProvider('apple.com');
-    return await signInWithRedirect(this.auth!, provider);
+    return await signInWithPopup(this.auth!, provider);
   }
 
   async registerWithEmail(email: string, pass: string) {

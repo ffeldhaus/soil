@@ -17,7 +17,7 @@ registerLocaleData(localeDe, 'de-DE');
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
-  authDomain: 'soil-602ea.firebaseapp.com',
+  authDomain: 'soil-602ea.web.app',
   projectId: 'soil-602ea',
   storageBucket: 'soil-602ea.firebasestorage.app',
   messagingSenderId: '167590574128',
