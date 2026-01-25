@@ -1,8 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { BehaviorSubject, debounceTime, type Observable, Subject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { GAME_CONSTANTS } from '../game-constants';
+import { OfflineService } from '../shared/offline.service';
 import type {
   CropType,
   Feedback,
@@ -29,12 +31,27 @@ export class GameService {
   private functions = inject(Functions, { optional: true });
   private localGame = inject(LocalGameService);
   private authService = inject(AuthService);
+  private offlineService = inject(OfflineService);
 
   private parcelsSubject = new BehaviorSubject<Parcel[]>(this.createInitialParcels());
   parcels$ = this.parcelsSubject.asObservable();
 
   private stateSubject = new BehaviorSubject<GameState | null>(null);
   state$ = this.stateSubject.asObservable();
+  private stateSignal = toSignal(this.state$);
+
+  isCloudGame = computed(() => {
+    const state = this.stateSignal();
+    if (!state || !state.game) return false;
+    // Local games start with 'local-'
+    if (state.game.id.startsWith('local-')) return false;
+
+    // Check for more than 1 human player
+    const numPlayers = state.game.config.numPlayers || 0;
+    const numAi = state.game.config.numAi || 0;
+    return numPlayers - numAi > 1;
+  });
+
   private pendingDecisions: Record<number, CropType> = {};
   private draftSaveSubject = new Subject<string>();
   currentRound: Round | null = null;
@@ -202,6 +219,10 @@ export class GameService {
       await saveDraftFn({ gameId, decision });
       if (window.console) console.warn('Draft saved');
     } catch (error: unknown) {
+      if (!this.offlineService.isOnline()) {
+        if (window.console) console.warn('Offline: Draft queued for background sync');
+        return;
+      }
       if (window.console) console.error('Failed to save draft:', error);
     }
   }
@@ -248,7 +269,12 @@ export class GameService {
         // Just submitted, wait for others.
         return { status: 'submitted' };
       }
-    } catch (error: unknown) {
+    } catch (error: any) {
+      if (!this.offlineService.isOnline()) {
+        if (window.console) console.warn('Offline: Decision queued for background sync');
+        // We return a "pseudo-submitted" state so the UI can progress
+        return { status: 'submitted', offline: true };
+      }
       if (window.console) console.error('Failed to submit round:', error);
       throw error;
     }

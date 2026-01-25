@@ -1,8 +1,8 @@
 {
   "id": "soil-simulation-game",
-  "name": "Soil - Multiplayer Resource Management",
+  "name": "Soil - Multiplayer Ressourcen-Management",
   "short_name": "SOIL",
-  "description": "A multiplayer game about resource management and soil quality.",
+  "description": "Ein Multiplayer-Spiel über Ressourcenmanagement und Bodenqualität.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -50,21 +50,21 @@
       "sizes": "1920x1377",
       "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "Soil Simulation Game Dashboard"
+      "label": "Soil Simulationsspiel Dashboard"
     },
     {
       "src": "/assets/images/bauernhof-portrait-hd.webp",
       "sizes": "1288x1920",
       "type": "image/webp",
       "form_factor": "narrow",
-      "label": "Soil Simulation Game Mobile View"
+      "label": "Soil Simulationsspiel Mobile Ansicht"
     }
   ],
   "shortcuts": [
     {
-      "name": "Start Game",
-      "short_name": "Play",
-      "description": "Start a new game of Soil",
+      "name": "Spiel starten",
+      "short_name": "Spielen",
+      "description": "Starte eine neue Runde Soil",
       "url": "/",
       "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
     }
