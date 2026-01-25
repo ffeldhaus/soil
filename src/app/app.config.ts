@@ -19,10 +19,8 @@ const isBrowser = typeof window !== 'undefined';
 const currentHostname = isBrowser ? window.location.hostname : '';
 
 // Dynamically use the App Hosting domain if applicable, otherwise fallback to the standard Firebase domain
-const dynamicAuthDomain = 
-  isBrowser && currentHostname.endsWith('apphostingapp.com') 
-    ? currentHostname 
-    : 'soil-602ea.firebaseapp.com';
+const dynamicAuthDomain =
+  isBrowser && currentHostname.endsWith('apphostingapp.com') ? currentHostname : 'soil-602ea.firebaseapp.com';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
