@@ -19,27 +19,32 @@ export class AiAgent {
     if (level === 'elementary') {
       // Elementary: Simple conventional farming, random main crops, no machines.
       decision.machines = 0;
-      decision.fertilizer = Math.random() > 0.3; // Often fertilize
-      decision.pesticide = Math.random() > 0.5;
+      decision.fertilizer = Math.random() > 0.4; // Often fertilize
+      decision.pesticide = Math.random() > 0.6;
 
       for (let i = 0; i < 40; i++) {
         decision.parcels[i] = mainCrops[Math.floor(Math.random() * mainCrops.length)];
       }
     } else if (level === 'middle') {
       // Middle: Follows rotation, basic machine usage, mostly conventional.
-      decision.machines = 1;
-      decision.fertilizer = true;
-      decision.pesticide = true;
+      decision.machines = Math.random() > 0.2 ? 1 : 0;
+      decision.fertilizer = Math.random() > 0.1; // Mostly fertilize
+      decision.pesticide = Math.random() > 0.1; // Mostly use pesticides
 
       for (let i = 0; i < 40; i++) {
         if (!previousRound || !previousRound.parcelsSnapshot || previousRound.parcelsSnapshot.length === 0) {
-          decision.parcels[i] = mainCrops[i % mainCrops.length];
+          decision.parcels[i] = mainCrops[(i + Math.floor(Math.random() * mainCrops.length)) % mainCrops.length];
         } else {
           const prevCrop = previousRound.parcelsSnapshot[i].crop;
           const goodNext = crops.filter(
             (c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good' && c !== 'Fallow' && c !== 'Grass',
           );
-          decision.parcels[i] = goodNext.length > 0 ? goodNext[0] : 'Wheat';
+          if (goodNext.length > 0) {
+            decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
+          } else {
+            const okNext = crops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'ok');
+            decision.parcels[i] = okNext.length > 0 ? okNext[Math.floor(Math.random() * okNext.length)] : 'Wheat';
+          }
         }
       }
     } else if (level === 'high') {
@@ -47,14 +52,18 @@ export class AiAgent {
       const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
       const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
 
-      decision.organic = averageSoil > 100; // Go organic if soil is excellent
-      decision.machines = averageSoil > 90 ? 2 : 1;
+      // Randomize thresholds slightly to create different AI "personalities"
+      const organicThreshold = 95 + Math.random() * 10;
+      const machinesThreshold = 85 + Math.random() * 10;
+
+      decision.organic = averageSoil > organicThreshold;
+      decision.machines = averageSoil > machinesThreshold ? 2 : 1;
 
       if (!decision.organic) {
-        decision.fertilizer = averageSoil < 120; // Only fertilize if soil needs boost
-        decision.pesticide = true;
+        decision.fertilizer = averageSoil < (115 + Math.random() * 10);
+        decision.pesticide = Math.random() > 0.05; // 95% usage
       } else {
-        decision.organisms = true;
+        decision.organisms = Math.random() > 0.1; // High organic usage
       }
 
       for (let i = 0; i < 40; i++) {
@@ -63,16 +72,19 @@ export class AiAgent {
           : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
         const prevCrop = prevParcel.crop;
 
-        if (prevParcel.soil < 70 || prevParcel.nutrition < 60) {
-          decision.parcels[i] = 'Fieldbean'; // Recovery
+        // Condition-based variety
+        if (prevParcel.soil < (65 + Math.random() * 10) || prevParcel.nutrition < (55 + Math.random() * 10)) {
+          const recoveryCrops: CropType[] = ['Fieldbean', 'Pea', 'Fallow'];
+          decision.parcels[i] = recoveryCrops[Math.floor(Math.random() * recoveryCrops.length)];
         } else if (decision.organic && i < 8) {
-          decision.parcels[i] = 'Grass'; // Needed for organic nutrition
+          decision.parcels[i] = Math.random() > 0.2 ? 'Grass' : 'Fallow'; // Variation in organic recovery
         } else {
           const goodNext = mainCrops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good');
           if (goodNext.length > 0) {
             decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
           } else {
-            decision.parcels[i] = 'Oat'; // Neutral
+            const neutralCrops: CropType[] = ['Oat', 'Rye'];
+            decision.parcels[i] = neutralCrops[Math.floor(Math.random() * neutralCrops.length)];
           }
         }
       }
