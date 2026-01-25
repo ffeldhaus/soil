@@ -27,6 +27,7 @@ import { FormsModule } from '@angular/forms';
               name="pin"
               [(ngModel)]="joinConfig.pin"
               type="password"
+              autocomplete="current-password"
               placeholder="••••"
               class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-emerald-500"
             />
