@@ -6,7 +6,7 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { AiAgent } from './ai-agent';
-import { APP_DOMAIN, GAME_CONSTANTS } from './constants';
+import { GAME_CONSTANTS } from './constants';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
 import type { Round } from './types';
@@ -769,7 +769,7 @@ export const submitOnboarding = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-    const { firstName, lastName, lang } = request.data;
+    const { firstName, lastName } = request.data;
     const email = request.auth.token.email || '';
 
     // Check Banned Emails
@@ -798,7 +798,6 @@ export const submitOnboarding = onCall(
       status: 'active',
       quota: 5,
       gameCount: 0,
-      lang: lang || 'de',
       createdAt: Timestamp.now(),
     };
 
@@ -1607,32 +1606,14 @@ export const sendPlayerInvite = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-    const { gameId, playerNumber, email, origin, lang } = request.data;
+    const { gameId, playerNumber, email, origin } = request.data;
     if (!gameId || !playerNumber || !email) throw new HttpsError('invalid-argument', 'Missing args');
 
-    const gameRef = db.collection('games').doc(gameId);
-    const gameDoc = await gameRef.get();
-
-    if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
-    const game = gameDoc.data();
-
-    if (game?.hostUid !== request.auth.uid) {
-      throw new HttpsError('permission-denied', 'Only game host can send invites');
-    }
-
-    const playerSecrets = game?.playerSecrets || {};
-    const secret = playerSecrets[String(playerNumber)];
-
-    if (!secret || !secret.password) {
-      throw new HttpsError('not-found', 'Player or PIN not found');
-    }
-
     // Use provided origin or default to production
-    const appOrigin = origin || APP_DOMAIN;
     // Construct login link
-    const loginLink = `${appOrigin}/login/player?gameId=${gameId}&pin=${secret.password}`;
+    const loginLink = `${origin}/game-login?gameId=${gameId}&pin=${password}`;
 
-    await mailService.sendPlayerLoginInfo(email, loginLink, lang || 'de');
+    await mailService.sendPlayerLoginInfo(email, loginLink);
 
     return { success: true };
   },
@@ -1643,74 +1624,31 @@ export const sendVerificationEmail = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
+    const { origin } = request.data;
     const email = request.auth.token.email;
-    if (!email) throw new HttpsError('invalid-argument', 'User has no email');
+    if (!email) throw new HttpsError('invalid-argument', 'No email found for user');
 
-    const { lang, origin } = request.data;
-    const appOrigin = origin || APP_DOMAIN;
+    const link = await admin.auth().generateEmailVerificationLink(email, {
+      url: `${origin}/admin/login?email=${email}&verified=true`,
+    });
 
-    let finalLang = lang;
-    if (!finalLang) {
-      const userSnap = await db.collection('users').doc(request.auth.uid).get();
-      finalLang = userSnap.data()?.lang || 'de';
-    }
-
-    try {
-      let link = await admin.auth().generateEmailVerificationLink(email, {
-        url: `${appOrigin}/${finalLang}/onboarding`,
-      });
-
-      // If in emulator, the link might point to 127.0.0.1:9099/emulator/action
-      // Point it directly to our app's handler instead for a better experience
-      if (process.env.FUNCTIONS_EMULATOR === 'true') {
-        const url = new URL(link);
-        const mode = url.searchParams.get('mode');
-        const oobCode = url.searchParams.get('oobCode');
-        const apiKey = url.searchParams.get('apiKey');
-        link = `${appOrigin}/auth/action?mode=${mode}&oobCode=${oobCode}&apiKey=${apiKey}`;
-      }
-
-      await mailService.sendVerificationEmail(email, link, finalLang);
-      return { success: true };
-    } catch (error: any) {
-      console.error('Error generating verification link:', error);
-      throw new HttpsError('internal', error.message);
-    }
+    await mailService.sendVerificationEmail(email, link);
+    return { success: true };
   },
 );
 
 export const sendPasswordResetEmail = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
   async (request) => {
-    const { email, lang, origin } = request.data;
+    const { email, origin } = request.data;
     if (!email) throw new HttpsError('invalid-argument', 'Email is required');
 
-    const appOrigin = origin || APP_DOMAIN;
+    const link = await admin.auth().generatePasswordResetLink(email, {
+      url: `${origin}/admin/login?email=${email}`,
+    });
 
-    let finalLang = lang;
-    if (!finalLang) {
-      const userSnap = await db.collection('users').where('email', '==', email).limit(1).get();
-      if (!userSnap.empty) {
-        finalLang = userSnap.docs[0].data()?.lang || 'de';
-      } else {
-        finalLang = 'de';
-      }
-    }
-
-    try {
-      const link = await admin.auth().generatePasswordResetLink(email, {
-        url: `${appOrigin}/${finalLang}/admin/login`,
-      });
-      await mailService.sendPasswordResetEmail(email, link, finalLang);
-      return { success: true };
-    } catch (error: any) {
-      console.error('Error generating password reset link:', error);
-      // For security, don't reveal if user exists or not if that's what the error means
-      // But generatePasswordResetLink throws if user not found.
-      // However, the standard Firebase behavior is to not reveal this.
-      // For now, let's just return success anyway if it's "user not found" to avoid enumeration.
-      throw new HttpsError('internal', error.message);
-    }
+    await mailService.sendPasswordResetEmail(email, link);
+    return { success: true };
   },
 );
 
@@ -1796,20 +1734,13 @@ export const sendGameInvite = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-    const { gameId, email, lang } = request.data;
-    if (!gameId || !email) throw new HttpsError('invalid-argument', 'Missing gameId or email');
+    const { gameId, email } = request.data;
+    if (!gameId || !email) throw new HttpsError('invalid-argument', 'Missing args');
 
-    const gameRef = db.collection('games').doc(gameId);
-    const gameDoc = await gameRef.get();
+    const gameSnap = await db.collection('games').doc(gameId).get();
+    const game = gameSnap.data();
 
-    if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
-    const game = gameDoc.data();
-
-    if (game?.hostUid !== request.auth.uid) {
-      throw new HttpsError('permission-denied', 'Only game host can send invites');
-    }
-
-    await mailService.sendGameInvite(email, game?.name || 'Untitled Game', gameId, lang || 'de');
+    await mailService.sendGameInvite(email, game?.name || 'Untitled Game', gameId);
 
     return { success: true };
   },

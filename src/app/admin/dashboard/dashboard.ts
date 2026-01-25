@@ -618,7 +618,7 @@ export class Dashboard implements OnInit, OnDestroy {
     if (!email) return;
 
     try {
-      await this.gameService.sendGameInvite(game.id, email, 'de');
+      await this.gameService.sendGameInvite(game.id, email);
       alert('Invite sent successfully!');
     } catch (e: unknown) {
       this.errorMessage = `Failed to send invite: ${(e as Error).message}`;
@@ -656,7 +656,7 @@ export class Dashboard implements OnInit, OnDestroy {
     if (!email) return;
 
     try {
-      await this.gameService.sendPlayerInvite(game.id, slot.number, email, window.location.origin, 'de');
+      await this.gameService.sendPlayerInvite(game.id, slot.number, email, window.location.origin);
       alert('Invite sent successfully!');
     } catch (e: unknown) {
       this.errorMessage = `Failed to send invite: ${(e as Error).message}`;

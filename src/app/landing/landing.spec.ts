@@ -16,12 +16,8 @@ describe('Landing', () => {
   let authServiceMock: any;
 
   beforeEach(async () => {
-    languageServiceMock = { currentLang: 'de' };
-    authMock = { onAuthStateChanged: vi.fn() };
-    functionsMock = {};
-    authServiceMock = {
-      signInAsGuest: vi.fn().mockResolvedValue({ user: { uid: 'guest-123' } }),
-      user$: { subscribe: vi.fn() },
+    mockGameService = {
+      loadGame: vi.fn().mockResolvedValue(null),
     };
 
     await TestBed.configureTestingModule({

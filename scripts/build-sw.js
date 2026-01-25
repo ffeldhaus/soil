@@ -6,35 +6,14 @@ const path = require('node:path');
 // Change this to match your build directory
 const swDest = 'dist/soil/browser/sw.js';
 
-// Preparation for App Hosting (handling localized build structure)
 const browserDir = 'dist/soil/browser';
-const serverDir = 'dist/soil/server';
-const defaultLocale = 'de';
+const rootIndexHtml = path.join(browserDir, 'index.html');
+const rootIndexCsrHtml = path.join(browserDir, 'index.csr.html');
 
-const indexHtml = path.join(browserDir, defaultLocale, 'index.html');
-const indexCsrHtml = path.join(browserDir, defaultLocale, 'index.csr.html');
-
-if (fs.existsSync(indexHtml)) {
+if (!fs.existsSync(rootIndexHtml) && fs.existsSync(rootIndexCsrHtml)) {
   // biome-ignore lint/suspicious/noConsole: used for build logging
-  console.log(`Copying ${defaultLocale} index.html to browser root for App Hosting compatibility...`);
-  fs.copyFileSync(indexHtml, path.join(browserDir, 'index.html'));
-} else if (fs.existsSync(indexCsrHtml)) {
-  // biome-ignore lint/suspicious/noConsole: used for build logging
-  console.log(`Copying ${defaultLocale} index.csr.html to browser root as index.html for App Hosting compatibility...`);
-  fs.copyFileSync(indexCsrHtml, path.join(browserDir, 'index.html'));
-}
-
-if (fs.existsSync(path.join(serverDir, defaultLocale))) {
-  // biome-ignore lint/suspicious/noConsole: used for build logging
-  console.log(`Copying ${defaultLocale} server files to server root for App Hosting compatibility...`);
-  const files = fs.readdirSync(path.join(serverDir, defaultLocale));
-  for (const file of files) {
-    const srcPath = path.join(serverDir, defaultLocale, file);
-    const destPath = path.join(serverDir, file);
-    if (fs.lstatSync(srcPath).isFile()) {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
+  console.log('Copying index.csr.html to index.html in browser root...');
+  fs.copyFileSync(rootIndexCsrHtml, rootIndexHtml);
 }
 
 // Bundle the service worker using esbuild to handle ES module imports

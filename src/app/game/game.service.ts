@@ -407,7 +407,6 @@ export class GameService {
     explanation: string;
     institution: string;
     institutionLink?: string;
-    lang?: string;
   }): Promise<void> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
@@ -421,7 +420,6 @@ export class GameService {
         explanation: string;
         institution: string;
         institutionLink?: string;
-        lang?: string;
       },
       void
     >(this.functions!, 'submitOnboarding');
@@ -432,7 +430,6 @@ export class GameService {
     targetUid: string,
     action: 'setQuota' | 'ban' | 'delete',
     value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number,
-    lang?: string,
     origin?: string,
   ): Promise<void> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
@@ -445,47 +442,40 @@ export class GameService {
         targetUid: string;
         action: 'setQuota' | 'ban' | 'delete';
         value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number;
-        lang?: string;
         origin?: string;
       },
       void
     >(this.functions!, 'manageAdmin');
-    await fn({ targetUid, action, value, lang, origin });
+    await fn({ targetUid, action, value, origin });
   }
 
-  async sendPlayerInvite(
-    gameId: string,
-    playerNumber: number,
-    email: string,
-    origin: string,
-    lang?: string,
-  ): Promise<void> {
+  async sendPlayerInvite(gameId: string, playerNumber: number, email: string, origin: string): Promise<void> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       if (window.console) console.warn('Mock: Player invite sent', { gameId, playerNumber, email });
       return;
     }
-    const fn = httpsCallable<
-      { gameId: string; playerNumber: number; email: string; origin: string; lang?: string },
-      void
-    >(this.functions!, 'sendPlayerInvite');
+    const fn = httpsCallable<{ gameId: string; playerNumber: number; email: string; origin: string }, void>(
+      this.functions!,
+      'sendPlayerInvite',
+    );
     try {
-      await fn({ gameId, playerNumber, email, origin, lang });
+      await fn({ gameId, playerNumber, email, origin });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to send player invite', error);
       throw error;
     }
   }
 
-  async sendGameInvite(gameId: string, email: string, lang?: string): Promise<void> {
+  async sendGameInvite(gameId: string, email: string): Promise<void> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       if (window.console) console.warn('Mock: Game invite sent', { gameId, email });
       return;
     }
-    const fn = httpsCallable<{ gameId: string; email: string; lang?: string }, void>(this.functions!, 'sendGameInvite');
+    const fn = httpsCallable<{ gameId: string; email: string }, void>(this.functions!, 'sendGameInvite');
     try {
-      await fn({ gameId, email, lang });
+      await fn({ gameId, email });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to send game invite', error);
       throw error;

@@ -40,16 +40,28 @@ export class AuthService {
     if (this.auth) {
       onAuthStateChanged(this.auth, (u) => {
         this.ngZone.run(() => {
-          const guestUid = isBrowser ? window.localStorage.getItem('soil_guest_uid') : null;
-          const activeLocalGame = isBrowser ? window.localStorage.getItem('soil_active_local_game') : null;
+          if (u) {
+            // If we have a real user, clear guest/local state to avoid conflicts
+            if (isBrowser) {
+              window.localStorage.removeItem('soil_guest_uid');
+              window.localStorage.removeItem('soil_active_local_game');
+              window.localStorage.removeItem('soil_active_local_pin');
+            }
+            if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
+              this.userSubject.next(u);
+            }
+          } else {
+            const guestUid = isBrowser ? window.localStorage.getItem('soil_guest_uid') : null;
+            const activeLocalGame = isBrowser ? window.localStorage.getItem('soil_active_local_game') : null;
 
-          if (guestUid || activeLocalGame) {
-            // Respect the local session, do not overwrite with null/stale Firebase state
-            return;
-          }
+            if (guestUid || activeLocalGame) {
+              // Respect the local session if no Firebase user
+              return;
+            }
 
-          if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
-            this.userSubject.next(u);
+            if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
+              this.userSubject.next(null);
+            }
           }
         });
       });
@@ -201,7 +213,6 @@ export class AuthService {
       }
       const sendFn = httpsCallable(this.functions!, 'sendVerificationEmail');
       await sendFn({
-        lang: 'de',
         origin: window.location.origin,
       });
     }
@@ -216,7 +227,6 @@ export class AuthService {
     const sendFn = httpsCallable(this.functions!, 'sendPasswordResetEmail');
     await sendFn({
       email,
-      lang: 'de',
       origin: window.location.origin,
     });
   }

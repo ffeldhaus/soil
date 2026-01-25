@@ -65,11 +65,6 @@ export class AdminRegisterComponent implements OnInit {
         this.currentUser = user;
         this.isGoogleUser = user.providerData.some((p) => p.providerId === 'google.com');
 
-        if (!user.isAnonymous) {
-          this.router.navigate(['/admin']);
-          return;
-        }
-
         if (this.isGoogleUser) {
           const names = (user.displayName || '').split(' ');
           this.registerForm.get('firstName')?.setValue(names[0] || '');
@@ -118,7 +113,6 @@ export class AdminRegisterComponent implements OnInit {
         lastName: formData.lastName as string,
         explanation: 'Simplified registration',
         institution: 'N/A',
-        lang: 'de',
       });
 
       if (!this.isGoogleUser) {

@@ -125,28 +125,11 @@ export class MailService {
     }
   }
 
-  async sendPlayerLoginInfo(email: string, loginLink: string, lang = 'en'): Promise<void> {
-    const subjects: Record<string, string> = {
-      en: 'Your Login Link to Soil',
-      de: 'Dein Login-Link für Soil',
-    };
-    const subject = subjects[lang] || subjects.en;
+  async sendPlayerLoginInfo(email: string, loginLink: string): Promise<void> {
+    const subject = 'Dein Login-Link für Soil';
+    const text = `Willkommen bei Soil!\n\nBitte nutze den folgenden Link, um dich einzuloggen:\n${loginLink}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
 
-    const textEN = `Welcome to Soil!\n\nPlease use the following link to log in:\n${loginLink}\n\nIf you did not request this, please ignore this email.`;
-    const textDE = `Willkommen bei Soil!\n\nBitte nutze den folgenden Link, um dich einzuloggen:\n${loginLink}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
-    const text = lang === 'de' ? textDE : textEN;
-
-    const htmlEN = `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>Welcome to Soil!</h2>
-        <p>Please use the button below to log in:</p>
-        <p>
-          <a href="${loginLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Login to Soil</a>
-        </p>
-        <p style="font-size: 12px; color: #777;">If the button doesn't work, copy and paste this link into your browser:<br>${loginLink}</p>
-      </div>
-    `;
-    const htmlDE = `
+    const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>Willkommen bei Soil!</h2>
         <p>Bitte nutze den folgenden Button, um dich einzuloggen:</p>
@@ -156,33 +139,15 @@ export class MailService {
         <p style="font-size: 12px; color: #777;">Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:<br>${loginLink}</p>
       </div>
     `;
-    const html = lang === 'de' ? htmlDE : htmlEN;
 
     return this.sendEmail({ to: email, subject, text, html });
   }
 
-  async sendVerificationEmail(email: string, link: string, lang = 'en'): Promise<void> {
-    const subjects: Record<string, string> = {
-      en: 'Verify your email for Soil',
-      de: 'Bestätige deine E-Mail für Soil',
-    };
-    const subject = subjects[lang] || subjects.en;
+  async sendVerificationEmail(email: string, link: string): Promise<void> {
+    const subject = 'Bestätige deine E-Mail für Soil';
+    const text = `Hallo,\n\nbitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
 
-    const textEN = `Hello,\n\nPlease verify your email address by clicking the link below:\n${link}\n\nIf you did not request this, please ignore this email.`;
-    const textDE = `Hallo,\n\nbitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
-    const text = lang === 'de' ? textDE : textEN;
-
-    const htmlEN = `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>Verify your email</h2>
-        <p>Please click the button below to verify your email address:</p>
-        <p>
-          <a href="${link}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verify Email</a>
-        </p>
-        <p style="font-size: 12px; color: #777;">If the button doesn't work, copy and paste this link into your browser:<br>${link}</p>
-      </div>
-    `;
-    const htmlDE = `
+    const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>E-Mail bestätigen</h2>
         <p>Bitte klicke auf den folgenden Button, um deine E-Mail-Adresse zu bestätigen:</p>
@@ -192,33 +157,15 @@ export class MailService {
         <p style="font-size: 12px; color: #777;">Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:<br>${link}</p>
       </div>
     `;
-    const html = lang === 'de' ? htmlDE : htmlEN;
 
     return this.sendEmail({ to: email, subject, text, html });
   }
 
-  async sendPasswordResetEmail(email: string, link: string, lang = 'en'): Promise<void> {
-    const subjects: Record<string, string> = {
-      en: 'Reset your password for Soil',
-      de: 'Passwort zurücksetzen für Soil',
-    };
-    const subject = subjects[lang] || subjects.en;
+  async sendPasswordResetEmail(email: string, link: string): Promise<void> {
+    const subject = 'Passwort zurücksetzen für Soil';
+    const text = `Hallo,\n\ndu kannst dein Passwort zurücksetzen, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
 
-    const textEN = `Hello,\n\nYou can reset your password by clicking the link below:\n${link}\n\nIf you did not request this, please ignore this email.`;
-    const textDE = `Hallo,\n\ndu kannst dein Passwort zurücksetzen, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
-    const text = lang === 'de' ? textDE : textEN;
-
-    const htmlEN = `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>Reset your password</h2>
-        <p>Please click the button below to reset your password:</p>
-        <p>
-          <a href="${link}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
-        </p>
-        <p style="font-size: 12px; color: #777;">If the button doesn't work, copy and paste this link into your browser:<br>${link}</p>
-      </div>
-    `;
-    const htmlDE = `
+    const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>Passwort zurücksetzen</h2>
         <p>Bitte klicke auf den folgenden Button, um dein Passwort zurückzusetzen:</p>
@@ -228,34 +175,15 @@ export class MailService {
         <p style="font-size: 12px; color: #777;">Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:<br>${link}</p>
       </div>
     `;
-    const html = lang === 'de' ? htmlDE : htmlEN;
 
     return this.sendEmail({ to: email, subject, text, html });
   }
 
-  async sendGameInvite(email: string, gameName: string, gameId: string, lang = 'en'): Promise<void> {
-    const subjects: Record<string, string> = {
-      en: `Invitation to Soil Game: ${gameName}`,
-      de: `Einladung zum Soil-Spiel: ${gameName}`,
-    };
-    const subject = subjects[lang] || subjects.en;
+  async sendGameInvite(email: string, gameName: string, gameId: string): Promise<void> {
+    const subject = `Einladung zum Soil-Spiel: ${gameName}`;
+    const text = `Du wurdest eingeladen, Soil zu spielen!\n\nSpiel: ${gameName}\nSpiel-ID: ${gameId}\n\nBitte frage deine Lehrkraft nach deinem persönlichen PIN.\n\nGehe auf ${APP_DOMAIN} um beizutreten.`;
 
-    const textEN = `You have been invited to play Soil!\n\nGame: ${gameName}\nGame ID: ${gameId}\n\nPlease ask your host for your unique Player PIN.\n\nGo to ${APP_DOMAIN} to join.`;
-    const textDE = `Du wurdest eingeladen, Soil zu spielen!\n\nSpiel: ${gameName}\nSpiel-ID: ${gameId}\n\nBitte frage deine Lehrkraft nach deinem persönlichen PIN.\n\nGehe auf ${APP_DOMAIN} um beizutreten.`;
-    const text = lang === 'de' ? textDE : textEN;
-
-    const htmlEN = `
-      <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>You're invited to Soil!</h2>
-        <p>You have been invited to join the game <strong>${gameName}</strong>.</p>
-        <p><strong>Game ID:</strong> ${gameId}</p>
-        <p>Please ask your host for your unique Player PIN.</p>
-        <p>
-          <a href="${APP_DOMAIN}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Soil</a>
-        </p>
-      </div>
-    `;
-    const htmlDE = `
+    const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>Einladung zu Soil!</h2>
         <p>Du wurdest eingeladen, dem Spiel <strong>${gameName}</strong> beizutreten.</p>
@@ -266,7 +194,6 @@ export class MailService {
         </p>
       </div>
     `;
-    const html = lang === 'de' ? htmlDE : htmlEN;
 
     return this.sendEmail({ to: email, subject, text, html });
   }

@@ -8,7 +8,6 @@ describe('AuthService Multi-Provider', () => {
   let service: AuthService;
   let authSpy: any;
   let functionsSpy: any;
-  let languageServiceSpy: any;
 
   beforeEach(() => {
     authSpy = {
@@ -16,7 +15,6 @@ describe('AuthService Multi-Provider', () => {
       onAuthStateChanged: vi.fn(),
     };
     functionsSpy = {};
-    languageServiceSpy = { currentLang: 'en' };
 
     // Set test mode in localStorage
     if (typeof window !== 'undefined') {

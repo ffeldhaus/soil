@@ -56,8 +56,6 @@ describe('AuthService', () => {
       httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
     };
 
-    const languageServiceMock = { currentLang: 'de' };
-
     TestBed.configureTestingModule({
       providers: [
         AuthService,
@@ -179,7 +177,7 @@ describe('AuthService', () => {
     await service.sendVerificationEmail();
 
     expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'sendVerificationEmail');
-    expect(mockCallable).toHaveBeenCalledWith({ lang: 'de', origin: expect.stringContaining('http://localhost') });
+    expect(mockCallable).toHaveBeenCalledWith({ origin: expect.stringContaining('http://localhost') });
   });
 
   it('should call sendPasswordResetEmail callable', async () => {
@@ -190,7 +188,6 @@ describe('AuthService', () => {
     expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'sendPasswordResetEmail');
     expect(mockCallable).toHaveBeenCalledWith({
       email: 'test@example.com',
-      lang: 'de',
       origin: expect.stringContaining('http://localhost'),
     });
   });

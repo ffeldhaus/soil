@@ -9,7 +9,6 @@ describe('AuthService Guest Mode', () => {
   let service: AuthService;
   let authSpy: any;
   let functionsSpy: any;
-  let languageServiceSpy: any;
 
   beforeEach(() => {
     authSpy = {
@@ -17,7 +16,6 @@ describe('AuthService Guest Mode', () => {
       onAuthStateChanged: vi.fn(),
     };
     functionsSpy = {};
-    languageServiceSpy = { currentLang: 'en' };
 
     TestBed.configureTestingModule({
       providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: functionsSpy }],

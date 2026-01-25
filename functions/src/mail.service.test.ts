@@ -51,26 +51,19 @@ describe('MailService', () => {
       sendEmailStub = sandbox.stub(mailService, 'sendEmail').resolves();
     });
 
-    it('sendPlayerLoginInfo should use correct language (en)', async () => {
-      await mailService.sendPlayerLoginInfo('test@example.com', 'http://link', 'en');
-      const args = sendEmailStub.firstCall.args[0];
-      expect(args.subject).to.equal('Your Login Link to Soil');
-      expect(args.text).to.contain('Welcome to Soil!');
-    });
-
-    it('sendPlayerLoginInfo should use correct language (de)', async () => {
-      await mailService.sendPlayerLoginInfo('test@example.com', 'http://link', 'de');
+    it('sendPlayerLoginInfo should use German template', async () => {
+      await mailService.sendPlayerLoginInfo('test@example.com', 'http://link');
       const args = sendEmailStub.firstCall.args[0];
       expect(args.subject).to.equal('Dein Login-Link für Soil');
       expect(args.text).to.contain('Willkommen bei Soil!');
     });
 
-    it('sendGameInvite should include game info', async () => {
-      await mailService.sendGameInvite('test@example.com', 'My Game', 'ID123', 'en');
+    it('sendGameInvite should include game info in German', async () => {
+      await mailService.sendGameInvite('test@example.com', 'My Game', 'ID123');
       const args = sendEmailStub.firstCall.args[0];
       expect(args.subject).to.contain('My Game');
-      expect(args.text).to.contain('Game: My Game');
-      expect(args.text).to.contain('Game ID: ID123');
+      expect(args.text).to.contain('Spiel: My Game');
+      expect(args.text).to.contain('Spiel-ID: ID123');
     });
   });
 });

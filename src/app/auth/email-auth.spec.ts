@@ -8,7 +8,6 @@ describe('AuthService Email Auth', () => {
   let service: AuthService;
   let authSpy: any;
   let functionsSpy: any;
-  let languageServiceSpy: any;
 
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -19,7 +18,6 @@ describe('AuthService Email Auth', () => {
       onAuthStateChanged: vi.fn(),
     };
     functionsSpy = {};
-    languageServiceSpy = { currentLang: 'en' };
 
     // Set test mode in localStorage
     if (typeof window !== 'undefined') {
