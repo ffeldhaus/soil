@@ -1609,9 +1609,25 @@ export const sendPlayerInvite = onCall(
     const { gameId, playerNumber, email, origin } = request.data;
     if (!gameId || !playerNumber || !email) throw new HttpsError('invalid-argument', 'Missing args');
 
-    // Use provided origin or default to production
+    const gameRef = db.collection('games').doc(gameId);
+    const gameDoc = await gameRef.get();
+
+    if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
+    const game = gameDoc.data();
+
+    if (game?.hostUid !== request.auth.uid) {
+      throw new HttpsError('permission-denied', 'Only game host can send invites');
+    }
+
+    const playerSecrets = game?.playerSecrets || {};
+    const secret = playerSecrets[String(playerNumber)];
+
+    if (!secret || !secret.password) {
+      throw new HttpsError('not-found', 'Player or PIN not found');
+    }
+
     // Construct login link
-    const loginLink = `${origin}/game-login?gameId=${gameId}&pin=${password}`;
+    const loginLink = `${origin}/game-login?gameId=${gameId}&pin=${secret.password}`;
 
     await mailService.sendPlayerLoginInfo(email, loginLink);
 
