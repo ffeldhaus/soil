@@ -30,7 +30,7 @@ describe('AiAgent', () => {
     const decisions = Array(5)
       .fill(null)
       .map(() => AiAgent.makeDecision('middle', prevRound));
-    
+
     // At least some machines should be 1, but we don't strictly require all to be 1
     const machinesValues = new Set(decisions.map((d) => d.machines));
     expect(machinesValues.has(0) || machinesValues.has(1)).to.be.true;
@@ -56,13 +56,13 @@ describe('AiAgent', () => {
       decision: { parcels: {}, machines: 0, organic: false, fertilizer: false, pesticide: false, organisms: false },
       parcelsSnapshot: prevParcels,
     };
-    
+
     const cropsUsed = new Set<string>();
     for (let i = 0; i < 20; i++) {
       const decision = AiAgent.makeDecision('high', prevRound);
       cropsUsed.add(decision.parcels[0]);
     }
-    
+
     // Should use more than just Fieldbean for recovery now
     expect(cropsUsed.size).to.be.greaterThan(1);
   });

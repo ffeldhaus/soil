@@ -60,7 +60,7 @@ export class AiAgent {
       decision.machines = averageSoil > machinesThreshold ? 2 : 1;
 
       if (!decision.organic) {
-        decision.fertilizer = averageSoil < (115 + Math.random() * 10);
+        decision.fertilizer = averageSoil < 115 + Math.random() * 10;
         decision.pesticide = Math.random() > 0.05; // 95% usage
       } else {
         decision.organisms = Math.random() > 0.1; // High organic usage
@@ -73,7 +73,7 @@ export class AiAgent {
         const prevCrop = prevParcel.crop;
 
         // Condition-based variety
-        if (prevParcel.soil < (65 + Math.random() * 10) || prevParcel.nutrition < (55 + Math.random() * 10)) {
+        if (prevParcel.soil < 65 + Math.random() * 10 || prevParcel.nutrition < 55 + Math.random() * 10) {
           const recoveryCrops: CropType[] = ['Fieldbean', 'Pea', 'Fallow'];
           decision.parcels[i] = recoveryCrops[Math.floor(Math.random() * recoveryCrops.length)];
         } else if (decision.organic && i < 8) {
