@@ -15,9 +15,18 @@ import { routes } from './app.routes';
 
 registerLocaleData(localeDe, 'de-DE');
 
+const isBrowser = typeof window !== 'undefined';
+const currentHostname = isBrowser ? window.location.hostname : '';
+
+// Dynamically use the App Hosting domain if applicable, otherwise fallback to the standard Firebase domain
+const dynamicAuthDomain = 
+  isBrowser && currentHostname.endsWith('apphostingapp.com') 
+    ? currentHostname 
+    : 'soil-602ea.firebaseapp.com';
+
 const firebaseConfig = {
   apiKey: 'AIzaSyB8miWCLbX3FqBR66W7WmAS8Xb204tCoPU',
-  authDomain: 'soil-602ea.web.app',
+  authDomain: dynamicAuthDomain,
   projectId: 'soil-602ea',
   storageBucket: 'soil-602ea.firebasestorage.app',
   messagingSenderId: '167590574128',
