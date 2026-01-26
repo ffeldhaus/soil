@@ -50,9 +50,13 @@ describe('AuthService', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     // Clear mock callables between tests
-    for (const key in mockCallables) {
-      mockCallables[key].mockReset();
-      mockCallables[key].mockResolvedValue({ data: {} });
+    const callableNames = ['playerLogin', 'sendVerificationEmail', 'sendPasswordResetEmail'];
+    for (const name of callableNames) {
+      if (!mockCallables[name]) {
+        mockCallables[name] = vi.fn(() => Promise.resolve({ data: {} }));
+      }
+      mockCallables[name].mockReset();
+      mockCallables[name].mockResolvedValue({ data: {} });
     }
 
     mockLocalStorage = {};

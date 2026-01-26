@@ -601,6 +601,26 @@ export class Board implements OnInit, OnDestroy {
     }
   }
 
+  get backgroundImage(): string {
+    const round = this.history.find((r) => r.number === this.viewingRound);
+    const weather = (round?.result?.events?.weather || 'Normal') as keyof typeof GAME_CONSTANTS.WEATHER_EFFECTS;
+
+    const weatherMap: Record<string, string> = {
+      Normal: '',
+      Drought: '-trockenheit',
+      SummerDrought: '-trockenheit',
+      HeatWave: '-hitzewelle',
+      LateFrost: '-spätfost', // Matching the filename "spätfost" from ls output
+      Flood: '-hochwasser',
+      Storm: '-sturm',
+    };
+
+    const suffix = weatherMap[weather] || '';
+    const orientation = this.cols === 5 ? 'portrait' : 'landscape';
+
+    return `assets/images/bauernhof-${orientation}${suffix}-hd.webp`;
+  }
+
   closeRoundResultModal() {
     this.showRoundResultModal = false;
   }
@@ -612,14 +632,19 @@ export class Board implements OnInit, OnDestroy {
       Normal: '☀️',
       Drought: '🏜️',
       LateFrost: '❄️',
-      SummerDrought: '🔥',
+      SummerDrought: '🏜️',
+      HeatWave: '🔥',
       Flood: '🌊',
       Storm: '💨',
     };
 
+    const weatherNames: Record<string, string> = {
+      SummerDrought: 'Sommerdürre',
+    };
+
     return {
       icon: icons[weather] || '☀️',
-      name: GAME_CONSTANTS.WEATHER_EFFECTS[weather]?.name || weather,
+      name: weatherNames[weather] || GAME_CONSTANTS.WEATHER_EFFECTS[weather]?.name || weather,
     };
   }
 
@@ -639,6 +664,7 @@ export class Board implements OnInit, OnDestroy {
       'oat-rust': '🍄',
       wireworm: '🐛',
       fritfly: '🪰',
+      'swine-fever': '🐖',
     };
 
     return pests.map((p) => ({

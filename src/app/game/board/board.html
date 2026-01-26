@@ -1,17 +1,9 @@
 <div class="h-screen w-screen text-white select-none relative font-sans overflow-hidden flex flex-col bg-gray-950 no-overscroll">
-  <!-- Background Image -->
-  <div class="fixed inset-0 z-0 pointer-events-none print:hidden transition-opacity duration-500">
-    <picture>
-      <source [srcset]="showFinance ? 'assets/images/bauernhof-portrait-dunkel.webp' : 'assets/images/bauernhof-portrait-hd.webp'" media="(orientation: portrait)" />
-      <img [src]="showFinance ? 'assets/images/bauernhof-landscape-dunkel.webp' : 'assets/images/bauernhof-landscape-hd.webp'" alt=""
-        fetchpriority="high" class="w-full h-full object-cover portrait:object-center landscape:object-center" />
-    </picture>
+  <!-- Fullscreen Background Image -->
+  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+    <img [src]="backgroundImage" alt=""
+      class="w-full h-full object-cover select-none">
   </div>
-
-  <!-- Dark overlay for readability (only for parcel view) -->
-  @if ((user$ | async) && !showFinance) {
-  <div class="absolute inset-0 z-0 pointer-events-none transition-colors duration-500 bg-black/30"></div>
-  }
 
   @if (user$ | async; as user) {
   <div class="relative z-10 h-full flex flex-col pt-10">
@@ -229,9 +221,11 @@
         @if (viewingRound >= 0) {
         <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pointer-events-auto w-full max-w-md px-4">
           <!-- Pests (Left) -->
-          <div class="flex gap-1 justify-end">
+          <div class="flex flex-wrap gap-1 justify-end portrait:hidden">
             @for (pest of selectedRoundPestsData; track $index) {
-            <span class="text-xl animate-bounce-slow" [title]="pest.name">{{ pest.icon }}</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-950/40 px-2 py-1 rounded border border-red-500/30 shadow-sm animate-pulse" [title]="pest.name">
+              {{ pest.name }}
+            </span>
             }
           </div>
 
@@ -262,8 +256,12 @@
           </div>
 
           <!-- Weather (Right) -->
-          <div class="flex justify-start">
-            <span class="text-2xl" [title]="selectedRoundWeatherData.name">{{ selectedRoundWeatherData.icon }}</span>
+          <div class="flex justify-start portrait:hidden">
+            @if (selectedRoundWeatherData.name !== 'Normal') {
+            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-950/40 px-2 py-1 rounded border border-blue-500/30 shadow-sm" [title]="selectedRoundWeatherData.name">
+              {{ selectedRoundWeatherData.name }}
+            </span>
+            }
           </div>
         </div>
         }

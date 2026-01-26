@@ -193,8 +193,8 @@ export class PlayerLoginComponent implements OnInit {
   }
 
   loginForm = this.fb.group({
-    gameId: ['', [Validators.required, Validators.minLength(4)]],
-    password: ['', [Validators.required, Validators.minLength(4)]],
+    gameId: ['', [Validators.required, Validators.minLength(3)]],
+    password: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   private autoSubmitted = false;

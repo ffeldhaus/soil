@@ -281,4 +281,31 @@ describe('Board', () => {
     // Should NOT have called getRoundData
     expect(gameService.getRoundData).toBeUndefined();
   });
+
+  it('should return correct backgroundImage based on weather and orientation', () => {
+    component.cols = 8; // Landscape
+    component.showFinance = false;
+    component.history = [
+      {
+        number: 0,
+        result: { events: { weather: 'Normal' } },
+      } as any,
+    ];
+    component.viewingRound = 0;
+
+    expect(component.backgroundImage).toBe('assets/images/bauernhof-landscape-hd.webp');
+
+    // Drought weather
+    component.history[0].result.events.weather = 'Drought';
+    expect(component.backgroundImage).toBe('assets/images/bauernhof-landscape-trockenheit-hd.webp');
+
+    // Portrait
+    component.cols = 5;
+    component.history[0].result.events.weather = 'Normal';
+    expect(component.backgroundImage).toBe('assets/images/bauernhof-portrait-hd.webp');
+
+    // Flood weather (should NOT be dunkel anymore)
+    component.history[0].result.events.weather = 'Flood';
+    expect(component.backgroundImage).toBe('assets/images/bauernhof-portrait-hochwasser-hd.webp');
+  });
 });

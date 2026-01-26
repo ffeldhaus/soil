@@ -25,16 +25,21 @@ export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
-  // Property Initializers for Firebase Functions to ensure they are created in the injection context
-  private playerLoginFn = this.functions
-    ? httpsCallable<{ gameId: string; password: string }, { customToken: string }>(this.functions, 'playerLogin')
-    : null;
-  private sendVerificationEmailFn = this.functions
-    ? httpsCallable<{ origin: string }, void>(this.functions, 'sendVerificationEmail')
-    : null;
-  private sendPasswordResetEmailFn = this.functions
-    ? httpsCallable<{ email: string; origin: string }, void>(this.functions, 'sendPasswordResetEmail')
-    : null;
+  // Lazy getters for Firebase Functions to avoid SSR issues with mock objects
+  private get playerLoginFn() {
+    if (!this.functions || (typeof window === 'undefined')) return null;
+    return httpsCallable<{ gameId: string; password: string }, { customToken: string }>(this.functions, 'playerLogin');
+  }
+
+  private get sendVerificationEmailFn() {
+    if (!this.functions || (typeof window === 'undefined')) return null;
+    return httpsCallable<{ origin: string }, void>(this.functions, 'sendVerificationEmail');
+  }
+
+  private get sendPasswordResetEmailFn() {
+    if (!this.functions || (typeof window === 'undefined')) return null;
+    return httpsCallable<{ email: string; origin: string }, void>(this.functions, 'sendPasswordResetEmail');
+  }
 
   get isAnonymous(): boolean {
     return !!this.userSubject.value?.isAnonymous;
@@ -145,11 +150,16 @@ export class AuthService {
     // Note: Function name is 'playerLogin' in backend
 
     try {
-      if (!this.playerLoginFn) throw new Error('Functions not available');
-      const result = await this.playerLoginFn({ gameId, password: pin });
+      const fn = this.playerLoginFn;
+      if (!fn) {
+        if (typeof window === 'undefined') return { user: null } as any;
+        throw new Error('Functions not available');
+      }
+      const result = await fn({ gameId, password: pin });
       const { customToken } = result.data;
       return await signInWithCustomToken(this.auth!, customToken);
     } catch (error) {
+      if (typeof window === 'undefined') return { user: null } as any;
       console.error('Player login failed:', error);
       throw error;
     }
@@ -221,8 +231,12 @@ export class AuthService {
         if (window.console) console.warn('Mock: Verification email sent');
         return;
       }
-      if (!this.sendVerificationEmailFn) throw new Error('Functions not available');
-      await this.sendVerificationEmailFn({
+      const fn = this.sendVerificationEmailFn;
+      if (!fn) {
+        if (typeof window === 'undefined') return;
+        throw new Error('Functions not available');
+      }
+      await fn({
         origin: window.location.origin,
       });
     }
@@ -234,8 +248,12 @@ export class AuthService {
       if (window.console) console.warn('Mock: Password reset email sent to', email);
       return;
     }
-    if (!this.sendPasswordResetEmailFn) throw new Error('Functions not available');
-    await this.sendPasswordResetEmailFn({
+    const fn = this.sendPasswordResetEmailFn;
+    if (!fn) {
+      if (typeof window === 'undefined') return;
+      throw new Error('Functions not available');
+    }
+    await fn({
       email,
       origin: window.location.origin,
     });

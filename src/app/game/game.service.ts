@@ -34,85 +34,128 @@ export class GameService {
   private authService = inject(AuthService);
   private offlineService = inject(OfflineService);
 
-  // Property Initializers for Firebase Functions to ensure they are created in the injection context
-  private getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number; targetUid?: string }, Round>(
-    this.functions!,
-    'getRoundData',
-  );
-  private getGameStateFn = httpsCallable<{ gameId: string }, GameState>(this.functions!, 'getGameState');
-  private saveDraftFn = httpsCallable<{ gameId: string; decision: RoundDecision }, { success: boolean }>(
-    this.functions!,
-    'saveDraft',
-  );
-  private submitDecisionFn = httpsCallable<
-    { gameId: string; decision: RoundDecision },
-    { status: string; nextRound?: Round }
-  >(this.functions!, 'submitDecision');
-  private createGameFn = httpsCallable<
-    { name: string; config: any; settings: any },
-    { gameId: string; password?: string }
-  >(this.functions!, 'createGame');
-  private getAdminGamesFn = httpsCallable<
-    { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
-    { games: Game[]; total: number }
-  >(this.functions!, 'getAdminGames');
-  private getUserStatusFn = httpsCallable<void, UserStatus | null>(this.functions!, 'getUserStatus');
-  private getAllAdminsFn = httpsCallable<void, (UserStatus & { gameCount: number; quota: number })[]>(
-    this.functions!,
-    'getAllAdmins',
-  );
-  private getSystemStatsFn = httpsCallable<void, SystemStats>(this.functions!, 'getSystemStats');
-  private submitOnboardingFn = httpsCallable<
-    {
-      firstName: string;
-      lastName: string;
-      explanation: string;
-      institution: string;
-      institutionLink?: string;
-    },
-    void
-  >(this.functions!, 'submitOnboarding');
-  private manageAdminFn = httpsCallable<
-    {
-      targetUid: string;
-      action: 'setQuota' | 'ban' | 'delete';
-      value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number;
-      origin?: string;
-    },
-    void
-  >(this.functions!, 'manageAdmin');
-  private sendPlayerInviteFn = httpsCallable<
-    { gameId: string; playerNumber: number; email: string; origin: string },
-    void
-  >(this.functions!, 'sendPlayerInvite');
-  private uploadFinishedGameFn = httpsCallable<{ gameData: any }, { success: boolean }>(
-    this.functions!,
-    'uploadFinishedGame',
-  );
-  private evaluateGameFn = httpsCallable<{ gameId: string; targetUid: string }, GameEvaluation>(
-    this.functions!,
-    'evaluateGame',
-  );
-  private sendGameInviteFn = httpsCallable<{ gameId: string; email: string }, void>(this.functions!, 'sendGameInvite');
-  private deleteGamesFn = httpsCallable<{ gameIds: string[]; force: boolean }, void>(this.functions!, 'deleteGames');
-  private undeleteGamesFn = httpsCallable<{ gameIds: string[] }, void>(this.functions!, 'undeleteGames');
-  private updatePlayerTypeFn = httpsCallable<
-    { gameId: string; playerNumber: number; type: 'human' | 'ai'; aiLevel?: string },
-    void
-  >(this.functions!, 'updatePlayerType');
-  private updateRoundDeadlineFn = httpsCallable<{ gameId: string; roundNumber: number; deadline: string }, void>(
-    this.functions!,
-    'updateRoundDeadline',
-  );
-  private submitFeedbackFn = httpsCallable<{ category: string; rating: number; comment: string }, void>(
-    this.functions!,
-    'submitFeedback',
-  );
-  private getAllFeedbackFn = httpsCallable<void, Feedback[]>(this.functions!, 'getAllFeedback');
-  private manageFeedbackFn = httpsCallable<
-    { feedbackId: string; action: string; value?: { response?: string; externalReference?: string } },
-    void
-  >(this.functions!, 'manageFeedback');
+  // Lazy getters for Firebase Functions to avoid SSR issues with mock objects
+  private get getRoundDataFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; roundNumber: number; targetUid?: string }, Round>(
+      this.functions,
+      'getRoundData',
+    );
+  }
+  private get getGameStateFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string }, GameState>(this.functions, 'getGameState');
+  }
+  private get saveDraftFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; decision: RoundDecision }, { success: boolean }>(
+      this.functions,
+      'saveDraft',
+    );
+  }
+  private get submitDecisionFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; decision: RoundDecision }, { status: string; nextRound?: Round }>(
+      this.functions,
+      'submitDecision',
+    );
+  }
+  private get createGameFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ name: string; config: any; settings: any }, { gameId: string; password?: string }>(
+      this.functions,
+      'createGame',
+    );
+  }
+  private get getAdminGamesFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ page: number; pageSize: number; showDeleted: boolean; adminUid?: string }, { games: Game[]; total: number }>(
+      this.functions,
+      'getAdminGames',
+    );
+  }
+  private get getUserStatusFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, UserStatus | null>(this.functions, 'getUserStatus');
+  }
+  private get getAllAdminsFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, (UserStatus & { gameCount: number; quota: number })[]>(this.functions, 'getAllAdmins');
+  }
+  private get getSystemStatsFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, SystemStats>(this.functions, 'getSystemStats');
+  }
+  private get submitOnboardingFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ firstName: string; lastName: string; explanation: string; institution: string; institutionLink?: string }, void>(
+      this.functions,
+      'submitOnboarding',
+    );
+  }
+  private get manageAdminFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ targetUid: string; action: 'setQuota' | 'ban' | 'delete'; value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number; origin?: string }, void>(
+      this.functions,
+      'manageAdmin',
+    );
+  }
+  private get sendPlayerInviteFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; playerNumber: number; email: string; origin: string }, void>(
+      this.functions,
+      'sendPlayerInvite',
+    );
+  }
+  private get uploadFinishedGameFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameData: any }, { success: boolean }>(this.functions, 'uploadFinishedGame');
+  }
+  private get evaluateGameFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; targetUid: string }, GameEvaluation>(this.functions, 'evaluateGame');
+  }
+  private get sendGameInviteFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; email: string }, void>(this.functions, 'sendGameInvite');
+  }
+  private get deleteGamesFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameIds: string[]; force: boolean }, void>(this.functions, 'deleteGames');
+  }
+  private get undeleteGamesFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameIds: string[] }, void>(this.functions, 'undeleteGames');
+  }
+  private get updatePlayerTypeFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; playerNumber: number; type: 'human' | 'ai'; aiLevel?: string }, void>(
+      this.functions,
+      'updatePlayerType',
+    );
+  }
+  private get updateRoundDeadlineFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string; roundNumber: number; deadline: string }, void>(
+      this.functions,
+      'updateRoundDeadline',
+    );
+  }
+  private get submitFeedbackFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ category: string; rating: number; comment: string }, void>(this.functions, 'submitFeedback');
+  }
+  private get getAllFeedbackFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, Feedback[]>(this.functions, 'getAllFeedback');
+  }
+  private get manageFeedbackFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ feedbackId: string; action: string; value?: { response?: string; externalReference?: string } }, void>(
+      this.functions,
+      'manageFeedback',
+    );
+  }
 
   private parcelsSubject = new BehaviorSubject<Parcel[]>(this.createInitialParcels());
   parcels$ = this.parcelsSubject.asObservable();
@@ -192,7 +235,12 @@ export class GameService {
       return round;
     }
 
-    const result = await this.getRoundDataFn({ gameId, roundNumber });
+    const fn = this.getRoundDataFn;
+    if (!fn) {
+      if (typeof window === 'undefined') return { number: roundNumber, parcelsSnapshot: [], result: undefined } as any;
+      throw new Error('Functions not available');
+    }
+    const result = await fn({ gameId, roundNumber });
     const round = result.data;
     if (round.parcelsSnapshot) {
       this.parcelCache[roundNumber] = round.parcelsSnapshot;
@@ -226,7 +274,12 @@ export class GameService {
     }
 
     try {
-      const result = await this.getGameStateFn({ gameId });
+      const fn = this.getGameStateFn;
+      if (!fn) {
+        if (typeof window === 'undefined') return null;
+        throw new Error('Functions not available');
+      }
+      const result = await fn({ gameId });
       const data = result.data;
 
       if (data.lastRound) {
@@ -322,7 +375,9 @@ export class GameService {
     };
 
     try {
-      await this.saveDraftFn({ gameId, decision });
+      const fn = this.saveDraftFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ gameId, decision });
       if (window.console) console.warn('Draft saved');
     } catch (error: unknown) {
       if (!this.offlineService.isOnline()) {
@@ -360,7 +415,9 @@ export class GameService {
     }
 
     try {
-      const result = await this.submitDecisionFn({
+      const fn = this.submitDecisionFn;
+      if (!fn) throw new Error('Functions not available');
+      const result = await fn({
         gameId,
         decision,
       });
@@ -410,7 +467,7 @@ export class GameService {
   ): Promise<{ gameId: string; password?: string }> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
-      return { gameId: `test-game-${Math.random().toString(36).substr(2, 9)}`, password: '123' };
+      return { gameId: `test-game-${Math.random().toString(36).substr(2, 9)}`, password: '1234' };
     }
     const numHumanPlayers = config.numPlayers - (config.numAi || 0);
     if (numHumanPlayers === 1) {
@@ -426,7 +483,9 @@ export class GameService {
         difficulty: 'normal',
         playerLabel: config.playerLabel || 'Player',
       };
-      const result = await this.createGameFn({ name, config, settings });
+      const fn = this.createGameFn;
+      if (!fn) throw new Error('Functions not available');
+      const result = await fn({ name, config, settings });
       return result.data;
     } catch (error: unknown) {
       if (window.console) console.error('Failed to create game:', error);
@@ -456,8 +515,17 @@ export class GameService {
     let cloudResponse = { games: [] as Game[], total: 0 };
     if (!this.authService.isAnonymous) {
       try {
-        const result = await this.getAdminGamesFn({ page, pageSize, showDeleted: showTrash, adminUid });
-        cloudResponse = result.data;
+        const fn = this.getAdminGamesFn;
+        if (!fn) {
+          if (typeof window === 'undefined') {
+             cloudResponse = { games: [], total: 0 };
+          } else {
+            throw new Error('Functions not available');
+          }
+        } else {
+          const result = await fn({ page, pageSize, showDeleted: showTrash, adminUid });
+          cloudResponse = result.data;
+        }
       } catch (e) {
         console.error('Error fetching cloud games:', e);
       }
@@ -498,7 +566,9 @@ export class GameService {
       const role = fullRole.startsWith('player') ? 'player' : fullRole;
       return { uid: 'mock-uid', email: `mock-${role}@example.com`, role, status: 'active' } as any;
     }
-    return (await this.getUserStatusFn()).data;
+    const fn = this.getUserStatusFn;
+    if (!fn) throw new Error('Functions not available');
+    return (await fn()).data;
   }
 
   async getAllAdmins(): Promise<(UserStatus & { gameCount: number; quota: number })[]> {
@@ -508,7 +578,9 @@ export class GameService {
         { uid: 'admin-1', email: 'admin@example.com', role: 'admin', status: 'active', gameCount: 5, quota: 10 } as any,
       ];
     }
-    return (await this.getAllAdminsFn()).data;
+    const fn = this.getAllAdminsFn;
+    if (!fn) throw new Error('Functions not available');
+    return (await fn()).data;
   }
 
   async getSystemStats(): Promise<SystemStats> {
@@ -519,7 +591,9 @@ export class GameService {
         users: { total: 50, admins: 40, banned: 2 },
       };
     }
-    return (await this.getSystemStatsFn()).data;
+    const fn = this.getSystemStatsFn;
+    if (!fn) throw new Error('Functions not available');
+    return (await fn()).data;
   }
 
   async submitOnboarding(data: {
@@ -534,7 +608,9 @@ export class GameService {
       if (window.console) console.warn('Mock: Onboarding submitted', data);
       return;
     }
-    await this.submitOnboardingFn(data);
+    const fn = this.submitOnboardingFn;
+    if (!fn) throw new Error('Functions not available');
+    await fn(data);
   }
 
   async manageAdmin(
@@ -548,7 +624,9 @@ export class GameService {
       if (window.console) console.warn('Mock: Manage admin', { targetUid, action, value });
       return;
     }
-    await this.manageAdminFn({ targetUid, action, value, origin });
+    const fn = this.manageAdminFn;
+    if (!fn) throw new Error('Functions not available');
+    await fn({ targetUid, action, value, origin });
   }
 
   async sendPlayerInvite(gameId: string, playerNumber: number, email: string, origin: string): Promise<void> {
@@ -558,7 +636,9 @@ export class GameService {
       return;
     }
     try {
-      await this.sendPlayerInviteFn({ gameId, playerNumber, email, origin });
+      const fn = this.sendPlayerInviteFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ gameId, playerNumber, email, origin });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to send player invite', error);
       throw error;
@@ -578,7 +658,9 @@ export class GameService {
     if (!isFinished) return;
 
     try {
-      const _result = await this.uploadFinishedGameFn({
+      const fn = this.uploadFinishedGameFn;
+      if (!fn) throw new Error('Functions not available');
+      const _result = await fn({
         gameData: {
           game: localState.game,
           allRounds: localState.allRounds,
@@ -592,7 +674,9 @@ export class GameService {
   }
 
   async evaluateGame(gameId: string, targetUid: string): Promise<GameEvaluation> {
-    return (await this.evaluateGameFn({ gameId, targetUid })).data;
+    const fn = this.evaluateGameFn;
+    if (!fn) throw new Error('Functions not available');
+    return (await fn({ gameId, targetUid })).data;
   }
 
   async sendGameInvite(gameId: string, email: string): Promise<void> {
@@ -602,7 +686,9 @@ export class GameService {
       return;
     }
     try {
-      await this.sendGameInviteFn({ gameId, email });
+      const fn = this.sendGameInviteFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ gameId, email });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to send game invite', error);
       throw error;
@@ -627,7 +713,9 @@ export class GameService {
       return;
     }
     try {
-      await this.deleteGamesFn({ gameIds, force });
+      const fn = this.deleteGamesFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ gameIds, force });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to delete games:', error);
       throw error;
@@ -652,7 +740,9 @@ export class GameService {
       return;
     }
     try {
-      await this.undeleteGamesFn({ gameIds });
+      const fn = this.undeleteGamesFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ gameIds });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to undelete games:', error);
       throw error;
@@ -666,7 +756,9 @@ export class GameService {
       return;
     }
     try {
-      await this.updatePlayerTypeFn({ gameId, playerNumber, type, aiLevel });
+      const fn = this.updatePlayerTypeFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ gameId, playerNumber, type, aiLevel });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to update player type', error);
       throw error;
@@ -680,7 +772,9 @@ export class GameService {
       return;
     }
     try {
-      await this.updateRoundDeadlineFn({ gameId, roundNumber, deadline });
+      const fn = this.updateRoundDeadlineFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ gameId, roundNumber, deadline });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to update deadline', error);
       throw error;
@@ -694,7 +788,9 @@ export class GameService {
       return;
     }
     try {
-      await this.submitFeedbackFn(feedback);
+      const fn = this.submitFeedbackFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn(feedback);
     } catch (error: unknown) {
       if (window.console) console.error('Failed to submit feedback', error);
       throw error;
@@ -717,7 +813,9 @@ export class GameService {
       ];
     }
     try {
-      return (await this.getAllFeedbackFn()).data;
+      const fn = this.getAllFeedbackFn;
+      if (!fn) throw new Error('Functions not available');
+      return (await fn()).data;
     } catch (error: unknown) {
       if (window.console) console.error('Failed to fetch all feedback', error);
       throw error;
@@ -735,7 +833,9 @@ export class GameService {
       return;
     }
     try {
-      await this.manageFeedbackFn({ feedbackId, action, value });
+      const fn = this.manageFeedbackFn;
+      if (!fn) throw new Error('Functions not available');
+      await fn({ feedbackId, action, value });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to manage feedback:', error);
       throw error;
@@ -765,7 +865,9 @@ export class GameService {
       const fullHistory: Round[] = [];
       for (let r = 0; r <= game.currentRoundNumber; r++) {
         try {
-          const result = await this.getRoundDataFn({ gameId, roundNumber: r, targetUid: player.uid });
+          const fn = this.getRoundDataFn;
+          if (!fn) throw new Error('Functions not available');
+          const result = await fn({ gameId, roundNumber: r, targetUid: player.uid });
           fullHistory.push(result.data);
         } catch (error) {
           if (window.console) console.error(`Failed to fetch round ${r} for player ${player.uid}`, error);
@@ -874,8 +976,10 @@ export class GameService {
     const numPlayers = isRound6 ? 10 : isEnd ? 4 : 1;
 
     const players: Record<string, PlayerState> = {};
+    const playerSecrets: Record<string, { password: string }> = {};
     for (let i = 1; i <= numPlayers; i++) {
       const uid = `player-test-game-id-${i}`;
+      playerSecrets[String(i)] = { password: '1234' };
       const playerHistory = this.createMockHistory(historyCount, i);
       const lastRound = playerHistory[playerHistory.length - 1];
 
@@ -910,6 +1014,7 @@ export class GameService {
         config: { numPlayers: numPlayers, numRounds, numAi: 0 },
         settings: { length: numRounds, difficulty: 'normal', playerLabel: 'Player' },
         players: players,
+        playerSecrets: playerSecrets,
         createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
       },
       playerState: playerState,

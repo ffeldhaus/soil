@@ -34,6 +34,7 @@ export class RoundResultModal {
       nematode: 'Rübennematode',
       fritfly: 'Fritfliege',
       wireworm: 'Drahtwurm',
+      'swine-fever': 'Afrikanische Schweinepest',
     };
     return translations[key] || key;
   }
