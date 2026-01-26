@@ -179,7 +179,7 @@ export class LocalGameService {
 
   private calculateNextRound(state: LocalGameState) {
     const nextRoundNum = state.game.currentRoundNumber + 1;
-    
+
     // Weather Generation
     const weatherRoll = Math.random();
     const weather =
