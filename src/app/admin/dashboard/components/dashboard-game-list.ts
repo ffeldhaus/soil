@@ -73,7 +73,7 @@ export class DashboardGameListComponent {
       'dashboard.table.deletedAt': 'Gelöscht am',
       'dashboard.table.created': 'Erstellt',
       'dashboard.table.actions': 'Aktionen',
-      'dashboard.table.id': '',
+      'dashboard.table.id': 'Spiel ID: ',
       'dashboard.table.email': 'Spieldetails senden',
       'dashboard.table.restore': 'Spiel wiederherstellen',
       'dashboard.table.delete': 'Spiel löschen',

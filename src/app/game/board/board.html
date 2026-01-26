@@ -128,7 +128,7 @@
           </div>
         </div>
 
-        <div class="p-4 bg-gray-950 border-t border-gray-800">
+        <div class="p-4 bg-gray-950 border-t border-gray-800 space-y-4">
           @if (user$ | async; as user) {
           <div class="flex items-center gap-3">
             @if (!isPlayer) {
@@ -154,6 +154,13 @@
             </div>
           </div>
           }
+
+          <div class="pt-2 flex flex-col gap-2 text-[10px] font-mono text-gray-500 border-t border-gray-800/50">
+            <a routerLink="/manual" class="hover:text-white transition">Handbuch</a>
+            <a routerLink="/info" class="hover:text-white transition">Wissenschaftlicher Hintergrund</a>
+            <a routerLink="/impressum" class="hover:text-white transition">Impressum</a>
+            <span class="mt-1 opacity-50">v{{ version }}</span>
+          </div>
         </div>
       </div>
     </div>

@@ -56,6 +56,7 @@ export class Board implements OnInit, OnDestroy {
   private gameService = inject(GameService);
   gameServicePublic = this.gameService; // Expose for template if needed, or just specific streams
   gameState$ = this.gameService.state$;
+  version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
 
   authService = inject(AuthService);
   private router = inject(Router);

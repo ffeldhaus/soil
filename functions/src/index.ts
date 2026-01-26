@@ -1964,7 +1964,7 @@ export const evaluateGame = onCall(async (request) => {
     return evaluation;
   } catch (error: any) {
     console.error('Gemini evaluation failed:', error);
-    throw new HttpsError('internal', 'Evaluation failed: ' + error.message);
+    throw new HttpsError('internal', `Evaluation failed: ${error.message}`);
   }
 });
 

@@ -25,17 +25,18 @@
 
 <router-outlet></router-outlet>
 <div
-  class="fixed bottom-0 right-0 pl-2 pr-4 py-1 bg-white/50 backdrop-blur z-[100] flex items-center gap-3 rounded-tl-lg text-xs font-mono"
+  class="fixed bottom-0 right-0 pl-2 pr-4 py-1 bg-white/50 backdrop-blur z-[100] flex items-center gap-3 rounded-tl-lg text-xs font-mono portrait:hidden"
 >
-  <a routerLink="/impressum" class="text-gray-600 hover:text-black hover:underline transition"
-    >Impressum</a
+  <a routerLink="/manual" class="text-gray-600 hover:text-black hover:underline transition"
+    >Handbuch</a
   >
   <span class="text-gray-400">|</span>
-  <a
-
-    routerLink="/manual"
-    class="text-gray-600 hover:text-black hover:underline transition"
-    >Handbuch</a
+  <a routerLink="/info" class="text-gray-600 hover:text-black hover:underline transition"
+    >Wissenschaftlicher Hintergrund</a
+  >
+  <span class="text-gray-400">|</span>
+  <a routerLink="/impressum" class="text-gray-600 hover:text-black hover:underline transition"
+    >Impressum</a
   >
   <span class="text-gray-400">|</span>
   <span class="text-gray-500">v{{ version }}</span>

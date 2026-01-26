@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, inject, isDevMode, O
 import { FormsModule } from '@angular/forms';
 import type { User } from 'firebase/auth';
 
-import type { Game, PlayerState, Round } from '../../../types';
+import type { Game, PlayerState } from '../../../types';
 import { GameService } from '../../game.service';
 
 @Component({

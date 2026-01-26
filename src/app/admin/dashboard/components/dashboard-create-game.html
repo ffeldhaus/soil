@@ -1,6 +1,6 @@
 <h3 class="text-lg font-bold text-white mb-4">{{ t('dashboard.createGame.title') }}</h3>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-    <div class="col-span-1 md:col-span-2">
+    <div class="col-span-1">
       <div class="flex justify-between items-center mb-1">
         <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.name') }} *</label>
         @if (!newGameConfig.name) {
@@ -18,7 +18,9 @@
         [class.focus:border-emerald-500]="newGameConfig.name"
       />
       <p class="text-[10px] text-gray-500 mb-3 italic">{{ t('dashboard.createGame.nameHint') }}</p>
+    </div>
 
+    <div class="col-span-1">
       <div class="flex justify-between items-center mb-1">
         <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.playerLabel') }} *</label>
         @if (!newGameConfig.playerLabel) {
@@ -36,6 +38,7 @@
       />
       <p class="text-[10px] text-gray-500 mb-3 italic">{{ t('dashboard.createGame.playerHint') }}</p>
     </div>
+
     <div>
       <div class="flex justify-between items-center mb-1">
         <label class="block text-xs text-gray-200">Gesamtanzahl Slots</label>

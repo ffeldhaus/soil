@@ -52,7 +52,7 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.required': 'Erforderlich',
       'dashboard.createGame.nameHint': 'Wähle einen aussagekräftigen Namen für dein Spiel.',
       'dashboard.createGame.playerHint': 'Wie sollen die Teilnehmenden genannt werden?',
-      'ai.level.elementary': 'Grundschule',
+      'ai.level.elementary': 'Unterstufe',
       'ai.level.middle': 'Mittelstufe',
       'ai.level.high': 'Oberstufe',
     };

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
-import type { Feedback, Game, GameEvaluation, PlayerState, SystemStats, UserStatus } from '../../types';
+import type { Feedback, Game, PlayerState, SystemStats, UserStatus } from '../../types';
 import { SuperAdminHudComponent } from './components/super-admin-hud';
 import { SuperAdminStatsComponent } from './components/super-admin-stats';
 
@@ -213,7 +213,7 @@ export class SuperAdminComponent implements OnInit {
       });
     } catch (err: any) {
       this.evaluatingPlayers.delete(key);
-      alert('Evaluation failed: ' + err.message);
+      alert(`Evaluation failed: ${err.message}`);
       this.cdr.detectChanges();
     }
   }

@@ -16,8 +16,6 @@ import { AuthService } from '../auth/auth.service';
         </div>
 
         <div class="flex items-center gap-3">
-          @defer (hydrate on interaction) {
-          }
           <!-- Spacer to match the back/logout button present on other pages -->
           <div class="w-10 h-10"></div>
         </div>
@@ -87,13 +85,21 @@ import { AuthService } from '../auth/auth.service';
       @defer (hydrate on viewport) {
         <div id="info-section" class="relative z-10 py-24 px-6">
           <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-6">
-              <h2
-                class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
-
-              >
-                Über das Spiel
-              </h2>
+            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2
+                  class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
+                >
+                  Über das Spiel
+                </h2>
+                <a
+                  routerLink="/manual"
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-800/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white rounded-xl border border-emerald-500/30 transition-all shadow-lg font-bold text-sm min-w-[220px]"
+                >
+                  <span class="p-1 bg-emerald-900/30 rounded-lg">📖</span>
+                  <span>Handbuch</span>
+                </a>
+              </div>
               <div class="space-y-4 text-lg leading-relaxed text-gray-400">
                 <p>
                   Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
@@ -113,13 +119,21 @@ import { AuthService } from '../auth/auth.service';
               </div>
             </section>
 
-            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-6">
-              <h2
-                class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
-
-              >
-                Hintergrund
-              </h2>
+            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2
+                  class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
+                >
+                  Hintergrund
+                </h2>
+                <a
+                  routerLink="/info"
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-800/40 hover:bg-blue-700/60 text-blue-300 hover:text-white rounded-xl border border-blue-500/30 transition-all shadow-lg font-bold text-sm min-w-[220px]"
+                >
+                  <span class="p-1 bg-blue-900/30 rounded-lg">🎓</span>
+                  <span>Wissenschaftlicher Hintergrund</span>
+                </a>
+              </div>
               <div class="space-y-4 text-lg leading-relaxed text-gray-400">
                 <p>
                   Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel
@@ -132,24 +146,6 @@ import { AuthService } from '../auth/auth.service';
                 </p>
               </div>
             </section>
-          </div>
-
-          <div class="mt-16 flex flex-wrap justify-center gap-6">
-            <a
-              routerLink="/info"
-              class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium border border-emerald-500/30 px-6 py-2 rounded-xl bg-gray-900/80 backdrop-blur-md hover:bg-gray-900/40 shadow-lg"
-            >
-              <span class="p-1 bg-emerald-900/30 rounded-lg">🎓</span>
-              <span>Hintergrund</span>
-            </a>
-
-            <a
-              routerLink="/manual"
-              class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-medium border border-blue-500/30 px-6 py-2 rounded-xl bg-gray-900/80 backdrop-blur-md hover:bg-gray-900/40 shadow-lg"
-            >
-              <span class="p-1 bg-blue-900/30 rounded-lg">📖</span>
-              <span>Handbuch</span>
-            </a>
           </div>
 
           <!-- Test Mode (Dev Only) -->

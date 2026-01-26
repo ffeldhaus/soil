@@ -53,22 +53,6 @@
                   <h2 class="text-2xl font-bold text-emerald-400" data-testid="admin-controls">
                     {{ t('dashboard.controls.title') }}
                   </h2>
-                  <p class="text-gray-300">
-                    @if (userStatus?.displayName || userStatus?.firstName || user.email) {
-                      <ng-container>
-                        Willkommen,
-                        <span class="font-bold text-white">{{
-                          userStatus?.displayName ||
-                            (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user.email)
-                        }}</span
-                        >!
-                      </ng-container>
-                    } @else {
-                      <ng-container>
-                        Willkommen!
-                      </ng-container>
-                    }
-                  </p>
                 </div>
                 <button
                   (click)="showFeedbackModal = true"
@@ -107,13 +91,6 @@
               }
             </div>
 
-            <!-- Join Game Box -->
-            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
-              <app-dashboard-join-game
-                (joinGame)="onJoinGame($event)"
-              ></app-dashboard-join-game>
-            </div>
-
             <!-- List Games Box -->
             <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
               <app-dashboard-game-list
@@ -149,6 +126,13 @@
                 (printAllQrCodes)="printAllQrCodes($event)"
                 (updateDeadline)="onUpdateDeadline($event)"
               ></app-dashboard-game-list>
+            </div>
+
+            <!-- Join Game Box -->
+            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
+              <app-dashboard-join-game
+                (joinGame)="onJoinGame($event)"
+              ></app-dashboard-join-game>
             </div>
 
             <!-- Teacher Guide Box -->
