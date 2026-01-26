@@ -36,8 +36,13 @@
           @if (!showTrash) {
             <ng-container>{{ t('dashboard.delete.question') }}</ng-container>
           }
-          <span class="font-bold text-white"> {{ gameToDelete.name }}</span
-          >?
+          <span class="font-bold text-white"> {{ gameToDelete.name }}</span>
+          @if (showTrash) {
+            {{ t('dashboard.delete.questionPermanentSuffix') }}
+          }
+          @if (!showTrash) {
+            {{ t('dashboard.delete.questionSuffix') }}
+          }
         </span>
       }
       @if (isDeletingSelected) {
@@ -49,9 +54,14 @@
             <ng-container>{{ t('dashboard.delete.questionBatch') }}</ng-container>
           }
           <span class="font-bold text-white"> {{ selectedCount }}</span>
-          <ng-container>{{ t('dashboard.delete.games') }}</ng-container
-          >?</span
-        >
+          {{ t('dashboard.delete.games') }}
+          @if (showTrash) {
+            {{ t('dashboard.delete.questionPermanentSuffix') }}
+          }
+          @if (!showTrash) {
+            {{ t('dashboard.delete.questionSuffix') }}
+          }
+        </span>
       }
     </p>
 
@@ -75,10 +85,9 @@
           />
         </svg>
         <div class="text-sm text-red-200/80">
-          <strong>{{ t('dashboard.delete.soft.title') }}</strong
-          ><ng-container>{{ t('dashboard.delete.soft.desc') }}</ng-container
-          ><strong>30 {{ t('dashboard.delete.days') }}</strong
-          >.
+          <strong>{{ t('dashboard.delete.soft.title') }}: </strong>
+          {{ t('dashboard.delete.soft.desc') }}
+          <strong>30 {{ t('dashboard.delete.days') }}</strong>.
         </div>
       </div>
     }
