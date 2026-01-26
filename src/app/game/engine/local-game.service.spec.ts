@@ -109,4 +109,24 @@ describe('LocalGameService', () => {
     const stateAfterExtra = await service.loadGame(gameId);
     expect(stateAfterExtra?.game.currentRoundNumber).toBe(2);
   });
+
+  it('should save draft for local game', async () => {
+    const response = await service.createGame('Draft Test', { numPlayers: 1 });
+    const gameId = response.gameId;
+
+    const draftDecision = {
+      parcels: { 0: 'Corn' as any },
+      machines: 1,
+      fertilizer: true,
+      pesticide: false,
+      organisms: false,
+      organic: false,
+    };
+
+    await service.saveDraft(gameId, draftDecision);
+
+    const state = await service.loadGame(gameId);
+    expect(state?.game.players[state.playerState.uid].pendingDecisions).toEqual(draftDecision);
+    expect(state?.playerState.pendingDecisions).toEqual(draftDecision);
+  });
 });

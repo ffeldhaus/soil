@@ -128,6 +128,18 @@ export class LocalGameService {
     return null;
   }
 
+  async saveDraft(gameId: string, decision: RoundDecision): Promise<void> {
+    const state = this.stateSubject.value;
+    if (!state || state.game.id !== gameId || state.game.status === 'finished') return;
+
+    const playerUid = state.playerState.uid;
+    state.game.players[playerUid].pendingDecisions = decision;
+    state.playerState = state.game.players[playerUid];
+
+    this.saveToStorage(state);
+    this.stateSubject.next({ ...state });
+  }
+
   async submitDecision(gameId: string, decision: RoundDecision): Promise<void> {
     const state = this.stateSubject.value;
     if (!state || state.game.id !== gameId || state.game.status === 'finished') return;

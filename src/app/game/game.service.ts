@@ -98,6 +98,19 @@ export class GameService {
   }
 
   async getRoundData(gameId: string, roundNumber: number): Promise<Round> {
+    if (gameId.startsWith('local-')) {
+      const state = await this.localGame.loadGame(gameId);
+      if (!state) throw new Error('Local game not found');
+      // For local games, all rounds for player 1 are in state.allRounds
+      const playerUid = state.playerState.uid;
+      const round = state.allRounds[playerUid][roundNumber];
+      if (!round) throw new Error('Round not found');
+      if (round.parcelsSnapshot) {
+        this.parcelCache[roundNumber] = round.parcelsSnapshot;
+      }
+      return round;
+    }
+
     const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number }, Round>(
       this.functions!,
       'getRoundData',
@@ -187,6 +200,28 @@ export class GameService {
   }
 
   async saveDraft(gameId: string) {
+    if (gameId.startsWith('local-')) {
+      // For local games, save the draft to LocalGameService
+      const fullParcels: Record<number, CropType> = {};
+      const currentParcels = this.parcelsSubject.value;
+      for (let i = 0; i < 40; i++) {
+        fullParcels[i] = this.pendingDecisions[i] || currentParcels[i].crop || 'Fallow';
+      }
+
+      const decision: RoundDecision = {
+        machines: 0,
+        organic: false,
+        fertilizer: false,
+        pesticide: false,
+        organisms: false,
+        parcels: fullParcels,
+        priceFixing: {},
+      };
+
+      await this.localGame.saveDraft(gameId, decision);
+      return;
+    }
+
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       if (window.console) console.warn('Mock: Draft saved locally');

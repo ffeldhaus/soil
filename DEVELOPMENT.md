@@ -33,6 +33,24 @@ This document outlines the local development strategy, testing procedures, and c
 - PREFER using `ripgrep` (`rg`) as it automatically respects `.gitignore` and is significantly faster.
 - Avoid searching through large generated directories like `dist/`, `node_modules/`, `.angular/`, or `coverage/`.
 
+## Game Types & Storage
+
+The application supports two primary game types:
+
+1. **On-Device (Local) Games**:
+   - Designed for single human players (with optional AI).
+   - Game logic is executed entirely on the client side using `LocalGameService`.
+   - Game IDs start with the prefix `local-`.
+   - Data is persisted in the browser's `localStorage`.
+   - Drafts are saved locally to avoid unnecessary network calls and unauthorized errors for unauthenticated users.
+   - **Requirement**: Once completed, local games should be uploaded to the cloud for research and analytics purposes. This requires a specialized API endpoint that accepts full game states. To prevent abuse, this endpoint should be restricted to requests from authorized frontends (e.g., using Firebase App Check and strict CORS/Origin policies).
+
+2. **Server/Cloud Games**:
+   - Designed for multiplayer scenarios (more than 1 human player).
+   - Game logic is executed on the server via Firebase Cloud Functions.
+   - Data is stored in Firestore.
+   - Requires users to be authenticated to save drafts and submit decisions.
+
 ## Local Development Environment
 
 We use the **Firebase Emulator Suite** to mirror the production environment locally. This ensures that our local testing is accurate and safe.
