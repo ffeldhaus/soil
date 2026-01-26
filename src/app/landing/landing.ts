@@ -124,14 +124,14 @@ import { AuthService } from '../auth/auth.service';
                 <h2
                   class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
                 >
-                  Hintergrund
+                  Nachhaltigkeit
                 </h2>
                 <a
                   routerLink="/info"
                   class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-800/40 hover:bg-blue-700/60 text-blue-300 hover:text-white rounded-xl border border-blue-500/30 transition-all shadow-lg font-bold text-sm min-w-[220px]"
                 >
                   <span class="p-1 bg-blue-900/30 rounded-lg">🎓</span>
-                  <span>Wissenschaftlicher Hintergrund</span>
+                  <span>Hintergrund</span>
                 </a>
               </div>
               <div class="space-y-4 text-lg leading-relaxed text-gray-400">

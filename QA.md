@@ -14,8 +14,9 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 | Feature | Steps | Expected Result | E2E Covered |
 |---------|-------|-----------------|-------------|
 | Hero Section | Observe background image and main title. | Background image loads correctly; title "SOIL" is visible and styled. | No |
-| Info Sections | Scroll down to "Über das Spiel" and "Hintergrund". | Content is readable and properly formatted. | No |
-| Manual | Click "Hintergrund" or go to `/manual`. | The user manual opens with all sections (Crops, Soil, etc.). | No |
+| Info Sections | Scroll down to "Über das Spiel" and "Nachhaltigkeit". | Content is readable and properly formatted. | No |
+| Manual | Click "Handbuch" or go to `/manual`. | The user manual opens with all sections (Crops, Soil, etc.). | No |
+| Background | Click "Hintergrund" or go to `/info`. | The background information page opens. | No |
 | Impressum | Find and click the Impressum link in the footer. | Impressum page displays legal information. | No |
 
 ---
