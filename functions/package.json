@@ -50,7 +50,7 @@
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.10.9",
-    "@types/nodemailer": "^7.0.4",
+    "@types/nodemailer": "^7.0.9",
     "@types/sinon": "^21.0.0",
     "chai": "^6.2.2",
     "firebase-functions-test": "^3.4.1",
