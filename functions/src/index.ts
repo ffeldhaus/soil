@@ -446,14 +446,13 @@ async function performCalculation(
     const availablePests = [
       'aphid-black',
       'aphid-cereal',
-      'fritfly',
       'potato-beetle',
       'corn-borer',
-      'wireworm',
       'pollen-beetle',
       'pea-moth',
       'oat-rust',
       'nematode',
+      'swine-fever',
     ];
     const numPests = Math.floor(Math.random() * 2) + 1; // 1-2 pests
     for (let i = 0; i < numPests; i++) {

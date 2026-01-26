@@ -319,7 +319,10 @@ export class GameEngine {
         ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC
         : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL) +
       (decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0);
-    const animalMaintenance = animalParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS;
+    let animalMaintenance = animalParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS;
+    if (events.vermin.includes('swine-fever')) {
+      animalMaintenance *= 2.0; // Significant increase due to hygiene and restriction zones
+    }
     const suppliesCost =
       (decision.fertilizer ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0) +
       (decision.pesticide ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0) +

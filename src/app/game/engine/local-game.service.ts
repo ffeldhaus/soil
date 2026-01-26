@@ -179,9 +179,45 @@ export class LocalGameService {
 
   private calculateNextRound(state: LocalGameState) {
     const nextRoundNum = state.game.currentRoundNumber + 1;
-    const weatherConditions = ['Normal', 'Drought', 'Flood', 'Cold', 'Optimal'];
-    const weather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
-    const events = { weather, vermin: [] };
+    
+    // Weather Generation
+    const weatherRoll = Math.random();
+    const weather =
+      weatherRoll > 0.9
+        ? 'SummerDrought'
+        : weatherRoll > 0.8
+          ? 'Drought'
+          : weatherRoll > 0.7
+            ? 'LateFrost'
+            : weatherRoll < 0.1
+              ? 'Flood'
+              : weatherRoll < 0.2
+                ? 'Storm'
+                : 'Normal';
+
+    // Pest Generation
+    const vermin: string[] = [];
+    const pestRoll = Math.random();
+    if (pestRoll > 0.8) {
+      const availablePests = [
+        'aphid-black',
+        'aphid-cereal',
+        'potato-beetle',
+        'corn-borer',
+        'pollen-beetle',
+        'pea-moth',
+        'oat-rust',
+        'nematode',
+        'swine-fever',
+      ];
+      const numPests = Math.floor(Math.random() * 2) + 1;
+      for (let i = 0; i < numPests; i++) {
+        const p = availablePests[Math.floor(Math.random() * availablePests.length)];
+        if (!vermin.includes(p)) vermin.push(p);
+      }
+    }
+
+    const events = { weather, vermin };
 
     for (const uid in state.game.players) {
       const p = state.game.players[uid];
