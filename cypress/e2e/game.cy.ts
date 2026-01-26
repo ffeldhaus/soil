@@ -87,6 +87,9 @@ describe('SOIL Game E2E', () => {
       },
     });
 
+    // Wait for game state to load
+    cy.wait('@getGameState');
+
     // Verify app root exists
     cy.get('app-root').should('exist');
   });

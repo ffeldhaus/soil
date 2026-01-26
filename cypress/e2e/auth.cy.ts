@@ -34,6 +34,10 @@ describe('Authentication & Roles', () => {
 
     // 3. Create Game
     cy.get('[data-testid="game-name-input"]').type('E2E Test Game');
+    // Set 2 players and 0 AI to ensure it's a multiplayer game and stays on dashboard
+    cy.get('[data-testid="num-players-input"]').invoke('val', 2).trigger('change');
+    cy.get('[data-testid="num-ai-input"]').invoke('val', 0).trigger('change');
+
     cy.get('[data-testid="create-game-submit"]').click();
 
     // Wait for credentials

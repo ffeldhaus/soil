@@ -50,6 +50,7 @@
         type="range"
         min="1"
         max="10"
+        data-testid="num-players-input"
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
       <p class="text-[10px] text-gray-500 mt-1">Du bist automatisch Spieler 1.</p>
@@ -64,6 +65,7 @@
         type="range"
         min="0"
         [max]="newGameConfig.numPlayers - 1"
+        data-testid="num-ai-input"
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
       />
       <p class="text-[10px] text-gray-500 mt-1">Restliche Slots ({{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}) sind für andere menschliche Spieler.</p>
