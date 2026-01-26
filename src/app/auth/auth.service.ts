@@ -27,17 +27,17 @@ export class AuthService {
 
   // Lazy getters for Firebase Functions to avoid SSR issues with mock objects
   private get playerLoginFn() {
-    if (!this.functions || (typeof window === 'undefined')) return null;
+    if (!this.functions || typeof window === 'undefined') return null;
     return httpsCallable<{ gameId: string; password: string }, { customToken: string }>(this.functions, 'playerLogin');
   }
 
   private get sendVerificationEmailFn() {
-    if (!this.functions || (typeof window === 'undefined')) return null;
+    if (!this.functions || typeof window === 'undefined') return null;
     return httpsCallable<{ origin: string }, void>(this.functions, 'sendVerificationEmail');
   }
 
   private get sendPasswordResetEmailFn() {
-    if (!this.functions || (typeof window === 'undefined')) return null;
+    if (!this.functions || typeof window === 'undefined') return null;
     return httpsCallable<{ email: string; origin: string }, void>(this.functions, 'sendPasswordResetEmail');
   }
 

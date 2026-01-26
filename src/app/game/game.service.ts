@@ -69,10 +69,10 @@ export class GameService {
   }
   private get getAdminGamesFn() {
     if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ page: number; pageSize: number; showDeleted: boolean; adminUid?: string }, { games: Game[]; total: number }>(
-      this.functions,
-      'getAdminGames',
-    );
+    return httpsCallable<
+      { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
+      { games: Game[]; total: number }
+    >(this.functions, 'getAdminGames');
   }
   private get getUserStatusFn() {
     if (!this.functions || typeof window === 'undefined') return null;
@@ -88,17 +88,22 @@ export class GameService {
   }
   private get submitOnboardingFn() {
     if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ firstName: string; lastName: string; explanation: string; institution: string; institutionLink?: string }, void>(
-      this.functions,
-      'submitOnboarding',
-    );
+    return httpsCallable<
+      { firstName: string; lastName: string; explanation: string; institution: string; institutionLink?: string },
+      void
+    >(this.functions, 'submitOnboarding');
   }
   private get manageAdminFn() {
     if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ targetUid: string; action: 'setQuota' | 'ban' | 'delete'; value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number; origin?: string }, void>(
-      this.functions,
-      'manageAdmin',
-    );
+    return httpsCallable<
+      {
+        targetUid: string;
+        action: 'setQuota' | 'ban' | 'delete';
+        value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number;
+        origin?: string;
+      },
+      void
+    >(this.functions, 'manageAdmin');
   }
   private get sendPlayerInviteFn() {
     if (!this.functions || typeof window === 'undefined') return null;
@@ -151,10 +156,10 @@ export class GameService {
   }
   private get manageFeedbackFn() {
     if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ feedbackId: string; action: string; value?: { response?: string; externalReference?: string } }, void>(
-      this.functions,
-      'manageFeedback',
-    );
+    return httpsCallable<
+      { feedbackId: string; action: string; value?: { response?: string; externalReference?: string } },
+      void
+    >(this.functions, 'manageFeedback');
   }
 
   private parcelsSubject = new BehaviorSubject<Parcel[]>(this.createInitialParcels());
@@ -518,7 +523,7 @@ export class GameService {
         const fn = this.getAdminGamesFn;
         if (!fn) {
           if (typeof window === 'undefined') {
-             cloudResponse = { games: [], total: 0 };
+            cloudResponse = { games: [], total: 0 };
           } else {
             throw new Error('Functions not available');
           }
