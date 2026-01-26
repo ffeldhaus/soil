@@ -1,6 +1,6 @@
 import { Injectable, inject, NgZone } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { Functions } from '@angular/fire/functions';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -13,7 +13,6 @@ import {
   type User,
   updateProfile,
 } from 'firebase/auth';
-import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({

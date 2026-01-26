@@ -99,6 +99,11 @@ export class GameService {
   }
 
   async getRoundData(gameId: string, roundNumber: number): Promise<Round> {
+    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number }, Round>(
+      this.functions!,
+      'getRoundData',
+    );
+
     if (gameId.startsWith('local-')) {
       const state = await this.localGame.loadGame(gameId);
       if (!state) throw new Error('Local game not found');
@@ -112,10 +117,6 @@ export class GameService {
       return round;
     }
 
-    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number }, Round>(
-      this.functions!,
-      'getRoundData',
-    );
     const result = await getRoundDataFn({ gameId, roundNumber });
     const round = result.data;
     if (round.parcelsSnapshot) {
@@ -125,6 +126,8 @@ export class GameService {
   }
 
   async loadGame(gameId: string): Promise<GameState | null> {
+    const getGameStateFn = httpsCallable<{ gameId: string }, GameState>(this.functions!, 'getGameState');
+
     if (gameId.startsWith('local-')) {
       const localState = await this.localGame.loadGame(gameId);
       if (localState && localState.game.status !== 'deleted') {
@@ -149,7 +152,6 @@ export class GameService {
       return mockState;
     }
 
-    const getGameStateFn = httpsCallable<{ gameId: string }, GameState>(this.functions!, 'getGameState');
     try {
       const result = await getGameStateFn({ gameId });
       const data = result.data;
@@ -201,6 +203,11 @@ export class GameService {
   }
 
   async saveDraft(gameId: string) {
+    const saveDraftFn = httpsCallable<{ gameId: string; decision: RoundDecision }, { success: boolean }>(
+      this.functions!,
+      'saveDraft',
+    );
+
     if (gameId.startsWith('local-')) {
       // For local games, save the draft to LocalGameService
       const fullParcels: Record<number, CropType> = {};
@@ -228,11 +235,6 @@ export class GameService {
       if (window.console) console.warn('Mock: Draft saved locally');
       return;
     }
-
-    const saveDraftFn = httpsCallable<{ gameId: string; decision: RoundDecision }, { success: boolean }>(
-      this.functions!,
-      'saveDraft',
-    );
 
     // Construct full decision for draft to ensure no undefined values
     const fullParcels: Record<number, CropType> = {};
@@ -264,6 +266,11 @@ export class GameService {
   }
 
   async submitDecision(gameId: string, decision: RoundDecision): Promise<any> {
+    const submitDecisionFn = httpsCallable<
+      { gameId: string; decision: RoundDecision },
+      { status: string; nextRound?: Round }
+    >(this.functions!, 'submitDecision');
+
     if (gameId.startsWith('local-')) {
       await this.localGame.submitDecision(gameId, decision);
       // LocalGameService updates its own stateSubject, but we need to refresh our local state$
@@ -288,11 +295,6 @@ export class GameService {
       }
       return { status: 'submitted' };
     }
-
-    const submitDecisionFn = httpsCallable<
-      { gameId: string; decision: RoundDecision },
-      { status: string; nextRound?: Round }
-    >(this.functions!, 'submitDecision');
 
     try {
       const result = await submitDecisionFn({
@@ -343,6 +345,11 @@ export class GameService {
       analyticsEnabled?: boolean;
     },
   ): Promise<{ gameId: string; password?: string }> {
+    const createGameFn = httpsCallable<
+      { name: string; config: any; settings: any },
+      { gameId: string; password?: string }
+    >(this.functions!, 'createGame');
+
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       return { gameId: `test-game-${Math.random().toString(36).substr(2, 9)}`, password: '123' };
@@ -355,10 +362,6 @@ export class GameService {
       return result;
     }
 
-    const createGameFn = httpsCallable<
-      { name: string; config: any; settings: any },
-      { gameId: string; password?: string }
-    >(this.functions!, 'createGame');
     try {
       const settings = {
         length: config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS,
@@ -379,6 +382,11 @@ export class GameService {
     showTrash = false,
     adminUid?: string,
   ): Promise<{ games: Game[]; total: number }> {
+    const getAdminGamesFn = httpsCallable<
+      { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
+      { games: Game[]; total: number }
+    >(this.functions!, 'getAdminGames');
+
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
       const mockGame = this.getMockGameState().game;
@@ -394,11 +402,6 @@ export class GameService {
     // 1. Fetch Cloud Games (Skip for guests)
     let cloudResponse = { games: [] as Game[], total: 0 };
     if (!this.authService.isAnonymous) {
-      const getAdminGamesFn = httpsCallable<
-        { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
-        { games: Game[]; total: number }
-      >(this.functions!, 'getAdminGames');
-
       try {
         const result = await getAdminGamesFn({ page, pageSize, showDeleted: showTrash, adminUid });
         cloudResponse = result.data;
@@ -539,6 +542,8 @@ export class GameService {
   }
 
   async uploadFinishedGame(gameId: string): Promise<void> {
+    const uploadFn = httpsCallable<{ gameData: any }, { success: boolean }>(this.functions!, 'uploadFinishedGame');
+
     if (!gameId.startsWith('local-')) return;
 
     const localState = await this.localGame.loadGame(gameId);
@@ -549,8 +554,6 @@ export class GameService {
       localState.game.currentRoundNumber >= (localState.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS);
 
     if (!isFinished) return;
-
-    const uploadFn = httpsCallable<{ gameData: any }, { success: boolean }>(this.functions!, 'uploadFinishedGame');
 
     try {
       const result = await uploadFn({
@@ -586,6 +589,8 @@ export class GameService {
   }
 
   async deleteGames(gameIds: string[], force = false): Promise<void> {
+    const deleteGamesFn = httpsCallable<{ gameIds: string[]; force: boolean }, void>(this.functions!, 'deleteGames');
+
     const localIds = gameIds.filter((id) => id.startsWith('local-'));
     const cloudIds = gameIds.filter((id) => !id.startsWith('local-'));
 
@@ -602,7 +607,6 @@ export class GameService {
       if (window.console) console.warn('Mock: Games deleted', { gameIds, force });
       return;
     }
-    const deleteGamesFn = httpsCallable<{ gameIds: string[]; force: boolean }, void>(this.functions!, 'deleteGames');
     try {
       await deleteGamesFn({ gameIds, force });
     } catch (error: unknown) {
@@ -612,6 +616,8 @@ export class GameService {
   }
 
   async undeleteGames(gameIds: string[]): Promise<void> {
+    const undeleteGamesFn = httpsCallable<{ gameIds: string[] }, void>(this.functions!, 'undeleteGames');
+
     const localIds = gameIds.filter((id) => id.startsWith('local-'));
     const cloudIds = gameIds.filter((id) => !id.startsWith('local-'));
 
@@ -628,7 +634,6 @@ export class GameService {
       if (window.console) console.warn('Mock: Games undeleted', { gameIds });
       return;
     }
-    const undeleteGamesFn = httpsCallable<{ gameIds: string[] }, void>(this.functions!, 'undeleteGames');
     try {
       await undeleteGamesFn({ gameIds });
     } catch (error: unknown) {
@@ -738,6 +743,11 @@ export class GameService {
   }
 
   async exportFullGameState(gameId: string): Promise<any> {
+    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number; targetUid?: string }, Round>(
+      this.functions!,
+      'getRoundData',
+    );
+
     if (gameId.startsWith('local-')) {
       const localState = await this.localGame.loadGame(gameId);
       if (!localState) return null;
@@ -754,11 +764,6 @@ export class GameService {
 
     const game = JSON.parse(JSON.stringify(state.game));
     const players = Object.values(game.players) as PlayerState[];
-
-    const getRoundDataFn = httpsCallable<{ gameId: string; roundNumber: number; targetUid?: string }, Round>(
-      this.functions!,
-      'getRoundData',
-    );
 
     // Fetch all rounds for all players
     for (const player of players) {

@@ -13,6 +13,10 @@ export class SyncService {
   private localGameService = inject(LocalGameService);
   private functions = inject(Functions, { optional: true });
 
+  private migrateLocalGameFn = this.functions
+    ? httpsCallable<{ gameData: any }, { success: boolean }>(this.functions, 'migrateLocalGame')
+    : null;
+
   constructor() {
     this.initSyncListener();
   }
@@ -38,22 +42,17 @@ export class SyncService {
   }
 
   async syncLocalGames() {
-    if (!this.functions) return;
+    if (!this.migrateLocalGameFn) return;
 
     const allLocalGames = await this.localGameService.getLocalGames();
     const localGames = allLocalGames.filter((g) => g.status !== 'deleted');
     if (localGames.length === 0) return;
 
-    const migrateLocalGameFn = httpsCallable<{ gameData: any }, { success: boolean }>(
-      this.functions,
-      'migrateLocalGame',
-    );
-
     for (const game of localGames) {
       try {
         const fullState = await this.localGameService.loadGame(game.id);
         if (fullState) {
-          await migrateLocalGameFn({ gameData: fullState });
+          await this.migrateLocalGameFn({ gameData: fullState });
           await this.localGameService.deleteGame(game.id, true);
           if (window.console) console.warn(`Successfully migrated game ${game.id} to cloud`);
         }

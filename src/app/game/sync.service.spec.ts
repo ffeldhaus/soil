@@ -21,10 +21,14 @@ describe('SyncService', () => {
   let authService: any;
   let functionsInstance: any;
   let userSubject: BehaviorSubject<any>;
+  let mockMigrateFn: any;
 
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    mockMigrateFn = vi.fn(() => Promise.resolve({ data: { success: true } }));
+    vi.mocked(httpsCallable).mockReturnValue(mockMigrateFn as any);
 
     userSubject = new BehaviorSubject(null);
     authService = {
@@ -48,11 +52,11 @@ describe('SyncService', () => {
       ],
     });
     service = TestBed.inject(SyncService);
-    vi.clearAllMocks();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'migrateLocalGame');
   });
 
   it('should sync local games when a non-anonymous user logs in', async () => {
@@ -60,9 +64,6 @@ describe('SyncService', () => {
     const mockFullState = { game: mockGame, allRounds: {} };
     localGameService.getLocalGames.mockResolvedValue([mockGame]);
     localGameService.loadGame.mockResolvedValue(mockFullState);
-
-    const mockMigrateFn = vi.fn(() => Promise.resolve({ data: { success: true } }));
-    vi.mocked(httpsCallable).mockReturnValue(mockMigrateFn as any);
 
     // Trigger user login
     userSubject.next({ uid: 'user-123', isAnonymous: false });
@@ -72,7 +73,6 @@ describe('SyncService', () => {
 
     expect(localGameService.getLocalGames).toHaveBeenCalled();
     expect(localGameService.loadGame).toHaveBeenCalledWith('local-123');
-    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'migrateLocalGame');
     expect(mockMigrateFn).toHaveBeenCalledWith({ gameData: mockFullState });
     expect(localGameService.deleteGame).toHaveBeenCalledWith('local-123', true);
   });
@@ -91,8 +91,8 @@ describe('SyncService', () => {
     localGameService.getLocalGames.mockResolvedValue([mockGame]);
     localGameService.loadGame.mockResolvedValue({ game: mockGame });
 
-    const mockMigrateFn = vi.fn(() => Promise.reject(new Error('Migration failed')));
-    vi.mocked(httpsCallable).mockReturnValue(mockMigrateFn as any);
+    // Override mock to fail
+    mockMigrateFn.mockRejectedValue(new Error('Migration failed'));
 
     userSubject.next({ uid: 'user-123', isAnonymous: false });
 
