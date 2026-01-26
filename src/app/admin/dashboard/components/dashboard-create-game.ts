@@ -45,7 +45,8 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.bots': 'Davon KI-Bots',
       'dashboard.createGame.aiLevel': 'KI-Niveau',
       'dashboard.createGame.advancedPricing': 'Fortgeschrittener Markt (Preisbildung durch Angebot & Nachfrage)',
-      'dashboard.createGame.analytics': 'Anonymisierte Daten für Forschung & Analyse teilen (hilft uns Soil zu verbessern)',
+      'dashboard.createGame.analytics':
+        'Anonymisierte Daten für Forschung & Analyse teilen (hilft uns Soil zu verbessern)',
       'dashboard.createGame.submit': '+ Neues Spiel erstellen',
       'dashboard.createGame.creating': 'Wird erstellt...',
       'dashboard.createGame.required': 'Erforderlich',
