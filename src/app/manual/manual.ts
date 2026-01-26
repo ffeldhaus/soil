@@ -34,9 +34,9 @@ export class ManualComponent {
       'manual.intro.goal.title': 'Das Ziel',
       'manual.intro.goal.text':
         'In Soil schlüpfst du in die Rolle einer Landwirtin oder eines Landwirts. Dein Ziel ist es, deinen Betrieb wirtschaftlich erfolgreich zu führen und gleichzeitig die langfristige Gesundheit deines Bodens zu erhalten. Du musst die richtige Balance zwischen Ertrag, Kosten und ökologischer Nachhaltigkeit finden.',
-      'manual.intro.mechanics.title': 'Mechanik',
+      'manual.intro.mechanics.title': 'Mechanik & Finanzen',
       'manual.intro.mechanics.text':
-        ' Ökologischer Anbau (Bio) führt zu signifikant geringeren Erträgen, wird aber durch höhere Marktpreise und staatliche Prämien ausgeglichen.',
+        'Ökologischer Anbau führt zu geringeren Erträgen, wird aber durch höhere Bio-Preise und die Öko-Prämie belohnt. Du musst jedoch die hohen Fixkosten (Personal, Pacht, Maschinen) im Blick behalten, die deinen Gewinn schmälern.',
       'manual.concepts.title': 'Konzepte',
       'manual.crops.title': 'Kulturen',
       'manual.toc.title': 'Inhalt',

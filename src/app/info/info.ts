@@ -92,7 +92,7 @@ import { RouterLink } from '@angular/router';
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
                   <h3 class="text-emerald-300 font-bold mb-2">Preise & Markt</h3>
                   <p class="text-sm">
-                    Die Preise für Saatgut und Ernten basieren auf historischen Marktdaten (ca. 2022-2024).
+                    Die Preise für Saatgut und Ernten basieren auf aktuellen Marktdaten für Deutschland (Wirtschaftsjahr 2024/2025).
                     Referenzen für konventionelle Preise stammen von der
                     <a href="https://www.ami-informiert.de/" target="_blank" class="text-emerald-400 hover:underline">AMI</a>,
                     während Bio-Marktprämien auf Informationen von
@@ -100,8 +100,8 @@ import { RouterLink } from '@angular/router';
                     basieren. Im optionalen "Fortgeschrittenen Markt" werden die Preise dynamisch berechnet: 
                     Ein hohes Gesamtangebot aller Spieler führt zu sinkenden Preisen, während Knappheit die Preise steigen lässt.
                     Betriebswirtschaftliche Datensammlungen des
-                    <a href="https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege" target="_blank" class="text-emerald-400 hover:underline">KTBL</a>
-                    dienen als Grundlage für Saatgut- und Maschinenkosten.
+                    <a href="https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege" target="_blank" class="text-emerald-400 hover:underline">KTBL</a> (Kuratorium für Technik und Bauwesen in der Landwirtschaft)
+                    dienen als Grundlage für die Modellierung der Maschinen- und Arbeitskosten.
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
@@ -109,7 +109,9 @@ import { RouterLink } from '@angular/router';
                   <p class="text-sm">
                     Das Wettersystem modelliert typische Herausforderungen wie Frühsommertrockenheit oder Spätfrost.
                     Integrierte Landwirtschaft (Mischung aus Schutzmaßnahmen und angepasster Düngung) erweist sich oft als
-                    die stabilste Strategie gegenüber extremen Wetterereignissen.
+                    die stabilste Strategie gegenüber extremen Wetterereignissen. Die Ertragsausfälle orientieren sich an den
+                    realen Schwankungen der Jahre 2023 und 2024 (Quelle: 
+                    <a href="https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse" target="_blank" class="text-emerald-400 hover:underline">BMEL Erntebericht 2024</a>).
                   </p>
                 </div>
                 <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5">
@@ -147,24 +149,25 @@ import { RouterLink } from '@angular/router';
                   </p>
                   <ul class="list-disc list-outside ml-5 text-xs space-y-2">
                     <li>
-                      <strong class="text-white">Frühsommertrockenheit:</strong> Kritisch für Getreide in der Bestockungsphase. Ertragsverluste von 20-30% sind in Trockenjahren realistisch.
+                      <strong class="text-white">Frühsommertrockenheit & Hitzewellen:</strong> Kritisch für Getreide in der Bestockungsphase. Ertragsverluste von 20-40% sind in Trockenjahren realistisch und belasten die Bodenstruktur durch Humusabbau.
                     </li>
                     <li>
                       <strong class="text-white">Spätfrost:</strong> Gefährdet besonders keimende Kulturen wie Mais und Zuckerrüben sowie die Blüte von Raps.
                     </li>
                     <li>
-                      <strong class="text-white">Staunässe/Hochwasser:</strong> Führt zu Sauerstoffmangel im Boden und Wurzelfäule, was insbesondere bei Hackfrüchten zu Totalausfällen führen kann.
+                      <strong class="text-white">Staunässe/Hochwasser:</strong> Führt zu Sauerstoffmangel im Boden, Wurzelfäule und verstärkter Erosion, was insbesondere bei Hackfrüchten zu Totalausfällen führen kann.
                     </li>
                   </ul>
                 </div>
                 <div class="space-y-4">
                   <h3 class="text-white font-bold flex items-center gap-2">
                     <span class="text-emerald-500">🦗</span>
-                    <ng-container>Schädlingsdruck & Pflanzenschutz</ng-container>
+                    <ng-container>Schädlingsdruck & Tierseuchen</ng-container>
                   </h3>
                   <p class="text-sm">
-                    Die Wahl der Schädlinge in SOIL basiert auf den ökonomisch bedeutendsten Arten in Deutschland (Referenz:
-                    <a href="https://www.pflanzenkrankheiten.ch/" target="_blank" class="text-emerald-400 hover:underline">pflanzenkrankheiten.ch</a>):
+                    Die Wahl der Schädlinge und Seuchen basiert auf den ökonomisch bedeutendsten Bedrohungen in Deutschland (Referenzen:
+                    <a href="https://www.isip.de/" target="_blank" class="text-emerald-400 hover:underline">ISIP</a>, 
+                    <a href="https://www.fli.de/de/aktuelles/tierseuchengeschehen/afrikanische-schweinepest/" target="_blank" class="text-emerald-400 hover:underline">FLI</a>):
                   </p>
                   <ul class="list-disc list-outside ml-5 text-xs space-y-2">
                     <li>
@@ -174,10 +177,10 @@ import { RouterLink } from '@angular/router';
                       <strong class="text-white">Kartoffelkäfer:</strong> Ein klassischer Defoliator. Der Kahlfraß kann die Knollenbildung fast vollständig unterbinden.
                     </li>
                     <li>
-                      <strong class="text-white">Drahtwurm:</strong> Ein Boden-Schädling (Larve des Schnellkäfers), der Wurzeln und Knollen frisst. Besonders problematisch bei Kartoffeln und Rüben.
+                      <strong class="text-white">Getreideblattlaus:</strong> Schadet durch Saftentzug und als Vektor für Viren (z.B. Gelbverzwergungsvirus).
                     </li>
                     <li>
-                      <strong class="text-white">Getreideblattlaus:</strong> Schadet durch Saftentzug und als Vektor für Viren (z.B. Gelbverzwergungsvirus).
+                      <strong class="text-white">Afrikanische Schweinepest (ASP):</strong> Eine hochinfektiöse Tierseuche. In der Simulation führt ein Ausbruch zu massiv erhöhten Haltungskosten durch Hygieneauflagen und Restriktionszonen.
                     </li>
                   </ul>
                 </div>
@@ -185,6 +188,54 @@ import { RouterLink } from '@angular/router';
               <div class="bg-emerald-900/10 border border-emerald-500/20 rounded-xl p-4 text-xs italic">
                 Hinweis: Die Simulation nutzt eine "Integrierte Strategie" (Nützlingsförderung), um den Einsatz chemisch-synthetischer Pflanzenschutzmittel ökologisch und ökonomisch abzuwägen.
               </div>
+            </div>
+          </section>
+
+          <!-- Data References -->
+          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
+              <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">📊</span>
+              Datenquellen & Referenzen
+            </h2>
+            <div class="grid gap-6 text-sm text-gray-300 leading-relaxed">
+              <p>
+                Die Modellierung der Simulation stützt sich auf offizielle Statistiken und Fachpublikationen des Zeitraums 2024/2025, 
+                um eine realitätsnahe Balance zwischen Ökonomie und Ökologie zu gewährleisten:
+              </p>
+              <ul class="list-disc list-outside ml-5 space-y-4">
+                <li>
+                  <strong class="text-white">Erntemengen & Erträge:</strong> 
+                  Daten des Bundesministeriums für Ernährung und Landwirtschaft (BMEL).
+                  <br/>
+                  <a href="https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse" target="_blank" class="text-emerald-400 hover:underline">BMEL: Ergebnisse der Getreideernte 2024</a> | 
+                  <a href="https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/kartoffelernte" target="_blank" class="text-emerald-400 hover:underline">BMEL: Kartoffelernte 2024</a>
+                </li>
+                <li>
+                  <strong class="text-white">Marktpreise:</strong> 
+                  Aktuelle Erzeugerpreise für konventionelle und ökologische Erzeugnisse.
+                  <br/>
+                  <a href="https://markt.agrarheute.com/marktfruechte/" target="_blank" class="text-emerald-400 hover:underline">Agrarheute: Marktfrüchte Index</a>
+                </li>
+                <li>
+                  <strong class="text-white">Betriebswirtschaft:</strong> 
+                  KTBL-Richtwerte dienen als Grundlage für die Modellierung des Arbeitszeitbedarfs und der Maschinenkosten.
+                  <br/>
+                  <a href="https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege" target="_blank" class="text-emerald-400 hover:underline">KTBL: Standarddeckungsbeiträge</a>
+                </li>
+                <li>
+                  <strong class="text-white">Pflanzenschutz & Tiergesundheit:</strong> 
+                  Informationen zu Schadorganismen und Tierseuchen.
+                  <br/>
+                  <a href="https://www.isip.de/" target="_blank" class="text-emerald-400 hover:underline">ISIP: Integrierter Pflanzenschutz</a> | 
+                  <a href="https://www.fli.de/de/aktuelles/tierseuchengeschehen/afrikanische-schweinepest/" target="_blank" class="text-emerald-400 hover:underline">FLI: Afrikanische Schweinepest</a>
+                </li>
+                <li>
+                  <strong class="text-white">Klimawandel & Wetterfolgen:</strong> 
+                  Wissenschaftliche Grundlagen zu den Auswirkungen von Extremwetterereignissen auf den Ackerbau.
+                  <br/>
+                  <a href="https://www.julius-kuehn.de/pb/klimaanpassung" target="_blank" class="text-emerald-400 hover:underline">JKI: Strategien zur Klimaanpassung</a>
+                </li>
+              </ul>
             </div>
           </section>
 
