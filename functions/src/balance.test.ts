@@ -127,9 +127,6 @@ describe('Game Balance Simulation', () => {
         ...res,
       }));
 
-      console.log(`\nResults for ${count} rounds:`);
-      console.table(rankedResults);
-
       // --- Assertions for ALL round counts ---
 
       // 1. & 2. Integrated or Organic Right should be in top 2
