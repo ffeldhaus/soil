@@ -6,7 +6,7 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { AiAgent } from './ai-agent';
-import { GAME_CONSTANTS } from './constants';
+import { GAME_CONSTANTS, GEMINI_MODEL } from './constants';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
 import type { Round } from './types';
@@ -1492,7 +1492,7 @@ export const submitFeedback = onCall(
       `;
 
       const result = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: GEMINI_MODEL,
         contents: prompt,
         config: { responseMimeType: 'application/json' },
       });
@@ -1889,26 +1889,6 @@ export const evaluateGame = onCall(async (request) => {
 
   const existingCategories = await getExistingCategories();
 
-  const model = ai.getGenerativeModel({
-    model: GEMINI_MODEL,
-    generationConfig: {
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: 'object',
-        properties: {
-          playStyle: { type: 'string' },
-          analysis: { type: 'string' },
-          improvements: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-          isNewCategory: { type: 'boolean' },
-        },
-        required: ['playStyle', 'analysis', 'improvements', 'isNewCategory'],
-      },
-    },
-  });
-
   const prompt = `
     Analyze the following game data for a player in the "Soil" agricultural management game.
     Cluster the player's play style into one of the existing categories if it fits, or create a new one if it is significantly different.
@@ -1938,8 +1918,31 @@ export const evaluateGame = onCall(async (request) => {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const response = JSON.parse(result.response.text());
+    const result = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: 'object',
+          properties: {
+            playStyle: { type: 'string' },
+            analysis: { type: 'string' },
+            improvements: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+            isNewCategory: { type: 'boolean' },
+          },
+          required: ['playStyle', 'analysis', 'improvements', 'isNewCategory'],
+        },
+      },
+    });
+
+    const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!responseText) throw new Error('No response from Gemini');
+
+    const response = JSON.parse(responseText);
 
     const evaluation: any = {
       playStyle: response.playStyle,
