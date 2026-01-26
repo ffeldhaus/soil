@@ -196,7 +196,7 @@ describe('GameEngine', () => {
       }));
     const prevRound: Round = { number: 1, decision, parcelsSnapshot: prevParcels };
 
-    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 10000);
+    const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 100000);
 
     expect(round.result?.expenses.total).to.be.greaterThan(0);
     expect(round.result?.income).to.be.greaterThan(0);

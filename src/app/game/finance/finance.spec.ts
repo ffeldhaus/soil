@@ -89,7 +89,7 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     expect(player).toBeTruthy();
-    expect(player?.detailedExpenses?.seeds.Potato).toBe(1000); // Potato organic
+    expect(player?.detailedExpenses?.seeds.Potato).toBe(2200); // Potato organic
   });
 
   it('should calculate detailed income correctly for Round 1', () => {

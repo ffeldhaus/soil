@@ -83,7 +83,7 @@ export const GAME_CONSTANTS = {
     // https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege (KTBL Datensammlungen)
     YIELD_BONUS: [0, 0.05, 0.1, 0.15, 0.2],
     LABOR_COST_REDUCTION: [1, 0.8, 0.6, 0.45, 0.3],
-    BASE_LABOR_COST: 12000, // Based on approx. 500h/year for 40ha @ 24€/h
+    BASE_LABOR_COST: 60000, // Based on approx. 1500h/year for 40ha @ 40€/h
     INVESTMENT_COST: [0, 2500, 10000, 25000, 60000],
   },
   WEATHER_EFFECTS: {
@@ -171,7 +171,7 @@ export const GAME_CONSTANTS = {
       soilSensitivity: 2.0,
       nutritionSensitivity: 1.2,
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
-      seedPrice: { conventional: 800, organic: 1000 },
+      seedPrice: { conventional: 1800, organic: 2200 },
       marketValue: { conventional: 15, organic: 35 },
     },
     Corn: {
@@ -228,7 +228,7 @@ export const GAME_CONSTANTS = {
       soilSensitivity: 1.6,
       nutritionSensitivity: 1.1,
       weatherSensitivity: { drought: 'Stark', cold: 'Stark', flood: 'Stark' },
-      seedPrice: { conventional: 150, organic: 180 },
+      seedPrice: { conventional: 450, organic: 550 },
       marketValue: { conventional: 4.5, organic: 7.5 },
       special: 'Zuckerrüben verbessern die Bodenqualität.',
     },
