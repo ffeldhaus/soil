@@ -121,9 +121,7 @@ export class LocalGameService {
   async loadGame(gameId: string): Promise<LocalGameState | null> {
     const data = localStorage.getItem(`soil_game_${gameId}`);
     if (data) {
-      const state = JSON.parse(data);
-      this.stateSubject.next(state);
-      return state;
+      return JSON.parse(data);
     }
     return null;
   }

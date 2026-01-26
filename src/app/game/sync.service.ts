@@ -17,6 +17,8 @@ export class SyncService {
     ? httpsCallable<{ gameData: any }, { success: boolean }>(this.functions, 'migrateLocalGame')
     : null;
 
+  private isSyncing = false;
+
   constructor() {
     this.initSyncListener();
   }
@@ -42,23 +44,28 @@ export class SyncService {
   }
 
   async syncLocalGames() {
-    if (!this.migrateLocalGameFn) return;
+    if (!this.migrateLocalGameFn || this.isSyncing) return;
 
-    const allLocalGames = await this.localGameService.getLocalGames();
-    const localGames = allLocalGames.filter((g) => g.status !== 'deleted');
-    if (localGames.length === 0) return;
+    this.isSyncing = true;
+    try {
+      const allLocalGames = await this.localGameService.getLocalGames();
+      const localGames = allLocalGames.filter((g) => g.status !== 'deleted');
+      if (localGames.length === 0) return;
 
-    for (const game of localGames) {
-      try {
-        const fullState = await this.localGameService.loadGame(game.id);
-        if (fullState) {
-          await this.migrateLocalGameFn({ gameData: fullState });
-          await this.localGameService.deleteGame(game.id, true);
-          if (window.console) console.warn(`Successfully migrated game ${game.id} to cloud`);
+      for (const game of localGames) {
+        try {
+          const fullState = await this.localGameService.loadGame(game.id);
+          if (fullState) {
+            await this.migrateLocalGameFn({ gameData: fullState });
+            await this.localGameService.deleteGame(game.id, true);
+            if (window.console) console.warn(`Successfully migrated game ${game.id} to cloud`);
+          }
+        } catch (error) {
+          if (window.console) console.error(`Failed to migrate game ${game.id}:`, error);
         }
-      } catch (error) {
-        if (window.console) console.error(`Failed to migrate game ${game.id}:`, error);
       }
+    } finally {
+      this.isSyncing = false;
     }
   }
 }

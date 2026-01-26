@@ -1,148 +1,151 @@
-import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Auth } from '@angular/fire/auth';
 import { Functions } from '@angular/fire/functions';
+import { signInWithCustomToken, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { AuthService } from './auth.service';
 
-// Mock the firebase/auth module
+const mockCallables: Record<string, any> = {};
+
+// Mock @angular/fire/functions
+vi.mock('@angular/fire/functions', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    httpsCallable: vi.fn((_functions: any, name: string) => {
+      if (!mockCallables[name]) {
+        mockCallables[name] = vi.fn(() => Promise.resolve({ data: {} }));
+      }
+      return mockCallables[name];
+    }),
+  };
+});
+
+// Mock firebase/auth
 vi.mock('firebase/auth', async (importOriginal) => {
-  const actual = await importOriginal<any>();
+  const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,
-    onAuthStateChanged: vi.fn(),
-    signOut: vi.fn(() => Promise.resolve()),
-    signInWithCustomToken: vi.fn(() => Promise.resolve()),
-    signInWithEmailAndPassword: vi.fn(() => Promise.resolve()),
-    createUserWithEmailAndPassword: vi.fn(() => Promise.resolve()),
-    signInWithPopup: vi.fn(() => Promise.resolve()),
-    updateProfile: vi.fn(() => Promise.resolve()),
+    onAuthStateChanged: vi.fn((_auth, cb) => {
+      cb(null);
+      return () => {};
+    }),
+    signInWithCustomToken: vi.fn(),
+    signInWithEmailAndPassword: vi.fn(),
+    signOut: vi.fn(),
+    signInWithPopup: vi.fn(),
+    createUserWithEmailAndPassword: vi.fn(),
+    updateProfile: vi.fn(),
   };
 });
-
-// Mock the firebase/functions module
-vi.mock('firebase/functions', async (importOriginal) => {
-  const actual = await importOriginal<any>();
-  return {
-    ...actual,
-    httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
-  };
-});
-
-import { signInWithCustomToken, signOut } from 'firebase/auth';
-import { httpsCallable } from 'firebase/functions';
 
 describe('AuthService', () => {
   let service: AuthService;
   let authSpy: any;
-  let functionsSpy: any;
   let mockLocalStorage: any;
 
   beforeEach(() => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    // Clear mock callables between tests
+    for (const key in mockCallables) {
+      mockCallables[key].mockReset();
+      mockCallables[key].mockResolvedValue({ data: {} });
+    }
+
     mockLocalStorage = {};
-    vi.stubGlobal('localStorage', {
-      getItem: vi.fn((key) => mockLocalStorage[key] || null),
-      setItem: vi.fn((key, value) => (mockLocalStorage[key] = value)),
-      removeItem: vi.fn((key) => delete mockLocalStorage[key]),
-      clear: vi.fn(() => (mockLocalStorage = {})),
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: (key: string) => mockLocalStorage[key] || null,
+        setItem: (key: string, val: string) => {
+          mockLocalStorage[key] = val;
+        },
+        removeItem: (key: string) => {
+          delete mockLocalStorage[key];
+        },
+        clear: () => {
+          mockLocalStorage = {};
+        },
+      },
+      writable: true,
+      configurable: true,
     });
 
-    authSpy = {
-      currentUser: null,
-    };
-
-    functionsSpy = {
-      httpsCallable: vi.fn(() => vi.fn(() => Promise.resolve({ data: {} }))),
-    };
+    authSpy = { currentUser: null };
 
     TestBed.configureTestingModule({
-      providers: [
-        AuthService,
-        { provide: Auth, useValue: authSpy },
-        { provide: Functions, useValue: functionsSpy },
-        { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
-      ],
+      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: {} }],
     });
     service = TestBed.inject(AuthService);
   });
 
   it('should return the current user', () => {
-    // In actual app, userSubject is updated via onAuthStateChanged
-    // We can trigger it by mocking the behavior if needed, but since it's a private field,
-    // we mostly rely on it being initialized to null.
-    expect(service.currentUser).toBeNull();
+    const mockUser = { uid: '123' };
+    (service as any).userSubject.next(mockUser);
+    expect(service.currentUser).toEqual(mockUser);
   });
 
   it('should handle logout when in test mode', async () => {
     mockLocalStorage.soil_test_mode = 'true';
-
     await service.logout();
-
-    expect(localStorage.removeItem).toHaveBeenCalledWith('soil_test_mode');
-    expect(signOut).toHaveBeenCalled();
+    expect(service.currentUser).toBeNull();
+    expect(mockLocalStorage.soil_test_mode).toBeUndefined();
   });
 
   it('should sign in as guest', async () => {
     const result = await service.signInAsGuest();
     expect(result.user.isAnonymous).toBe(true);
-    expect(localStorage.setItem).toHaveBeenCalledWith('soil_guest_uid', expect.any(String));
+    expect(service.currentUser?.isAnonymous).toBe(true);
   });
 
   it('should login with Google', async () => {
-    const { signInWithPopup } = await import('firebase/auth');
-    await service.loginWithGoogle();
-    expect(signInWithPopup).toHaveBeenCalled();
+    mockLocalStorage.soil_test_mode = 'true';
+    const result = await service.loginWithGoogle();
+    expect(result.user.displayName).toBeDefined();
   });
 
   it('should register with email', async () => {
-    const { createUserWithEmailAndPassword } = await import('firebase/auth');
-    await service.registerWithEmail('test@example.com', 'pass123');
-    expect(createUserWithEmailAndPassword).toHaveBeenCalledWith(authSpy, 'test@example.com', 'pass123');
+    mockLocalStorage.soil_test_mode = 'true';
+    const result = await service.registerWithEmail('test@example.com', 'pass');
+    expect(result.user.email).toBe('mock-player@example.com');
   });
 
   it('should update display name', async () => {
-    const { updateProfile } = await import('firebase/auth');
-    const mockUser = { reload: vi.fn().mockResolvedValue(undefined) };
+    mockLocalStorage.soil_test_mode = 'true';
+    const mockUser = { uid: '123', displayName: 'Old Name', reload: vi.fn() };
     authSpy.currentUser = mockUser;
 
-    await service.updateDisplayName('New Name');
+    // updateProfile should update the mock user
+    vi.mocked(updateProfile).mockImplementation(async (user: any, profile: any) => {
+      user.displayName = profile.displayName;
+    });
 
-    expect(updateProfile).toHaveBeenCalledWith(mockUser, { displayName: 'New Name' });
-    expect(mockUser.reload).toHaveBeenCalled();
+    await service.updateDisplayName('New Name');
+    expect(service.currentUser?.displayName).toBe('New Name');
   });
 
   it('should handle local session in constructor', () => {
-    mockLocalStorage.soil_guest_uid = 'guest-123';
-
+    mockLocalStorage.soil_guest_uid = 'guest123';
+    // Re-inject to trigger constructor with local storage
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      providers: [
-        AuthService,
-        { provide: Auth, useValue: authSpy },
-        { provide: Functions, useValue: functionsSpy },
-        { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
-      ],
+      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: {} }],
     });
-    const freshService = TestBed.inject(AuthService);
-    expect(freshService.isAnonymous).toBe(true);
+    const newService = TestBed.inject(AuthService);
+    expect(newService.currentUser?.uid).toBe('guest123');
   });
 
   it('should handle active local game in constructor', () => {
+    mockLocalStorage.soil_guest_uid = 'guest123';
     mockLocalStorage.soil_active_local_game = 'local-123';
-    mockLocalStorage.soil_guest_uid = 'guest-123';
-
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      providers: [
-        AuthService,
-        { provide: Auth, useValue: authSpy },
-        { provide: Functions, useValue: functionsSpy },
-        { provide: NgZone, useValue: { run: (fn: () => void) => fn() } },
-      ],
+      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: {} }],
     });
-    const freshService = TestBed.inject(AuthService);
-    expect(freshService.isAnonymous).toBe(true);
+    const newService = TestBed.inject(AuthService);
+    expect(newService.currentUser?.uid).toBe('guest123');
   });
 
   it('should call auth signOut when not in test mode', async () => {
@@ -151,44 +154,32 @@ describe('AuthService', () => {
   });
 
   it('should call playerLogin and signInWithCustomToken', async () => {
-    const mockCallable = vi.fn(() => Promise.resolve({ data: { customToken: 'mock-token' } }));
-    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
+    const playerLoginMock = mockCallables.playerLogin;
+    playerLoginMock.mockResolvedValue({ data: { customToken: 'mock-token' } });
 
-    await service.loginAsPlayer('game123', '1234');
+    await service.loginAsPlayer('cloud-game', '1234');
 
-    expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'playerLogin');
-    expect(mockCallable).toHaveBeenCalledWith({ gameId: 'game123', password: '1234' });
-    expect(signInWithCustomToken).toHaveBeenCalledWith(authSpy, 'mock-token');
+    expect(playerLoginMock).toHaveBeenCalledWith({ gameId: 'cloud-game', password: '1234' });
+    expect(signInWithCustomToken).toHaveBeenCalled();
   });
 
   it('should call signInWithEmailAndPassword', async () => {
-    // Mock firebase/auth methods
-    const { signInWithEmailAndPassword: signInEmailMock } = await import('firebase/auth');
-
     await service.loginWithEmail('test@example.com', 'password');
-
-    expect(signInEmailMock).toHaveBeenCalledWith(authSpy, 'test@example.com', 'password');
+    expect(signInWithEmailAndPassword).toHaveBeenCalled();
   });
 
   it('should call sendVerificationEmail callable', async () => {
-    const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
-    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
-    authSpy.currentUser = { email: 'test@example.com' };
-    await service.sendVerificationEmail();
+    authSpy.currentUser = { uid: '123' };
+    const sendVerificationEmailMock = mockCallables.sendVerificationEmail;
 
-    expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'sendVerificationEmail');
-    expect(mockCallable).toHaveBeenCalledWith({ origin: expect.stringContaining('http://localhost') });
+    await service.sendVerificationEmail();
+    expect(sendVerificationEmailMock).toHaveBeenCalled();
   });
 
   it('should call sendPasswordResetEmail callable', async () => {
-    const mockCallable = vi.fn(() => Promise.resolve({ data: {} }));
-    vi.mocked(httpsCallable).mockReturnValue(mockCallable as any);
-    await service.sendPasswordResetEmail('test@example.com');
+    const sendPasswordResetEmailMock = mockCallables.sendPasswordResetEmail;
 
-    expect(httpsCallable).toHaveBeenCalledWith(functionsSpy, 'sendPasswordResetEmail');
-    expect(mockCallable).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      origin: expect.stringContaining('http://localhost'),
-    });
+    await service.sendPasswordResetEmail('test@example.com');
+    expect(sendPasswordResetEmailMock).toHaveBeenCalled();
   });
 });

@@ -25,6 +25,17 @@ export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
 
+  // Property Initializers for Firebase Functions to ensure they are created in the injection context
+  private playerLoginFn = this.functions
+    ? httpsCallable<{ gameId: string; password: string }, { customToken: string }>(this.functions, 'playerLogin')
+    : null;
+  private sendVerificationEmailFn = this.functions
+    ? httpsCallable<{ origin: string }, void>(this.functions, 'sendVerificationEmail')
+    : null;
+  private sendPasswordResetEmailFn = this.functions
+    ? httpsCallable<{ email: string; origin: string }, void>(this.functions, 'sendPasswordResetEmail')
+    : null;
+
   get isAnonymous(): boolean {
     return !!this.userSubject.value?.isAnonymous;
   }
@@ -132,11 +143,11 @@ export class AuthService {
     }
     // Call backend to get custom token for player login
     // Note: Function name is 'playerLogin' in backend
-    const playerLoginFn = httpsCallable(this.functions!, 'playerLogin');
 
     try {
-      const result = await playerLoginFn({ gameId, password: pin });
-      const { customToken } = result.data as { customToken: string };
+      if (!this.playerLoginFn) throw new Error('Functions not available');
+      const result = await this.playerLoginFn({ gameId, password: pin });
+      const { customToken } = result.data;
       return await signInWithCustomToken(this.auth!, customToken);
     } catch (error) {
       console.error('Player login failed:', error);
@@ -210,8 +221,8 @@ export class AuthService {
         if (window.console) console.warn('Mock: Verification email sent');
         return;
       }
-      const sendFn = httpsCallable(this.functions!, 'sendVerificationEmail');
-      await sendFn({
+      if (!this.sendVerificationEmailFn) throw new Error('Functions not available');
+      await this.sendVerificationEmailFn({
         origin: window.location.origin,
       });
     }
@@ -223,8 +234,8 @@ export class AuthService {
       if (window.console) console.warn('Mock: Password reset email sent to', email);
       return;
     }
-    const sendFn = httpsCallable(this.functions!, 'sendPasswordResetEmail');
-    await sendFn({
+    if (!this.sendPasswordResetEmailFn) throw new Error('Functions not available');
+    await this.sendPasswordResetEmailFn({
       email,
       origin: window.location.origin,
     });
