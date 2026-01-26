@@ -27,5 +27,5 @@
       }
     }
   ],
-  "navigationUrls": ["/**", "!/de/**", "!/de", "!/en-US/**", "!/en-US"]
+  "navigationUrls": ["/**"]
 }

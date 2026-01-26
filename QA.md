@@ -9,11 +9,10 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 ---
 
 ## 1. Landing Page & Public Pages
-**URL:** [http://localhost:4200/de/](http://localhost:4200/de/)
+**URL:** [http://localhost:4200/](http://localhost:4200/)
 
 | Feature | Steps | Expected Result | E2E Covered |
 |---------|-------|-----------------|-------------|
-| Language Switcher | Toggle between DE and EN using the top-right button. | All text (Hero, Intro, Buttons) changes to the selected language. | No |
 | Hero Section | Observe background image and main title. | Background image loads correctly; title "SOIL" is visible and styled. | No |
 | Info Sections | Scroll down to "Über das Spiel" and "Hintergrund". | Content is readable and properly formatted. | No |
 | Manual | Click "Hintergrund" or go to `/manual`. | The user manual opens with all sections (Crops, Soil, etc.). | No |
@@ -22,7 +21,7 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 ---
 
 ## 2. Onboarding & Registration
-**URL:** [http://localhost:4200/de/admin/register](http://localhost:4200/de/admin/register)
+**URL:** [http://localhost:4200/admin/register](http://localhost:4200/admin/register)
 
 | Feature | Steps | Expected Result | E2E Covered |
 |---------|-------|-----------------|-------------|
@@ -31,7 +30,7 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 ---
 
 ## 3. Teacher Dashboard (Admin)
-**URL:** [http://localhost:4200/de/admin/login](http://localhost:4200/de/admin/login)
+**URL:** [http://localhost:4200/admin/login](http://localhost:4200/admin/login)
 *Use **Mock Admin** from the Landing Page test toggle.*
 
 | Feature | Steps | Expected Result | E2E Covered |
@@ -46,7 +45,7 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 ---
 
 ## 4. Super Admin Console
-**URL:** [http://localhost:4200/de/admin/super](http://localhost:4200/de/admin/super)
+**URL:** [http://localhost:4200/admin/super](http://localhost:4200/admin/super)
 *Use **Mock SuperAdmin** from the Landing Page test toggle.*
 
 | Feature | Steps | Expected Result | E2E Covered |
@@ -59,7 +58,7 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 ---
 
 ## 5. Game Experience (Player)
-**URL:** [http://localhost:4200/de/game-login](http://localhost:4200/de/game-login)
+**URL:** [http://localhost:4200/game-login](http://localhost:4200/game-login)
 *Use **Mock Player** from the Landing Page test toggle or log in with Game ID/PIN.*
 
 | Feature | Steps | Expected Result | E2E Covered |
