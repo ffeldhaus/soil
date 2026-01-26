@@ -92,6 +92,7 @@ export interface GameConfig {
   numRounds: number;
   numAi: number;
   advancedPricingEnabled?: boolean;
+  analyticsEnabled?: boolean;
 }
 
 export interface Game {

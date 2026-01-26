@@ -148,6 +148,101 @@ export const migrateLocalGame = onCall(async (request) => {
   return { success: true, gameId: targetGameId, status: startRound === 0 ? 'created' : 'updated' };
 });
 
+export const uploadFinishedGame = onCall({ enforceAppCheck: true }, async (request) => {
+  const { gameData } = request.data;
+  if (!gameData || !gameData.game || !gameData.allRounds) {
+    throw new HttpsError('invalid-argument', 'Missing gameData');
+  }
+
+  const { game, allRounds } = gameData;
+
+  // 0. Respect Opt-Out
+  if (game.config?.analyticsEnabled === false) {
+    return { success: true, status: 'opted_out' };
+  }
+
+  const oldGameId = game.id;
+
+  // 1. Basic validation
+  const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+  if (game.currentRoundNumber < roundLimit && game.status !== 'finished') {
+    throw new HttpsError('failed-precondition', 'Only finished games can be uploaded via this endpoint');
+  }
+
+  // 2. Check if already uploaded
+  const existingSnap = await db.collection('research_games').where('migratedFrom', '==', oldGameId).limit(1).get();
+
+  if (!existingSnap.empty) {
+    return { success: true, gameId: existingSnap.docs[0].id, status: 'already_uploaded' };
+  }
+
+  const targetGameId = db.collection('research_games').doc().id;
+
+  // 3. Prepare anonymized game document
+  // We remove any PII (displayName, game name)
+  const anonymizedPlayers: Record<string, any> = {};
+  const uidMap: Record<string, string> = {};
+
+  for (const oldUid in game.players) {
+    const p = game.players[oldUid];
+    const newUid = `player-${targetGameId}-${p.playerNumber || oldUid.split('-').pop()}`;
+    uidMap[oldUid] = newUid;
+
+    anonymizedPlayers[newUid] = {
+      ...p,
+      uid: newUid,
+      displayName: 'Anonymized Player', // Clear display name
+      history: p.history.map((h: any) => ({
+        ...h,
+        parcelsSnapshot: [], // Lightweight history
+      })),
+    };
+  }
+
+  const gameDoc: any = {
+    ...game,
+    id: targetGameId,
+    name: 'Anonymized Game', // Clear game name
+    players: anonymizedPlayers,
+    updatedAt: Timestamp.now(),
+    createdAt: game.createdAt ? Timestamp.fromDate(new Date(game.createdAt)) : Timestamp.now(),
+    migratedFrom: oldGameId,
+    isResearchData: true,
+  };
+
+  // 4. Write in transaction
+  await db.runTransaction(async (t) => {
+    t.set(db.collection('research_games').doc(targetGameId), gameDoc);
+
+    // Write all rounds
+    const currentRound = game.currentRoundNumber || 0;
+    for (let r = 0; r <= currentRound; r++) {
+      const playerData: Record<string, any> = {};
+      let roundEvents = { weather: 'Normal', vermin: [] };
+
+      for (const oldUid in allRounds) {
+        const newUid = uidMap[oldUid];
+        const round = allRounds[oldUid][r];
+        if (round) {
+          playerData[newUid] = round;
+          if (round.result?.events) {
+            roundEvents = round.result.events;
+          }
+        }
+      }
+
+      t.set(db.collection('research_games').doc(targetGameId).collection('rounds').doc(`round_${r}`), {
+        number: r,
+        playerData,
+        events: roundEvents,
+        createdAt: Timestamp.now(),
+      });
+    }
+  });
+
+  return { success: true, gameId: targetGameId, status: 'uploaded' };
+});
+
 export const getGameState = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
   const { gameId } = request.data;

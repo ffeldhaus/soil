@@ -18,6 +18,7 @@ export class DashboardCreateGameComponent {
     playerLabel: string;
     aiLevel: 'elementary' | 'middle' | 'high';
     advancedPricingEnabled: boolean;
+    analyticsEnabled: boolean;
   }>();
   @Output() playersChange = new EventEmitter<void>();
 
@@ -29,6 +30,7 @@ export class DashboardCreateGameComponent {
     playerLabel: 'Team',
     aiLevel: 'middle' as 'elementary' | 'middle' | 'high',
     advancedPricingEnabled: false,
+    analyticsEnabled: true,
   };
 
   t(key: string): string {
@@ -43,6 +45,7 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.bots': 'Davon KI-Bots',
       'dashboard.createGame.aiLevel': 'KI-Niveau',
       'dashboard.createGame.advancedPricing': 'Fortgeschrittener Markt (Preisbildung durch Angebot & Nachfrage)',
+      'dashboard.createGame.analytics': 'Anonymisierte Daten für Forschung & Analyse teilen (hilft uns Soil zu verbessern)',
       'dashboard.createGame.submit': '+ Neues Spiel erstellen',
       'dashboard.createGame.creating': 'Wird erstellt...',
       'dashboard.createGame.required': 'Erforderlich',

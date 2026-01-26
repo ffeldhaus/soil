@@ -106,6 +106,18 @@
         {{ t('dashboard.createGame.advancedPricing') }}
       </label>
     </div>
+
+    <div class="flex items-center gap-3 pt-2 border-t border-gray-700/30">
+      <input
+        type="checkbox"
+        id="analyticsEnabled"
+        [(ngModel)]="newGameConfig.analyticsEnabled"
+        class="w-5 h-5 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+      />
+      <label for="analyticsEnabled" class="text-sm text-gray-200 cursor-pointer">
+        {{ t('dashboard.createGame.analytics') }}
+      </label>
+    </div>
   </div>
 
   @if (numHumanPlayers > 1 && isGuest) {
