@@ -91,6 +91,13 @@ export interface GameConfig {
   analyticsEnabled?: boolean;
 }
 
+export interface GameEvaluation {
+  playStyle: string;
+  analysis: string;
+  improvements: string[];
+  evaluatedAt: admin.firestore.Timestamp;
+}
+
 export interface Game {
   id: string;
   name: string;
@@ -106,6 +113,7 @@ export interface Game {
   deletedAt?: admin.firestore.Timestamp | null; // Soft delete timestamp
   playerSecrets?: Record<string, { password: string }>; // Key is playerNumber (1, 2...), Value is secret
   roundDeadlines?: Record<number, admin.firestore.Timestamp>;
+  evaluations?: Record<string, GameEvaluation>; // Keyed by player UID
 }
 
 export interface UserData {

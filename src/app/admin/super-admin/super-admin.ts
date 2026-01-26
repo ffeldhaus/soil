@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
-import type { Feedback, Game, SystemStats, UserStatus } from '../../types';
+import type { Feedback, Game, GameEvaluation, PlayerState, SystemStats, UserStatus } from '../../types';
 import { SuperAdminHudComponent } from './components/super-admin-hud';
 import { SuperAdminStatsComponent } from './components/super-admin-stats';
 
@@ -71,6 +71,13 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.quota.modal.label': 'Limit',
       'superadmin.quota.modal.save': 'Speichern',
       'superadmin.modal.cancel': 'Abbrechen',
+      'superadmin.evaluation.title': 'Strategie-Analyse',
+      'superadmin.evaluation.btn': 'KI-Analyse starten',
+      'superadmin.evaluation.evaluating': 'Analysiere...',
+      'superadmin.evaluation.playStyle': 'Spielstil',
+      'superadmin.evaluation.analysis': 'Analyse',
+      'superadmin.evaluation.improvements': 'Verbesserungsvorschläge (Mechanik)',
+      'superadmin.evaluation.date': 'Analysiert am',
       'superadmin.feedback.title': 'Feedback & Vorschläge',
       'superadmin.feedback.none': 'Kein Feedback gefunden.',
       'superadmin.feedback.table.user': 'Benutzer',
@@ -104,6 +111,8 @@ export class SuperAdminComponent implements OnInit {
   selectedUserForQuota: (UserStatus & { gameCount: number; quota: number }) | null = null;
 
   newQuotaValue = 0;
+
+  evaluatingPlayers = new Set<string>(); // gameId + uid
 
   async ngOnInit() {
     this.authService.user$.subscribe((user) => {
@@ -186,6 +195,31 @@ export class SuperAdminComponent implements OnInit {
 
       this.cdr.detectChanges();
     }
+  }
+
+  // Evaluation Logic
+  async evaluatePlayer(game: Game, player: PlayerState) {
+    const key = `${game.id}-${player.uid}`;
+    this.evaluatingPlayers.add(key);
+    this.cdr.detectChanges();
+
+    try {
+      const evaluation = await this.gameService.evaluateGame(game.id, player.uid);
+      this.ngZone.run(() => {
+        if (!game.evaluations) game.evaluations = {};
+        game.evaluations[player.uid] = evaluation;
+        this.evaluatingPlayers.delete(key);
+        this.cdr.detectChanges();
+      });
+    } catch (err: any) {
+      this.evaluatingPlayers.delete(key);
+      alert('Evaluation failed: ' + err.message);
+      this.cdr.detectChanges();
+    }
+  }
+
+  getPlayers(game: Game): PlayerState[] {
+    return Object.values(game.players || {}).filter((p) => !p.isAi);
   }
 
   // Feedback Management

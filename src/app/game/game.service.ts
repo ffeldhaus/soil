@@ -9,6 +9,7 @@ import type {
   CropType,
   Feedback,
   Game,
+  GameEvaluation,
   Parcel,
   PlayerState,
   Round,
@@ -562,6 +563,11 @@ export class GameService {
     } catch (error) {
       if (window.console) console.error('Failed to upload finished local game:', error);
     }
+  }
+
+  async evaluateGame(gameId: string, targetUid: string): Promise<GameEvaluation> {
+    const fn = httpsCallable<{ gameId: string; targetUid: string }, GameEvaluation>(this.functions!, 'evaluateGame');
+    return (await fn({ gameId, targetUid })).data;
   }
 
   async sendGameInvite(gameId: string, email: string): Promise<void> {

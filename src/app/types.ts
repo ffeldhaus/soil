@@ -95,6 +95,13 @@ export interface GameConfig {
   analyticsEnabled?: boolean;
 }
 
+export interface GameEvaluation {
+  playStyle: string;
+  analysis: string;
+  improvements: string[];
+  evaluatedAt: { seconds: number; nanoseconds: number } | Date;
+}
+
 export interface Game {
   id: string;
   name: string;
@@ -110,6 +117,7 @@ export interface Game {
   deletedAt?: { seconds: number; nanoseconds: number } | Date | null;
   playerSecrets?: Record<string, { password: string }>;
   roundDeadlines?: Record<number, { seconds: number; nanoseconds: number } | Date>;
+  evaluations?: Record<string, GameEvaluation>;
 }
 
 export interface UserStatus {

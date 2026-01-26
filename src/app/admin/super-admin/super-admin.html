@@ -454,6 +454,72 @@
                       {{ game.id }}
                     </div>
                   </div>
+
+                  <!-- Players & Evaluation -->
+                  <div class="mt-4 pt-4 border-t border-gray-800 space-y-4">
+                    @for (player of getPlayers(game); track player.uid) {
+                      <div class="bg-gray-950/30 p-3 rounded-xl border border-white/5">
+                        <div class="flex justify-between items-center mb-2">
+                          <span class="text-sm font-bold text-gray-200">{{ player.displayName }}</span>
+                          <button
+                            (click)="evaluatePlayer(game, player)"
+                            [disabled]="evaluatingPlayers.has(game.id + '-' + player.uid)"
+                            class="text-[10px] px-2 py-1 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 rounded-lg border border-blue-600/30 transition flex items-center gap-2"
+                          >
+                            @if (evaluatingPlayers.has(game.id + '-' + player.uid)) {
+                              <svg
+                                class="animate-spin h-3 w-3"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path
+                                  class="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                              </svg>
+                              {{ t('superadmin.evaluation.evaluating') }}
+                            } @else {
+                              {{ t('superadmin.evaluation.btn') }}
+                            }
+                          </button>
+                        </div>
+
+                        @if (game.evaluations?.[player.uid]) {
+                          <div class="space-y-3 animate-fade-in">
+                            <div>
+                              <div class="text-[10px] uppercase text-gray-500 font-bold mb-1">
+                                {{ t('superadmin.evaluation.playStyle') }}
+                              </div>
+                              <span class="text-xs bg-emerald-900/30 text-emerald-400 px-2 py-0.5 rounded border border-emerald-900/50">
+                                {{ game.evaluations![player.uid].playStyle }}
+                              </span>
+                            </div>
+                            <div>
+                              <div class="text-[10px] uppercase text-gray-500 font-bold mb-1">
+                                {{ t('superadmin.evaluation.analysis') }}
+                              </div>
+                              <p class="text-[11px] text-gray-400 leading-relaxed italic">
+                                "{{ game.evaluations![player.uid].analysis }}"
+                              </p>
+                            </div>
+                            <div>
+                              <div class="text-[10px] uppercase text-gray-500 font-bold mb-1">
+                                {{ t('superadmin.evaluation.improvements') }}
+                              </div>
+                              <ul class="list-disc list-inside text-[10px] text-gray-500 space-y-1">
+                                @for (imp of game.evaluations![player.uid].improvements; track imp) {
+                                  <li>{{ imp }}</li>
+                                }
+                              </ul>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
                 </div>
               }
             </div>

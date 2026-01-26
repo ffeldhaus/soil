@@ -1840,6 +1840,131 @@ export const manageFeedback = onCall(
   },
 );
 
+// --- Game Evaluation ---
+
+async function getExistingCategories(): Promise<string[]> {
+  const categoriesSnap = await db.collection('game_categories').get();
+  if (categoriesSnap.empty) {
+    const initialCategories = [
+      'Integrated Farming',
+      'Organic Right',
+      'Organic Wrong',
+      'Conventional Right',
+      'Conventional Wrong',
+      'Resource Miser',
+    ];
+    // Seed categories
+    const batch = db.batch();
+    for (const cat of initialCategories) {
+      batch.set(db.collection('game_categories').doc(), { name: cat });
+    }
+    await batch.commit();
+    return initialCategories;
+  }
+  return categoriesSnap.docs.map((doc) => doc.data().name);
+}
+
+export const evaluateGame = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  // Super Admin Check
+  const callerRef = db.collection('users').doc(request.auth.uid);
+  const callerSnap = await callerRef.get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  if (!isSuper) throw new HttpsError('permission-denied', 'Super-Administratoren only');
+
+  const { gameId, targetUid } = request.data;
+  if (!gameId || !targetUid) throw new HttpsError('invalid-argument', 'Missing gameId or targetUid');
+
+  const gameRef = db.collection('games').doc(gameId);
+  const gameSnap = await gameRef.get();
+  if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
+  const game = gameSnap.data()!;
+
+  const player = game.players[targetUid];
+  if (!player) throw new HttpsError('not-found', 'Player not found in this game');
+
+  const existingCategories = await getExistingCategories();
+
+  const model = ai.getGenerativeModel({
+    model: GEMINI_MODEL,
+    generationConfig: {
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: 'object',
+        properties: {
+          playStyle: { type: 'string' },
+          analysis: { type: 'string' },
+          improvements: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          isNewCategory: { type: 'boolean' },
+        },
+        required: ['playStyle', 'analysis', 'improvements', 'isNewCategory'],
+      },
+    },
+  });
+
+  const prompt = `
+    Analyze the following game data for a player in the "Soil" agricultural management game.
+    Cluster the player's play style into one of the existing categories if it fits, or create a new one if it is significantly different.
+    
+    Existing Categories: ${existingCategories.join(', ')}
+    
+    Game Data:
+    - Game Name: ${game.name}
+    - Player: ${player.displayName}
+    - Total Rounds: ${game.currentRoundNumber}
+    - Final Capital: ${player.capital}
+    - Avg Soil Quality: ${player.avgSoil}
+    - Avg Nutrition: ${player.avgNutrition}
+    - History Summary: ${JSON.stringify(
+      player.history.map((h: any) => ({
+        round: h.number,
+        decisions: h.decision,
+        result: h.result ? { profit: h.result.profit, events: h.result.events } : 'N/A',
+      })),
+    )}
+
+    Provide:
+    1. "playStyle": The name of the category (existing or new).
+    2. "analysis": A detailed analysis of their strategy and its consequences.
+    3. "improvements": A list of potential improvements to make the game mechanics better based on this player's experience.
+    4. "isNewCategory": Boolean indicating if you created a new category.
+  `;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = JSON.parse(result.response.text());
+
+    const evaluation: any = {
+      playStyle: response.playStyle,
+      analysis: response.analysis,
+      improvements: response.improvements,
+      evaluatedAt: Timestamp.now(),
+    };
+
+    // Update game with evaluation
+    await gameRef.update({
+      [`evaluations.${targetUid}`]: evaluation,
+    });
+
+    // If new category, add to our list
+    if (response.isNewCategory && !existingCategories.includes(response.playStyle)) {
+      await db.collection('game_categories').add({ name: response.playStyle });
+    }
+
+    return evaluation;
+  } catch (error: any) {
+    console.error('Gemini evaluation failed:', error);
+    throw new HttpsError('internal', 'Evaluation failed: ' + error.message);
+  }
+});
+
 export const sendGameInvite = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
   async (request) => {

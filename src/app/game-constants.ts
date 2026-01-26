@@ -34,6 +34,8 @@ interface CropConfig {
 
 export const APP_DOMAIN = 'https://soil.app';
 
+export const GEMINI_MODEL = 'gemini-3-flash-preview';
+
 export const GAME_CONSTANTS = {
   DEFAULT_ROUNDS: 20,
   SOIL: {
