@@ -1,21 +1,23 @@
 <div
-  class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-2 sm:px-6 py-1 flex items-center justify-between h-10"
+  class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-2 sm:px-6 py-1 flex items-center h-10"
 >
-  <button
-    (click)="toggleMobileMenu.emit()"
-    data-testid="mobile-menu-toggle"
-    class="lg:hidden p-2 hover:bg-gray-800 rounded-lg text-gray-400"
-    aria-label="Open menu"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  </button>
-  <!-- Left Side: Logo & Stats -->
-  <div class="flex items-center gap-2 sm:gap-4">
-    <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider hidden md:block">SOIL</h1>
+  <!-- Left Section: Logo & Stats -->
+  <div class="flex-1 flex items-center gap-2 sm:gap-4 min-w-0">
+    <button
+      (click)="toggleMobileMenu.emit()"
+      data-testid="mobile-menu-toggle"
+      class="lg:hidden p-1 hover:bg-gray-800 rounded-lg text-gray-400 shrink-0"
+      aria-label="Open menu"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+    
+    <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider hidden md:block shrink-0">SOIL</h1>
+    
     @if (gameState) {
-      <div class="hidden sm:flex gap-4 text-gray-200 font-mono text-sm md:text-base">
+      <div class="hidden sm:flex gap-4 text-gray-200 font-mono text-sm md:text-base truncate">
         <span class="text-yellow-400 whitespace-nowrap" data-testid="hud-capital">{{
           getDisplayCapital() | currency: 'EUR' : 'symbol' : '1.0-0'
         }}</span>
@@ -23,201 +25,203 @@
     }
   </div>
 
-  <!-- Mobile Controls (Visible on small screens) -->
-  <div class="flex lg:hidden items-center gap-0.5 sm:gap-1">
-    <button (click)="toggleLabels.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-400]="!showLabels" title="Feldnamen">
-      <span class="text-sm">🏷️</span>
-    </button>
-    <button (click)="toggleNutrition.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay" title="Nährstoffe">
-      <span class="text-sm">🧪</span>
-    </button>
-    <button (click)="toggleHarvest.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay" title="Ertrag">
-      <span class="text-sm">🌾</span>
-    </button>
-    <button (click)="toggleSoil.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-400]="!showSoilOverlay" title="Bodenqualität">
-      <span class="text-sm">🌿</span>
-    </button>
-    <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-400]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
-      <span class="text-sm">📊</span>
-    </button>
-
-    <div class="w-px h-6 bg-gray-700 mx-1"></div>
-
-    @if (gameState?.game?.status !== 'finished') {
-      <button (click)="nextRound.emit()" 
-        [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound" 
-        class="w-8 h-8 flex items-center justify-center bg-emerald-600 rounded-lg text-white disabled:bg-gray-700 disabled:text-gray-500 shadow-sm"
-        [title]="isSubmitted ? 'Warten auf andere...' : 'Nächste Runde'">
-        @if (isSubmitted || pendingNextRound) {
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-        } @else {
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-          </svg>
-        }
+  <!-- Center Section: Controls -->
+  <div class="flex-none flex items-center justify-center">
+    <!-- Mobile Controls (Visible on small screens) -->
+    <div class="flex lg:hidden items-center gap-0.5 sm:gap-1">
+      <button (click)="toggleLabels.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-400]="!showLabels" title="Feldnamen">
+        <span class="text-sm">🏷️</span>
       </button>
-    }
-  </div>
+      <button (click)="toggleNutrition.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay" title="Nährstoffe">
+        <span class="text-sm">🧪</span>
+      </button>
+      <button (click)="toggleHarvest.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay" title="Ertrag">
+        <span class="text-sm">🌾</span>
+      </button>
+      <button (click)="toggleSoil.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-400]="!showSoilOverlay" title="Bodenqualität">
+        <span class="text-sm">🌿</span>
+      </button>
+      <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-400]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
+        <span class="text-sm">📊</span>
+      </button>
 
-  <!-- Center/Right: Desktop Controls -->
-  <div class="hidden lg:flex items-center gap-3">
-    <!-- User Info -->
-    <div class="flex items-center gap-2 mr-2">
-      @if (!isPlayer) {
-        <img [src]="t('user.photoURL')" alt="Profile picture" class="w-6 h-6 rounded-full border border-gray-600" />
-      }
-      @if (user) {
-        @if (!isEditingName) {
-          <span
-            class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200 transition-colors"
-            (click)="startEditName(); $event.stopPropagation()"
-          >
-            {{
-              isPlayer && !user.displayName ? playerLabel + ' ' + (playerNumber || '') : (user.displayName | uppercase)
-            }}
-          </span>
-        } @else {
-          <input
-            [(ngModel)]="tempName"
-            (keyup.enter)="saveName()"
-            (blur)="saveName()"
-            class="bg-gray-800 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1"
-            (click)="$event.stopPropagation()"
-          />
-        }
+      <div class="w-px h-6 bg-gray-700 mx-1"></div>
+
+      @if (gameState?.game?.status !== 'finished') {
+        <button (click)="nextRound.emit()" 
+          [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound" 
+          class="w-8 h-8 flex items-center justify-center bg-emerald-600 rounded-lg text-white disabled:bg-gray-700 disabled:text-gray-500 shadow-sm"
+          [title]="isSubmitted ? 'Warten auf andere...' : 'Nächste Runde'">
+          @if (isSubmitted || pendingNextRound) {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          }
+        </button>
       }
     </div>
 
-    <!-- Toggle Buttons -->
-    <button
-      (click)="toggleLabels.emit()"
-      class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-      [class.bg-emerald-600]="showLabels"
-      [class.text-white]="showLabels"
-      [class.border-emerald-500]="showLabels"
-      [class.bg-gray-800]="!showLabels"
-      [class.text-gray-400]="!showLabels"
-      [class.border-gray-700]="!showLabels"
-      [attr.aria-pressed]="showLabels"
-      aria-label="Toggle field names"
-    >
-      {{ t('board.nav.names') }}
-    </button>
-    <button
-      (click)="toggleNutrition.emit()"
-      class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-      [class.bg-blue-600]="showNutritionOverlay"
-      [class.text-white]="showNutritionOverlay"
-      [class.border-blue-500]="showNutritionOverlay"
-      [class.bg-gray-800]="!showNutritionOverlay"
-      [class.text-gray-400]="!showNutritionOverlay"
-      [class.border-gray-700]="!showNutritionOverlay"
-      [attr.aria-pressed]="showNutritionOverlay"
-      aria-label="Toggle nutrition overlay"
-    >
-      {{ t('board.nav.nutrition') }}
-    </button>
-    <button
-      (click)="toggleHarvest.emit()"
-      class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-      [class.bg-yellow-600]="showHarvestOverlay"
-      [class.text-white]="showHarvestOverlay"
-      [class.border-yellow-500]="showHarvestOverlay"
-      [class.bg-gray-800]="!showHarvestOverlay"
-      [class.text-gray-400]="!showHarvestOverlay"
-      [class.border-gray-700]="!showHarvestOverlay"
-      [attr.aria-pressed]="showHarvestOverlay"
-      aria-label="Toggle harvest overlay"
-    >
-      {{ t('board.nav.harvest') }}
-    </button>
-    <button
-      (click)="toggleSoil.emit()"
-      class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-      [class.bg-emerald-700]="showSoilOverlay"
-      [class.text-white]="showSoilOverlay"
-      [class.border-emerald-600]="showSoilOverlay"
-      [class.bg-gray-800]="!showSoilOverlay"
-      [class.text-gray-400]="!showSoilOverlay"
-      [class.border-gray-700]="!showSoilOverlay"
-      [attr.aria-pressed]="showSoilOverlay"
-      aria-label="Toggle soil quality overlay"
-    >
-      {{ t('board.nav.soil') }}
-    </button>
-    <button
-      (click)="toggleFinance.emit()"
-      [disabled]="maxRoundNumber === 0"
-      class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-      [class.bg-emerald-600]="showFinance"
-      [class.text-white]="showFinance || maxRoundNumber > 0"
-      [class.border-emerald-500]="showFinance"
-      [class.bg-gray-800]="!showFinance"
-      [class.text-gray-400]="!showFinance && maxRoundNumber === 0"
-      [class.border-gray-700]="!showFinance"
-      [class.opacity-50]="maxRoundNumber === 0"
-      [attr.aria-pressed]="showFinance"
-      aria-label="Toggle financial report"
-    >
-      {{ t('board.nav.finance') }}
-    </button>
-
-    <div class="h-6 w-px bg-gray-700 mx-1"></div>
-
-    <!-- Action Buttons -->
-    <button
-      (click)="openRoundSettings.emit()"
-      [disabled]="isReadOnly"
-      class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg border border-gray-600 transition text-[10px] flex items-center gap-1 disabled:opacity-50"
-      aria-label="Open round options"
-    >
-      {{ t('board.nav.options') }}
-    </button>
-    @if (gameState?.game?.status !== 'finished') {
-      <button
-        (click)="nextRound.emit()"
-        data-testid="next-round-button"
-        [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
-        class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500"
-        [attr.aria-label]="isSubmitted ? 'Waiting for other players' : 'Submit round and proceed'"
-      >
-        @if (isSubmitted || pendingNextRound) {
-          <ng-container>{{ t('board.nav.waiting') }}</ng-container>
-        } @else {
-          <ng-container>{{ t('board.nav.nextRound') }}</ng-container>
+    <!-- Desktop Controls -->
+    <div class="hidden lg:flex items-center gap-3">
+      <!-- User Info -->
+      <div class="flex items-center gap-2 mr-2">
+        @if (!isPlayer) {
+          <img [src]="t('user.photoURL')" alt="Profile picture" class="w-6 h-6 rounded-full border border-gray-600" />
         }
-      </button>
-    }
-    @if (gameState?.game?.status === 'finished') {
+        @if (user) {
+          @if (!isEditingName) {
+            <span
+              class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200 transition-colors"
+              (click)="startEditName(); $event.stopPropagation()"
+            >
+              {{
+                isPlayer && !user.displayName ? playerLabel + ' ' + (playerNumber || '') : (user.displayName | uppercase)
+              }}
+            </span>
+          } @else {
+            <input
+              [(ngModel)]="tempName"
+              (keyup.enter)="saveName()"
+              (blur)="saveName()"
+              class="bg-gray-800 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1"
+              (click)="$event.stopPropagation()"
+            />
+          }
+        }
+      </div>
+
+      <!-- Toggle Buttons -->
       <button
-        (click)="showGameEnd.emit()"
-        class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg border border-amber-500 transition text-[10px] shadow-lg shadow-amber-900/40"
-        aria-label="Game finished, view results"
+        (click)="toggleLabels.emit()"
+        class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
+        [class.bg-emerald-600]="showLabels"
+        [class.text-white]="showLabels"
+        [class.border-emerald-500]="showLabels"
+        [class.bg-gray-800]="!showLabels"
+        [class.text-gray-400]="!showLabels"
+        [class.border-gray-700]="!showLabels"
+        [attr.aria-pressed]="showLabels"
+        aria-label="Toggle field names"
       >
-        <ng-container>Spiel beendet</ng-container>
+        {{ t('board.nav.names') }}
       </button>
-    }
+      <button
+        (click)="toggleNutrition.emit()"
+        class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
+        [class.bg-blue-600]="showNutritionOverlay"
+        [class.text-white]="showNutritionOverlay"
+        [class.border-blue-500]="showNutritionOverlay"
+        [class.bg-gray-800]="!showNutritionOverlay"
+        [class.text-gray-400]="!showNutritionOverlay"
+        [class.border-gray-700]="!showNutritionOverlay"
+        [attr.aria-pressed]="showNutritionOverlay"
+        aria-label="Toggle nutrition overlay"
+      >
+        {{ t('board.nav.nutrition') }}
+      </button>
+      <button
+        (click)="toggleHarvest.emit()"
+        class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
+        [class.bg-yellow-600]="showHarvestOverlay"
+        [class.text-white]="showHarvestOverlay"
+        [class.border-yellow-500]="showHarvestOverlay"
+        [class.bg-gray-800]="!showHarvestOverlay"
+        [class.text-gray-400]="!showHarvestOverlay"
+        [class.border-gray-700]="!showHarvestOverlay"
+        [attr.aria-pressed]="showHarvestOverlay"
+        aria-label="Toggle harvest overlay"
+      >
+        {{ t('board.nav.harvest') }}
+      </button>
+      <button
+        (click)="toggleSoil.emit()"
+        class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
+        [class.bg-emerald-700]="showSoilOverlay"
+        [class.text-white]="showSoilOverlay"
+        [class.border-emerald-600]="showSoilOverlay"
+        [class.bg-gray-800]="!showSoilOverlay"
+        [class.text-gray-400]="!showSoilOverlay"
+        [class.border-gray-700]="!showSoilOverlay"
+        [attr.aria-pressed]="showSoilOverlay"
+        aria-label="Toggle soil quality overlay"
+      >
+        {{ t('board.nav.soil') }}
+      </button>
+      <button
+        (click)="toggleFinance.emit()"
+        [disabled]="maxRoundNumber === 0"
+        class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
+        [class.bg-emerald-600]="showFinance"
+        [class.text-white]="showFinance || maxRoundNumber > 0"
+        [class.border-emerald-500]="showFinance"
+        [class.bg-gray-800]="!showFinance"
+        [class.text-gray-400]="!showFinance && maxRoundNumber === 0"
+        [class.border-gray-700]="!showFinance"
+        [class.opacity-50]="maxRoundNumber === 0"
+        [attr.aria-pressed]="showFinance"
+        aria-label="Toggle financial report"
+      >
+        {{ t('board.nav.finance') }}
+      </button>
+
+      <div class="h-6 w-px bg-gray-700 mx-1"></div>
+
+      <!-- Action Buttons -->
+      <button
+        (click)="openRoundSettings.emit()"
+        [disabled]="isReadOnly"
+        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg border border-gray-600 transition text-[10px] flex items-center gap-1 disabled:opacity-50"
+        aria-label="Open round options"
+      >
+        {{ t('board.nav.options') }}
+      </button>
+      @if (gameState?.game?.status !== 'finished') {
+        <button
+          (click)="nextRound.emit()"
+          data-testid="next-round-button"
+          [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
+          class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500"
+          [attr.aria-label]="isSubmitted ? 'Waiting for other players' : 'Submit round and proceed'"
+        >
+          @if (isSubmitted || pendingNextRound) {
+            <ng-container>{{ t('board.nav.waiting') }}</ng-container>
+          } @else {
+            <ng-container>{{ t('board.nav.nextRound') }}</ng-container>
+          }
+        </button>
+      }
+      @if (gameState?.game?.status === 'finished') {
+        <button
+          (click)="showGameEnd.emit()"
+          class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg border border-amber-500 transition text-[10px] shadow-lg shadow-amber-900/40"
+          aria-label="Game finished, view results"
+        >
+          <ng-container>Spiel beendet</ng-container>
+        </button>
+      }
+    </div>
   </div>
 
-  <div class="flex items-center gap-3">
+  <!-- Right Section: Dev & Logout -->
+  <div class="flex-1 flex items-center justify-end gap-3 min-w-0">
     @if (isDev) {
       <button
         (click)="copyGameState()"
-        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white font-bold rounded-lg border border-gray-700 transition text-[10px]"
+        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white font-bold rounded-lg border border-gray-700 transition text-[10px] hidden sm:block"
         title="Copy Game State JSON"
         aria-label="Copy game state as JSON"
       >
         {{ t('board.nav.copyState') }}
       </button>
     }
-    @defer (hydrate on interaction) {
-    }
     <button
       (click)="logout.emit()"
       data-testid="logout-button"
-      class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-10 h-10 flex items-center justify-center"
+      class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-10 h-10 flex items-center justify-center shrink-0"
       [title]="t('board.logout.title')"
       [attr.aria-label]="t('board.logout.title')"
     >
