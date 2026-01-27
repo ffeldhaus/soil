@@ -223,7 +223,7 @@
           <!-- Pests (Left) -->
           <div class="absolute left-4 flex flex-wrap gap-1 justify-end portrait:hidden pointer-events-none">
             @for (pest of selectedRoundPestsData; track $index) {
-            <span class="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-950/40 px-3 py-1 rounded border border-red-500/30 shadow-sm whitespace-nowrap pointer-events-auto" [title]="pest.name">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-950 px-3 py-1 rounded border border-red-500 shadow-sm whitespace-nowrap pointer-events-auto" [title]="pest.name">
               {{ pest.name }}
             </span>
             }
@@ -258,7 +258,7 @@
           <!-- Weather (Right) -->
           <div class="absolute right-4 flex justify-start portrait:hidden pointer-events-none">
             @if (selectedRoundWeatherData.name !== 'Normal') {
-            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-950/40 px-3 py-1 rounded border border-blue-500/30 shadow-sm whitespace-nowrap pointer-events-auto" [title]="selectedRoundWeatherData.name">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-950 px-3 py-1 rounded border border-blue-500 shadow-sm whitespace-nowrap pointer-events-auto" [title]="selectedRoundWeatherData.name">
               {{ selectedRoundWeatherData.name }}
             </span>
             }
