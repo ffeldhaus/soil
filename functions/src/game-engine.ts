@@ -309,16 +309,12 @@ export class GameEngine {
       }
     });
 
-    const laborCost =
-      GAME_CONSTANTS.MACHINE_FACTORS.BASE_LABOR_COST *
-      GAME_CONSTANTS.MACHINE_FACTORS.LABOR_COST_REDUCTION[machineLevel];
+    const laborCost = GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST;
     const machineInvestment =
       GAME_CONSTANTS.MACHINE_FACTORS.INVESTMENT_COST[Math.round(decision.machines || 0)] * costScale;
+    const machineMaintenance = GAME_CONSTANTS.MACHINE_FACTORS.MAINTENANCE_COST[machineLevel];
     const runningCost =
-      (decision.organic
-        ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC
-        : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL) +
-      (decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0);
+      (decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0) + machineMaintenance + laborCost;
     let animalMaintenance = animalParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS;
     if (events.vermin.includes('swine-fever')) {
       animalMaintenance *= 2.0; // Significant increase due to hygiene and restriction zones
@@ -327,7 +323,7 @@ export class GameEngine {
       (decision.fertilizer ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0) +
       (decision.pesticide ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0) +
       (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0);
-    const totalExpenses = seedCost + laborCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
+    const totalExpenses = seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
 
     const subsidies = 220 * numParcels + (bioSiegel ? 210 * numParcels : 0);
 
@@ -357,7 +353,7 @@ export class GameEngine {
       harvestSummary,
       expenses: {
         seeds: seedCost,
-        labor: laborCost,
+        labor: 0,
         running: runningCost + animalMaintenance,
         investments: machineInvestment + suppliesCost,
         total: totalExpenses,

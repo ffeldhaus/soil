@@ -43,7 +43,7 @@ export class ManualConceptCardComponent {
         'Staatliche Zahlungen (GAP) unterstützen deinen Betrieb. Bio-Betriebe erhalten eine zusätzliche Öko-Prämie als Ausgleich für den Mehraufwand.',
       'manual.concepts.machines.title': 'Maschinen & Arbeit',
       'manual.concepts.machines.text':
-        'Maschinen reduzieren den hohen Arbeitszeitaufwand und damit die Lohnkosten, belasten aber durch ihr Gewicht die Bodenstruktur und erfordern regelmäßige hohe Investitionen.',
+        'Maschinen erhöhen durch modernste Technik deine Erträge, belasten aber durch ihr Gewicht die Bodenstruktur und erfordern regelmäßige hohe Investitionen sowie laufende Wartungskosten.',
       'manual.concepts.bio.title': 'Bio-Siegel',
       'manual.concepts.bio.text':
         'Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie. Tiere (Gras) sind für den organischen Dünger im Bio-Anbau essenziell.',

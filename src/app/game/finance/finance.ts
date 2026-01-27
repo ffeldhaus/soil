@@ -16,9 +16,9 @@ interface DetailedExpenses {
     pesticide: number;
     organisms: number;
     animals: number;
-    base: number;
+    personnel: number;
+    maintenance: number;
   };
-  labor: number;
   total: number;
 }
 
@@ -83,7 +83,6 @@ export class Finance implements OnChanges {
     seeds: false,
     investments: false,
     running: false,
-    labor: false,
     harvest: false,
   };
 
@@ -189,9 +188,6 @@ export class Finance implements OnChanges {
     const result = round.result;
     if (!result) return;
 
-    const totalRounds = this.game.settings?.length || 20;
-    const costScale = totalRounds / 20;
-
     // Calculate detailed seeds
     const seeds: Record<string, number> = {};
     let animalCount = 0;
@@ -221,6 +217,10 @@ export class Finance implements OnChanges {
       }
     });
 
+    const machineLevel = Math.min(4, Math.max(0, Math.round(result.machineRealLevel ?? 0)));
+    const personnelCost = GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST;
+    const maintenanceCost = GAME_CONSTANTS.MACHINE_FACTORS.MAINTENANCE_COST[machineLevel];
+
     data.detailedExpenses = {
       seeds,
       investments: {
@@ -228,17 +228,14 @@ export class Finance implements OnChanges {
         animals: 0, // In current engine, livestock is not a one-time investment but a running cost per parcel
       },
       running: {
-        organic_control: (decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0) * costScale,
-        fertilize: (decision.fertilizer ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0) * costScale,
-        pesticide: (decision.pesticide ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0) * costScale,
-        organisms: (decision.organisms ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0) * costScale,
-        animals: animalCount * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS * costScale,
-        base:
-          (decision.organic
-            ? GAME_CONSTANTS.EXPENSES.RUNNING.BASE_ORGANIC
-            : GAME_CONSTANTS.EXPENSES.RUNNING.BASE_CONVENTIONAL) * costScale,
+        organic_control: decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0,
+        fertilize: decision.fertilizer ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0,
+        pesticide: decision.pesticide ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0,
+        organisms: decision.organisms ? 40 * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0,
+        animals: animalCount * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS,
+        personnel: personnelCost,
+        maintenance: maintenanceCost,
       },
-      labor: result.expenses.labor || 0,
       total: result.expenses.total,
     };
 

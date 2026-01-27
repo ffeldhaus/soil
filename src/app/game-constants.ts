@@ -82,9 +82,9 @@ export const GAME_CONSTANTS = {
     // References for Labor & Machinery:
     // https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege (KTBL Datensammlungen)
     YIELD_BONUS: [0, 0.05, 0.1, 0.15, 0.2],
-    LABOR_COST_REDUCTION: [1, 0.8, 0.6, 0.45, 0.3],
-    BASE_LABOR_COST: 60000, // Based on approx. 1500h/year for 40ha @ 40€/h
+    PERSONNEL_COST: 60000, // Based on approx. 1500h/year for 40ha @ 40€/h
     INVESTMENT_COST: [0, 2500, 10000, 25000, 60000],
+    MAINTENANCE_COST: [0, 1000, 4000, 10000, 20000],
   },
   WEATHER_EFFECTS: {
     // References for Weather Impacts:
@@ -283,8 +283,6 @@ export const GAME_CONSTANTS = {
       PESTICIDE: 100,
       ORGANISMS: 150,
       ANIMALS: 250,
-      BASE_CONVENTIONAL: 8000, // Fixed overhead (insurance, office, buildings) for 40ha
-      BASE_ORGANIC: 10000,
     },
   },
   ROTATION_MATRIX: {

@@ -307,55 +307,6 @@
           }
           }
 
-          <!-- Labor Costs Breakdown -->
-          <tr class="group hover:bg-gray-800/20 transition-colors cursor-pointer" (click)="toggleSection('labor')">
-            <td class="p-3 pl-8 text-sm font-bold text-gray-200 border-b border-gray-800/50">
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] transition-transform duration-300"
-                  [class.rotate-90]="expandedSections['labor']">▶</span>
-                <span>Personalkosten</span>
-              </div>
-            </td>
-            @for (p of players; track p) {
-            <td class="p-3 border-b border-gray-800/50 text-center font-bold text-red-400/80">
-              @if (!expandedSections['labor']) {
-              {{ p.result?.expenses?.labor | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              }
-            </td>
-            }
-          </tr>
-          @if (expandedSections['labor']) {
-          <tr class="bg-black/20 border-b border-gray-800/30">
-            <td class="p-3 pl-12 text-sm font-bold text-gray-400">Gesamt</td>
-            @for (p of players; track p) {
-            <td class="p-3 text-center font-bold text-red-400">
-              {{ p.result?.expenses?.labor | currency: 'EUR' : 'symbol' : '1.0-0' }}
-            </td>
-            }
-          </tr>
-          <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
-            <td
-              class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">Lohnkosten (Grundbetrag)</td>
-            @for (p of players; track p) {
-            <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
-              {{ GAME_CONSTANTS.MACHINE_FACTORS.BASE_LABOR_COST * (game.settings.length || 20) / 20 | currency: 'EUR'
-              : 'symbol' : '1.0-0' }}
-            </td>
-            }
-          </tr>
-          <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
-            <td
-              class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">Einsparung durch Maschinen</td>
-            @for (p of players; track p) {
-            <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
-              -{{ (GAME_CONSTANTS.MACHINE_FACTORS.BASE_LABOR_COST * (game.settings.length || 20) / 20) -
-              (p.result?.expenses?.labor || 0) | currency: 'EUR' :
-              'symbol' : '1.0-0' }}
-            </td>
-            }
-          </tr>
-          }
-
           <!-- Investments Breakdown -->
           <tr class="group hover:bg-gray-800/20 transition-colors cursor-pointer"
             (click)="toggleSection('investments')">
@@ -433,10 +384,19 @@
           </tr>
           <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
             <td
-              class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">Grundkosten</td>
+              class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">Personalkosten</td>
             @for (p of players; track p) {
             <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
-              {{ p.detailedExpenses?.running?.base || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+              {{ p.detailedExpenses?.running?.personnel || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            </td>
+            }
+          </tr>
+          <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
+            <td
+              class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">Maschinenwartung</td>
+            @for (p of players; track p) {
+            <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
+              {{ p.detailedExpenses?.running?.maintenance || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
             </td>
             }
           </tr>

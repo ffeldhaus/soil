@@ -121,12 +121,11 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     // Round 1: fertilizer true, organic false
-    // Scale: 10 rounds / 20 = 0.5
-    // Fertilizer: 40 * 100 * 0.5 = 2000
-    // Base: 8000 * 0.5 = 4000
-    expect(player?.detailedExpenses?.running?.fertilize).toBe(2000);
+    // Fertilizer: 40 * 100 = 4000
+    // Personnel: 60000
+    expect(player?.detailedExpenses?.running?.fertilize).toBe(4000);
     expect(player?.detailedExpenses?.running?.organic_control).toBe(0);
-    expect(player?.detailedExpenses?.running?.base).toBe(4000);
+    expect(player?.detailedExpenses?.running?.personnel).toBe(60000);
   });
 
   it('should calculate capital history correctly', () => {
