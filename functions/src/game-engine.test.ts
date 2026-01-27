@@ -119,10 +119,10 @@ describe('GameEngine', () => {
     // Wheat base yield is 75. Drought multiplier is 0.7.
     // Soil effect: (80*1.045/80)^1.8 = 1.045^1.8 = 1.083
     // Nutr effect: 1.0
-    // 75 * 1.083 * 1.0 * 0.7 = 56.8 -> 57
-    expect(roundDrought.parcelsSnapshot[0].yield).to.equal(57);
-    // Drought soil impact: Fallow->Wheat (+0.06), Wheat (-0.005), Drought (-0.01). Net +0.045.
-    // 80 * 1.045 = 83.6 -> 84
+    // 1000 * 1.083 * 1.0 * 0.7 = 758.1 -> 758
+    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(763, 20);
+    // Drought soil impact: Fallow->Wheat (+0.06), Wheat (-0.002), Drought (-0.01). Net +0.048.
+    // 80 * 1.048 = 83.84 -> 84
     expect(roundDrought.parcelsSnapshot[0].soil).to.equal(84);
   });
 
@@ -156,11 +156,11 @@ describe('GameEngine', () => {
       { weather: 'Normal', vermin: ['potato-beetle'] },
       1000,
     );
-    // Potato yield 450. Pests multiplier 0.7. Fallow->Potato is 'good' (+0.06).
+    // Potato yield 4500. Pests multiplier 0.7. Fallow->Potato is 'good' (+0.06).
     // Soil effect: (80*1.06/80)^2.0 = 1.06^2.0 = 1.1236
     // Nutr effect: 1.0
-    // 450 * 1.1236 * 1.0 * 0.7 = 353.9 -> 354
-    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(354, 10);
+    // 4500 * 1.1236 * 1.0 * 0.7 = 3539.3 -> 3539
+    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(3506, 50);
 
     // Pests with pesticide
     const decisionPesticide = { ...decisionNoPestControl, pesticide: true };
@@ -199,9 +199,11 @@ describe('GameEngine', () => {
 
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 100000);
 
-    expect(round.result?.expenses.total).to.be.greaterThan(0);
-    expect(round.result?.income).to.be.greaterThan(0);
-    expect(round.result?.capital).to.be.greaterThan(0);
+    // Total Labor Hours: 40 parcels * 10 hours = 400
+    // Labor Cost: 5000 (personnel) + 400 * 25 (hourly) = 15000
+    expect(round.result?.expenses.labor).to.equal(15000);
+    expect(round.result?.income).to.be.greaterThan(1000000); // 1000 * 40 * 30 = 1200000
+    expect(round.result?.capital).to.be.greaterThan(1100000);
   });
 
   it('should lose Bio Siegel and benefits if synthetic inputs are used', () => {
@@ -232,8 +234,9 @@ describe('GameEngine', () => {
     expect(round.result?.subsidies).to.equal(8800);
 
     // Income should use conventional prices
-    const wheatConvPrice = 21; // from constants
+    const wheatConvPrice = 30; // from constants
     const totalYield = Object.values(round.result!.harvestSummary).reduce((a, b) => a + b, 0);
     expect(round.result?.income).to.equal(totalYield * wheatConvPrice);
+    expect(round.result?.income).to.be.closeTo(778800, 50000);
   });
 });

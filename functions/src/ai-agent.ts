@@ -3,7 +3,7 @@ import type { CropType, Round, RoundDecision } from './types';
 
 export class AiAgent {
   static makeDecision(
-    level: 'elementary' | 'middle' | 'high',
+    level: 'elementary' | 'middle' | 'high' | 'perfect',
     previousRound: Round | undefined,
     aiId?: string,
   ): RoundDecision {
@@ -28,6 +28,9 @@ export class AiAgent {
     }
     if (level === 'high') {
       return AiAgent.makeHighDecision(decision, previousRound, personality, strategyVariant);
+    }
+    if (level === 'perfect') {
+      return AiAgent.makePerfectDecision(decision, previousRound);
     }
 
     return decision;
@@ -105,7 +108,6 @@ export class AiAgent {
     personality: number,
     strategyVariant: number,
   ): RoundDecision {
-    const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
     const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
     const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
     const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
@@ -113,25 +115,23 @@ export class AiAgent {
 
     const isEcoFriendly = strategyVariant > 0.7;
     const isIndustrialist = strategyVariant < 0.3;
-
-    // Capital-conscious decision making
-    const isLowCapital = currentCapital < 20000;
+    const isLowCapital = currentCapital < 15000;
     const isCriticallyLow = currentCapital < 5000;
 
     const organicThreshold = isEcoFriendly ? 85 : isIndustrialist ? 115 : 100;
     decision.organic = averageSoil > organicThreshold + (personality - 0.5) * 10;
 
     if (isLowCapital) {
-      decision.machines = 0; // Cut costs
+      decision.machines = 0;
     } else {
-      decision.machines = isIndustrialist ? (averageSoil > 80 ? 2 : 1) : averageSoil > 95 ? 2 : 1;
+      decision.machines = isIndustrialist ? (averageSoil > 95 ? 2 : 1) : averageSoil > 110 ? 2 : 1;
     }
 
     if (!decision.organic) {
       decision.fertilizer = averageSoil < 110 + (personality - 0.5) * 20;
-      decision.pesticide = Math.random() > (isIndustrialist ? 0.02 : 0.1);
+      decision.pesticide = Math.random() > (isIndustrialist ? 0.05 : 0.15);
     } else {
-      decision.organisms = isCriticallyLow ? false : Math.random() > (isEcoFriendly ? 0.05 : 0.2);
+      decision.organisms = isCriticallyLow ? false : Math.random() > (isEcoFriendly ? 0.1 : 0.3);
     }
 
     for (let i = 0; i < 40; i++) {
@@ -140,16 +140,105 @@ export class AiAgent {
         : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
       const prevCrop = prevParcel.crop;
 
-      const recoveryThreshold = 75 + personality * 10;
-      const nutritionThreshold = 65 + personality * 10;
+      const recoveryThreshold = 80 + personality * 10;
+      const nutritionThreshold = 70 + personality * 10;
 
       if (prevParcel.soil < recoveryThreshold || prevParcel.nutrition < nutritionThreshold) {
-        const recoveryCrops: CropType[] = isEcoFriendly ? ['Fieldbean', 'Pea', 'Grass'] : ['Fieldbean', 'Fallow'];
-        decision.parcels[i] = recoveryCrops[Math.floor(Math.random() * recoveryCrops.length)];
-      } else if (decision.organic && i < 12 && isEcoFriendly) {
-        decision.parcels[i] = Math.random() > 0.3 ? 'Grass' : 'Fieldbean';
+        // High AI now knows to use Fieldbean for recovery
+        // Bias heavily towards Fieldbean/Grass but allow Pea
+        const pick = Math.random();
+        decision.parcels[i] = pick > 0.3 ? (prevCrop === 'Fieldbean' ? 'Grass' : 'Fieldbean') : 'Pea';
       } else {
-        let candidates = mainCrops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good');
+        decision.parcels[i] = AiAgent.chooseBestCropForHigh(prevCrop, mainCrops, isLowCapital, isIndustrialist);
+      }
+    }
+    return decision;
+  }
+
+  private static chooseBestCropForHigh(
+    prevCrop: CropType,
+    mainCrops: CropType[],
+    isLowCapital: boolean,
+    isIndustrialist: boolean,
+  ): CropType {
+    const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
+    let candidates = mainCrops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good');
+
+    if (candidates.length === 0) {
+      candidates = crops.filter(
+        (c) =>
+          GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] !== 'bad' && c !== prevCrop && c !== 'Fallow' && c !== 'Grass',
+      );
+    }
+
+    // Mix in legumes for sustainability even when not critical
+    if (Math.random() > 0.7) {
+      const legumes = candidates.filter((c) => c === 'Pea' || c === 'Fieldbean' || c === 'Oat');
+      if (legumes.length > 0) candidates = legumes;
+      else if (candidates.length === 0) return 'Pea'; // Force legume if no options
+    }
+
+    if (isLowCapital && Math.random() > 0.2) {
+      candidates = candidates.filter((c) => (GAME_CONSTANTS.CROPS[c]?.laborHours ?? 100) <= 20);
+    }
+
+    if (isIndustrialist && !isLowCapital) {
+      const highValue: CropType[] = ['Potato', 'Corn', 'Beet', 'Wheat'];
+      const hvCandidates = candidates.filter((c) => highValue.includes(c));
+      if (hvCandidates.length > 0) candidates = hvCandidates;
+    }
+
+    if (candidates.length > 0) {
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+    const neutralCrops: CropType[] = ['Oat', 'Rye'];
+    return neutralCrops[Math.floor(Math.random() * neutralCrops.length)];
+  }
+
+  private static makePerfectDecision(decision: RoundDecision, previousRound: Round | undefined): RoundDecision {
+    const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
+    const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
+    const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
+    const currentCapital = previousRound?.result?.capital ?? 100000;
+
+    // Perfect AI: Strictly profit-oriented with soil as secondary constraint
+    decision.organic = false;
+
+    // Machinery usage - very conservative to ensure profit
+    if (currentCapital < 50000) {
+      decision.machines = 0; // Don't invest unless we have safety buffer
+    } else if (averageSoil > 150 && currentCapital > 200000) {
+      decision.machines = 2;
+    } else {
+      decision.machines = 1;
+    }
+
+    decision.fertilizer = averageSoil < 100;
+    decision.pesticide = true;
+
+    // 4. OPTIMAL CROP SELECTION
+    for (let i = 0; i < 40; i++) {
+      const prevParcel = hasParcels
+        ? previousRound!.parcelsSnapshot[i]
+        : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
+      const prevCrop = prevParcel.crop;
+
+      // Perfect recovery logic - prioritize soil stability
+      if (prevParcel.soil < 80) {
+        decision.parcels[i] = 'Fallow';
+      } else if (prevParcel.soil < 90 || prevParcel.nutrition < 85) {
+        // Active recovery
+        decision.parcels[i] = prevCrop === 'Fieldbean' ? 'Grass' : 'Fieldbean';
+      } else {
+        // Find best 'good' rotation crop with lowest labor and high yield
+        let candidates = crops.filter(
+          (c) =>
+            GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good' &&
+            c !== 'Fallow' &&
+            c !== 'Grass' &&
+            c !== prevCrop &&
+            (GAME_CONSTANTS.CROPS[c]?.laborHours ?? 100) <= 12,
+        );
 
         if (candidates.length === 0) {
           candidates = crops.filter(
@@ -157,32 +246,33 @@ export class AiAgent {
               GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] !== 'bad' &&
               c !== prevCrop &&
               c !== 'Fallow' &&
-              c !== 'Grass',
+              c !== 'Grass' &&
+              (GAME_CONSTANTS.CROPS[c]?.laborHours ?? 100) <= 12,
           );
         }
 
-        // Filter high-labor crops if capital is low
-        if (isLowCapital) {
-          candidates = candidates.filter((c) => (GAME_CONSTANTS.CROPS[c]?.laborHours ?? 100) <= 15);
-        }
-
-        if (isIndustrialist && !isLowCapital) {
-          const highValue: CropType[] = ['Potato', 'Corn', 'Beet', 'Wheat'];
-          const hvCandidates = candidates.filter((c) => highValue.includes(c));
-          if (hvCandidates.length > 0) candidates = hvCandidates;
+        // Gate high-impact crops (Potato/Beet/Corn) behind high soil
+        // Assuming Potato/Beet/Corn have soilSensitivity >= 1.6
+        if (prevParcel.soil < 100) {
+          candidates = candidates.filter((c) => (GAME_CONSTANTS.CROPS[c]?.soilSensitivity ?? 1) < 1.6);
         }
 
         if (candidates.length > 0) {
-          decision.parcels[i] = candidates[Math.floor(Math.random() * candidates.length)];
+          candidates.sort((a, b) => {
+            const configA = GAME_CONSTANTS.CROPS[a];
+            const configB = GAME_CONSTANTS.CROPS[b];
+            const profitA = configA.baseYield * configA.marketValue.conventional - configA.seedPrice.conventional;
+            const profitB = configB.baseYield * configB.marketValue.conventional - configB.seedPrice.conventional;
+            return profitB - profitA;
+          });
+          decision.parcels[i] = candidates[0];
         } else {
-          const neutralCrops: CropType[] = ['Oat', 'Rye'];
-          decision.parcels[i] = neutralCrops[Math.floor(Math.random() * neutralCrops.length)];
+          decision.parcels[i] = 'Wheat';
         }
       }
     }
     return decision;
   }
-
   private static seededRandom(seed: string): number {
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
