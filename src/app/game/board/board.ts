@@ -378,8 +378,16 @@ export class Board implements OnInit, OnDestroy {
   }
 
   checkOrientation() {
-    const isPortrait = window.innerWidth < window.innerHeight;
-    this.cols = isPortrait ? 5 : 8;
+    const aspectRatio = window.innerWidth / window.innerHeight;
+    if (aspectRatio < 0.5) {
+      this.cols = 4;
+    } else if (aspectRatio < 1.0) {
+      this.cols = 5;
+    } else if (aspectRatio < 2.0) {
+      this.cols = 8;
+    } else {
+      this.cols = 10;
+    }
     this.rows = Math.ceil(this.parcels.length / this.cols);
   }
 
@@ -616,7 +624,7 @@ export class Board implements OnInit, OnDestroy {
     };
 
     const suffix = weatherMap[weather] || '';
-    const orientation = this.cols === 5 ? 'portrait' : 'landscape';
+    const orientation = this.cols <= 5 ? 'portrait' : 'landscape';
 
     return `assets/images/bauernhof-${orientation}${suffix}-hd.webp`;
   }

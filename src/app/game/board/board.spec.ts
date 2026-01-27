@@ -308,4 +308,44 @@ describe('Board', () => {
     component.history[0].result.events.weather = 'Flood';
     expect(component.backgroundImage).toBe('assets/images/bauernhof-portrait-hochwasser-hd.webp');
   });
+
+  it('should update cols/rows based on aspect ratio in checkOrientation', () => {
+    component.parcels = Array(40).fill({});
+
+    const setViewport = (width: number, height: number) => {
+      Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: width });
+      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: height });
+    };
+
+    const originalWidth = window.innerWidth;
+    const originalHeight = window.innerHeight;
+
+    try {
+      // Very tall (AR < 0.5)
+      setViewport(300, 1000);
+      component.checkOrientation();
+      expect(component.cols).toBe(4);
+      expect(component.rows).toBe(10);
+
+      // Portrait (0.5 <= AR < 1.0)
+      setViewport(600, 1000);
+      component.checkOrientation();
+      expect(component.cols).toBe(5);
+      expect(component.rows).toBe(8);
+
+      // Landscape (1.0 <= AR < 2.0)
+      setViewport(1200, 1000);
+      component.checkOrientation();
+      expect(component.cols).toBe(8);
+      expect(component.rows).toBe(5);
+
+      // Very wide (AR >= 2.0)
+      setViewport(2500, 1000);
+      component.checkOrientation();
+      expect(component.cols).toBe(10);
+      expect(component.rows).toBe(4);
+    } finally {
+      setViewport(originalWidth, originalHeight);
+    }
+  });
 });

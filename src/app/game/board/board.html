@@ -216,21 +216,21 @@
       }
 
       <!-- Round Header (Static Flex Item) -->
-      <div class="shrink-0 pt-2 pb-1 flex flex-col items-center gap-1 z-30">
+      <div class="shrink-0 pt-2 pb-1 flex flex-col items-center gap-1 z-30 w-full">
         <!-- Round Selector (History) -->
         @if (viewingRound >= 0) {
-        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pointer-events-auto w-full max-w-md px-4">
+        <div class="relative flex items-center justify-center w-full max-w-4xl px-4">
           <!-- Pests (Left) -->
-          <div class="flex flex-wrap gap-1 justify-end portrait:hidden">
+          <div class="absolute left-4 flex flex-wrap gap-1 justify-end portrait:hidden pointer-events-none">
             @for (pest of selectedRoundPestsData; track $index) {
-            <span class="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-950/40 px-2 py-1 rounded border border-red-500/30 shadow-sm animate-pulse" [title]="pest.name">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-950/40 px-3 py-1 rounded border border-red-500/30 shadow-sm whitespace-nowrap pointer-events-auto" [title]="pest.name">
               {{ pest.name }}
             </span>
             }
           </div>
 
           <div data-testid="round-indicator"
-            class="flex items-center gap-1 bg-gray-900/60 backdrop-blur rounded-full px-4 py-1 border border-gray-700">
+            class="flex items-center gap-1 bg-gray-900/60 backdrop-blur rounded-full px-4 py-1 border border-gray-700 mx-auto">
             <button (click)="goToRound(viewingRound - 1)" [disabled]="viewingRound === 0"
               class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -256,9 +256,9 @@
           </div>
 
           <!-- Weather (Right) -->
-          <div class="flex justify-start portrait:hidden">
+          <div class="absolute right-4 flex justify-start portrait:hidden pointer-events-none">
             @if (selectedRoundWeatherData.name !== 'Normal') {
-            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-950/40 px-2 py-1 rounded border border-blue-500/30 shadow-sm" [title]="selectedRoundWeatherData.name">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-950/40 px-3 py-1 rounded border border-blue-500/30 shadow-sm whitespace-nowrap pointer-events-auto" [title]="selectedRoundWeatherData.name">
               {{ selectedRoundWeatherData.name }}
             </span>
             }
