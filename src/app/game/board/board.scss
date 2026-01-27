@@ -12,14 +12,18 @@
   grid-template-columns: repeat(var(--cols), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
 
-  // Reduced overhead: Header (40px) + Round HUD (~40px) + minimal padding
-  $overhead: 190px;
+  // Responsive overhead: accounts for HUD, Round Header, Timer, and Wrapper padding
+  --grid-overhead: 150px;
+  @media (orientation: portrait) {
+    --grid-overhead: 130px;
+  }
 
   // Ensure the grid maintains an aspect ratio based on its elements
   aspect-ratio: var(--cols) / var(--rows);
 
   width: 100%;
-  max-width: calc((100vh - #{$overhead}) * (var(--cols) / var(--rows)));
+  max-height: calc(100vh - var(--grid-overhead));
+  max-width: calc((100vh - var(--grid-overhead)) * (var(--cols) / var(--rows)));
 }
 
 @keyframes modal-entrance {
