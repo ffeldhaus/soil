@@ -13,9 +13,9 @@
   grid-template-rows: repeat(var(--rows), 1fr);
 
   // Responsive overhead: accounts for HUD, Round Header, Timer, and Wrapper padding
-  --grid-overhead: 150px;
+  --grid-overhead: 140px;
   @media (orientation: portrait) {
-    --grid-overhead: 130px;
+    --grid-overhead: 110px;
   }
 
   // Ensure the grid maintains an aspect ratio based on its elements

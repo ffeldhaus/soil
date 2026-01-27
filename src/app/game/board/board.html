@@ -282,7 +282,7 @@
 
       <!-- Grid or Finance (Flex Grow) -->
       @if (!showFinance) {
-        <div class="flex-1 w-full min-h-0 pt-1 pb-8 portrait:pb-4 px-4 flex items-start justify-center board-grid-wrapper">
+        <div class="flex-1 w-full min-h-0 pt-1 pb-6 portrait:pb-4 px-4 flex items-center justify-center board-grid-wrapper">
           <div class="game-grid grid gap-1 touch-none sm:mt-0" [style.--cols]="cols" [style.--rows]="rows"
             role="grid" aria-label="Game board"
             (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
