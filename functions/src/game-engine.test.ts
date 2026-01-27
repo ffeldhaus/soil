@@ -53,9 +53,9 @@ describe('GameEngine', () => {
     };
 
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 1000, 20);
-    // Fallow -> Wheat is 'good' (+0.02). Machines level 4 (-0.05). Wheat loss (-0.005).
-    // Net: 1 + 0.02 - 0.05 - 0.005 = 0.965. 100 * 0.965 = 96.5 -> 97.
-    expect(round.parcelsSnapshot[0].soil).to.equal(97);
+    // Fallow -> Wheat is 'good' (+0.03). Machines level 4 (-0.05). Wheat loss (-0.005).
+    // Net: 1 + 0.03 - 0.05 - 0.005 = 0.975. 100 * 0.975 = 97.5 -> 98.
+    expect(round.parcelsSnapshot[0].soil).to.equal(98);
   });
 
   it('organic farming should benefit from animals', () => {
@@ -119,10 +119,11 @@ describe('GameEngine', () => {
     // Wheat base yield is 75. Drought multiplier is 0.7.
     // Soil effect: (80*1.015/80)^1.8 = 1.015^1.8 = 1.027
     // Nutr effect: 1.0
-    // 75 * 1.027 * 1.0 * 0.7 = 53.9 -> 54 (Actual engine might return 53 due to internal rounding sequence)
-    expect(roundDrought.parcelsSnapshot[0].yield).to.equal(53);
-    // Drought soil impact: Fallow->Wheat (+0.02), Wheat (-0.005), Drought (-0.01). Net +0.005.
-    expect(roundDrought.parcelsSnapshot[0].soil).to.equal(80);
+    // 75 * 1.027 * 1.0 * 0.7 = 53.9 -> 54
+    expect(roundDrought.parcelsSnapshot[0].yield).to.equal(54);
+    // Drought soil impact: Fallow->Wheat (+0.03), Wheat (-0.005), Drought (-0.01). Net +0.015.
+    // 80 * 1.015 = 81.2 -> 81
+    expect(roundDrought.parcelsSnapshot[0].soil).to.equal(81);
   });
 
   it('should apply vermin effects and pest control', () => {

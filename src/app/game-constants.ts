@@ -40,8 +40,8 @@ export const GAME_CONSTANTS = {
   DEFAULT_ROUNDS: 20,
   SOIL: {
     START: 80,
-    FALLOW_RECOVERY: 0.3,
-    CROP_ROTATION_BONUS: 0.02,
+    FALLOW_RECOVERY: 0.4,
+    CROP_ROTATION_BONUS: 0.03,
     CROP_ROTATION_PENALTY: -0.02,
     FERTILIZER_SYNTHETIC_IMPACT: -0.04,
     PESTICIDE_IMPACT: -0.02,
@@ -72,9 +72,9 @@ export const GAME_CONSTANTS = {
   NUTRITION: {
     START: 80,
     MAX: 150,
-    BASE_DECLINE: 0.12,
+    BASE_DECLINE: 0.15,
     FERTILIZER_SYNTHETIC: 40,
-    FERTILIZER_ORGANIC: 35,
+    FERTILIZER_ORGANIC: 25,
     FIELDBEAN_BONUS: 20,
     ANIMALS_REQUIRED_RATIO: 0.2,
   },
@@ -142,7 +142,7 @@ export const GAME_CONSTANTS = {
       yields: { veryHigh: '≥ 82', high: '59-81', moderate: '39-58', low: '20-38', veryLow: '< 20' },
       weatherSensitivity: { drought: 'Mäßig', cold: 'Mäßig', flood: 'Mäßig' },
       seedPrice: { conventional: 90, organic: 110 },
-      marketValue: { conventional: 18, organic: 35 },
+      marketValue: { conventional: 18, organic: 30 },
       special: 'Gerste ist robust und vielseitig.',
     },
     Oat: {
@@ -172,7 +172,7 @@ export const GAME_CONSTANTS = {
       nutritionSensitivity: 1.2,
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 1800, organic: 2200 },
-      marketValue: { conventional: 15, organic: 35 },
+      marketValue: { conventional: 15, organic: 32 },
     },
     Corn: {
       id: 'Corn',
@@ -186,7 +186,7 @@ export const GAME_CONSTANTS = {
       nutritionSensitivity: 1.0,
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 100, organic: 120 },
-      marketValue: { conventional: 24, organic: 42 },
+      marketValue: { conventional: 24, organic: 38 },
     },
     Rye: {
       id: 'Rye',
@@ -200,7 +200,7 @@ export const GAME_CONSTANTS = {
       nutritionSensitivity: 0.7,
       weatherSensitivity: { drought: 'Mäßig', cold: 'Mäßig', flood: 'Stark' },
       seedPrice: { conventional: 90, organic: 110 },
-      marketValue: { conventional: 18, organic: 36 },
+      marketValue: { conventional: 18, organic: 32 },
       special: 'Roggen verbessert die Bodenqualität.',
     },
     Wheat: {
@@ -215,7 +215,7 @@ export const GAME_CONSTANTS = {
       nutritionSensitivity: 1.1,
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 100, organic: 120 },
-      marketValue: { conventional: 21, organic: 48 },
+      marketValue: { conventional: 21, organic: 36 },
     },
     Beet: {
       id: 'Beet',
@@ -229,7 +229,7 @@ export const GAME_CONSTANTS = {
       nutritionSensitivity: 1.1,
       weatherSensitivity: { drought: 'Stark', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 450, organic: 550 },
-      marketValue: { conventional: 4.5, organic: 7.5 },
+      marketValue: { conventional: 4.5, organic: 6.8 },
       special: 'Zuckerrüben verbessern die Bodenqualität.',
     },
     Rapeseed: {

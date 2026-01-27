@@ -281,7 +281,7 @@ export class GameEngine {
 
     let yieldAmount =
       cropConfig.baseYield * soilEffect * nutritionEffect * weatherYieldEffect * pestImpact * (1 + machineYieldBonus);
-    if (decision.organic) yieldAmount *= 0.6;
+    if (decision.organic) yieldAmount *= 0.4;
     return yieldAmount;
   }
 
