@@ -45,11 +45,11 @@ export const GAME_CONSTANTS = {
     CROP_ROTATION_PENALTY: -0.02,
     FERTILIZER_SYNTHETIC_IMPACT: -0.04,
     PESTICIDE_IMPACT: -0.02,
-    MACHINE_IMPACT: [0, -0.002, -0.01, -0.05, -0.1],
+    MACHINE_IMPACT: [0, -0.001, -0.005, -0.02, -0.05],
     ORGANISMS_SOIL_BONUS: 0.005,
     MONOCULTURE_PENALTY: -0.06,
-    NUTRITION_OVER_PENALTY_START: 110,
-    NUTRITION_OVER_PENALTY_FACTOR: -0.002,
+    NUTRITION_OVER_PENALTY_START: 120,
+    NUTRITION_OVER_PENALTY_FACTOR: -0.001,
     SYNTHETIC_BURN_THRESHOLD: 100,
     SYNTHETIC_BURN_PENALTY: -0.05,
     PLANTATION_GAINS: {
@@ -82,9 +82,9 @@ export const GAME_CONSTANTS = {
     // References for Labor & Machinery:
     // https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege (KTBL Datensammlungen)
     YIELD_BONUS: [0, 0.05, 0.1, 0.15, 0.2],
-    PERSONNEL_COST: 60000, // Based on approx. 1500h/year for 40ha @ 40€/h
+    PERSONNEL_COST: 45000, // Based on approx. 1500h/year for 40ha @ 30€/h
     INVESTMENT_COST: [0, 2500, 10000, 25000, 60000],
-    MAINTENANCE_COST: [0, 1000, 4000, 10000, 20000],
+    MAINTENANCE_COST: [0, 500, 1500, 4000, 10000],
   },
   WEATHER_EFFECTS: {
     // References for Weather Impacts:

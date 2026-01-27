@@ -53,9 +53,9 @@ describe('GameEngine', () => {
     };
 
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 1000, 20);
-    // Fallow -> Wheat is 'good' (+0.02). Machines level 4 (-0.10). Wheat loss (-0.005).
-    // Net: 1 + 0.02 - 0.10 - 0.005 = 0.915. 100 * 0.915 = 91.5 -> 92.
-    expect(round.parcelsSnapshot[0].soil).to.equal(92);
+    // Fallow -> Wheat is 'good' (+0.02). Machines level 4 (-0.05). Wheat loss (-0.005).
+    // Net: 1 + 0.02 - 0.05 - 0.005 = 0.965. 100 * 0.965 = 96.5 -> 97.
+    expect(round.parcelsSnapshot[0].soil).to.equal(97);
   });
 
   it('organic farming should benefit from animals', () => {
