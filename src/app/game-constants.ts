@@ -29,6 +29,7 @@ interface CropConfig {
     conventional: number;
     organic: number;
   };
+  laborHours: number;
   special?: string;
 }
 
@@ -82,7 +83,8 @@ export const GAME_CONSTANTS = {
     // References for Labor & Machinery:
     // https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege (KTBL Datensammlungen)
     YIELD_BONUS: [0, 0.05, 0.1, 0.15, 0.2],
-    PERSONNEL_COST: 45000, // Based on approx. 1500h/year for 40ha @ 30€/h
+    LABOR_COST_PER_HOUR: 30, // Average cost per hour for labor
+    PERSONNEL_COST: 10000, // Base overhead/management cost per year
     INVESTMENT_COST: [0, 2500, 10000, 25000, 60000],
     MAINTENANCE_COST: [0, 500, 1500, 4000, 10000],
   },
@@ -128,6 +130,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Stark', cold: 'Mäßig', flood: 'Stark' },
       seedPrice: { conventional: 150, organic: 180 },
       marketValue: { conventional: 25, organic: 45 },
+      laborHours: 12,
       special: 'Ackerbohnen erhöhen den Mineralstoffgehalt und die Bodenqualität.',
     },
     Barley: {
@@ -143,6 +146,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Mäßig', flood: 'Mäßig' },
       seedPrice: { conventional: 90, organic: 110 },
       marketValue: { conventional: 18, organic: 30 },
+      laborHours: 10,
       special: 'Gerste ist robust und vielseitig.',
     },
     Oat: {
@@ -158,6 +162,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 80, organic: 100 },
       marketValue: { conventional: 20, organic: 40 },
+      laborHours: 10,
       special: 'Hafer verbessert die Bodenqualität.',
     },
     Potato: {
@@ -173,6 +178,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 1800, organic: 2200 },
       marketValue: { conventional: 15, organic: 32 },
+      laborHours: 60,
     },
     Corn: {
       id: 'Corn',
@@ -187,6 +193,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 100, organic: 120 },
       marketValue: { conventional: 24, organic: 38 },
+      laborHours: 15,
     },
     Rye: {
       id: 'Rye',
@@ -201,6 +208,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Mäßig', flood: 'Stark' },
       seedPrice: { conventional: 90, organic: 110 },
       marketValue: { conventional: 18, organic: 32 },
+      laborHours: 10,
       special: 'Roggen verbessert die Bodenqualität.',
     },
     Wheat: {
@@ -216,6 +224,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 100, organic: 120 },
       marketValue: { conventional: 21, organic: 36 },
+      laborHours: 10,
     },
     Beet: {
       id: 'Beet',
@@ -230,6 +239,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Stark', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 450, organic: 550 },
       marketValue: { conventional: 4.5, organic: 6.8 },
+      laborHours: 25,
       special: 'Zuckerrüben verbessern die Bodenqualität.',
     },
     Rapeseed: {
@@ -245,6 +255,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 150, organic: 180 },
       marketValue: { conventional: 44, organic: 65 },
+      laborHours: 12,
     },
     Pea: {
       id: 'Pea',
@@ -259,6 +270,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Stark', cold: 'Mäßig', flood: 'Stark' },
       seedPrice: { conventional: 100, organic: 125 },
       marketValue: { conventional: 28, organic: 48 },
+      laborHours: 12,
       special: 'Erbsen erhöhen den Mineralstoffgehalt und die Bodenqualität.',
     },
     Grass: {
@@ -274,6 +286,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Gering', cold: 'Gering', flood: 'Mäßig' },
       seedPrice: { conventional: 50, organic: 60 },
       marketValue: { conventional: 0, organic: 0 },
+      laborHours: 5,
     },
   } as Record<string, CropConfig>,
   EXPENSES: {

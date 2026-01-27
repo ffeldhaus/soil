@@ -188,18 +188,22 @@ export class Finance implements OnChanges {
     const result = round.result;
     if (!result) return;
 
-    // Calculate detailed seeds
+    // Calculate detailed seeds and labor hours
     const seeds: Record<string, number> = {};
     let animalCount = 0;
+    let totalLaborHours = 0;
     Object.entries(decision.parcels).forEach(([_, crop]) => {
       if (crop === 'Grass') {
         animalCount++;
-      }
-      if (crop !== 'Fallow' && crop !== 'Grass' && GAME_CONSTANTS.CROPS[crop]) {
+        totalLaborHours += GAME_CONSTANTS.CROPS.Grass.laborHours || 0;
+      } else if (crop === 'Fallow') {
+        totalLaborHours += 2;
+      } else if (GAME_CONSTANTS.CROPS[crop]) {
         const cost = decision.organic
           ? GAME_CONSTANTS.CROPS[crop].seedPrice.organic
           : GAME_CONSTANTS.CROPS[crop].seedPrice.conventional;
         seeds[crop] = (seeds[crop] || 0) + cost;
+        totalLaborHours += GAME_CONSTANTS.CROPS[crop].laborHours || 0;
       }
     });
 
@@ -218,7 +222,9 @@ export class Finance implements OnChanges {
     });
 
     const machineLevel = Math.min(4, Math.max(0, Math.round(result.machineRealLevel ?? 0)));
-    const personnelCost = GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST;
+    const personnelCost =
+      GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST +
+      totalLaborHours * GAME_CONSTANTS.MACHINE_FACTORS.LABOR_COST_PER_HOUR;
     const maintenanceCost = GAME_CONSTANTS.MACHINE_FACTORS.MAINTENANCE_COST[machineLevel];
 
     data.detailedExpenses = {

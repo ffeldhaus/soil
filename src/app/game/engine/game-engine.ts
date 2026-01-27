@@ -300,16 +300,24 @@ export class GameEngine {
     options?: { marketPrices?: Record<string, { organic: number; conventional: number }> },
   ): RoundResult {
     let seedCost = 0;
+    let totalLaborHours = 0;
     parcelupdates.forEach((p) => {
       if (p.crop && p.crop !== 'Fallow' && p.crop !== 'Grass') {
         const cropConfig = GAME_CONSTANTS.CROPS[p.crop];
         if (cropConfig) {
           seedCost += decision.organic ? cropConfig.seedPrice.organic : cropConfig.seedPrice.conventional;
+          totalLaborHours += cropConfig.laborHours || 0;
         }
+      } else if (p.crop === 'Grass') {
+        totalLaborHours += GAME_CONSTANTS.CROPS.Grass.laborHours || 0;
+      } else if (p.crop === 'Fallow') {
+        totalLaborHours += 2; // Base labor for fallow (mulching/maintenance)
       }
     });
 
-    const laborCost = GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST;
+    const laborCost =
+      GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST +
+      totalLaborHours * GAME_CONSTANTS.MACHINE_FACTORS.LABOR_COST_PER_HOUR;
     const machineInvestment =
       GAME_CONSTANTS.MACHINE_FACTORS.INVESTMENT_COST[Math.round(decision.machines || 0)] * costScale;
     const machineMaintenance = GAME_CONSTANTS.MACHINE_FACTORS.MAINTENANCE_COST[machineLevel];
@@ -353,8 +361,8 @@ export class GameEngine {
       harvestSummary,
       expenses: {
         seeds: seedCost,
-        labor: 0,
-        running: runningCost + animalMaintenance,
+        labor: laborCost,
+        running: runningCost + animalMaintenance - laborCost,
         investments: machineInvestment + suppliesCost,
         total: totalExpenses,
       },

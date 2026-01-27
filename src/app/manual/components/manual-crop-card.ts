@@ -35,6 +35,7 @@ interface CropConfig {
     conventional: number;
     organic: number;
   };
+  laborHours: number;
   special?: string;
 }
 
@@ -95,6 +96,7 @@ export class ManualCropCardComponent implements OnChanges {
       'manual.crops.requirements': 'Ansprüche',
       'manual.crops.soil': 'Bodenqualität',
       'manual.crops.minerals': 'Mineralstoffe',
+      'manual.crops.labor': 'Arbeitsaufwand',
       'sensitivity.high': 'Hoch',
       'sensitivity.moderate': 'Mäßig',
       'manual.crops.weather': 'Wetter-Empfindlichkeit',
