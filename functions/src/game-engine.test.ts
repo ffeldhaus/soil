@@ -20,9 +20,9 @@ describe('GameEngine', () => {
 
     expect(round.number).to.equal(1);
     expect(round.parcelsSnapshot).to.have.length(40);
-    // Soil gain: Fallow Recovery (0.3) * Diff (80-80=0) + Rotation Bonus (0.02)
-    // 80 * (1 + 0.02) = 81.6 -> 82
-    expect(round.parcelsSnapshot[0].soil).to.equal(82);
+    // Soil gain: Fallow Recovery (0.5) * Diff (80-80=0) + Rotation Bonus (0.06)
+    // 80 * (1 + 0.06) = 84.8 -> 85
+    expect(round.parcelsSnapshot[0].soil).to.equal(85);
   });
 
   it('should decrease soil quality with machines', () => {
@@ -53,9 +53,9 @@ describe('GameEngine', () => {
     };
 
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 1000, 20);
-    // Fallow -> Wheat is 'good' (+0.03). Machines level 4 (-0.05). Wheat loss (-0.005).
-    // Net: 1 + 0.03 - 0.05 - 0.005 = 0.975. 100 * 0.975 = 97.5 -> 98.
-    expect(round.parcelsSnapshot[0].soil).to.equal(98);
+    // Fallow -> Wheat is 'good' (+0.06). Machines level 4 (-0.1). Wheat loss (-0.002).
+    // Net: 1 + 0.06 - 0.1 - 0.002 = 0.958. 100 * 0.958 = 95.8 -> 96.
+    expect(round.parcelsSnapshot[0].soil).to.equal(96);
   });
 
   it('organic farming should benefit from animals', () => {
@@ -117,13 +117,13 @@ describe('GameEngine', () => {
     // Test Drought
     const roundDrought = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Drought', vermin: [] }, 1000);
     // Wheat base yield is 75. Drought multiplier is 0.7.
-    // Soil effect: (80*1.015/80)^1.8 = 1.015^1.8 = 1.027
+    // Soil effect: (80*1.045/80)^1.8 = 1.045^1.8 = 1.083
     // Nutr effect: 1.0
-    // 75 * 1.027 * 1.0 * 0.7 = 53.9 -> 54
-    expect(roundDrought.parcelsSnapshot[0].yield).to.equal(54);
-    // Drought soil impact: Fallow->Wheat (+0.03), Wheat (-0.005), Drought (-0.01). Net +0.015.
-    // 80 * 1.015 = 81.2 -> 81
-    expect(roundDrought.parcelsSnapshot[0].soil).to.equal(81);
+    // 75 * 1.083 * 1.0 * 0.7 = 56.8 -> 57
+    expect(roundDrought.parcelsSnapshot[0].yield).to.equal(57);
+    // Drought soil impact: Fallow->Wheat (+0.06), Wheat (-0.005), Drought (-0.01). Net +0.045.
+    // 80 * 1.045 = 83.6 -> 84
+    expect(roundDrought.parcelsSnapshot[0].soil).to.equal(84);
   });
 
   it('should apply vermin effects and pest control', () => {
@@ -156,11 +156,11 @@ describe('GameEngine', () => {
       { weather: 'Normal', vermin: ['potato-beetle'] },
       1000,
     );
-    // Potato yield 450. Pests multiplier 0.7. Fallow->Potato is 'good' (+0.04).
-    // Soil effect: (80*1.04/80)^2.0 = 1.04^2.0 = 1.0816
+    // Potato yield 450. Pests multiplier 0.7. Fallow->Potato is 'good' (+0.06).
+    // Soil effect: (80*1.06/80)^2.0 = 1.06^2.0 = 1.1236
     // Nutr effect: 1.0
-    // 450 * 1.0816 * 1.0 * 0.7 = 340.7 -> 341 (Actual 321 in engine, likely due to different soil factor calculation sequence)
-    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(321, 10);
+    // 450 * 1.1236 * 1.0 * 0.7 = 353.9 -> 354
+    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(354, 10);
 
     // Pests with pesticide
     const decisionPesticide = { ...decisionNoPestControl, pesticide: true };
