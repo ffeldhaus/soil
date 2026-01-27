@@ -127,13 +127,32 @@ export class BoardHudComponent {
   }
 
   startEditName() {
-    this.tempName = this.user?.displayName || '';
+    this.tempName = this.getDisplayName();
     this.isEditingName = true;
   }
 
   saveName() {
     this.updateName.emit(this.tempName);
     this.isEditingName = false;
+  }
+
+  getDisplayName(): string {
+    if (!this.user) return '';
+
+    // If it's a real user (not anonymous) OR a guest who changed their name
+    if (this.user.displayName && this.user.displayName !== 'Guest') {
+      return this.user.displayName;
+    }
+
+    // If it's a player, try to get the name from the game state (PlayerState.displayName)
+    if (this.isPlayer) {
+      if (this.gameState?.playerState?.displayName) {
+        return this.gameState.playerState.displayName;
+      }
+      return `${this.playerLabel} ${this.playerNumber || ''}`;
+    }
+
+    return this.user.displayName || 'Guest';
   }
 
   async copyGameState() {

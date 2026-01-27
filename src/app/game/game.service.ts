@@ -169,6 +169,10 @@ export class GameService {
   state$ = this.stateSubject.asObservable();
   private stateSignal = toSignal(this.state$);
 
+  get state(): GameState | null {
+    return this.stateSubject.value;
+  }
+
   isCloudGame = computed(() => {
     const state = this.stateSignal();
     if (!state || !state.game) return false;

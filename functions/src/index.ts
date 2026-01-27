@@ -742,6 +742,7 @@ export const createGame = onCall(async (request) => {
     uid: hostPlayerUid,
     displayName: `${settings.playerLabel} 1`,
     isAi: false,
+    playerNumber: 1,
     capital: 1000,
     currentRound: 0,
     history: [],
@@ -757,6 +758,7 @@ export const createGame = onCall(async (request) => {
       uid: pUid,
       displayName: `${settings.playerLabel} ${i}`,
       isAi: isAi,
+      playerNumber: i,
       aiLevel: isAi ? config.aiLevel || 'middle' : undefined,
       capital: 1000,
       currentRound: 0,
@@ -1175,6 +1177,7 @@ export const updatePlayerType = onCall(
           uid: uid,
           displayName: existingPlayer?.displayName || `KI Team ${playerNumber}`,
           isAi: true,
+          playerNumber: playerNumber,
           aiLevel: aiLevel || 'middle',
           capital: existingPlayer?.capital ?? 1000,
           currentRound: existingPlayer?.currentRound ?? 0,
@@ -1186,11 +1189,13 @@ export const updatePlayerType = onCall(
           players[uid].isAi = false;
           players[uid].aiLevel = undefined;
           players[uid].displayName = `Team ${playerNumber}`;
+          players[uid].playerNumber = playerNumber;
         } else {
           players[uid] = {
             uid,
             displayName: `Team ${playerNumber}`,
             isAi: false,
+            playerNumber: playerNumber,
             capital: 1000,
             currentRound: 0,
             history: [],

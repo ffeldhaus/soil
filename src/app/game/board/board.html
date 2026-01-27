@@ -131,11 +131,7 @@
               <span
                 class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200"
                 (click)="startEditName(); $event.stopPropagation()">
-                {{
-                isPlayer && !user.displayName
-                ? playerLabel + ' ' + (playerNumber || '')
-                : (user.displayName | uppercase)
-                }}
+                {{ getDisplayName(user) | uppercase }}
               </span>
               } @else {
               <input [(ngModel)]="tempName" (keyup.enter)="saveName()" (blur)="saveName()"

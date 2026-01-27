@@ -338,6 +338,26 @@ export class Board implements OnInit, OnDestroy {
     this.saveName();
   }
 
+  getDisplayName(user: User | null): string {
+    if (!user) return '';
+
+    // If it's a real user (not anonymous) OR a guest who changed their name
+    if (user.displayName && user.displayName !== 'Guest') {
+      return user.displayName;
+    }
+
+    // If it's a player, try to get the name from the game state (PlayerState.displayName)
+    if (this.isPlayer) {
+      const state = this.gameService.state;
+      if (state?.playerState?.displayName) {
+        return state.playerState.displayName;
+      }
+      return `${this.playerLabel} ${this.playerNumber || ''}`;
+    }
+
+    return user.displayName || 'Guest';
+  }
+
   async playerLogin() {
     this.authError = null;
     if (!this.gameId || !this.playerNumber || !this.pin) {
@@ -349,7 +369,7 @@ export class Board implements OnInit, OnDestroy {
   startEditName() {
     if (!this.isPlayer) return;
     this.authService.user$.pipe(take(1)).subscribe((user) => {
-      this.tempName = user?.displayName || `${this.playerLabel} ${this.playerNumber || ''}`;
+      this.tempName = this.getDisplayName(user);
       this.isEditingName = true;
     });
   }

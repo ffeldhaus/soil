@@ -92,7 +92,8 @@ export class AuthService {
       // For now, let the guest logic below handle it if guest_uid is present.
       if (window.localStorage.getItem('soil_guest_uid')) {
         const guestUid = window.localStorage.getItem('soil_guest_uid')!;
-        const guestUser = this.createGuestUser(guestUid);
+        const guestName = window.localStorage.getItem('soil_guest_name') || 'Guest';
+        const guestUser = this.createGuestUser(guestUid, guestName);
         const localUser = {
           ...guestUser,
           getIdTokenResult: async () => ({
@@ -107,7 +108,8 @@ export class AuthService {
       }
     } else if (isBrowser && window.localStorage.getItem('soil_guest_uid')) {
       const guestUid = window.localStorage.getItem('soil_guest_uid')!;
-      this.userSubject.next(this.createGuestUser(guestUid));
+      const guestName = window.localStorage.getItem('soil_guest_name') || 'Guest';
+      this.userSubject.next(this.createGuestUser(guestUid, guestName));
     }
   }
 
@@ -120,9 +122,10 @@ export class AuthService {
         window.localStorage.setItem('soil_active_local_pin', pin);
       }
 
+      const guestName = (isBrowser && window.localStorage.getItem('soil_guest_name')) || 'Guest';
       const currentUser =
         this.userSubject.value ||
-        (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp') : null);
+        (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp', guestName) : null);
       if (currentUser) {
         // Wrap user to include local claims
         const localUser = {
@@ -165,10 +168,10 @@ export class AuthService {
     }
   }
 
-  private createGuestUser(uid: string): User {
+  private createGuestUser(uid: string, displayName = 'Guest'): User {
     return {
       uid,
-      displayName: 'Guest',
+      displayName,
       isAnonymous: true,
       email: null,
       emailVerified: false,
@@ -281,11 +284,13 @@ export class AuthService {
 
   async signInAsGuest() {
     const guestUid = `guest-${Math.random().toString(36).substring(2, 15)}`;
-    const guestUser = this.createGuestUser(guestUid);
+    const guestName = 'Guest';
+    const guestUser = this.createGuestUser(guestUid, guestName);
 
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     if (isBrowser) {
       window.localStorage.setItem('soil_guest_uid', guestUid);
+      window.localStorage.setItem('soil_guest_name', guestName);
     }
 
     this.ngZone.run(() => this.userSubject.next(guestUser));
@@ -302,6 +307,7 @@ export class AuthService {
 
       if (window.localStorage.getItem('soil_guest_uid')) {
         window.localStorage.removeItem('soil_guest_uid');
+        window.localStorage.removeItem('soil_guest_name');
         this.userSubject.next(null);
         return Promise.resolve();
       }
@@ -316,8 +322,20 @@ export class AuthService {
   }
 
   async updateDisplayName(name: string) {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+
+    // Handle Guest update
+    if (isBrowser && window.localStorage.getItem('soil_guest_uid')) {
+      const currentUser = this.userSubject.value;
+      if (currentUser) {
+        window.localStorage.setItem('soil_guest_name', name);
+        const updatedUser = { ...currentUser, displayName: name };
+        this.ngZone.run(() => this.userSubject.next(updatedUser as any));
+      }
+      return;
+    }
+
     if (this.auth?.currentUser) {
-      const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
       if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
         const user = this.getMockUser();
         this.userSubject.next({ ...user, displayName: name } as any);

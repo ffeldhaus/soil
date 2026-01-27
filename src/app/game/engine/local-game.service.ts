@@ -77,6 +77,7 @@ export class LocalGameService {
         uid: pUid,
         displayName: `${config.playerLabel || 'Team'} ${i}`,
         isAi: isAi,
+        playerNumber: i,
         capital: 1000,
         currentRound: 0,
         history: [{ ...round0, parcelsSnapshot: [] }], // Lightweight history
