@@ -849,7 +849,7 @@ async function internalProcessAiTurns(gameId: string, transaction: admin.firesto
     if (p.isAi && (p.submittedRound === undefined || p.submittedRound < currentRound)) {
       // Use player's own history for decision context
       const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
-      const decision = AiAgent.makeDecision((p.aiLevel || 'middle') as any, lastRound);
+      const decision = AiAgent.makeDecision((p.aiLevel || 'middle') as any, lastRound, uid);
       p.submittedRound = currentRound;
       p.pendingDecisions = decision;
     }
@@ -1634,7 +1634,7 @@ export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region
             // FORCE AI decision
             const lastRound = p.history && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
             const aiLevel = p.isAi ? p.aiLevel || 'middle' : 'middle';
-            const decision = AiAgent.makeDecision(aiLevel as any, lastRound);
+            const decision = AiAgent.makeDecision(aiLevel as any, lastRound, uid);
 
             p.submittedRound = currentRound;
             p.pendingDecisions = decision;

@@ -77,6 +77,7 @@ export class LocalGameService {
         uid: pUid,
         displayName: `${config.playerLabel || 'Team'} ${i}`,
         isAi: isAi,
+        aiLevel: isAi ? config.aiLevel || 'middle' : undefined,
         playerNumber: i,
         capital: 1000,
         currentRound: 0,
@@ -161,7 +162,7 @@ export class LocalGameService {
             ? state.allRounds[uid][state.allRounds[uid].length - 1]
             : undefined;
         const aiLevel = p.aiLevel || 'middle';
-        const decision = AiAgent.makeDecision(aiLevel as any, lastRound);
+        const decision = AiAgent.makeDecision(aiLevel as any, lastRound, uid);
         p.pendingDecisions = decision;
         p.submittedRound = currentRound;
       }

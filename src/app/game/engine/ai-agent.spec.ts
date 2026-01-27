@@ -12,7 +12,7 @@ describe('AiAgent', () => {
   it('should make a middle level decision', () => {
     const decision = AiAgent.makeDecision('middle', undefined);
     expect(decision).toBeDefined();
-    expect(decision.machines).toBe(1);
+    expect(decision.machines).toBeLessThanOrEqual(1);
     expect(Object.keys(decision.parcels).length).toBe(40);
   });
 

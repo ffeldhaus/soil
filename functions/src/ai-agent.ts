@@ -2,7 +2,11 @@ import { GAME_CONSTANTS } from './constants';
 import type { CropType, Round, RoundDecision } from './types';
 
 export class AiAgent {
-  static makeDecision(level: 'elementary' | 'middle' | 'high', previousRound: Round | undefined): RoundDecision {
+  static makeDecision(
+    level: 'elementary' | 'middle' | 'high',
+    previousRound: Round | undefined,
+    aiId?: string,
+  ): RoundDecision {
     const decision: RoundDecision = {
       machines: 0,
       organic: false,
@@ -12,84 +16,143 @@ export class AiAgent {
       parcels: {},
     };
 
-    const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
-    const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
+    // Use aiId to create a stable personality if provided, otherwise random per round
+    const personality = aiId ? AiAgent.seededRandom(`${aiId}${previousRound?.number || 0}`) : Math.random();
+    const strategyVariant = aiId ? AiAgent.seededRandom(aiId) : Math.random();
 
-    // 1. Level Specific Strategy
     if (level === 'elementary') {
-      // Elementary: Simple conventional farming, random main crops, no machines.
-      decision.machines = 0;
-      decision.fertilizer = Math.random() > 0.4; // Often fertilize
-      decision.pesticide = Math.random() > 0.6;
-
-      for (let i = 0; i < 40; i++) {
-        decision.parcels[i] = mainCrops[Math.floor(Math.random() * mainCrops.length)];
-      }
-    } else if (level === 'middle') {
-      // Middle: Follows rotation, basic machine usage, mostly conventional.
-      decision.machines = Math.random() > 0.2 ? 1 : 0;
-      decision.fertilizer = Math.random() > 0.1; // Mostly fertilize
-      decision.pesticide = Math.random() > 0.1; // Mostly use pesticides
-
-      for (let i = 0; i < 40; i++) {
-        if (!previousRound || !previousRound.parcelsSnapshot || previousRound.parcelsSnapshot.length === 0) {
-          decision.parcels[i] = mainCrops[(i + Math.floor(Math.random() * mainCrops.length)) % mainCrops.length];
-        } else {
-          const prevCrop = previousRound.parcelsSnapshot[i].crop;
-          const goodNext = crops.filter(
-            (c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good' && c !== 'Fallow' && c !== 'Grass',
-          );
-          if (goodNext.length > 0) {
-            decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
-          } else {
-            const okNext = crops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'ok');
-            decision.parcels[i] = okNext.length > 0 ? okNext[Math.floor(Math.random() * okNext.length)] : 'Wheat';
-          }
-        }
-      }
-    } else if (level === 'high') {
-      // High: Strategic. Uses rotation, optimizes machines, considers organic if soil allows.
-      const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
-      const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
-
-      // Randomize thresholds slightly to create different AI "personalities"
-      const organicThreshold = 95 + Math.random() * 10;
-      const machinesThreshold = 85 + Math.random() * 10;
-
-      decision.organic = averageSoil > organicThreshold;
-      decision.machines = averageSoil > machinesThreshold ? 2 : 1;
-
-      if (!decision.organic) {
-        decision.fertilizer = averageSoil < 115 + Math.random() * 10;
-        decision.pesticide = Math.random() > 0.05; // 95% usage
-      } else {
-        decision.organisms = Math.random() > 0.1; // High organic usage
-      }
-
-      for (let i = 0; i < 40; i++) {
-        const prevParcel = hasParcels
-          ? previousRound!.parcelsSnapshot[i]
-          : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
-        const prevCrop = prevParcel.crop;
-
-        // Condition-based variety
-        if (prevParcel.soil < 65 + Math.random() * 10 || prevParcel.nutrition < 55 + Math.random() * 10) {
-          const recoveryCrops: CropType[] = ['Fieldbean', 'Pea', 'Fallow'];
-          decision.parcels[i] = recoveryCrops[Math.floor(Math.random() * recoveryCrops.length)];
-        } else if (decision.organic && i < 8) {
-          decision.parcels[i] = Math.random() > 0.2 ? 'Grass' : 'Fallow'; // Variation in organic recovery
-        } else {
-          const goodNext = mainCrops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good');
-          if (goodNext.length > 0) {
-            decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
-          } else {
-            const neutralCrops: CropType[] = ['Oat', 'Rye'];
-            decision.parcels[i] = neutralCrops[Math.floor(Math.random() * neutralCrops.length)];
-          }
-        }
-      }
+      return AiAgent.makeElementaryDecision(decision, aiId, strategyVariant);
+    }
+    if (level === 'middle') {
+      return AiAgent.makeMiddleDecision(decision, previousRound, strategyVariant);
+    }
+    if (level === 'high') {
+      return AiAgent.makeHighDecision(decision, previousRound, personality, strategyVariant);
     }
 
     return decision;
+  }
+
+  private static makeElementaryDecision(
+    decision: RoundDecision,
+    aiId: string | undefined,
+    strategyVariant: number,
+  ): RoundDecision {
+    const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
+    decision.machines = 0;
+
+    const fertThreshold = 0.3 + strategyVariant * 0.4;
+    decision.fertilizer = Math.random() > fertThreshold;
+    decision.pesticide = Math.random() > 0.5 + strategyVariant * 0.3;
+
+    const preferredCrops = [
+      mainCrops[Math.floor(AiAgent.seededRandom(aiId || 'default') * mainCrops.length)],
+      mainCrops[Math.floor(AiAgent.seededRandom(`${aiId || 'default'}2`) * mainCrops.length)],
+    ];
+
+    for (let i = 0; i < 40; i++) {
+      if (strategyVariant < 0.3) {
+        decision.parcels[i] = preferredCrops[Math.random() > 0.8 ? 1 : 0];
+      } else {
+        decision.parcels[i] = mainCrops[Math.floor(Math.random() * mainCrops.length)];
+      }
+    }
+    return decision;
+  }
+
+  private static makeMiddleDecision(
+    decision: RoundDecision,
+    previousRound: Round | undefined,
+    strategyVariant: number,
+  ): RoundDecision {
+    const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
+    const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
+    decision.machines = strategyVariant > 0.5 ? 1 : 0;
+    decision.fertilizer = Math.random() > 0.15;
+    decision.pesticide = Math.random() > 0.2;
+
+    for (let i = 0; i < 40; i++) {
+      if (!previousRound || !previousRound.parcelsSnapshot || previousRound.parcelsSnapshot.length === 0) {
+        const startOffset = Math.floor(strategyVariant * mainCrops.length);
+        decision.parcels[i] = mainCrops[(i + startOffset + Math.floor(Math.random() * 3)) % mainCrops.length];
+      } else {
+        const prevCrop = previousRound.parcelsSnapshot[i].crop;
+        const goodNext = crops.filter(
+          (c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good' && c !== 'Fallow' && c !== 'Grass',
+        );
+
+        if (goodNext.length > 0) {
+          decision.parcels[i] = goodNext[Math.floor(Math.random() * goodNext.length)];
+        } else {
+          const okNext = crops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'ok');
+          decision.parcels[i] = okNext.length > 0 ? okNext[Math.floor(Math.random() * okNext.length)] : 'Wheat';
+        }
+      }
+    }
+    return decision;
+  }
+
+  private static makeHighDecision(
+    decision: RoundDecision,
+    previousRound: Round | undefined,
+    personality: number,
+    strategyVariant: number,
+  ): RoundDecision {
+    const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
+    const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
+    const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
+
+    const isEcoFriendly = strategyVariant > 0.7;
+    const isIndustrialist = strategyVariant < 0.3;
+
+    const organicThreshold = isEcoFriendly ? 85 : isIndustrialist ? 115 : 100;
+    decision.organic = averageSoil > organicThreshold + (personality - 0.5) * 10;
+    decision.machines = isIndustrialist ? (averageSoil > 80 ? 2 : 1) : averageSoil > 95 ? 2 : 1;
+
+    if (!decision.organic) {
+      decision.fertilizer = averageSoil < 110 + (personality - 0.5) * 20;
+      decision.pesticide = Math.random() > (isIndustrialist ? 0.02 : 0.1);
+    } else {
+      decision.organisms = Math.random() > (isEcoFriendly ? 0.05 : 0.2);
+    }
+
+    for (let i = 0; i < 40; i++) {
+      const prevParcel = hasParcels
+        ? previousRound!.parcelsSnapshot[i]
+        : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
+      const prevCrop = prevParcel.crop;
+
+      if (prevParcel.soil < 60 + personality * 15 || prevParcel.nutrition < 50 + personality * 15) {
+        const recoveryCrops: CropType[] = isEcoFriendly ? ['Fieldbean', 'Pea', 'Grass'] : ['Fieldbean', 'Fallow'];
+        decision.parcels[i] = recoveryCrops[Math.floor(Math.random() * recoveryCrops.length)];
+      } else if (decision.organic && i < 10 && isEcoFriendly) {
+        decision.parcels[i] = Math.random() > 0.3 ? 'Grass' : 'Fieldbean';
+      } else {
+        let candidates = mainCrops.filter((c) => GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good');
+        if (isIndustrialist) {
+          const highValue: CropType[] = ['Potato', 'Corn', 'Beet', 'Wheat'];
+          const hvCandidates = candidates.filter((c) => highValue.includes(c));
+          if (hvCandidates.length > 0) candidates = hvCandidates;
+        }
+        if (candidates.length > 0) {
+          decision.parcels[i] = candidates[Math.floor(Math.random() * candidates.length)];
+        } else {
+          const neutralCrops: CropType[] = ['Oat', 'Rye'];
+          decision.parcels[i] = neutralCrops[Math.floor(Math.random() * neutralCrops.length)];
+        }
+      }
+    }
+    return decision;
+  }
+
+  private static seededRandom(seed: string): number {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      const char = seed.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash |= 0;
+    }
+    const x = Math.sin(hash) * 10000;
+    return x - Math.floor(x);
   }
 }
