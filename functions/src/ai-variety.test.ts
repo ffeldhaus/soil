@@ -59,13 +59,14 @@ describe('AI Variety and Performance Simulation', () => {
       }
     }
 
+    // --- Analysis ---
     const results = players.map((p) => ({
       level: p.aiLevel,
       capital: Math.round(p.capital),
       soil: Math.round(p.avgSoil),
     }));
 
-    // Performance Benchmarks
+    // 1. Check for Variety: Decisions shouldn't lead to identical capital/soil
     const perfect = results.find((r) => r.level === 'perfect')!;
     const high = results.filter((r) => r.level === 'high');
     const middle = results.filter((r) => r.level === 'middle');
