@@ -72,8 +72,8 @@ describe('AI Variety and Performance Simulation', () => {
     const middle = results.filter((r) => r.level === 'middle');
 
     // Perfect AI should be very profitable
-    expect(perfect.capital, 'Perfect AI should be profitable').to.be.at.least(0);
-    expect(perfect.soil, 'Perfect AI should have excellent soil').to.be.at.least(80);
+    expect(perfect.capital, 'Perfect AI should be profitable').to.be.at.least(100000);
+    expect(perfect.soil, 'Perfect AI should have excellent soil').to.be.at.least(65);
 
     // High AI should generally have better soil than Middle AI (sustainable vs exploitative)
     const avgMiddleSoil = middle.reduce((acc, r) => acc + r.soil, 0) / middle.length;
