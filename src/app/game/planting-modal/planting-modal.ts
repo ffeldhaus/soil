@@ -22,7 +22,7 @@ import type { CropType } from '../../types';
           Was möchtest du anbauen?
         </h2>
 
-        <div class="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-6 landscape:grid-cols-3 sm:landscape:grid-cols-3 lg:landscape:grid-cols-6 gap-2 sm:gap-3 overflow-y-auto pr-1 pb-2">
+        <div class="grid grid-cols-4 sm:grid-cols-4 landscape:grid-cols-3 sm:landscape:grid-cols-4 gap-2 sm:gap-3 overflow-y-auto pr-1 pb-2">
           @for (crop of crops; track crop) {
             <button
               (click)="select(crop)"
@@ -38,7 +38,7 @@ import type { CropType } from '../../types';
                 class="absolute top-1 left-0 right-0 text-center pointer-events-none z-20 flex flex-col items-center"
               >
                 <span
-                  class="text-[9px] sm:text-xs font-serif font-bold text-white tracking-wide leading-tight px-1"
+                  class="text-[10px] sm:text-xs font-serif font-bold text-white tracking-wide leading-tight px-1"
                   style="-webkit-text-stroke: 0.5px black; paint-order: stroke fill; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
                 >
                   {{ t(getConfig(crop).label) }}
