@@ -181,7 +181,9 @@ export class LocalGameService {
     const allSubmitted = Object.values(state.game.players).every((p) => {
       const submitted = p.submittedRound === currentRound;
       if (!submitted) {
-        console.warn(`Player ${p.uid} has not submitted. Current round: ${currentRound}, Player round: ${p.submittedRound}, Is AI: ${p.isAi}`);
+        console.warn(
+          `Player ${p.uid} has not submitted. Current round: ${currentRound}, Player round: ${p.submittedRound}, Is AI: ${p.isAi}`,
+        );
       }
       return submitted;
     });

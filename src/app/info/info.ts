@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, PLATFORM_ID, inject, type OnInit } from '@angular/core';
+import { Component, inject, type OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
