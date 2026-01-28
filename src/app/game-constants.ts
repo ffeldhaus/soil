@@ -145,8 +145,8 @@ export const GAME_CONSTANTS = {
       yields: { veryHigh: '≥ 82', high: '59-81', moderate: '39-58', low: '20-38', veryLow: '< 20' },
       weatherSensitivity: { drought: 'Mäßig', cold: 'Mäßig', flood: 'Mäßig' },
       seedPrice: { conventional: 90, organic: 110 },
-      marketValue: { conventional: 18, organic: 30 },
-      laborHours: 10,
+      marketValue: { conventional: 24, organic: 38 },
+      laborHours: 8,
       special: 'Gerste ist robust und vielseitig.',
     },
     Oat: {
@@ -161,8 +161,8 @@ export const GAME_CONSTANTS = {
       nutritionSensitivity: 0.7,
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 80, organic: 100 },
-      marketValue: { conventional: 20, organic: 40 },
-      laborHours: 10,
+      marketValue: { conventional: 26, organic: 45 },
+      laborHours: 8,
       special: 'Hafer verbessert die Bodenqualität.',
     },
     Potato: {

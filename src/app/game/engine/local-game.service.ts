@@ -212,9 +212,9 @@ export class LocalGameService {
     const weather =
       weatherRoll > 0.9
         ? 'SummerDrought'
-        : weatherRoll > 0.8
+        : weatherRoll > 0.75
           ? 'Drought'
-          : weatherRoll > 0.7
+          : weatherRoll > 0.6
             ? 'LateFrost'
             : weatherRoll < 0.1
               ? 'Flood'
@@ -225,7 +225,10 @@ export class LocalGameService {
     // Pest Generation
     const vermin: string[] = [];
     const pestRoll = Math.random();
-    if (pestRoll > 0.8) {
+    // 80% chance of at least one pest (mostly 1 or 2)
+    const numPests = pestRoll < 0.2 ? 0 : pestRoll < 0.6 ? 1 : 2;
+
+    if (numPests > 0) {
       const availablePests = [
         'aphid-black',
         'aphid-cereal',
@@ -237,7 +240,6 @@ export class LocalGameService {
         'nematode',
         'swine-fever',
       ];
-      const numPests = Math.floor(Math.random() * 2) + 1;
       for (let i = 0; i < numPests; i++) {
         const p = availablePests[Math.floor(Math.random() * availablePests.length)];
         if (!vermin.includes(p)) vermin.push(p);

@@ -224,9 +224,9 @@ export class AiAgent {
       const prevCrop = prevParcel.crop;
 
       // Perfect recovery logic - prioritize soil stability
-      if (prevParcel.soil < 70) {
+      if (prevParcel.soil < 65) {
         decision.parcels[i] = 'Fallow';
-      } else if (prevParcel.soil < 85 || prevParcel.nutrition < 70) {
+      } else if (prevParcel.soil < 75 || prevParcel.nutrition < 60) {
         // Active recovery
         decision.parcels[i] = prevCrop === 'Fieldbean' ? 'Grass' : 'Fieldbean';
       } else {
@@ -263,7 +263,9 @@ export class AiAgent {
             const profitB = configB.baseYield * configB.marketValue.conventional - configB.seedPrice.conventional;
             return profitB - profitA;
           });
-          decision.parcels[i] = candidates[0];
+          // Small chance to pick 2nd or 3rd best for variety if available
+          const pickIndex = Math.random() > 0.8 ? Math.min(candidates.length - 1, 1) : 0;
+          decision.parcels[i] = candidates[pickIndex];
         } else {
           decision.parcels[i] = 'Wheat';
         }
