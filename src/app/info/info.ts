@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, type OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, PLATFORM_ID, inject, type OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -399,10 +399,13 @@ import { RouterLink } from '@angular/router';
   `,
 })
 export class InfoComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
   year = new Date().getFullYear();
 
   ngOnInit() {
-    window.scrollTo(0, 0);
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
   }
 
   publications = [
