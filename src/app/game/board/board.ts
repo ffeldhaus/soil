@@ -104,6 +104,7 @@ export class Board implements OnInit, OnDestroy {
   isPlayer = false;
   viewingRound = 0;
   maxRoundNumber = 0;
+  totalRounds = 20;
   history: Round[] = [];
   isSubmitted = false;
   showRoundResultModal = false;
@@ -247,6 +248,7 @@ export class Board implements OnInit, OnDestroy {
             this.gameService.state$.subscribe((state) => {
               if (state?.game) {
                 this.maxRoundNumber = state.game.currentRoundNumber;
+                this.totalRounds = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
                 // Only move viewingRound to max if it was previously at the old max
                 const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
 

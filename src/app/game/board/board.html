@@ -238,8 +238,7 @@
             <span class="text-xs font-mono px-2 min-w-[100px] text-center transition-colors"
               [class.text-emerald-400]="viewingRound === maxRoundNumber"
               [class.text-gray-400]="viewingRound < maxRoundNumber">
-              <ng-container>Runde</ng-container> {{
-              viewingRound }}
+              <ng-container>Runde</ng-container> {{ viewingRound }} von {{ totalRounds }}
             </span>
             <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
               class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">

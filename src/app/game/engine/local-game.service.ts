@@ -28,8 +28,9 @@ export class LocalGameService {
 
   async createGame(name: string, config: any): Promise<LocalCreateResponse> {
     const gameId = `local-${Math.random().toString(36).substring(2, 11)}`;
-    const numPlayers = config.numPlayers || 1;
-    const numAi = config.numAi || 0;
+    const numPlayers = parseInt(config.numPlayers, 10) || 1;
+    const numAi = parseInt(config.numAi, 10) || 0;
+    const numRounds = parseInt(config.numRounds, 10) || GAME_CONSTANTS.DEFAULT_ROUNDS;
 
     // Get current user UID for hosting
     let currentUserUid = 'local-host';
@@ -96,7 +97,7 @@ export class LocalGameService {
       status: 'in_progress',
       currentRoundNumber: 0,
       settings: {
-        length: config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS,
+        length: numRounds,
         difficulty: 'normal',
         playerLabel: config.playerLabel || 'Team',
       },
