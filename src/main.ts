@@ -25,4 +25,12 @@ if ('serviceWorker' in navigator && !isDevMode()) {
   });
 
   wb.register();
+} else if ('serviceWorker' in navigator && isDevMode()) {
+  // In dev mode, unregister any existing service workers to ensure we see latest changes
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister();
+      console.warn('Unregistered existing service worker in dev mode');
+    }
+  });
 }

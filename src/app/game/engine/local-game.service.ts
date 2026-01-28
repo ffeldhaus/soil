@@ -26,6 +26,10 @@ export class LocalGameService {
   private auth = inject(AuthService);
   state$ = this.stateSubject.asObservable();
 
+  constructor() {
+    console.log('LocalGameService initialized (Debug Mode)');
+  }
+
   async createGame(name: string, config: any): Promise<LocalCreateResponse> {
     const gameId = `local-${Math.random().toString(36).substring(2, 11)}`;
     const numPlayers = parseInt(config.numPlayers, 10) || 1;
@@ -163,17 +167,34 @@ export class LocalGameService {
             ? state.allRounds[uid][state.allRounds[uid].length - 1]
             : undefined;
         const aiLevel = p.aiLevel || 'middle';
-        const decision = AiAgent.makeDecision(aiLevel as any, lastRound, uid);
-        p.pendingDecisions = decision;
-        p.submittedRound = currentRound;
+        try {
+          const decision = AiAgent.makeDecision(aiLevel as any, lastRound, uid);
+          p.pendingDecisions = decision;
+          p.submittedRound = currentRound;
+        } catch (e) {
+          console.error(`Error generating AI decision for ${uid}:`, e);
+        }
       }
     }
 
     // 3. Check if all human players submitted (in local mode usually only 1)
-    const allSubmitted = Object.values(state.game.players).every((p) => p.submittedRound === currentRound);
+    const allSubmitted = Object.values(state.game.players).every((p) => {
+      const submitted = p.submittedRound === currentRound;
+      if (!submitted) {
+        console.warn(`Player ${p.uid} has not submitted. Current round: ${currentRound}, Player round: ${p.submittedRound}, Is AI: ${p.isAi}`);
+      }
+      return submitted;
+    });
+
+    console.log(`Round ${currentRound} submission status:`, { allSubmitted, players: Object.keys(state.game.players) });
 
     if (allSubmitted) {
-      this.calculateNextRound(state);
+      try {
+        this.calculateNextRound(state);
+      } catch (error) {
+        console.error('Error calculating next round:', error);
+        throw error;
+      }
     }
 
     this.saveToStorage(state);
@@ -181,6 +202,7 @@ export class LocalGameService {
   }
 
   private calculateNextRound(state: LocalGameState) {
+    console.log('Calculating next round', state.game.currentRoundNumber + 1);
     const nextRoundNum = state.game.currentRoundNumber + 1;
 
     // Weather Generation
