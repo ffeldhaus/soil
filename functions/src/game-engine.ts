@@ -157,19 +157,30 @@ export class GameEngine {
   ): number {
     let soilFactor = 0;
 
-    if (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey])
-      soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] * timeScale;
-    if (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey])
+    if (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey]) {
+      // Diminishing returns for soil gains at high levels
+      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
+      const gainMultiplier = soilRatio > 1.5 ? 0.2 : soilRatio > 1.0 ? 0.5 : 1.0;
+      soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] * gainMultiplier * timeScale;
+    }
+    if (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey]) {
+      // Losses are more severe if soil is already poor, or simply absolute
       soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
+    }
 
     if (cropKey === 'Fallow') {
+      // Fallow recovery only works well if soil is below START
       const diff = Math.max(GAME_CONSTANTS.SOIL.START - prevParcel.soil, 0);
       soilFactor += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * timeScale;
     }
 
     const prevCrop = prevParcel.crop;
     const sequenceQuality = GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[cropKey] || 'ok';
-    if (sequenceQuality === 'good') soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_BONUS * timeScale;
+    if (sequenceQuality === 'good') {
+      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
+      const bonusMultiplier = soilRatio > 1.2 ? 0.5 : 1.0;
+      soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_BONUS * bonusMultiplier * timeScale;
+    }
     if (sequenceQuality === 'bad') soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_PENALTY * timeScale;
 
     if (prevCrop === cropKey && cropKey !== 'Fallow' && cropKey !== 'Grass') {
@@ -245,9 +256,14 @@ export class GameEngine {
     weather: { yield: number },
     machineYieldBonus: number,
   ): number {
-    const soilEffect = (Math.max(0, newSoil) / GAME_CONSTANTS.SOIL.START) ** (cropConfig.soilSensitivity || 1);
-    const nutritionEffect =
-      (Math.max(0, newNutrition) / GAME_CONSTANTS.NUTRITION.START) ** (cropConfig.nutritionSensitivity || 1);
+    const soilEffect = Math.min(
+      1.2,
+      (Math.max(0, newSoil) / GAME_CONSTANTS.SOIL.START) ** (cropConfig.soilSensitivity || 1),
+    );
+    const nutritionEffect = Math.min(
+      1.2,
+      (Math.max(0, newNutrition) / GAME_CONSTANTS.NUTRITION.START) ** (cropConfig.nutritionSensitivity || 1),
+    );
 
     let pestImpact = 1.0;
     const cropPestKey = GameEngine.getPestKey(cropConfig.pest);

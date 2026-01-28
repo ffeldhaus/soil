@@ -20,9 +20,9 @@ describe('GameEngine', () => {
 
     expect(round.number).to.equal(1);
     expect(round.parcelsSnapshot).to.have.length(40);
-    // Soil gain: Fallow Recovery (0.5) * Diff (80-80=0) + Rotation Bonus (0.06)
-    // 80 * (1 + 0.06) = 84.8 -> 85
-    expect(round.parcelsSnapshot[0].soil).to.equal(85);
+    // Soil gain: Fallow Recovery (0.3) * Diff (80-80=0) + Rotation Bonus (0.03)
+    // 80 * (1 + 0.03) = 82.4 -> 82
+    expect(round.parcelsSnapshot[0].soil).to.equal(82);
   });
 
   it('should decrease soil quality with machines', () => {
@@ -121,9 +121,9 @@ describe('GameEngine', () => {
     // Nutr effect: 1.0
     // 110 * 1.063 * 1.0 * 0.6 = 70.15 -> 70
     expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(70, 10);
-    // Drought soil impact: Fallow->Wheat (+0.06), Wheat (-0.002), Drought (-0.01). Net +0.048.
-    // 80 * 1.048 = 83.84 -> 84
-    expect(roundDrought.parcelsSnapshot[0].soil).to.equal(84);
+    // Drought soil impact: Fallow->Wheat (+0.03), Wheat (-0.005), Drought (-0.01). Net +0.015.
+    // 80 * 1.015 = 81.2 -> 81
+    expect(roundDrought.parcelsSnapshot[0].soil).to.equal(81);
   });
 
   it('should apply vermin effects and pest control', () => {
@@ -240,7 +240,7 @@ describe('GameEngine', () => {
     const wheatConvPrice = 30; // from constants
     const totalYield = Object.values(round.result!.harvestSummary).reduce((a, b) => a + b, 0);
     expect(round.result?.income).to.equal(totalYield * wheatConvPrice);
-    // Yield ~71 * 40 * 30 = 85200
-    expect(round.result?.income).to.be.closeTo(85000, 10000);
+    // Yield ~53 * 40 * 30 = 63600
+    expect(round.result?.income).to.be.closeTo(63000, 10000);
   });
 });

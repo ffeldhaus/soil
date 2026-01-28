@@ -124,7 +124,7 @@ describe('Finance Component Logic', () => {
     // Cost: 5000 + (25 * 25) = 5625
     expect(player?.detailedExpenses?.running?.fertilize).toBe(16000); // 40 * 400
     expect(player?.detailedExpenses?.running?.organic_control).toBe(0);
-    // Efficiency calculation uses count of same crops. 
+    // Efficiency calculation uses count of same crops.
     // In this test, each crop appears once, so efficiency is 1.0.
     expect(player?.detailedExpenses?.running?.personnel).toBe(5625);
   });
