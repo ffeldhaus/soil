@@ -88,10 +88,10 @@
     </div>
     <div>
       <label class="block text-xs text-gray-200 mb-1">{{ t('dashboard.createGame.aiLevel') }}</label>
-      <div class="relative">
+      <div class="relative h-[42px]">
         <select
           [(ngModel)]="newGameConfig.aiLevel"
-          class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white font-bold focus:border-blue-500 focus:outline-none appearance-none cursor-pointer"
+          class="w-full h-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none appearance-none cursor-pointer transition-colors"
         >
           <option value="elementary" class="bg-gray-900 text-white">{{ t('ai.level.elementary') }}</option>
           <option value="middle" class="bg-gray-900 text-white">{{ t('ai.level.middle') }}</option>

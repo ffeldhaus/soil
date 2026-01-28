@@ -48,13 +48,13 @@
       <div class="flex flex-wrap items-end gap-4">
         <div>
           <label class="block text-[10px] text-gray-500 mb-1">Runde</label>
-          <div class="relative">
+          <div class="relative h-[30px]">
             <select
               [(ngModel)]="selectedDeadlineRound"
-              class="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:border-blue-500 outline-none appearance-none cursor-pointer pr-8"
+              class="w-full h-full bg-gray-800/50 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:border-blue-500 outline-none appearance-none cursor-pointer pr-8 transition-colors"
             >
               @for (r of getRounds(); track r) {
-                <option [value]="r">Runde {{ r }}</option>
+                <option [value]="r" class="bg-gray-900 text-white">Runde {{ r }}</option>
               }
             </select>
             <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400">
