@@ -27,6 +27,7 @@ export class LocalGameService {
   state$ = this.stateSubject.asObservable();
 
   constructor() {
+    // biome-ignore lint/suspicious/noConsole: Debug mode
     console.log('LocalGameService initialized (Debug Mode)');
   }
 
@@ -188,6 +189,7 @@ export class LocalGameService {
       return submitted;
     });
 
+    // biome-ignore lint/suspicious/noConsole: Debug mode
     console.log(`Round ${currentRound} submission status:`, { allSubmitted, players: Object.keys(state.game.players) });
 
     if (allSubmitted) {
@@ -204,6 +206,7 @@ export class LocalGameService {
   }
 
   private calculateNextRound(state: LocalGameState) {
+    // biome-ignore lint/suspicious/noConsole: Debug mode
     console.log('Calculating next round', state.game.currentRoundNumber + 1);
     const nextRoundNum = state.game.currentRoundNumber + 1;
 
