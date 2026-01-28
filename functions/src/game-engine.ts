@@ -255,9 +255,9 @@ export class GameEngine {
       if (decision.pesticide) {
         pestImpact = 0.95;
       } else if (decision.organisms) {
-        pestImpact = 0.85;
+        pestImpact = 0.8;
       } else {
-        const basePenalty = 1.0 - 0.7;
+        const basePenalty = 1.0 - 0.4;
         const multiplier = decision.organic ? 1.2 : 1.0;
         pestImpact = Math.max(0, 1.0 - basePenalty * multiplier);
       }
@@ -267,14 +267,14 @@ export class GameEngine {
     if (weatherYieldEffect < 1.0) {
       const penalty = 1.0 - weatherYieldEffect;
       let sensitivityLevel = 'Mäßig';
-      if (events.weather === 'Drought' || events.weather === 'SummerDrought') {
+      if (events.weather === 'Drought' || events.weather === 'SummerDrought' || events.weather === 'HeatWave') {
         sensitivityLevel = cropConfig.weatherSensitivity.drought;
       } else if (events.weather === 'LateFrost') {
         sensitivityLevel = cropConfig.weatherSensitivity.cold;
       } else if (events.weather === 'Flood' || events.weather === 'Storm') {
         sensitivityLevel = cropConfig.weatherSensitivity.flood;
       }
-      const sensitivityMultiplierMap: Record<string, number> = { Stark: 1.5, Mäßig: 1.0, Gering: 0.5, Keine: 0 };
+      const sensitivityMultiplierMap: Record<string, number> = { Stark: 2.0, Mäßig: 1.0, Gering: 0.5, Keine: 0 };
       const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 1.0;
       weatherYieldEffect = Math.max(0, 1.0 - penalty * multiplier);
     }
@@ -301,7 +301,13 @@ export class GameEngine {
   ): RoundResult {
     let seedCost = 0;
     let totalLaborHours = 0;
+    const cropCounts: Record<string, number> = {};
+
     parcelupdates.forEach((p) => {
+      if (p.crop) {
+        cropCounts[p.crop] = (cropCounts[p.crop] || 0) + 1;
+      }
+
       if (p.crop && p.crop !== 'Fallow' && p.crop !== 'Grass') {
         const cropConfig = GAME_CONSTANTS.CROPS[p.crop];
         if (cropConfig) {
@@ -314,6 +320,25 @@ export class GameEngine {
         totalLaborHours += 2; // Base labor for fallow (mulching/maintenance)
       }
     });
+
+    // Apply labor efficiency (economies of scale)
+    // If many parcels have the same crop, labor per parcel reduces
+    let efficientLaborHours = 0;
+    Object.entries(cropCounts).forEach(([crop, count]) => {
+      let baseHours = 0;
+      if (crop === 'Grass') baseHours = count * (GAME_CONSTANTS.CROPS.Grass.laborHours || 0);
+      else if (crop === 'Fallow') baseHours = count * 2;
+      else {
+        const cropConfig = GAME_CONSTANTS.CROPS[crop as CropType];
+        baseHours = count * (cropConfig?.laborHours || 0);
+      }
+
+      // Efficiency factor: 1.0 for 1 parcel, down to 0.7 for 40 parcels
+      // Specialization reduces setup and logistics time
+      const efficiencyFactor = Math.max(0.7, 1.0 - (count - 1) * 0.0077);
+      efficientLaborHours += baseHours * efficiencyFactor;
+    });
+    totalLaborHours = efficientLaborHours;
 
     const laborCost =
       GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST +

@@ -205,16 +205,16 @@ export class AiAgent {
     decision.organic = false;
 
     // Machinery usage - very conservative to ensure profit
-    if (currentCapital < 50000) {
+    if (currentCapital < 30000) {
       decision.machines = 0; // Don't invest unless we have safety buffer
-    } else if (averageSoil > 150 && currentCapital > 200000) {
+    } else if (averageSoil > 150 && currentCapital > 300000) {
       decision.machines = 2;
     } else {
       decision.machines = 1;
     }
 
-    decision.fertilizer = averageSoil < 100;
-    decision.pesticide = true;
+    decision.fertilizer = averageSoil < 100 && currentCapital > 50000;
+    decision.pesticide = currentCapital > 40000; // Only use if we can afford
 
     // 4. OPTIMAL CROP SELECTION
     for (let i = 0; i < 40; i++) {
@@ -224,20 +224,19 @@ export class AiAgent {
       const prevCrop = prevParcel.crop;
 
       // Perfect recovery logic - prioritize soil stability
-      if (prevParcel.soil < 80) {
+      if (prevParcel.soil < 70) {
         decision.parcels[i] = 'Fallow';
-      } else if (prevParcel.soil < 90 || prevParcel.nutrition < 85) {
+      } else if (prevParcel.soil < 85 || prevParcel.nutrition < 70) {
         // Active recovery
         decision.parcels[i] = prevCrop === 'Fieldbean' ? 'Grass' : 'Fieldbean';
       } else {
-        // Find best 'good' rotation crop with lowest labor and high yield
+        // Find best 'good' rotation crop
         let candidates = crops.filter(
           (c) =>
             GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] === 'good' &&
             c !== 'Fallow' &&
             c !== 'Grass' &&
-            c !== prevCrop &&
-            (GAME_CONSTANTS.CROPS[c]?.laborHours ?? 100) <= 12,
+            c !== prevCrop,
         );
 
         if (candidates.length === 0) {
@@ -246,21 +245,20 @@ export class AiAgent {
               GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[c] !== 'bad' &&
               c !== prevCrop &&
               c !== 'Fallow' &&
-              c !== 'Grass' &&
-              (GAME_CONSTANTS.CROPS[c]?.laborHours ?? 100) <= 12,
+              c !== 'Grass',
           );
         }
 
         // Gate high-impact crops (Potato/Beet/Corn) behind high soil
-        // Assuming Potato/Beet/Corn have soilSensitivity >= 1.6
-        if (prevParcel.soil < 100) {
-          candidates = candidates.filter((c) => (GAME_CONSTANTS.CROPS[c]?.soilSensitivity ?? 1) < 1.6);
+        if (prevParcel.soil < 95) {
+          candidates = candidates.filter((c) => (GAME_CONSTANTS.CROPS[c]?.soilSensitivity ?? 1) < 1.5);
         }
 
         if (candidates.length > 0) {
           candidates.sort((a, b) => {
             const configA = GAME_CONSTANTS.CROPS[a];
             const configB = GAME_CONSTANTS.CROPS[b];
+            // Simple profit heuristic per hectare
             const profitA = configA.baseYield * configA.marketValue.conventional - configA.seedPrice.conventional;
             const profitB = configB.baseYield * configB.marketValue.conventional - configB.seedPrice.conventional;
             return profitB - profitA;

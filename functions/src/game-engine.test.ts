@@ -116,11 +116,11 @@ describe('GameEngine', () => {
 
     // Test Drought
     const roundDrought = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Drought', vermin: [] }, 1000);
-    // Wheat base yield is 75. Drought multiplier is 0.7.
-    // Soil effect: (80*1.045/80)^1.8 = 1.045^1.8 = 1.083
+    // Wheat base yield is 110. Drought multiplier is 0.6.
+    // Soil effect: (80*1.045/80)^1.4 = 1.045^1.4 = 1.063
     // Nutr effect: 1.0
-    // 110 * 1.119 * 1.0 * 0.7 = 86.1 -> 86
-    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(86, 10);
+    // 110 * 1.063 * 1.0 * 0.6 = 70.15 -> 70
+    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(70, 10);
     // Drought soil impact: Fallow->Wheat (+0.06), Wheat (-0.002), Drought (-0.01). Net +0.048.
     // 80 * 1.048 = 83.84 -> 84
     expect(roundDrought.parcelsSnapshot[0].soil).to.equal(84);
@@ -156,11 +156,11 @@ describe('GameEngine', () => {
       { weather: 'Normal', vermin: ['potato-beetle'] },
       1000,
     );
-    // Potato yield 450. Pests multiplier 0.7. Fallow->Potato is 'good' (+0.06).
-    // Soil effect: (80*1.06/80)^2.0 = 1.06^2.0 = 1.1236
+    // Potato yield 450. Pests penalty 0.6 (multiplier 0.4). Fallow->Potato is 'good' (+0.06).
+    // Soil effect: (80*1.06/80)^1.5 = 1.06^1.5 = 1.0913
     // Nutr effect: 1.0
-    // 450 * 1.1236 * 1.0 * 0.7 = 353.9 -> 354
-    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(354, 20);
+    // 450 * 1.0913 * 1.0 * 0.4 = 196.4 -> 196
+    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(196, 20);
 
     // Pests with pesticide
     const decisionPesticide = { ...decisionNoPestControl, pesticide: true };
@@ -200,8 +200,10 @@ describe('GameEngine', () => {
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 100000);
 
     // Total Labor Hours: 40 parcels * 10 hours = 400
-    // Labor Cost: 5000 (personnel) + 400 * 25 (hourly) = 15000
-    expect(round.result?.expenses.labor).to.equal(15000);
+    // Efficiency Factor (40 parcels): 0.7
+    // Total Efficient Hours: 400 * 0.7 = 280
+    // Labor Cost: 5000 (personnel) + 280 * 25 (hourly) = 12000
+    expect(round.result?.expenses.labor).to.equal(12000);
     // 110 * 40 * 30 = 132000
     expect(round.result?.income).to.be.greaterThan(130000);
     expect(round.result?.capital).to.be.greaterThan(200000);
