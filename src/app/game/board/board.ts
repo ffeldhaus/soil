@@ -640,7 +640,7 @@ export class Board implements OnInit, OnDestroy {
       Drought: '-trockenheit',
       SummerDrought: '-trockenheit',
       HeatWave: '-hitzewelle',
-      LateFrost: '-spätfost', // Matching the filename "spätfost" from ls output
+      LateFrost: '-spaetfrost', // Matching the filename "spaetfrost" from ls output
       Flood: '-hochwasser',
       Storm: '-sturm',
     };
