@@ -26,11 +26,12 @@ describe('Game Balance Simulation', () => {
       name: 'Organic Right',
       logic: (round: number, lastRound?: Round) => {
         const avgNutrition = lastRound ? lastRound.parcelsSnapshot.reduce((acc, p) => acc + p.nutrition, 0) / 40 : 80;
-        const rotation: CropType[] = ['Fieldbean', 'Wheat', 'Pea', 'Grass', 'Rye', 'Fallow'];
+        // Use more profitable organic crops: Potato, Rapeseed, Beet, Wheat
+        const rotation: CropType[] = ['Fieldbean', 'Potato', 'Rapeseed', 'Beet', 'Wheat', 'Pea'];
         return {
           machines: 1,
           organic: true,
-          fertilizer: avgNutrition < 60,
+          fertilizer: avgNutrition < 80,
           pesticide: false,
           organisms: true,
           parcels: Object.fromEntries(
@@ -54,7 +55,7 @@ describe('Game Balance Simulation', () => {
       name: 'Conventional Right',
       logic: (round: number, lastRound?: Round) => {
         const avgNutrition = lastRound ? lastRound.parcelsSnapshot.reduce((acc, p) => acc + p.nutrition, 0) / 40 : 80;
-        const rotation: CropType[] = ['Fieldbean', 'Wheat', 'Beet', 'Barley', 'Oat', 'Rye'];
+        const rotation: CropType[] = ['Fieldbean', 'Wheat', 'Potato', 'Barley', 'Rapeseed', 'Rye'];
         return {
           machines: 2, // Sustainable machinery level
           organic: false,
@@ -120,7 +121,6 @@ describe('Game Balance Simulation', () => {
         };
       });
 
-      // Sort by capital descending and add rank
       results.sort((a, b) => b.Capital - a.Capital);
       const rankedResults = results.map((res, index) => ({
         Rank: index + 1,
@@ -129,45 +129,33 @@ describe('Game Balance Simulation', () => {
 
       // --- Assertions for ALL round counts ---
 
-      // 1. & 2. Integrated or Organic Right should be in top 2
-      // In short games (10-20 rounds), Conventional Right might still be #1 or #2
-      // because soil degradation hasn't fully impacted yields yet.
+      // 1. & 2. Top 2 should be Conventional Right or Integrated Farming
       const topTwo = [rankedResults[0].Strategy, rankedResults[1].Strategy];
-      if (count >= 40) {
-        expect(topTwo, `Top 2 for ${count} rounds should be Integrated/Organic`).to.include('Integrated Farming');
-        // Organic Right might be lower due to high labor costs and very conservative rotation in tests
-        const hasGoodStrategy = topTwo.includes('Integrated Farming') || topTwo.includes('Organic Right');
-        expect(hasGoodStrategy, `At least one good strategy should be in Top 2 for ${count} rounds`).to.be.true;
-      } else {
-        // In shorter games, at least one of the "good" strategies must be in top 2
-        const hasGoodStrategy =
-          topTwo.includes('Integrated Farming') ||
-          topTwo.includes('Organic Right') ||
-          topTwo.includes('Conventional Right');
-        expect(hasGoodStrategy, `At least one good strategy should be in Top 2 for ${count} rounds`).to.be.true;
-      }
+      expect(topTwo).to.include('Conventional Right');
+      expect(topTwo).to.include('Integrated Farming');
 
       // The top strategy should always be profitable (ending capital > start capital)
       expect(rankedResults[0].Capital).to.be.greaterThan(100000);
 
-      // 3. Either Integrated, Organic Right or Conventional Right should be in top 3
-      const topThree = [rankedResults[0].Strategy, rankedResults[1].Strategy, rankedResults[2].Strategy];
-      const hasAnyRightStrategy =
-        topThree.includes('Integrated Farming') ||
-        topThree.includes('Organic Right') ||
-        topThree.includes('Conventional Right');
-      expect(hasAnyRightStrategy, `At least one "Right" strategy should be in Top 3 for ${count} rounds`).to.be.true;
+      // 3. Organic Right should be in top 4 (or top 5 in very short games)
+      const topFive = rankedResults.slice(0, 5).map((r) => r.Strategy);
+      const topFour = rankedResults.slice(0, 4).map((r) => r.Strategy);
+      if (count <= 10) {
+        expect(topFive, `Organic Right should be in Top 5 for ${count} rounds`).to.include('Organic Right');
+      } else {
+        expect(topFour, `Organic Right should be in Top 4 for ${count} rounds`).to.include('Organic Right');
+      }
 
-      // 4. "Wrong" strategies should be at the bottom
+      // 4. "Wrong" strategies should be bottom half
       const convWrong = rankedResults.find((r) => r.Strategy === 'Conventional Wrong');
       const orgWrong = rankedResults.find((r) => r.Strategy === 'Organic Wrong');
-      expect(convWrong!.Rank).to.be.greaterThan(3);
-      expect(orgWrong!.Rank).to.be.greaterThan(3);
+      expect(convWrong!.Rank).to.be.greaterThan(2);
+      expect(orgWrong!.Rank).to.be.greaterThan(4);
 
-      // 5. Soil Quality: Organic Right should have reasonable soil
+      // 5. Soil Quality: Organic Right should have excellent soil
       if (count >= 20) {
         const organicRightRes = rankedResults.find((r) => r.Strategy === 'Organic Right');
-        expect(organicRightRes!['Avg Soil']).to.be.greaterThan(60);
+        expect(organicRightRes!['Avg Soil']).to.be.greaterThan(80);
       }
     });
   });

@@ -41,33 +41,33 @@ export const GAME_CONSTANTS = {
   DEFAULT_ROUNDS: 20,
   SOIL: {
     START: 80,
-    FALLOW_RECOVERY: 0.3,
-    CROP_ROTATION_BONUS: 0.03,
-    CROP_ROTATION_PENALTY: -0.02,
-    FERTILIZER_SYNTHETIC_IMPACT: -0.02,
-    PESTICIDE_IMPACT: -0.01,
-    MACHINE_IMPACT: [0, -0.002, -0.005, -0.015, -0.05],
-    ORGANISMS_SOIL_BONUS: 0.003,
-    MONOCULTURE_PENALTY: -0.02,
-    NUTRITION_OVER_PENALTY_START: 120,
-    NUTRITION_OVER_PENALTY_FACTOR: -0.002,
-    SYNTHETIC_BURN_THRESHOLD: 100,
-    SYNTHETIC_BURN_PENALTY: -0.08,
+    FALLOW_RECOVERY: 2.0,
+    CROP_ROTATION_BONUS: 0.5,
+    CROP_ROTATION_PENALTY: -0.5,
+    FERTILIZER_SYNTHETIC_IMPACT: -0.1,
+    PESTICIDE_IMPACT: -0.1,
+    MACHINE_IMPACT: [0, -0.2, -0.5, -1.5, -5.0],
+    ORGANISMS_SOIL_BONUS: 0.1,
+    MONOCULTURE_PENALTY: -0.5,
+    NUTRITION_OVER_PENALTY_START: 130,
+    NUTRITION_OVER_PENALTY_FACTOR: -0.05,
+    SYNTHETIC_BURN_THRESHOLD: 150,
+    SYNTHETIC_BURN_PENALTY: -2.0,
     PLANTATION_GAINS: {
-      Fieldbean: 0.05,
-      Pea: 0.04,
-      Oat: 0.015,
-      Rye: 0.015,
-      Beet: 0.005,
-      Grass: 0.05,
+      Fieldbean: 2.0,
+      Pea: 1.5,
+      Oat: 0.5,
+      Rye: 0.5,
+      Beet: 0.2,
+      Grass: 2.0,
     } as Record<string, number>,
     PLANTATION_LOSSES: {
-      Barley: -0.005,
-      Potato: -0.01,
-      Corn: -0.01,
-      Wheat: -0.005,
-      Beet: -0.005,
-      Rapeseed: -0.005,
+      Barley: -0.2,
+      Potato: -1.0,
+      Corn: -1.0,
+      Wheat: -0.2,
+      Beet: -0.2,
+      Rapeseed: -0.2,
     } as Record<string, number>,
   },
   NUTRITION: {
@@ -76,7 +76,7 @@ export const GAME_CONSTANTS = {
     BASE_DECLINE: 0.15,
     FERTILIZER_SYNTHETIC: 40,
     FERTILIZER_ORGANIC: 25,
-    FIELDBEAN_BONUS: 20,
+    FIELDBEAN_BONUS: 15,
     ANIMALS_REQUIRED_RATIO: 0.2,
   },
   MACHINE_FACTORS: {
@@ -84,20 +84,20 @@ export const GAME_CONSTANTS = {
     // https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege (KTBL Datensammlungen)
     YIELD_BONUS: [0, 0.1, 0.2, 0.3, 0.4],
     LABOR_COST_PER_HOUR: 25, // Average cost per hour for labor
-    PERSONNEL_COST: 5000, // Base overhead/management cost per year
+    PERSONNEL_COST: 12000, // Increased base overhead/management cost per year
     INVESTMENT_COST: [0, 2000, 8000, 20000, 50000],
-    MAINTENANCE_COST: [0, 400, 1200, 3000, 8000],
+    MAINTENANCE_COST: [0, 500, 2000, 6000, 15000],
   },
   WEATHER_EFFECTS: {
     // References for Weather Impacts:
     // https://www.julius-kuehn.de/pb/klimaanpassung (JKI Klimafolgen)
     // https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse
     Normal: { yield: 1.0, soil: 0, name: 'Normal' },
-    Drought: { yield: 0.6, soil: -0.01, name: 'Trockenheit' },
+    Drought: { yield: 0.6, soil: -1.0, name: 'Trockenheit' },
     LateFrost: { yield: 0.7, soil: 0, name: 'Spätfrost' },
-    HeatWave: { yield: 0.65, soil: -0.02, name: 'Hitzewelle' },
-    Flood: { yield: 0.5, soil: -0.03, name: 'Starkregen/Hochwasser' },
-    Storm: { yield: 0.75, soil: -0.01, name: 'Sturm' },
+    HeatWave: { yield: 0.65, soil: -2.0, name: 'Hitzewelle' },
+    Flood: { yield: 0.5, soil: -3.0, name: 'Starkregen/Hochwasser' },
+    Storm: { yield: 0.75, soil: -1.0, name: 'Sturm' },
   } as Record<string, { yield: number; soil: number; name: string }>,
   VERMIN_EFFECTS: {
     // References for Pests:
@@ -178,7 +178,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 1800, organic: 2200 },
       marketValue: { conventional: 15, organic: 32 },
-      laborHours: 60,
+      laborHours: 100,
     },
     Corn: {
       id: 'Corn',
@@ -193,7 +193,7 @@ export const GAME_CONSTANTS = {
       weatherSensitivity: { drought: 'Mäßig', cold: 'Stark', flood: 'Stark' },
       seedPrice: { conventional: 100, organic: 120 },
       marketValue: { conventional: 35, organic: 50 },
-      laborHours: 15,
+      laborHours: 30,
     },
     Rye: {
       id: 'Rye',
@@ -237,9 +237,9 @@ export const GAME_CONSTANTS = {
       soilSensitivity: 1.3,
       nutritionSensitivity: 1.1,
       weatherSensitivity: { drought: 'Stark', cold: 'Stark', flood: 'Stark' },
-      seedPrice: { conventional: 450, organic: 550 },
+      seedPrice: { conventional: 550, organic: 700 },
       marketValue: { conventional: 6.5, organic: 9.5 },
-      laborHours: 25,
+      laborHours: 60,
       special: 'Zuckerrüben verbessern die Bodenqualität.',
     },
     Rapeseed: {

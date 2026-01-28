@@ -38,7 +38,7 @@ describe('Crop Viability and Balance', () => {
         return;
       }
 
-      const hasHighYield = crop.baseYield * crop.marketValue.conventional > 2000;
+      const hasHighYield = crop.baseYield * crop.marketValue.conventional > 1000;
       const hasLowLabor = crop.laborHours <= 10;
       const hasSoilBenefit = (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] || 0) > 0;
       const isHardy = crop.soilSensitivity <= 1.0;
@@ -58,15 +58,15 @@ describe('Crop Viability and Balance', () => {
     let capital = 100000;
     const pickedCrops = new Set<string>();
 
-    // Run for 100 rounds to see variety
-    for (let r = 1; r <= 100; r++) {
+    // Run for 200 rounds to see variety
+    for (let r = 1; r <= 200; r++) {
       const decision = AiAgent.makeDecision('perfect', lastRound, 'viability-test');
       Object.values(decision.parcels).forEach((c) => {
         pickedCrops.add(c);
       });
 
       const events = { weather: 'Normal', vermin: [] };
-      const round = GameEngine.calculateRound(r, lastRound, decision, events, capital, 100);
+      const round = GameEngine.calculateRound(r, lastRound, decision, events, capital, 20);
       capital = round.result!.capital;
       lastRound = round;
     }

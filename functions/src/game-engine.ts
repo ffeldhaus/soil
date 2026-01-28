@@ -61,7 +61,7 @@ export class GameEngine {
         timeScale,
       );
 
-      newSoil = prevParcel.soil * (1 + soilFactor);
+      newSoil = prevParcel.soil + soilFactor;
 
       // B. NUTRITION CALCULATION
       const nutritionGain = GameEngine.calculateNutritionGain(cropKey, decision, animalParcels, numParcels);
@@ -160,18 +160,16 @@ export class GameEngine {
     if (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey]) {
       // Diminishing returns for soil gains at high levels
       const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
-      const gainMultiplier = soilRatio > 1.5 ? 0.2 : soilRatio > 1.0 ? 0.5 : 1.0;
+      const gainMultiplier = soilRatio > 1.5 ? 0.2 : soilRatio > 1.2 ? 0.5 : 1.0;
       soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] * gainMultiplier * timeScale;
     }
     if (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey]) {
-      // Losses are more severe if soil is already poor, or simply absolute
       soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
     }
 
     if (cropKey === 'Fallow') {
-      // Fallow recovery only works well if soil is below START
       const diff = Math.max(GAME_CONSTANTS.SOIL.START - prevParcel.soil, 0);
-      soilFactor += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * timeScale;
+      soilFactor += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * 10 * timeScale;
     }
 
     const prevCrop = prevParcel.crop;
@@ -187,10 +185,10 @@ export class GameEngine {
       soilFactor += GAME_CONSTANTS.SOIL.MONOCULTURE_PENALTY * timeScale;
     }
 
-    if (decision.fertilizer) soilFactor += GAME_CONSTANTS.SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale ** 0.7;
-    if (decision.pesticide) soilFactor += GAME_CONSTANTS.SOIL.PESTICIDE_IMPACT * timeScale ** 0.7;
+    if (decision.fertilizer) soilFactor += GAME_CONSTANTS.SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale;
+    if (decision.pesticide) soilFactor += GAME_CONSTANTS.SOIL.PESTICIDE_IMPACT * timeScale;
 
-    soilFactor += machineSoilImpact;
+    soilFactor += machineSoilImpact * timeScale;
     soilFactor += weather.soil * timeScale;
 
     if (prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {

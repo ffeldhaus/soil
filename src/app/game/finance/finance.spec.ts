@@ -118,15 +118,15 @@ describe('Finance Component Logic', () => {
     component.currentViewingRound = 1;
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
-    // Fertilizer: 40 * 100 = 4000
-    // Personnel: 5000 + (TotalLabor * 25)
-    // Labor: Wheat (10h) + Corn (15h) = 25h
-    // Cost: 5000 + (25 * 25) = 5625
+    // Fertilizer: 40 * 400 = 16000
+    // Personnel: 12000 (new base) + (TotalLabor * 25)
+    // Labor: Wheat (10h) + Corn (30h) = 40h
+    // Cost: 12000 + (40 * 25) = 13000
     expect(player?.detailedExpenses?.running?.fertilize).toBe(16000); // 40 * 400
     expect(player?.detailedExpenses?.running?.organic_control).toBe(0);
     // Efficiency calculation uses count of same crops.
     // In this test, each crop appears once, so efficiency is 1.0.
-    expect(player?.detailedExpenses?.running?.personnel).toBe(5625);
+    expect(player?.detailedExpenses?.running?.personnel).toBe(13000);
   });
 
   it('should calculate capital history correctly', () => {
