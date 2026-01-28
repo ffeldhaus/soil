@@ -27,7 +27,7 @@ import type { CropType } from '../../types';
             <button
               (click)="select(crop)"
               [attr.data-testid]="'crop-' + crop.toLowerCase()"
-              class="group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700/50 bg-gray-800/80 hover:z-10 hover:shadow-[0_0_20px_5px_rgba(52,211,153,0.7)] hover:border-emerald-400/50 transition-all duration-200"
+              class="group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700/50 bg-gray-800/80 hover:z-10 hover:shadow-[0_0_20px_5px_rgba(52,211,153,0.7)] hover:border-emerald-400/50 transition-all duration-200 [container-type:size]"
             >
               <img
                 [src]="'assets/images/' + getConfig(crop).image"
@@ -35,14 +35,13 @@ import type { CropType } from '../../types';
                 class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
               />
               <div
-                class="absolute top-1 left-0 right-0 text-center pointer-events-none z-20 flex flex-col items-center"
+                class="absolute inset-0 flex flex-col justify-start items-center pointer-events-none z-20 pt-1"
               >
-                <span
-                  class="text-[10px] sm:text-xs font-serif font-bold text-white tracking-wide leading-tight px-1"
-                  style="-webkit-text-stroke: 0.5px black; paint-order: stroke fill; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"
+                <div
+                  class="bg-gray-300/90 text-gray-900 text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap"
                 >
                   {{ t(getConfig(crop).label) }}
-                </span>
+                </div>
               </div>
             </button>
           }
