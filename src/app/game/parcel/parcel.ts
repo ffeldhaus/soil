@@ -67,7 +67,7 @@ export class Parcel {
   }
 
   get yieldPercentage(): number {
-    if (!this.parcel.yield || this.parcel.crop === 'Fallow' || this.parcel.crop === 'Grass') return 0;
+    if (!this.parcel.yield || this.parcel.crop === 'Fallow') return 0;
     const base = GAME_CONSTANTS.CROPS[this.parcel.crop]?.baseYield || 1;
     return Math.round((this.parcel.yield / base) * 100);
   }
