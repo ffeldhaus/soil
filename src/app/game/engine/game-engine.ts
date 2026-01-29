@@ -61,7 +61,7 @@ export class GameEngine {
         timeScale,
       );
 
-      newSoil = prevParcel.soil * (1 + soilFactor);
+      newSoil = prevParcel.soil + soilFactor;
 
       // B. NUTRITION CALCULATION
       const nutritionGain = GameEngine.calculateNutritionGain(cropKey, decision, animalParcels, numParcels);
@@ -72,8 +72,8 @@ export class GameEngine {
       if (cropKey !== 'Fallow' && cropKey !== 'Grass' && cropConfig) {
         yieldAmount = GameEngine.calculateYield(
           cropConfig,
-          newSoil,
-          newNutrition,
+          prevParcel.soil,
+          prevParcel.nutrition,
           events,
           decision,
           weather,
@@ -164,7 +164,7 @@ export class GameEngine {
 
     if (cropKey === 'Fallow') {
       const diff = Math.max(GAME_CONSTANTS.SOIL.START - prevParcel.soil, 0);
-      soilFactor += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * timeScale;
+      soilFactor += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * 10 * timeScale;
     }
 
     const prevCrop = prevParcel.crop;
@@ -255,7 +255,7 @@ export class GameEngine {
       if (decision.pesticide) {
         pestImpact = 0.95;
       } else if (decision.organisms) {
-        pestImpact = 0.85;
+        pestImpact = 0.9;
       } else {
         const basePenalty = 1.0 - 0.7;
         const multiplier = decision.organic ? 1.2 : 1.0;

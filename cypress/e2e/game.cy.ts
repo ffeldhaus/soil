@@ -24,8 +24,8 @@ describe('SOIL Game E2E', () => {
               .map((_, i) => ({
                 index: i,
                 crop: i === 0 ? 'Wheat' : 'Fallow',
-                soil: 80,
-                nutrition: 80,
+                soil: 100,
+                nutrition: 100,
                 yield: 0,
               })),
           },
@@ -42,13 +42,13 @@ describe('SOIL Game E2E', () => {
             currentRoundNumber: 0,
             settings: { length: 10, difficulty: 'normal' },
             players: {
-              'player-test-game-id-1': { displayName: 'Test User', capital: 1000 },
+              'player-test-game-id-1': { displayName: 'Test User', capital: 100000 },
             },
           },
           playerState: {
             uid: 'player-test-game-id-1',
             displayName: 'Test User',
-            capital: 1000,
+            capital: 10000000,
             currentRound: 0,
             history: [
               {
@@ -58,8 +58,8 @@ describe('SOIL Game E2E', () => {
                   .map((_, i) => ({
                     index: i,
                     crop: 'Fallow',
-                    soil: 80,
-                    nutrition: 80,
+                    soil: 100,
+                    nutrition: 100,
                     yield: 0,
                   })),
                 decision: { parcels: {}, machines: 0 },
@@ -73,8 +73,8 @@ describe('SOIL Game E2E', () => {
               .map((_, i) => ({
                 index: i,
                 crop: 'Fallow',
-                soil: 80,
-                nutrition: 80,
+                soil: 100,
+                nutrition: 100,
               })),
           },
         },

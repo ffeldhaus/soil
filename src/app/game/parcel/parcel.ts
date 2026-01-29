@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostBinding, Input } from '@angular/core';
 
+import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType, Parcel as ParcelType } from '../../types';
 
 @Component({
@@ -63,6 +64,12 @@ export class Parcel {
 
   get nutritionPercentage(): number {
     return Math.min(100, (this.parcel.nutrition / 200) * 100);
+  }
+
+  get yieldPercentage(): number {
+    if (!this.parcel.yield || this.parcel.crop === 'Fallow' || this.parcel.crop === 'Grass') return 0;
+    const base = GAME_CONSTANTS.CROPS[this.parcel.crop]?.baseYield || 1;
+    return Math.round((this.parcel.yield / base) * 100);
   }
 
   getOverlayColor(): string {

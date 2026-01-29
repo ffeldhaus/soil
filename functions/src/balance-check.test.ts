@@ -5,8 +5,8 @@ import type { CropType, Round, RoundDecision } from './types';
 
 describe('Balance Exhaustive Check', () => {
   const MAX_PROFITS = {
-    CONVENTIONAL: 130000,
-    ORGANIC: 130000,
+    CONVENTIONAL: 150000,
+    ORGANIC: 150000,
   };
 
   const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];

@@ -23,7 +23,7 @@ describe('LocalGameService', () => {
     const state = await service.loadGame(gameId);
     expect(state).toBeDefined();
     expect(state?.game.name).toBe('Test Local');
-    expect(state?.playerState.capital).toBe(1000);
+    expect(state?.playerState.capital).toBe(100000);
   });
 
   it('should submit a decision and calculate next round in single player', async () => {

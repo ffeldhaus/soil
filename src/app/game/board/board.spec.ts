@@ -56,8 +56,8 @@ describe('Board', () => {
             .map((_, i) => ({
               index: i,
               crop: 'Fallow',
-              soil: 80,
-              nutrition: 80,
+              soil: 100,
+              nutrition: 100,
               yield: 0,
             })),
         ),
@@ -67,8 +67,8 @@ describe('Board', () => {
           .map((_, i) => ({
             index: i,
             crop: 'Fallow',
-            soil: 80,
-            nutrition: 80,
+            soil: 100,
+            nutrition: 100,
             yield: 0,
           })),
       updateParcelDecision: () => {},
@@ -208,8 +208,8 @@ describe('Board', () => {
         .map((_, i) => ({
           index: i,
           crop: 'Fallow',
-          soil: 80,
-          nutrition: 80,
+          soil: 100,
+          nutrition: 100,
           yield: 0,
         })) as any;
     }
@@ -242,7 +242,7 @@ describe('Board', () => {
   it('should fetch round data when switching to historical round without snapshots', async () => {
     const mockFullRound = {
       number: 1,
-      parcelsSnapshot: Array(40).fill({ index: 0, crop: 'Corn', soil: 80, nutrition: 80 }),
+      parcelsSnapshot: Array(40).fill({ index: 0, crop: 'Corn', soil: 100, nutrition: 100 }),
     };
     const gameService = TestBed.inject(GameService);
     const getRoundDataSpy = vi.fn().mockResolvedValue(mockFullRound);
@@ -266,7 +266,7 @@ describe('Board', () => {
   });
 
   it('should use history directly when switching to historical round with snapshots', async () => {
-    const mockParcels = Array(40).fill({ index: 0, crop: 'Potato', soil: 80, nutrition: 80 });
+    const mockParcels = Array(40).fill({ index: 0, crop: 'Potato', soil: 100, nutrition: 100 });
     component.maxRoundNumber = 2;
     component.history = [
       { number: 0, decision: {} as any, parcelsSnapshot: [] },

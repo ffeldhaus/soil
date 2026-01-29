@@ -67,7 +67,7 @@ export class LocalGameService {
         decision: { parcels: {} } as any,
         result: {
           profit: 0,
-          capital: 1000,
+          capital: 100000,
           harvestSummary: {} as any,
           expenses: { seeds: 0, labor: 0, running: 0, investments: 0, total: 0 },
           income: 0,
@@ -85,7 +85,7 @@ export class LocalGameService {
         isAi: isAi,
         aiLevel: isAi ? config.aiLevel || 'middle' : undefined,
         playerNumber: i,
-        capital: 1000,
+        capital: 100000,
         currentRound: 0,
         history: [{ ...round0, parcelsSnapshot: [] }], // Lightweight history
         avgSoil: startSoil,

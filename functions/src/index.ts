@@ -544,7 +544,7 @@ async function performCalculation(
       }
     }
 
-    const currentCapital = prevRoundData?.result?.capital ?? player.capital ?? 1000;
+    const currentCapital = prevRoundData?.result?.capital ?? player.capital ?? 100000;
 
     const nextRound = GameEngine.calculateRound(
       nextRoundNumber,
@@ -740,7 +740,7 @@ export const createGame = onCall(async (request) => {
     displayName: `${settings.playerLabel} 1`,
     isAi: false,
     playerNumber: 1,
-    capital: 1000,
+    capital: 100000,
     currentRound: 0,
     history: [],
     joinedAt: Timestamp.now(),
@@ -757,7 +757,7 @@ export const createGame = onCall(async (request) => {
       isAi: isAi,
       playerNumber: i,
       aiLevel: isAi ? config.aiLevel || 'middle' : undefined,
-      capital: 1000,
+      capital: 100000,
       currentRound: 0,
       history: [],
     };
@@ -1176,7 +1176,7 @@ export const updatePlayerType = onCall(
           isAi: true,
           playerNumber: playerNumber,
           aiLevel: aiLevel || 'middle',
-          capital: existingPlayer?.capital ?? 1000,
+          capital: existingPlayer?.capital ?? 100000,
           currentRound: existingPlayer?.currentRound ?? 0,
           history: existingPlayer?.history ?? [],
         };
@@ -1193,7 +1193,7 @@ export const updatePlayerType = onCall(
             displayName: `Team ${playerNumber}`,
             isAi: false,
             playerNumber: playerNumber,
-            capital: 1000,
+            capital: 100000,
             currentRound: 0,
             history: [],
           };

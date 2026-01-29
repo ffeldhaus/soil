@@ -24,8 +24,8 @@ describe('Full Game Playthrough', () => {
                 .map((_, i) => ({
                   index: i,
                   crop: req.body.data.decision.parcels[i] || 'Fallow',
-                  soil: 80,
-                  nutrition: 80,
+                  soil: 100,
+                  nutrition: 100,
                   yield: 10,
                 })),
             },
@@ -43,14 +43,14 @@ describe('Full Game Playthrough', () => {
             game: { id: 'test-game-id', status: 'in_progress', currentRoundNumber: 0, settings: {} },
             playerState: {
               uid: 'player-test-game-id-1',
-              capital: callCount === 1 ? 1000 : 1500,
+              capital: callCount === 1 ? 100000 : 105000,
               currentRound: 0,
               history: [
                 {
                   number: 0,
                   parcelsSnapshot: Array(40)
                     .fill(null)
-                    .map((_, i) => ({ index: i, crop: 'Fallow', soil: 80, nutrition: 80 })),
+                    .map((_, i) => ({ index: i, crop: 'Fallow', soil: 100, nutrition: 100 })),
                   decision: { parcels: {}, machines: 0 },
                 },
               ],

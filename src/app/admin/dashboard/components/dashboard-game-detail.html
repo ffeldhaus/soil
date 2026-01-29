@@ -166,7 +166,7 @@
               [class.text-amber-400]="(slot.player?.avgSoil || 0) <= 80 && (slot.player?.avgSoil || 0) > 60"
               [class.text-red-400]="(slot.player?.avgSoil || 0) <= 60"
             >
-              {{ slot.isJoined ? (slot.player?.avgSoil || 0 | number: '1.0-1') : '-' }}
+              {{ slot.isJoined ? (slot.player?.avgSoil || 0 | number: '1.0-1') : '-' }}%
             </div>
           </div>
           <div>
@@ -179,7 +179,7 @@
               [class.text-amber-400]="(slot.player?.avgNutrition || 0) <= 80 && (slot.player?.avgNutrition || 0) > 60"
               [class.text-red-400]="(slot.player?.avgNutrition || 0) <= 60"
             >
-              {{ slot.isJoined ? (slot.player?.avgNutrition || 0 | number: '1.0-1') : '-' }}
+              {{ slot.isJoined ? (slot.player?.avgNutrition || 0 | number: '1.0-1') : '-' }}%
             </div>
           </div>
           <div class="col-span-2 pt-1 border-t border-white/5">

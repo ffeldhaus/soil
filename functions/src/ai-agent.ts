@@ -110,7 +110,7 @@ export class AiAgent {
   ): RoundDecision {
     const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
     const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
-    const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
+    const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 100;
     const currentCapital = previousRound?.result?.capital ?? 100000;
 
     const isEcoFriendly = strategyVariant > 0.7;
@@ -137,7 +137,7 @@ export class AiAgent {
     for (let i = 0; i < 40; i++) {
       const prevParcel = hasParcels
         ? previousRound!.parcelsSnapshot[i]
-        : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
+        : { soil: 100, nutrition: 100, crop: 'Fallow' as CropType };
       const prevCrop = prevParcel.crop;
 
       const recoveryThreshold = 80 + personality * 10;
@@ -198,7 +198,7 @@ export class AiAgent {
   private static makePerfectDecision(decision: RoundDecision, previousRound: Round | undefined): RoundDecision {
     const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
     const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
-    const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 80;
+    const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 100;
     const currentCapital = previousRound?.result?.capital ?? 100000;
 
     // Perfect AI: Strictly profit-oriented with soil as secondary constraint
@@ -220,7 +220,7 @@ export class AiAgent {
     for (let i = 0; i < 40; i++) {
       const prevParcel = hasParcels
         ? previousRound!.parcelsSnapshot[i]
-        : { soil: 80, nutrition: 80, crop: 'Fallow' as CropType };
+        : { soil: 100, nutrition: 100, crop: 'Fallow' as CropType };
       const prevCrop = prevParcel.crop;
 
       // Perfect recovery logic - prioritize soil stability

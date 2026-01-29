@@ -18,8 +18,8 @@ describe('AiAgent', () => {
       .map((_, i) => ({
         index: i,
         crop: 'Potato',
-        soil: 80,
-        nutrition: 80,
+        soil: 100,
+        nutrition: 100,
         yield: 0,
       }));
     const prevRound: Round = {

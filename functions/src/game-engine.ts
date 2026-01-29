@@ -72,8 +72,8 @@ export class GameEngine {
       if (cropKey !== 'Fallow' && cropKey !== 'Grass' && cropConfig) {
         yieldAmount = GameEngine.calculateYield(
           cropConfig,
-          newSoil,
-          newNutrition,
+          prevParcel.soil,
+          prevParcel.nutrition,
           events,
           decision,
           weather,
@@ -269,7 +269,7 @@ export class GameEngine {
       if (decision.pesticide) {
         pestImpact = 0.95;
       } else if (decision.organisms) {
-        pestImpact = 0.8;
+        pestImpact = 0.9;
       } else {
         const basePenalty = 1.0 - 0.4;
         const multiplier = decision.organic ? 1.2 : 1.0;

@@ -19,7 +19,7 @@ describe('DashboardGameDetailComponent', () => {
         uid: 'player-test-game-1',
         displayName: 'Player 1',
         isAi: false,
-        capital: 1000,
+        capital: 100000,
         currentRound: 1,
         history: [],
       },

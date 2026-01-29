@@ -25,39 +25,26 @@
   <!-- Overlays Container -->
   <div class="absolute inset-0 flex flex-col justify-evenly items-center pointer-events-none z-20 py-0.5">
     <!-- Text Overlay (Name) -->
-    @if (showLabels) {
-      <div
-        class="bg-gray-300/90 text-gray-900 text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap"
-      >
-        {{ t(getConfig(parcel.crop).label) }}
-      </div>
-    }
+    <div class="bg-gray-300/90 text-gray-900 text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap">
+      {{ t(getConfig(parcel.crop).label) }}
+    </div>
 
-    <!-- Soil Overlay -->
-    @if (showSoil) {
-      <div
-        class="bg-emerald-700/90 text-white text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-emerald-400/50"
-      >
-        {{ parcel.soil | number: '1.0-0' }}
-      </div>
-    }
+  @if (showSoil) {
+    <div class="bg-emerald-700/90 text-white text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-emerald-400/50">
+      {{ parcel.soil }}%
+    </div>
+  }
 
-    <!-- Harvest Overlay (Yield) -->
-    @if (showHarvest) {
-      <div
-        class="bg-yellow-500/90 text-black text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-yellow-300"
-      >
-        {{ parcel.yield || 0 | number: '1.0-0' }}
-      </div>
-    }
+  @if (showHarvest && parcel.yield) {
+    <div class="bg-yellow-500/90 text-black text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-yellow-300">
+      {{ parcel.yield }} ({{ yieldPercentage }}%)
+    </div>
+  }
 
-    <!-- Nutrition Overlay -->
-    @if (showNutrition) {
-      <div
-        class="bg-blue-600/90 text-white text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-blue-400/50"
-      >
-        {{ parcel.nutrition | number: '1.0-0' }}
-      </div>
-    }
+  @if (showNutrition) {
+    <div class="bg-blue-600/90 text-white text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-blue-400/50">
+      {{ parcel.nutrition }}%
+    </div>
+  }
   </div>
 </div>

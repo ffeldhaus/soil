@@ -76,10 +76,10 @@ describe('Authentication & Roles', () => {
             },
             playerState: {
               uid: 'player-uid',
-              capital: 1000,
+              capital: 100000,
               currentRound: 0,
               history: [
-                { number: 0, parcelsSnapshot: Array(40).fill({ index: 0, crop: 'Fallow', soil: 80, nutrition: 80 }) },
+                { number: 0, parcelsSnapshot: Array(40).fill({ index: 0, crop: 'Fallow', soil: 100, nutrition: 100 }) },
               ],
             },
           },
