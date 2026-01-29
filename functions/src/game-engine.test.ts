@@ -116,13 +116,13 @@ describe('GameEngine', () => {
 
     // Test Drought
     const roundDrought = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Drought', vermin: [] }, 1000);
-    // Wheat base yield is 110. Drought multiplier is 0.6.
+    // Wheat base yield is 110. Drought multiplier is 0.55.
     // Soil effect: (80.5/80)^1.4 = 1.006^1.4 = 1.008
     // Nutr effect: 1.0
-    // 110 * 1.008 * 1.0 * 0.6 = 66.5 -> 67
-    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(67, 5);
-    // Drought soil impact: Fallow->Wheat (+0.5), Wheat (-0.2), Drought (-1.0). Net -0.7.
-    // 80 - 0.7 = 79.3 -> 79
+    // 110 * 1.008 * 1.0 * 0.55 = 60.9 -> 61
+    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(61, 5);
+    // Drought soil impact: Fallow->Wheat (+0.5), Wheat (-0.2), Drought (-1.2). Net -0.9.
+    // 80 - 0.9 = 79.1 -> 79
     expect(roundDrought.parcelsSnapshot[0].soil).to.equal(79);
   });
 

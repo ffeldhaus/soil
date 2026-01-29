@@ -426,17 +426,15 @@ async function performCalculation(
 
   const weatherRoll = Math.random();
   const weather =
-    weatherRoll > 0.9
-      ? 'SummerDrought'
-      : weatherRoll > 0.75
-        ? 'Drought'
-        : weatherRoll > 0.6
-          ? 'LateFrost'
-          : weatherRoll < 0.1
-            ? 'Flood'
-            : weatherRoll < 0.2
-              ? 'Storm'
-              : 'Normal';
+    weatherRoll > 0.75
+      ? 'Drought'
+      : weatherRoll > 0.6
+        ? 'LateFrost'
+        : weatherRoll < 0.1
+          ? 'Flood'
+          : weatherRoll < 0.2
+            ? 'Storm'
+            : 'Normal';
 
   const vermin: string[] = [];
   const pestRoll = Math.random();

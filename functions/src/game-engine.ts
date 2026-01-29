@@ -281,7 +281,7 @@ export class GameEngine {
     if (weatherYieldEffect < 1.0) {
       const penalty = 1.0 - weatherYieldEffect;
       let sensitivityLevel = 'Mäßig';
-      if (events.weather === 'Drought' || events.weather === 'SummerDrought' || events.weather === 'HeatWave') {
+      if (events.weather === 'Drought' || events.weather === 'HeatWave') {
         sensitivityLevel = cropConfig.weatherSensitivity.drought;
       } else if (events.weather === 'LateFrost') {
         sensitivityLevel = cropConfig.weatherSensitivity.cold;

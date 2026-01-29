@@ -93,8 +93,7 @@ export const GAME_CONSTANTS = {
     // https://www.julius-kuehn.de/pb/klimaanpassung (JKI Klimafolgen)
     // https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse
     Normal: { yield: 1.0, soil: 0, name: 'Normal' },
-    Drought: { yield: 0.6, soil: -1.0, name: 'Trockenheit' },
-    SummerDrought: { yield: 0.45, soil: -1.5, name: 'Trockenheit' },
+    Drought: { yield: 0.55, soil: -1.2, name: 'Trockenheit' },
     LateFrost: { yield: 0.7, soil: 0, name: 'Spätfrost' },
     HeatWave: { yield: 0.65, soil: -2.0, name: 'Hitzewelle' },
     Flood: { yield: 0.5, soil: -3.0, name: 'Starkregen/Hochwasser' },

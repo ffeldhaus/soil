@@ -638,7 +638,6 @@ export class Board implements OnInit, OnDestroy {
     const weatherMap: Record<string, string> = {
       Normal: '',
       Drought: '-trockenheit',
-      SummerDrought: '-trockenheit',
       HeatWave: '-hitzewelle',
       LateFrost: '-spaetfrost', // Matching the filename "spaetfrost" from ls output
       Flood: '-hochwasser',
@@ -662,7 +661,6 @@ export class Board implements OnInit, OnDestroy {
       Normal: '☀️',
       Drought: '🏜️',
       LateFrost: '❄️',
-      SummerDrought: '🏜️',
       HeatWave: '🔥',
       Flood: '🌊',
       Storm: '💨',
