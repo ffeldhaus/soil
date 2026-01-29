@@ -424,8 +424,6 @@ export class GameEngine {
       Erbsenwickler: 'pea-moth',
       Rübennematode: 'nematode',
       Haferkronenrost: 'oat-rust',
-      Drahtwurm: 'wireworm',
-      Fritfliege: 'fritfly',
       'Afrikanische Schweinepest': 'swine-fever',
     };
     return map[p] || 'aphid-black';

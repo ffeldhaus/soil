@@ -124,8 +124,6 @@ export class Finance implements OnChanges {
             nematode: '🐍',
             'pea-moth': '🐛',
             'oat-rust': '🍄',
-            wireworm: '🐛',
-            fritfly: '🪰',
             'swine-fever': '🐖',
           };
           return pests.map((p) => ({

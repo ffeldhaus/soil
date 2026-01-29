@@ -241,8 +241,6 @@ export class LocalGameService {
         'pea-moth',
         'oat-rust',
         'nematode',
-        'wireworm',
-        'fritfly',
         'swine-fever',
       ];
       for (let i = 0; i < numPests; i++) {

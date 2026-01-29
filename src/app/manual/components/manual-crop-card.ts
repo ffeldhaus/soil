@@ -77,9 +77,7 @@ export class ManualCropCardComponent implements OnChanges {
     if (key.startsWith('crop.')) {
       const cropKey = key.replace('crop.', '');
       // Try case-insensitive match for crop keys
-      const entry = Object.entries(GAME_CONSTANTS.CROPS).find(
-        ([k]) => k.toLowerCase() === cropKey.toLowerCase(),
-      );
+      const entry = Object.entries(GAME_CONSTANTS.CROPS).find(([k]) => k.toLowerCase() === cropKey.toLowerCase());
       if (entry) return entry[1].name;
     }
 
@@ -137,8 +135,6 @@ export class ManualCropCardComponent implements OnChanges {
       Erbsenwickler: 'pea-moth',
       Haferkronenrost: 'oat-rust',
       Rübennematode: 'nematode',
-      Drahtwurm: 'wireworm',
-      Fritfliege: 'fritfly',
       'Afrikanische Schweinepest': 'swine-fever',
     };
     return map[pest] || 'aphid-black';

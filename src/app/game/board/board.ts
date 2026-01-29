@@ -688,8 +688,6 @@ export class Board implements OnInit, OnDestroy {
       nematode: '🐍',
       'pea-moth': '🐛',
       'oat-rust': '🍄',
-      wireworm: '🐛',
-      fritfly: '🪰',
       'swine-fever': '🐖',
     };
 
