@@ -333,7 +333,15 @@ export class GameEngine {
       (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0);
     const totalExpenses = seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
 
-    const subsidies = 220 * numParcels + (bioSiegel ? 210 * numParcels : 0);
+    // Subsidies Calculation
+    const fallowParcels = parcelupdates.filter((p) => p.crop === 'Fallow').length;
+    const greenStripParcels = Math.min(fallowParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
+    const regularParcels = numParcels - greenStripParcels;
+
+    const subsidies =
+      regularParcels * GAME_CONSTANTS.SUBSIDIES.BASE +
+      greenStripParcels * GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP +
+      (bioSiegel ? numParcels * GAME_CONSTANTS.SUBSIDIES.BIO : 0);
 
     let income = 0;
     const marketPricesUsed: Record<string, number> = {};

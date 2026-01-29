@@ -232,13 +232,29 @@ describe('GameEngine', () => {
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 10000, 20, {});
 
     expect(round.result?.bioSiegel).to.be.false;
+    // 40 parcels * 220 (BASE) = 8800
     expect(round.result?.subsidies).to.equal(8800);
-
-    // Income should use conventional prices
-    const wheatConvPrice = 30; // from constants
-    const totalYield = Object.values(round.result!.harvestSummary).reduce((a, b) => a + b, 0);
     expect(round.result?.income).to.equal(totalYield * wheatConvPrice);
-    // Yield ~53 * 40 * 30 = 63600
     expect(round.result?.income).to.be.closeTo(55000, 10000);
+  });
+
+  it('should apply Green Strip subsidies for up to 5 fallow fields', () => {
+    const decision: RoundDecision = {
+      machines: 0,
+      organic: false,
+      fertilizer: false,
+      pesticide: false,
+      organisms: false,
+      parcels: { 0: 'Fallow', 1: 'Fallow', 2: 'Fallow', 3: 'Fallow', 4: 'Fallow' },
+    };
+    const prevParcels: Parcel[] = Array(40)
+      .fill(null)
+      .map((_, i) => ({ index: i, crop: 'Wheat', soil: 100, nutrition: 100, yield: 0 }));
+    const round = GameEngine.calculateRound(2, { number: 1, decision: {} as any, parcelsSnapshot: prevParcels }, decision, { weather: 'Normal', vermin: [] }, 100000);
+
+    // 5 Green Strip Parcels * 1200 = 6000
+    // 35 Regular Parcels * 220 = 7700
+    // Total = 13700
+    expect(round.result?.subsidies).to.equal(13700);
   });
 });

@@ -22,9 +22,16 @@ interface DetailedExpenses {
   total: number;
 }
 
+interface DetailedSubsidies {
+  base: number;
+  bio: number;
+  greenStrip: number;
+  total: number;
+}
+
 interface DetailedIncome {
   harvest: Record<string, number>;
-  subsidies: number;
+  subsidies: DetailedSubsidies;
   total: number;
 }
 
@@ -244,10 +251,25 @@ export class Finance implements OnChanges {
       total: result.expenses.total,
     };
 
+    // Calculate detailed subsidies
+    const fallowParcels = Object.values(decision.parcels).filter((c) => c === 'Fallow').length;
+    const greenStripParcels = Math.min(fallowParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
+    const numParcels = Object.keys(decision.parcels).length || 40;
+    const regularParcels = numParcels - greenStripParcels;
+
+    const baseSubsidy = regularParcels * GAME_CONSTANTS.SUBSIDIES.BASE;
+    const greenStripSubsidy = greenStripParcels * GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP;
+    const bioSubsidy = result.bioSiegel ? numParcels * GAME_CONSTANTS.SUBSIDIES.BIO : 0;
+
     data.detailedIncome = {
       harvest: harvestIncome,
-      subsidies: result.subsidies || 0,
-      total: result.income + (result.subsidies || 0),
+      subsidies: {
+        base: baseSubsidy,
+        greenStrip: greenStripSubsidy,
+        bio: bioSubsidy,
+        total: result.subsidies,
+      },
+      total: result.income + result.subsidies,
     };
 
     if (result.income > 0) {

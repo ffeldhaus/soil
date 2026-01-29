@@ -120,7 +120,7 @@ export class ManualCropCardComponent implements OnChanges {
       'special.rapeseed': 'Wichtige Ölsaat, wertvoll für Bienen und Bodenstruktur.',
       'special.pea': 'Fixiert Stickstoff und lockert den Boden auf (Leguminose).',
       'special.animals': 'Dauerkultur zur Viehhaltung.',
-      'special.fallow': 'Regeneration für den Boden.',
+      'special.fallow': 'Regeneration für den Boden. Für bis zu 5 Brachland-Felder erhältst du eine hohe EU-Förderung (Grünstreifen-Prämie).',
     };
     return translations[key] || key;
   }

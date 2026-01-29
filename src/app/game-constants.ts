@@ -79,6 +79,12 @@ export const GAME_CONSTANTS = {
     FIELDBEAN_BONUS: 15,
     ANIMALS_REQUIRED_RATIO: 0.2,
   },
+  SUBSIDIES: {
+    BASE: 220,
+    BIO: 210,
+    GREEN_STRIP: 1200,
+    GREEN_STRIP_MAX_PARCELS: 5,
+  },
   MACHINE_FACTORS: {
     // References for Labor & Machinery:
     // https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege (KTBL Datensammlungen)

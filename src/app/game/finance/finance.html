@@ -450,37 +450,49 @@
           <!-- Income Breakdown -->
           <tr class="group hover:bg-gray-800/20 transition-colors cursor-pointer" (click)="toggleSection('harvest')">
             <td class="p-3 pl-8 text-sm font-bold text-emerald-400 border-b border-gray-800/50">
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] transition-transform duration-300"
-                  [class.rotate-90]="expandedSections['harvest']">▶</span>
-                <span>Einnahmen</span>
-              </div>
+              Einnahmen
             </td>
             @for (p of players; track p) {
             <td class="p-3 border-b border-gray-800/50 text-center font-black text-emerald-500/80">
-              @if (!expandedSections['harvest']) {
-              +{{ p.detailedIncome?.total | currency: 'EUR' : 'symbol' : '1.0-0' }}
-              }
+              {{ (p.result?.income || 0) + (p.result?.subsidies || 0) | currency: 'EUR' : 'symbol' : '1.0-0' }}
             </td>
             }
           </tr>
+
           @if (expandedSections['harvest']) {
-          <tr class="bg-black/20 border-b border-gray-800/30">
-            <td class="p-3 pl-12 text-sm font-bold text-emerald-400">Gesamt</td>
+          <tr class="bg-black/5 text-[10px] uppercase font-bold text-gray-500">
+            <td class="p-1 pl-12 border-b border-gray-800/20">EU-Subventionen</td>
             @for (p of players; track p) {
-            <td class="p-3 text-center font-black text-emerald-500">
-              +{{ p.detailedIncome?.total | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            <td class="p-1 border-b border-gray-800/20 text-center"></td>
+            }
+          </tr>
+          <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
+            <td class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">
+              Basisprämie
+            </td>
+            @for (p of players; track p) {
+            <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
+              {{ p.detailedIncome?.subsidies?.base || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
             </td>
             }
           </tr>
           <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
-            <td
-              class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">
-              Subventionen
+            <td class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">
+              Grünstreifen-Prämie
             </td>
             @for (p of players; track p) {
             <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
-              {{ p.detailedIncome?.subsidies || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+              {{ p.detailedIncome?.subsidies?.greenStrip || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            </td>
+            }
+          </tr>
+          <tr class="bg-black/10 text-xs hover:bg-black/20 transition-colors">
+            <td class="p-2 pl-12 border-b border-gray-800/30 italic text-gray-300">
+              Öko-Prämie
+            </td>
+            @for (p of players; track p) {
+            <td class="p-2 border-b border-gray-800/30 text-center font-mono text-xs text-gray-200">
+              {{ p.detailedIncome?.subsidies?.bio || 0 | currency: 'EUR' : 'symbol' : '1.0-0' }}
             </td>
             }
           </tr>
