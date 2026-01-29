@@ -668,13 +668,9 @@ export class Board implements OnInit, OnDestroy {
       Storm: '💨',
     };
 
-    const weatherNames: Record<string, string> = {
-      SummerDrought: 'Sommerdürre',
-    };
-
     return {
       icon: icons[weather] || '☀️',
-      name: weatherNames[weather] || GAME_CONSTANTS.WEATHER_EFFECTS[weather]?.name || weather,
+      name: GAME_CONSTANTS.WEATHER_EFFECTS[weather]?.name || weather,
     };
   }
 

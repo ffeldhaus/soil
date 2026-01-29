@@ -116,19 +116,20 @@ export class Finance implements OnChanges {
         const pests = round.result.events.vermin;
         if (pests.length > 0) {
           const iconMap: Record<string, string> = {
-            Kartoffelkäfer: '🪲',
-            Maiszünsler: '🦋',
-            'Schwarze Bohnenlaus': '🐜',
-            Getreideblattlaus: '🦟',
-            Rapsglanzkäfer: '✨',
-            Rübennematode: '🐍',
-            Erbsenwickler: '🐛',
-            Haferkronenrost: '🍄',
-            Getreidehähnchen: '🐔',
-            Fritfliege: '🪰',
+            'potato-beetle': '🪲',
+            'corn-borer': '🦋',
+            'aphid-black': '🐜',
+            'aphid-cereal': '🦟',
+            'pollen-beetle': '✨',
+            nematode: '🐍',
+            'pea-moth': '🐛',
+            'oat-rust': '🍄',
+            wireworm: '🐛',
+            fritfly: '🪰',
+            'swine-fever': '🐖',
           };
           return pests.map((p) => ({
-            name: p,
+            name: GAME_CONSTANTS.VERMIN_EFFECTS[p as keyof typeof GAME_CONSTANTS.VERMIN_EFFECTS]?.name || p,
             icon: iconMap[p] || '🐛',
           }));
         }

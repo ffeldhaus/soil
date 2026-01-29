@@ -94,6 +94,7 @@ export const GAME_CONSTANTS = {
     // https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse
     Normal: { yield: 1.0, soil: 0, name: 'Normal' },
     Drought: { yield: 0.6, soil: -1.0, name: 'Trockenheit' },
+    SummerDrought: { yield: 0.45, soil: -1.5, name: 'Frühsommertrockenheit' },
     LateFrost: { yield: 0.7, soil: 0, name: 'Spätfrost' },
     HeatWave: { yield: 0.65, soil: -2.0, name: 'Hitzewelle' },
     Flood: { yield: 0.5, soil: -3.0, name: 'Starkregen/Hochwasser' },
@@ -111,6 +112,9 @@ export const GAME_CONSTANTS = {
     'pollen-beetle': { name: 'Rapsglanzkäfer' },
     'pea-moth': { name: 'Erbsenwickler' },
     nematode: { name: 'Rübennematode' },
+    'oat-rust': { name: 'Haferkronenrost' },
+    wireworm: { name: 'Drahtwurm' },
+    fritfly: { name: 'Fritfliege' },
     'swine-fever': { name: 'Afrikanische Schweinepest' }, // Affects Animals (Pigs)
   } as Record<string, { name: string }>,
   CROPS: {

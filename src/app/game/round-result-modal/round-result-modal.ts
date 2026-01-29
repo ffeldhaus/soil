@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+import { GAME_CONSTANTS } from '../../game-constants';
 import type { Round } from '../../types';
 
 @Component({
@@ -15,26 +16,16 @@ export class RoundResultModal {
   @Output() resultClosed = new EventEmitter<void>();
 
   t(key: string): string {
+    if (GAME_CONSTANTS.WEATHER_EFFECTS[key]) {
+      return GAME_CONSTANTS.WEATHER_EFFECTS[key].name;
+    }
+    if (GAME_CONSTANTS.VERMIN_EFFECTS[key]) {
+      return GAME_CONSTANTS.VERMIN_EFFECTS[key].name;
+    }
+
     const translations: Record<string, string> = {
-      Normal: 'Normal',
-      Drought: 'Dürre',
-      SummerDrought: 'Sommerdürre',
-      LateFrost: 'Spätfrost',
-      Flood: 'Flut',
-      Storm: 'Sturm',
       None: 'Keine',
       Pests: 'Schädlinge',
-      'aphid-black': 'Schwarze Bohnenlaus',
-      'aphid-cereal': 'Getreideblattlaus',
-      'potato-beetle': 'Kartoffelkäfer',
-      'corn-borer': 'Maiszünsler',
-      'pollen-beetle': 'Rapsglanzkäfer',
-      'pea-moth': 'Erbsenwickler',
-      'oat-rust': 'Haferkronenrost',
-      nematode: 'Rübennematode',
-      fritfly: 'Fritfliege',
-      wireworm: 'Drahtwurm',
-      'swine-fever': 'Afrikanische Schweinepest',
     };
     return translations[key] || key;
   }

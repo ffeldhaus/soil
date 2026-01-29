@@ -67,28 +67,24 @@ export class ManualCropCardComponent implements OnChanges {
   }
 
   t(key: string): string {
+    if (key.startsWith('pest.')) {
+      const pestKey = key.replace('pest.', '');
+      if (GAME_CONSTANTS.VERMIN_EFFECTS[pestKey]) {
+        return GAME_CONSTANTS.VERMIN_EFFECTS[pestKey].name;
+      }
+    }
+
+    if (key.startsWith('crop.')) {
+      const cropKey = key.replace('crop.', '');
+      // Try case-insensitive match for crop keys
+      const entry = Object.entries(GAME_CONSTANTS.CROPS).find(
+        ([k]) => k.toLowerCase() === cropKey.toLowerCase(),
+      );
+      if (entry) return entry[1].name;
+    }
+
     const translations: Record<string, string> = {
-      'crop.wheat': 'Weizen',
-      'crop.corn': 'Mais',
-      'crop.potato': 'Kartoffel',
-      'crop.beet': 'Zuckerrübe',
-      'crop.barley': 'Gerste',
-      'crop.oat': 'Hafer',
-      'crop.rye': 'Roggen',
-      'crop.fieldbean': 'Ackerbohne',
-      'crop.rapeseed': 'Raps',
-      'crop.pea': 'Erbse',
-      'crop.animals': 'Tiere',
-      'crop.fallow': 'Brachland',
       'pest.label': 'Hauptschädling',
-      'pest.aphid-black': 'Schwarze Bohnenlaus',
-      'pest.aphid-cereal': 'Getreideblattlaus',
-      'pest.potato-beetle': 'Kartoffelkäfer',
-      'pest.corn-borer': 'Maiszünsler',
-      'pest.pollen-beetle': 'Rapsglanzkäfer',
-      'pest.pea-moth': 'Erbsenwickler',
-      'pest.oat-rust': 'Haferkronenrost',
-      'pest.nematode': 'Rübennematode',
       'manual.crops.rotation': 'Fruchtfolgewirkung',
       'manual.crops.rotationPrev': 'Vorfrucht',
       'manual.crops.current': 'Aktuell',
@@ -141,6 +137,9 @@ export class ManualCropCardComponent implements OnChanges {
       Erbsenwickler: 'pea-moth',
       Haferkronenrost: 'oat-rust',
       Rübennematode: 'nematode',
+      Drahtwurm: 'wireworm',
+      Fritfliege: 'fritfly',
+      'Afrikanische Schweinepest': 'swine-fever',
     };
     return map[pest] || 'aphid-black';
   }
