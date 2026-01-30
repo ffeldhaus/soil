@@ -104,6 +104,14 @@
             <span class="text-sm">🌾</span>
             {{ t('manual.crops.title') }}
           </a>
+          <a
+            routerLink="."
+            fragment="husbandry"
+            class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+          >
+            <span class="text-sm">🐖</span>
+            {{ t('manual.husbandry.title') }}
+          </a>
           <div class="ml-4 flex flex-col gap-1 mt-1 border-l border-gray-800">
             @for (crop of crops; track crop.id) {
               <a
@@ -163,6 +171,27 @@
               @defer (hydrate on viewport) {
                 <app-manual-concept-card [concept]="concept" [index]="i"></app-manual-concept-card>
               }
+            }
+          </div>
+        </section>
+
+        <!-- Husbandry Section -->
+        <section
+          id="husbandry"
+          class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl scroll-mt-24 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
+        >
+          <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
+            <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">🐖</span>
+            {{ t('manual.husbandry.title') }}
+          </h2>
+          <div class="flex flex-col gap-12 sm:gap-20 leading-relaxed text-white print:text-gray-700">
+            <p>{{ t('manual.husbandry.text') }}</p>
+            @for (crop of husbandryCrops; track crop.id) {
+              <div class="flex flex-col gap-12 sm:gap-20">
+                @defer (hydrate on viewport) {
+                  <app-manual-crop-card [id]="crop.id.toLowerCase()" [crop]="crop"></app-manual-crop-card>
+                }
+              </div>
             }
           </div>
         </section>

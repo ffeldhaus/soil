@@ -39,12 +39,16 @@ export class ManualComponent {
         'Ökologischer Anbau führt zu geringeren Erträgen, wird aber durch höhere Bio-Preise und die Öko-Prämie belohnt. Du musst jedoch die hohen Fixkosten (Personal, Pacht, Maschinen) im Blick behalten, die deinen Gewinn schmälern.',
       'manual.concepts.title': 'Konzepte',
       'manual.crops.title': 'Kulturen',
+      'manual.husbandry.title': 'Tierhaltung',
+      'manual.husbandry.text':
+        'Die Tierhaltung (Wiese) ist ein wichtiger Bestandteil eines nachhaltigen Betriebs. Tiere liefern wertvollen organischen Dünger und sind robust gegenüber extremen Wetterbedingungen. Zudem werden Wiesenflächen als ökologisch wertvolle Grünstreifen gefördert.',
       'manual.toc.title': 'Inhalt',
     };
     return translations[key] || key;
   }
 
-  crops = Object.values(GAME_CONSTANTS.CROPS);
+  crops = Object.values(GAME_CONSTANTS.CROPS).filter((c) => c.id !== 'Grass');
+  husbandryCrops = Object.values(GAME_CONSTANTS.CROPS).filter((c) => c.id === 'Grass');
 
   showPrintModal = false;
   printSize = 'A4';

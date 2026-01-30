@@ -99,11 +99,11 @@ export const GAME_CONSTANTS = {
     // https://www.julius-kuehn.de/pb/klimaanpassung (JKI Klimafolgen)
     // https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse
     Normal: { yield: 1.0, soil: 0, name: 'Normal' },
-    Drought: { yield: 0.55, soil: -1.2, name: 'Trockenheit' },
-    LateFrost: { yield: 0.7, soil: 0, name: 'Spätfrost' },
-    HeatWave: { yield: 0.65, soil: -2.0, name: 'Hitzewelle' },
-    Flood: { yield: 0.5, soil: -3.0, name: 'Starkregen/Hochwasser' },
-    Storm: { yield: 0.75, soil: -1.0, name: 'Sturm' },
+    Drought: { yield: 0.75, soil: -0.8, name: 'Trockenheit' },
+    LateFrost: { yield: 0.85, soil: 0, name: 'Spätfrost' },
+    HeatWave: { yield: 0.8, soil: -1.2, name: 'Hitzewelle' },
+    Flood: { yield: 0.7, soil: -2.0, name: 'Starkregen/Hochwasser' },
+    Storm: { yield: 0.85, soil: -0.5, name: 'Sturm' },
   } as Record<string, { yield: number; soil: number; name: string }>,
   VERMIN_EFFECTS: {
     // References for Pests:
@@ -290,7 +290,7 @@ export const GAME_CONSTANTS = {
       baseYield: 100,
       soilSensitivity: 0.5,
       nutritionSensitivity: 0.5,
-      weatherSensitivity: { drought: 'Gering', cold: 'Gering', flood: 'Mäßig' },
+      weatherSensitivity: { drought: 'Keine', cold: 'Keine', flood: 'Keine' },
       seedPrice: { conventional: 100, organic: 120 },
       marketValue: { conventional: 12, organic: 20 },
       laborHours: 15,

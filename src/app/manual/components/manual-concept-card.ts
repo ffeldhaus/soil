@@ -31,7 +31,7 @@ export class ManualConceptCardComponent {
         'Der Bedarf an Nährstoffen sowie der Bodenanspruch variieren je nach Kultur. Eine ausgewogene Versorgung ist entscheidend für Pflanzengesundheit und Ertrag.',
       'manual.concepts.weather.title': 'Wetter',
       'manual.concepts.weather.text':
-        'Trockenheit, Hitzewellen, Kälte oder Starkregen beeinflussen Ertrag und Bodengüte.',
+        'Trockenheit, Hitzewellen, Kälte oder Starkregen beeinflussen Ertrag und Bodengüte. Tiere sind vom Wetter nicht direkt betroffen.',
       'manual.concepts.yield.title': 'Ertrag & Einkommen',
       'manual.concepts.yield.text':
         'Dein Ertrag hängt massiv von der Bodenqualität und der Nährstoffversorgung ab. <b>Schlechter Boden führt langfristig zu sinkenden Ernten und damit zu wirtschaftlichen Verlusten.</b> Zusätzlich zum Verkauf erhältst du GAP-Flächenzahlungen.',

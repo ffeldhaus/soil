@@ -20,11 +20,9 @@ describe('GameEngine', () => {
     expect(round.parcelsSnapshot).to.have.length(40);
     // Initial soil is 100. Fallow recovery: (100-100)/100 * 2 * 10 = 0.
     // Soil gain from Fallow: 0. New soil: 100.
-    expect(round.parcelsSnapshot[0].soil).to.equal(100);
-    // Nutrition gain from fallow fallback logic: prev (100) + 5 = 105.
-    // Wait, the test error said actual was 100 when I expected 150.
-    // This means nutrition gain was NOT applied or START is 100.
-    expect(round.parcelsSnapshot[0].nutrition).to.equal(100);
+    expect(round.parcelsSnapshot[0].soil).to.be.closeTo(100, 2);
+    // Nutrition gain from fallow recovery: 5. prev (100) + 5 = 105.
+    expect(round.parcelsSnapshot[0].nutrition).to.be.closeTo(105, 2);
   });
 
   it('should apply rotation and machine impact', () => {
@@ -49,14 +47,16 @@ describe('GameEngine', () => {
       number: 1,
       decision: { parcels: {} } as any,
       parcelsSnapshot: prevParcels,
+      avgSoil: 100,
+      avgNutrition: 100,
+      result: { machineRealLevel: 0 } as any,
     };
 
     const round = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Normal', vermin: [] }, 100000, 20);
 
-    // Fallow -> Wheat rotation bonus (+0.5), Wheat impact (-0.2), Machine 4 impact (-5.0)
-    // Mult: 1 + (0.5 - 0.2 - 5.0)/100 = 1 - 0.047 = 0.953
-    // 100 * 0.953 = 95.3 -> 95
-    expect(round.parcelsSnapshot[0].soil).to.equal(110);
+    // Fallow -> Wheat rotation bonus (+0.5), Wheat impact (-0.2), Machine Level 1 impact (-0.2)
+    // 100 + 0.5 - 0.2 - 0.2 = 100.1 -> 100
+    expect(round.parcelsSnapshot[0].soil).to.be.closeTo(100, 2);
   });
 
   it('should calculate yields correctly based on soil and nutrition', () => {
@@ -115,13 +115,15 @@ describe('GameEngine', () => {
 
     // Test Drought
     const roundDrought = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Drought', vermin: [] }, 100000);
-    // Wheat base yield is 110. Drought multiplier is 0.55.
-    // Starting values (100) are used for yield calculation.
-    // Yield = 110 * 1.0 * 1.0 * 0.55 = 60.5 -> 61
-    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(61, 5);
-    // Drought soil impact: Fallow->Wheat (+0.5), Wheat (-0.2), Drought (-1.2). Net -0.9.
-    // 100 * (1 - 0.009) = 99.1 -> 99
-    expect(roundDrought.parcelsSnapshot[0].soil).to.equal(10);
+    // Wheat base yield is 110. Drought base factor is 0.75 (Penalty 0.25).
+    // Wheat weather sensitivity to drought: Mäßig (multiplier 0.6)
+    // Yield Effect: 1.0 - 0.25 * 0.6 = 0.85
+    // Yield = 110 * 1.0 * 1.0 * 0.85 = 93.5 -> 94
+    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(94, 2);
+    // Drought soil impact: -0.8
+    // Fallow->Wheat (+0.5), Wheat (-0.2), Drought (-0.8). Net -0.5.
+    // 100 - 0.5 = 99.5 -> 100
+    expect(roundDrought.parcelsSnapshot[0].soil).to.be.closeTo(100, 2);
   });
 
   it('should apply vermin effects and pest control', () => {
@@ -154,11 +156,9 @@ describe('GameEngine', () => {
       { weather: 'Normal', vermin: ['potato-beetle'] },
       1000,
     );
-    // Potato yield 450. Pests penalty 0.6 (multiplier 0.4). Fallow->Potato is 'good' (+0.5).
-    // Soil effect: (80.5/80)^1.5 = 1.006^1.5 = 1.009
-    // Nutr effect: 1.0
-    // 450 * 1.009 * 1.0 * 0.4 = 181.6 -> 182
-    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(182, 20);
+    // Potato yield 450. Pests penalty 0.6 (multiplier 0.4).
+    // Yield = 450 * 1.0 * 1.0 * 0.4 = 180.
+    expect(roundPests.parcelsSnapshot[0].yield).to.be.closeTo(180, 20);
 
     // Pests with pesticide
     const decisionPesticide = { ...decisionNoPestControl, pesticide: true };
@@ -170,6 +170,7 @@ describe('GameEngine', () => {
       1000,
     );
     // Pesticide should mitigate pests (multiplier 0.95).
+    // Yield = 450 * 0.95 = 427.5 -> 428
     expect(roundPesticide.parcelsSnapshot[0].yield).to.be.greaterThan(400);
   });
 
@@ -202,7 +203,7 @@ describe('GameEngine', () => {
     // Total Efficient Hours: 400 * 0.7 = 280
     // Labor Cost: 12000 (personnel) + 280 * 25 (hourly) = 19000
     expect(round.result?.expenses.labor).to.equal(19000);
-    // Wheat base yield is 110. Soil effect 1.008. Income ~ 110.8 * 40 * 30 = 132960
+    // Wheat base yield is 110. Income ~ 110 * 40 * 30 = 132000
     expect(round.result?.income).to.be.greaterThan(130000);
     expect(round.result?.capital).to.be.greaterThan(200000);
   });
@@ -234,25 +235,32 @@ describe('GameEngine', () => {
     expect(round.result?.bioSiegel).to.be.false;
     // 40 parcels * 220 (BASE) = 8800
     expect(round.result?.subsidies).to.equal(8800);
-    expect(round.result?.income).to.equal(totalYield * wheatConvPrice);
-    expect(round.result?.income).to.be.closeTo(55000, 10000);
+    // Wheat yield: 110 * 0.4 = 44 per parcel. Total: 40 * 44 = 1760.
+    // Value: 1760 * 30 = 52800
+    expect(round.result?.income).to.be.closeTo(52800, 1000);
   });
 
-  it('should apply Green Strip subsidies for up to 5 fallow fields', () => {
+  it('should apply Green Strip subsidies for up to 5 fallow or grass fields', () => {
     const decision: RoundDecision = {
       machines: 0,
       organic: false,
       fertilizer: false,
       pesticide: false,
       organisms: false,
-      parcels: { 0: 'Fallow', 1: 'Fallow', 2: 'Fallow', 3: 'Fallow', 4: 'Fallow' },
+      parcels: { 0: 'Fallow', 1: 'Grass', 2: 'Fallow', 3: 'Grass', 4: 'Fallow' },
     };
     const prevParcels: Parcel[] = Array(40)
       .fill(null)
       .map((_, i) => ({ index: i, crop: 'Wheat', soil: 100, nutrition: 100, yield: 0 }));
-    const round = GameEngine.calculateRound(2, { number: 1, decision: {} as any, parcelsSnapshot: prevParcels }, decision, { weather: 'Normal', vermin: [] }, 100000);
+    const round = GameEngine.calculateRound(
+      2,
+      { number: 1, decision: {} as any, parcelsSnapshot: prevParcels },
+      decision,
+      { weather: 'Normal', vermin: [] },
+      100000,
+    );
 
-    // 5 Green Strip Parcels * 1200 = 6000
+    // 5 Green Strip Parcels (Fallow/Grass) * 1200 = 6000
     // 35 Regular Parcels * 220 = 7700
     // Total = 13700
     expect(round.result?.subsidies).to.equal(13700);

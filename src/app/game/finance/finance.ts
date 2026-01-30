@@ -252,8 +252,8 @@ export class Finance implements OnChanges {
     };
 
     // Calculate detailed subsidies
-    const fallowParcels = Object.values(decision.parcels).filter((c) => c === 'Fallow').length;
-    const greenStripParcels = Math.min(fallowParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
+    const greenParcels = Object.values(decision.parcels).filter((c) => c === 'Fallow' || c === 'Grass').length;
+    const greenStripParcels = Math.min(greenParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
     const numParcels = Object.keys(decision.parcels).length || 40;
     const regularParcels = numParcels - greenStripParcels;
 
@@ -267,9 +267,9 @@ export class Finance implements OnChanges {
         base: baseSubsidy,
         greenStrip: greenStripSubsidy,
         bio: bioSubsidy,
-        total: result.subsidies,
+        total: result.subsidies || 0,
       },
-      total: result.income + result.subsidies,
+      total: result.income + (result.subsidies || 0),
     };
 
     if (result.income > 0) {

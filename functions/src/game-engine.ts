@@ -288,8 +288,8 @@ export class GameEngine {
       } else if (events.weather === 'Flood' || events.weather === 'Storm') {
         sensitivityLevel = cropConfig.weatherSensitivity.flood;
       }
-      const sensitivityMultiplierMap: Record<string, number> = { Stark: 2.0, Mäßig: 1.0, Gering: 0.5, Keine: 0 };
-      const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 1.0;
+      const sensitivityMultiplierMap: Record<string, number> = { Stark: 1.0, Mäßig: 0.6, Gering: 0.3, Keine: 0 };
+      const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 0.6;
       weatherYieldEffect = Math.max(0, 1.0 - penalty * multiplier);
     }
 
@@ -373,8 +373,8 @@ export class GameEngine {
     const totalExpenses = seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
 
     // Subsidies Calculation
-    const fallowParcels = parcelupdates.filter((p) => p.crop === 'Fallow').length;
-    const greenStripParcels = Math.min(fallowParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
+    const greenParcels = parcelupdates.filter((p) => p.crop === 'Fallow' || p.crop === 'Grass').length;
+    const greenStripParcels = Math.min(greenParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
     const regularParcels = numParcels - greenStripParcels;
 
     const subsidies =

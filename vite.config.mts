@@ -22,6 +22,11 @@ const appVersion = getVersion();
 
 export default defineConfig(({ mode }) => ({
   plugins: [angular()],
+  server: {
+    fs: {
+      allow: ['.', 'functions/src/shared'],
+    },
+  },
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(appVersion),
   },

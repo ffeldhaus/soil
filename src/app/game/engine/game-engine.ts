@@ -157,8 +157,12 @@ export class GameEngine {
   ): number {
     let soilFactor = 0;
 
-    if (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey])
-      soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] * timeScale;
+    if (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey]) {
+      // Diminishing returns for soil gains at high levels
+      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
+      const gainMultiplier = soilRatio > 1.5 ? 0.2 : soilRatio > 1.2 ? 0.5 : 1.0;
+      soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] * gainMultiplier * timeScale;
+    }
     if (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey])
       soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
 
@@ -169,17 +173,21 @@ export class GameEngine {
 
     const prevCrop = prevParcel.crop;
     const sequenceQuality = GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[cropKey] || 'ok';
-    if (sequenceQuality === 'good') soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_BONUS * timeScale;
+    if (sequenceQuality === 'good') {
+      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
+      const bonusMultiplier = soilRatio > 1.2 ? 0.5 : 1.0;
+      soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_BONUS * bonusMultiplier * timeScale;
+    }
     if (sequenceQuality === 'bad') soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_PENALTY * timeScale;
 
     if (prevCrop === cropKey && cropKey !== 'Fallow' && cropKey !== 'Grass') {
       soilFactor += GAME_CONSTANTS.SOIL.MONOCULTURE_PENALTY * timeScale;
     }
 
-    if (decision.fertilizer) soilFactor += GAME_CONSTANTS.SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale ** 0.7;
-    if (decision.pesticide) soilFactor += GAME_CONSTANTS.SOIL.PESTICIDE_IMPACT * timeScale ** 0.7;
+    if (decision.fertilizer) soilFactor += GAME_CONSTANTS.SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale;
+    if (decision.pesticide) soilFactor += GAME_CONSTANTS.SOIL.PESTICIDE_IMPACT * timeScale;
 
-    soilFactor += machineSoilImpact;
+    soilFactor += machineSoilImpact * timeScale;
     soilFactor += weather.soil * timeScale;
 
     if (prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
@@ -245,9 +253,14 @@ export class GameEngine {
     weather: { yield: number },
     machineYieldBonus: number,
   ): number {
-    const soilEffect = (Math.max(0, newSoil) / GAME_CONSTANTS.SOIL.START) ** (cropConfig.soilSensitivity || 1);
-    const nutritionEffect =
-      (Math.max(0, newNutrition) / GAME_CONSTANTS.NUTRITION.START) ** (cropConfig.nutritionSensitivity || 1);
+    const soilEffect = Math.min(
+      1.2,
+      (Math.max(0, newSoil) / GAME_CONSTANTS.SOIL.START) ** (cropConfig.soilSensitivity || 1),
+    );
+    const nutritionEffect = Math.min(
+      1.2,
+      (Math.max(0, newNutrition) / GAME_CONSTANTS.NUTRITION.START) ** (cropConfig.nutritionSensitivity || 1),
+    );
 
     let pestImpact = 1.0;
     const cropPestKey = GameEngine.getPestKey(cropConfig.pest);
@@ -257,7 +270,7 @@ export class GameEngine {
       } else if (decision.organisms) {
         pestImpact = 0.9;
       } else {
-        const basePenalty = 1.0 - 0.7;
+        const basePenalty = 1.0 - 0.4;
         const multiplier = decision.organic ? 1.2 : 1.0;
         pestImpact = Math.max(0, 1.0 - basePenalty * multiplier);
       }
@@ -267,15 +280,15 @@ export class GameEngine {
     if (weatherYieldEffect < 1.0) {
       const penalty = 1.0 - weatherYieldEffect;
       let sensitivityLevel = 'Mäßig';
-      if (events.weather === 'Drought') {
+      if (events.weather === 'Drought' || events.weather === 'HeatWave') {
         sensitivityLevel = cropConfig.weatherSensitivity.drought;
       } else if (events.weather === 'LateFrost') {
         sensitivityLevel = cropConfig.weatherSensitivity.cold;
       } else if (events.weather === 'Flood' || events.weather === 'Storm') {
         sensitivityLevel = cropConfig.weatherSensitivity.flood;
       }
-      const sensitivityMultiplierMap: Record<string, number> = { Stark: 1.5, Mäßig: 1.0, Gering: 0.5, Keine: 0 };
-      const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 1.0;
+      const sensitivityMultiplierMap: Record<string, number> = { Stark: 1.0, Mäßig: 0.6, Gering: 0.3, Keine: 0 };
+      const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 0.6;
       weatherYieldEffect = Math.max(0, 1.0 - penalty * multiplier);
     }
 
@@ -301,7 +314,13 @@ export class GameEngine {
   ): RoundResult {
     let seedCost = 0;
     let totalLaborHours = 0;
+    const cropCounts: Record<string, number> = {};
+
     parcelupdates.forEach((p) => {
+      if (p.crop) {
+        cropCounts[p.crop] = (cropCounts[p.crop] || 0) + 1;
+      }
+
       if (p.crop && p.crop !== 'Fallow' && p.crop !== 'Grass') {
         const cropConfig = GAME_CONSTANTS.CROPS[p.crop];
         if (cropConfig) {
@@ -314,6 +333,25 @@ export class GameEngine {
         totalLaborHours += 2; // Base labor for fallow (mulching/maintenance)
       }
     });
+
+    // Apply labor efficiency (economies of scale)
+    // If many parcels have the same crop, labor per parcel reduces
+    let efficientLaborHours = 0;
+    Object.entries(cropCounts).forEach(([crop, count]) => {
+      let baseHours = 0;
+      if (crop === 'Grass') baseHours = count * (GAME_CONSTANTS.CROPS.Grass.laborHours || 0);
+      else if (crop === 'Fallow') baseHours = count * 2;
+      else {
+        const cropConfig = GAME_CONSTANTS.CROPS[crop as CropType];
+        baseHours = count * (cropConfig?.laborHours || 0);
+      }
+
+      // Efficiency factor: 1.0 for 1 parcel, down to 0.7 for 40 parcels
+      // Specialization reduces setup and logistics time
+      const efficiencyFactor = Math.max(0.7, 1.0 - (count - 1) * 0.0077);
+      efficientLaborHours += baseHours * efficiencyFactor;
+    });
+    totalLaborHours = efficientLaborHours;
 
     const laborCost =
       GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST +
@@ -334,8 +372,8 @@ export class GameEngine {
     const totalExpenses = seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
 
     // Subsidies Calculation
-    const fallowParcels = parcelupdates.filter((p) => p.crop === 'Fallow').length;
-    const greenStripParcels = Math.min(fallowParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
+    const greenParcels = parcelupdates.filter((p) => p.crop === 'Fallow' || p.crop === 'Grass').length;
+    const greenStripParcels = Math.min(greenParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
     const regularParcels = numParcels - greenStripParcels;
 
     const subsidies =

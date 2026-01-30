@@ -30,6 +30,7 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
+            "preserveSymlinks": true,
             "inlineStyleLanguage": "scss",
             "ssr": {
               "entry": "src/server.ts"
