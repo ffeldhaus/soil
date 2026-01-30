@@ -51,6 +51,17 @@ The application supports two primary game types:
    - Data is stored in Firestore.
    - Requires users to be authenticated to save drafts and submit decisions.
 
+## Shared Code & Constants
+
+To ensure consistency between the frontend (Local Games) and the backend (Server Games), core game logic and constants are shared:
+
+- **Centralized Source**: `src/app/game-constants.ts` and `src/app/types.ts` are the primary sources of truth.
+- **Symlinking**: The backend uses symlinks to access these files:
+  - `functions/src/constants.ts` -> `../../src/app/game-constants.ts`
+  - `functions/src/types.ts` -> `../../src/app/types.ts`
+- **Build Configuration**: The Angular build is configured with `"preserveSymlinks": true` in `angular.json` to correctly handle these links during development and production builds.
+- **Engine Alignment**: The `GameEngine` implementation is duplicated between `src/app/game/engine/game-engine.ts` and `functions/src/game-engine.ts`. Any changes to the engine logic MUST be applied to both files and verified with their respective unit tests.
+
 ## Local Development Environment
 
 We use the **Firebase Emulator Suite** to mirror the production environment locally. This ensures that our local testing is accurate and safe.
