@@ -98,19 +98,19 @@
           </a>
           <a
             routerLink="."
-            fragment="crops"
-            class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
-          >
-            <span class="text-sm">🌾</span>
-            {{ t('manual.crops.title') }}
-          </a>
-          <a
-            routerLink="."
             fragment="husbandry"
             class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
           >
             <span class="text-sm">🐖</span>
             {{ t('manual.husbandry.title') }}
+          </a>
+          <a
+            routerLink="."
+            fragment="crops"
+            class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+          >
+            <span class="text-sm">🌾</span>
+            {{ t('manual.crops.title') }}
           </a>
           <div class="ml-4 flex flex-col gap-1 mt-1 border-l border-gray-800">
             @for (crop of crops; track crop.id) {
