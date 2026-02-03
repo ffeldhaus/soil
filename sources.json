@@ -1,0 +1,725 @@
+{
+  "GAME_CONSTANTS": {
+    "DEFAULT_ROUNDS": {
+      "exact": 20,
+      "description": "Default number of rounds in a game",
+      "uri": ""
+    },
+    "SOIL": {
+      "START": {
+        "exact": 100,
+        "description": "Initial soil quality value for a parcel",
+        "uri": "Project Internal Convention"
+      },
+      "FALLOW_RECOVERY": {
+        "exact": 2.0,
+        "description": "Soil quality recovery amount when a parcel is left fallow. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": "Project Internal Convention"
+      },
+      "CROP_ROTATION_BONUS": {
+        "exact": 0.5,
+        "description": "Bonus to soil quality for good crop rotation. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": "Project Internal Convention"
+      },
+      "CROP_ROTATION_PENALTY": {
+        "exact": -0.5,
+        "description": "Penalty to soil quality for bad crop rotation. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": "Project Internal Convention"
+      },
+      "FERTILIZER_SYNTHETIC_IMPACT": {
+        "exact": -0.1,
+        "description": "Impact of synthetic fertilizer on soil quality. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "PESTICIDE_IMPACT": {
+        "exact": -0.1,
+        "description": "Impact of pesticide usage on soil quality. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "MACHINE_IMPACT": {
+        "exact": [
+          0,
+          -0.2,
+          -0.5,
+          -1.5,
+          -5.0
+        ],
+        "description": "Soil impact of machinery levels 0-4. Level 0: 0 impact, 0% yield bonus. Level 1: -0.2 impact, 10% bonus. Level 2: -0.5 impact, 20% bonus. Level 3: -1.5 impact, 30% bonus. Level 4: -5.0 impact, 40% bonus. Levels are reached through investment (round decision 0-4) which adds up to 1.0 (for decision 4) to the machinery state, while per-round decay removes 10-25%. Effective level is the rounded state. Soil impact scales linearly with 1/totalRounds (via timeScale).",
+        "uri": "",
+        "reviewed": true
+      },
+      "ORGANISMS_SOIL_BONUS": {
+        "exact": 0.1,
+        "description": "Bonus to soil quality from beneficial organisms. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "MONOCULTURE_PENALTY": {
+        "exact": -0.5,
+        "description": "Penalty for repeating the same crop too often. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "NUTRITION_OVER_PENALTY_START": {
+        "exact": 130,
+        "description": "Threshold at which over-nutrition starts penalizing the soil",
+        "uri": ""
+      },
+      "NUTRITION_OVER_PENALTY_FACTOR": {
+        "exact": -0.05,
+        "description": "Scale factor for over-nutrition penalty. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "SYNTHETIC_BURN_THRESHOLD": {
+        "exact": 150,
+        "description": "Threshold at which synthetic fertilizer causes 'burn' damage to soil",
+        "uri": ""
+      },
+      "SYNTHETIC_BURN_PENALTY": {
+        "exact": -2.0,
+        "description": "Penalty applied when nutrition exceeds burn threshold via synthetic fertilizer. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "PLANTATION_GAINS": {
+        "Fieldbean": {
+          "exact": 2.0,
+          "description": "Nitrogen fixation bonus. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Pea": {
+          "exact": 1.5,
+          "description": "Nitrogen fixation bonus. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Oat": {
+          "exact": 0.5,
+          "description": "Moderate soil improvement. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Rye": {
+          "exact": 0.5,
+          "description": "Moderate soil improvement. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Beet": {
+          "exact": 0.2,
+          "description": "Slight soil improvement. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Grass": {
+          "exact": 2.0,
+          "description": "High humus building potential. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        }
+      },
+      "PLANTATION_LOSSES": {
+        "Barley": {
+          "exact": -0.2,
+          "description": "Minor soil depletion. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Potato": {
+          "exact": -1.0,
+          "description": "Heavy feeder soil depletion. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Corn": {
+          "exact": -1.0,
+          "description": "Heavy feeder soil depletion. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Wheat": {
+          "exact": -0.2,
+          "description": "Minor soil depletion. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Beet": {
+          "exact": -0.2,
+          "description": "Minor soil depletion. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "Rapeseed": {
+          "exact": -0.2,
+          "description": "Minor soil depletion. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        }
+      }
+    },
+    "NUTRITION": {
+      "START": {
+        "exact": 100,
+        "description": "Initial nutrition level of a parcel",
+        "uri": "Project Internal Convention"
+      },
+      "MAX": {
+        "exact": 150,
+        "description": "Maximum possible nutrition level",
+        "uri": "Project Internal Convention"
+      },
+      "BASE_DECLINE": {
+        "exact": 0.15,
+        "description": "Natural nutrition decline per round. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "FERTILIZER_SYNTHETIC": {
+        "exact": 50,
+        "description": "Nutrition gain from synthetic fertilizer. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "FERTILIZER_ORGANIC": {
+        "exact": 25,
+        "description": "Nutrition gain from organic fertilizer. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "FIELDBEAN_BONUS": {
+        "exact": 15,
+        "description": "Nutrition bonus from nitrogen-fixing field beans. Scales linearly with 1/totalRounds (via timeScale).",
+        "uri": ""
+      },
+      "ANIMALS_REQUIRED_RATIO": {
+        "exact": 0.2,
+        "description": "Ratio of animals required for organic fertilizer logic",
+        "uri": ""
+      }
+    },
+    "SUBSIDIES": {
+      "BASE": {
+        "exact": 220,
+        "description": "Base subsidy amount per parcel",
+        "uri": "https://www.bmel.de/DE/themen/landwirtschaft/eu-agrarpolitik-foerderung/gap/gap-direktzahlungen.html",
+        "local_uri": "docs/references/subsidies_bmel.html"
+      },
+      "BIO": {
+        "exact": 210,
+        "description": "Additional subsidy for organic farming",
+        "uri": ""
+      },
+      "GREEN_STRIP": {
+        "exact": 1200,
+        "description": "Subsidy for maintaining green strips",
+        "uri": ""
+      },
+      "GREEN_STRIP_MAX_PARCELS": {
+        "exact": 5,
+        "description": "Maximum number of parcels eligible for green strip subsidy",
+        "uri": ""
+      }
+    },
+    "MACHINE_FACTORS": {
+      "YIELD_BONUS": {
+        "exact": [
+          0,
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "description": "Yield multiplier for machinery levels",
+        "uri": ""
+      },
+      "LABOR_COST_PER_HOUR": {
+        "exact": 25,
+        "description": "Average hourly cost for labor",
+        "uri": "https://www.ktbl.de/webanwendungen/standarddeckungsbeitraege",
+        "local_uri": "docs/references/ktbl_labor.html"
+      },
+      "PERSONNEL_COST": {
+        "exact": 12000,
+        "description": "Base annual overhead cost",
+        "uri": ""
+      },
+      "INVESTMENT_COST": {
+        "exact": [
+          0,
+          2000,
+          8000,
+          20000,
+          50000
+        ],
+        "description": "Cost of upgrading machinery levels. Scales linearly with totalRounds (via costScale).",
+        "uri": ""
+      },
+      "MAINTENANCE_COST": {
+        "exact": [
+          0,
+          500,
+          2000,
+          6000,
+          15000
+        ],
+        "description": "Annual maintenance cost for machinery levels",
+        "uri": ""
+      }
+    },
+    "WEATHER_EFFECTS": {
+      "Normal": {
+        "yield": {
+          "exact": 1.0
+        },
+        "soil": {
+          "exact": 0
+        },
+        "description": "Baseline weather. Yield impact is absolute (does not scale). Soil impact is zero.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf",
+        "reviewed": true
+      },
+      "Drought": {
+        "yield": {
+          "range": [
+            0.7,
+            0.9
+          ]
+        },
+        "soil": {
+          "exact": -0.8
+        },
+        "description": "Dry conditions causing 10-30% yield loss (absolute). This aligns with research (e.g., ScienceDirect, 2022) showing single-day losses of ~0.36% for winter wheat, compounding to >20% in severe spells. Soil quality degrades by 0.8 (scales with 1/totalRounds) due to reduced microbial activity and nutrient cycling. Impact is primarily a 'biological pause'.",
+        "uri": "https://doi.org/10.1016/j.foodpol.2022.102359",
+        "local_uri": "docs/references/drought_science_direct.html",
+        "reviewed": true
+      },
+      "LateFrost": {
+        "yield": {
+          "exact": 0.85
+        },
+        "soil": {
+          "exact": 0.3
+        },
+        "description": "Frost in late spring causing 15% yield loss (absolute). Max Planck Institute research (2021) confirms these events are becoming significantly more likely and pose an 'existential threat' to harvests. Provides a 0.3 soil quality bonus (frost tilth) by breaking up compaction (scales with 1/totalRounds).",
+        "uri": "https://www.bgc-jena.mpg.de/en/late-frost-crop-failures",
+        "local_uri": "docs/references/late_frost_mpg.html",
+        "reviewed": true
+      },
+      "HeatWave": {
+        "yield": {
+          "exact": 0.8
+        },
+        "soil": {
+          "exact": -1.2
+        },
+        "description": "High evaporation and soil stress causing 20% yield loss (absolute). This aligns with the trend observed in Brás et al. (2021), where the severity of heatwave and drought impacts on European cereals has tripled, reaching ~10% on average with significantly higher losses in extreme years. Soil quality degrades by 1.2 (scales with 1/totalRounds).",
+        "uri": "https://doi.org/10.1088/1748-9326/abf004",
+        "local_uri": "docs/references/heatwave_iop.html",
+        "reviewed": true
+      },
+      "Flood": {
+        "yield": {
+          "exact": 0.7
+        },
+        "soil": {
+          "exact": -2.0
+        },
+        "description": "Heavy rainfall and flooding causing significant yield failures. Research in Germany (Webber et al., 2020) identifies waterlogging and flooding as key drivers of negative yield anomalies. Game value of 30% loss is a representative average for severe localized inundation. Soil quality degrades severely by 2.0 (scales with 1/totalRounds) due to erosion and anaerobic conditions.",
+        "uri": "https://doi.org/10.1088/1748-9326/aba2a4",
+        "local_uri": "docs/references/flood_iop.html",
+        "reviewed": true
+      },
+      "Storm": {
+        "yield": {
+          "exact": 0.85
+        },
+        "soil": {
+          "exact": -0.5
+        },
+        "description": "Physical crop damage and surface erosion causing 15% yield loss (absolute). European Parliament study (2023) identifies storms as major drivers of cropland destruction and soil damage. Soil quality degrades by 0.5 (scales with 1/totalRounds).",
+        "uri": "https://www.europarl.europa.eu/RegData/etudes/STUD/2023/733115/IPOL_STU(2023)733115_EN.pdf",
+        "local_uri": "docs/references/storm_eu_parliament.pdf",
+        "reviewed": true
+      }
+    },
+    "VERMIN_EFFECTS": {
+      "aphid-black": {
+        "name": {
+          "exact": "Schwarze Bohnenlaus"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "aphid-cereal": {
+        "name": {
+          "exact": "Getreideblattlaus"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "potato-beetle": {
+        "name": {
+          "exact": "Kartoffelkäfer"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "corn-borer": {
+        "name": {
+          "exact": "Maiszünsler"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "pollen-beetle": {
+        "name": {
+          "exact": "Rapsglanzkäfer"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "pea-moth": {
+        "name": {
+          "exact": "Erbsenwickler"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "nematode": {
+        "name": {
+          "exact": "Rübennematode"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "oat-rust": {
+        "name": {
+          "exact": "Haferkronenrost"
+        },
+        "description": "",
+        "uri": ""
+      },
+      "swine-fever": {
+        "name": {
+          "exact": "Afrikanische Schweinepest"
+        },
+        "description": "",
+        "uri": ""
+      }
+    },
+    "EXPENSES": {
+      "RUNNING": {
+        "ORGANIC_CONTROL": {
+          "exact": 1500,
+          "description": "Annual fee for organic certification control. Does not scale.",
+          "uri": ""
+        },
+        "FERTILIZE": {
+          "exact": 400,
+          "description": "Cost of synthetic fertilization. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "PESTICIDE": {
+          "exact": 500,
+          "description": "Cost of pesticides. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "ORGANISMS": {
+          "exact": 600,
+          "description": "Cost of beneficial organisms. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        },
+        "ANIMALS": {
+          "exact": 500,
+          "description": "Cost of maintaining animals per unit. Scales linearly with 1/totalRounds (via timeScale).",
+          "uri": ""
+        }
+      }
+    },
+    "CROPS": {
+      "Fieldbean": {
+        "baseYield": {
+          "exact": 60
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 150
+          },
+          "organic": {
+            "exact": 180
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 25
+          },
+          "organic": {
+            "exact": 45
+          }
+        },
+        "laborHours": {
+          "exact": 12
+        },
+        "description": "Ackerbohne. Real-world avg yield (2018-2023) is ~32.4 dt/ha (BMEL 2024). Game value is higher for balancing.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Barley": {
+        "baseYield": {
+          "exact": 110
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 90
+          },
+          "organic": {
+            "exact": 110
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 24
+          },
+          "organic": {
+            "exact": 38
+          }
+        },
+        "laborHours": {
+          "exact": 8
+        },
+        "description": "Gerste. Real-world avg yield (2018-2023) is ~66.1 dt/ha (BMEL 2024). Game value is higher for balancing.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Oat": {
+        "baseYield": {
+          "exact": 100
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 80
+          },
+          "organic": {
+            "exact": 100
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 26
+          },
+          "organic": {
+            "exact": 45
+          }
+        },
+        "laborHours": {
+          "exact": 8
+        },
+        "description": "Hafer. Real-world avg yield (2018-2023) is ~42.1 dt/ha (BMEL 2024). Game value is higher for balancing.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Potato": {
+        "baseYield": {
+          "exact": 450
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 2500
+          },
+          "organic": {
+            "exact": 3000
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 15
+          },
+          "organic": {
+            "exact": 32
+          }
+        },
+        "laborHours": {
+          "exact": 100
+        },
+        "description": "Kartoffel. Real-world yield (2024) is ~450 dt/ha, matching game value (BMEL 2024).",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf",
+        "reviewed": true
+      },
+      "Corn": {
+        "baseYield": {
+          "exact": 110
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 100
+          },
+          "organic": {
+            "exact": 120
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 35
+          },
+          "organic": {
+            "exact": 50
+          }
+        },
+        "laborHours": {
+          "exact": 30
+        },
+        "description": "Mais. Real-world avg yield (2018-2023) is ~91.6 dt/ha (BMEL 2024). Game value is slightly higher.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Rye": {
+        "baseYield": {
+          "exact": 100
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 90
+          },
+          "organic": {
+            "exact": 110
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 25
+          },
+          "organic": {
+            "exact": 40
+          }
+        },
+        "laborHours": {
+          "exact": 10
+        },
+        "description": "Roggen. Real-world avg yield (2018-2023) is ~50.9 dt/ha (BMEL 2024). Game value is higher for balancing.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Wheat": {
+        "baseYield": {
+          "exact": 110
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 100
+          },
+          "organic": {
+            "exact": 120
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 30
+          },
+          "organic": {
+            "exact": 45
+          }
+        },
+        "laborHours": {
+          "exact": 10
+        },
+        "description": "Weizen. Real-world avg yield (2018-2023) is ~74.3 dt/ha (BMEL 2024). Game value is higher for balancing.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf",
+        "reviewed": true
+      },
+      "Beet": {
+        "baseYield": {
+          "exact": 750
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 1200
+          },
+          "organic": {
+            "exact": 1500
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 6.5
+          },
+          "organic": {
+            "exact": 9.5
+          }
+        },
+        "laborHours": {
+          "exact": 60
+        },
+        "description": "Zuckerrübe. Real-world yields can reach 700-800 dt/ha.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Rapeseed": {
+        "baseYield": {
+          "exact": 60
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 150
+          },
+          "organic": {
+            "exact": 180
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 44
+          },
+          "organic": {
+            "exact": 65
+          }
+        },
+        "laborHours": {
+          "exact": 12
+        },
+        "description": "Raps. Real-world avg yield (2018-2023) is ~35.0 dt/ha (BMEL 2024). Game value is higher for balancing.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Pea": {
+        "baseYield": {
+          "exact": 50
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 100
+          },
+          "organic": {
+            "exact": 125
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 28
+          },
+          "organic": {
+            "exact": 48
+          }
+        },
+        "laborHours": {
+          "exact": 12
+        },
+        "description": "Erbse. Real-world yields are often around 30-40 dt/ha.",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      },
+      "Grass": {
+        "baseYield": {
+          "exact": 100
+        },
+        "seedPrice": {
+          "conventional": {
+            "exact": 100
+          },
+          "organic": {
+            "exact": 120
+          }
+        },
+        "marketValue": {
+          "conventional": {
+            "exact": 12
+          },
+          "organic": {
+            "exact": 20
+          }
+        },
+        "laborHours": {
+          "exact": 15
+        },
+        "description": "Tiere / Wiese",
+        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
+        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+      }
+    }
+  }
+}

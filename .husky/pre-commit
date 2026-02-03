@@ -19,29 +19,30 @@ else
   echo "Warning: nvm not found. Using system node version: $(node -v)"
 fi
 
-# If ONLY media, version-related files (package.json, angular.json), or husky files are changed, skip everything
-if ! git diff --cached --name-only | grep -qvE '\.(jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|^\.geminiignore$'; then
-  echo "Only media, version changes (package.json, angular.json), husky changes, or .geminiignore detected. Skipping pre-commit hooks."
+# If ONLY media, version-related files (package.json, angular.json), husky files, or docs/references are changed, skip everything
+if ! git diff --cached --name-only | grep -qvE '\.(jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|^\.geminiignore$|^docs/references/'; then
+  echo "Only media, version, husky, .geminiignore, or docs/references changes detected. Skipping pre-commit hooks."
   exit 0
 fi
 
 npx biome check --write --staged --no-errors-on-unmatched
+npm run verify-constants
 node scripts/check-file-size.js
 
 # Check for broken links in staged files
-STAGED_FILES=$(git diff --cached --name-only | grep -vE '\.(jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|package-lock\.json$|^\.geminiignore$' || true)
+STAGED_FILES=$(git diff --cached --name-only | grep -vE '\.(jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|package-lock\.json$|^\.geminiignore$|^docs/references/|^sources\.json$|^src/app/game-constants\.ts$' || true)
 if [ -n "$STAGED_FILES" ]; then
   echo "$STAGED_FILES" | lychee --files-from -
 fi
 
-# Check if any staged files are NOT documentation, media, version-related, or husky-related
-if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|^\.geminiignore$'; then
+# Check if any staged files are NOT documentation, media, version-related, husky-related, or docs/references
+if git diff --cached --name-only | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|^\.geminiignore$|^docs/references/'; then
   # Determine what to run based on changed files
   FRONTEND_CHANGED=false
   BACKEND_CHANGED=false
 
-  # Check for frontend changes (anything outside functions/ excluding pure docs/media/version/husky)
-  if git diff --cached --name-only | grep -vE '^functions/' | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|^package-lock\.json$|^\.geminiignore$'; then
+  # Check for frontend changes (anything outside functions/ excluding pure docs/media/version/husky/references)
+  if git diff --cached --name-only | grep -vE '^functions/' | grep -qvE '\.(md|jpeg|jpg|png|webp|gif|svg|ico)$|^package\.json$|^angular\.json$|^\.husky/|^package-lock\.json$|^\.geminiignore$|^docs/references/'; then
     FRONTEND_CHANGED=true
   fi
 

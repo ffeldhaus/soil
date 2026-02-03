@@ -17,6 +17,7 @@
       "!package-lock.json",
       "!angular.json",
       "!public",
+      "!docs/references",
       "!src/app/admin/dashboard/components/dashboard-game-detail.html"
     ]
   },

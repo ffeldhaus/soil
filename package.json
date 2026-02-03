@@ -19,6 +19,7 @@
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "format": "biome format --write .",
+    "verify-constants": "vitest run src/app/verify-sources.spec.ts",
     "prettier:check": "biome format .",
     "prepare": "husky",
     "serve:ssr:soil": "node dist/soil/server/server.mjs"

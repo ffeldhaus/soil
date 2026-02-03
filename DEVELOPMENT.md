@@ -123,6 +123,17 @@ These run automatically on `git push`:
 - **Diagnostics**: Print the current application version to the developer console on first load.
 - **Dynamic Versioning**: The application picks up the version automatically during the build process using `git describe` and build IDs.
 
+## Game Constants & Ground Truth
+
+Core game mechanics and constants (yields, prices, weather impacts) are documented in `sources.json`. This file acts as the primary registry for data validation.
+
+### Management Rules:
+1.  **Registry (`sources.json`)**: Every entry in `GAME_CONSTANTS` (src/app/game-constants.ts) must have a corresponding entry in `sources.json`.
+2.  **Ground Truth**: Entries must include a `uri` (external link) and where applicable a `local_uri` (path to a local copy in `docs/references/`).
+3.  **Verification**: A pre-commit hook runs `npm run verify-constants` to ensure code values match the registry.
+4.  **Review Status**: Use the `reviewed` field (boolean) to track manual validation of values against sources.
+5.  **Local Files**: Original research papers (PDF/HTML) should be stored in `docs/references/` to ensure long-term accessibility.
+
 ## Git & Commits
 
 - **Review**: Always run `git status` and `git diff` before committing.

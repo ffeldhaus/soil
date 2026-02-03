@@ -40,7 +40,7 @@ export class GameEngine {
     const weather = GAME_CONSTANTS.WEATHER_EFFECTS[events.weather] || GAME_CONSTANTS.WEATHER_EFFECTS.Normal;
 
     const machineYieldBonus = GAME_CONSTANTS.MACHINE_FACTORS.YIELD_BONUS[machineLevel];
-    const machineSoilImpact = GAME_CONSTANTS.SOIL.MACHINE_IMPACT[machineLevel] * timeScale ** 0.5;
+    const machineSoilImpact = GAME_CONSTANTS.SOIL.MACHINE_IMPACT[machineLevel];
 
     // -- 2. Calculate Parcel Updates --
     previousParcels.forEach((prevParcel, index) => {
@@ -64,8 +64,14 @@ export class GameEngine {
       newSoil = prevParcel.soil + soilFactor;
 
       // B. NUTRITION CALCULATION
-      const nutritionGain = GameEngine.calculateNutritionGain(cropKey, decision, animalParcels, numParcels);
-      newNutrition = GameEngine.calculateNutritionUpdate(prevParcel.nutrition, nutritionGain, cropKey, newSoil);
+      const nutritionGain = GameEngine.calculateNutritionGain(cropKey, decision, animalParcels, numParcels) * timeScale;
+      newNutrition = GameEngine.calculateNutritionUpdate(
+        prevParcel.nutrition,
+        nutritionGain,
+        cropKey,
+        newSoil,
+        timeScale,
+      );
 
       // C. HARVEST CALCULATION
       let yieldAmount = 0;
@@ -81,7 +87,8 @@ export class GameEngine {
         );
 
         const harvestIntensity = yieldAmount / cropConfig.baseYield;
-        newNutrition -= harvestIntensity * GAME_CONSTANTS.NUTRITION.BASE_DECLINE * GAME_CONSTANTS.NUTRITION.START;
+        newNutrition -=
+          harvestIntensity * GAME_CONSTANTS.NUTRITION.BASE_DECLINE * GAME_CONSTANTS.NUTRITION.START * timeScale;
 
         harvestSummary[cropKey] += Math.round(yieldAmount);
       }
@@ -107,6 +114,7 @@ export class GameEngine {
       events,
       bioSiegel,
       costScale,
+      timeScale,
       currentCapital,
       options,
     );
@@ -234,12 +242,14 @@ export class GameEngine {
     nutritionGain: number,
     cropKey: CropType,
     newSoil: number,
+    timeScale: number,
   ): number {
     if (cropKey === 'Fallow' || cropKey === 'Grass') {
       if (prevNutrition > GAME_CONSTANTS.NUTRITION.START) {
-        return prevNutrition * 0.9 + GAME_CONSTANTS.NUTRITION.START * 0.1;
+        const recoverySpeed = 0.1 * timeScale;
+        return prevNutrition * (1 - recoverySpeed) + GAME_CONSTANTS.NUTRITION.START * recoverySpeed;
       }
-      return prevNutrition + 5;
+      return prevNutrition + 5 * timeScale;
     }
     const uptakeEfficiency = Math.max(0.2, Math.min(1.2, newSoil / GAME_CONSTANTS.SOIL.START));
     return prevNutrition + nutritionGain * uptakeEfficiency;
@@ -310,6 +320,7 @@ export class GameEngine {
     events: { weather: string; vermin: string[] },
     bioSiegel: boolean,
     costScale: number,
+    timeScale: number,
     currentCapital: number,
     options?: { marketPrices?: Record<string, { organic: number; conventional: number }> },
   ): RoundResult {
@@ -362,14 +373,14 @@ export class GameEngine {
     const machineMaintenance = GAME_CONSTANTS.MACHINE_FACTORS.MAINTENANCE_COST[machineLevel];
     const runningCost =
       (decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0) + machineMaintenance + laborCost;
-    let animalMaintenance = animalParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS;
+    let animalMaintenance = animalParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS * timeScale;
     if (events.vermin.includes('swine-fever')) {
       animalMaintenance *= 2.0; // Significant increase due to hygiene and restriction zones
     }
     const suppliesCost =
-      (decision.fertilizer ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0) +
-      (decision.pesticide ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0) +
-      (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0);
+      (decision.fertilizer ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE * timeScale : 0) +
+      (decision.pesticide ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE * timeScale : 0) +
+      (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS * timeScale : 0);
     const totalExpenses = seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
 
     // Subsidies Calculation

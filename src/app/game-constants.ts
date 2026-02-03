@@ -100,7 +100,7 @@ export const GAME_CONSTANTS = {
     // https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse
     Normal: { yield: 1.0, soil: 0, name: 'Normal' },
     Drought: { yield: 0.75, soil: -0.8, name: 'Trockenheit' },
-    LateFrost: { yield: 0.85, soil: 0, name: 'Spätfrost' },
+    LateFrost: { yield: 0.85, soil: 0.3, name: 'Spätfrost' },
     HeatWave: { yield: 0.8, soil: -1.2, name: 'Hitzewelle' },
     Flood: { yield: 0.7, soil: -2.0, name: 'Starkregen/Hochwasser' },
     Storm: { yield: 0.85, soil: -0.5, name: 'Sturm' },
