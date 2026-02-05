@@ -80,8 +80,8 @@ describe('Finance Component Logic', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
     expect(player).toBeTruthy();
-    expect(player?.detailedExpenses?.seeds.Wheat).toBe(100); // Wheat conv
-    expect(player?.detailedExpenses?.seeds.Corn).toBe(100); // Corn conv
+    expect(player?.detailedExpenses?.seeds.Wheat).toBe(130); // Wheat conv
+    expect(player?.detailedExpenses?.seeds.Corn).toBe(250); // Corn conv
   });
 
   it('should calculate detailed seeds correctly for Round 2 (Organic)', () => {
@@ -96,10 +96,10 @@ describe('Finance Component Logic', () => {
     component.currentViewingRound = 1;
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
-    // Wheat: 100 * 30 (Conv) = 3000
-    // Corn: 200 * 35 (Conv) = 7000
-    expect(player?.detailedIncome?.harvest.Wheat).toBe(3000);
-    expect(player?.detailedIncome?.harvest.Corn).toBe(7000);
+    // Wheat: 100 * 21 (Conv) = 2100
+    // Corn: 200 * 18 (Conv) = 3600
+    expect(player?.detailedIncome?.harvest.Wheat).toBe(2100);
+    expect(player?.detailedIncome?.harvest.Corn).toBe(3600);
   });
 
   it('should calculate detailed investments correctly', () => {

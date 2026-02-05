@@ -37,13 +37,7 @@
         "uri": ""
       },
       "MACHINE_IMPACT": {
-        "exact": [
-          0,
-          -0.2,
-          -0.5,
-          -1.5,
-          -5.0
-        ],
+        "exact": [0, -0.2, -0.5, -1.5, -5.0],
         "description": "Soil impact of machinery levels 0-4. Level 0: 0 impact, 0% yield bonus. Level 1: -0.2 impact, 10% bonus. Level 2: -0.5 impact, 20% bonus. Level 3: -1.5 impact, 30% bonus. Level 4: -5.0 impact, 40% bonus. Levels are reached through investment (round decision 0-4) which adds up to 1.0 (for decision 4) to the machinery state, while per-round decay removes 10-25%. Effective level is the rounded state. Soil impact scales linearly with 1/totalRounds (via timeScale).",
         "uri": "",
         "reviewed": true
@@ -205,13 +199,7 @@
     },
     "MACHINE_FACTORS": {
       "YIELD_BONUS": {
-        "exact": [
-          0,
-          0.1,
-          0.2,
-          0.3,
-          0.4
-        ],
+        "exact": [0, 0.1, 0.2, 0.3, 0.4],
         "description": "Yield multiplier for machinery levels",
         "uri": ""
       },
@@ -227,24 +215,12 @@
         "uri": ""
       },
       "INVESTMENT_COST": {
-        "exact": [
-          0,
-          2000,
-          8000,
-          20000,
-          50000
-        ],
+        "exact": [0, 2000, 8000, 20000, 50000],
         "description": "Cost of upgrading machinery levels. Scales linearly with totalRounds (via costScale).",
         "uri": ""
       },
       "MAINTENANCE_COST": {
-        "exact": [
-          0,
-          500,
-          2000,
-          6000,
-          15000
-        ],
+        "exact": [0, 500, 2000, 6000, 15000],
         "description": "Annual maintenance cost for machinery levels",
         "uri": ""
       }
@@ -264,10 +240,7 @@
       },
       "Drought": {
         "yield": {
-          "range": [
-            0.7,
-            0.9
-          ]
+          "range": [0.7, 0.9]
         },
         "soil": {
           "exact": -0.8
@@ -401,7 +374,8 @@
         "FERTILIZE": {
           "exact": 400,
           "description": "Cost of synthetic fertilization. Scales linearly with 1/totalRounds (via timeScale).",
-          "uri": ""
+          "uri": "https://www.landwirtschaft.sachsen.de/duengerpreise-54093.asp",
+          "local_uri": "docs/references/saxony_fertilizer_prices.html"
         },
         "PESTICIDE": {
           "exact": 500,
@@ -423,302 +397,311 @@
     "CROPS": {
       "Fieldbean": {
         "baseYield": {
-          "exact": 60
+          "range": [20, 65]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 150
+            "range": [120, 250]
           },
           "organic": {
-            "exact": 180
+            "range": [150, 350]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 25
+            "range": [20, 45]
           },
           "organic": {
-            "exact": 45
+            "range": [40, 65]
           }
         },
         "laborHours": {
           "exact": 12
         },
-        "description": "Ackerbohne. Real-world avg yield (2018-2023) is ~32.4 dt/ha (BMEL 2024). Game value is higher for balancing.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Ackerbohne. Real-world avg yield (2018-2023) is ~24.4 dt/ha (BMEL 2024). Range anchored to Destatis time series.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Barley": {
         "baseYield": {
-          "exact": 110
+          "range": [65, 115]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 90
+            "range": [80, 150]
           },
           "organic": {
-            "exact": 110
+            "range": [100, 200]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 24
+            "range": [15, 30]
           },
           "organic": {
-            "exact": 38
+            "range": [30, 45]
           }
         },
         "laborHours": {
           "exact": 8
         },
-        "description": "Gerste. Real-world avg yield (2018-2023) is ~66.1 dt/ha (BMEL 2024). Game value is higher for balancing.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Gerste. Real-world avg yield (2018-2023) is ~69.8 dt/ha (BMEL 2024). Range allows balancing up to 110.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Oat": {
         "baseYield": {
-          "exact": 100
+          "range": [40, 105]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 80
+            "range": [70, 130]
           },
           "organic": {
-            "exact": 100
+            "range": [90, 160]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 26
+            "range": [15, 35]
           },
           "organic": {
-            "exact": 45
+            "range": [35, 55]
           }
         },
         "laborHours": {
           "exact": 8
         },
-        "description": "Hafer. Real-world avg yield (2018-2023) is ~42.1 dt/ha (BMEL 2024). Game value is higher for balancing.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Hafer. Real-world avg yield (2018-2023) is ~40.5 dt/ha (BMEL 2024). Range allows balancing up to 100.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Potato": {
         "baseYield": {
-          "exact": 450
+          "range": [350, 560]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 2500
+            "range": [1800, 3000]
           },
           "organic": {
-            "exact": 3000
+            "range": [2500, 3500]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 15
+            "range": [12, 25]
           },
           "organic": {
-            "exact": 32
+            "range": [25, 45]
           }
         },
         "laborHours": {
           "exact": 100
         },
-        "description": "Kartoffel. Real-world yield (2024) is ~450 dt/ha, matching game value (BMEL 2024).",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf",
+        "description": "Kartoffel. Real-world avg yield (2018-2023) is ~383.4 dt/ha (BMEL 2024). Range covers high-yield years.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
         "reviewed": true
       },
       "Corn": {
         "baseYield": {
-          "exact": 110
+          "range": [80, 125]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 100
+            "range": [100, 300]
           },
           "organic": {
-            "exact": 120
+            "range": [120, 400]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 35
+            "range": [15, 40]
           },
           "organic": {
-            "exact": 50
+            "range": [30, 55]
           }
         },
         "laborHours": {
           "exact": 30
         },
-        "description": "Mais. Real-world avg yield (2018-2023) is ~91.6 dt/ha (BMEL 2024). Game value is slightly higher.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Mais. Real-world avg yield (2018-2023) is ~89.4 dt/ha (BMEL 2024). Range allows balancing around 110.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Rye": {
         "baseYield": {
-          "exact": 100
+          "range": [50, 105]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 90
+            "range": [80, 140]
           },
           "organic": {
-            "exact": 110
+            "range": [100, 180]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 25
+            "range": [12, 30]
           },
           "organic": {
-            "exact": 40
+            "range": [25, 45]
           }
         },
         "laborHours": {
           "exact": 10
         },
-        "description": "Roggen. Real-world avg yield (2018-2023) is ~50.9 dt/ha (BMEL 2024). Game value is higher for balancing.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Roggen. Real-world avg yield (2018-2023) is ~53.0 dt/ha (BMEL 2024). Range allows balancing up to 100.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Wheat": {
         "baseYield": {
-          "exact": 110
+          "range": [70, 115]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 100
+            "range": [90, 150]
           },
           "organic": {
-            "exact": 120
+            "range": [110, 200]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 30
+            "range": [16, 35]
           },
           "organic": {
-            "exact": 45
+            "range": [35, 50]
           }
         },
         "laborHours": {
           "exact": 10
         },
-        "description": "Weizen. Real-world avg yield (2018-2023) is ~74.3 dt/ha (BMEL 2024). Game value is higher for balancing.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf",
+        "description": "Weizen. Real-world avg yield (2018-2023) is ~73.8 dt/ha (BMEL 2024). Range allows balancing around 110.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
         "reviewed": true
       },
       "Beet": {
         "baseYield": {
-          "exact": 750
+          "range": [650, 850]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 1200
+            "range": [300, 700]
           },
           "organic": {
-            "exact": 1500
+            "range": [500, 900]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 6.5
+            "range": [4, 8]
           },
           "organic": {
-            "exact": 9.5
+            "range": [8, 12]
           }
         },
         "laborHours": {
           "exact": 60
         },
-        "description": "Zuckerrübe. Real-world yields can reach 700-800 dt/ha.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Zuckerrübe. Real-world avg yield (2018-2023) is ~700.3 dt/ha (BMEL 2024). Range allows balancing around 750.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Rapeseed": {
         "baseYield": {
-          "exact": 60
+          "range": [30, 65]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 150
+            "range": [120, 200]
           },
           "organic": {
-            "exact": 180
+            "range": [150, 250]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 44
+            "range": [35, 55]
           },
           "organic": {
-            "exact": 65
+            "range": [55, 85]
           }
         },
         "laborHours": {
           "exact": 12
         },
-        "description": "Raps. Real-world avg yield (2018-2023) is ~35.0 dt/ha (BMEL 2024). Game value is higher for balancing.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Raps. Real-world avg yield (2018-2023) is ~34.7 dt/ha (BMEL 2024). Range allows balancing up to 60.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Pea": {
         "baseYield": {
-          "exact": 50
+          "range": [25, 55]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 100
+            "range": [80, 220]
           },
           "organic": {
-            "exact": 125
+            "range": [100, 300]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 28
+            "range": [25, 40]
           },
           "organic": {
-            "exact": 48
+            "range": [40, 60]
           }
         },
         "laborHours": {
           "exact": 12
         },
-        "description": "Erbse. Real-world yields are often around 30-40 dt/ha.",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Erbse. Real-world avg yield (2018-2023) is ~26.9 dt/ha (BMEL 2024). Range allows balancing up to 50.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       },
       "Grass": {
         "baseYield": {
-          "exact": 100
+          "range": [80, 120]
         },
         "seedPrice": {
           "conventional": {
-            "exact": 100
+            "range": [80, 150]
           },
           "organic": {
-            "exact": 120
+            "range": [100, 200]
           }
         },
         "marketValue": {
           "conventional": {
-            "exact": 12
+            "range": [8, 15]
           },
           "organic": {
-            "exact": 20
+            "range": [15, 25]
           }
         },
         "laborHours": {
           "exact": 15
         },
-        "description": "Tiere / Wiese",
-        "uri": "https://www.bmel-statistik.de/fileadmin/daten/1002000-2024.pdf",
-        "local_uri": "docs/references/bmel_yield_statistics_2024.pdf"
+        "description": "Tiere / Wiese. Yield and prices are representative of silage/hay value.",
+        "uri": "https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Feldfruechte-Gruenland/Tabellen/gtz-zeitreihe-erntemengen-augewaehlter-anbaukulturen.html",
+        "local_uri": "docs/references/destatis_yields_timeseries.html",
+        "reviewed": true
       }
     }
   }

@@ -50,9 +50,9 @@ describe('GameEngine Consistency (Frontend)', () => {
     expect(wheatParcel.soil).toBe(100);
 
     // Wheat yield calculation
-    // Base 110, Soil Effect 1.0, Nutrition Effect 1.0, Weather Normal 1.0, Pest 1.0
-    // yield = 110
-    expect(wheatParcel.yield).toBe(110);
+    // Base 85, Soil Effect 1.0, Nutrition Effect 1.0, Weather Normal 1.0, Pest 1.0
+    // yield = 85
+    expect(wheatParcel.yield).toBe(85);
 
     // Finance check
     expect(round.result?.income).toBeGreaterThan(0);
@@ -97,10 +97,10 @@ describe('GameEngine Consistency (Frontend)', () => {
     // Penalty: 1.0 - 0.7 = 0.3
     // Sensitivity Multiplier for 'Stark': 1.0
     // Final Weather Yield Effect: 1.0 - 0.3 * 1.0 = 0.7
-    // Yield: 110 (base for Beet) * 0.7 = 77
-    // Wait, Beet base yield is actually 750.
-    // Yield: 750 * 0.7 = 525.
-    expect(round.parcelsSnapshot[0].yield).toBe(525);
+    // Yield: 95 (base for Beet) * 0.7 = 66.5
+    // Wait, Beet base yield is actually 720.
+    // Yield: 720 * 0.7 = 504.
+    expect(round.parcelsSnapshot[0].yield).toBe(504);
 
     // Flood soil impact: -2.0
     // Fallow -> Beet rotation bonus: 'good' (+0.5)
