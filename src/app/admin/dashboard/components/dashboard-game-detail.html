@@ -151,6 +151,12 @@
             }}</span>
           </div>
           <div>
+            <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">PIN</span>
+            <span class="font-mono text-emerald-400 font-bold text-sm" [attr.data-testid]="'player-pin-' + slot.number">{{
+              slot.password
+            }}</span>
+          </div>
+          <div>
             <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
               t('dashboard.player.round')
             }}</span>

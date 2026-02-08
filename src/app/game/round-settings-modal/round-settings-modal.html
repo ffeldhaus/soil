@@ -105,6 +105,7 @@
             @for (crop of plantedCrops; track crop) {
               <button
                 (click)="togglePriceFixing(crop)"
+                [attr.data-testid]="'price-fixing-' + crop"
                 class="flex items-center justify-between px-3 py-2 rounded-lg border transition-all text-sm"
                 [class]="{
                   'bg-amber-900/30': isPriceFixed(crop),

@@ -30,6 +30,7 @@
       <input
         [(ngModel)]="newGameConfig.playerLabel"
         placeholder="Player"
+        data-testid="player-label-input"
         [placeholder]="t('dashboard.createGame.phPlayer')"
         class="w-full px-4 py-2 bg-gray-900/50 border rounded-lg text-white focus:outline-none mb-1"
         [class.border-red-500]="!newGameConfig.playerLabel"
@@ -83,6 +84,7 @@
         type="range"
         min="10"
         max="50"
+        data-testid="num-rounds-input"
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
     </div>
@@ -91,6 +93,7 @@
       <div class="relative h-[42px]">
         <select
           [(ngModel)]="newGameConfig.aiLevel"
+          data-testid="ai-level-select"
           class="w-full h-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none appearance-none cursor-pointer transition-colors"
         >
           <option value="elementary" class="bg-gray-900 text-white">{{ t('ai.level.elementary') }}</option>
@@ -111,6 +114,7 @@
       <input
         type="checkbox"
         id="advancedPricingEnabled"
+        data-testid="advanced-pricing-checkbox"
         [(ngModel)]="newGameConfig.advancedPricingEnabled"
         class="w-5 h-5 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
       />

@@ -86,6 +86,14 @@
                         createdGame.id
                       }}</span>
                     </div>
+                    @if (createdGame.password) {
+                      <div>
+                        <span class="text-gray-400 block">PIN</span>
+                        <span class="font-mono text-emerald-400 select-all text-lg font-bold" data-testid="created-game-pin">{{
+                          createdGame.password
+                        }}</span>
+                      </div>
+                    }
                   </div>
                 </div>
               }
