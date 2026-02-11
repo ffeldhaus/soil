@@ -44,7 +44,7 @@ export class GameService {
   }
   private get getGameStateFn() {
     if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ gameId: string }, GameState>(this.functions, 'getGameState');
+    return httpsCallable<{ gameId: string; targetUid?: string }, GameState>(this.functions, 'getGameState');
   }
   private get saveDraftFn() {
     if (!this.functions || typeof window === 'undefined') return null;
@@ -73,6 +73,13 @@ export class GameService {
       { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
       { games: Game[]; total: number }
     >(this.functions, 'getAdminGames');
+  }
+  private get getResearchGamesFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ page: number; pageSize: number }, { games: Game[]; total: number }>(
+      this.functions,
+      'getResearchGames',
+    );
   }
   private get getUserStatusFn() {
     if (!this.functions || typeof window === 'undefined') return null;
@@ -161,6 +168,17 @@ export class GameService {
       void
     >(this.functions, 'manageFeedback');
   }
+  private get analyzeSystemBalanceFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, { success: boolean; insightId: string; analysis: any }>(
+      this.functions,
+      'analyzeSystemBalance',
+    );
+  }
+  private get getSystemInsightsFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, any[]>(this.functions, 'getSystemInsights');
+  }
 
   private parcelsSubject = new BehaviorSubject<Parcel[]>(this.createInitialParcels());
   parcels$ = this.parcelsSubject.asObservable();
@@ -230,12 +248,12 @@ export class GameService {
     return this.parcelsSubject.value;
   }
 
-  async getRoundData(gameId: string, roundNumber: number): Promise<Round> {
+  async getRoundData(gameId: string, roundNumber: number, targetUid?: string): Promise<Round> {
     if (gameId.startsWith('local-')) {
       const state = await this.localGame.loadGame(gameId);
       if (!state) throw new Error('Local game not found');
       // For local games, all rounds for player 1 are in state.allRounds
-      const playerUid = state.playerState.uid;
+      const playerUid = targetUid || state.playerState.uid;
       const round = state.allRounds[playerUid][roundNumber];
       if (!round) throw new Error('Round not found');
       if (round.parcelsSnapshot) {
@@ -249,7 +267,7 @@ export class GameService {
       if (typeof window === 'undefined') return { number: roundNumber, parcelsSnapshot: [], result: undefined } as any;
       throw new Error('Functions not available');
     }
-    const result = await fn({ gameId, roundNumber });
+    const result = await fn({ gameId, roundNumber, targetUid });
     const round = result.data;
     if (round.parcelsSnapshot) {
       this.parcelCache[roundNumber] = round.parcelsSnapshot;
@@ -257,16 +275,21 @@ export class GameService {
     return round;
   }
 
-  async loadGame(gameId: string): Promise<GameState | null> {
+  async loadGame(gameId: string, targetUid?: string): Promise<GameState | null> {
     if (gameId.startsWith('local-')) {
       const localState = await this.localGame.loadGame(gameId);
       if (localState && localState.game.status !== 'deleted') {
-        this.currentRound = localState.lastRound || null;
-        this.parcelsSubject.next(localState.lastRound?.parcelsSnapshot || this.createInitialParcels());
+        const playerState = targetUid ? localState.game.players[targetUid] : localState.playerState;
+        const lastRound = targetUid
+          ? localState.allRounds[targetUid][localState.allRounds[targetUid].length - 1]
+          : localState.lastRound;
+
+        this.currentRound = lastRound || null;
+        this.parcelsSubject.next(lastRound?.parcelsSnapshot || this.createInitialParcels());
         this.stateSubject.next({
           game: localState.game,
-          playerState: localState.playerState,
-          lastRound: localState.lastRound,
+          playerState: playerState,
+          lastRound: lastRound,
         });
         return this.stateSubject.value;
       }
@@ -288,7 +311,7 @@ export class GameService {
         if (typeof window === 'undefined') return null;
         throw new Error('Functions not available');
       }
-      const result = await fn({ gameId });
+      const result = await fn({ gameId, targetUid });
       const data = result.data;
 
       if (data.lastRound) {
@@ -558,6 +581,27 @@ export class GameService {
       games: paginatedGames,
       total: allGames.length,
     };
+  }
+
+  async getResearchGames(page: number, pageSize: number): Promise<{ games: Game[]; total: number }> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      const mockGame = this.getMockGameState().game;
+      return {
+        games: [{ ...mockGame, id: 'research-game-1', name: 'Research Game 1' }],
+        total: 1,
+      };
+    }
+
+    try {
+      const fn = this.getResearchGamesFn;
+      if (!fn) throw new Error('Functions not available');
+      const result = await fn({ page, pageSize });
+      return result.data;
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to fetch research games:', error);
+      throw error;
+    }
   }
 
   private formatDate(d: any): Date {
@@ -849,6 +893,37 @@ export class GameService {
       if (window.console) console.error('Failed to manage feedback:', error);
       throw error;
     }
+  }
+
+  async analyzeSystemBalance(): Promise<any> {
+    const fn = this.analyzeSystemBalanceFn;
+    if (!fn) throw new Error('Functions not available');
+    return (await fn()).data;
+  }
+
+  async getSystemInsights(): Promise<any[]> {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+      return [
+        {
+          createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
+          strategies: [
+            { name: 'Integrated Farming', description: 'Sustainable balanced approach.' },
+            { name: 'Organic Right', description: 'Profitable organic rotation.' },
+          ],
+          balancingReport: {
+            summary: 'System is stable.',
+            issues: [
+              { severity: 'low', description: 'Potatoes slightly too strong.', suggestion: 'Increase seed cost.' },
+            ],
+            cropAnalysis: [],
+          },
+        },
+      ];
+    }
+    const fn = this.getSystemInsightsFn;
+    if (!fn) throw new Error('Functions not available');
+    return (await fn()).data;
   }
 
   async exportFullGameState(gameId: string): Promise<any> {

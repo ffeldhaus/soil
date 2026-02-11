@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { BehaviorSubject, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
@@ -24,11 +25,52 @@ export interface LocalCreateResponse {
 export class LocalGameService {
   private stateSubject = new BehaviorSubject<LocalGameState | null>(null);
   private auth = inject(AuthService);
+  private functions = inject(Functions, { optional: true });
   state$ = this.stateSubject.asObservable();
 
   constructor() {
     // biome-ignore lint/suspicious/noConsole: Debug mode
     console.log('LocalGameService initialized (Debug Mode)');
+  }
+
+  async syncLocalGames(): Promise<void> {
+    if (!this.functions || typeof window === 'undefined') return;
+
+    const listData = localStorage.getItem('soil_local_games') || '[]';
+    const ids = JSON.parse(listData);
+
+    const uploadFn = httpsCallable<{ gameData: any }, { success: boolean; status: string }>(
+      this.functions,
+      'uploadFinishedGame',
+    );
+
+    for (const id of ids) {
+      const data = localStorage.getItem(`soil_game_${id}`);
+      if (!data) continue;
+
+      const state: LocalGameState = JSON.parse(data);
+      const isFinished = state.game.status === 'finished';
+      const isAlreadyUploaded = !!state.game.uploadedAt;
+
+      if (isFinished && !isAlreadyUploaded) {
+        try {
+          const result = await uploadFn({
+            gameData: {
+              game: state.game,
+              allRounds: state.allRounds,
+            },
+          });
+
+          if (result.data.success) {
+            state.game.uploadedAt = new Date();
+            this.saveToStorage(state);
+            if (window.console) console.warn(`Synced local game ${id} to cloud`);
+          }
+        } catch (error) {
+          if (window.console) console.error(`Failed to sync local game ${id}:`, error);
+        }
+      }
+    }
   }
 
   async createGame(name: string, config: any): Promise<LocalCreateResponse> {
@@ -279,6 +321,8 @@ export class LocalGameService {
     const roundLimit = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
     if (nextRoundNum >= roundLimit) {
       state.game.status = 'finished';
+      // Trigger background sync
+      setTimeout(() => this.syncLocalGames(), 1000);
     }
     state.game.updatedAt = new Date();
     state.playerState = state.game.players[state.playerState.uid];

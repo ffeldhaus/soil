@@ -261,7 +261,7 @@ describe('Board', () => {
     // Use promise to wait for getRoundData
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(getRoundDataSpy).toHaveBeenCalledWith('test-game', 1);
+    expect(getRoundDataSpy).toHaveBeenCalledWith('test-game', 1, undefined);
     expect(component.parcels[0].crop).toBe('Corn');
   });
 

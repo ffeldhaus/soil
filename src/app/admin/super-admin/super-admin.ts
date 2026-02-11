@@ -78,6 +78,12 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.evaluation.analysis': 'Analyse',
       'superadmin.evaluation.improvements': 'Verbesserungsvorschläge (Mechanik)',
       'superadmin.evaluation.date': 'Analysiert am',
+      'superadmin.research.title': 'Forschungsdaten (Lokale Spiele)',
+      'superadmin.table.game': 'Spiel',
+      'superadmin.table.rounds': 'Runden',
+      'superadmin.table.capital': 'Kapital',
+      'superadmin.table.soil': 'Boden',
+      'superadmin.actions.view': 'Ansehen',
       'superadmin.feedback.title': 'Feedback & Vorschläge',
       'superadmin.feedback.none': 'Kein Feedback gefunden.',
       'superadmin.feedback.table.user': 'Benutzer',
@@ -99,6 +105,10 @@ export class SuperAdminComponent implements OnInit {
 
   admins: (UserStatus & { gameCount: number; quota: number })[] = [];
   feedback: Feedback[] = [];
+  researchGames: Game[] = [];
+  isLoadingResearchGames = false;
+  systemInsights: any[] = [];
+  isAnalyzing = false;
 
   selectedAdmin: (UserStatus & { gameCount: number; quota: number }) | null = null;
   adminGames: Game[] = [];
@@ -164,20 +174,20 @@ export class SuperAdminComponent implements OnInit {
     if (window.console) console.warn('SuperAdmin: Loading data...');
 
     try {
-      const [admins, stats, feedback] = await Promise.all([
+      const [admins, stats, feedback, researchRes, insights] = await Promise.all([
         this.gameService.getAllAdmins(),
-
         this.gameService.getSystemStats(),
-
         this.gameService.getAllFeedback(),
+        this.gameService.getResearchGames(1, 50),
+        this.gameService.getSystemInsights(),
       ]);
 
       this.ngZone.run(() => {
         this.admins = admins;
-
         this.stats = stats;
-
         this.feedback = feedback;
+        this.researchGames = researchRes.games;
+        this.systemInsights = insights;
 
         if (window.console)
           console.warn('SuperAdmin: Data loaded', {
@@ -371,6 +381,30 @@ export class SuperAdminComponent implements OnInit {
         alert('Failed to load games');
         this.cdr.detectChanges();
       });
+    }
+  }
+
+  async viewAsPlayer(gameId: string, playerUid: string) {
+    this.router.navigate(['/game'], {
+      queryParams: {
+        gameId: gameId,
+        playerUid: playerUid,
+        viewOnly: 'true',
+      },
+    });
+  }
+
+  async analyzeSystem() {
+    this.isAnalyzing = true;
+    this.cdr.detectChanges();
+    try {
+      await this.gameService.analyzeSystemBalance();
+      await this.loadData();
+    } catch (err: any) {
+      alert(`Analysis failed: ${err.message}`);
+    } finally {
+      this.isAnalyzing = false;
+      this.cdr.detectChanges();
     }
   }
 

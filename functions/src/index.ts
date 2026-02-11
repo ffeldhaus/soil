@@ -148,6 +148,213 @@ export const migrateLocalGame = onCall(async (request) => {
   return { success: true, gameId: targetGameId, status: startRound === 0 ? 'created' : 'updated' };
 });
 
+// --- System Analysis and Balancing ---
+
+async function incrementGameAnalysisCounter() {
+  const metadataRef = db.collection('system_metadata').doc('analysis');
+  await db.runTransaction(async (t) => {
+    const doc = await t.get(metadataRef);
+    const count = (doc.data()?.gameCount || 0) + 1;
+    t.set(metadataRef, { gameCount: count }, { merge: true });
+
+    if (count > 0 && count % 100 === 0) {
+      // Trigger background analysis (we don't wait for it here to avoid blocking)
+      // In a real production environment, we might use a Task Queue or another trigger.
+      // For now, we just acknowledge the threshold.
+      // biome-ignore lint/suspicious/noConsole: System trigger log
+      console.log(`Analysis threshold reached: ${count} games. Triggering analysis.`);
+    }
+  });
+}
+
+export const analyzeSystemBalance = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  // Super Admin Check
+  const callerRef = db.collection('users').doc(request.auth.uid);
+  const callerSnap = await callerRef.get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  if (!isSuper) throw new HttpsError('permission-denied', 'Super-Administratoren only');
+
+  // 1. Fetch current categories and metadata
+  const categoriesSnap = await db.collection('game_categories').get();
+  const existingCategories = categoriesSnap.docs.map((d) => d.data().name);
+
+  // 2. Fetch a sample of recent games (e.g., last 100 research games)
+  const gamesSnap = await db.collection('research_games').orderBy('updatedAt', 'desc').limit(100).get();
+  const gameData = gamesSnap.docs.map((doc) => {
+    const d = doc.data();
+    return {
+      id: d.id,
+      rounds: d.currentRoundNumber,
+      players: Object.values(d.players || {}).map((p: any) => ({
+        capital: p.capital,
+        avgSoil: p.avgSoil,
+        avgNutrition: p.avgNutrition,
+        // history summary for strategy analysis
+        history: (p.history || []).map((h: any) => ({
+          round: h.number,
+          decision: {
+            organic: h.decision?.organic,
+            fertilizer: h.decision?.fertilizer,
+            pesticide: h.decision?.pesticide,
+            organisms: h.decision?.organisms,
+            crops: Object.values(h.decision?.parcels || {}).reduce((acc: any, crop: any) => {
+              acc[crop] = (acc[crop] || 0) + 1;
+              return acc;
+            }, {}),
+          },
+          profit: h.result?.profit,
+        })),
+      })),
+    };
+  });
+
+  const prompt = `
+    Analyze the following dataset of ${gameData.length} games from the "Soil" agricultural management game.
+    
+    Task 1: Clustering and Strategies
+    Review the player strategies. Cluster them into logical groups. 
+    Use these existing categories if they fit: ${existingCategories.join(', ')}.
+    If you find distinct new strategies, describe them and give them a name.
+    Every 100 games, we refine these descriptions to be more accurate based on actual player behavior.
+
+    Task 2: Balancing and Gameplay Issues
+    Identify any issues in the game mechanics:
+    - Significant losses (players going bankrupt too easily).
+    - Too high capital gains (economy is too easy).
+    - Extremes in soil quality or nutrition (too high/low).
+    - Crop balance: Are some crops too powerful? Too weak? Never used?
+    - Systemic issues: Do certain combinations of inputs (fertilizer, organic, etc.) lead to degenerate playstyles?
+
+    Game Data: ${JSON.stringify(gameData)}
+
+    Provide a JSON response with:
+    - "strategies": Array of objects { name, description, typicalMetrics: { capital, soil, nutrition }, keyDecisions }.
+    - "balancingReport": {
+        summary: string,
+        issues: Array of { severity: 'low'|'medium'|'high', description, suggestion },
+        cropAnalysis: Array of { crop, usageFrequency, performanceAssessment }
+      }
+  `;
+
+  try {
+    const result = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: 'object',
+          properties: {
+            strategies: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  description: { type: 'string' },
+                  typicalMetrics: {
+                    type: 'object',
+                    properties: {
+                      capital: { type: 'number' },
+                      soil: { type: 'number' },
+                      nutrition: { type: 'number' },
+                    },
+                  },
+                  keyDecisions: { type: 'string' },
+                },
+                required: ['name', 'description'],
+              },
+            },
+            balancingReport: {
+              type: 'object',
+              properties: {
+                summary: { type: 'string' },
+                issues: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      severity: { type: 'string', enum: ['low', 'medium', 'high'] },
+                      description: { type: 'string' },
+                      suggestion: { type: 'string' },
+                    },
+                  },
+                },
+                cropAnalysis: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      crop: { type: 'string' },
+                      usageFrequency: { type: 'string' },
+                      performanceAssessment: { type: 'string' },
+                    },
+                  },
+                },
+              },
+              required: ['summary', 'issues', 'cropAnalysis'],
+            },
+          },
+          required: ['strategies', 'balancingReport'],
+        },
+      },
+    });
+
+    const responseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!responseText) throw new Error('No response from Gemini');
+
+    const analysis = JSON.parse(responseText);
+
+    // Save insight
+    const insightId = Timestamp.now().toMillis().toString();
+    await db
+      .collection('system_insights')
+      .doc(insightId)
+      .set({
+        ...analysis,
+        createdAt: Timestamp.now(),
+        gameCount: gameData.length,
+      });
+
+    // Update categories if new ones found
+    for (const strat of analysis.strategies) {
+      if (!existingCategories.includes(strat.name)) {
+        await db.collection('game_categories').add({
+          name: strat.name,
+          description: strat.description,
+          addedAt: Timestamp.now(),
+          isAiGenerated: true,
+        });
+      }
+    }
+
+    return { success: true, insightId, analysis };
+  } catch (error: any) {
+    console.error('System analysis failed:', error);
+    throw new HttpsError('internal', `Analysis failed: ${error.message}`);
+  }
+});
+
+export const getSystemInsights = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  const callerRef = db.collection('users').doc(request.auth.uid);
+  const callerSnap = await callerRef.get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  if (!isSuper) throw new HttpsError('permission-denied', 'Super-Administratoren only');
+
+  const snap = await db.collection('system_insights').orderBy('createdAt', 'desc').limit(10).get();
+  return snap.docs.map((d) => d.data());
+});
+
 export const uploadFinishedGame = onCall({ enforceAppCheck: true }, async (request) => {
   const { gameData } = request.data;
   if (!gameData || !gameData.game || !gameData.allRounds) {
@@ -240,23 +447,43 @@ export const uploadFinishedGame = onCall({ enforceAppCheck: true }, async (reque
     }
   });
 
+  // 5. Trigger Analysis Counter
+  await incrementGameAnalysisCounter();
+
   return { success: true, gameId: targetGameId, status: 'uploaded' };
 });
 
 export const getGameState = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
-  const { gameId } = request.data;
+  const { gameId, targetUid } = request.data;
   if (!gameId) throw new HttpsError('invalid-argument', 'Missing gameId');
 
-  const gameRef = db.collection('games').doc(gameId);
-  const gameSnap = await gameRef.get();
+  const callerUid = request.auth.uid;
+  const callerRef = db.collection('users').doc(callerUid);
+  const callerSnap = await callerRef.get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  // Check if research game or normal game
+  let gameRef = db.collection('games').doc(gameId);
+  let gameSnap = await gameRef.get();
+
+  if (!gameSnap.exists) {
+    gameRef = db.collection('research_games').doc(gameId);
+    gameSnap = await gameRef.get();
+  }
+
   if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
 
   const game = gameSnap.data()!;
-  const uid = request.auth.uid;
+  const uid = targetUid || callerUid;
   const playerState = game.players?.[uid];
 
-  if (!playerState) throw new HttpsError('not-found', 'Player not found in this game');
+  if (!playerState && !isSuper) throw new HttpsError('not-found', 'Player not found in this game');
+
+  const finalUid = playerState ? uid : Object.keys(game.players || {})[0];
+  const finalPlayerState = game.players?.[finalUid];
 
   const currentRoundNum = game.currentRoundNumber || 0;
 
@@ -267,8 +494,8 @@ export const getGameState = onCall(async (request) => {
     const roundSnap = await roundRef.get();
     if (roundSnap.exists) {
       const roundData = roundSnap.data();
-      if (roundData?.playerData?.[uid]) {
-        lastRound = roundData.playerData[uid];
+      if (roundData?.playerData?.[finalUid]) {
+        lastRound = roundData.playerData[finalUid];
       } else if (currentRoundNum === 0) {
         // Fallback for legacy round_0 or global round_0
         lastRound = roundData as Round;
@@ -279,16 +506,21 @@ export const getGameState = onCall(async (request) => {
   return {
     game: {
       id: game.id,
+      name: game.name,
       status: game.status,
       currentRoundNumber: game.currentRoundNumber,
       settings: game.settings,
       players: game.players,
+      config: game.config,
+      createdAt: game.createdAt?.toDate?.()?.toISOString() || game.createdAt,
     },
-    playerState: {
-      ...playerState,
-      playerNumber: uid.startsWith('player-') ? uid.split('-')[2] : undefined,
-      // history in playerState is already the lightweight version (parcelsSnapshot = [])
-    },
+    playerState: finalPlayerState
+      ? {
+          ...finalPlayerState,
+          playerNumber: finalUid.startsWith('player-') ? finalUid.split('-')[2] : undefined,
+          // history in playerState is already the lightweight version (parcelsSnapshot = [])
+        }
+      : null,
     lastRound,
   };
 });
@@ -298,8 +530,32 @@ export const getRoundData = onCall(async (request) => {
   const { gameId, roundNumber, targetUid } = request.data;
   if (!gameId || roundNumber === undefined) throw new HttpsError('invalid-argument', 'Missing gameId or roundNumber');
 
-  const uid = targetUid || request.auth.uid;
-  const roundRef = db.collection('games').doc(gameId).collection('rounds').doc(`round_${roundNumber}`);
+  const callerUid = request.auth.uid;
+  const callerRef = db.collection('users').doc(callerUid);
+  const callerSnap = await callerRef.get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  const uid = targetUid || callerUid;
+
+  // Check if research game or normal game
+  let gameRef = db.collection('games').doc(gameId);
+  let gameSnap = await gameRef.get();
+
+  if (!gameSnap.exists) {
+    gameRef = db.collection('research_games').doc(gameId);
+    gameSnap = await gameRef.get();
+  }
+
+  if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
+
+  const game = gameSnap.data()!;
+  if (!game.players?.[uid] && !isSuper) {
+    throw new HttpsError('permission-denied', 'Access denied');
+  }
+
+  const roundRef = gameRef.collection('rounds').doc(`round_${roundNumber}`);
   const roundSnap = await roundRef.get();
 
   if (!roundSnap.exists) throw new HttpsError('not-found', 'Round data not found');
@@ -314,6 +570,37 @@ export const getRoundData = onCall(async (request) => {
   throw new HttpsError('not-found', 'No data for player in this round');
 });
 
+export const getResearchGames = onCall(async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+
+  // Super Check
+  const callerRef = db.collection('users').doc(request.auth.uid);
+  const callerSnap = await callerRef.get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  if (!isSuper) throw new HttpsError('permission-denied', 'Super-Administratoren only');
+
+  const { page = 1, pageSize = 20 } = request.data;
+  const offset = (page - 1) * pageSize;
+
+  const query = db.collection('research_games').orderBy('updatedAt', 'desc');
+  const snapshot = await query.limit(pageSize).offset(offset).get();
+  const countSnap = await query.count().get();
+
+  const games = snapshot.docs.map((doc) => {
+    const d = doc.data();
+    return {
+      ...d,
+      createdAt: d.createdAt?.toDate?.()?.toISOString() || d.createdAt,
+      updatedAt: d.updatedAt?.toDate?.()?.toISOString() || d.updatedAt,
+    };
+  });
+
+  return { games, total: countSnap.data().count };
+});
+
 export const submitDecision = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
   async (request) => {
@@ -326,9 +613,10 @@ export const submitDecision = onCall(
     }
 
     const gameRef = db.collection('games').doc(gameId);
+    let gameWasFinished = false;
 
     try {
-      return await db.runTransaction(async (transaction) => {
+      const result = await db.runTransaction(async (transaction) => {
         // 1. ALL READS FIRST
         const gameDoc = await transaction.get(gameRef);
         if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
@@ -365,6 +653,7 @@ export const submitDecision = onCall(
         );
         if (calculationResults) {
           const myNewRound = calculationResults.playerRounds[uid];
+          gameWasFinished = !!calculationResults.isFinished;
           return { status: 'calculated', nextRound: myNewRound };
         }
 
@@ -376,6 +665,12 @@ export const submitDecision = onCall(
 
         return { status: 'submitted' };
       });
+
+      if (gameWasFinished) {
+        await incrementGameAnalysisCounter();
+      }
+
+      return result;
     } catch (error: any) {
       console.error('Error in submitDecision:', error);
       throw new HttpsError('internal', error.message || 'Internal Error');
@@ -601,7 +896,7 @@ async function performCalculation(
     players,
     updatedAt: Timestamp.now(),
   });
-  return { number: nextRoundNumber, playerRounds: allPlayerRounds };
+  return { number: nextRoundNumber, playerRounds: allPlayerRounds, isFinished };
 }
 
 export const calculateNextRound = onCall(async (request) => {
@@ -614,10 +909,19 @@ export const calculateNextRound = onCall(async (request) => {
     throw new HttpsError('invalid-argument', 'Missing gameId or decision');
   }
 
+  let gameWasFinished = false;
   try {
-    return await db.runTransaction(async (transaction) => {
-      return await performCalculation(gameId, decision, transaction);
+    const result = await db.runTransaction(async (transaction) => {
+      const calcResult = await performCalculation(gameId, decision, transaction);
+      gameWasFinished = !!calcResult?.isFinished;
+      return calcResult;
     });
+
+    if (gameWasFinished) {
+      await incrementGameAnalysisCounter();
+    }
+
+    return result;
   } catch (error: any) {
     console.error('Error in calculateNextRound:', error);
     throw new HttpsError('internal', error.message || 'Internal Error');
@@ -1619,6 +1923,7 @@ export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region
     const deadline = game.roundDeadlines?.[currentRound];
 
     if (deadline && deadline.toMillis() < now.toMillis()) {
+      let gameWasFinished = false;
       await db.runTransaction(async (transaction) => {
         const refreshedGameDoc = await transaction.get(gameDoc.ref);
         const refreshedGame = refreshedGameDoc.data();
@@ -1644,12 +1949,17 @@ export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region
         if (logicNeedsCalc) {
           const allSubmitted = Object.values(players).every((p: any) => p.submittedRound === currentRound);
           if (allSubmitted) {
-            await performCalculation(game.id, null, transaction, { ...refreshedGame, players });
+            const calcResult = await performCalculation(game.id, null, transaction, { ...refreshedGame, players });
+            gameWasFinished = !!calcResult?.isFinished;
           } else {
             transaction.update(gameDoc.ref, { players });
           }
         }
       });
+
+      if (gameWasFinished) {
+        await incrementGameAnalysisCounter();
+      }
     }
   }
 });
@@ -1849,20 +2159,38 @@ async function getExistingCategories(): Promise<string[]> {
   const categoriesSnap = await db.collection('game_categories').get();
   if (categoriesSnap.empty) {
     const initialCategories = [
-      'Integrated Farming',
-      'Organic Right',
-      'Organic Wrong',
-      'Conventional Right',
-      'Conventional Wrong',
-      'Resource Miser',
+      {
+        name: 'Integrated Farming',
+        description: 'Sustainable balanced approach with moderate tech and crop rotation.',
+      },
+      {
+        name: 'Organic Right',
+        description: 'Profitable organic rotation using beneficial organisms and high-value crops.',
+      },
+      {
+        name: 'Organic Wrong',
+        description: 'Organic approach failing due to poor rotation or monoculture (e.g. only Potatoes).',
+      },
+      {
+        name: 'Conventional Right',
+        description: 'Sustainable conventional approach with optimized synthetic inputs and rotation.',
+      },
+      {
+        name: 'Conventional Wrong',
+        description: 'Intensive conventional approach with constant pesticides and fertilizer, often monoculture.',
+      },
+      {
+        name: 'Resource Miser',
+        description: 'Minimalist strategy with zero investment in machines or inputs, usually low-yield.',
+      },
     ];
     // Seed categories
     const batch = db.batch();
     for (const cat of initialCategories) {
-      batch.set(db.collection('game_categories').doc(), { name: cat });
+      batch.set(db.collection('game_categories').doc(), cat);
     }
     await batch.commit();
-    return initialCategories;
+    return initialCategories.map((c) => c.name);
   }
   return categoriesSnap.docs.map((doc) => doc.data().name);
 }

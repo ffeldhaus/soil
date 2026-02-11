@@ -153,11 +153,12 @@ export class Board implements OnInit, OnDestroy {
     if (round >= 0 && round <= this.maxRoundNumber) {
       this.viewingRound = round;
       this.updateReadOnly();
-      this.updateParcelsForViewingRound();
+      const targetUid = this.route.snapshot?.queryParams?.playerUid;
+      this.updateParcelsForViewingRound(targetUid);
     }
   }
 
-  private updateParcelsForViewingRound() {
+  private updateParcelsForViewingRound(targetUid?: string) {
     if (this.viewingRound === this.maxRoundNumber) {
       // Current round: use parcels from gameService (which handles drafts)
       this.gameService
@@ -178,7 +179,7 @@ export class Board implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         } else {
           // Parcels missing (lightweight history), fetch them
-          this.gameService.getRoundData(this.gameId, this.viewingRound).then((fullRound) => {
+          this.gameService.getRoundData(this.gameId, this.viewingRound, targetUid).then((fullRound) => {
             // Update history with full data to cache it in the component
             histRound.parcelsSnapshot = fullRound.parcelsSnapshot;
             // Only update if we are still viewing this round
@@ -241,9 +242,12 @@ export class Board implements OnInit, OnDestroy {
           }
         }
 
+        const viewOnly = params.viewOnly === 'true';
+        const targetUid = params.playerUid as string;
+
         if (activeGameId) {
           this.gameId = activeGameId;
-          const gameState = await this.gameService.loadGame(activeGameId);
+          const gameState = await this.gameService.loadGame(activeGameId, targetUid);
           if (gameState) {
             this.gameService.state$.subscribe((state) => {
               if (state?.game) {
@@ -261,8 +265,15 @@ export class Board implements OnInit, OnDestroy {
                 }
 
                 this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
-                this.updateReadOnly();
-                this.updateParcelsForViewingRound();
+
+                if (viewOnly) {
+                  this.isReadOnly = true;
+                  this.showReadOnlyBanner = true;
+                } else {
+                  this.updateReadOnly();
+                }
+
+                this.updateParcelsForViewingRound(targetUid);
 
                 // Timer Logic
                 this.updateTimer(state.game);
@@ -288,6 +299,13 @@ export class Board implements OnInit, OnDestroy {
           Promise.resolve().then(() => {
             this.isPlayer = true;
           });
+        } else if (
+          claims.role === 'superadmin' ||
+          claims.role === 'admin' ||
+          user.email === 'florian.feldhaus@gmail.com'
+        ) {
+          // Admin/Super-Admin can view games
+          this.isPlayer = false;
         } else {
           this.router.navigate(['/admin']);
         }
@@ -343,17 +361,18 @@ export class Board implements OnInit, OnDestroy {
   getDisplayName(user: User | null): string {
     if (!user) return '';
 
+    // If we have a player state (either we are the player or an admin viewing the player)
+    const state = this.gameService.state;
+    if (state?.playerState?.displayName) {
+      return state.playerState.displayName;
+    }
+
     // If it's a real user (not anonymous) OR a guest who changed their name
     if (user.displayName && user.displayName !== 'Guest') {
       return user.displayName;
     }
 
-    // If it's a player, try to get the name from the game state (PlayerState.displayName)
     if (this.isPlayer) {
-      const state = this.gameService.state;
-      if (state?.playerState?.displayName) {
-        return state.playerState.displayName;
-      }
       return `${this.playerLabel} ${this.playerNumber || ''}`;
     }
 

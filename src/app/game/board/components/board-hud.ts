@@ -139,16 +139,17 @@ export class BoardHudComponent {
   getDisplayName(): string {
     if (!this.user) return '';
 
-    // If it's a real user (not anonymous) OR a guest who changed their name
+    // If we have a player state (either we are the player or an admin viewing the player)
+    if (this.gameState?.playerState?.displayName) {
+      return this.gameState.playerState.displayName;
+    }
+
+    // Fallback to user display name
     if (this.user.displayName && this.user.displayName !== 'Guest') {
       return this.user.displayName;
     }
 
-    // If it's a player, try to get the name from the game state (PlayerState.displayName)
     if (this.isPlayer) {
-      if (this.gameState?.playerState?.displayName) {
-        return this.gameState.playerState.displayName;
-      }
       return `${this.playerLabel} ${this.playerNumber || ''}`;
     }
 

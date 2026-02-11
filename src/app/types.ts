@@ -115,6 +115,7 @@ export interface Game {
   createdAt: { seconds: number; nanoseconds: number } | Date; // Firestore Timestamp or Date
   updatedAt?: { seconds: number; nanoseconds: number } | Date;
   deletedAt?: { seconds: number; nanoseconds: number } | Date | null;
+  uploadedAt?: { seconds: number; nanoseconds: number } | Date | null;
   playerSecrets?: Record<string, { password: string }>;
   roundDeadlines?: Record<number, { seconds: number; nanoseconds: number } | Date>;
   evaluations?: Record<string, GameEvaluation>;
