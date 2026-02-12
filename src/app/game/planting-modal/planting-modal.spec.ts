@@ -50,6 +50,6 @@ describe('PlantingModal', () => {
   it('should fallback to default for unknown crop', () => {
     const config = component.getConfig('Unknown' as any);
     expect(config.label).toBe('Unknown');
-    expect(config.image).toBe('placeholder.jpg');
+    expect(config.image).toBe('acker.webp');
   });
 });

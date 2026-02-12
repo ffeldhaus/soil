@@ -55,7 +55,7 @@ export class Parcel {
   };
 
   getConfig(crop: CropType) {
-    return this.cropConfig[crop] || { label: crop, image: 'placeholder.jpg' };
+    return this.cropConfig[crop] || { label: crop, image: 'acker.webp' };
   }
 
   get soilPercentage(): number {

@@ -36,6 +36,17 @@ app.use(
 );
 
 /**
+ * Explicitly serve robots.txt and sitemap.xml to avoid Angular router redirects.
+ */
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(join(browserDistFolder, 'robots.txt'));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(join(browserDistFolder, 'sitemap.xml'));
+});
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 let angularApp: AngularNodeAppEngine | undefined;

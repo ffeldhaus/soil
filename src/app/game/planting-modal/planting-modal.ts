@@ -98,7 +98,7 @@ export class PlantingModal {
   };
 
   getConfig(crop: CropType) {
-    return this.cropConfig[crop] || { label: crop, image: 'placeholder.jpg' };
+    return this.cropConfig[crop] || { label: crop, image: 'acker.webp' };
   }
 
   select(crop: CropType) {
