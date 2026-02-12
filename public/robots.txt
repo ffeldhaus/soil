@@ -1,6 +1,5 @@
 User-agent: *
 # Disallow administrative and private routes
-Disallow: /admin/
 Disallow: /game
 Disallow: /game-login
 
@@ -9,6 +8,5 @@ Disallow: /impressum
 
 # Allow public content
 Allow: /
-Allow: /manual
 
 Sitemap: https://soil.app/sitemap.xml
