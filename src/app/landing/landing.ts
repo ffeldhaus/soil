@@ -106,7 +106,7 @@ import { AuthService } from '../auth/auth.service';
                 <p>
                   Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
                   ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen
-                  Schülerinnen und Schüler über zehn Runden einen landwirtschaftlichen Betrieb auf.
+                  die Lernenden über zehn Runden einen landwirtschaftlichen Betrieb auf.
                 </p>
                 <p>
                   Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung

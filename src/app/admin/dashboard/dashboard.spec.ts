@@ -77,13 +77,18 @@ describe('Dashboard Component', () => {
       numAi: 1,
       playerLabel: 'Team',
       aiLevel: 'middle',
+      advancedPricingEnabled: false,
+      analyticsEnabled: true,
     };
     await component.createNewGame();
     expect(gameServiceMock.createGame).toHaveBeenCalledWith('Test Game', {
       numPlayers: 5,
       numRounds: 10,
       numAi: 1,
+      aiLevel: 'middle',
       playerLabel: 'Team',
+      advancedPricingEnabled: false,
+      analyticsEnabled: true,
     });
   });
 
@@ -143,7 +148,7 @@ describe('Dashboard Component', () => {
 
   it('should handle player conversion', async () => {
     await component.convertPlayer({ id: 'g1' } as any, { number: 1, isAi: false });
-    expect(gameServiceMock.updatePlayerType).toHaveBeenCalledWith('g1', 1, 'ai', 'middle');
+    expect(gameServiceMock.updatePlayerType).toHaveBeenCalledWith('g1', 1, 'ai', 'elementary');
   });
 
   it('should handle game selection', () => {

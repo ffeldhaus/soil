@@ -24,11 +24,11 @@ export class DashboardCreateGameComponent {
 
   newGameConfig = {
     name: '',
-    numPlayers: 1,
+    numPlayers: 4,
     numRounds: 20,
-    numAi: 0,
+    numAi: 3,
     playerLabel: 'Team',
-    aiLevel: 'middle' as 'elementary' | 'middle' | 'high',
+    aiLevel: 'elementary' as 'elementary' | 'middle' | 'high',
     advancedPricingEnabled: false,
     analyticsEnabled: true,
   };

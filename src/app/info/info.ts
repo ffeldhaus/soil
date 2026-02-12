@@ -74,7 +74,7 @@ import { RouterLink } from '@angular/router';
             <div class="space-y-6 text-gray-300 leading-relaxed">
               <p>
                 Die Simulation SOIL wurde so gestaltet, dass sie zentrale Aspekte der deutschen Landwirtschaft abbildet,
-                dabei jedoch die Komplexität auf ein für Schüler handhabbares Maß reduziert.
+                dabei jedoch die Komplexität auf ein für die Lernenden handhabbares Maß reduziert.
               </p>
 
               <div class="grid md:grid-cols-2 gap-8">
@@ -257,12 +257,12 @@ import { RouterLink } from '@angular/router';
               <div class="bg-gray-950/50 rounded-xl p-6 border border-white/5 space-y-6">
                 <section>
                   <h3 class="text-emerald-300 font-bold mb-2">1. Kernziel: Überwindung der „Wissens-Handlungs-Lücke“</h3>
-                  <p class="text-gray-300 leading-relaxed">
+                  <p>
                     Die zentrale Herausforderung dieser Forschungsarbeit ist die Diskrepanz zwischen dem theoretischen Wissen
-                    der Schüler über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige
+                    der Lernenden über Nachhaltigkeit und ihrem tatsächlichen Verhalten. Trotz jahrelanger „Bildung für nachhaltige
                     Entwicklung“ (BNE) zeigen Studien, dass viele Jugendliche nur über geringes Wissen verfügen und es nicht
                     schaffen, ökologische Werte in konkretes Handeln umzusetzen. Die Dissertation zielt darauf ab, eine
-                    Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Schülern ermöglicht, die
+                    Lernumgebung zu gestalten, die Nachhaltigkeit nicht nur „predigt“, sondern es den Lernenden ermöglicht, die
                     systemischen Konsequenzen ihrer Entscheidungen durch ein Simulationsspiel namens „SOIL“ zu erleben.
                   </p>
                 </section>
@@ -288,7 +288,7 @@ import { RouterLink } from '@angular/router';
                   <h3 class="text-emerald-300 font-bold mb-2">3. Gestaltungsprinzipien</h3>
                   <ul class="list-disc list-outside ml-5 text-gray-300 space-y-2">
                     <li>
-                      <strong class="text-white">Erfahrungsorientiertes Lernen:</strong> Die Schüler beginnen mit einer
+                      <strong class="text-white">Erfahrungsorientiertes Lernen:</strong> Die Lernenden beginnen mit einer
                       gewinnmaximierenden Einstellung. Wenn sie Ressourcen übermäßig ausbeuten, sinken Variablen wie die
                       „Bodenqualität“, was zu Ertragseinbußen führt. Diese „Scheitererfahrung“ erzwingt Reflexion.
                     </li>
@@ -311,7 +311,7 @@ import { RouterLink } from '@angular/router';
                     <li><strong>Ökologie für Ökonomie:</strong> Erkenntnis, dass ökologische Gesundheit die Voraussetzung für wirtschaftlichen Erfolg ist.</li>
                   </ol>
                   <p class="text-gray-300 leading-relaxed mt-2">
-                    <strong>Fazit:</strong> Die Simulation bewegte die Schüler erfolgreich in Richtung Typ 3, indem sie die Umwelt
+                    <strong>Fazit:</strong> Die Simulation bewegte die Lernenden erfolgreich in Richtung Typ 3, indem sie die Umwelt
                     als „Partner“ und nicht als Gegner sahen.
                   </p>
                 </section>

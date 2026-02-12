@@ -116,6 +116,11 @@ export class AuthService {
   async loginAsPlayer(gameId: string, pin: string) {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
+    if (isBrowser) {
+      window.localStorage.setItem('soil_last_game_id', gameId);
+      window.localStorage.setItem('soil_last_game_pin', pin);
+    }
+
     if (gameId.startsWith('local-')) {
       if (isBrowser) {
         window.localStorage.setItem('soil_active_local_game', gameId);

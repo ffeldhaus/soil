@@ -50,6 +50,9 @@ export class Dashboard implements OnInit, OnDestroy {
       'dashboard.super.title': 'Super-Admin-Zugriff',
       'dashboard.super.redirect': 'Weiterleitung zur Super-Admin-Konsole...',
       'dashboard.super.btnGo': 'Zur Konsole',
+      'dashboard.quickStart.title': 'Schnellstart',
+      'dashboard.quickStart.newDefault': 'Neues Spiel mit Standardeinstellungen',
+      'dashboard.quickStart.joinLast': 'Letztem Spiel beitreten',
       'dashboard.controls.title': 'Konfiguration',
       'dashboard.createGame.title': 'Neues Spiel erstellen',
       'dashboard.createGame.name': 'Spielname',
@@ -211,14 +214,33 @@ export class Dashboard implements OnInit, OnDestroy {
 
   newGameConfig = {
     name: '',
-    numPlayers: 1,
+    numPlayers: 4,
     numRounds: 20,
-    numAi: 0,
+    numAi: 3,
     playerLabel: 'Team',
-    aiLevel: 'middle',
+    aiLevel: 'elementary',
     advancedPricingEnabled: false,
     analyticsEnabled: true,
   };
+
+  lastGame = {
+    id: typeof window !== 'undefined' ? localStorage.getItem('soil_last_game_id') : null,
+    pin: typeof window !== 'undefined' ? localStorage.getItem('soil_last_game_pin') : null,
+  };
+
+  async joinLastGame() {
+    if (this.lastGame.id && this.lastGame.pin) {
+      await this.onJoinGame({ gameId: this.lastGame.id, pin: this.lastGame.pin });
+    }
+  }
+
+  async startDefaultGame() {
+    this.newGameConfig.name = this.getRandomName();
+    this.newGameConfig.numPlayers = 4;
+    this.newGameConfig.numAi = 3;
+    this.newGameConfig.aiLevel = 'elementary';
+    await this.createNewGame();
+  }
 
   onPlayersChange() {
     if (this.newGameConfig.numAi > this.newGameConfig.numPlayers) {
@@ -471,6 +493,7 @@ export class Dashboard implements OnInit, OnDestroy {
       numPlayers: this.newGameConfig.numPlayers,
       numRounds: this.newGameConfig.numRounds,
       numAi: this.newGameConfig.numAi,
+      aiLevel: this.newGameConfig.aiLevel,
       playerLabel: this.newGameConfig.playerLabel,
       advancedPricingEnabled: this.newGameConfig.advancedPricingEnabled,
       analyticsEnabled: this.newGameConfig.analyticsEnabled,

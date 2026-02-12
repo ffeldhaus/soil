@@ -46,6 +46,33 @@
 
           <!-- Active Dashboard -->
           @if (!isLoading && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin') {
+            <!-- Quick Start Box -->
+            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-6 portrait:rounded-none portrait:border-x-0">
+              <h2 class="text-2xl font-bold text-emerald-400">
+                {{ t('dashboard.quickStart.title') }}
+              </h2>
+              <div class="flex flex-wrap gap-4">
+                <button
+                  (click)="startDefaultGame()"
+                  [disabled]="isCreatingGame"
+                  class="flex-1 min-w-[250px] px-6 py-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-lg transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  <span class="text-2xl">🎮</span>
+                  <span>{{ t('dashboard.quickStart.newDefault') }}</span>
+                </button>
+
+                @if (lastGame.id) {
+                  <button
+                    (click)="joinLastGame()"
+                    class="flex-1 min-w-[250px] px-6 py-4 bg-blue-800 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3"
+                  >
+                    <span class="text-2xl">🔄</span>
+                    <span>{{ t('dashboard.quickStart.joinLast') }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+
             <!-- Create Game Box (includes Welcome & Feedback) -->
             <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
               <div class="flex justify-between items-start">
