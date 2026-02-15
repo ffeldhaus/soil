@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, HostListener, inject, type OnDestroy, typ
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
-import { combineLatest, Subscription, take } from 'rxjs';
+import { combineLatest, type Subscription, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
@@ -338,7 +338,6 @@ export class Board implements OnInit, OnDestroy {
     if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
     if (this.parcelsSub) this.parcelsSub.unsubscribe();
   }
-
 
   private updateTimer(game: Game) {
     const deadline = game.roundDeadlines?.[game.currentRoundNumber];
