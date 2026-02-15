@@ -64,12 +64,6 @@ export class DashboardCreateGameComponent {
   }
 
   onPlayersChange() {
-    // If we increased players, make the new ones AI by default
-    // We always keep 1 human (the creator)
-    if (this.newGameConfig.numAi < this.newGameConfig.numPlayers - 1) {
-      this.newGameConfig.numAi = this.newGameConfig.numPlayers - 1;
-    }
-
     if (this.newGameConfig.numAi > this.newGameConfig.numPlayers - 1) {
       this.newGameConfig.numAi = this.newGameConfig.numPlayers - 1;
     }

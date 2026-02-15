@@ -25,7 +25,7 @@ describe('Important Routes', () => {
   });
 
   it('should redirect /admin to login if not authenticated', () => {
-    // Note: In real environment this might depend on auth state. 
+    // Note: In real environment this might depend on auth state.
     // In e2e without mock it should redirect or show guest dashboard.
     cy.visit('/admin');
     cy.url().should('include', '/admin');
