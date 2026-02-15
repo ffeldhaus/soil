@@ -43,7 +43,7 @@
               "express"
             ],
             "define": {
-              "import.meta.env.APP_VERSION": "\"2.5.9\""
+              "import.meta.env.APP_VERSION": "\"2.5.10\""
             },
             "assets": [
               {
