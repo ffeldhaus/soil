@@ -507,6 +507,8 @@ export class Dashboard implements OnInit, OnDestroy {
       if (numHumanPlayers === 1) {
         // Auto-join the created game as first player
         await this.authService.loginAsPlayer(result.gameId, result.password!);
+        this.lastGame.id = result.gameId;
+        this.lastGame.pin = result.password!;
         this.router.navigate(['/game']);
       }
 
@@ -605,11 +607,25 @@ export class Dashboard implements OnInit, OnDestroy {
         throw new Error('Please type DELETE to confirm.');
       }
 
+      let deletedGameIds: string[] = [];
       if (this.gameToDelete) {
-        await this.gameService.deleteGames([this.gameToDelete.id], force);
+        deletedGameIds = [this.gameToDelete.id];
       } else if (this.isDeletingSelected) {
-        await this.gameService.deleteGames(Array.from(this.selectedGameIds), force);
+        deletedGameIds = Array.from(this.selectedGameIds);
       }
+
+      await this.gameService.deleteGames(deletedGameIds, force);
+
+      // If the last game was deleted, clear the last game reference
+      if (this.lastGame.id && deletedGameIds.includes(this.lastGame.id)) {
+        this.lastGame.id = null;
+        this.lastGame.pin = null;
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('soil_last_game_id');
+          localStorage.removeItem('soil_last_game_pin');
+        }
+      }
+
       await this.loadGames();
     } catch (e: unknown) {
       this.ngZone.run(() => {
