@@ -17,6 +17,49 @@ const app = express();
 app.use(compression());
 
 /**
+ * Explicitly serve robots.txt and sitemap.xml to avoid Angular router redirects.
+ * Served as strings for maximum reliability in App Hosting environment.
+ */
+app.get('/robots.txt', (_req, res) => {
+  res.type('text/plain');
+  res.send(`User-agent: *
+# Disallow administrative and private routes
+Disallow: /game
+Disallow: /game-login
+
+# Disallow Impressum to protect contact data from indexing
+Disallow: /impressum
+
+# Allow public content
+Allow: /
+
+Sitemap: https://soil.app/sitemap.xml`);
+});
+
+app.get('/sitemap.xml', (_req, res) => {
+  res.type('application/xml');
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://soil.app/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://soil.app/manual</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://soil.app/info</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://soil.app/admin</loc>
+    <priority>0.8</priority>
+  </url>
+</urlset>`);
+});
+
+/**
  * Security headers for Firebase Auth popups.
  */
 app.use((req, res, next) => {
@@ -34,17 +77,6 @@ app.use(
     redirect: false,
   }),
 );
-
-/**
- * Explicitly serve robots.txt and sitemap.xml to avoid Angular router redirects.
- */
-app.get('/robots.txt', (req, res) => {
-  res.sendFile(join(browserDistFolder, 'robots.txt'));
-});
-
-app.get('/sitemap.xml', (req, res) => {
-  res.sendFile(join(browserDistFolder, 'sitemap.xml'));
-});
 
 /**
  * Handle all other requests by rendering the Angular application.
