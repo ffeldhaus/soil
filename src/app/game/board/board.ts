@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, HostListener, inject, type OnDestroy, typ
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
-import { combineLatest, take } from 'rxjs';
+import { combineLatest, Subscription, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
@@ -136,6 +136,10 @@ export class Board implements OnInit, OnDestroy {
   showLabels = true;
   pendingNextRound = false;
 
+  private routeSub: Subscription | null = null;
+  private gameStatusSub: Subscription | null = null;
+  private parcelsSub: Subscription | null = null;
+
   login() {
     this.authService.loginWithGoogle();
   }
@@ -146,7 +150,9 @@ export class Board implements OnInit, OnDestroy {
 
   updateReadOnly() {
     // Logic to determine if board is read-only
-    this.isReadOnly = this.isSubmitted || this.viewingRound < this.maxRoundNumber;
+    const state = this.gameService.state;
+    const isFinished = state?.game?.status === 'finished';
+    this.isReadOnly = isFinished || this.isSubmitted || this.viewingRound < this.maxRoundNumber;
   }
 
   goToRound(round: number) {
@@ -220,97 +226,103 @@ export class Board implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest([this.route.queryParams, this.user$]).subscribe(async ([params, user]: [Params, User | null]) => {
-      if (!user) {
-        this.router.navigate(['/']);
-        return;
-      }
-      if (user) {
-        const idTokenResult = await user.getIdTokenResult();
-        const claims = idTokenResult.claims;
+    this.routeSub = combineLatest([this.route.queryParams, this.user$]).subscribe(
+      async ([params, user]: [Params, User | null]) => {
+        if (!user) {
+          this.router.navigate(['/']);
+          return;
+        }
+        if (user) {
+          const idTokenResult = await user.getIdTokenResult();
+          const claims = idTokenResult.claims;
 
-        // Extract Game ID
-        let activeGameId = params.gameId || (claims.gameId as string);
-        if (!activeGameId) {
-          if (user.uid.startsWith('player-')) {
-            const parts = user.uid.split('-');
-            if (parts.length >= 3) {
-              activeGameId = parts[1];
+          // Extract Game ID
+          let activeGameId = params.gameId || (claims.gameId as string);
+          if (!activeGameId) {
+            if (user.uid.startsWith('player-')) {
+              const parts = user.uid.split('-');
+              if (parts.length >= 3) {
+                activeGameId = parts[1];
+              }
+            } else if (claims.gameId) {
+              activeGameId = claims.gameId as string;
             }
-          } else if (claims.gameId) {
-            activeGameId = claims.gameId as string;
+          }
+
+          const viewOnly = params.viewOnly === 'true';
+          const targetUid = params.playerUid as string;
+
+          if (activeGameId) {
+            this.gameId = activeGameId;
+            const gameState = await this.gameService.loadGame(activeGameId, targetUid);
+            if (gameState) {
+              // Cleanup old subscriptions if this is a re-load on same component
+              if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
+              if (this.parcelsSub) this.parcelsSub.unsubscribe();
+
+              this.gameStatusSub = this.gameService.state$.subscribe((state) => {
+                if (state?.game) {
+                  this.maxRoundNumber = state.game.currentRoundNumber;
+                  this.totalRounds = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+                  // Only move viewingRound to max if it was previously at the old max
+                  const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
+
+                  this.playerLabel = state.game.settings?.playerLabel || 'Player';
+                  this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
+                  this.history = state.playerState?.history || [];
+
+                  if (wasAtMax || this.viewingRound === 0) {
+                    this.viewingRound = this.maxRoundNumber;
+                  }
+
+                  this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
+
+                  if (viewOnly) {
+                    this.isReadOnly = true;
+                    this.showReadOnlyBanner = true;
+                  } else {
+                    this.updateReadOnly();
+                  }
+
+                  this.updateParcelsForViewingRound(targetUid);
+
+                  // Timer Logic
+                  this.updateTimer(state.game);
+
+                  // Detect Game Finished
+                  if (state.game.status === 'finished' && !this.showGameEndModal) {
+                    this.calculateWinners(state.game);
+                    this.showGameEndModal = true;
+                  }
+                }
+              });
+
+              this.parcelsSub = this.gameService.getParcels().subscribe((parcels) => {
+                if (this.viewingRound === this.maxRoundNumber) {
+                  this.parcels = parcels;
+                  this.checkOrientation();
+                }
+              });
+            }
+          }
+
+          if (claims.role === 'player' || user.uid.startsWith('player-')) {
+            Promise.resolve().then(() => {
+              this.isPlayer = true;
+            });
+          } else if (
+            claims.role === 'superadmin' ||
+            claims.role === 'admin' ||
+            user.email === 'florian.feldhaus@gmail.com'
+          ) {
+            // Admin/Super-Admin can view games
+            this.isPlayer = false;
+          } else {
+            this.router.navigate(['/admin']);
           }
         }
-
-        const viewOnly = params.viewOnly === 'true';
-        const targetUid = params.playerUid as string;
-
-        if (activeGameId) {
-          this.gameId = activeGameId;
-          const gameState = await this.gameService.loadGame(activeGameId, targetUid);
-          if (gameState) {
-            this.gameService.state$.subscribe((state) => {
-              if (state?.game) {
-                this.maxRoundNumber = state.game.currentRoundNumber;
-                this.totalRounds = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
-                // Only move viewingRound to max if it was previously at the old max
-                const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
-
-                this.playerLabel = state.game.settings?.playerLabel || 'Player';
-                this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
-                this.history = state.playerState?.history || [];
-
-                if (wasAtMax || this.viewingRound === 0) {
-                  this.viewingRound = this.maxRoundNumber;
-                }
-
-                this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
-
-                if (viewOnly) {
-                  this.isReadOnly = true;
-                  this.showReadOnlyBanner = true;
-                } else {
-                  this.updateReadOnly();
-                }
-
-                this.updateParcelsForViewingRound(targetUid);
-
-                // Timer Logic
-                this.updateTimer(state.game);
-
-                // Detect Game Finished
-                if (state.game.status === 'finished' && !this.showGameEndModal) {
-                  this.calculateWinners(state.game);
-                  this.showGameEndModal = true;
-                }
-              }
-            });
-
-            this.gameService.getParcels().subscribe((parcels) => {
-              if (this.viewingRound === this.maxRoundNumber) {
-                this.parcels = parcels;
-                this.checkOrientation();
-              }
-            });
-          }
-        }
-
-        if (claims.role === 'player' || user.uid.startsWith('player-')) {
-          Promise.resolve().then(() => {
-            this.isPlayer = true;
-          });
-        } else if (
-          claims.role === 'superadmin' ||
-          claims.role === 'admin' ||
-          user.email === 'florian.feldhaus@gmail.com'
-        ) {
-          // Admin/Super-Admin can view games
-          this.isPlayer = false;
-        } else {
-          this.router.navigate(['/admin']);
-        }
-      }
-    });
+      },
+    );
 
     this.checkOrientation();
     this.timerInterval = setInterval(() => {
@@ -322,7 +334,11 @@ export class Board implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.timerInterval) clearInterval(this.timerInterval);
+    if (this.routeSub) this.routeSub.unsubscribe();
+    if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
+    if (this.parcelsSub) this.parcelsSub.unsubscribe();
   }
+
 
   private updateTimer(game: Game) {
     const deadline = game.roundDeadlines?.[game.currentRoundNumber];
