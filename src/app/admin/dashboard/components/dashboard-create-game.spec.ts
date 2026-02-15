@@ -30,10 +30,10 @@ describe('DashboardCreateGameComponent', () => {
 
   it('should handle players change correctly', () => {
     component.newGameConfig.numPlayers = 5;
-    component.newGameConfig.numAi = 0;
+    component.newGameConfig.numAi = 6;
     component.onPlayersChange();
 
-    // Should auto-assign AI to remaining slots (numPlayers - 1)
+    // Should clamp numAi to numPlayers - 1
     expect(component.newGameConfig.numAi).toBe(4);
   });
 
