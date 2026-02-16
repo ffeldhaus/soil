@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
 import { combineLatest, type Subscription, take } from 'rxjs';
-import { FeedbackModal } from '../../admin/components/feedback-modal/feedback-modal';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
@@ -30,7 +29,6 @@ import { BoardHudComponent } from './components/board-hud';
 
     Finance,
     BoardHudComponent,
-    FeedbackModal,
   ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
@@ -76,7 +74,6 @@ export class Board implements OnInit, OnDestroy {
   showMenu = false;
   showSettings = false;
   showFinance = false;
-  showFeedbackModal = false;
   newName = '';
 
   currentRoundSettings: RoundSettings = {
@@ -128,6 +125,19 @@ export class Board implements OnInit, OnDestroy {
   showGameEndModal = false;
   financialWinner: { name: string; capital: number } | null = null;
   soilWinner: { name: string; avgSoil: number } | null = null;
+
+  // Feedback Logic
+  feedback: {
+    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+    rating: number;
+    comment: string;
+  } = {
+    category: 'other',
+    rating: 5,
+    comment: '',
+  };
+  isSubmittingFeedback = false;
+  feedbackSubmitted = false;
 
   // Inline Name Editing
   isEditingName = false;
@@ -203,18 +213,16 @@ export class Board implements OnInit, OnDestroy {
     }
   }
 
-  onFeedbackSubmit(feedback: {
-    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
-    rating: number;
-    comment: string;
-  }) {
+  onFeedbackSubmit() {
+    this.isSubmittingFeedback = true;
     this.gameService
-      .submitFeedback(feedback)
+      .submitFeedback(this.feedback)
       .then(() => {
-        this.showFeedbackModal = false;
-        alert('Vielen Dank für dein Feedback!');
+        this.isSubmittingFeedback = false;
+        this.feedbackSubmitted = true;
       })
       .catch((error) => {
+        this.isSubmittingFeedback = false;
         console.error('Failed to submit feedback:', error);
         alert('Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.');
       });
