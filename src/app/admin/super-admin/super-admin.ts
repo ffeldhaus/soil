@@ -123,6 +123,7 @@ export class SuperAdminComponent implements OnInit {
   newQuotaValue = 0;
 
   evaluatingPlayers = new Set<string>(); // gameId + uid
+  expandedGames = new Set<string>(); // gameIds
 
   async ngOnInit() {
     this.authService.user$.subscribe((user) => {
@@ -230,6 +231,15 @@ export class SuperAdminComponent implements OnInit {
 
   getPlayers(game: Game): PlayerState[] {
     return Object.values(game.players || {}).filter((p) => !p.isAi);
+  }
+
+  toggleGameExpansion(gameId: string) {
+    if (this.expandedGames.has(gameId)) {
+      this.expandedGames.delete(gameId);
+    } else {
+      this.expandedGames.add(gameId);
+    }
+    this.cdr.detectChanges();
   }
 
   // Feedback Management
