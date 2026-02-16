@@ -1,12 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { Functions } from '@angular/fire/functions';
+import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { AuthService } from '../auth/auth.service';
 import { LocalGameService } from './engine/local-game.service';
 import { GameService } from './game.service';
-
-import { of } from 'rxjs';
 
 const mockCallables: Record<string, any> = {};
 
