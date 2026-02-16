@@ -261,7 +261,7 @@ export async function internalAnonymizeAndUploadForResearch(game: any, allRounds
     id: targetGameId,
     name: 'Anonymized Game',
     status: String(game.status || 'finished'),
-    currentRoundNumber: Number(game.currentRoundNumber || 0),
+    currentRoundNumber: Math.min(100, Number(game.currentRoundNumber || 0)),
     settings: {
       length: Math.min(100, Number(game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS)),
       difficulty: String(game.settings?.difficulty || 'normal'),
@@ -542,8 +542,8 @@ export const getSystemInsights = onCall(async (request) => {
   return snap.docs.map((d) => d.data());
 });
 
-export const uploadFinishedGame = onCall(async (request) => {
-  const { gameData } = request.data;
+export async function internalUploadFinishedGame(data: any) {
+  const { gameData } = data;
   if (!gameData || !gameData.game || !gameData.allRounds) {
     throw new HttpsError('invalid-argument', 'Missing gameData');
   }
@@ -560,7 +560,17 @@ export const uploadFinishedGame = onCall(async (request) => {
     throw new HttpsError('invalid-argument', 'Only local games can be uploaded via this endpoint');
   }
 
+  // Prevent "Large Payload" attacks by checking semantic limits early
+  const numPlayers = Object.keys(game.players || {}).length;
+  if (numPlayers === 0 || numPlayers > 10) {
+    throw new HttpsError('invalid-argument', 'Invalid player count (max 10)');
+  }
+
   const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+  if (roundLimit > 100) {
+    throw new HttpsError('invalid-argument', 'Invalid round limit (max 100)');
+  }
+
   if (game.currentRoundNumber < roundLimit && game.status !== 'finished') {
     throw new HttpsError('failed-precondition', 'Only finished games can be uploaded via this endpoint');
   }
@@ -572,6 +582,10 @@ export const uploadFinishedGame = onCall(async (request) => {
 
   // internalAnonymizeAndUploadForResearch now handles strict sanitization of fields
   return await internalAnonymizeAndUploadForResearch(game, allRounds);
+}
+
+export const uploadFinishedGame = onCall(async (request) => {
+  return await internalUploadFinishedGame(request.data);
 });
 
 export const getGameState = onCall(async (request) => {
