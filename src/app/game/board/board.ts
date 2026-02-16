@@ -13,6 +13,7 @@ import { Parcel } from '../parcel/parcel';
 import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
+import { FeedbackModal } from '../../admin/components/feedback-modal/feedback-modal';
 import { BoardHudComponent } from './components/board-hud';
 
 @Component({
@@ -29,6 +30,7 @@ import { BoardHudComponent } from './components/board-hud';
 
     Finance,
     BoardHudComponent,
+    FeedbackModal,
   ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
@@ -74,6 +76,7 @@ export class Board implements OnInit, OnDestroy {
   showMenu = false;
   showSettings = false;
   showFinance = false;
+  showFeedbackModal = false;
   newName = '';
 
   currentRoundSettings: RoundSettings = {
@@ -198,6 +201,23 @@ export class Board implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  onFeedbackSubmit(feedback: {
+    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+    rating: number;
+    comment: string;
+  }) {
+    this.gameService
+      .submitFeedback(feedback)
+      .then(() => {
+        this.showFeedbackModal = false;
+        alert('Vielen Dank für dein Feedback!');
+      })
+      .catch((error) => {
+        console.error('Failed to submit feedback:', error);
+        alert('Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.');
+      });
   }
 
   toggleLabels() {

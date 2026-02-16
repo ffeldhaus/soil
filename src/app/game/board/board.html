@@ -215,7 +215,7 @@
       <div class="shrink-0 pt-4 pb-1 flex flex-col items-center gap-1 z-30 w-full">
         <!-- Round Selector (History) -->
         @if (viewingRound >= 0) {
-        <div class="flex items-center justify-center w-full max-w-4xl px-4 gap-2">
+        <div class="flex items-center justify-center w-full max-w-4xl px-4 gap-2 min-h-[40px] sm:min-h-[48px]">
           <!-- Weather (Left) -->
           <div class="flex-1 flex justify-end portrait:hidden">
             @if (selectedRoundWeatherData.name !== 'Normal') {
@@ -353,18 +353,25 @@
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
           <button (click)="closeGameEndModal()"
-
             class="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition border border-gray-600 shadow-lg">
             Ergebnisse ansehen
           </button>
+          <button (click)="showFeedbackModal = true"
+            class="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-blue-900/40">
+            Feedback geben
+          </button>
           <button routerLink="/admin"
-
             class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-900/40">
             Zum Dashboard
           </button>
         </div>
       </div>
     </div>
+    }
+
+    @if (showFeedbackModal) {
+    <app-feedback-modal (closeModal)="showFeedbackModal = false" (feedbackSubmit)="onFeedbackSubmit($event)">
+    </app-feedback-modal>
     }
   </div>
   }
