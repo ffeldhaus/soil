@@ -206,20 +206,73 @@ export async function internalAnonymizeAndUploadForResearch(game: any, allRounds
     uidMap[oldUid] = newUid;
 
     anonymizedPlayers[newUid] = {
-      ...p,
       uid: newUid,
       displayName: 'Anonymized Player',
-      history: (p.history || []).map((h: any) => ({
-        ...h,
-        parcelsSnapshot: [],
+      isAi: !!p.isAi,
+      aiLevel: p.aiLevel,
+      playerNumber: Number(p.playerNumber),
+      capital: Number(p.capital || 0),
+      currentRound: Number(p.currentRound || 0),
+      avgSoil: Number(p.avgSoil || 0),
+      avgNutrition: Number(p.avgNutrition || 0),
+      history: (p.history || []).slice(0, 100).map((h: any) => ({
+        number: Number(h.number),
+        avgSoil: Number(h.avgSoil || 0),
+        avgNutrition: Number(h.avgNutrition || 0),
+        decision: h.decision
+          ? {
+              organic: !!h.decision.organic,
+              fertilizer: !!h.decision.fertilizer,
+              pesticide: !!h.decision.pesticide,
+              organisms: !!h.decision.organisms,
+              parcels: typeof h.decision.parcels === 'object' ? h.decision.parcels : {},
+            }
+          : undefined,
+        result: h.result
+          ? {
+              profit: Number(h.result.profit || 0),
+              capital: Number(h.result.capital || 0),
+              income: Number(h.result.income || 0),
+              subsidies: Number(h.result.subsidies || 0),
+              expenses: h.result.expenses
+                ? {
+                    seeds: Number(h.result.expenses.seeds || 0),
+                    labor: Number(h.result.expenses.labor || 0),
+                    running: Number(h.result.expenses.running || 0),
+                    investments: Number(h.result.expenses.investments || 0),
+                    total: Number(h.result.expenses.total || 0),
+                  }
+                : undefined,
+              events: h.result.events
+                ? {
+                    weather: String(h.result.events.weather || 'Normal'),
+                    vermin: Array.isArray(h.result.events.vermin) ? h.result.events.vermin.slice(0, 10) : [],
+                  }
+                : { weather: 'Normal', vermin: [] },
+              harvestSummary: typeof h.result.harvestSummary === 'object' ? h.result.harvestSummary : {},
+            }
+          : undefined,
+        parcelsSnapshot: [], // Explicitly empty for history
       })),
     };
   }
 
   const gameDoc: any = {
-    ...game,
     id: targetGameId,
     name: 'Anonymized Game',
+    status: String(game.status || 'finished'),
+    currentRoundNumber: Number(game.currentRoundNumber || 0),
+    settings: {
+      length: Math.min(100, Number(game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS)),
+      difficulty: String(game.settings?.difficulty || 'normal'),
+      playerLabel: String(game.settings?.playerLabel || 'Player').substring(0, 50),
+    },
+    config: {
+      numPlayers: Math.min(20, Number(game.config?.numPlayers || 1)),
+      numRounds: Math.min(100, Number(game.config?.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS)),
+      numAi: Math.min(20, Number(game.config?.numAi || 0)),
+      advancedPricingEnabled: !!game.config?.advancedPricingEnabled,
+    },
     players: anonymizedPlayers,
     updatedAt: Timestamp.now(),
     createdAt: game.createdAt
@@ -235,7 +288,7 @@ export async function internalAnonymizeAndUploadForResearch(game: any, allRounds
   await db.runTransaction(async (t) => {
     t.set(db.collection('research_games').doc(targetGameId), gameDoc);
 
-    const currentRound = game.currentRoundNumber || 0;
+    const currentRound = Math.min(100, game.currentRoundNumber || 0);
     for (let r = 0; r <= currentRound; r++) {
       const playerData: Record<string, any> = {};
       let roundEvents = { weather: 'Normal', vermin: [] };
@@ -244,9 +297,46 @@ export async function internalAnonymizeAndUploadForResearch(game: any, allRounds
         const newUid = uidMap[oldUid];
         const round = resolvedRounds[oldUid][r];
         if (round) {
-          playerData[newUid] = round;
+          playerData[newUid] = {
+            number: Number(round.number),
+            avgSoil: Number(round.avgSoil || 0),
+            avgNutrition: Number(round.avgNutrition || 0),
+            decision: round.decision
+              ? {
+                  organic: !!round.decision.organic,
+                  fertilizer: !!round.decision.fertilizer,
+                  pesticide: !!round.decision.pesticide,
+                  organisms: !!round.decision.organisms,
+                  parcels: typeof round.decision.parcels === 'object' ? round.decision.parcels : {},
+                }
+              : undefined,
+            result: round.result
+              ? {
+                  profit: Number(round.result.profit || 0),
+                  capital: Number(round.result.capital || 0),
+                  income: Number(round.result.income || 0),
+                  subsidies: Number(round.result.subsidies || 0),
+                  expenses: round.result.expenses,
+                  events: round.result.events,
+                  harvestSummary: round.result.harvestSummary,
+                }
+              : undefined,
+            parcelsSnapshot: Array.isArray(round.parcelsSnapshot)
+              ? round.parcelsSnapshot.slice(0, 100).map((p: any) => ({
+                  index: Number(p.index),
+                  crop: String(p.crop),
+                  soil: Number(p.soil || 0),
+                  nutrition: Number(p.nutrition || 0),
+                  yield: Number(p.yield || 0),
+                  harvestRating: p.harvestRating,
+                }))
+              : [],
+          };
           if (round.result?.events) {
-            roundEvents = round.result.events;
+            roundEvents = {
+              weather: String(round.result.events.weather || 'Normal'),
+              vermin: Array.isArray(round.result.events.vermin) ? round.result.events.vermin.slice(0, 10) : [],
+            };
           }
         }
       }
@@ -452,7 +542,7 @@ export const getSystemInsights = onCall(async (request) => {
   return snap.docs.map((d) => d.data());
 });
 
-export const uploadFinishedGame = onCall({ enforceAppCheck: true }, async (request) => {
+export const uploadFinishedGame = onCall(async (request) => {
   const { gameData } = request.data;
   if (!gameData || !gameData.game || !gameData.allRounds) {
     throw new HttpsError('invalid-argument', 'Missing gameData');
@@ -466,11 +556,21 @@ export const uploadFinishedGame = onCall({ enforceAppCheck: true }, async (reque
   }
 
   // 1. Basic validation
+  if (!game.id || !String(game.id).startsWith('local-')) {
+    throw new HttpsError('invalid-argument', 'Only local games can be uploaded via this endpoint');
+  }
+
   const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
   if (game.currentRoundNumber < roundLimit && game.status !== 'finished') {
     throw new HttpsError('failed-precondition', 'Only finished games can be uploaded via this endpoint');
   }
 
+  // 2. Extra safety for local uploads: verify allRounds structure
+  if (typeof allRounds !== 'object' || Object.keys(allRounds).length === 0) {
+    throw new HttpsError('invalid-argument', 'Invalid allRounds structure');
+  }
+
+  // internalAnonymizeAndUploadForResearch now handles strict sanitization of fields
   return await internalAnonymizeAndUploadForResearch(game, allRounds);
 });
 
