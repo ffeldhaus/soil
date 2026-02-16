@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
 import { combineLatest, type Subscription, take } from 'rxjs';
+import { FeedbackModal } from '../../admin/components/feedback-modal/feedback-modal';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
@@ -13,7 +14,6 @@ import { Parcel } from '../parcel/parcel';
 import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
-import { FeedbackModal } from '../../admin/components/feedback-modal/feedback-modal';
 import { BoardHudComponent } from './components/board-hud';
 
 @Component({
