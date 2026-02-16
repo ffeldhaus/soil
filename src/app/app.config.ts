@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import localeDe from '@angular/common/locales/de';
 import { type ApplicationConfig, isDevMode, LOCALE_ID } from '@angular/core';
 import { provideFirebaseApp } from '@angular/fire/app';
+import { CustomProvider, initializeAppCheck, provideAppCheck, ReCaptchaV3Provider } from '@angular/fire/app-check';
 import { provideAuth } from '@angular/fire/auth';
 import { provideFunctions } from '@angular/fire/functions';
 import { provideClientHydration, withEventReplay, withIncrementalHydration } from '@angular/platform-browser';
@@ -49,6 +50,25 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     provideFirebaseApp(() => app),
+    provideAppCheck(() => {
+      // Use Debug Provider on localhost
+      if (isLocalhost || (typeof window !== 'undefined' && (window as any).Cypress)) {
+        return initializeAppCheck(app, {
+          provider: new CustomProvider({
+            getToken: () =>
+              Promise.resolve({
+                token: 'debug-token',
+                expireTimeMillis: Date.now() + 1000 * 60 * 60,
+              }),
+          }),
+          isTokenAutoRefreshEnabled: true,
+        });
+      }
+      return initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6Lce_pIqAAAAAN7fS0S0S0S0S0S0S0S0S0S0S0S0'), // TODO: Replace with real site key
+        isTokenAutoRefreshEnabled: true,
+      });
+    }),
     provideAuth(() => {
       const auth = getAuth(app);
       if (isDevMode() || isLocalhost) {

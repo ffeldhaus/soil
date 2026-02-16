@@ -119,10 +119,6 @@ export class GameService {
       'sendPlayerInvite',
     );
   }
-  private get uploadFinishedGameFn() {
-    if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ gameData: any }, { success: boolean }>(this.functions, 'uploadFinishedGame');
-  }
   private get evaluateGameFn() {
     if (!this.functions || typeof window === 'undefined') return null;
     return httpsCallable<{ gameId: string; targetUid: string }, GameEvaluation>(this.functions, 'evaluateGame');
@@ -434,13 +430,6 @@ export class GameService {
           lastRound: localState.lastRound,
         });
 
-        // Trigger upload if finished
-        if (localState.game.status === 'finished') {
-          this.uploadFinishedGame(gameId).catch((err) =>
-            console.error('Background upload of finished game failed:', err),
-          );
-        }
-
         return localState.lastRound;
       }
       return { status: 'submitted' };
@@ -695,34 +684,6 @@ export class GameService {
     } catch (error: unknown) {
       if (window.console) console.error('Failed to send player invite', error);
       throw error;
-    }
-  }
-
-  async uploadFinishedGame(gameId: string): Promise<void> {
-    if (!gameId.startsWith('local-')) return;
-
-    const localState = await this.localGame.loadGame(gameId);
-    if (!localState) return;
-
-    const isFinished =
-      localState.game.status === 'finished' ||
-      localState.game.currentRoundNumber >= (localState.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS);
-
-    if (!isFinished) return;
-
-    try {
-      const fn = this.uploadFinishedGameFn;
-      if (!fn) throw new Error('Functions not available');
-      const _result = await fn({
-        gameData: {
-          game: localState.game,
-          allRounds: localState.allRounds,
-        },
-      });
-      if (window.console) {
-      }
-    } catch (error) {
-      if (window.console) console.error('Failed to upload finished local game:', error);
     }
   }
 

@@ -6,6 +6,8 @@ import { AuthService } from '../auth/auth.service';
 import { LocalGameService } from './engine/local-game.service';
 import { GameService } from './game.service';
 
+import { of } from 'rxjs';
+
 const mockCallables: Record<string, any> = {};
 
 // Mock @angular/fire/functions
@@ -101,7 +103,7 @@ describe('GameService', () => {
       providers: [
         GameService,
         { provide: Functions, useValue: {} },
-        { provide: AuthService, useValue: { isAnonymous: false } },
+        { provide: AuthService, useValue: { isAnonymous: false, user$: of(null) } },
       ],
     });
     service = TestBed.inject(GameService);

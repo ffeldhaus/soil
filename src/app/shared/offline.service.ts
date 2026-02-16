@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { LocalGameService } from '../game/engine/local-game.service';
+import { SyncService } from '../game/sync.service';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +7,7 @@ import { LocalGameService } from '../game/engine/local-game.service';
 export class OfflineService {
   isOnline = signal(typeof navigator !== 'undefined' ? navigator.onLine : true);
   isSyncing = signal(false);
-  private localGame = inject(LocalGameService);
+  private syncService = inject(SyncService);
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -37,7 +37,7 @@ export class OfflineService {
 
   private handleOnline() {
     // When coming back online, we trigger a check for local games that need syncing
-    this.localGame.syncLocalGames().catch((err) => {
+    this.syncService.syncLocalGames().catch((err: unknown) => {
       if (window.console) console.error('Failed to sync local games on reconnect:', err);
     });
   }

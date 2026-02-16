@@ -167,6 +167,103 @@ async function incrementGameAnalysisCounter() {
   });
 }
 
+/**
+ * Anonymizes and uploads a finished game to the research_games collection.
+ * Works for both local games (with allRounds provided) and cloud games (rounds fetched from DB).
+ */
+async function internalAnonymizeAndUploadForResearch(game: any, allRounds?: Record<string, any[]>) {
+  const oldGameId = game.id;
+
+  // 1. Check if already uploaded
+  const existingSnap = await db.collection('research_games').where('migratedFrom', '==', oldGameId).limit(1).get();
+  if (!existingSnap.empty) {
+    return { success: true, gameId: existingSnap.docs[0].id, status: 'already_uploaded' };
+  }
+
+  const targetGameId = db.collection('research_games').doc().id;
+
+  // 2. Fetch rounds if not provided (for cloud games)
+  const resolvedRounds: Record<string, any[]> = allRounds || {};
+  if (!allRounds) {
+    const roundsSnap = await db.collection('games').doc(oldGameId).collection('rounds').get();
+    for (const doc of roundsSnap.docs) {
+      const data = doc.data();
+      const roundNum = data.number;
+      for (const uid in data.playerData) {
+        if (!resolvedRounds[uid]) resolvedRounds[uid] = [];
+        resolvedRounds[uid][roundNum] = data.playerData[uid];
+      }
+    }
+  }
+
+  // 3. Prepare anonymized game document
+  const anonymizedPlayers: Record<string, any> = {};
+  const uidMap: Record<string, string> = {};
+
+  for (const oldUid in game.players) {
+    const p = game.players[oldUid];
+    const newUid = `player-${targetGameId}-${p.playerNumber || oldUid.split('-').pop()}`;
+    uidMap[oldUid] = newUid;
+
+    anonymizedPlayers[newUid] = {
+      ...p,
+      uid: newUid,
+      displayName: 'Anonymized Player',
+      history: (p.history || []).map((h: any) => ({
+        ...h,
+        parcelsSnapshot: [],
+      })),
+    };
+  }
+
+  const gameDoc: any = {
+    ...game,
+    id: targetGameId,
+    name: 'Anonymized Game',
+    players: anonymizedPlayers,
+    updatedAt: Timestamp.now(),
+    createdAt: game.createdAt
+      ? typeof game.createdAt === 'string'
+        ? Timestamp.fromDate(new Date(game.createdAt))
+        : game.createdAt
+      : Timestamp.now(),
+    migratedFrom: oldGameId,
+    isResearchData: true,
+  };
+
+  // 4. Write in transaction
+  await db.runTransaction(async (t) => {
+    t.set(db.collection('research_games').doc(targetGameId), gameDoc);
+
+    const currentRound = game.currentRoundNumber || 0;
+    for (let r = 0; r <= currentRound; r++) {
+      const playerData: Record<string, any> = {};
+      let roundEvents = { weather: 'Normal', vermin: [] };
+
+      for (const oldUid in resolvedRounds) {
+        const newUid = uidMap[oldUid];
+        const round = resolvedRounds[oldUid][r];
+        if (round) {
+          playerData[newUid] = round;
+          if (round.result?.events) {
+            roundEvents = round.result.events;
+          }
+        }
+      }
+
+      t.set(db.collection('research_games').doc(targetGameId).collection('rounds').doc(`round_${r}`), {
+        number: r,
+        playerData,
+        events: roundEvents,
+        createdAt: Timestamp.now(),
+      });
+    }
+  });
+
+  await incrementGameAnalysisCounter();
+  return { success: true, gameId: targetGameId, status: 'uploaded' };
+}
+
 export const analyzeSystemBalance = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
@@ -368,89 +465,13 @@ export const uploadFinishedGame = onCall({ enforceAppCheck: true }, async (reque
     return { success: true, status: 'opted_out' };
   }
 
-  const oldGameId = game.id;
-
   // 1. Basic validation
   const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
   if (game.currentRoundNumber < roundLimit && game.status !== 'finished') {
     throw new HttpsError('failed-precondition', 'Only finished games can be uploaded via this endpoint');
   }
 
-  // 2. Check if already uploaded
-  const existingSnap = await db.collection('research_games').where('migratedFrom', '==', oldGameId).limit(1).get();
-
-  if (!existingSnap.empty) {
-    return { success: true, gameId: existingSnap.docs[0].id, status: 'already_uploaded' };
-  }
-
-  const targetGameId = db.collection('research_games').doc().id;
-
-  // 3. Prepare anonymized game document
-  // We remove any PII (displayName, game name)
-  const anonymizedPlayers: Record<string, any> = {};
-  const uidMap: Record<string, string> = {};
-
-  for (const oldUid in game.players) {
-    const p = game.players[oldUid];
-    const newUid = `player-${targetGameId}-${p.playerNumber || oldUid.split('-').pop()}`;
-    uidMap[oldUid] = newUid;
-
-    anonymizedPlayers[newUid] = {
-      ...p,
-      uid: newUid,
-      displayName: 'Anonymized Player', // Clear display name
-      history: p.history.map((h: any) => ({
-        ...h,
-        parcelsSnapshot: [], // Lightweight history
-      })),
-    };
-  }
-
-  const gameDoc: any = {
-    ...game,
-    id: targetGameId,
-    name: 'Anonymized Game', // Clear game name
-    players: anonymizedPlayers,
-    updatedAt: Timestamp.now(),
-    createdAt: game.createdAt ? Timestamp.fromDate(new Date(game.createdAt)) : Timestamp.now(),
-    migratedFrom: oldGameId,
-    isResearchData: true,
-  };
-
-  // 4. Write in transaction
-  await db.runTransaction(async (t) => {
-    t.set(db.collection('research_games').doc(targetGameId), gameDoc);
-
-    // Write all rounds
-    const currentRound = game.currentRoundNumber || 0;
-    for (let r = 0; r <= currentRound; r++) {
-      const playerData: Record<string, any> = {};
-      let roundEvents = { weather: 'Normal', vermin: [] };
-
-      for (const oldUid in allRounds) {
-        const newUid = uidMap[oldUid];
-        const round = allRounds[oldUid][r];
-        if (round) {
-          playerData[newUid] = round;
-          if (round.result?.events) {
-            roundEvents = round.result.events;
-          }
-        }
-      }
-
-      t.set(db.collection('research_games').doc(targetGameId).collection('rounds').doc(`round_${r}`), {
-        number: r,
-        playerData,
-        events: roundEvents,
-        createdAt: Timestamp.now(),
-      });
-    }
-  });
-
-  // 5. Trigger Analysis Counter
-  await incrementGameAnalysisCounter();
-
-  return { success: true, gameId: targetGameId, status: 'uploaded' };
+  return await internalAnonymizeAndUploadForResearch(game, allRounds);
 });
 
 export const getGameState = onCall(async (request) => {
@@ -667,7 +688,14 @@ export const submitDecision = onCall(
       });
 
       if (gameWasFinished) {
-        await incrementGameAnalysisCounter();
+        // Automatically anonymize and upload finished cloud games for research
+        const gameSnap = await gameRef.get();
+        const gameData = gameSnap.data();
+        if (gameData && gameData.config?.analyticsEnabled !== false) {
+          internalAnonymizeAndUploadForResearch(gameData).catch((err) =>
+            console.error('Failed to auto-upload cloud game for research:', err),
+          );
+        }
       }
 
       return result;
@@ -918,7 +946,13 @@ export const calculateNextRound = onCall(async (request) => {
     });
 
     if (gameWasFinished) {
-      await incrementGameAnalysisCounter();
+      const gameSnap = await db.collection('games').doc(gameId).get();
+      const gameData = gameSnap.data();
+      if (gameData && gameData.config?.analyticsEnabled !== false) {
+        internalAnonymizeAndUploadForResearch(gameData).catch((err) =>
+          console.error('Failed to auto-upload cloud game for research (calculateNextRound):', err),
+        );
+      }
     }
 
     return result;
@@ -1958,7 +1992,13 @@ export const processDeadlines = onSchedule({ schedule: 'every 1 minutes', region
       });
 
       if (gameWasFinished) {
-        await incrementGameAnalysisCounter();
+        const gameSnap = await gameDoc.ref.get();
+        const gameData = gameSnap.data();
+        if (gameData && gameData.config?.analyticsEnabled !== false) {
+          internalAnonymizeAndUploadForResearch(gameData).catch((err) =>
+            console.error('Failed to auto-upload cloud game for research (processDeadlines):', err),
+          );
+        }
       }
     }
   }
