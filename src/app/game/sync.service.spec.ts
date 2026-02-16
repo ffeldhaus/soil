@@ -21,25 +21,36 @@ describe('SyncService', () => {
   let authService: any;
   let functionsInstance: any;
   let userSubject: BehaviorSubject<any>;
+  let localStateSubject: BehaviorSubject<any>;
   let mockMigrateFn: any;
+  let mockUploadFn: any;
 
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     mockMigrateFn = vi.fn(() => Promise.resolve({ data: { success: true } }));
-    vi.mocked(httpsCallable).mockReturnValue(mockMigrateFn as any);
+    mockUploadFn = vi.fn(() => Promise.resolve({ data: { success: true } }));
+
+    vi.mocked(httpsCallable).mockImplementation((_functions: any, name: string) => {
+      if (name === 'migrateLocalGame') return mockMigrateFn;
+      if (name === 'uploadFinishedGame') return mockUploadFn;
+      return vi.fn();
+    });
 
     userSubject = new BehaviorSubject(null);
     authService = {
       user$: userSubject.asObservable(),
       isAnonymous: false,
+      get currentUser() { return userSubject.value; }
     };
+    localStateSubject = new BehaviorSubject(null);
     localGameService = {
       getLocalGames: vi.fn().mockResolvedValue([]),
       loadGame: vi.fn(),
       deleteGame: vi.fn().mockResolvedValue(undefined),
-      state$: new BehaviorSubject(null).asObservable(),
+      state$: localStateSubject.asObservable(),
     };
     functionsInstance = {};
 
@@ -57,10 +68,11 @@ describe('SyncService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'migrateLocalGame');
+    expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'uploadFinishedGame');
   });
 
   it('should sync local games when a non-anonymous user logs in', async () => {
-    const mockGame = { id: 'local-123', name: 'Test Game' };
+    const mockGame = { id: 'local-123', name: 'Test Game', status: 'in_progress' };
     const mockFullState = { game: mockGame, allRounds: {} };
     localGameService.getLocalGames.mockResolvedValue([mockGame]);
     localGameService.loadGame.mockResolvedValue(mockFullState);
@@ -77,17 +89,53 @@ describe('SyncService', () => {
     expect(localGameService.deleteGame).toHaveBeenCalledWith('local-123', true);
   });
 
-  it('should not sync if user is anonymous', async () => {
+  it('should upload finished local game for research even if anonymous', async () => {
+    const mockGame = { id: 'local-123', name: 'Test Game', status: 'finished' };
+    const mockFullState = { game: mockGame, allRounds: {} };
+    localGameService.loadGame.mockResolvedValue(mockFullState);
+
     authService.isAnonymous = true;
     userSubject.next({ uid: 'guest-123', isAnonymous: true });
 
+    // Trigger local state change (game finished)
+    localStateSubject.next(mockFullState);
+
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    expect(localGameService.getLocalGames).not.toHaveBeenCalled();
+    expect(mockUploadFn).toHaveBeenCalledWith({ gameData: mockFullState });
+    expect(mockMigrateFn).not.toHaveBeenCalled();
+  });
+
+  it('should upload for research before migrating when user is logged in and game is finished', async () => {
+    const mockGame = { id: 'local-123', name: 'Test Game', status: 'finished' };
+    const mockFullState = { game: mockGame, allRounds: {} };
+    localGameService.getLocalGames.mockResolvedValue([mockGame]);
+    localGameService.loadGame.mockResolvedValue(mockFullState);
+
+    userSubject.next({ uid: 'user-123', isAnonymous: false });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(mockUploadFn).toHaveBeenCalled();
+    expect(mockMigrateFn).toHaveBeenCalled();
+    expect(localGameService.deleteGame).toHaveBeenCalled();
+  });
+
+  it('should not upload for research if game is not finished', async () => {
+    const mockGame = { id: 'local-123', name: 'Test Game', status: 'in_progress' };
+    const mockFullState = { game: mockGame, allRounds: {} };
+    
+    authService.isAnonymous = true;
+    userSubject.next({ uid: 'guest-123', isAnonymous: true });
+    localStateSubject.next(mockFullState);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(mockUploadFn).not.toHaveBeenCalled();
   });
 
   it('should not delete local game if migration fails', async () => {
-    const mockGame = { id: 'local-123', name: 'Test Game' };
+    const mockGame = { id: 'local-123', name: 'Test Game', status: 'in_progress' };
     localGameService.getLocalGames.mockResolvedValue([mockGame]);
     localGameService.loadGame.mockResolvedValue({ game: mockGame });
 

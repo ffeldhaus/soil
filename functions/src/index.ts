@@ -18,7 +18,7 @@ setGlobalOptions({
 });
 
 admin.initializeApp();
-const db = admin.firestore();
+export const db = admin.firestore();
 db.settings({ ignoreUndefinedProperties: true });
 
 // Initialize Vertex AI with the new @google/genai SDK
@@ -171,7 +171,7 @@ async function incrementGameAnalysisCounter() {
  * Anonymizes and uploads a finished game to the research_games collection.
  * Works for both local games (with allRounds provided) and cloud games (rounds fetched from DB).
  */
-async function internalAnonymizeAndUploadForResearch(game: any, allRounds?: Record<string, any[]>) {
+export async function internalAnonymizeAndUploadForResearch(game: any, allRounds?: Record<string, any[]>) {
   const oldGameId = game.id;
 
   // 1. Check if already uploaded
