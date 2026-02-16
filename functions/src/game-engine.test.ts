@@ -87,9 +87,9 @@ describe('GameEngine', () => {
 
     // Starting soil 100. Soil effect: (100/100)^1.4 = 1.0.
     // Starting nutrition 100. Nutr effect: (100/100)^1.1 = 1.0.
-    // Wheat base yield 110. Organic 0.4.
-    // Yield = 110 * 1.0 * 1.0 * 0.4 = 44.
-    expect(round.parcelsSnapshot[8].yield).to.equal(44);
+    // Wheat base yield 85. Organic 0.4.
+    // Yield = 85 * 1.0 * 1.0 * 0.4 = 34.
+    expect(round.parcelsSnapshot[8].yield).to.equal(34);
     expect(round.result?.bioSiegel).to.be.true;
   });
 
@@ -115,11 +115,11 @@ describe('GameEngine', () => {
 
     // Test Drought
     const roundDrought = GameEngine.calculateRound(2, prevRound, decision, { weather: 'Drought', vermin: [] }, 100000);
-    // Wheat base yield is 110. Drought base factor is 0.75 (Penalty 0.25).
+    // Wheat base yield is 85. Drought base factor is 0.75 (Penalty 0.25).
     // Wheat weather sensitivity to drought: Mäßig (multiplier 0.6)
     // Yield Effect: 1.0 - 0.25 * 0.6 = 0.85
-    // Yield = 110 * 1.0 * 1.0 * 0.85 = 93.5 -> 94
-    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(94, 2);
+    // Yield = 85 * 1.0 * 1.0 * 0.85 = 72.25 -> 72
+    expect(roundDrought.parcelsSnapshot[0].yield).to.be.closeTo(72, 2);
     // Drought soil impact: -0.8
     // Fallow->Wheat (+0.5), Wheat (-0.2), Drought (-0.8). Net -0.5.
     // 100 - 0.5 = 99.5 -> 100
@@ -170,8 +170,8 @@ describe('GameEngine', () => {
       1000,
     );
     // Pesticide should mitigate pests (multiplier 0.95).
-    // Yield = 450 * 0.95 = 427.5 -> 428
-    expect(roundPesticide.parcelsSnapshot[0].yield).to.be.greaterThan(400);
+    // Yield = 400 * 0.95 = 380
+    expect(roundPesticide.parcelsSnapshot[0].yield).to.be.greaterThan(370);
   });
 
   it('should calculate finances correctly', () => {
@@ -203,9 +203,9 @@ describe('GameEngine', () => {
     // Total Efficient Hours: 400 * 0.7 = 280
     // Labor Cost: 12000 (personnel) + 280 * 25 (hourly) = 19000
     expect(round.result?.expenses.labor).to.equal(19000);
-    // Wheat base yield is 110. Income ~ 110 * 40 * 30 = 132000
-    expect(round.result?.income).to.be.greaterThan(130000);
-    expect(round.result?.capital).to.be.greaterThan(200000);
+    // Wheat base yield is 85. Income ~ 85 * 40 * 21 = 71400
+    expect(round.result?.income).to.be.closeTo(71400, 1000);
+    expect(round.result?.capital).to.be.greaterThan(150000);
   });
 
   it('should lose Bio Siegel and benefits if synthetic inputs are used', () => {
@@ -235,9 +235,9 @@ describe('GameEngine', () => {
     expect(round.result?.bioSiegel).to.be.false;
     // 40 parcels * 220 (BASE) = 8800
     expect(round.result?.subsidies).to.equal(8800);
-    // Wheat yield: 110 * 0.4 = 44 per parcel. Total: 40 * 44 = 1760.
-    // Value: 1760 * 30 = 52800
-    expect(round.result?.income).to.be.closeTo(52800, 1000);
+    // Wheat yield: 85 * 0.4 = 34 per parcel. Total: 40 * 34 = 1360.
+    // Value: 1360 * 21 = 28560
+    expect(round.result?.income).to.be.closeTo(28560, 1000);
   });
 
   it('should apply Green Strip subsidies for up to 5 fallow or grass fields', () => {

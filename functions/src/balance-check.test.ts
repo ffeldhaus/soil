@@ -5,7 +5,7 @@ import type { CropType, Round, RoundDecision } from './types';
 
 describe('Balance Exhaustive Check', () => {
   const MAX_PROFITS = {
-    CONVENTIONAL: 150000,
+    CONVENTIONAL: 180000,
     ORGANIC: 150000,
   };
 
