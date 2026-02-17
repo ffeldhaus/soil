@@ -1,4 +1,5 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import type { Round } from '../../types';
 import { RoundResultModal } from './round-result-modal';
@@ -23,7 +24,7 @@ describe('RoundResultModal', () => {
       bioSiegel: true,
       events: {
         weather: 'Normal',
-        vermin: 'None',
+        vermin: [],
       },
       harvestSummary: {} as any,
       expenses: {
@@ -42,6 +43,7 @@ describe('RoundResultModal', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RoundResultModal],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RoundResultModal);

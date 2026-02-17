@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import type { CropType, GameConfig } from '../../types';
+import type { CropType, GameConfig, Round } from '../../types';
+import { GameAdvisorComponent } from '../advisor/advisor';
 
 export interface RoundSettings {
   machines: number;
@@ -15,12 +16,15 @@ export interface RoundSettings {
 @Component({
   selector: 'app-round-settings-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, GameAdvisorComponent],
   templateUrl: './round-settings-modal.html',
 })
 export class RoundSettingsModal {
   @Input() config?: GameConfig;
   @Input() plantedCrops: CropType[] = [];
+  @Input() currentRound?: Round;
+  @Input() previousRound?: Round;
+  @Input() advisorEnabled = true;
   @Input() settings: RoundSettings = {
     machines: 0,
     organic: false,

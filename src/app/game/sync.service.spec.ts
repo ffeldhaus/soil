@@ -43,7 +43,9 @@ describe('SyncService', () => {
     authService = {
       user$: userSubject.asObservable(),
       isAnonymous: false,
-      get currentUser() { return userSubject.value; }
+      get currentUser() {
+        return userSubject.value;
+      },
     };
     localStateSubject = new BehaviorSubject(null);
     localGameService = {
@@ -124,7 +126,7 @@ describe('SyncService', () => {
   it('should not upload for research if game is not finished', async () => {
     const mockGame = { id: 'local-123', name: 'Test Game', status: 'in_progress' };
     const mockFullState = { game: mockGame, allRounds: {} };
-    
+
     authService.isAnonymous = true;
     userSubject.next({ uid: 'guest-123', isAnonymous: true });
     localStateSubject.next(mockFullState);

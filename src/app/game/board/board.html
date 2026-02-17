@@ -45,6 +45,20 @@
               }
             </div>
             <div class="h-px bg-gray-800 mx-2 my-2"></div>
+            
+            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Einstellungen</label>
+            <div class="px-2 py-3 flex items-center justify-between">
+              <span class="text-sm text-gray-300">Geführte Tour</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" [checked]="!tourService.isTourDisabled()" (change)="tourService.setTourDisabled(!$any($event.target).checked)" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+            <button (click)="tourService.resetTour(); tourService.startTour(); toggleMobileMenu()" class="w-full text-left px-4 py-2 text-xs text-emerald-500 hover:text-emerald-400 transition">
+              Tour jetzt starten
+            </button>
+            
+            <div class="h-px bg-gray-800 mx-2 my-2"></div>
             <label
               class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Einblendungen</label>
             <div class="grid grid-cols-1 gap-2">
@@ -195,7 +209,9 @@
 
       @if (showRoundSettingsModal) {
       <app-round-settings-modal [settings]="currentRoundSettings" [config]="(gameState$ | async)?.game?.config"
-        [plantedCrops]="getPlantedCrops()" (save)="onRoundSettingsSaved($event)"
+        [plantedCrops]="getPlantedCrops()" [currentRound]="history[history.length - 1]" [previousRound]="getPreviousRound(history.length - 1)" 
+        [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false"
+        (save)="onRoundSettingsSaved($event)"
         (settingsCancelled)="cancelRoundSettings()">
       </app-round-settings-modal>
       }
@@ -207,7 +223,9 @@
       }
 
       @if (showRoundResultModal && roundResultRound) {
-      <app-round-result-modal [round]="roundResultRound!" (resultClosed)="closeRoundResultModal()">
+      <app-round-result-modal [round]="roundResultRound!" [previousRound]="getPreviousRound(roundResultRound!.number)" 
+        [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false"
+        (resultClosed)="closeRoundResultModal()">
       </app-round-result-modal>
       }
 
@@ -225,7 +243,7 @@
             }
           </div>
 
-          <div data-testid="round-indicator"
+          <div data-testid="round-indicator" data-tour="round-selector"
             class="shrink-0 flex items-center gap-1 bg-gray-900/60 backdrop-blur rounded-full px-4 py-1 border border-gray-700">
             <button (click)="goToRound(viewingRound - 1)" [disabled]="viewingRound === 0"
               class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
@@ -251,7 +269,7 @@
           </div>
 
           <!-- Pests (Right) -->
-          <div class="flex-1 flex flex-wrap gap-1 justify-start portrait:hidden">
+          <div class="flex-1 flex flex-wrap gap-1 justify-start portrait:hidden" data-tour="weather-pests">
             @for (pest of selectedRoundPestsData; track $index) {
             <span class="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-950 px-3 py-1 rounded border border-red-500 shadow-sm whitespace-nowrap" [title]="pest.name">
               {{ pest.name }}
@@ -264,7 +282,7 @@
         <!-- NEW Timer Component -->
         @if (countdownText && viewingRound === maxRoundNumber && !isSubmitted) {
         <div
-          class="flex items-center gap-2 bg-red-900/60 backdrop-blur rounded-full px-4 py-1 border border-red-500/50 mt-1 animate-pulse shadow-lg shadow-red-900/20">
+          class="flex items-center gap-2 bg-red-900/60 backdrop-blur rounded-full px-4 py-1 border border-red-500/50 mt-1 animate-pulse shadow-lg shadow-red-900/20" data-tour="timer">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -277,7 +295,7 @@
 
       <!-- Grid or Finance (Flex Grow) -->
       @if (!showFinance) {
-        <div class="flex-1 w-full min-h-0 pt-3 pb-10 portrait:pb-4 px-4 flex items-center justify-center board-grid-wrapper">
+        <div class="flex-1 w-full min-h-0 pt-3 pb-10 portrait:pb-4 px-4 flex items-center justify-center board-grid-wrapper" data-tour="game-grid">
           <div class="game-grid grid gap-1 touch-none sm:mt-0" [style.--cols]="cols" [style.--rows]="rows"
             role="grid" aria-label="Game board"
             (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"

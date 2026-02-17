@@ -19,6 +19,7 @@ export class DashboardCreateGameComponent {
     aiLevel: 'elementary' | 'middle' | 'high';
     advancedPricingEnabled: boolean;
     analyticsEnabled: boolean;
+    advisorEnabled: boolean;
   }>();
   @Output() playersChange = new EventEmitter<void>();
 
@@ -31,6 +32,7 @@ export class DashboardCreateGameComponent {
     aiLevel: 'elementary' as 'elementary' | 'middle' | 'high',
     advancedPricingEnabled: false,
     analyticsEnabled: true,
+    advisorEnabled: true,
   };
 
   t(key: string): string {
@@ -47,6 +49,7 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.advancedPricing': 'Fortgeschrittener Markt (Preisbildung durch Angebot & Nachfrage)',
       'dashboard.createGame.analytics':
         'Anonymisierte Daten für Forschung & Analyse teilen (hilft uns Soil zu verbessern)',
+      'dashboard.createGame.advisor': 'Landwirtschaftlicher Berater (gibt Tipps nach jeder Runde)',
       'dashboard.createGame.submit': '+ Neues Spiel erstellen',
       'dashboard.createGame.creating': 'Wird erstellt...',
       'dashboard.createGame.required': 'Erforderlich',

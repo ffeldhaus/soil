@@ -484,6 +484,7 @@ export class GameService {
       playerLabel: string;
       advancedPricingEnabled?: boolean;
       analyticsEnabled?: boolean;
+      advisorEnabled?: boolean;
     },
   ): Promise<{ gameId: string; password?: string }> {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';

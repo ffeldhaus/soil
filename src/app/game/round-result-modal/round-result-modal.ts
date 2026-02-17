@@ -3,16 +3,19 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { Round } from '../../types';
+import { GameAdvisorComponent } from '../advisor/advisor';
 
 @Component({
   selector: 'app-round-result-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, GameAdvisorComponent],
   templateUrl: './round-result-modal.html',
   styleUrl: './round-result-modal.scss',
 })
 export class RoundResultModal {
   @Input() round!: Round;
+  @Input() previousRound?: Round;
+  @Input() advisorEnabled = true;
   @Output() resultClosed = new EventEmitter<void>();
 
   t(key: string): string {

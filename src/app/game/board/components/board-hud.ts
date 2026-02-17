@@ -5,6 +5,7 @@ import type { User } from 'firebase/auth';
 
 import type { Game, PlayerState } from '../../../types';
 import { GameService } from '../../game.service';
+import { TourService } from '../../tour.service';
 
 @Component({
   selector: 'app-board-hud',
@@ -14,6 +15,7 @@ import { GameService } from '../../game.service';
 })
 export class BoardHudComponent {
   private gameService = inject(GameService);
+  private tourService = inject(TourService);
   private cdr = inject(ChangeDetectorRef);
   @Input() user: User | null = null;
   @Input() gameState: { game: Game | null; playerState: PlayerState | null } | null = null;
@@ -165,5 +167,10 @@ export class BoardHudComponent {
     navigator.clipboard.writeText(json).then(() => {
       alert('Full game state copied to clipboard!');
     });
+  }
+
+  startTour() {
+    this.tourService.resetTour();
+    this.tourService.startTour();
   }
 }

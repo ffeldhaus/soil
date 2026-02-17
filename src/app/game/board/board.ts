@@ -13,6 +13,7 @@ import { Parcel } from '../parcel/parcel';
 import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
+import { TourService } from '../tour.service';
 import { BoardHudComponent } from './components/board-hud';
 
 @Component({
@@ -54,6 +55,7 @@ export class Board implements OnInit, OnDestroy {
     return translations[key] || key;
   }
   private gameService = inject(GameService);
+  public tourService = inject(TourService);
   gameServicePublic = this.gameService; // Expose for template if needed, or just specific streams
   gameState$ = this.gameService.state$;
   version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
@@ -147,7 +149,8 @@ export class Board implements OnInit, OnDestroy {
   pin = '';
   authError: string | null = null;
   showLabels = true;
-  pendingNextRound = false;
+  public pendingNextRound = false;
+  private tourStarted = false;
 
   private routeSub: Subscription | null = null;
   private gameStatusSub: Subscription | null = null;
@@ -321,6 +324,15 @@ export class Board implements OnInit, OnDestroy {
                   if (state.game.status === 'finished' && !this.showGameEndModal) {
                     this.calculateWinners(state.game);
                     this.showGameEndModal = true;
+                  }
+
+                  // Start tour if not seen yet
+                  if (!this.tourService.isTourSeen() && !this.tourStarted) {
+                    this.tourStarted = true;
+                    // Small delay to ensure everything is rendered
+                    setTimeout(() => {
+                      this.tourService.startTour();
+                    }, 1000);
                   }
                 }
               });
@@ -714,6 +726,10 @@ export class Board implements OnInit, OnDestroy {
 
   closeRoundResultModal() {
     this.showRoundResultModal = false;
+  }
+
+  getPreviousRound(roundNumber: number): Round | undefined {
+    return this.history.find((r) => r.number === roundNumber - 1);
   }
 
   get selectedRoundWeatherData(): { icon: string; name: string } {

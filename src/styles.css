@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "shepherd.js/dist/css/shepherd.css";
 
 html {
   scrollbar-gutter: stable;
@@ -174,4 +175,59 @@ body {
 .gsi-material-button.apple-style:not(:disabled):hover .gsi-material-button-state {
   background-color: #ffffff;
   opacity: 10%;
+}
+
+/* Shepherd Tour Custom Styles */
+.shepherd-element.shepherd-theme-custom {
+  @apply bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl max-w-sm;
+}
+
+.shepherd-header {
+  @apply bg-gray-900 border-b border-gray-800 p-4 rounded-t-2xl flex items-center justify-between;
+}
+
+.shepherd-title {
+  @apply text-emerald-500 font-bold text-lg;
+}
+
+.shepherd-text {
+  @apply p-4 text-gray-200 leading-relaxed text-sm;
+}
+
+.shepherd-footer {
+  @apply p-4 flex justify-end gap-2 bg-gray-950/50 rounded-b-2xl;
+}
+
+.shepherd-button-primary {
+  @apply px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors border border-emerald-500;
+}
+
+.shepherd-button-secondary {
+  @apply px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white text-xs font-bold rounded-lg transition-colors border border-gray-700;
+}
+
+.shepherd-cancel-icon {
+  @apply text-gray-500 hover:text-white transition-colors text-2xl;
+}
+
+.shepherd-arrow:before {
+  @apply bg-gray-900 border border-gray-700;
+}
+
+.shepherd-modal-overlay-container {
+  @apply opacity-70;
+}
+
+/* Custom Scrollbar Utility */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-900/50 rounded;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-700 rounded;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
 }

@@ -221,6 +221,7 @@ export class Dashboard implements OnInit, OnDestroy {
     aiLevel: 'elementary',
     advancedPricingEnabled: false,
     analyticsEnabled: true,
+    advisorEnabled: true,
   };
 
   lastGame = {
@@ -457,6 +458,7 @@ export class Dashboard implements OnInit, OnDestroy {
     playerLabel: string;
     advancedPricingEnabled: boolean;
     analyticsEnabled: boolean;
+    advisorEnabled: boolean;
   }) {
     this.newGameConfig = { ...this.newGameConfig, ...config };
 
@@ -497,6 +499,7 @@ export class Dashboard implements OnInit, OnDestroy {
       playerLabel: this.newGameConfig.playerLabel,
       advancedPricingEnabled: this.newGameConfig.advancedPricingEnabled,
       analyticsEnabled: this.newGameConfig.analyticsEnabled,
+      advisorEnabled: this.newGameConfig.advisorEnabled,
     };
 
     try {

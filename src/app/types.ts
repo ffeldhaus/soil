@@ -93,6 +93,7 @@ export interface GameConfig {
   numAi: number;
   advancedPricingEnabled?: boolean;
   analyticsEnabled?: boolean;
+  advisorEnabled?: boolean;
 }
 
 export interface GameEvaluation {
