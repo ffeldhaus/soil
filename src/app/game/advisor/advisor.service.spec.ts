@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { GAME_CONSTANTS } from '../../game-constants';
-import type { Parcel, Round } from '../../types';
 import { AdvisorService } from './advisor.service';
+import type { Round, Parcel } from '../../types';
 
 describe('AdvisorService', () => {
   let service: AdvisorService;

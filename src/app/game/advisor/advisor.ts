@@ -55,24 +55,7 @@ import { type AdvisorInsight, AdvisorService } from './advisor.service';
       </div>
     }
   `,
-  styles: [
-    `
-      @reference "tailwindcss";
-      .custom-scrollbar::-webkit-scrollbar {
-  
-      width: 4px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      @apply bg-gray-900/50 rounded;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      @apply bg-gray-700 rounded;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      @apply bg-gray-600;
-    }
-  `,
-  ],
+  styleUrl: './advisor.scss',
 })
 export class GameAdvisorComponent implements OnInit {
   @Input() currentRound!: Round;

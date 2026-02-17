@@ -10,6 +10,7 @@ This document outlines the local development strategy, testing procedures, and c
 
 - **Conventions**: Rigorously adhere to existing project conventions. Analyze surrounding code, tests, and configuration before modifying.
 - **Style & Structure**: Mimic the style (formatting, naming), structure, and architectural patterns of existing code. Keep Angular components modular to ensure that individual files (especially HTML templates) remain manageable in size (ideally under 500 lines). Avoid extremely large inline templates; prefer separate `.html` files if the template exceeds 50 lines. This improves maintainability and ensures better performance for AI code generation tools like Gemini CLI.
+- **Styles & CSS**: PREFER separate `.scss` files over inline `styles` for components, especially when using complex CSS or Tailwind `@apply` rules. This prevents build-time errors like `ENAMETOOLONG` which can occur when build tools (Vite/PostCSS) attempt to encode long inline styles into virtual filenames. Always include `@reference "tailwindcss";` at the top of component-specific `.scss` files if they use Tailwind utilities.
 - **Idiomatic Changes**: Ensure changes integrate naturally and idiomatically within the local context.
 - **Comments**: Add comments sparingly, focusing on _why_ something is done rather than _what_.
 - **Dependencies**: Verify established usage in `package.json` before employing new libraries. Prefer stable versions.
