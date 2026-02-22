@@ -139,9 +139,9 @@ export interface UserStatus {
 
 export interface Feedback {
   id: string;
-  userId: string;
-  userEmail: string;
-  userName: string;
+  userId?: string;
+  userEmail?: string;
+  userName?: string;
   category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
   rating: number; // 0-5
   comment: string;

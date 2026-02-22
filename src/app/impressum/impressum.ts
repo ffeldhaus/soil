@@ -52,11 +52,14 @@ import { RouterLink } from '@angular/router';
 
       <div class="relative z-10 max-w-5xl mx-auto pt-[72px] pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
         <!-- Header -->
-        <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl flex justify-between items-center portrait:rounded-none portrait:border-x-0">
+        <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 portrait:rounded-none portrait:border-x-0">
           <div>
             <h1 class="text-4xl font-serif font-bold text-emerald-500 mb-2">Impressum</h1>
             <p class="text-gray-400">Rechtliche Informationen & Kontakt</p>
           </div>
+          <a routerLink="/privacy" class="px-6 py-3 bg-emerald-800/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white rounded-xl border border-emerald-500/30 transition-all font-bold">
+            Datenschutzerklärung lesen
+          </a>
         </header>
 
         <!-- Projekt -->

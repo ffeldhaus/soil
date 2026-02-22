@@ -46,6 +46,10 @@ const baseRoutes: Routes = [
     loadComponent: () => import('./impressum/impressum').then((m) => m.ImpressumComponent),
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./privacy/privacy').then((m) => m.PrivacyPolicyComponent),
+  },
+  {
     path: 'manual',
     loadComponent: () => import('./manual/manual').then((m) => m.ManualComponent),
   },

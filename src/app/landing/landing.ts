@@ -163,6 +163,15 @@ import { AuthService } from '../auth/auth.service';
               <p class="mt-2 text-xs text-gray-500">Enabling test mode will mock all backend calls and use local data.</p>
             </div>
           }
+
+          <!-- Footer -->
+          <footer class="mt-24 pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-center items-center gap-6 text-sm text-gray-500 pb-12">
+            <p>© {{ year }} Soil Projekt</p>
+            <div class="flex gap-6">
+              <a routerLink="/impressum" class="hover:text-emerald-400 transition-colors">Impressum</a>
+              <a routerLink="/privacy" class="hover:text-emerald-400 transition-colors">Datenschutz</a>
+            </div>
+          </footer>
         </div>
       }
     </div>

@@ -17,8 +17,24 @@ This document outlines the local development strategy, testing procedures, and c
 - **Modals**: Consistently use HTML/CSS modals instead of native browser dialogs (alert/confirm/prompt).
 - **Manual**: Ensure the User Manual (`src/app/manual/manual.ts`) is kept up to date whenever game logic or crop properties change.
 - **Sitemap & SEO**: Ensure the Sitemap (`public/sitemap.xml`) and `public/robots.txt` are kept up to date whenever public routes are added or changed.
-- **Compliance**: All public pages and views must include a link to the Impressum page.
+- **Compliance**: All public pages and views must include a link to the Impressum and Privacy Policy.
 - **Search**: NEVER run a `grep` recursively in the project without excluding files/folders from `.gitignore`. Use tools like `ripgrep` or properly configured search tools that respect project ignore patterns to avoid excessive output and token consumption.
+
+## PII & Data Privacy
+
+The application follows strict data minimization principles to comply with GDPR and Google Play policies.
+
+### 1. Personal Identifiable Information (PII)
+- **Authentication**: Registration (Email/Password or Social Login) is required only for Cloud Games. This data is used exclusively for technical provision and **abuse prevention**.
+- **Feedback**: The feedback system is **fully anonymized**. No user IDs, names, or email addresses are stored with feedback messages.
+- **Research Data**: All data uploaded for research and analytics purposes is **anonymized**. Real player names and emails are replaced with generic identifiers (e.g., "Team 1").
+
+### 2. Regional Constraints
+- **Data Residency**: All Firebase services (Auth, Firestore, Functions, Storage) must be configured to use the **EU (europe-west4)** region to ensure data stays within European jurisdiction.
+
+### 3. Compliance Documentation
+- **Privacy Policy**: A comprehensive Datenschutzerklärung is available at `/privacy`. Any changes to data collection logic must be reflected here.
+- **Impressum**: Legal contact information is available at `/impressum`.
 
 ## Prerequisites
 

@@ -86,24 +86,42 @@ export class SyncService {
 
     try {
       const fullState = await this.localGameService.loadGame(gameId);
-      if (fullState && fullState.game.status === 'finished' && !fullState.game.uploadedAt) {
-        if (window.console) console.log(`Attempting to upload finished local game ${gameId} for research...`);
+      if (
+        fullState &&
+        fullState.game.status === 'finished' &&
+        !fullState.game.uploadedAt &&
+        fullState.game.config?.analyticsEnabled !== false
+      ) {
+        if (window.console) {
+          // biome-ignore lint/suspicious/noConsole: Background sync logging
+          window.console.log(`Attempting to upload finished local game ${gameId} for research...`);
+        }
         const result = await this.uploadFinishedGameFn({ gameData: fullState });
         if (result.data.success) {
           fullState.game.uploadedAt = new Date();
           // Update local storage so we don't try again
           localStorage.setItem(`soil_game_${gameId}`, JSON.stringify(fullState));
-          if (window.console) console.warn(`Successfully uploaded finished local game ${gameId} for research`);
+          if (window.console) {
+            // biome-ignore lint/suspicious/noConsole: Background sync logging
+            window.console.warn(`Successfully uploaded finished local game ${gameId} for research`);
+          }
         } else {
-          if (window.console) console.error(`Failed to upload finished game ${gameId}: Server returned success=false`);
+          if (window.console) {
+            // biome-ignore lint/suspicious/noConsole: Background sync logging
+            window.console.error(`Failed to upload finished game ${gameId}: Server returned success=false`);
+          }
         }
       }
     } catch (error: any) {
       if (window.console) {
-        console.error(`Failed to upload finished game ${gameId} for research:`, error);
-        if (error.code) console.error(`Error Code: ${error.code}`);
-        if (error.message) console.error(`Error Message: ${error.message}`);
-        if (error.details) console.error(`Error Details:`, error.details);
+        // biome-ignore lint/suspicious/noConsole: Background sync logging
+        window.console.error(`Failed to upload finished game ${gameId} for research:`, error);
+        // biome-ignore lint/suspicious/noConsole: Background sync logging
+        if (error.code) window.console.error(`Error Code: ${error.code}`);
+        // biome-ignore lint/suspicious/noConsole: Background sync logging
+        if (error.message) window.console.error(`Error Message: ${error.message}`);
+        // biome-ignore lint/suspicious/noConsole: Background sync logging
+        if (error.details) window.console.error(`Error Details:`, error.details);
       }
     }
   }

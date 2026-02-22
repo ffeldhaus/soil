@@ -207,7 +207,7 @@ export async function internalAnonymizeAndUploadForResearch(game: any, allRounds
 
     anonymizedPlayers[newUid] = {
       uid: newUid,
-      displayName: 'Anonymized Player',
+      displayName: `Team ${p.playerNumber || oldUid.split('-').pop()}`,
       isAi: !!p.isAi,
       aiLevel: p.aiLevel,
       playerNumber: Number(p.playerNumber),
@@ -1903,18 +1903,11 @@ export const submitFeedback = onCall(
       throw new HttpsError('invalid-argument', 'Missing feedback fields');
     }
 
-    const uid = request.auth.uid;
-    const email = request.auth.token.email || '';
-    const name = request.auth.token.name || email;
-
     const feedbackId = db.collection('feedback').doc().id;
     const feedbackRef = db.collection('feedback').doc(feedbackId);
 
     const feedbackData: any = {
       id: feedbackId,
-      userId: uid,
-      userEmail: email,
-      userName: name,
       category,
       rating,
       comment,
@@ -1930,7 +1923,6 @@ export const submitFeedback = onCall(
     try {
       const prompt = `
         Analyze the following feedback from a user of the SOIL agricultural simulation game.
-        User: ${name} (${email})
         Category: ${category}
         Rating: ${rating}/5
         Comment: ${comment}
@@ -1970,12 +1962,11 @@ export const submitFeedback = onCall(
     }
 
     const notificationSubject = `New Feedback Received: ${category} (${rating}/5)`;
-    const notificationText = `New feedback from ${name} (${email}):\n\nCategory: ${category}\nRating: ${rating}/5\nComment: ${comment}\n\nAI Analysis:\nSummary: ${feedbackData.aiAnalysis?.summary || 'N/A'}\nSentiment: ${feedbackData.aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${(feedbackData.aiAnalysis?.suggestedActions || []).join(', ')}`;
+    const notificationText = `New anonymous feedback received:\n\nCategory: ${category}\nRating: ${rating}/5\nComment: ${comment}\n\nAI Analysis:\nSummary: ${feedbackData.aiAnalysis?.summary || 'N/A'}\nSentiment: ${feedbackData.aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${(feedbackData.aiAnalysis?.suggestedActions || []).join(', ')}`;
 
     const notificationHtml = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #059669;">New Feedback Received</h2>
-        <p><strong>From:</strong> ${name} (${email})</p>
+        <h2 style="color: #059669;">New Anonymous Feedback Received</h2>
         <p><strong>Category:</strong> ${category}</p>
         <p><strong>Rating:</strong> ${rating}/5</p>
         <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">

@@ -26,7 +26,9 @@ exclude = [
   'https://fonts.googleapis.com/.*',                      # Google Fonts API
   'https://fonts.gstatic.com/.*',                         # Google Fonts Assets
   'site.webmanifest',                                     # Relative link in index.html
-  'https://mcp.context7.com/mcp'                          # MCP Server URL
+  'https://mcp.context7.com/mcp',                         # MCP Server URL
+  '/impressum',                                           # Internal route
+  '/privacy'                                              # Internal route
 ]
 
 # Exclude paths from getting checked.

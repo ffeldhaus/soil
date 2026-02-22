@@ -86,7 +86,7 @@ describe('Sync and Research Upload', () => {
     // Verify anonymization
     const uploadedGame = setStub.firstCall.args[1];
     expect(uploadedGame.name).to.equal('Anonymized Game');
-    expect(uploadedGame.players['player-target-game-id-1'].displayName).to.equal('Anonymized Player');
+    expect(uploadedGame.players['player-target-game-id-1'].displayName).to.equal('Team 1');
     expect(uploadedGame.isResearchData).to.be.true;
     expect(uploadedGame.migratedFrom).to.equal('local-123');
     // Verify arbitrary fields are NOT copied
