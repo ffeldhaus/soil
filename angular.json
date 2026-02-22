@@ -49,6 +49,10 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": ".well-known/*",
+                "input": "public"
               }
             ],
             "styles": [

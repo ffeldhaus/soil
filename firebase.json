@@ -13,7 +13,7 @@
   ],
   "hosting": {
     "public": "dist/soil/browser",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": ["firebase.json", "**/node_modules/**", "**/.*", "!**/.well-known/**"],
     "headers": [
       {
         "source": "/**",
