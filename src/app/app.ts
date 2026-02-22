@@ -3,8 +3,8 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { GameService } from './game/game.service';
 import { SyncService } from './game/sync.service';
-import { OfflineService } from './shared/offline.service';
 import { PerformanceService } from './services/performance.service';
+import { OfflineService } from './shared/offline.service';
 
 @Component({
   selector: 'app-root',

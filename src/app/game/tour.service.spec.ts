@@ -43,12 +43,14 @@ describe('TourService', () => {
 
   it('should start the tour if not disabled', () => {
     service.startTour();
-    expect(shepherdServiceMock.addSteps).toHaveBeenCalledWith(expect.arrayContaining([
-      expect.objectContaining({ id: 'welcome' }),
-      expect.objectContaining({ id: 'select-parcel' }),
-      expect.objectContaining({ id: 'planting-modal' }),
-      expect.objectContaining({ id: 'next-round' }),
-    ]));
+    expect(shepherdServiceMock.addSteps).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'welcome' }),
+        expect.objectContaining({ id: 'select-parcel' }),
+        expect.objectContaining({ id: 'planting-modal' }),
+        expect.objectContaining({ id: 'next-round' }),
+      ]),
+    );
     const steps = shepherdServiceMock.addSteps.mock.calls[0][0];
     expect(steps.length).toBe(11);
     expect(shepherdServiceMock.start).toHaveBeenCalled();

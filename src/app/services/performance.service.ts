@@ -1,5 +1,5 @@
-import { Injectable, PLATFORM_ID, inject, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Injectable, inject, NgZone, PLATFORM_ID } from '@angular/core';
 
 export type PerformanceTier = 1 | 2 | 3; // 1: Low (Opaque), 2: Med (Transparent), 3: High (Blur)
 
@@ -35,11 +35,11 @@ export class PerformanceService {
 
   private applyTier() {
     if (!this.isBrowser) return;
-    
+
     const body = document.body;
     body.classList.remove('perf-tier-1', 'perf-tier-2', 'perf-tier-3');
     body.classList.add(`perf-tier-${this.currentTier}`);
-    
+
     localStorage.setItem(this.tierKey, this.currentTier.toString());
     console.log(`[Performance] Applied Tier ${this.currentTier}`);
   }
@@ -67,7 +67,7 @@ export class PerformanceService {
           const delta = now - lastTime;
           const fps = Math.round((frameCount * 1000) / delta);
           const timestamp = new Date().toLocaleTimeString();
-          
+
           let shouldDowngrade = false;
 
           if (fps < 30) {
@@ -114,7 +114,7 @@ export class PerformanceService {
     if (this.currentTier > 1) {
       this.currentTier--;
       this.applyTier();
-      
+
       if (this.currentTier > 1) {
         this.ngZone.runOutsideAngular(() => {
           setTimeout(() => this.monitorPerformance(), 5000);

@@ -26,7 +26,7 @@ describe('Performance Tiers', () => {
     });
     cy.visit('/');
     cy.get('body').should('have.class', 'perf-tier-2');
-    
+
     // Verify that backdrop-blur is removed in Tier 2
     // We can check if a modal background (if any) has backdrop-filter none
     // But since we are at landing, let's just check body context
@@ -45,11 +45,11 @@ describe('Performance Tiers', () => {
       win.localStorage.setItem('soil_perf_tier', '1');
     });
     cy.visit('/');
-    
+
     // Trigger something that has an overlay, e.g. login error or just check footer/nav if they use bg-black/XX
     // Actually, we can just check the computed style of any element with a background class
     cy.get('body').should('have.class', 'perf-tier-1');
-    
+
     // Find an element that usually has transparency and check if it's now opaque
     // Many sections in landing have bg-gray-900/80
     cy.get('section').first().should('have.css', 'background-color', 'rgb(0, 0, 0)'); // Tier 1 forces black for overlays

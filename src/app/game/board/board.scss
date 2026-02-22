@@ -54,7 +54,7 @@
   border-radius: 50%;
   opacity: 0;
 
-  @for $i from 1 through 50 {
+  @for $i from 1 through 40 {
     $color: hsl(math.random(360), 100%, 60%);
     $peak: -30vh - (math.random(50) * 1vh);
     $drift: (math.random(200) - 100) * 1px;
@@ -66,19 +66,6 @@
       box-shadow: 0 0 10px $color, 0 0 20px $color;
       animation: firework-#{ $i } 4s infinite;
       animation-delay: calc(#{math.random(4000)}ms);
-    }
-
-    /* Tier 2: Simpler fireworks (no box-shadow trails) */
-    :host-context(body.perf-tier-2) & {
-      box-shadow: none !important;
-      @keyframes firework-#{$i} {
-        0% { transform: translateY(0) translateX(0); opacity: 0; }
-        5% { opacity: 1; }
-        30% { transform: translateY($peak) translateX($launch-x); opacity: 1; }
-        31% { transform: translateY($peak) translateX($launch-x); opacity: 1; }
-        45% { transform: translateY(calc($peak + 20px)) translateX(calc($launch-x + $drift)); opacity: 0; }
-        100% { opacity: 0; }
-      }
     }
 
     @keyframes firework-#{$i} {

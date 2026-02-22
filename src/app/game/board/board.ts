@@ -6,6 +6,7 @@ import type { User } from 'firebase/auth';
 import { combineLatest, type Subscription, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
+import { PerformanceService } from '../../services/performance.service';
 import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
 import { Finance } from '../finance/finance';
 import { GameService } from '../game.service';
@@ -14,7 +15,6 @@ import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
 import { TourService } from '../tour.service';
-import { PerformanceService } from '../../services/performance.service';
 import { BoardHudComponent } from './components/board-hud';
 
 @Component({
@@ -167,8 +167,7 @@ export class Board implements OnInit, OnDestroy {
     // Logic to determine if board is read-only
     const state = this.gameService.state;
     const isFinished = state?.game?.status === 'finished';
-    this.isReadOnly =
-      isFinished || this.isSubmitted || this.viewingRound < this.maxRoundNumber;
+    this.isReadOnly = isFinished || this.isSubmitted || this.viewingRound < this.maxRoundNumber;
   }
 
   goToRound(round: number) {

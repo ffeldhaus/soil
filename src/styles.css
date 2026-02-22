@@ -251,7 +251,6 @@ body.perf-tier-1 .game-grid {
   gap: 2px !important;
 }
 
-
 /* Shepherd Tour Custom Styles */
 .shepherd-element.shepherd-theme-custom {
   /* Use a minimal shadow to reduce GPU load on older devices */
