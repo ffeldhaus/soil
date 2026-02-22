@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import type { Parcel, Round } from '../../types';
 import { AdvisorService } from './advisor.service';
-import type { Round, Parcel } from '../../types';
 
 describe('AdvisorService', () => {
   let service: AdvisorService;

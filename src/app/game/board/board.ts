@@ -14,6 +14,7 @@ import { PlantingModal } from '../planting-modal/planting-modal';
 import { RoundResultModal } from '../round-result-modal/round-result-modal';
 import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
 import { TourService } from '../tour.service';
+import { PerformanceService } from '../../services/performance.service';
 import { BoardHudComponent } from './components/board-hud';
 
 @Component({
@@ -56,6 +57,7 @@ export class Board implements OnInit, OnDestroy {
   }
   private gameService = inject(GameService);
   public tourService = inject(TourService);
+  public performanceService = inject(PerformanceService);
   gameServicePublic = this.gameService; // Expose for template if needed, or just specific streams
   gameState$ = this.gameService.state$;
   version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
@@ -148,17 +150,14 @@ export class Board implements OnInit, OnDestroy {
   gameId = '';
   pin = '';
   authError: string | null = null;
-  showLabels = true;
-  public pendingNextRound = false;
-  private tourStarted = false;
-
   private routeSub: Subscription | null = null;
   private gameStatusSub: Subscription | null = null;
   private parcelsSub: Subscription | null = null;
+  private tourSub: Subscription | null = null;
 
-  login() {
-    this.authService.loginWithGoogle();
-  }
+  showLabels = false;
+  tourStarted = false;
+  pendingNextRound = false;
 
   toggleMobileMenu() {
     this.showMobileMenu = !this.showMobileMenu;
@@ -168,7 +167,8 @@ export class Board implements OnInit, OnDestroy {
     // Logic to determine if board is read-only
     const state = this.gameService.state;
     const isFinished = state?.game?.status === 'finished';
-    this.isReadOnly = isFinished || this.isSubmitted || this.viewingRound < this.maxRoundNumber;
+    this.isReadOnly =
+      isFinished || this.isSubmitted || this.viewingRound < this.maxRoundNumber;
   }
 
   goToRound(round: number) {
@@ -257,6 +257,25 @@ export class Board implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.tourSub = this.tourService.stepShow$.subscribe((stepId) => {
+      if (stepId === 'planting-modal' || stepId === 'planting-modal-crop') {
+        if (this.selectedIndices.size === 0) {
+          this.selectedIndices.add(0);
+          this.selectedIndices = new Set(this.selectedIndices);
+        }
+        this.showPlantingModal = true;
+        this.cdr.detectChanges();
+      } else if (stepId === 'tour-finished' || stepId === 'tour-cancelled') {
+        this.showPlantingModal = false;
+        this.selectedIndices.clear();
+        this.selectedIndices = new Set(this.selectedIndices);
+        this.cdr.detectChanges();
+      } else if (this.showPlantingModal && stepId !== 'planting-modal' && stepId !== 'planting-modal-crop') {
+        this.showPlantingModal = false;
+        this.cdr.detectChanges();
+      }
+    });
+
     this.routeSub = combineLatest([this.route.queryParams, this.user$]).subscribe(
       async ([params, user]: [Params, User | null]) => {
         if (!user) {
@@ -377,6 +396,7 @@ export class Board implements OnInit, OnDestroy {
     if (this.routeSub) this.routeSub.unsubscribe();
     if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
     if (this.parcelsSub) this.parcelsSub.unsubscribe();
+    if (this.tourSub) this.tourSub.unsubscribe();
   }
 
   private updateTimer(game: Game) {

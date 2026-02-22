@@ -166,6 +166,26 @@ We use semantic versioning managed in `package.json` and tagged in Git. For a fu
 - **Cloud Build**: Monitor CI/CD builds for success; fix errors and address warnings promptly.
 - **Post-Deployment**: Verify the live version matches the intended `package.json` version.
 
+## Performance & Rendering Tiers
+
+The application implements an automatic performance monitoring and tiering system to ensure smooth gameplay across a wide range of devices (from modern smartphones to older Intel-based laptops).
+
+### Tiers:
+1.  **Tier 3 (High)**: Full visual fidelity. Includes `backdrop-blur` (glassmorphism), complex box-shadows, smooth CSS transitions, and high-density particle effects (e.g., 80 firework particles).
+2.  **Tier 2 (Medium)**: Balanced performance. Disables `backdrop-blur` (which is extremely GPU-intensive). dark overlays are made more opaque (`0.9`) to maintain readability. Animation complexity is reduced (e.g., simpler fireworks with 30 particles and no trails).
+3.  **Tier 1 (Low)**: Maximum performance. Disables all transparency, transitions, animations, and shadows. Overlays become fully opaque. Particle effects are omitted.
+
+### Technical Implementation:
+- **`PerformanceService`**: A singleton service that monitors the FPS using `requestAnimationFrame`. If the frame rate stays below 30 FPS for 3 consecutive seconds, it automatically downgrades the tier.
+- **Persistence**: The detected tier is cached in `localStorage` (`soil_perf_tier`) to provide a consistent experience on return visits.
+- **CSS Hierarchy**: Tiers are applied via classes on the `body` element (`perf-tier-1`, `perf-tier-2`, `perf-tier-3`). All components should use these classes for conditional styling of expensive properties.
+- **Template Logic**: Components can inject `PerformanceService` to perform high-level structural optimizations (e.g., reducing the number of DOM elements in an animation).
+
+### Guidelines for New Features:
+- **Avoid `backdrop-filter`**: It is the most common cause of GPU lag on older hardware. Only use it for Tier 3.
+- **Limit Shadows**: Use `shadow-md` or smaller for Tier 2, and omit shadows for Tier 1.
+- **Conditional Animations**: Use the `perf-tier-*` classes to disable or simplify animations for lower tiers.
+
 ## Future Improvements & TODOs
 
 - **Cognitive Complexity**: Refactor `functions/src/game-engine.ts` (specifically `calculateRound`) to reduce cognitive complexity from ~54 to below 15.

@@ -179,7 +179,7 @@ import { AuthService } from '../auth.service';
       <!-- Error Modal -->
       @if (showErrorModal) {
         <div
-          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in portrait:p-0"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in portrait:p-0"
           (click)="closeModal()"
         >
           <div

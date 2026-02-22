@@ -177,45 +177,170 @@ body {
   opacity: 10%;
 }
 
+/* Performance Tiers Styling */
+
+/* Tier 3: High (Default, Full Effects) */
+body.perf-tier-3 {
+  /* No special overrides needed */
+}
+
+/* Tier 2: Medium (Semi-transparent, No Backdrop Blur) */
+body.perf-tier-2 [class*="backdrop-blur"],
+body.perf-tier-2 [style*="backdrop-filter"],
+body.perf-tier-2 [class*="blur-"],
+body.perf-tier-2 [style*="filter: blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* Slightly increase opacity for common dark overlays in Tier 2 since blur is gone */
+body.perf-tier-2 [class*="bg-black/"],
+body.perf-tier-2 [class*="bg-gray-900/"],
+body.perf-tier-2 [class*="bg-gray-950/"] {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Tier 1: Low (Fully Opaque, No Transparency, No Animations) */
+/* Target only true modal/overlay backdrops for full opacity */
+body.perf-tier-1 .fixed.inset-0.z-\[100\],
+body.perf-tier-1 .fixed.inset-0.z-50,
+body.perf-tier-1 .fixed.inset-0.z-\[80\],
+body.perf-tier-1 .fixed.inset-0.bg-black\/60,
+body.perf-tier-1 .absolute.inset-0.bg-black\/60 {
+  background-color: #000000 !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+
+/* Ensure modal content (dialogs) remains opaque and visible */
+body.perf-tier-1 [role="dialog"] {
+  background-color: #111827 !important; /* solid gray-900 */
+  opacity: 1 !important;
+}
+
+/* Ensure common transparent background classes used for overlays are opaque */
+body.perf-tier-1 .bg-black\/60,
+body.perf-tier-1 .bg-gray-900\/95,
+body.perf-tier-1 .bg-gray-900\/80 {
+  opacity: 1 !important;
+}
+
+/* Standardizing transition and animation removal without universal selector */
+body.perf-tier-1 .fixed,
+body.perf-tier-1 .absolute,
+body.perf-tier-1 .transition,
+body.perf-tier-1 .transition-all,
+body.perf-tier-1 .animate-pulse,
+body.perf-tier-1 .animate-fade-in,
+body.perf-tier-1 .animate-modal-entrance,
+body.perf-tier-1 [class*="blur-"] {
+  transition: none !important;
+  animation: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* Remove all shadows in Tier 1 */
+body.perf-tier-1 [class*="shadow"] {
+  box-shadow: none !important;
+}
+
+/* Handle the game grid separation since shadows are gone */
+body.perf-tier-1 .game-grid {
+  gap: 2px !important;
+}
+
+
 /* Shepherd Tour Custom Styles */
 .shepherd-element.shepherd-theme-custom {
-  @apply bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl max-w-sm;
+  /* Use a minimal shadow to reduce GPU load on older devices */
+  @apply bg-gray-900 border border-gray-700 rounded-2xl shadow-md max-w-sm;
+  /* Trigger hardware acceleration for the popup itself */
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
-.shepherd-header {
-  @apply bg-gray-900 border-b border-gray-800 p-4 rounded-t-2xl flex items-center justify-between;
+/* Disable expensive backdrop-blur on all elements when a tour is active to save GPU */
+/* Standard shepherd class is 'shepherd-active' on body */
+body.shepherd-active *,
+body.shepherd-active ::before,
+body.shepherd-active ::after {
+  backdrop-filter: none !important;
+  /* Disable transitions during tour to prevent GPU spikes during step changes */
+  transition: none !important;
+  animation: none !important;
 }
 
-.shepherd-title {
-  @apply text-emerald-500 font-bold text-lg;
+/* Specifically disable the library's SVG path transition which is very heavy on Intel GPUs */
+.shepherd-modal-overlay-container,
+.shepherd-modal-overlay-container svg,
+.shepherd-modal-overlay-container path {
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
 }
 
-.shepherd-text {
+.shepherd-element.shepherd-theme-custom .shepherd-header {
+  @apply bg-black border-b border-gray-800 py-1.5 px-4 rounded-t-2xl flex items-center justify-between;
+  background-color: black !important;
+}
+
+.shepherd-element.shepherd-theme-custom .shepherd-title {
+  @apply text-emerald-500 font-bold text-sm;
+  color: var(--color-emerald-500) !important;
+  font-size: var(--text-sm) !important;
+}
+
+.shepherd-element.shepherd-theme-custom .shepherd-text {
   @apply p-4 text-gray-200 leading-relaxed text-sm;
+  color: var(--color-gray-200) !important;
 }
 
-.shepherd-footer {
-  @apply p-4 flex justify-end gap-2 bg-gray-950/50 rounded-b-2xl;
+.shepherd-element.shepherd-theme-custom .shepherd-footer {
+  @apply p-3 flex justify-end gap-2 bg-black/40 rounded-b-2xl;
+  background-color: rgba(0, 0, 0, 0.4) !important;
 }
 
-.shepherd-button-primary {
-  @apply px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors border border-emerald-500;
+.shepherd-element.shepherd-theme-custom .shepherd-button-primary {
+  @apply px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-sm font-bold rounded-lg transition-colors border border-emerald-500;
+  color: white !important;
+  font-size: var(--text-sm) !important;
 }
 
-.shepherd-button-secondary {
-  @apply px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white text-xs font-bold rounded-lg transition-colors border border-gray-700;
+.shepherd-element.shepherd-theme-custom .shepherd-button-secondary {
+  @apply px-4 py-2 bg-gray-800 hover:bg-gray-700 text-sm font-bold rounded-lg transition-colors border border-gray-700;
+  color: white !important;
+  font-size: var(--text-sm) !important;
 }
 
-.shepherd-cancel-icon {
-  @apply text-gray-500 hover:text-white transition-colors text-2xl;
+/* Hard override for any Shepherd library button styles that might still be active */
+.shepherd-element.shepherd-theme-custom .shepherd-button,
+.shepherd-element.shepherd-theme-custom .shepherd-button:hover,
+.shepherd-element.shepherd-theme-custom .shepherd-button:focus,
+.shepherd-element.shepherd-theme-custom .shepherd-button:not(:disabled) {
+  color: white !important;
 }
 
-.shepherd-arrow:before {
+.shepherd-element.shepherd-theme-custom .shepherd-cancel-icon {
+  @apply text-gray-400 hover:text-white transition-colors text-2xl;
+  color: var(--color-gray-400) !important;
+}
+
+.shepherd-element.shepherd-theme-custom .shepherd-cancel-icon:hover {
+  color: white !important;
+}
+
+.shepherd-element.shepherd-theme-custom .shepherd-arrow:before {
   @apply bg-gray-900 border border-gray-700;
 }
 
 .shepherd-modal-overlay-container {
   @apply opacity-70;
+}
+
+body.perf-tier-1 .shepherd-modal-overlay-container {
+  opacity: 1 !important;
 }
 
 /* Custom Scrollbar Utility */

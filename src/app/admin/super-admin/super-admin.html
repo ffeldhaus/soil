@@ -863,7 +863,7 @@
     <!-- Delete Confirmation Modal -->
     @if (gameToDelete) {
       <div
-        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm portrait:p-0"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm portrait:p-0"
         (click)="cancelDelete()"
       >
         <div
@@ -989,7 +989,7 @@
     @if (showQuotaModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
         <!-- Modal Backdrop -->
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="closeQuotaModal()"></div>
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeQuotaModal()"></div>
 
         <!-- Modal Content -->
         <div
@@ -1084,7 +1084,7 @@
     <!-- Feedback Action Modals -->
     @if (feedbackToManage) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="cancelFeedbackAction()"></div>
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="cancelFeedbackAction()"></div>
         <div
           class="relative bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
           (click)="$event.stopPropagation()"

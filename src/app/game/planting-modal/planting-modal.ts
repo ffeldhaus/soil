@@ -18,15 +18,16 @@ import type { CropType } from '../../types';
         aria-modal="true"
         aria-labelledby="planting-title"
       >
-        <h2 id="planting-title" class="text-lg sm:text-2xl font-bold text-white mb-4 sm:mb-6 font-serif shrink-0 text-center sm:text-left">
+        <h2 id="planting-title" data-tour="planting-modal-title" class="text-lg sm:text-2xl font-bold text-white mb-4 sm:mb-6 font-serif shrink-0 text-center sm:text-left">
           Was möchtest du anbauen?
         </h2>
 
         <div class="grid grid-cols-4 sm:grid-cols-4 landscape:grid-cols-3 sm:landscape:grid-cols-4 gap-2 sm:gap-3 overflow-y-auto pr-1 pb-2">
-          @for (crop of crops; track crop) {
+          @for (crop of crops; track crop; let first = $first) {
             <button
               (click)="select(crop)"
               [attr.data-testid]="'crop-' + crop.toLowerCase()"
+              [attr.data-tour]="first ? 'planting-modal-first-crop' : null"
               class="group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700/50 bg-gray-800/80 hover:z-10 hover:shadow-[0_0_20px_5px_rgba(52,211,153,0.7)] hover:border-emerald-400/50 transition-all duration-200 [container-type:size]"
             >
               <img

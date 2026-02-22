@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ShepherdService } from 'angular-shepherd';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,24 +10,30 @@ export class TourService {
   private tourKey = 'soil_tour_seen';
   private tourDisabledKey = 'soil_tour_disabled';
 
+  public stepShow$ = new Subject<string>();
+
   private defaultStepOptions: any = {
     classes: 'shepherd-theme-custom',
-    scrollTo: { behavior: 'smooth', block: 'center' },
+    scrollTo: { behavior: 'auto', block: 'center' },
     cancelIcon: {
       enabled: true,
     },
+    canClickTarget: false,
   };
 
   private steps: any[] = [
     {
       id: 'welcome',
       title: 'Willkommen bei SOIL!',
-      text: 'Lass uns dir kurz zeigen, wie alles funktioniert, damit du erfolgreich wirtschaften kannst.',
+      text: 'Lass uns dir kurz zeigen, wie alles funktioniert, damit du erfolgreich wirtschaften und mehr über nachhaltige Bodenbewirtschaftung lernen kannst.',
       buttons: [
         {
           classes: 'shepherd-button-secondary',
-          text: 'Überspringen',
-          type: 'cancel',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
         },
         {
           classes: 'shepherd-button-primary',
@@ -38,12 +45,25 @@ export class TourService {
     {
       id: 'stats',
       title: 'Dein Kapital',
-      text: 'Hier siehst du dein aktuelles Kapital. Wirtschafte klug, um am Ende als Sieger hervorzugehen!',
+      text: 'Hier siehst du dein Kapital. Wirtschafte klug und achte auf die Gesundheit deines Bodens, um langfristig erfolgreich zu sein.',
       attachTo: {
         element: '[data-tour="hud-stats"]',
         on: 'bottom',
       },
       buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
         {
           classes: 'shepherd-button-primary',
           text: 'Weiter',
@@ -54,12 +74,25 @@ export class TourService {
     {
       id: 'grid',
       title: 'Dein Acker',
-      text: 'Das ist dein Spielfeld. Jedes Quadrat ist ein Teilstück deines Ackers.',
+      text: 'Das ist dein Spielfeld. Jedes Quadrat ist ein Teilstück deines Ackers mit individueller Bodenqualität und Nährstoffgehalt.',
       attachTo: {
         element: '[data-tour="game-grid"]',
         on: 'top',
       },
       buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
         {
           classes: 'shepherd-button-primary',
           text: 'Weiter',
@@ -70,12 +103,119 @@ export class TourService {
     {
       id: 'planting',
       title: 'Anbau',
-      text: 'Klicke oder ziehe über Teilstücke, um sie auszuwählen und eine Fruchtfolge festzulegen.',
+      text: 'Wähle Teilstücke aus, um eine Fruchtfolge festzulegen. Eine gute Planung schützt den Boden und sichert deine Erträge.',
       attachTo: {
         element: '[data-tour="game-grid"]',
         on: 'top',
       },
       buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
+        {
+          classes: 'shepherd-button-primary',
+          text: 'Weiter',
+          type: 'next',
+        },
+      ],
+    },
+    {
+      id: 'select-parcel',
+      title: 'Teilstück auswählen',
+      text: 'Klicke auf ein Teilstück deines Ackers (oder ziehe über mehrere), um es für den Anbau auszuwählen.',
+      attachTo: {
+        element: '[data-tour="first-parcel"]',
+        on: 'bottom',
+      },
+      buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
+        {
+          classes: 'shepherd-button-primary',
+          text: 'Weiter',
+          type: 'next',
+        },
+      ],
+    },
+    {
+      id: 'planting-modal',
+      title: 'Frucht wählen',
+      text: 'Sobald du Teilstücke ausgewählt hast, öffnet sich dieses Fenster. Hier kannst du entscheiden, was du als nächstes anbauen möchtest.',
+      attachTo: {
+        element: '[data-tour="planting-modal-title"]',
+        on: 'bottom',
+      },
+      beforeShowPromise: () => {
+        return new Promise<void>((resolve) => {
+          // We can't easily force open the modal here without potentially breaking state,
+          // but we can at least try to find it. If it's not there, the tour will just point to the middle of the screen or skip.
+          resolve();
+        });
+      },
+      buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
+        {
+          classes: 'shepherd-button-primary',
+          text: 'Weiter',
+          type: 'next',
+        },
+      ],
+    },
+    {
+      id: 'planting-modal-crop',
+      title: 'Anbau festlegen',
+      text: 'Wähle eine Kultur aus. Jede Pflanze hat unterschiedliche Auswirkungen auf Bodenqualität und Nährstoffe.',
+      attachTo: {
+        element: '[data-tour="planting-modal-first-crop"]',
+        on: 'bottom',
+      },
+      buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
         {
           classes: 'shepherd-button-primary',
           text: 'Weiter',
@@ -86,7 +226,7 @@ export class TourService {
     {
       id: 'overlays',
       title: 'Informationen',
-      text: 'Nutze diese Buttons, um Informationen über Nährstoffe, Ertrag oder Bodenqualität einzublenden.',
+      text: 'Nutze diese Ansichten, um die Bodengesundheit und Nährstoffe im Blick zu behalten – die Grundlage deines Erfolgs.',
       attachTo: {
         element: () => {
           const desktop = document.querySelector('[data-tour="desktop-overlays"]');
@@ -98,6 +238,19 @@ export class TourService {
         on: 'bottom',
       },
       buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
         {
           classes: 'shepherd-button-primary',
           text: 'Weiter',
@@ -114,6 +267,19 @@ export class TourService {
         on: 'bottom',
       },
       buttons: [
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
         {
           classes: 'shepherd-button-primary',
           text: 'Weiter',
@@ -146,6 +312,19 @@ export class TourService {
       },
       buttons: [
         {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
+        {
           classes: 'shepherd-button-primary',
           text: 'Weiter',
           type: 'next',
@@ -170,6 +349,19 @@ export class TourService {
       },
       buttons: [
         {
+          classes: 'shepherd-button-secondary',
+          text: 'Nicht mehr anzeigen',
+          action: () => {
+            this.setTourDisabled(true);
+            this.shepherdService.cancel();
+          },
+        },
+        {
+          classes: 'shepherd-button-secondary',
+          text: 'Zurück',
+          type: 'back',
+        },
+        {
           classes: 'shepherd-button-primary',
           text: 'Fertig!',
           type: 'next',
@@ -191,10 +383,18 @@ export class TourService {
 
     this.shepherdService.tourObject?.on('complete', () => {
       this.markTourAsSeen();
+      this.stepShow$.next('tour-finished');
     });
 
     this.shepherdService.tourObject?.on('cancel', () => {
       this.markTourAsSeen();
+      this.stepShow$.next('tour-cancelled');
+    });
+
+    this.shepherdService.tourObject?.on('show', (event: any) => {
+      if (event?.step?.id) {
+        this.stepShow$.next(event.step.id);
+      }
     });
   }
 
