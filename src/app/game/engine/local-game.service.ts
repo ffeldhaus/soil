@@ -271,8 +271,8 @@ export class LocalGameService {
       // Update player state
       p.capital = newRound.result!.capital;
       p.currentRound = nextRoundNum;
-      p.avgSoil = newRound.avgSoil || 0;
-      p.avgNutrition = newRound.avgNutrition || 0;
+      p.avgSoil = newRound.avgSoil;
+      p.avgNutrition = newRound.avgNutrition;
       p.history.push({ ...newRound, parcelsSnapshot: [] });
       p.pendingDecisions = undefined;
     }

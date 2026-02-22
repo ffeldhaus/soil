@@ -1,20 +1,28 @@
 @import "tailwindcss";
 @import "shepherd.js/dist/css/shepherd.css";
 
-html {
-  scrollbar-gutter: stable;
-}
-
 html,
 body {
   font-family: "Noto Sans", sans-serif;
-  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   -webkit-overflow-scrolling: touch;
   color-scheme: dark;
+  overflow: hidden;
 }
 
 .no-overscroll {
   overscroll-behavior-y: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 @theme {
@@ -354,4 +362,76 @@ body.perf-tier-1 .shepherd-modal-overlay-container {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-600;
+}
+
+/* Responsive Planting Grid */
+.planting-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 0 auto;
+  width: 100%;
+  overflow: hidden !important;
+
+  /* Default: Portrait 3x4 */
+  --cols: 3;
+  --rows: 4;
+
+  grid-template-columns: repeat(var(--cols), minmax(80px, 1fr));
+  grid-template-rows: repeat(var(--rows), 1fr);
+
+  /* Use the same scaling logic as the board grid */
+  --modal-overhead: 140px;
+  aspect-ratio: var(--cols) / var(--rows);
+  max-height: calc(100vh - var(--modal-overhead));
+  max-width: calc((100vh - var(--modal-overhead)) * (var(--cols) / var(--rows)));
+}
+
+@media (min-width: 640px) {
+  .planting-grid {
+    gap: 1.25rem;
+    --modal-overhead: 180px;
+    grid-template-columns: repeat(var(--cols), minmax(120px, 1fr));
+  }
+}
+
+/* Landscape: 4x3 */
+@media (orientation: landscape) {
+  .planting-grid {
+    --cols: 4;
+    --rows: 3;
+  }
+}
+
+/* Very short landscape screens: 6x2 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .planting-grid {
+    --cols: 6;
+    --rows: 2;
+    --modal-overhead: 100px; /* More compact overhead on short screens */
+    grid-template-columns: repeat(var(--cols), minmax(70px, 1fr));
+  }
+}
+
+/* Further refinements for very short screens */
+@media (max-height: 500px) {
+  #planting-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .planting-grid {
+    gap: 0.6rem !important;
+  }
+  .planting-grid + div {
+    margin-top: 0.5rem !important;
+  }
+  .planting-modal-container {
+    padding: 1rem !important;
+  }
+}
+
+.planting-modal-container {
+  width: fit-content !important;
+  max-width: 95vw !important;
+  min-width: min(90vw, 320px);
+  margin: 0 auto;
 }

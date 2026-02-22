@@ -12,7 +12,7 @@ import type { CropType } from '../../types';
       (click)="plantingCancelled.emit()"
     >
       <div
-        class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[98vh] sm:max-h-[90vh] flex flex-col"
+        class="planting-modal-container bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 max-h-[98vh] sm:max-h-[90vh] flex flex-col"
         (click)="$event.stopPropagation()"
         role="dialog"
         aria-modal="true"
@@ -22,7 +22,7 @@ import type { CropType } from '../../types';
           Was möchtest du anbauen?
         </h2>
 
-        <div class="grid grid-cols-4 sm:grid-cols-4 landscape:grid-cols-3 sm:landscape:grid-cols-4 gap-2 sm:gap-3 overflow-y-auto pr-1 pb-2">
+        <div class="planting-grid pr-1 pb-2">
           @for (crop of crops; track crop; let first = $first) {
             <button
               (click)="select(crop)"
@@ -39,7 +39,7 @@ import type { CropType } from '../../types';
                 class="absolute inset-0 flex flex-col justify-start items-center pointer-events-none z-20 pt-1"
               >
                 <div
-                  class="bg-gray-300/90 text-gray-900 text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap"
+                  class="bg-gray-300/90 text-gray-900 text-[clamp(8px,15cqw,16px)] font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap"
                 >
                   {{ t(getConfig(crop).label) }}
                 </div>

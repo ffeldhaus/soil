@@ -119,11 +119,16 @@ export class GameEngine {
       options,
     );
 
+    const avgSoil = parcelupdates.reduce((sum, p) => sum + p.soil, 0) / numParcels;
+    const avgNutrition = parcelupdates.reduce((sum, p) => sum + p.nutrition, 0) / numParcels;
+
     return {
       number: currentRoundNumber,
       decision,
       result,
       parcelsSnapshot: parcelupdates,
+      avgSoil: Math.round(avgSoil),
+      avgNutrition: Math.round(avgNutrition),
     };
   }
 
@@ -440,6 +445,7 @@ export class GameEngine {
       Maiszünsler: 'corn-borer',
       Rapsglanzkäfer: 'pollen-beetle',
       Erbsenwickler: 'pea-moth',
+      Rübennematode: 'nematode',
       Haferkronenrost: 'oat-rust',
       'Afrikanische Schweinepest': 'swine-fever',
     };

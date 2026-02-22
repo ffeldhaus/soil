@@ -166,25 +166,38 @@ We use semantic versioning managed in `package.json` and tagged in Git. For a fu
 - **Cloud Build**: Monitor CI/CD builds for success; fix errors and address warnings promptly.
 - **Post-Deployment**: Verify the live version matches the intended `package.json` version.
 
+.
+- **Component Reactivity**: UI components (like the Game Board) must subscribe to these events to auto-trigger state changes (e.g., opening the planting modal, selecting a parcel) that guide the user through the interface.
+- **Cleanup**: Components must handle tour completion/cancellation to reset any temporary states or selections.
+
+## Angular Performance & NgZone
+
+Heavy background monitoring or frequently recurring logic (like FPS checks) must be optimized.
+
+- **Outside the Zone**: Use `NgZone.runOutsideAngular(() => { ... })` for any logic using `requestAnimationFrame`, `setTimeout`, or `setInterval` that does not directly require Angular Change Detection every tick.
+- **Manual Detection**: If state changes occur outside the zone that *do* need to be reflected in the UI, use `ChangeDetectorRef.detectChanges()` or `ngZone.run()` specifically for that update.
+
 ## Performance & Rendering Tiers
 
 The application implements an automatic performance monitoring and tiering system to ensure smooth gameplay across a wide range of devices (from modern smartphones to older Intel-based laptops).
 
 ### Tiers:
-1.  **Tier 3 (High)**: Full visual fidelity. Includes `backdrop-blur` (glassmorphism), complex box-shadows, smooth CSS transitions, and high-density particle effects (e.g., 50 firework particles).
-2.  **Tier 2 (Medium)**: Balanced performance. Disables `backdrop-blur` (which is extremely GPU-intensive). dark overlays are made more opaque (`0.9`) to maintain readability. Animation complexity is reduced (particle effects like fireworks are omitted).
-3.  **Tier 1 (Low)**: Maximum performance. Disables all transparency, transitions, animations, and shadows. Overlays become fully opaque. Particle effects are omitted.
+1.  **Tier 3 (High)**: Full visual fidelity. Includes `backdrop-blur` (glassmorphism), complex box-shadows, smooth CSS transitions, and high-density particle effects (e.g., 40 firework particles).
+2.  **Tier 2 (Medium)**: Balanced performance. Disables `backdrop-blur` (which is extremely GPU-intensive). Dark overlays are made more opaque (`0.9`) to maintain readability. Animation complexity is reduced (particle effects like fireworks are omitted).
+3.  **Tier 1 (Low)**: Maximum performance. Disables all transparency, transitions, animations, and shadows. Overlays become **fully opaque black**. UI components switch to solid colors.
 
 ### Technical Implementation:
-- **`PerformanceService`**: A singleton service that monitors the FPS using `requestAnimationFrame` (outside Angular's zone for efficiency). If the frame rate stays below 50 FPS for 3 consecutive seconds OR below 30 FPS for 2 consecutive seconds, it automatically downgrades the tier.
+- **`PerformanceService`**: A singleton service that monitors the FPS using `requestAnimationFrame` (strictly outside Angular's zone).
+- **Downgrade Logic**: 
+    - 2 consecutive checks < 30 FPS.
+    - 3 consecutive checks < 50 FPS.
 - **Persistence**: The detected tier is cached in `localStorage` (`soil_perf_tier`) to provide a consistent experience on return visits.
-- **CSS Hierarchy**: Tiers are applied via classes on the `body` element (`perf-tier-1`, `perf-tier-2`, `perf-tier-3`). All components should use these classes for conditional styling of expensive properties.
-- **Template Logic**: Components can inject `PerformanceService` to perform high-level structural optimizations (e.g., reducing the number of DOM elements in an animation).
+- **CSS Hierarchy**: Tiers are applied via classes on the `body` element (`perf-tier-1`, `perf-tier-2`, `perf-tier-3`). 
 
 ### Guidelines for New Features:
 - **Avoid `backdrop-filter`**: It is the most common cause of GPU lag on older hardware. Only use it for Tier 3.
 - **Limit Shadows**: Use `shadow-md` or smaller for Tier 2, and omit shadows for Tier 1.
-- **Conditional Animations**: Use the `perf-tier-*` classes to disable or simplify animations for lower tiers.
+- **Specific Overrides**: When implementing Tier 1, target layout-level backdrops specifically to ensure they are opaque without breaking small UI elements (like badge colors).
 
 ## Future Improvements & TODOs
 

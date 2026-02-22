@@ -1,4 +1,4 @@
-<div class="h-dvh w-screen text-white select-none relative font-sans overflow-hidden flex flex-col bg-gray-950 no-overscroll">
+<div class="h-dvh w-screen text-white select-none relative font-sans overflow-hidden flex flex-col bg-gray-950 no-overscroll no-scrollbar">
   <!-- Fullscreen Background Image -->
   <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
     <img [src]="backgroundImage" alt=""
@@ -316,7 +316,7 @@
           </div>
         </div>
       } @else {
-        <div class="flex-1 w-full min-h-0 pt-1 pb-8 flex items-start justify-center overflow-y-auto">
+        <div class="flex-1 w-full min-h-0 pt-1 pb-8 flex items-start justify-center overflow-y-auto custom-scrollbar">
           @if (gameState$ | async; as state) {
             <app-finance [game]="state.game" [viewingRound]="viewingRound" [playerUid]="(user$ | async)?.uid || ''">
             </app-finance>

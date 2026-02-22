@@ -60,6 +60,7 @@ import { type AdvisorInsight, AdvisorService } from './advisor.service';
 export class GameAdvisorComponent implements OnInit {
   @Input() currentRound!: Round;
   @Input() previousRound?: Round;
+  @Input() context: 'result' | 'next_round' = 'result';
   @Input() enabled = true;
 
   private advisorService = inject(AdvisorService);
@@ -68,6 +69,6 @@ export class GameAdvisorComponent implements OnInit {
   dismissed = false;
 
   ngOnInit() {
-    this.insights = this.advisorService.getInsights(this.currentRound, this.previousRound);
+    this.insights = this.advisorService.getInsights(this.currentRound, this.previousRound, this.context);
   }
 }

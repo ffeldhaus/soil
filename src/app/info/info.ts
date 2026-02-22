@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="min-h-screen relative font-sans text-gray-100 overflow-x-hidden">
+    <div class="h-full overflow-y-auto custom-scrollbar relative font-sans text-gray-100 overflow-x-hidden">
           <!-- Background Image -->
           <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
             <picture>

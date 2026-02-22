@@ -3,7 +3,7 @@
   (click)="settingsCancelled.emit()"
 >
   <div
-    class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-lg w-full"
+    class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-xl w-full"
     (click)="$event.stopPropagation()"
     role="dialog"
     aria-modal="true"
@@ -12,11 +12,6 @@
     <h2 id="settings-title" class="text-2xl font-bold text-white mb-6 font-serif">{{ t('settings.title') }}</h2>
 
     <div class="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-      <!-- Advisor -->
-      @if (currentRound) {
-        <app-game-advisor [currentRound]="currentRound" [previousRound]="previousRound" [enabled]="advisorEnabled"></app-game-advisor>
-      }
-
       <!-- Machines Slider -->
       <div class="space-y-2">
         <div class="flex justify-between">
@@ -131,6 +126,11 @@
             }
           </div>
         </div>
+      }
+
+      <!-- Advisor (at the bottom) -->
+      @if (currentRound) {
+        <app-game-advisor [currentRound]="currentRound" [previousRound]="previousRound" [enabled]="advisorEnabled" context="next_round"></app-game-advisor>
       }
     </div>
 

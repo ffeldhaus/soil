@@ -7,7 +7,7 @@ import { AuthService } from '../auth/auth.service';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="min-h-screen relative font-sans text-gray-100 overflow-hidden">
+    <div class="h-full relative font-sans text-gray-100 overflow-y-auto custom-scrollbar">
       <!-- Navigation Bar (Matching other pages for consistent switcher position) -->
       <nav
         class="bg-transparent px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-10 print:hidden"

@@ -107,11 +107,26 @@ describe('AdvisorService', () => {
     const parcels = Array(40)
       .fill(null)
       .map(() => createMockParcel());
-    const round = createMockRound(1, parcels, -3000);
+    const round = createMockRound(1, parcels, -6000);
 
     const insights = service.getInsights(round);
     const financeInsight = insights.find((i) => i.type === 'finance' && i.level === 'warning');
     expect(financeInsight).toBeTruthy();
     expect(financeInsight?.title).toBe('Hoher Verlust');
+  });
+
+  it('should use different messages for soil quality based on context', () => {
+    const parcels = Array(40)
+      .fill(null)
+      .map(() => createMockParcel({ soil: 50 }));
+    const round = createMockRound(1, parcels);
+
+    const resultInsights = service.getInsights(round, undefined, 'result');
+    const resultSoil = resultInsights.find((i) => i.type === 'soil');
+    expect(resultSoil?.message).toContain('nach dieser Runde');
+
+    const nextRoundInsights = service.getInsights(round, undefined, 'next_round');
+    const nextRoundSoil = nextRoundInsights.find((i) => i.type === 'soil');
+    expect(nextRoundSoil?.message).toContain('starten mit einer sehr schlechten');
   });
 });

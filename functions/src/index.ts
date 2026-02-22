@@ -999,11 +999,6 @@ async function performCalculation(
 
     allPlayerRounds[uid] = nextRound;
 
-    // Calculate player-specific averages
-    const pAvgSoil = nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.soil, 0) / nextRound.parcelsSnapshot.length;
-    const pAvgNutrition =
-      nextRound.parcelsSnapshot.reduce((sum, p) => sum + p.nutrition, 0) / nextRound.parcelsSnapshot.length;
-
     // Update player state with lightweight history
     const lightweightRound: Round = {
       ...nextRound,
@@ -1014,8 +1009,8 @@ async function performCalculation(
     player.history.push(lightweightRound);
     player.currentRound = nextRoundNumber;
     player.capital = nextRound.result?.capital; // Sync current capital
-    player.avgSoil = Math.round(pAvgSoil);
-    player.avgNutrition = Math.round(pAvgNutrition);
+    player.avgSoil = nextRound.avgSoil;
+    player.avgNutrition = nextRound.avgNutrition;
 
     // Reset pending decisions for next round (Firestore doesn't allow undefined)
     (player as any).pendingDecisions = undefined;

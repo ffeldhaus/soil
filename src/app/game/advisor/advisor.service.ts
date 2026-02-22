@@ -10,24 +10,28 @@ export interface AdvisorInsight {
   hint?: string;
 }
 
+export type AdvisorContext = 'result' | 'next_round';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AdvisorService {
-  getInsights(currentRound: Round, previousRound?: Round): AdvisorInsight[] {
+  getInsights(currentRound: Round, previousRound?: Round, context: AdvisorContext = 'result'): AdvisorInsight[] {
     const insights: AdvisorInsight[] = [];
 
-    if (!currentRound.result) return insights;
+    if (!currentRound.result && context === 'result') return insights;
 
-    this.addHarvestInsights(insights, currentRound);
-    this.addSoilInsights(insights, currentRound, previousRound);
-    this.addNutritionInsights(insights, currentRound, previousRound);
-    this.addFinancialInsights(insights, currentRound);
+    this.addHarvestInsights(insights, currentRound, context);
+    this.addSoilInsights(insights, currentRound, previousRound, context);
+    this.addNutritionInsights(insights, currentRound, previousRound, context);
+    this.addFinancialInsights(insights, currentRound, context);
 
     return insights;
   }
 
-  private addHarvestInsights(insights: AdvisorInsight[], round: Round) {
+  private addHarvestInsights(insights: AdvisorInsight[], round: Round, context: AdvisorContext) {
+    if (context !== 'result') return;
+
     const summary = round.result?.harvestSummary;
     if (!summary) return;
 
@@ -40,7 +44,7 @@ export class AdvisorService {
           level: 'danger',
           title: 'Ernteausfall',
           message: 'Du hast keine Erträge erzielt, obwohl du Pflanzen angebaut hast.',
-          hint: 'Überprüfe das Wetter und den Schädlingsbefall in der Rundenübersicht. Extreme Bedingungen können die Ernte vernichten.',
+          hint: 'Extreme Wetterbedingungen oder massiver Schädlingsbefall haben deine Ernte vernichtet.',
         });
       }
       return;
@@ -62,110 +66,131 @@ export class AdvisorService {
           type: 'harvest',
           level: 'warning',
           title: `Geringer Ertrag: ${this.getCropName(crop as CropType)}`,
-          message: `Der Ertrag bei ${this.getCropName(crop as CropType)} war sehr enttäuschend.`,
-          hint: 'Schlechte Bodenqualität oder Nährstoffmangel könnten die Ursache sein. Auch Schädlinge mindern den Ertrag erheblich, wenn kein Pflanzenschutz eingesetzt wird.',
+          message: `Der Ertrag bei ${this.getCropName(crop as CropType)} war in dieser Runde sehr enttäuschend.`,
+          hint: 'Schlechte Bodenqualität, Nährstoffmangel oder Schädlinge könnten die Ursache für dieses Ergebnis sein.',
         });
       }
     }
   }
 
-  private addSoilInsights(insights: AdvisorInsight[], current: Round, previous?: Round) {
+  private addSoilInsights(
+    insights: AdvisorInsight[],
+    current: Round,
+    previous: Round | undefined,
+    context: AdvisorContext,
+  ) {
     const currentAvgSoil = this.calculateAvgSoil(current.parcelsSnapshot);
 
-    if (currentAvgSoil < GAME_CONSTANTS.SOIL.START * 0.8) {
+    if (!Number.isNaN(currentAvgSoil) && currentAvgSoil < GAME_CONSTANTS.SOIL.START * 0.8) {
       insights.push({
         type: 'soil',
         level: 'danger',
         title: 'Kritische Bodenqualität',
-        message: 'Deine Bodenqualität ist auf einem gefährlich niedrigen Niveau.',
-        hint: 'Monokulturen und intensiver Maschineneinsatz schaden dem Boden. Nutze Brachland oder Feldbohnen zur Regeneration. Siehe Handbuch Kapitel "Bodenqualität".',
+        message:
+          context === 'result'
+            ? 'Deine Bodenqualität ist nach dieser Runde auf einem gefährlich niedrigen Niveau.'
+            : 'Achtung: Deine Felder starten mit einer sehr schlechten Bodenqualität in diese Runde.',
+        hint: 'Ein ausgelaugter Boden führt zu massiven Ernteverlusten und braucht lange zur Regeneration.',
       });
     }
 
-    if (previous) {
+    if (previous && context === 'result') {
       const prevAvgSoil = this.calculateAvgSoil(previous.parcelsSnapshot);
-      const diff = currentAvgSoil - prevAvgSoil;
+      if (!Number.isNaN(currentAvgSoil) && !Number.isNaN(prevAvgSoil)) {
+        const diff = currentAvgSoil - prevAvgSoil;
 
-      if (diff < -5) {
-        insights.push({
-          type: 'soil',
-          level: 'warning',
-          title: 'Bodenqualität sinkt',
-          message: 'Die Bodenqualität hat sich in dieser Runde deutlich verschlechtert.',
-          hint: 'Hast du viele schwere Maschinen eingesetzt oder die Fruchtfolge missachtet? Manche Pflanzen wie Zuckerrüben sind besonders anspruchsvoll.',
-        });
-      } else if (diff > 2) {
-        insights.push({
-          type: 'soil',
-          level: 'info',
-          title: 'Bodenverbesserung',
-          message: 'Gute Nachrichten! Deine Maßnahmen zur Bodenverbesserung zeigen Wirkung.',
-          hint: 'Nachhaltige Bewirtschaftung zahlt sich langfristig durch stabilere Erträge aus.',
-        });
-      }
-    }
-  }
-
-  private addNutritionInsights(insights: AdvisorInsight[], current: Round, previous?: Round) {
-    const currentAvgNut = this.calculateAvgNutrition(current.parcelsSnapshot);
-
-    if (currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.5) {
-      insights.push({
-        type: 'nutrition',
-        level: 'danger',
-        title: 'Nährstoffmangel',
-        message: 'Deine Felder sind ausgelaugt. Den Pflanzen fehlen wichtige Mineralstoffe.',
-        hint: 'Ohne Nährstoffe wächst nichts. Setze Dünger ein oder integriere Viehhaltung (Gras/Tiere) für organischen Dünger. Auch Feldbohnen helfen.',
-      });
-    }
-
-    if (previous) {
-      const prevAvgNut = this.calculateAvgNutrition(previous.parcelsSnapshot);
-      if (currentAvgNut < prevAvgNut && currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.8) {
-        const diff = prevAvgNut - currentAvgNut;
-        if (diff > 10) {
+        if (diff < -5) {
           insights.push({
-            type: 'nutrition',
+            type: 'soil',
             level: 'warning',
-            title: 'Hoher Nährstoffverbrauch',
-            message: 'Die letzte Ernte hat dem Boden sehr viele Nährstoffe entzogen.',
-            hint: 'Starkzehrer wie Weizen oder Mais benötigen viel Nahrung. Achte darauf, dem Boden wieder Nährstoffe zuzuführen.',
+            title: 'Bodenqualität sinkt',
+            message: 'Die Bodenqualität hat sich durch deine Bewirtschaftung deutlich verschlechtert.',
+            hint: 'Intensive Nutzung und schwere Maschinen setzen dem Boden zu.',
+          });
+        } else if (diff > 2) {
+          insights.push({
+            type: 'soil',
+            level: 'info',
+            title: 'Bodenverbesserung',
+            message: 'Gute Nachrichten! Deine Maßnahmen zur Bodenverbesserung zeigen Wirkung.',
           });
         }
       }
     }
+  }
 
-    if (currentAvgNut > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
+  private addNutritionInsights(
+    insights: AdvisorInsight[],
+    current: Round,
+    previous: Round | undefined,
+    context: AdvisorContext,
+  ) {
+    const currentAvgNut = this.calculateAvgNutrition(current.parcelsSnapshot);
+
+    if (!Number.isNaN(currentAvgNut) && currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.5) {
+      insights.push({
+        type: 'nutrition',
+        level: 'danger',
+        title: 'Nährstoffmangel',
+        message:
+          context === 'result'
+            ? 'Deine Felder sind nach der Ernte völlig ausgelaugt.'
+            : 'Deine Felder weisen einen erheblichen Mangel an Mineralstoffen auf.',
+        hint: 'Ohne ausreichende Nährstoffe können Pflanzen nicht gesund wachsen und bringen kaum Ertrag.',
+      });
+    }
+
+    if (previous && context === 'result') {
+      const prevAvgNut = this.calculateAvgNutrition(previous.parcelsSnapshot);
+      if (!Number.isNaN(currentAvgNut) && !Number.isNaN(prevAvgNut)) {
+        if (currentAvgNut < prevAvgNut && currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.8) {
+          const diff = prevAvgNut - currentAvgNut;
+          if (diff > 10) {
+            insights.push({
+              type: 'nutrition',
+              level: 'warning',
+              title: 'Hoher Nährstoffverbrauch',
+              message: 'Diese Runde hat dem Boden überdurchschnittlich viele Nährstoffe entzogen.',
+              hint: 'Starkzehrer benötigen viel Nahrung. Achte auf den Nährstoffhaushalt deiner Flächen.',
+            });
+          }
+        }
+      }
+    }
+
+    if (!Number.isNaN(currentAvgNut) && currentAvgNut > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
       insights.push({
         type: 'nutrition',
         level: 'warning',
         title: 'Überdüngung',
-        message: 'Die Nährstoffwerte sind zu hoch. Das schadet der Bodenqualität.',
-        hint: 'Zuviel Dünger ist kontraproduktiv. Er schadet den Bodenorganismen und mindert die Bodenqualität langfristig.',
+        message: 'Die Nährstoffwerte sind aktuell zu hoch.',
+        hint: 'Zuviel Dünger schadet den Bodenorganismen und mindert die Bodenqualität langfristig.',
       });
     }
   }
 
-  private addFinancialInsights(insights: AdvisorInsight[], round: Round) {
+  private addFinancialInsights(insights: AdvisorInsight[], round: Round, context: AdvisorContext) {
+    if (context !== 'result') return;
+
     const profit = round.result?.profit ?? 0;
-    if (profit < -2000) {
+    if (profit < -5000) {
       insights.push({
         type: 'finance',
         level: 'warning',
         title: 'Hoher Verlust',
-        message: 'Du hast in dieser Runde ein großes finanzielles Minus gemacht.',
-        hint: 'Überprüfe deine Ausgaben für Maschineninvestitionen und Saatgut im Verhältnis zu den Erträgen. Manchmal ist weniger mehr.',
+        message: 'Du hast in dieser Runde ein massives finanzielles Minus gemacht.',
+        hint: 'Hohe Investitionskosten standen in keinem gesunden Verhältnis zu den erzielten Erlösen.',
       });
     }
   }
 
   private calculateAvgSoil(parcels: Parcel[]): number {
-    if (parcels.length === 0) return 0;
+    if (!parcels || parcels.length === 0) return Number.NaN;
     return parcels.reduce((sum, p) => sum + p.soil, 0) / parcels.length;
   }
 
   private calculateAvgNutrition(parcels: Parcel[]): number {
-    if (parcels.length === 0) return 0;
+    if (!parcels || parcels.length === 0) return Number.NaN;
     return parcels.reduce((sum, p) => sum + p.nutrition, 0) / parcels.length;
   }
 

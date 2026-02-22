@@ -935,8 +935,8 @@ export class GameService {
       .map((_, i) => ({
         index: i,
         crop: 'Fallow',
-        soil: 75 + (playerIndex % 10) + Math.random() * 5,
-        nutrition: 70 + (playerIndex % 15) + Math.random() * 10,
+        soil: GAME_CONSTANTS.SOIL.START - 5 + (playerIndex % 10) + Math.random() * 5,
+        nutrition: GAME_CONSTANTS.NUTRITION.START - 10 + (playerIndex % 15) + Math.random() * 10,
         yield: 0,
       }));
   }

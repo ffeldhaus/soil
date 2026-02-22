@@ -7,7 +7,7 @@
     "build": "ng build",
     "postbuild": "node scripts/build-sw.js",
     "watch": "ng build --watch --configuration development",
-    "start:emulators": "firebase emulators:start",
+    "start:emulators": "npm run build && firebase emulators:start",
     "test:unit": "vitest run",
     "test:unit:coverage": "vitest run --coverage",
     "test:functions": "npm run test --prefix functions",
