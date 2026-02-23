@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
-- Refined the "Tier 3" (Default) glassmorphism container backgrounds to use a premium, semi-transparent black (`rgba(0, 0, 0, 0.7)`) instead of the default bluish Tailwind `gray-900`. This aligns the visual style with Tier 2 while retaining the high-quality `backdrop-blur` effect.
+- Refined the "Tier 3" (Default) glassmorphism container backgrounds to use a premium, semi-transparent black (`rgba(0, 0, 0, 0.6)`) with a slightly reduced blur (`8px`) instead of the default bluish Tailwind `gray-900` with `12px` blur. This aligns the visual style with Tier 2 while retaining a high-quality, glassy `backdrop-blur` effect with excellent readability.
 - Unified the "Home" navigation experience across the application by making the "SOIL" logo (and "ADMIN" logo on the Super Admin dashboard) a clickable link to the start page or dashboard.
 - Removed redundant and inconsistent "Zur Startseite" house icon buttons from the right side of navigation bars on all informational and authentication pages.
 - Updated the "SOIL" logo in the game HUD to smartly navigate back to the Admin Dashboard for authenticated users or the Start Page for guest players, resolving confusion between the home action and the "Logout" (exit) button.
