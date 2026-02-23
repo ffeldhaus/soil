@@ -16,7 +16,7 @@ import { type AdvisorInsight, AdvisorService } from './advisor.service';
             <span class="text-lg">💡</span>
             Landwirtschaftlicher Berater
           </h3>
-          <button (click)="dismissed = true" class="text-gray-500 hover:text-gray-300 transition-colors">
+          <button (click)="dismissed = true" class="text-gray-300 hover:text-white transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -34,11 +34,11 @@ import { type AdvisorInsight, AdvisorService } from './advisor.service';
                 @if (insight.level === 'danger') { <span class="text-red-500">⚠️</span> }
                 @if (insight.level === 'warning') { <span class="text-amber-500">🔸</span> }
                 @if (insight.level === 'info') { <span class="text-blue-500">ℹ️</span> }
-                <span class="font-bold text-sm text-gray-200">{{ insight.title }}</span>
+                <span class="font-bold text-sm text-white">{{ insight.title }}</span>
               </div>
-              <p class="text-xs text-gray-400 mb-1">{{ insight.message }}</p>
+              <p class="text-xs text-white mb-1">{{ insight.message }}</p>
               @if (insight.hint) {
-                <p class="text-[10px] italic text-gray-500">Tipp: {{ insight.hint }}</p>
+                <p class="text-[10px] italic text-gray-200">Tipp: {{ insight.hint }}</p>
               }
             </div>
           }

@@ -5,7 +5,7 @@
     <div class="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
       <!-- Profit -->
       <div class="flex justify-between items-center border-b border-gray-700 pb-4">
-        <span class="text-gray-400">Rundengewinn</span>
+        <span class="text-white">Rundengewinn</span>
         <div class="text-right">
           <span class="text-xl font-bold block" [class.text-emerald-400]="profit >= 0" [class.text-red-400]="profit < 0">
             {{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
@@ -21,11 +21,11 @@
       <!-- Financial Breakdown -->
       <div class="grid grid-cols-2 gap-4 text-xs">
         <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
-          <span class="text-gray-500 block uppercase tracking-tighter">Einnahmen</span>
+          <span class="text-white block uppercase tracking-tighter">Einnahmen</span>
           <span class="text-white font-mono">{{ income + subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
         </div>
         <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
-          <span class="text-gray-500 block uppercase tracking-tighter">Ausgaben</span>
+          <span class="text-white block uppercase tracking-tighter">Ausgaben</span>
           <span class="text-white font-mono">{{ expenses | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
         </div>
       </div>
@@ -33,9 +33,9 @@
       <!-- Bio Siegel -->
       <div class="flex justify-between items-center border-b border-gray-700 pb-4">
         <div class="flex flex-col">
-          <span class="text-gray-400">EU-Bio-Siegel</span>
+          <span class="text-white">EU-Bio-Siegel</span>
           @if (!bioSiegel) {
-            <span class="text-xs text-gray-500">Kriterien nicht erfüllt</span>
+            <span class="text-xs text-gray-300">Kriterien nicht erfüllt</span>
           }
           @if (bioSiegel) {
             <span class="text-xs text-emerald-500">Kriterien erfüllt!</span>
@@ -70,13 +70,13 @@
 
       <!-- Weather / Events -->
       <div class="bg-gray-800/50 rounded-lg p-4">
-        <h3 class="text-sm font-bold text-gray-300 mb-2">Bedingungen</h3>
+        <h3 class="text-sm font-bold text-white mb-2">Bedingungen</h3>
         <div class="flex justify-between mb-1">
-          <span class="text-gray-400">Wetter</span>
+          <span class="text-white">Wetter</span>
           <span class="text-white">{{ t(events?.weather || 'Normal') }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-400">Schädlinge</span>
+          <span class="text-white">Schädlinge</span>
           <span class="text-white">
             @if (events?.vermin?.length) {
               @for (v of events?.vermin; track v; let last = $last) {

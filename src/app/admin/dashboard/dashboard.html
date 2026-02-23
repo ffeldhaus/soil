@@ -21,7 +21,7 @@
         <div class="space-y-6">
           <!-- Loading State -->
           @if (isLoading) {
-            <div class="p-12 bg-gray-900/80 backdrop-blur-md rounded-3xl border border-gray-700 shadow-2xl flex flex-col items-center justify-center text-gray-400 animate-fade-in portrait:rounded-none">
+            <div class="p-12 bg-gray-900/80 backdrop-blur-md rounded-3xl border border-gray-700 shadow-2xl flex flex-col items-center justify-center text-white animate-fade-in portrait:rounded-none">
               <svg
                 class="animate-spin h-10 w-10 text-emerald-500 mb-4"
                 xmlns="http://www.w3.org/2000/svg"
@@ -108,14 +108,14 @@
                   <h3 class="text-lg font-bold text-emerald-400 mb-2">{{ t('dashboard.created.title') }}</h3>
                   <div class="grid grid-cols-1 gap-4 text-sm">
                     <div>
-                      <span class="text-gray-400 block">{{ t('dashboard.created.id') }}</span>
+                      <span class="text-gray-300 block">{{ t('dashboard.created.id') }}</span>
                       <span class="font-mono text-white select-all text-lg" data-testid="created-game-id">{{
                         createdGame.id
                       }}</span>
                     </div>
                     @if (createdGame.password) {
                       <div>
-                        <span class="text-gray-400 block">PIN</span>
+                        <span class="text-gray-300 block">PIN</span>
                         <span class="font-mono text-emerald-400 select-all text-lg font-bold" data-testid="created-game-pin">{{
                           createdGame.password
                         }}</span>

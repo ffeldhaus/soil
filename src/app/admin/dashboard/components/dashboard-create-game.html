@@ -2,7 +2,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
     <div class="col-span-1">
       <div class="flex justify-between items-center mb-1">
-        <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.name') }} *</label>
+        <label class="block text-xs text-white">{{ t('dashboard.createGame.name') }} *</label>
         @if (!newGameConfig.name) {
           <span class="text-[10px] text-red-400 uppercase font-bold">{{ t('dashboard.createGame.required') }}</span>
         }
@@ -17,12 +17,12 @@
         [class.border-gray-600]="newGameConfig.name"
         [class.focus:border-emerald-500]="newGameConfig.name"
       />
-      <p class="text-[10px] text-gray-500 mb-3 italic">{{ t('dashboard.createGame.nameHint') }}</p>
+      <p class="text-[10px] text-white mb-3 italic">{{ t('dashboard.createGame.nameHint') }}</p>
     </div>
 
     <div class="col-span-1">
       <div class="flex justify-between items-center mb-1">
-        <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.playerLabel') }} *</label>
+        <label class="block text-xs text-white">{{ t('dashboard.createGame.playerLabel') }} *</label>
         @if (!newGameConfig.playerLabel) {
           <span class="text-[10px] text-red-400 uppercase font-bold">{{ t('dashboard.createGame.required') }}</span>
         }
@@ -37,12 +37,12 @@
         [class.border-gray-600]="newGameConfig.playerLabel"
         [class.focus:border-emerald-500]="newGameConfig.playerLabel"
       />
-      <p class="text-[10px] text-gray-500 mb-3 italic">{{ t('dashboard.createGame.playerHint') }}</p>
+      <p class="text-[10px] text-white mb-3 italic">{{ t('dashboard.createGame.playerHint') }}</p>
     </div>
 
     <div>
       <div class="flex justify-between items-center mb-1">
-        <label class="block text-xs text-gray-200">Gesamtanzahl Slots</label>
+        <label class="block text-xs text-white">Gesamtanzahl Slots</label>
         <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numPlayers }}</span>
       </div>
       <input
@@ -54,11 +54,11 @@
         data-testid="num-players-input"
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
-      <p class="text-[10px] text-gray-500 mt-1">Du bist automatisch Spieler 1.</p>
+      <p class="text-[10px] text-white mt-1">Du bist automatisch Spieler 1.</p>
     </div>
     <div>
       <div class="flex justify-between items-center mb-1">
-        <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.bots') }}</label>
+        <label class="block text-xs text-white">{{ t('dashboard.createGame.bots') }}</label>
         <span class="text-xs font-bold text-blue-400 font-mono">{{ newGameConfig.numAi }}</span>
       </div>
       <input
@@ -69,14 +69,14 @@
         data-testid="num-ai-input"
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
       />
-      <p class="text-[10px] text-gray-500 mt-1">Restliche Slots ({{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}) sind für andere menschliche Spieler.</p>
+      <p class="text-[10px] text-white mt-1">Restliche Slots ({{ newGameConfig.numPlayers - 1 - newGameConfig.numAi }}) sind für andere menschliche Spieler.</p>
     </div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
     <div>
       <div class="flex justify-between items-center mb-1">
-        <label class="block text-xs text-gray-200">{{ t('dashboard.createGame.rounds') }}</label>
+        <label class="block text-xs text-white">{{ t('dashboard.createGame.rounds') }}</label>
         <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numRounds }}</span>
       </div>
       <input
@@ -89,7 +89,7 @@
       />
     </div>
     <div>
-      <label class="block text-xs text-gray-200 mb-1">{{ t('dashboard.createGame.aiLevel') }}</label>
+      <label class="block text-xs text-white mb-1">{{ t('dashboard.createGame.aiLevel') }}</label>
       <div class="relative h-[42px]">
         <select
           [(ngModel)]="newGameConfig.aiLevel"
@@ -118,7 +118,7 @@
         [(ngModel)]="newGameConfig.advancedPricingEnabled"
         class="w-5 h-5 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
       />
-      <label for="advancedPricingEnabled" class="text-sm text-gray-200 cursor-pointer">
+      <label for="advancedPricingEnabled" class="text-sm text-white cursor-pointer">
         {{ t('dashboard.createGame.advancedPricing') }}
       </label>
     </div>
@@ -130,7 +130,7 @@
         [(ngModel)]="newGameConfig.analyticsEnabled"
         class="w-5 h-5 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
       />
-      <label for="analyticsEnabled" class="text-sm text-gray-200 cursor-pointer">
+      <label for="analyticsEnabled" class="text-sm text-white cursor-pointer">
         {{ t('dashboard.createGame.analytics') }}
       </label>
     </div>
@@ -142,7 +142,7 @@
         [(ngModel)]="newGameConfig.advisorEnabled"
         class="w-5 h-5 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
       />
-      <label for="advisorEnabled" class="text-sm text-gray-200 cursor-pointer">
+      <label for="advisorEnabled" class="text-sm text-white cursor-pointer">
         {{ t('dashboard.createGame.advisor') }}
       </label>
     </div>
@@ -192,7 +192,7 @@
   </button>
 
   <div class="mt-4 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
-    <p class="text-[9px] text-gray-500 leading-relaxed italic">
+    <p class="text-[9px] text-white leading-relaxed italic">
       <strong>Hinweis:</strong> Spieldaten werden für Forschungszwecke und die Spielbalance **anonymisiert** ausgewertet. 
       Details zur Datenverarbeitung finden Sie in der 
       <a routerLink="/privacy" class="text-emerald-500 hover:underline">Datenschutzerklärung</a>.

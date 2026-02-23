@@ -102,7 +102,7 @@
           [class.text-white]="showLabels"
           [class.border-emerald-500]="showLabels"
           [class.bg-gray-800]="!showLabels"
-          [class.text-gray-400]="!showLabels"
+          [class.text-gray-200]="!showLabels"
           [class.border-gray-700]="!showLabels"
           [attr.aria-pressed]="showLabels"
           aria-label="Toggle field names"
@@ -116,7 +116,7 @@
           [class.text-white]="showNutritionOverlay"
           [class.border-blue-500]="showNutritionOverlay"
           [class.bg-gray-800]="!showNutritionOverlay"
-          [class.text-gray-400]="!showNutritionOverlay"
+          [class.text-gray-200]="!showNutritionOverlay"
           [class.border-gray-700]="!showNutritionOverlay"
           [attr.aria-pressed]="showNutritionOverlay"
           aria-label="Toggle nutrition overlay"
@@ -130,7 +130,7 @@
           [class.text-white]="showHarvestOverlay"
           [class.border-yellow-500]="showHarvestOverlay"
           [class.bg-gray-800]="!showHarvestOverlay"
-          [class.text-gray-400]="!showHarvestOverlay"
+          [class.text-gray-200]="!showHarvestOverlay"
           [class.border-gray-700]="!showHarvestOverlay"
           [attr.aria-pressed]="showHarvestOverlay"
           aria-label="Toggle harvest overlay"
@@ -144,7 +144,7 @@
           [class.text-white]="showSoilOverlay"
           [class.border-emerald-600]="showSoilOverlay"
           [class.bg-gray-800]="!showSoilOverlay"
-          [class.text-gray-400]="!showSoilOverlay"
+          [class.text-gray-200]="!showSoilOverlay"
           [class.border-gray-700]="!showSoilOverlay"
           [attr.aria-pressed]="showSoilOverlay"
           aria-label="Toggle soil quality overlay"
@@ -159,7 +159,7 @@
           [class.text-white]="showFinance || maxRoundNumber > 0"
           [class.border-emerald-500]="showFinance"
           [class.bg-gray-800]="!showFinance"
-          [class.text-gray-400]="!showFinance && maxRoundNumber === 0"
+          [class.text-gray-200]="!showFinance && maxRoundNumber === 0"
           [class.border-gray-700]="!showFinance"
           [class.opacity-50]="maxRoundNumber === 0"
           [attr.aria-pressed]="showFinance"
@@ -183,7 +183,7 @@
       </button>
       <button
         (click)="startTour()"
-        class="w-7 h-7 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg border border-gray-700 transition"
+        class="w-7 h-7 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg border border-gray-700 transition"
         title="Geführte Tour starten"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -196,7 +196,7 @@
           data-testid="next-round-button"
           data-tour="next-round"
           [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
-          class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500"
+          class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-400"
           [attr.aria-label]="isSubmitted ? 'Waiting for other players' : 'Submit round and proceed'"
         >
           @if (isSubmitted || pendingNextRound) {
@@ -223,7 +223,7 @@
     @if (isDev) {
       <button
         (click)="copyGameState()"
-        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white font-bold rounded-lg border border-gray-700 transition text-[10px] hidden sm:block"
+        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-bold rounded-lg border border-gray-700 transition text-[10px] hidden sm:block"
         title="Copy Game State JSON"
         aria-label="Copy game state as JSON"
       >

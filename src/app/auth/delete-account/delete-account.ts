@@ -53,7 +53,7 @@ import { AuthService } from '../auth.service';
             {{ isGuest() ? 'Lokale Daten löschen' : 'Konto löschen' }}
           </h1>
           
-          <p class="text-gray-300 leading-relaxed">
+          <p class="text-white leading-relaxed">
             Wir bedauern, dass Sie uns verlassen möchten. Bitte beachten Sie, dass die Löschung 
             {{ isGuest() ? 'Ihrer lokalen Spieldaten' : 'Ihres Kontos' }} endgültig ist.
           </p>
@@ -65,7 +65,7 @@ import { AuthService } from '../auth.service';
               </svg>
               Was passiert bei der Löschung?
             </h2>
-            <ul class="list-disc list-inside text-gray-300 space-y-2 text-sm ml-2">
+            <ul class="list-disc list-inside text-gray-200 space-y-2 text-sm ml-2">
               @if (isGuest()) {
                 <li>Alle lokal in Ihrem Browser gespeicherten Spieldaten (z.B. lokale Spiele) werden unwiderruflich gelöscht.</li>
                 <li>Ihre anonyme Gast-Sitzung wird beendet.</li>
@@ -120,7 +120,7 @@ import { AuthService } from '../auth.service';
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="showConfirmModal.set(false)"></div>
         <div class="bg-gray-900 border border-gray-700 p-8 rounded-3xl shadow-2xl relative z-10 max-w-md w-full space-y-6">
           <h3 class="text-2xl font-bold text-white">Sind Sie absolut sicher?</h3>
-          <p class="text-gray-300">
+          <p class="text-white">
             Diese Aktion löscht {{ isGuest() ? 'alle Ihre lokalen Spieldaten' : 'alle Ihre Daten und Ihr Konto' }} dauerhaft. Eine Wiederherstellung ist nicht möglich.
           </p>
           <div class="flex gap-4">

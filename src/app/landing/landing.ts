@@ -38,7 +38,7 @@ import { AuthService } from '../auth/auth.service';
             SOIL
           </h1>
 
-          <p class="text-xl md:text-3xl text-gray-200 font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+          <p class="text-xl md:text-3xl text-white max-w-2xl mx-auto leading-relaxed drop-shadow-md">
             <span data-testid="landing-intro">Eine interaktive Simulation über</span>&nbsp;<span
               class="text-emerald-300 font-normal"
               data-testid="landing-agriculture"
@@ -102,7 +102,7 @@ import { AuthService } from '../auth/auth.service';
                   <span>Handbuch</span>
                 </a>
               </div>
-              <div class="space-y-4 text-lg leading-relaxed text-gray-400">
+              <div class="space-y-4 text-lg leading-relaxed text-white">
                 <p>
                   Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
                   ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen
@@ -138,7 +138,7 @@ import { AuthService } from '../auth/auth.service';
                   <span>Hintergrund</span>
                 </a>
               </div>
-              <div class="space-y-4 text-lg leading-relaxed text-gray-400">
+              <div class="space-y-4 text-lg leading-relaxed text-white">
                 <p>
                   Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel
                   soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.

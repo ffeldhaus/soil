@@ -12,7 +12,7 @@
         <a routerLink="/admin/register" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg transition">Registrieren</a>
         <a routerLink="/admin/login" class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg transition">Anmelden</a>
       } @else {
-        <span class="text-sm font-medium text-gray-300 hidden md:block">
+        <span class="text-sm font-medium text-white hidden md:block">
           {{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user?.email) }}
         </span>
       }

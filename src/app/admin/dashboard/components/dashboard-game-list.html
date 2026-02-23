@@ -118,7 +118,7 @@
 
   <!-- Loading State -->
   @if (isLoadingGames) {
-    <div class="py-12 flex flex-col items-center justify-center text-gray-400">
+    <div class="py-12 flex flex-col items-center justify-center text-white">
       <svg
         class="animate-spin h-8 w-8 text-emerald-500 mb-3"
         xmlns="http://www.w3.org/2000/svg"
@@ -319,7 +319,7 @@
 
   <!-- Pagination -->
   @if (totalGames > 0) {
-    <div class="flex flex-col sm:flex-row justify-between items-center mt-4 text-sm text-gray-400 gap-4">
+    <div class="flex flex-col sm:flex-row justify-between items-center mt-4 text-sm text-white gap-4">
       <div>
         <ng-container>{{ t('dashboard.pagination.showing') }}</ng-container>&nbsp;<span class="text-white">{{ (currentPage - 1) * pageSize + 1 }}</span> -
         <span class="text-white">{{ (currentPage - 1) * pageSize + games.length }}</span>&nbsp;<ng-container>{{ t('dashboard.pagination.of') }}</ng-container>&nbsp;<span class="text-white">{{ totalGames }}</span>

@@ -1,6 +1,6 @@
 <div class="ml-12">
   <div class="flex justify-between items-center mb-4">
-    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wide">
+    <h4 class="text-sm font-bold text-gray-300 uppercase tracking-wide">
       {{ t('dashboard.details.players') }}
     </h4>
     <button
@@ -117,7 +117,7 @@
                 <span class="text-emerald-400">{{ slot.player?.displayName }}</span>
               }
               @if (!slot.isAi && !slot.isJoined) {
-                <span class="text-gray-500">{{ t('dashboard.player.label') }} {{ slot.number }}</span>
+                <span class="text-gray-300">{{ t('dashboard.player.label') }} {{ slot.number }}</span>
               }
             </div>
           </div>
@@ -133,7 +133,7 @@
             </span>
           }
           @if (!slot.isJoined) {
-            <span class="px-2 py-0.5 rounded text-[10px] bg-gray-800 text-gray-400 font-bold uppercase tracking-wider">
+            <span class="px-2 py-0.5 rounded text-[10px] bg-gray-800 text-gray-300 font-bold uppercase tracking-wider">
               EMPTY
             </span>
           }
@@ -143,7 +143,7 @@
           class="grid grid-cols-2 gap-4 text-xs bg-black/20 p-3 rounded-xl border border-white/5 portrait:rounded-none"
         >
           <div>
-            <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
+            <span class="block text-gray-300 text-[10px] uppercase font-bold mb-1">{{
               t('dashboard.player.capital')
             }}</span>
             <span class="font-mono text-yellow-500 font-bold text-sm">{{
@@ -151,19 +151,19 @@
             }}</span>
           </div>
           <div>
-            <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">PIN</span>
+            <span class="block text-gray-300 text-[10px] uppercase font-bold mb-1">PIN</span>
             <span class="font-mono text-emerald-400 font-bold text-sm" [attr.data-testid]="'player-pin-' + slot.number">{{
               slot.password
             }}</span>
           </div>
           <div>
-            <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
+            <span class="block text-gray-300 text-[10px] uppercase font-bold mb-1">{{
               t('dashboard.player.round')
             }}</span>
             <span class="font-mono text-white text-sm">{{ slot.player?.currentRound ?? 0 }}</span>
           </div>
           <div>
-            <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
+            <span class="block text-gray-300 text-[10px] uppercase font-bold mb-1">{{
               t('dashboard.player.soil')
             }}</span>
             <div
@@ -176,7 +176,7 @@
             </div>
           </div>
           <div>
-            <span class="block text-gray-400 text-[10px] uppercase font-bold mb-1">{{
+            <span class="block text-gray-300 text-[10px] uppercase font-bold mb-1">{{
               t('dashboard.player.nutrition')
             }}</span>
             <div
@@ -190,13 +190,13 @@
           </div>
           <div class="col-span-2 pt-1 border-t border-white/5">
             <div class="flex justify-between items-center">
-              <span class="text-gray-400 text-[10px] uppercase font-bold">{{ t('dashboard.player.submitted') }}</span>
+              <span class="text-gray-300 text-[10px] uppercase font-bold">{{ t('dashboard.player.submitted') }}</span>
               <span
                 class="font-bold text-[10px] px-2 py-0.5 rounded-full"
                 [class.bg-emerald-500/20]="slot.player?.submittedRound === game.currentRoundNumber"
                 [class.text-emerald-400]="slot.player?.submittedRound === game.currentRoundNumber"
                 [class.bg-gray-700]="slot.player?.submittedRound !== game.currentRoundNumber"
-                [class.text-gray-500]="slot.player?.submittedRound !== game.currentRoundNumber"
+                [class.text-gray-400]="slot.player?.submittedRound !== game.currentRoundNumber"
               >
                 {{ slot.player?.submittedRound === game.currentRoundNumber ? 'JA' : 'NEIN' }}
               </span>

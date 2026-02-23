@@ -152,12 +152,12 @@
                 class="bg-gray-900 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1" />
               }
               <span
-                class="text-[10px] text-gray-500">Aktiver Spieler</span>
+                class="text-[10px] text-white">Aktiver Spieler</span>
             </div>
           </div>
           }
 
-          <div class="pt-2 flex flex-col gap-2 text-[10px] font-mono text-gray-500 border-t border-gray-800/50">
+          <div class="pt-2 flex flex-col gap-2 text-[10px] font-mono text-white border-t border-gray-800/50">
             <a routerLink="/manual" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Handbuch</a>
             <a routerLink="/info" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Hintergrund</a>
             <a routerLink="/impressum" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Impressum</a>
@@ -165,7 +165,7 @@
               href="https://github.com/ffeldhaus/soil/blob/main/CHANGELOG.md"
               target="_blank"
               rel="noopener noreferrer"
-              class="mt-1 opacity-50 hover:opacity-100 hover:underline transition"
+              class="mt-1 opacity-100 hover:underline transition"
               >v{{ version }}</a
             >
           </div>
@@ -261,7 +261,7 @@
             </button>
             <span class="text-xs font-mono px-2 min-w-[100px] text-center transition-colors"
               [class.text-emerald-400]="viewingRound === maxRoundNumber"
-              [class.text-gray-400]="viewingRound < maxRoundNumber">
+              [class.text-white]="viewingRound < maxRoundNumber">
               <ng-container>Runde</ng-container> {{ viewingRound }} von {{ totalRounds }}
             </span>
             <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
@@ -352,7 +352,7 @@
             Spiel beendet!
           </h2>
           <p
-            class="text-gray-400 text-lg sm:text-xl">
+            class="text-white text-lg sm:text-xl">
             Herausragende Leistung aller Landwirte.
           </p>
         </div>
@@ -390,7 +390,7 @@
             <form (submit)="onFeedbackSubmit()" #feedbackForm="ngForm" class="space-y-4">
               <!-- Rating -->
               <div class="flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-400">Wie hat dir das Spiel gefallen?</span>
+                <span class="text-sm font-medium text-white">Wie hat dir das Spiel gefallen?</span>
                 <div class="flex gap-1">
                   @for (star of [1, 2, 3, 4, 5]; track star) {
                     <button type="button" (click)="feedback.rating = star" class="transition-transform active:scale-90">

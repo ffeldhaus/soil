@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
+- Improved readability across the entire application by replacing low-contrast grey text with white or light grey.
+- Updated footer links and version number to black for better contrast against semi-transparent backgrounds.
+- Unified primary container styles with modern glassmorphism (bg-gray-900/80 + backdrop-blur-md) across Admin and Game sections.
 - Finalized UI consistency by standardizing container backgrounds and alignments across all informational and administrative pages.
 ### Fixed
 - Fixed 404 error for `/.well-known/assetlinks.json` by adding an explicit route in the server and allowing dotfiles in static serving.

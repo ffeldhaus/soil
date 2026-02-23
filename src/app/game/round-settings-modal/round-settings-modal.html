@@ -15,7 +15,7 @@
       <!-- Machines Slider -->
       <div class="space-y-2">
         <div class="flex justify-between">
-          <label class="text-gray-300 font-medium">{{ t('settings.machines') }}</label>
+          <label class="text-white font-medium">{{ t('settings.machines') }}</label>
           <span class="text-emerald-400 font-bold">{{ settings.machines }}</span>
         </div>
         <input
@@ -26,7 +26,7 @@
           [(ngModel)]="settings.machines"
           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
         />
-        <p class="text-xs text-gray-400">{{ t('settings.machines_desc') }}</p>
+        <p class="text-xs text-white">{{ t('settings.machines_desc') }}</p>
       </div>
 
       <!-- Toggles Grid -->
@@ -39,10 +39,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+            <span class="text-white font-medium group-hover:text-white transition-colors">{{
               t('settings.organic')
             }}</span>
-            <p class="text-xs text-gray-500">{{ t('settings.organic_desc') }}</p>
+            <p class="text-xs text-gray-300">{{ t('settings.organic_desc') }}</p>
           </div>
         </label>
 
@@ -55,10 +55,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+            <span class="text-white font-medium group-hover:text-white transition-colors">{{
               t('settings.fertilizer')
             }}</span>
-            <p class="text-xs text-gray-500">{{ t('settings.fertilizer_desc') }}</p>
+            <p class="text-xs text-gray-300">{{ t('settings.fertilizer_desc') }}</p>
           </div>
         </label>
 
@@ -71,10 +71,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+            <span class="text-white font-medium group-hover:text-white transition-colors">{{
               t('settings.pesticide')
             }}</span>
-            <p class="text-xs text-gray-500">{{ t('settings.pesticide_desc') }}</p>
+            <p class="text-xs text-gray-300">{{ t('settings.pesticide_desc') }}</p>
           </div>
         </label>
 
@@ -86,10 +86,10 @@
             class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
           <div>
-            <span class="text-gray-300 font-medium group-hover:text-white transition-colors">{{
+            <span class="text-white font-medium group-hover:text-white transition-colors">{{
               t('settings.organisms')
             }}</span>
-            <p class="text-xs text-gray-500">{{ t('settings.organisms_desc') }}</p>
+            <p class="text-xs text-gray-300">{{ t('settings.organisms_desc') }}</p>
           </div>
         </label>
       </div>
@@ -99,7 +99,7 @@
         <div class="mt-6 pt-6 border-t border-gray-800 space-y-4">
           <div>
             <span class="text-amber-400 font-bold text-sm uppercase tracking-wider">{{ t('settings.priceFixing') }}</span>
-            <p class="text-xs text-gray-400 mt-1">{{ t('settings.priceFixing_desc') }}</p>
+            <p class="text-xs text-white mt-1">{{ t('settings.priceFixing_desc') }}</p>
           </div>
           <div class="grid grid-cols-2 gap-2">
             @for (crop of plantedCrops; track crop) {
@@ -113,7 +113,7 @@
                   'text-amber-200': isPriceFixed(crop),
                   'bg-gray-800/50': !isPriceFixed(crop),
                   'border-gray-700': !isPriceFixed(crop),
-                  'text-gray-400': !isPriceFixed(crop)
+                  'text-gray-300': !isPriceFixed(crop)
                 }"
               >
                 <span>{{ getCropName(crop) }}</span>
