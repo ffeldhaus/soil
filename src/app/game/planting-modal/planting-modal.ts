@@ -22,7 +22,7 @@ import type { CropType } from '../../types';
           Was möchtest du anbauen?
         </h2>
 
-        <div class="planting-grid pr-1 pb-2">
+        <div class="planting-grid p-2">
           @for (crop of crops; track crop; let first = $first) {
             <button
               (click)="select(crop)"

@@ -370,7 +370,7 @@ body.perf-tier-1 .shepherd-modal-overlay-container {
   gap: 1rem;
   margin: 0 auto;
   width: 100%;
-  overflow: hidden !important;
+  overflow: visible !important;
 
   /* Default: Portrait 3x4 */
   --cols: 3;
