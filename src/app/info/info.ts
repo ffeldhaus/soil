@@ -1,13 +1,13 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, inject, type OnInit, PLATFORM_ID } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, type OnInit, PLATFORM_ID, ElementRef, viewChild } from '@angular/core';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-info',
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="h-full overflow-y-auto custom-scrollbar relative font-sans text-gray-100 overflow-x-hidden">
+    <div #scrollContainer class="h-full overflow-y-auto custom-scrollbar relative font-sans text-gray-100 overflow-x-hidden">
           <!-- Background Image -->
           <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
             <picture>
@@ -50,22 +50,76 @@ import { RouterLink } from '@angular/router';
         </div>
       </nav>
 
-      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-[72px] pb-12 space-y-16 animate-fade-in">
-        <header class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl text-center space-y-4 portrait:rounded-none portrait:border-x-0">
+      <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-[72px] pb-12 portrait:px-0 portrait:max-w-none flex flex-col gap-8 animate-fade-in">
+        <header class="order-1 bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl text-left portrait:rounded-none portrait:border-x-0">
           <h1
-            class="text-4xl md:text-6xl font-bold text-emerald-500 tracking-tight"
+            class="text-4xl md:text-6xl font-bold text-emerald-500 mb-4 tracking-tight"
           >
             Hintergrund
           </h1>
-          <p class="text-xl text-gray-300 leading-relaxed font-light">
+          <p class="text-xl text-white max-w-2xl">
             Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen
             Handelns.
           </p>
         </header>
 
-        <div class="space-y-12">
+        <!-- Table of Contents -->
+        <aside
+          class="order-2 w-full min-[1400px]:w-52 min-[1400px]:absolute min-[1400px]:left-full min-[1400px]:ml-2 min-[1400px]:top-[72px] min-[1400px]:order-none print:hidden shrink-0 z-40 portrait:border-x-0"
+        >
+          <div class="min-[1400px]:sticky min-[1400px]:top-12 bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl h-fit portrait:rounded-none portrait:border-x-0">
+            <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+              <span>📋</span>
+              Inhalt
+            </h2>
+            <nav class="flex flex-col gap-2">
+              <a
+                routerLink="."
+                fragment="design"
+                class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              >
+                <span class="text-sm">🎨</span>
+                Grundlagen
+              </a>
+              <a
+                routerLink="."
+                fragment="science"
+                class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              >
+                <span class="text-sm">🐛</span>
+                Wissenschaft
+              </a>
+              <a
+                routerLink="."
+                fragment="sources"
+                class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              >
+                <span class="text-sm">📊</span>
+                Datenquellen
+              </a>
+              <a
+                routerLink="."
+                fragment="research"
+                class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              >
+                <span class="text-sm">🎓</span>
+                Forschung
+              </a>
+              <a
+                routerLink="."
+                fragment="publications"
+                class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              >
+                <span class="text-sm">📚</span>
+                Publikationen
+              </a>
+            </nav>
+          </div>
+        </aside>
+
+        <div class="order-3 relative flex flex-col gap-8">
           <!-- Design Choices -->
-          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
+          <section id="design" class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl scroll-mt-24 portrait:rounded-none portrait:border-x-0">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎨</span>
               <ng-container>Design-Entscheidungen & Fachliche Grundlagen</ng-container>
@@ -129,7 +183,7 @@ import { RouterLink } from '@angular/router';
           </section>
 
           <!-- Weather & Pests Section -->
-          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
+          <section id="science" class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl scroll-mt-24 portrait:rounded-none portrait:border-x-0">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🐛</span>
               <ng-container>Wissenschaftlicher Hintergrund: Wetter & Schädlinge</ng-container>
@@ -191,7 +245,7 @@ import { RouterLink } from '@angular/router';
           </section>
 
           <!-- Data References -->
-          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
+          <section id="sources" class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl scroll-mt-24 portrait:rounded-none portrait:border-x-0">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">📊</span>
               Datenquellen & Referenzen
@@ -239,7 +293,7 @@ import { RouterLink } from '@angular/router';
           </section>
 
           <!-- Main Reference -->
-          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl">
+          <section id="research" class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl scroll-mt-24 portrait:rounded-none portrait:border-x-0">
             <h2 class="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">🎓</span>
               <ng-container>Zentrale Forschungsarbeit</ng-container>
@@ -352,7 +406,7 @@ import { RouterLink } from '@angular/router';
           </section>
 
           <!-- Publication List -->
-          <section class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8">
+          <section id="publications" class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8 shadow-2xl space-y-8 scroll-mt-24 portrait:rounded-none portrait:border-x-0">
             <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3">
               <span class="p-2 bg-emerald-900/30 rounded-xl text-xl">📚</span>
               Weitere Publikationen
@@ -399,11 +453,33 @@ import { RouterLink } from '@angular/router';
 })
 export class InfoComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
+  private route = inject(ActivatedRoute);
   year = new Date().getFullYear();
+
+  scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      window.scrollTo(0, 0);
+      this.route.fragment.subscribe(fragment => {
+        if (fragment) {
+          setTimeout(() => {
+            const element = document.getElementById(fragment);
+            const container = this.scrollContainer()?.nativeElement;
+            if (element && container) {
+              const headerOffset = 100;
+              const elementPosition = element.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + container.scrollTop - headerOffset;
+
+              container.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          }, 100);
+        } else {
+          this.scrollContainer()?.nativeElement.scrollTo(0, 0);
+        }
+      });
     }
   }
 

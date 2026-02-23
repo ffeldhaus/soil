@@ -54,8 +54,8 @@ import { RouterLink } from '@angular/router';
         <!-- Header -->
         <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 portrait:rounded-none portrait:border-x-0">
           <div>
-            <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-2 tracking-tight">Impressum</h1>
-            <p class="text-gray-400">Rechtliche Informationen & Kontakt</p>
+            <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">Impressum</h1>
+            <p class="text-xl text-white max-w-2xl">Rechtliche Informationen & Kontakt</p>
           </div>
           <a routerLink="/privacy" class="px-6 py-3 bg-emerald-800/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white rounded-xl border border-emerald-500/30 transition-all font-bold">
             Datenschutzerklärung lesen
@@ -79,22 +79,6 @@ import { RouterLink } from '@angular/router';
               Email:
               <a href="mailto:florian.feldhaus&#64;gmail.com" class="text-emerald-400 hover:underline"
                 >florian.feldhaus&#64;gmail.com</a
-              >
-            </p>
-          </div>
-        </section>
-
-        <!-- Verantwortlich -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-2xl font-bold text-white">Verantwortlich</h2>
-          <div class="text-gray-300 space-y-1">
-            <p class="font-bold text-white">Nina Wolf</p>
-            <p>Kanonikerweg 2</p>
-            <p>59494 Soest</p>
-            <p>
-              Email:
-              <a href="mailto:nina.vanessa.wolf&#64;gmail.com" class="text-emerald-400 hover:underline"
-                >nina.vanessa.wolf&#64;gmail.com</a
               >
             </p>
           </div>

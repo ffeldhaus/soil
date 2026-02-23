@@ -2,15 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.14] - 2026-02-23
+## [Unpublished]
 ### Added
+- Added a Table of Contents sidebar to the "Info" page for better navigation.
 - Added a link to the version number in the footer of all pages pointing to the Changelog on GitHub.
 - Added unit tests for the 404 "Not Found" page.
 ### Changed
-- Standardized heading styles across Manual, Info, Impressum, Privacy, and Error pages.
+- Standardized heading styles and alignment across Manual, Info, Impressum, Privacy, and Error pages (all are now left-aligned).
+- Standardized subtitle font size (text-xl) and color (white) across Manual, Info, Impressum, and Privacy pages.
+- Standardized container width and layout between Manual and Info pages.
 - Standardized font usage to exclusively use Sans Serif across the entire application, removing all serif font declarations.
+- Refined Impressum page by removing the redundant "Verantwortlich" section.
 ### Fixed
 - Fixed 404 page layout to prevent overlapping of the "404" text and "Seite nicht gefunden" heading.
+- Fixed inconsistent top gap on the Manual page by standardizing navigation bar behavior.
+- Fixed alignment of the Table of Contents on the Manual page to match the header.
 - Removed redundant "SOIL" text from the bottom of the 404 page.
 
 ## [2.6.13] - 2026-02-23

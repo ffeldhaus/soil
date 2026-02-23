@@ -50,8 +50,8 @@ import { RouterLink } from '@angular/router';
       <div class="relative z-10 max-w-5xl mx-auto pt-[72px] pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
         <!-- Header -->
         <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
-          <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-2 tracking-tight">Datenschutzerklärung</h1>
-          <p class="text-gray-400">Informationen über die Verarbeitung Ihrer personenbezogenen Daten</p>
+          <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">Datenschutzerklärung</h1>
+          <p class="text-xl text-white max-w-2xl">Informationen über die Verarbeitung Ihrer personenbezogenen Daten</p>
         </header>
 
         <!-- Allgemein -->

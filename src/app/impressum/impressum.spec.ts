@@ -26,6 +26,5 @@ describe('ImpressumComponent', () => {
   it('should display contact information', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Florian Feldhaus');
-    expect(compiled.textContent).toContain('Nina Wolf');
   });
 });

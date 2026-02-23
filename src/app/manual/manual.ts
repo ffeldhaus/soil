@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, inject, type OnInit, PLATFORM_ID, ElementRef, viewChild } from '@angular/core';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../game-constants';
 import { ManualConceptCardComponent } from './components/manual-concept-card';
@@ -21,7 +21,37 @@ import { ManualPrintModalComponent } from './components/manual-print-modal';
   templateUrl: './manual.html',
   styleUrl: './manual.scss',
 })
-export class ManualComponent {
+export class ManualComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
+  private route = inject(ActivatedRoute);
+
+  scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.route.fragment.subscribe(fragment => {
+        if (fragment) {
+          setTimeout(() => {
+            const element = document.getElementById(fragment);
+            const container = this.scrollContainer()?.nativeElement;
+            if (element && container) {
+              const headerOffset = 100;
+              const elementPosition = element.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + container.scrollTop - headerOffset;
+
+              container.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          }, 100);
+        } else {
+          this.scrollContainer()?.nativeElement.scrollTo(0, 0);
+        }
+      });
+    }
+  }
+
   t(key: string): string {
     const translations: Record<string, string> = {
       'manual.print': 'Drucken',
