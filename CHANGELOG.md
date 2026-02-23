@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.13] - 2026-02-23
 ### Added
 - Added a dedicated 404 "Not Found" page for invalid routes.
 - Added dedicated "Delete Account" page at `/delete-account` with data purging logic.
