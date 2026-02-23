@@ -47,7 +47,7 @@
           <!-- Active Dashboard -->
           @if (!isLoading && userStatus?.role !== 'new' && userStatus?.role !== 'superadmin') {
             <!-- Quick Start Box -->
-            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-6 portrait:rounded-none portrait:border-x-0">
+            <div class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-6 portrait:rounded-none portrait:border-x-0">
               <h2 class="text-2xl font-bold text-emerald-400">
                 {{ t('dashboard.quickStart.title') }}
               </h2>
@@ -74,7 +74,7 @@
             </div>
 
             <!-- Create Game Box (includes Welcome & Feedback) -->
-            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
+            <div class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
               <div class="flex justify-between items-start">
                 <div>
                   <h2 class="text-2xl font-bold text-emerald-400" data-testid="admin-controls">
@@ -127,7 +127,7 @@
             </div>
 
             <!-- List Games Box -->
-            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
+            <div class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
               <app-dashboard-game-list
                 [games]="games"
                 [showTrash]="showTrash"
@@ -164,7 +164,7 @@
             </div>
 
             <!-- Join Game Box -->
-            <div class="bg-gray-900 p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
+            <div class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
               <app-dashboard-join-game
                 (joinGame)="onJoinGame($event)"
               ></app-dashboard-join-game>

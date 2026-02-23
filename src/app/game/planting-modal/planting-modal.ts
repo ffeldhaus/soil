@@ -12,7 +12,7 @@ import type { CropType } from '../../types';
       (click)="plantingCancelled.emit()"
     >
       <div
-        class="planting-modal-container bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 max-h-[98vh] sm:max-h-[90vh] flex flex-col"
+        class="planting-modal-container bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 max-h-[98vh] sm:max-h-[90vh] flex flex-col"
         (click)="$event.stopPropagation()"
         role="dialog"
         aria-modal="true"

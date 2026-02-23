@@ -2,7 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.16] - 2026-02-23
+## [Unpublished]
+### Changed
+- Standardized container background styling across Admin Dashboard and Game components (Finance, Planting Modal) to use glassmorphism (bg-gray-900/80 + backdrop-blur-md) for UI consistency.
 ### Fixed
 - Fixed internal Table of Contents links on Info and Manual pages by implementing robust manual fragment scrolling logic in `AfterViewInit`.
 
