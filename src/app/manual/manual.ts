@@ -1,6 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, inject, type OnInit, PLATFORM_ID, ElementRef, viewChild } from '@angular/core';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, type ElementRef, inject, type OnInit, PLATFORM_ID, viewChild } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../game-constants';
 import { ManualConceptCardComponent } from './components/manual-concept-card';
@@ -29,7 +29,7 @@ export class ManualComponent implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.route.fragment.subscribe(fragment => {
+      this.route.fragment.subscribe((fragment) => {
         if (fragment) {
           setTimeout(() => {
             const element = document.getElementById(fragment);
@@ -41,7 +41,7 @@ export class ManualComponent implements OnInit {
 
               container.scrollTo({
                 top: offsetPosition,
-                behavior: 'smooth'
+                behavior: 'smooth',
               });
             }
           }, 100);
