@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.21] - 2026-02-23
 ### Added
 - Registered Play Store verification user (`no-reply@example.com`) in Firestore and verified their email to facilitate app store approval.
 ### Changed
