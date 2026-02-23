@@ -22,8 +22,6 @@ import { ManualPrintModalComponent } from './components/manual-print-modal';
   styleUrl: './manual.scss',
 })
 export class ManualComponent {
-  year = new Date().getFullYear();
-
   t(key: string): string {
     const translations: Record<string, string> = {
       'manual.print': 'Drucken',
