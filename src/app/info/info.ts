@@ -212,12 +212,12 @@ export class InfoComponent implements AfterViewInit {
 
   scrollToFragment(fragment: string) {
     if (!fragment) return;
-    
+
     // Attempt multiple times to handle rendering delays
     const attemptScroll = () => {
       const element = document.getElementById(fragment);
       const container = this.scrollContainer()?.nativeElement;
-      
+
       if (element && container) {
         const containerRect = container.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
