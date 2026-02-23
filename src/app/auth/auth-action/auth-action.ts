@@ -14,7 +14,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
       class="min-h-screen relative font-sans text-gray-100 overflow-hidden flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8"
     >
       <!-- Background Image -->
-      <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+      <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
         <picture>
           <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
           <img

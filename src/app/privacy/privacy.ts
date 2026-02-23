@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
   template: `
     <div class="h-full overflow-y-auto custom-scrollbar relative font-sans text-gray-100">
       <!-- Background Image -->
-      <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+      <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
         <picture>
           <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
           <img

@@ -22,7 +22,7 @@ import { AuthService } from '../auth/auth.service';
       </nav>
 
       <!-- Background Image -->
-      <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+      <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
         <picture>
           <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
           <img src="assets/images/bauernhof-landscape-dunkel.webp" alt="" fetchpriority="high" class="w-full h-full object-cover portrait:object-center landscape:object-center" />

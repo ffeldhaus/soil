@@ -10,7 +10,7 @@ import { AuthService } from '../auth.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-screen relative bg-gray-900 text-gray-100 font-sans overflow-hidden flex flex-col">
+    <div class="min-h-screen relative text-gray-100 font-sans overflow-hidden flex flex-col">
       <!-- Navigation Bar -->
       <nav
         class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
@@ -43,7 +43,7 @@ import { AuthService } from '../auth.service';
 
       <div class="flex-1 relative flex items-center justify-center p-6 portrait:p-0">
         <!-- Background Image -->
-        <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none">
+        <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
           <picture>
             <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
             <img

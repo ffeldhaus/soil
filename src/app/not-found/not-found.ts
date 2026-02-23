@@ -6,9 +6,9 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="min-h-screen bg-gray-900 flex items-center justify-center px-4 relative overflow-hidden font-sans">
+    <div class="min-h-screen flex items-center justify-center px-4 relative overflow-hidden font-sans">
       <!-- Background Asset (consistent with app theme) -->
-      <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none opacity-30">
+      <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none opacity-30">
         <picture>
           <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
           <img

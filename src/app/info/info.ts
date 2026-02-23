@@ -7,7 +7,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="flex flex-col h-full bg-gray-900 text-white font-sans overflow-hidden">
+    <div class="flex flex-col h-full text-white font-sans overflow-hidden">
       <!-- Navigation Bar -->
       <nav
         class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
@@ -36,7 +36,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
       <div #scrollContainer class="flex-1 overflow-y-auto custom-scrollbar relative">
         <!-- Background Image -->
-        <div class="fixed inset-0 h-screen w-screen z-0 pointer-events-none print:hidden">
+        <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none print:hidden">
           <picture>
             <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
             <img src="assets/images/bauernhof-landscape-dunkel.webp" alt="" fetchpriority="high" class="w-full h-full object-cover portrait:object-center landscape:object-center" />

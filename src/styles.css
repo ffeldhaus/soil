@@ -23,9 +23,6 @@ app-root {
   overscroll-behavior-y: none;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -115,17 +112,20 @@ app-root {
 }
 
 .gsi-material-button.apple-style .gsi-material-button-icon {
-  height: 34px; /* Significantly larger to compensate for whitespace in official Apple SVG */
+  height: 34px;
+  /* Significantly larger to compensate for whitespace in official Apple SVG */
   width: 22px;
   margin-right: 10px;
-  margin-left: -2px; /* Pull slightly left to account for narrower aspect ratio */
+  margin-left: -2px;
+  /* Pull slightly left to account for narrower aspect ratio */
 }
 
 .gsi-material-button .gsi-material-button-content-wrapper {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 190px; /* Fixed width ensures icons and text start at the same horizontal offset */
+  width: 190px;
+  /* Fixed width ensures icons and text start at the same horizontal offset */
 }
 
 .gsi-material-button .gsi-material-button-contents {
@@ -229,7 +229,8 @@ body.perf-tier-1 .absolute.inset-0.bg-black\/60 {
 
 /* Ensure modal content (dialogs) remains opaque and visible */
 body.perf-tier-1 [role="dialog"] {
-  background-color: #111827 !important; /* solid gray-900 */
+  background-color: #111827 !important;
+  /* solid gray-900 */
   opacity: 1 !important;
 }
 
@@ -357,17 +358,9 @@ body.perf-tier-1 .shepherd-modal-overlay-container {
 }
 
 /* Custom Scrollbar Utility */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-gray-900/50 rounded;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-gray-700 rounded;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-600;
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #374151 rgba(17, 24, 39, 0.5);
 }
 
 /* Responsive Planting Grid */
@@ -413,7 +406,8 @@ body.perf-tier-1 .shepherd-modal-overlay-container {
   .planting-grid {
     --cols: 6;
     --rows: 2;
-    --modal-overhead: 100px; /* More compact overhead on short screens */
+    --modal-overhead: 100px;
+    /* More compact overhead on short screens */
     grid-template-columns: repeat(var(--cols), minmax(70px, 1fr));
   }
 }
@@ -424,12 +418,15 @@ body.perf-tier-1 .shepherd-modal-overlay-container {
     font-size: 1.1rem !important;
     margin-bottom: 0.5rem !important;
   }
+
   .planting-grid {
     gap: 0.6rem !important;
   }
+
   .planting-grid + div {
     margin-top: 0.5rem !important;
   }
+
   .planting-modal-container {
     padding: 1rem !important;
   }

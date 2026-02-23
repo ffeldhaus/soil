@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Fixed an issue where custom scrollbars were invisible on several pages (like Manual, Info, Dashboard) by removing `-webkit-scrollbar` overrides and replacing them with standard CSS `scrollbar-width` and `scrollbar-color`. Adjusted z-indices of background images and removed conflicting background colors from root containers.
+
 ## [2.6.22] - 2026-02-23
 ### Changed
 - Optimized site metadata for SEO by updating the title, description, and keywords with educational and agricultural terminology.
