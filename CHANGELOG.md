@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.22] - 2026-02-23
 ### Changed
 - Optimized site metadata for SEO by updating the title, description, and keywords with educational and agricultural terminology.
 - Updated Open Graph and Twitter card tags for better social sharing.
