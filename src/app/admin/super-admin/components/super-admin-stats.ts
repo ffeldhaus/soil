@@ -19,7 +19,7 @@ export class SuperAdminStatsComponent {
       'superadmin.stats.trash': 'Papierkorb',
       'superadmin.stats.totalUsers': 'Gesamt Benutzer',
       'superadmin.stats.registered': 'registriert',
-      'superadmin.stats.teachers': 'Lehrkräfte',
+      'superadmin.stats.teachers': 'Administratoren',
       'superadmin.stats.rejected': 'Abgelehnt',
       'superadmin.stats.banned': 'Gesperrt',
     };

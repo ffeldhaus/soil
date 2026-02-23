@@ -43,7 +43,7 @@ import { QrOverlayComponent } from './components/qr-overlay';
 export class Dashboard implements OnInit, OnDestroy {
   t(key: string): string {
     const translations: Record<string, string> = {
-      'dashboard.title': 'Dashboard für Lehrkräfte',
+      'dashboard.title': 'Admin-Konsole',
       'dashboard.logout': 'Abmelden',
       'dashboard.loading.verifying': 'Konto-Status wird geprüft...',
       'dashboard.loading.games': 'Spiele werden geladen...',
@@ -136,7 +136,7 @@ export class Dashboard implements OnInit, OnDestroy {
       'dashboard.delete.cancel': 'Abbrechen',
       'dashboard.delete.btnPermanent': 'Dauerhaft löschen',
       'dashboard.delete.btnGame': 'Spiel löschen',
-      'dashboard.login.msg': 'Bitte melde dich an, um auf das Dashboard zuzugreifen.',
+      'dashboard.login.msg': 'Bitte melde dich an, um auf die Admin-Konsole zuzugreifen.',
       'dashboard.login.btn': 'Anmelden mit Google',
       'ai.level.elementary': 'Unterstufe',
       'ai.level.middle': 'Mittelstufe',

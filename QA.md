@@ -26,11 +26,11 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 
 | Feature | Steps | Expected Result | E2E Covered |
 |---------|-------|-----------------|-------------|
-| Teacher Registration | Fill out the registration form (Name, Institution, Reason). | Registration successful; user is prompted to verify email. | No |
+| Administrator Registration | Fill out the registration form (Name, Institution, Reason). | Registration successful; user is prompted to verify email. | No |
 
 ---
 
-## 3. Teacher Dashboard (Admin)
+## 3. Admin Console
 **URL:** [http://localhost:4200/admin/login](http://localhost:4200/admin/login)
 *Use **Mock Admin** from the Landing Page test toggle.*
 
@@ -51,10 +51,10 @@ This document provides a comprehensive guide for manual Quality Assurance testin
 
 | Feature | Steps | Expected Result | E2E Covered |
 |---------|-------|-----------------|-------------|
-| System Stats | Observe the statistics cards at the top. | Displays counts for total games, users, teachers, etc. | No |
-| Quota Management | Click "Limit" on a teacher and change it to 20. | The new quota is saved and displayed. | No |
+| System Stats | Observe the statistics cards at the top. | Displays counts for total games, users, administrators, etc. | No |
+| Quota Management | Click "Limit" on an administrator and change it to 20. | The new quota is saved and displayed. | No |
 | Feedback Management | View feedback list, click "Antworten". | Modal opens to type a response. | No |
-| Global Game View | Click "Spiele" on a teacher to see all their games. | List of games for that specific teacher is displayed below. | No |
+| Global Game View | Click "Spiele" on an administrator to see all their games. | List of games for that specific administrator is displayed below. | No |
 
 ---
 

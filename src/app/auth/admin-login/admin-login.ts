@@ -59,7 +59,7 @@ import { AuthService } from '../auth.service';
         >
           <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-emerald-400 mb-2">Anmeldung</h1>
-            <p class="text-gray-400">Zugang zum Soil-Dashboard</p>
+            <p class="text-gray-400">Zugang zur Admin-Konsole</p>
           </div>
 
           @if (successMessage) {

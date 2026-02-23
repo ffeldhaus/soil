@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Registered Play Store verification user (`no-reply@example.com`) in Firestore and verified their email to facilitate app store approval.
+### Changed
+- Replaced the misleading gear icon for "Delete Account" in the Admin Dashboard HUD with a "user-circle-off" icon for better clarity.
+- Updated terminology from "Lehrkräfte" (Teachers) to "Administratoren" (Administrators) across the application and documentation for a more universal administrative context.
+- Improved contrast and feedback for the delete-account link.
+- Removed sensitive `auth_users.json` export file from the repository.
+
 ## [2.6.20] - 2026-02-23
 ### Changed
 - Unified modal background styling (Round Settings, Round Result, Financial Report) with the standard glassmorphism look (bg-gray-900/80 + backdrop-blur-md).

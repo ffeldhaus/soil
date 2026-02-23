@@ -114,7 +114,7 @@ import { AuthService } from '../auth/auth.service';
                   Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.
                 </p>
                 <p>
-                  Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Lehrkräfte ist eine
+                  Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Administrator-Konten ist eine
                   Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die
                   Zugehörigkeit zu einer Bildungseinrichtung verifiziert.
                 </p>
