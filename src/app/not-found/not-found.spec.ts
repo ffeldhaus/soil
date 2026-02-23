@@ -31,7 +31,7 @@ describe('NotFoundComponent', () => {
     // The main SOIL logo/string that was removed was a h1 in a div with pt-8
     // Now there are only 2 headers: h1 (404) and h2 (Seite nicht gefunden)
     const headers = compiled.querySelectorAll('h1');
-    headers.forEach(h => {
+    headers.forEach((h) => {
       expect(h.textContent).not.toBe('SOIL');
     });
   });
