@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.18] - 2026-02-23
 ### Changed
 - Finalized UI consistency by standardizing container backgrounds and alignments across all informational and administrative pages.
 
