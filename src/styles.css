@@ -194,6 +194,13 @@ app-root {
 /* Performance Tiers Styling */
 
 /* Tier 3: High (Default, Full Effects) */
+/* Override the bluish gray base to a neutral black for premium glassmorphism */
+body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-900/80"],
+body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-900/95"],
+body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-950/80"],
+body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-950/95"] {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
 body.perf-tier-3 {
   /* No special overrides needed */
 }

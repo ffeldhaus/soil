@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
-- Removed `target="_blank"` from the "Handbuch" and "Hintergrund" links on the landing page, so they open in the current tab instead of a new one.
-- Removed the hover translate animation from the "Spiele erstellen & verwalten" button on the landing page to prevent unwanted movement on hover.
+- Refined the "Tier 3" (Default) glassmorphism container backgrounds to use a premium, semi-transparent black (`rgba(0, 0, 0, 0.7)`) instead of the default bluish Tailwind `gray-900`. This aligns the visual style with Tier 2 while retaining the high-quality `backdrop-blur` effect.
 - Unified the "Home" navigation experience across the application by making the "SOIL" logo (and "ADMIN" logo on the Super Admin dashboard) a clickable link to the start page or dashboard.
 - Removed redundant and inconsistent "Zur Startseite" house icon buttons from the right side of navigation bars on all informational and authentication pages.
 - Updated the "SOIL" logo in the game HUD to smartly navigate back to the Admin Dashboard for authenticated users or the Start Page for guest players, resolving confusion between the home action and the "Logout" (exit) button.
 - Styled the "Abbrechen" text link in the parcel selection (planting) dialog into a proper, prominent button.
+- Removed `target="_blank"` from the "Handbuch" and "Hintergrund" links on the landing page, so they open in the current tab instead of a new one.
+- Removed the hover translate animation from the "Spiele erstellen & verwalten" button on the landing page to prevent unwanted movement on hover.
 - Improved the responsive layout of the landing page info sections to stack vertically below 860px and expand to full width in portrait mode, matching the layout of other informational pages.
 ### Fixed
 - Fixed an issue where the green selection glow was cut off for crops on the edges of the round selection (planting) dialog by removing `overflow: hidden` from the planting grid.
