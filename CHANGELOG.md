@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.14] - 2026-02-23
 ### Added
 - Added a link to the version number in the footer of all pages pointing to the Changelog on GitHub.
 - Added unit tests for the 404 "Not Found" page.
