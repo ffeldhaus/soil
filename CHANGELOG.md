@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.17] - 2026-02-23
 ### Changed
 - Standardized container background styling across Admin Dashboard and Game components (Finance, Planting Modal) to use glassmorphism (bg-gray-900/80 + backdrop-blur-md) for UI consistency.
 ### Fixed
