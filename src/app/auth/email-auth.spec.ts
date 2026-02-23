@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { Auth } from '@angular/fire/auth';
-import { Functions } from '@angular/fire/functions';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { FIREBASE_AUTH, FIREBASE_FUNCTIONS } from '../firebase.config';
 import { AuthService } from './auth.service';
 
 describe('AuthService Email Auth', () => {
@@ -26,7 +25,7 @@ describe('AuthService Email Auth', () => {
     }
 
     TestBed.configureTestingModule({
-      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: functionsSpy }],
+      providers: [AuthService, { provide: FIREBASE_AUTH, useValue: authSpy }, { provide: FIREBASE_FUNCTIONS, useValue: functionsSpy }],
     });
     service = TestBed.inject(AuthService);
   });

@@ -2,17 +2,15 @@ import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import localeDe from '@angular/common/locales/de';
 import { type ApplicationConfig, isDevMode, LOCALE_ID } from '@angular/core';
-import { provideFirebaseApp } from '@angular/fire/app';
-import { CustomProvider, initializeAppCheck, provideAppCheck, ReCaptchaV3Provider } from '@angular/fire/app-check';
-import { provideAuth } from '@angular/fire/auth';
-import { provideFunctions } from '@angular/fire/functions';
 import { provideClientHydration, withEventReplay, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { initializeApp } from 'firebase/app';
+import { CustomProvider, initializeAppCheck } from 'firebase/app-check';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
+import { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_FUNCTIONS } from './firebase.config';
 
 registerLocaleData(localeDe, 'de-DE');
 
@@ -40,6 +38,27 @@ const isLocalhost =
   typeof window !== 'undefined' &&
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
+// Initialize AppCheck on client side
+if (isBrowser) {
+  // Use Debug Provider on localhost
+  if (isLocalhost || (window as any).Cypress) {
+    initializeAppCheck(app, {
+      provider: new CustomProvider({
+        getToken: () =>
+          Promise.resolve({
+            token: 'debug-token',
+            expireTimeMillis: Date.now() + 1000 * 60 * 60,
+          }),
+      }),
+      isTokenAutoRefreshEnabled: true,
+    });
+  } else {
+    // ReCaptchaV3Provider requires a script to be loaded, native SDK handles this if possible
+    // For now we skip ReCaptcha in SSR or if not initialized to avoid errors
+    // initializeAppCheck(app, { ... }); 
+  }
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(
@@ -49,40 +68,27 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled',
       }),
     ),
-    provideFirebaseApp(() => app),
-    provideAppCheck(() => {
-      // Use Debug Provider on localhost
-      if (isLocalhost || (typeof window !== 'undefined' && (window as any).Cypress)) {
-        return initializeAppCheck(app, {
-          provider: new CustomProvider({
-            getToken: () =>
-              Promise.resolve({
-                token: 'debug-token',
-                expireTimeMillis: Date.now() + 1000 * 60 * 60,
-              }),
-          }),
-          isTokenAutoRefreshEnabled: true,
-        });
-      }
-      return initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider('6Lce_pIqAAAAAN7fS0S0S0S0S0S0S0S0S0S0S0S0'), // TODO: Replace with real site key
-        isTokenAutoRefreshEnabled: true,
-      });
-    }),
-    provideAuth(() => {
-      const auth = getAuth(app);
-      if (isDevMode() || isLocalhost) {
-        connectAuthEmulator(auth, 'http://localhost:9099');
-      }
-      return auth;
-    }),
-    provideFunctions(() => {
-      const functions = getFunctions(app, 'europe-west4');
-      if (isDevMode() || isLocalhost) {
-        connectFunctionsEmulator(functions, 'localhost', 5001);
-      }
-      return functions;
-    }),
+    { provide: FIREBASE_APP, useValue: app },
+    {
+      provide: FIREBASE_AUTH,
+      useFactory: () => {
+        const auth = getAuth(app);
+        if (isDevMode() || isLocalhost) {
+          connectAuthEmulator(auth, 'http://localhost:9099');
+        }
+        return auth;
+      },
+    },
+    {
+      provide: FIREBASE_FUNCTIONS,
+      useFactory: () => {
+        const functions = getFunctions(app, 'europe-west4');
+        if (isDevMode() || isLocalhost) {
+          connectFunctionsEmulator(functions, 'localhost', 5001);
+        }
+        return functions;
+      },
+    },
     provideHttpClient(),
     provideClientHydration(withIncrementalHydration(), withEventReplay()),
     { provide: LOCALE_ID, useValue: 'de-DE' },

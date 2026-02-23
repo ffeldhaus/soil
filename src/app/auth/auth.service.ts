@@ -1,6 +1,4 @@
 import { Injectable, inject, NgZone } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
-import { Functions, httpsCallable } from '@angular/fire/functions';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -13,14 +11,16 @@ import {
   type User,
   updateProfile,
 } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject } from 'rxjs';
+import { FIREBASE_AUTH, FIREBASE_FUNCTIONS } from '../firebase.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private functions = inject(Functions, { optional: true });
-  private auth = inject(Auth, { optional: true }); // Injected instance is native due to app.config
+  private functions = inject(FIREBASE_FUNCTIONS, { optional: true });
+  private auth = inject(FIREBASE_AUTH, { optional: true });
   private ngZone = inject(NgZone);
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
@@ -92,9 +92,6 @@ export class AuthService {
       this.userSubject.next(this.getMockUser());
     } else if (isBrowser && window.localStorage.getItem('soil_active_local_game')) {
       const gameId = window.localStorage.getItem('soil_active_local_game')!;
-      // We don't call this.loginAsPlayer here because it would trigger nested logic,
-      // instead we just initialize the user state if needed.
-      // For now, let the guest logic below handle it if guest_uid is present.
       if (window.localStorage.getItem('soil_guest_uid')) {
         const guestUid = window.localStorage.getItem('soil_guest_uid')!;
         const guestName = window.localStorage.getItem('soil_guest_name') || 'Guest';
@@ -137,7 +134,6 @@ export class AuthService {
         this.userSubject.value ||
         (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp', guestName) : null);
       if (currentUser) {
-        // Wrap user to include local claims
         const localUser = {
           ...currentUser,
           getIdTokenResult: async () => ({
@@ -159,8 +155,6 @@ export class AuthService {
       this.userSubject.next(user);
       return { user };
     }
-    // Call backend to get custom token for player login
-    // Note: Function name is 'playerLogin' in backend
 
     try {
       const fn = this.playerLoginFn;
@@ -363,8 +357,6 @@ export class AuthService {
       }
       await updateProfile(this.auth!.currentUser!, { displayName: name });
       await this.auth!.currentUser!.reload();
-      // Force emission of new user state if needed
-      // onAuthStateChanged should pick up changes or reload might trigger it
       const currentUser = this.auth!.currentUser!;
       this.ngZone.run(() => this.userSubject.next(currentUser));
     }

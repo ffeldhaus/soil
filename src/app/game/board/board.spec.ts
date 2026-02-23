@@ -1,12 +1,12 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
-import { Functions } from '@angular/fire/functions';
 import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
+import { FIREBASE_FUNCTIONS } from '../../firebase.config';
 import { GameService } from '../game.service';
 import { Board } from './board';
 
@@ -90,7 +90,7 @@ describe('Board', () => {
         provideClientHydration(withIncrementalHydration()),
         { provide: AuthService, useValue: authSpy },
         { provide: GameService, useValue: gameSpy },
-        { provide: Functions, useValue: functionsSpy },
+        { provide: FIREBASE_FUNCTIONS, useValue: functionsSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ActivatedRoute, useValue: { queryParams: of({}) } },
         { provide: ChangeDetectorRef, useValue: cdrSpy },

@@ -1,8 +1,9 @@
 import { computed, Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Functions, httpsCallable } from '@angular/fire/functions';
+import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject, debounceTime, type Observable, Subject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { FIREBASE_FUNCTIONS } from '../firebase.config';
 import { GAME_CONSTANTS } from '../game-constants';
 import { OfflineService } from '../shared/offline.service';
 import type {
@@ -29,7 +30,7 @@ export interface GameState {
   providedIn: 'root',
 })
 export class GameService {
-  private functions = inject(Functions, { optional: true });
+  private functions = inject(FIREBASE_FUNCTIONS, { optional: true });
   private localGame = inject(LocalGameService);
   private authService = inject(AuthService);
   private offlineService = inject(OfflineService);

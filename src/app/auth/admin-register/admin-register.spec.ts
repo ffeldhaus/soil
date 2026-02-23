@@ -21,6 +21,8 @@ describe('AdminRegisterComponent', () => {
       user$: of(null),
       registerWithEmail: vi.fn().mockResolvedValue(undefined),
       sendVerificationEmail: vi.fn().mockResolvedValue(undefined),
+      loginWithGoogle: vi.fn(),
+      loginWithApple: vi.fn(),
     };
     gameServiceMock = {
       submitOnboarding: vi.fn().mockResolvedValue({ success: true }),

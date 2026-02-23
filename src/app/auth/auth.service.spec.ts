@@ -1,14 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { Auth } from '@angular/fire/auth';
-import { Functions } from '@angular/fire/functions';
 import { signInWithCustomToken, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { FIREBASE_AUTH, FIREBASE_FUNCTIONS } from '../firebase.config';
 import { AuthService } from './auth.service';
 
 const mockCallables: Record<string, any> = {};
 
-// Mock @angular/fire/functions
-vi.mock('@angular/fire/functions', async (importOriginal) => {
+// Mock firebase/functions
+vi.mock('firebase/functions', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,
@@ -80,7 +79,11 @@ describe('AuthService', () => {
     authSpy = { currentUser: null };
 
     TestBed.configureTestingModule({
-      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: {} }],
+      providers: [
+        AuthService,
+        { provide: FIREBASE_AUTH, useValue: authSpy },
+        { provide: FIREBASE_FUNCTIONS, useValue: {} },
+      ],
     });
     service = TestBed.inject(AuthService);
   });
@@ -135,7 +138,11 @@ describe('AuthService', () => {
     // Re-inject to trigger constructor with local storage
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: {} }],
+      providers: [
+        AuthService,
+        { provide: FIREBASE_AUTH, useValue: authSpy },
+        { provide: FIREBASE_FUNCTIONS, useValue: {} },
+      ],
     });
     const newService = TestBed.inject(AuthService);
     expect(newService.currentUser?.uid).toBe('guest123');
@@ -146,7 +153,11 @@ describe('AuthService', () => {
     mockLocalStorage.soil_active_local_game = 'local-123';
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      providers: [AuthService, { provide: Auth, useValue: authSpy }, { provide: Functions, useValue: {} }],
+      providers: [
+        AuthService,
+        { provide: FIREBASE_AUTH, useValue: authSpy },
+        { provide: FIREBASE_FUNCTIONS, useValue: {} },
+      ],
     });
     const newService = TestBed.inject(AuthService);
     expect(newService.currentUser?.uid).toBe('guest123');

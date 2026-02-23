@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Functions, httpsCallable } from '@angular/fire/functions';
+import { httpsCallable } from 'firebase/functions';
 import { filter } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
+import { FIREBASE_FUNCTIONS } from '../firebase.config';
 import { LocalGameService } from './engine/local-game.service';
 
 @Injectable({
@@ -11,7 +12,7 @@ import { LocalGameService } from './engine/local-game.service';
 export class SyncService {
   private authService = inject(AuthService);
   private localGameService = inject(LocalGameService);
-  private functions = inject(Functions, { optional: true });
+  private functions = inject(FIREBASE_FUNCTIONS, { optional: true });
 
   private migrateLocalGameFn = this.functions
     ? httpsCallable<{ gameData: any }, { success: boolean }>(this.functions, 'migrateLocalGame')
@@ -102,25 +103,19 @@ export class SyncService {
           // Update local storage so we don't try again
           localStorage.setItem(`soil_game_${gameId}`, JSON.stringify(fullState));
           if (window.console) {
-            // biome-ignore lint/suspicious/noConsole: Background sync logging
             window.console.warn(`Successfully uploaded finished local game ${gameId} for research`);
           }
         } else {
           if (window.console) {
-            // biome-ignore lint/suspicious/noConsole: Background sync logging
             window.console.error(`Failed to upload finished game ${gameId}: Server returned success=false`);
           }
         }
       }
     } catch (error: any) {
       if (window.console) {
-        // biome-ignore lint/suspicious/noConsole: Background sync logging
         window.console.error(`Failed to upload finished game ${gameId} for research:`, error);
-        // biome-ignore lint/suspicious/noConsole: Background sync logging
         if (error.code) window.console.error(`Error Code: ${error.code}`);
-        // biome-ignore lint/suspicious/noConsole: Background sync logging
         if (error.message) window.console.error(`Error Message: ${error.message}`);
-        // biome-ignore lint/suspicious/noConsole: Background sync logging
         if (error.details) window.console.error(`Error Details:`, error.details);
       }
     }

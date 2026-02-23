@@ -34,7 +34,6 @@
     "@angular/common": "^21.1.0",
     "@angular/compiler": "^21.1.0",
     "@angular/core": "^21.1.0",
-    "@angular/fire": "^21.0.0-rc.0",
     "@angular/forms": "^21.1.0",
     "@angular/platform-browser": "^21.1.0",
     "@angular/platform-browser-dynamic": "^21.1.0",
@@ -77,10 +76,5 @@
     "typescript": "~5.9.3",
     "vitest": "^4.0.16",
     "workbox-build": "^7.4.0"
-  },
-  "overrides": {
-    "@angular/fire": {
-      "firebase-tools": "^15.1.0"
-    }
   }
 }

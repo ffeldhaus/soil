@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { Functions, httpsCallable } from '@angular/fire/functions';
+import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService } from '../auth/auth.service';
+import { FIREBASE_FUNCTIONS } from '../firebase.config';
 import { LocalGameService } from './engine/local-game.service';
 import { SyncService } from './sync.service';
 
-// Mock @angular/fire/functions
-vi.mock('@angular/fire/functions', async (importOriginal) => {
+// Mock firebase/functions
+vi.mock('firebase/functions', async (importOriginal) => {
   const actual = await importOriginal<Record<string, unknown>>();
   return {
     ...actual,
@@ -61,7 +62,7 @@ describe('SyncService', () => {
         SyncService,
         { provide: LocalGameService, useValue: localGameService },
         { provide: AuthService, useValue: authService },
-        { provide: Functions, useValue: functionsInstance },
+        { provide: FIREBASE_FUNCTIONS, useValue: functionsInstance },
       ],
     });
     service = TestBed.inject(SyncService);

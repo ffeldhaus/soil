@@ -1,13 +1,9 @@
 import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
-import {
-  Auth,
-  applyActionCode,
-  checkActionCode,
-  confirmPasswordReset,
-  verifyPasswordResetCode,
-} from '@angular/fire/auth';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { applyActionCode, checkActionCode, confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
+import { FIREBASE_AUTH } from '../../firebase.config';
+import type { Auth } from 'firebase/auth';
 
 @Component({
   selector: 'app-auth-action',
@@ -135,7 +131,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
   `,
 })
 export class AuthActionComponent implements OnInit {
-  private auth = inject(Auth);
+  private auth = inject(FIREBASE_AUTH) as Auth;
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);

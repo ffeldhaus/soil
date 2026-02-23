@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => ({
     },
     server: {
       deps: {
-        inline: ['rxfire', '@angular/fire'],
+        inline: [],
       },
     },
     globals: true,
