@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
+- Styled the "Abbrechen" text link in the parcel selection (planting) dialog into a proper, prominent button.
 - Improved the responsive layout of the landing page info sections to stack vertically below 860px and expand to full width in portrait mode, matching the layout of other informational pages.
 ### Fixed
 - Fixed an issue where the green selection glow was cut off for crops on the edges of the round selection (planting) dialog by removing `overflow: hidden` from the planting grid.

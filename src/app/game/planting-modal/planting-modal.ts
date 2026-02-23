@@ -51,7 +51,7 @@ import type { CropType } from '../../types';
         <div class="flex justify-end gap-3 mt-4 sm:mt-8 shrink-0">
           <button
             (click)="plantingCancelled.emit()"
-            class="px-4 py-2 text-gray-400 hover:text-white transition text-sm sm:text-base"
+            class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm sm:text-base font-bold rounded-lg transition-colors border border-gray-700 shadow-md"
           >
             Abbrechen
           </button>
