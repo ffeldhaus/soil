@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.20] - 2026-02-23
 ### Changed
 - Unified modal background styling (Round Settings, Round Result, Financial Report) with the standard glassmorphism look (bg-gray-900/80 + backdrop-blur-md).
 - Improved readability in HUD and mobile menus by switching low-contrast text to white.
