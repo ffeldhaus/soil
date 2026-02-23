@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
-import type { User } from 'firebase/auth';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import type { User } from 'firebase/auth';
 
 import { GameService } from '../../game/game.service';
 import { AuthService } from '../auth.service';

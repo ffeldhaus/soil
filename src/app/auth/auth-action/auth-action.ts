@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import type { Auth } from 'firebase/auth';
 import { applyActionCode, checkActionCode, confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../../firebase.config';
-import type { Auth } from 'firebase/auth';
 
 @Component({
   selector: 'app-auth-action',

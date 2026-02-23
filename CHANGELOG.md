@@ -2,13 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.12] - 2026-02-23
-
-## [2.6.0] to [2.6.11] - 2026-02-22 to 2026-02-23
+## [Unpublished]
 ### Added
-- Feat: implement dedicated "Delete Account" page at `/delete-account` with data purging logic.
-- Feat: implement `deleteAccount` Cloud Function to purge user profile, hosted games, and auth data.
-- Feat: add dedicated 404 "Not Found" page for invalid routes.
+- Added a dedicated 404 "Not Found" page for invalid routes.
+- Added dedicated "Delete Account" page at `/delete-account` with data purging logic.
+- Implemented `deleteAccount` Cloud Function to purge user profile, hosted games, and auth data.
+- Added logic to clear `localStorage` for guest users and all data (local & remote) for authenticated users.
+- Added Cypress E2E tests for account and data deletion flows.
+- Added a pre-commit check to ensure `CHANGELOG.md` is updated before every commit.
+### Changed
+- Refactored project to remove `@angular/fire` and migrate to the native Firebase SDK.
+- Optimized release process: `npm run deploy` now handles `CHANGELOG.md` versioning automatically.
+- Updated `GEMINI.md` with instructions for minor version consolidation and mandatory changelog updates.
+### Fixed
+- Fixed vertical alignment of the "Abbrechen" button on the account deletion page.
+- Improved data deletion descriptions to clarify status-based purging.
+
+## [2.6.0] to [2.6.12] - 2026-02-22 to 2026-02-23
+### Added
 - Feat: implement game advisor and guided tour with comprehensive tests.
 - Feat: implement GDPR-compliant privacy policy and anonymized user data handling.
 - Feat: improve advisor insights, dialog layout, and crop selection UI.

@@ -117,6 +117,7 @@ The project uses automated hooks to maintain code quality and stability.
 ### 1. Pre-commit Hooks (Fast)
 These run automatically on every `git commit`:
 - **Biome**: Lints and formats the code.
+- **Changelog Check**: Ensures that `CHANGELOG.md` has been updated with changes under the `## [Unpublished]` header.
 - **lychee**: Checks for broken links.
 - **Vitest**: Runs frontend unit tests.
 - **Mocha**: Runs backend (Cloud Functions) unit tests.
@@ -155,6 +156,7 @@ Core game mechanics and constants (yields, prices, weather impacts) are document
 ## Git & Commits
 
 - **Review**: Always run `git status` and `git diff` before committing.
+- **Changelog**: Every commit must include an update to `CHANGELOG.md` under the `## [Unpublished]` header. The pre-commit hook will enforce this.
 - **Commit Frequency**: Commit every time a task is completed. Do not bundle multiple unrelated tasks into a single commit.
 - **Messages**: Propose clear, concise commit messages focusing on "why". Match existing project style.
 - **Automation**: Trust the pre-commit hooks. They handle linting, formatting, testing, and building. If a commit fails, fix the reported errors and try again.

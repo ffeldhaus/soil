@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import type { User } from 'firebase/auth';
 import { RouterLink } from '@angular/router';
+import type { User } from 'firebase/auth';
 
 import type { UserStatus } from '../../../types';
 

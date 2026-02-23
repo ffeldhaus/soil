@@ -25,7 +25,11 @@ describe('AuthService Email Auth', () => {
     }
 
     TestBed.configureTestingModule({
-      providers: [AuthService, { provide: FIREBASE_AUTH, useValue: authSpy }, { provide: FIREBASE_FUNCTIONS, useValue: functionsSpy }],
+      providers: [
+        AuthService,
+        { provide: FIREBASE_AUTH, useValue: authSpy },
+        { provide: FIREBASE_FUNCTIONS, useValue: functionsSpy },
+      ],
     });
     service = TestBed.inject(AuthService);
   });

@@ -55,7 +55,7 @@ if (isBrowser) {
   } else {
     // ReCaptchaV3Provider requires a script to be loaded, native SDK handles this if possible
     // For now we skip ReCaptcha in SSR or if not initialized to avoid errors
-    // initializeAppCheck(app, { ... }); 
+    // initializeAppCheck(app, { ... });
   }
 }
 

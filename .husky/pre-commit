@@ -25,6 +25,13 @@ if ! git diff --cached --name-only | grep -qvE '\.(jpeg|jpg|png|webp|gif|svg|ico
   exit 0
 fi
 
+# Check if CHANGELOG.md was updated (staged)
+if ! git diff --cached --name-only | grep -q '^CHANGELOG\.md$'; then
+  echo "\033[31mERROR: CHANGELOG.md must be updated before committing.\033[0m"
+  echo "Please add your changes under the '## [Unpublished]' header in CHANGELOG.md and stage it."
+  exit 1
+fi
+
 npx biome check --write --staged --no-errors-on-unmatched
 npm run verify-constants
 node scripts/check-file-size.js
