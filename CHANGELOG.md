@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Removed the hover translate animation from the "Spiele erstellen & verwalten" button on the landing page to prevent unwanted movement on hover.
 - Improved the responsive layout of the landing page info sections to stack vertically below 860px and expand to full width in portrait mode, matching the layout of other informational pages.
 ### Fixed
+- Fixed an issue where the logout button was confusingly displayed for guest users on the Admin Dashboard by hiding it and the account deletion button when in anonymous mode.
 - Fixed an issue where the green selection glow was cut off for crops on the edges of the round selection (planting) dialog by removing `overflow: hidden` from the planting grid.
 - Fixed an issue where custom scrollbars were invisible on several pages (like Manual, Info, Dashboard) by removing `-webkit-scrollbar` overrides and replacing them with standard CSS `scrollbar-width` and `scrollbar-color`. Adjusted z-indices of background images and removed conflicting background colors from root containers.
 - Fixed text boxes displaying a bluish semi-transparent background on performance tier 1 by forcing all Tailwind dark backgrounds (`bg-gray-900`, `bg-gray-950`, `bg-black`) to solid `#000000` with full opacity.
