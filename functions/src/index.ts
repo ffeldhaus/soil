@@ -2439,19 +2439,31 @@ export const evaluateGame = onCall(async (request) => {
   }
 });
 
-export const sendGameInvite = onCall(
-  { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
-  async (request) => {
-    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+export const deleteAccount = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError('unauthenticated', 'Must be logged in to delete your account');
+  }
 
-    const { gameId, email } = request.data;
-    if (!gameId || !email) throw new HttpsError('invalid-argument', 'Missing args');
+  const uid = request.auth.uid;
 
-    const gameSnap = await db.collection('games').doc(gameId).get();
-    const game = gameSnap.data();
+  try {
+    // 1. Delete all games hosted by this user
+    const gamesSnapshot = await db.collection('games').where('hostUid', '==', uid).get();
+    for (const gameDoc of gamesSnapshot.docs) {
+      // Use recursiveDelete to ensure all subcollections (like rounds) are also deleted
+      await db.recursiveDelete(gameDoc.ref);
+    }
 
-    await mailService.sendGameInvite(email, game?.name || 'Untitled Game', gameId);
+    // 2. Delete the user document
+    const userRef = db.collection('users').doc(uid);
+    await db.recursiveDelete(userRef);
+
+    // 3. Delete the Firebase Auth user
+    await admin.auth().deleteUser(uid);
 
     return { success: true };
-  },
-);
+  } catch (error: any) {
+    console.error('Error deleting account:', error);
+    throw new HttpsError('internal', error.message || 'Failed to delete account');
+  }
+});

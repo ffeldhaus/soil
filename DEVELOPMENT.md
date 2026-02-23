@@ -125,6 +125,7 @@ These run automatically on every `git commit`:
 ### 2. Pre-push Hooks (Comprehensive)
 These run automatically on `git push`:
 - **Outdated Check**: Ensures dependencies are kept up to date within constraints.
+- **Changelog Check**: Verifies that `CHANGELOG.md` contains an entry for the current version in `package.json` or a `## [Unpublished]` header.
 
 ## Performance, SEO & Accessibility
 
@@ -161,18 +162,29 @@ Core game mechanics and constants (yields, prices, weather impacts) are document
 
 ## Release Process
 
-We use semantic versioning managed in `package.json` and tagged in Git. For a full release including backend components:
+We use semantic versioning managed in `package.json` and tagged in Git. For every release, corresponding entries **must be added to `CHANGELOG.md` under a `## [Unpublished]` header**. The actual version number and date will be automatically inserted by the deployment script.
+
+### Changelog Maintenance
+To keep the changelog readable, **consolidate entries on every minor version release**. Whenever a new minor version (e.g., `v2.7.0`) is released:
+1. Combine all previous patch release notes (e.g., `v2.6.1` through `v2.6.9`) into a single summary under the previous minor version's heading.
+2. Ensure the changelog remains a high-level overview of significant milestones rather than a verbose commit log.
+
+**Important**: Do not commit `CHANGELOG.md` manually. The changes should remain in the working tree under the `## [Unpublished]` header. The `npm run deploy` script will automatically update the version number, set the date, and commit the file as part of the release.
+
+### Deployment Workflow
+For a full release including backend components:
 
 1. Ensure `main` is up to date.
-2. Run `npm run deploy [patch | minor | major | <version>]`. This script will:
+2. Update `CHANGELOG.md` by adding your changes under the `## [Unpublished]` header.
+3. Run `npm run deploy [patch | minor | major | <version>]`. This script will:
    - Use the provided increment type or version, or prompt if no argument is given.
    - Update `package.json`.
+   - Update `angular.json` with the new version.
+   - **Update `CHANGELOG.md` by replacing `## [Unpublished]` with the new version and current date.**
+   - Commit the version and changelog changes.
+   - Create a git tag.
+   - Push the changes and tags to GitHub.
    - Deploy backend components (Functions, Firestore, Storage) to Firebase.
-3. The script will automatically commit the `package.json` change and create a git tag.
-4. The script will prompt to push the changes and tags to GitHub.
-
-> [!NOTE]
-> The frontend deployment is triggered automatically by the push to `main`.
 
 ## CI/CD & Deployment
 

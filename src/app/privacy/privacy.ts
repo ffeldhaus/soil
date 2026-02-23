@@ -121,7 +121,9 @@ import { RouterLink } from '@angular/router';
             Sie haben im Rahmen der geltenden gesetzlichen Bestimmungen (DSGVO) jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten.
           </p>
           <p class="text-gray-300">
-            Wenden Sie sich hierzu bitte an die im Impressum genannten Kontaktpersonen.
+            Sie können Ihr Konto und alle damit verbundenen Daten jederzeit selbstständig über unsere 
+            <a routerLink="/delete-account" class="text-emerald-400 hover:underline">Seite zur Kontolöschung</a> 
+            löschen. Alternativ wenden Sie sich hierzu bitte an die im Impressum genannten Kontaktpersonen.
           </p>
         </section>
       </div>

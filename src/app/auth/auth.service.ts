@@ -41,6 +41,11 @@ export class AuthService {
     return httpsCallable<{ email: string; origin: string }, void>(this.functions, 'sendPasswordResetEmail');
   }
 
+  private get deleteAccountFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, { success: boolean }>(this.functions, 'deleteAccount');
+  }
+
   get isAnonymous(): boolean {
     return !!this.userSubject.value?.isAnonymous;
   }
@@ -324,6 +329,16 @@ export class AuthService {
       return await signOut(this.auth);
     }
     return Promise.resolve();
+  }
+
+  async deleteAccount() {
+    const fn = this.deleteAccountFn;
+    if (!fn) throw new Error('Functions not available');
+    const result = await fn();
+    if (result.data.success) {
+      await this.logout();
+    }
+    return result.data;
   }
 
   async updateDisplayName(name: string) {

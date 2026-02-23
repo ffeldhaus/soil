@@ -21,8 +21,8 @@ const newVersionRequested = increments[arg] || arg;
 
 const performDeployment = async (newVersion) => {
   try {
-    // Check for uncommitted changes
-    const status = execSync('git status --porcelain').toString().trim();
+    // Check for uncommitted changes (ignoring CHANGELOG.md)
+    const status = execSync('git status --porcelain | grep -v "CHANGELOG.md" || true').toString().trim();
     if (status) {
       console.error(
         '\x1b[31m%s\x1b[0m',
@@ -43,6 +43,23 @@ const performDeployment = async (newVersion) => {
     angularJson.projects.soil.architect.build.options.define['import.meta.env.APP_VERSION'] = `"${newVersion}"`;
     fs.writeFileSync(angularJsonPath, `${JSON.stringify(angularJson, null, 2)}\n`);
     execSync(`git add ${angularJsonPath}`, { stdio: 'inherit' });
+
+    // Update CHANGELOG.md
+    const changelogPath = 'CHANGELOG.md';
+    if (fs.existsSync(changelogPath)) {
+      let changelog = fs.readFileSync(changelogPath, 'utf8');
+      const today = new Date().toISOString().split('T')[0];
+      const unpublishedRegex = /##\s*\[Unpublished\]/i;
+
+      if (unpublishedRegex.test(changelog)) {
+        changelog = changelog.replace(unpublishedRegex, `## [${newVersion}] - ${today}`);
+        fs.writeFileSync(changelogPath, changelog);
+        execSync(`git add ${changelogPath}`, { stdio: 'inherit' });
+        console.log(`Updated CHANGELOG.md with version ${newVersion} and date ${today}`);
+      } else {
+        console.warn('WARNING: No [Unpublished] entry found in CHANGELOG.md. Skipping changelog update.');
+      }
+    }
 
     execSync(`git commit -m "v${newVersion}"`, { stdio: 'inherit' });
     execSync(`git tag -a v${newVersion} -m "v${newVersion}"`, { stdio: 'inherit' });
