@@ -60,7 +60,7 @@ import { AuthService } from '../auth/auth.service';
             <a
               routerLink="/admin"
               data-testid="landing-manage-games"
-              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden flex-1"
+              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden flex-1"
             >
               <span class="relative z-10 flex items-center justify-center gap-2"
                 >Spiele erstellen & verwalten</span
@@ -94,8 +94,6 @@ import { AuthService } from '../auth/auth.service';
                 </h2>
                 <a
                   routerLink="/manual"
-                  target="_blank"
-                  rel="noopener noreferrer"
                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-800/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white rounded-xl border border-emerald-500/30 transition-all shadow-lg font-bold text-lg min-w-[220px]"
                 >
                   <span class="p-1 bg-emerald-900/30 rounded-lg">📖</span>
@@ -130,8 +128,6 @@ import { AuthService } from '../auth/auth.service';
                 </h2>
                 <a
                   routerLink="/info"
-                  target="_blank"
-                  rel="noopener noreferrer"
                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-800/40 hover:bg-blue-700/60 text-blue-300 hover:text-white rounded-xl border border-blue-500/30 transition-all shadow-lg font-bold text-lg min-w-[220px]"
                 >
                   <span class="p-1 bg-blue-900/30 rounded-lg">🎓</span>

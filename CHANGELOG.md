@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
+- Removed `target="_blank"` from the "Handbuch" and "Hintergrund" links on the landing page, so they open in the current tab instead of a new one.
+- Removed the hover translate animation from the "Spiele erstellen & verwalten" button on the landing page to prevent unwanted movement on hover.
 - Unified the "Home" navigation experience across the application by making the "SOIL" logo (and "ADMIN" logo on the Super Admin dashboard) a clickable link to the start page or dashboard.
 - Removed redundant and inconsistent "Zur Startseite" house icon buttons from the right side of navigation bars on all informational and authentication pages.
 - Updated the "SOIL" logo in the game HUD to smartly navigate back to the Admin Dashboard for authenticated users or the Start Page for guest players, resolving confusion between the home action and the "Logout" (exit) button.
