@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
+- Unified the "Home" navigation experience across the application by making the "SOIL" logo (and "ADMIN" logo on the Super Admin dashboard) a clickable link to the start page or dashboard.
+- Removed redundant and inconsistent "Zur Startseite" house icon buttons from the right side of navigation bars on all informational and authentication pages.
+- Updated the "SOIL" logo in the game HUD to smartly navigate back to the Admin Dashboard for authenticated users or the Start Page for guest players, resolving confusion between the home action and the "Logout" (exit) button.
 - Styled the "Abbrechen" text link in the parcel selection (planting) dialog into a proper, prominent button.
 - Improved the responsive layout of the landing page info sections to stack vertically below 860px and expand to full width in portrait mode, matching the layout of other informational pages.
 ### Fixed

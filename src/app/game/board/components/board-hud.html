@@ -14,7 +14,7 @@
       </svg>
     </button>
     
-    <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider hidden md:block shrink-0">SOIL</h1>
+    <a [routerLink]="user?.isAnonymous ? '/' : '/admin'" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors hidden md:block shrink-0 cursor-pointer" [title]="user?.isAnonymous ? 'Zur Startseite' : 'Zum Dashboard'">SOIL</a>
     
     @if (gameState) {
       <div class="hidden sm:flex gap-4 text-gray-200 font-mono text-sm md:text-base truncate" data-tour="hud-stats">

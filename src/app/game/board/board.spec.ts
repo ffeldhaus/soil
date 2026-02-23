@@ -1,8 +1,9 @@
 import { ChangeDetectorRef } from '@angular/core';
-import { type ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
@@ -87,6 +88,7 @@ describe('Board', () => {
     await TestBed.configureTestingModule({
       imports: [Board],
       providers: [
+        provideRouter([]),
         provideClientHydration(withIncrementalHydration()),
         { provide: AuthService, useValue: authSpy },
         { provide: GameService, useValue: gameSpy },

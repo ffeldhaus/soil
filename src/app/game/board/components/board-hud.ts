@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, inject, isDevMode, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
 
 import type { Game, PlayerState } from '../../../types';
@@ -10,7 +11,7 @@ import { TourService } from '../../tour.service';
 @Component({
   selector: 'app-board-hud',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './board-hud.html',
 })
 export class BoardHudComponent {
