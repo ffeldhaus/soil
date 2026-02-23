@@ -83,9 +83,9 @@ import { AuthService } from '../auth/auth.service';
 
       <!-- Info Sections -->
       @defer (hydrate on viewport) {
-        <div id="info-section" class="relative z-10 py-24 px-6">
-          <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8">
+        <div id="info-section" class="relative z-10 py-24 px-6 portrait:px-0">
+          <div class="max-w-6xl mx-auto grid min-[860px]:grid-cols-2 gap-8 portrait:max-w-none">
+            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2
                   class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
@@ -121,7 +121,7 @@ import { AuthService } from '../auth/auth.service';
               </div>
             </section>
 
-            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8">
+            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2
                   class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
