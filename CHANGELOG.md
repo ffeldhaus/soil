@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Optimized site metadata for SEO by updating the title, description, and keywords with educational and agricultural terminology.
+- Updated Open Graph and Twitter card tags for better social sharing.
+- Updated the Web App Manifest (site.webmanifest) name and description for consistency with SEO improvements.
+
 ## [2.6.21] - 2026-02-23
 ### Added
 - Registered Play Store verification user (`no-reply@example.com`) in Firestore and verified their email to facilitate app store approval.

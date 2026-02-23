@@ -1,8 +1,8 @@
 {
   "id": "soil-simulation-game",
-  "name": "Soil - Multiplayer Ressourcen-Management",
+  "name": "Soil - Kostenloses Lernspiel & Simulation",
   "short_name": "SOIL",
-  "description": "Ein Multiplayer-Spiel über Ressourcenmanagement und Bodenqualität.",
+  "description": "Kostenloses Lernspiel und Simulation für den Biologie-Unterricht über Landwirtschaft und Bodenqualität.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
