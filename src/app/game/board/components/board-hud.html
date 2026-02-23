@@ -6,7 +6,7 @@
     <button
       (click)="toggleMobileMenu.emit()"
       data-testid="mobile-menu-toggle"
-      class="lg:hidden p-1 hover:bg-gray-800 rounded-lg text-gray-400 shrink-0"
+      class="lg:hidden p-1 hover:bg-gray-800 rounded-lg text-white shrink-0"
       aria-label="Open menu"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -29,19 +29,19 @@
   <div class="flex-none flex items-center justify-center">
     <!-- Mobile Controls (Visible on small screens) -->
     <div class="flex lg:hidden items-center gap-0.5 sm:gap-1" data-tour="mobile-overlays">
-      <button (click)="toggleLabels.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-400]="!showLabels" title="Feldnamen">
+      <button (click)="toggleLabels.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-300]="!showLabels" title="Feldnamen">
         <span class="text-sm">🏷️</span>
       </button>
-      <button (click)="toggleNutrition.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay" title="Nährstoffe">
+      <button (click)="toggleNutrition.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-300]="!showNutritionOverlay" title="Nährstoffe">
         <span class="text-sm">🧪</span>
       </button>
-      <button (click)="toggleHarvest.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay" title="Ertrag">
+      <button (click)="toggleHarvest.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-300]="!showHarvestOverlay" title="Ertrag">
         <span class="text-sm">🌾</span>
       </button>
-      <button (click)="toggleSoil.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-400]="!showSoilOverlay" title="Bodenqualität">
+      <button (click)="toggleSoil.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-300]="!showSoilOverlay" title="Bodenqualität">
         <span class="text-sm">🌿</span>
       </button>
-      <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-400]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
+      <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-300]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
         <span class="text-sm">📊</span>
       </button>
 
@@ -102,7 +102,7 @@
           [class.text-white]="showLabels"
           [class.border-emerald-500]="showLabels"
           [class.bg-gray-800]="!showLabels"
-          [class.text-gray-200]="!showLabels"
+          [class.text-white]="!showLabels"
           [class.border-gray-700]="!showLabels"
           [attr.aria-pressed]="showLabels"
           aria-label="Toggle field names"
@@ -116,7 +116,7 @@
           [class.text-white]="showNutritionOverlay"
           [class.border-blue-500]="showNutritionOverlay"
           [class.bg-gray-800]="!showNutritionOverlay"
-          [class.text-gray-200]="!showNutritionOverlay"
+          [class.text-white]="!showNutritionOverlay"
           [class.border-gray-700]="!showNutritionOverlay"
           [attr.aria-pressed]="showNutritionOverlay"
           aria-label="Toggle nutrition overlay"
@@ -130,7 +130,7 @@
           [class.text-white]="showHarvestOverlay"
           [class.border-yellow-500]="showHarvestOverlay"
           [class.bg-gray-800]="!showHarvestOverlay"
-          [class.text-gray-200]="!showHarvestOverlay"
+          [class.text-white]="!showHarvestOverlay"
           [class.border-gray-700]="!showHarvestOverlay"
           [attr.aria-pressed]="showHarvestOverlay"
           aria-label="Toggle harvest overlay"
@@ -144,7 +144,7 @@
           [class.text-white]="showSoilOverlay"
           [class.border-emerald-600]="showSoilOverlay"
           [class.bg-gray-800]="!showSoilOverlay"
-          [class.text-gray-200]="!showSoilOverlay"
+          [class.text-white]="!showSoilOverlay"
           [class.border-gray-700]="!showSoilOverlay"
           [attr.aria-pressed]="showSoilOverlay"
           aria-label="Toggle soil quality overlay"
@@ -159,7 +159,7 @@
           [class.text-white]="showFinance || maxRoundNumber > 0"
           [class.border-emerald-500]="showFinance"
           [class.bg-gray-800]="!showFinance"
-          [class.text-gray-200]="!showFinance && maxRoundNumber === 0"
+          [class.text-white]="!showFinance && maxRoundNumber === 0"
           [class.border-gray-700]="!showFinance"
           [class.opacity-50]="maxRoundNumber === 0"
           [attr.aria-pressed]="showFinance"

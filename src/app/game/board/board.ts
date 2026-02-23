@@ -155,7 +155,7 @@ export class Board implements OnInit, OnDestroy {
   private parcelsSub: Subscription | null = null;
   private tourSub: Subscription | null = null;
 
-  showLabels = false;
+  showLabels = true;
   tourStarted = false;
   pendingNextRound = false;
 

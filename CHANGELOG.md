@@ -2,8 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.19] - 2026-02-23
+## [Unpublished]
 ### Changed
+- Unified modal background styling (Round Settings, Round Result, Financial Report) with the standard glassmorphism look (bg-gray-900/80 + backdrop-blur-md).
+- Improved readability in HUD and mobile menus by switching low-contrast text to white.
+- Standardized parcel names to be enabled by default on the game board.
+- Replaced linter-incompatible opacity text classes with standard Tailwind equivalents.
+### Fixed
+- Fixed "Namen" (Labels) toggle in the game view which was previously unresponsive.
+### Added
 - Improved readability across the entire application by replacing low-contrast grey text with white or light grey.
 - Updated footer links and version number to black for better contrast against semi-transparent backgrounds.
 - Unified primary container styles with modern glassmorphism (bg-gray-900/80 + backdrop-blur-md) across Admin and Game sections.
