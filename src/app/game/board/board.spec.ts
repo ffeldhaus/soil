@@ -1,9 +1,8 @@
 import { ChangeDetectorRef } from '@angular/core';
-import { type ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
-import { ActivatedRoute, Router, provideRouter } from '@angular/router';
-import { BehaviorSubject, Subject, of } from 'rxjs';
+import { type ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { By, provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';

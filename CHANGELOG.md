@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Removed `target="_blank"` from the "Handbuch" and "Hintergrund" links on the landing page, so they open in the current tab instead of a new one.
 - Removed the hover translate animation from the "Spiele erstellen & verwalten" button on the landing page to prevent unwanted movement on hover.
 - Improved the responsive layout of the landing page info sections to stack vertically below 860px and expand to full width in portrait mode, matching the layout of other informational pages.
+- Cleaned up unused imports in the `Board` unit tests.
 ### Fixed
 - Fixed an issue where the logout button was confusingly displayed for guest users on the Admin Dashboard by hiding it and the account deletion button when in anonymous mode.
 - Fixed an issue where the green selection glow was cut off for crops on the edges of the round selection (planting) dialog by removing `overflow: hidden` from the planting grid.
