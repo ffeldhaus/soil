@@ -2,29 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.11] - 2026-02-23
-### Added
-- Added a dedicated 404 "Not Found" page instead of redirecting invalid routes to the landing page.
-- Added dedicated "Delete Account" page at `/delete-account` for users to request data purging.
-- Implemented logic to clear `localStorage` for guest users and all data (local & remote) for authenticated users.
-- Added Cypress E2E tests for account and data deletion flows.
-### Fixed
-- Fixed vertical alignment of "Abbrechen" button on the account deletion page.
-- Improved description on the account deletion page to clarify what data is deleted based on user status.
+## [Unpublished]
 
-## [2.6.0] to [2.6.9] - 2026-02-22 to 2026-02-23
+## [2.6.0] to [2.6.11] - 2026-02-22 to 2026-02-23
 ### Added
+- Feat: implement dedicated "Delete Account" page at `/delete-account` with data purging logic.
+- Feat: implement `deleteAccount` Cloud Function to purge user profile, hosted games, and auth data.
+- Feat: add dedicated 404 "Not Found" page for invalid routes.
 - Feat: implement game advisor and guided tour with comprehensive tests.
-- Feat: implement GDPR-compliant privacy policy and anonymize user data.
+- Feat: implement GDPR-compliant privacy policy and anonymized user data handling.
 - Feat: improve advisor insights, dialog layout, and crop selection UI.
+- Feat: add automated `CHANGELOG.md` versioning and pre-push verification.
 - Feat: add privacy and impressum pages to sitemap.
+- Docs: add instructions to `GEMINI.md` for consolidating changelog entries on every minor version release.
 ### Changed
-- Style: refine manual layout and refine crop card designs (removed NPK/labor icons).
-- Refactor: move advisor styles to separate file and update GEMINI.md best practices.
-- Perf: refine performance tiers and optimize animations (fireworks).
+- Style: refine manual layout and crop card designs (removed NPK/labor icons).
+- Refactor: move advisor styles to separate file and update performance tiers.
+- Perf: optimize animations (fireworks) and rendering tiers.
+- Build: refined `scripts/deploy.js` to automate changelog management during releases.
 ### Fixed
-- Fix: resolve manual scrolling, home button overlap, and footer link behavior.
+- Fix: resolve manual scrolling issues and footer link behavior.
 - Fix: remove duplicate footers and ensure assetlinks.json is served correctly.
+- Fix: align "Abbrechen" button and improve data deletion descriptions.
 
 ## [2.5.0] to [2.5.15] - 2026-02-05 to 2026-02-16
 ### Added
