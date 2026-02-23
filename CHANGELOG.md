@@ -2,12 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.10] - 2026-02-23
+## [2.6.11] - 2026-02-23
 ### Added
+- Added a dedicated 404 "Not Found" page instead of redirecting invalid routes to the landing page.
 - Added dedicated "Delete Account" page at `/delete-account` for users to request data purging.
-- Implemented `deleteAccount` Cloud Function to purge user profile, hosted games, and auth data.
-- Automated `CHANGELOG.md` versioning: `npm run deploy` now replaces `## [Unpublished]` with the actual version and date.
-- Added husky pre-push check for `CHANGELOG.md` (accepts `[Unpublished]` for development).
+- Implemented logic to clear `localStorage` for guest users and all data (local & remote) for authenticated users.
+- Added Cypress E2E tests for account and data deletion flows.
+### Fixed
+- Fixed vertical alignment of "Abbrechen" button on the account deletion page.
+- Improved description on the account deletion page to clarify what data is deleted based on user status.
 
 ## [2.6.0] to [2.6.9] - 2026-02-22 to 2026-02-23
 ### Added
