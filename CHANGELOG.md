@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.15] - 2026-02-23
 ### Added
 - Added a Table of Contents sidebar to the "Info" page for better navigation.
 - Added a link to the version number in the footer of all pages pointing to the Changelog on GitHub.
