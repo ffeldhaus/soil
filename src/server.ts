@@ -17,7 +17,7 @@ const app = express();
 app.use(compression());
 
 /**
- * Explicitly serve robots.txt and sitemap.xml to avoid Angular router redirects.
+ * Explicitly serve robots.txt, sitemap.xml and assetlinks.json to avoid Angular router redirects.
  * Served as strings for maximum reliability in App Hosting environment.
  */
 app.get('/robots.txt', (_req, res) => {
@@ -59,6 +59,18 @@ app.get('/sitemap.xml', (_req, res) => {
 </urlset>`);
 });
 
+app.get('/.well-known/assetlinks.json', (_req, res) => {
+  res.type('application/json');
+  res.send(`[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.soil.twa",
+    "sha256_cert_fingerprints": ["A7:D5:AB:FE:C2:09:B5:BA:53:F1:71:8E:DC:C0:25:D2:53:66:7C:10:8A:0C:F2:AA:99:5C:BC:54:D4:BD:69:5E"]
+  }
+}]`);
+});
+
 /**
  * Security headers for Firebase Auth popups.
  */
@@ -75,6 +87,7 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
+    dotfiles: 'allow',
   }),
 );
 

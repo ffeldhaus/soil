@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.18] - 2026-02-23
+## [Unpublished]
 ### Changed
 - Finalized UI consistency by standardizing container backgrounds and alignments across all informational and administrative pages.
+### Fixed
+- Fixed 404 error for `/.well-known/assetlinks.json` by adding an explicit route in the server and allowing dotfiles in static serving.
 
 ## [2.6.17] - 2026-02-23
 ### Changed
