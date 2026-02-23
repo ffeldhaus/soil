@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.19] - 2026-02-23
 ### Changed
 - Improved readability across the entire application by replacing low-contrast grey text with white or light grey.
 - Updated footer links and version number to black for better contrast against semi-transparent backgrounds.
