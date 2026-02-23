@@ -50,11 +50,10 @@ import { RouterLink } from '@angular/router';
         </div>
       </nav>
 
-      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-16 animate-fade-in">
-        <header class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl text-center space-y-4">
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-[72px] pb-12 space-y-16 animate-fade-in">
+        <header class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl text-center space-y-4 portrait:rounded-none portrait:border-x-0">
           <h1
             class="text-4xl md:text-6xl font-bold text-emerald-500 tracking-tight"
-
           >
             Hintergrund
           </h1>

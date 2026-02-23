@@ -18,7 +18,7 @@ import type { CropType } from '../../types';
         aria-modal="true"
         aria-labelledby="planting-title"
       >
-        <h2 id="planting-title" data-tour="planting-modal-title" class="text-lg sm:text-2xl font-bold text-white mb-4 sm:mb-6 font-serif shrink-0 text-center sm:text-left">
+        <h2 id="planting-title" data-tour="planting-modal-title" class="text-lg sm:text-2xl font-bold text-white mb-4 sm:mb-6 shrink-0 text-center sm:text-left">
           Was möchtest du anbauen?
         </h2>
 

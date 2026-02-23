@@ -49,7 +49,7 @@ import { AuthService } from '../auth.service';
 
       <div class="relative z-10 max-w-2xl mx-auto pt-[100px] pb-12 px-4 space-y-8 animate-fade-in">
         <div class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-6">
-          <h1 class="text-3xl font-serif font-bold text-red-500">
+          <h1 class="text-3xl font-bold text-red-500">
             {{ isGuest() ? 'Lokale Daten löschen' : 'Konto löschen' }}
           </h1>
           
@@ -119,7 +119,7 @@ import { AuthService } from '../auth.service';
       <div class="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="showConfirmModal.set(false)"></div>
         <div class="bg-gray-900 border border-gray-700 p-8 rounded-3xl shadow-2xl relative z-10 max-w-md w-full space-y-6">
-          <h3 class="text-2xl font-serif font-bold text-white">Sind Sie absolut sicher?</h3>
+          <h3 class="text-2xl font-bold text-white">Sind Sie absolut sicher?</h3>
           <p class="text-gray-300">
             Diese Aktion löscht {{ isGuest() ? 'alle Ihre lokalen Spieldaten' : 'alle Ihre Daten und Ihr Konto' }} dauerhaft. Eine Wiederherstellung ist nicht möglich.
           </p>

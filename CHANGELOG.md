@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added a link to the version number in the footer of all pages pointing to the Changelog on GitHub.
+- Added unit tests for the 404 "Not Found" page.
+### Changed
+- Standardized heading styles across Manual, Info, Impressum, Privacy, and Error pages.
+- Standardized font usage to exclusively use Sans Serif across the entire application, removing all serif font declarations.
+### Fixed
+- Fixed 404 page layout to prevent overlapping of the "404" text and "Seite nicht gefunden" heading.
+- Removed redundant "SOIL" text from the bottom of the 404 page.
+
 ## [2.6.13] - 2026-02-23
 ### Added
 - Added a dedicated 404 "Not Found" page for invalid routes.

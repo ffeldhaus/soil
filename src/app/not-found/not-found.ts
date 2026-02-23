@@ -19,12 +19,12 @@ import { RouterLink } from '@angular/router';
         </picture>
       </div>
 
-      <div class="relative z-10 text-center space-y-8 max-w-lg animate-fade-in">
+      <div class="relative z-10 text-center space-y-4 max-w-lg animate-fade-in">
         <div class="space-y-2">
-          <h1 class="text-9xl font-black text-emerald-500/20 absolute -top-20 left-1/2 -translate-x-1/2 select-none tracking-tighter">
+          <h1 class="text-9xl font-black text-emerald-500/20 select-none tracking-tighter">
             404
           </h1>
-          <h2 class="text-4xl sm:text-5xl font-serif font-bold text-white relative">
+          <h2 class="text-4xl sm:text-5xl font-bold text-white relative">
             Seite nicht gefunden
           </h2>
           <p class="text-gray-400 text-lg sm:text-xl leading-relaxed">
@@ -32,7 +32,7 @@ import { RouterLink } from '@angular/router';
           </p>
         </div>
 
-        <div class="pt-4">
+        <div class="pt-8">
           <a
             routerLink="/"
             class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-xl active:scale-95 group"
@@ -42,10 +42,6 @@ import { RouterLink } from '@angular/router';
             </svg>
             Zurück zum Hof
           </a>
-        </div>
-
-        <div class="pt-8">
-          <h1 class="text-xl font-bold font-sans text-emerald-500 tracking-wider select-none opacity-50">SOIL</h1>
         </div>
       </div>
     </div>
