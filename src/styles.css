@@ -234,10 +234,11 @@ body.perf-tier-1 [role="dialog"] {
   opacity: 1 !important;
 }
 
-/* Ensure common transparent background classes used for overlays are opaque */
-body.perf-tier-1 .bg-black\/60,
-body.perf-tier-1 .bg-gray-900\/95,
-body.perf-tier-1 .bg-gray-900\/80 {
+/* Ensure common transparent background classes used for overlays are opaque and black */
+body.perf-tier-1 [class*="bg-black/"],
+body.perf-tier-1 [class*="bg-gray-900/"],
+body.perf-tier-1 [class*="bg-gray-950/"] {
+  background-color: #000000 !important;
   opacity: 1 !important;
 }
 

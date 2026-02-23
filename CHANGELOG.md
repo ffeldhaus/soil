@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unpublished]
 ### Fixed
 - Fixed an issue where custom scrollbars were invisible on several pages (like Manual, Info, Dashboard) by removing `-webkit-scrollbar` overrides and replacing them with standard CSS `scrollbar-width` and `scrollbar-color`. Adjusted z-indices of background images and removed conflicting background colors from root containers.
+- Fixed text boxes displaying a bluish semi-transparent background on performance tier 1 by forcing all Tailwind dark backgrounds (`bg-gray-900`, `bg-gray-950`, `bg-black`) to solid `#000000` with full opacity.
 
 ## [2.6.22] - 2026-02-23
 ### Changed
