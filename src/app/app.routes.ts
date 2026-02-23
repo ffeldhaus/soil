@@ -63,7 +63,7 @@ const baseRoutes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    loadComponent: () => import('./not-found/not-found').then((m) => m.NotFoundComponent),
   },
 ];
 

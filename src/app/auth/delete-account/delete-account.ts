@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -49,10 +49,13 @@ import { AuthService } from '../auth.service';
 
       <div class="relative z-10 max-w-2xl mx-auto pt-[100px] pb-12 px-4 space-y-8 animate-fade-in">
         <div class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-6">
-          <h1 class="text-3xl font-serif font-bold text-red-500">Konto löschen</h1>
+          <h1 class="text-3xl font-serif font-bold text-red-500">
+            {{ isGuest() ? 'Lokale Daten löschen' : 'Konto löschen' }}
+          </h1>
           
           <p class="text-gray-300 leading-relaxed">
-            Wir bedauern, dass Sie uns verlassen möchten. Bitte beachten Sie, dass die Löschung Ihres Kontos endgültig ist.
+            Wir bedauern, dass Sie uns verlassen möchten. Bitte beachten Sie, dass die Löschung 
+            {{ isGuest() ? 'Ihrer lokalen Spieldaten' : 'Ihres Kontos' }} endgültig ist.
           </p>
 
           <div class="bg-red-900/20 border border-red-500/30 rounded-2xl p-6 space-y-4">
@@ -63,8 +66,14 @@ import { AuthService } from '../auth.service';
               Was passiert bei der Löschung?
             </h2>
             <ul class="list-disc list-inside text-gray-300 space-y-2 text-sm ml-2">
-              <li>Alle Ihre persönlichen Daten (Name, E-Mail) werden unwiderruflich gelöscht.</li>
-              <li>Sämtliche von Ihnen erstellten Cloud-Spiele und deren Spielstände werden vollständig entfernt.</li>
+              @if (isGuest()) {
+                <li>Alle lokal in Ihrem Browser gespeicherten Spieldaten (z.B. lokale Spiele) werden unwiderruflich gelöscht.</li>
+                <li>Ihre anonyme Gast-Sitzung wird beendet.</li>
+              } @else {
+                <li>Alle Ihre persönlichen Daten (Name, E-Mail) werden unwiderruflich gelöscht.</li>
+                <li>Sämtliche von Ihnen erstellten Cloud-Spiele und deren Spielstände werden vollständig entfernt.</li>
+                <li>Lokal gespeicherte Entwürfe und Einstellungen werden ebenfalls gelöscht.</li>
+              }
               <li>Anonymisierte Forschungsdaten und anonymes Feedback bleiben erhalten, können aber nicht mehr mit Ihnen in Verbindung gebracht werden.</li>
               <li>Dieser Vorgang kann nicht rückgängig gemacht werden.</li>
             </ul>
@@ -89,14 +98,14 @@ import { AuthService } from '../auth.service';
                 </svg>
                 Wird gelöscht...
               } @else {
-                Konto und Daten jetzt unwiderruflich löschen
+                {{ isGuest() ? 'Lokale Daten jetzt unwiderruflich löschen' : 'Konto und Daten jetzt unwiderruflich löschen' }}
               }
             </button>
             
             <a
               routerLink="/"
               [class.pointer-events-none]="loading()"
-              class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl transition-all border border-gray-600 text-center"
+              class="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl transition-all border border-gray-600 flex items-center justify-center text-center"
             >
               Abbrechen
             </a>
@@ -112,7 +121,7 @@ import { AuthService } from '../auth.service';
         <div class="bg-gray-900 border border-gray-700 p-8 rounded-3xl shadow-2xl relative z-10 max-w-md w-full space-y-6">
           <h3 class="text-2xl font-serif font-bold text-white">Sind Sie absolut sicher?</h3>
           <p class="text-gray-300">
-            Diese Aktion löscht alle Ihre Daten dauerhaft. Eine Wiederherstellung ist nicht möglich.
+            Diese Aktion löscht {{ isGuest() ? 'alle Ihre lokalen Spieldaten' : 'alle Ihre Daten und Ihr Konto' }} dauerhaft. Eine Wiederherstellung ist nicht möglich.
           </p>
           <div class="flex gap-4">
             <button
@@ -141,6 +150,15 @@ export class DeleteAccountComponent {
   error = signal<string | null>(null);
   showConfirmModal = signal(false);
 
+  currentUser = signal(this.authService.currentUser);
+  isGuest = computed(() => !this.currentUser() || this.currentUser()?.isAnonymous);
+
+  constructor() {
+    this.authService.user$.subscribe((user) => {
+      this.currentUser.set(user);
+    });
+  }
+
   confirmDeletion() {
     this.showConfirmModal.set(true);
   }
@@ -151,11 +169,45 @@ export class DeleteAccountComponent {
     this.error.set(null);
 
     try {
-      await this.authService.deleteAccount();
+      if (this.isGuest()) {
+        // Clear all local data related to the game
+        const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+        if (isBrowser) {
+          // Find all keys starting with 'soil-' or other relevant prefixes
+          const keysToRemove: string[] = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith('soil') || key.startsWith('firebase:'))) {
+              keysToRemove.push(key);
+            }
+          }
+          for (const key of keysToRemove) {
+            localStorage.removeItem(key);
+          }
+        }
+        await this.authService.logout();
+      } else {
+        // Clear local storage too for authenticated users
+        const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+        if (isBrowser) {
+          const keysToRemove: string[] = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith('soil') || key.startsWith('firebase:'))) {
+              keysToRemove.push(key);
+            }
+          }
+          for (const key of keysToRemove) {
+            localStorage.removeItem(key);
+          }
+        }
+        await this.authService.deleteAccount();
+      }
+
       // After successful deletion, navigate to landing page
       this.router.navigate(['/']);
     } catch (err: any) {
-      this.error.set(err.message || 'Fehler beim Löschen des Kontos. Bitte versuchen Sie es später erneut.');
+      this.error.set(err.message || 'Fehler beim Löschen. Bitte versuchen Sie es später erneut.');
       this.loading.set(false);
     }
   }
