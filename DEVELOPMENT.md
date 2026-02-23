@@ -167,26 +167,28 @@ Core game mechanics and constants (yields, prices, weather impacts) are document
 We use semantic versioning managed in `package.json` and tagged in Git. For every release, corresponding entries **must be added to `CHANGELOG.md` under a `## [Unpublished]` header**. The actual version number and date will be automatically inserted by the deployment script.
 
 ### Changelog Maintenance
-To keep the changelog readable, **consolidate entries on every minor version release**. Whenever a new minor version (e.g., `v2.7.0`) is released:
-1. Combine all previous patch release notes (e.g., `v2.6.1` through `v2.6.9`) into a single summary under the previous minor version's heading.
-2. Ensure the changelog remains a high-level overview of significant milestones rather than a verbose commit log.
+To keep the changelog accurate and readable:
+1.  **Every Release Must Be Documented**: Every version number (including patch releases) must have a dedicated section in `CHANGELOG.md`. Never skip a version.
+2.  **No Duplication**: When preparing a release, ensure that the content under `## [Unpublished]` does not duplicate content from previous versions.
+3.  **Milestone Consolidation**: On every **minor version release** (e.g., `v2.7.0`), consolidate all previous patch release notes (e.g., `v2.6.1` through `v2.6.9`) into a single summary under the previous minor version's heading to maintain high-level clarity.
+4.  **High-Level Focus**: The changelog should remain a high-level overview of significant milestones and fixes, rather than a verbose mirror of the commit log.
 
-**Important**: Do not commit `CHANGELOG.md` manually. The changes should remain in the working tree under the `## [Unpublished]` header. The `npm run deploy` script will automatically update the version number, set the date, and commit the file as part of the release.
+**Important**: Do not commit `CHANGELOG.md` manually with a version number. The changes should remain in the working tree under the `## [Unpublished]` header. The `npm run deploy` script will automatically replace this header with the new version and current date as part of the release process.
 
 ### Deployment Workflow
 For a full release including backend components:
 
-1. Ensure `main` is up to date.
-2. Update `CHANGELOG.md` by adding your changes under the `## [Unpublished]` header.
-3. Run `npm run deploy [patch | minor | major | <version>]`. This script will:
-   - Use the provided increment type or version, or prompt if no argument is given.
-   - Update `package.json`.
-   - Update `angular.json` with the new version.
-   - **Update `CHANGELOG.md` by replacing `## [Unpublished]` with the new version and current date.**
-   - Commit the version and changelog changes.
-   - Create a git tag.
-   - Push the changes and tags to GitHub.
-   - Deploy backend components (Functions, Firestore, Storage) to Firebase.
+1.  Ensure `main` is up to date.
+2.  Update `CHANGELOG.md` by adding your changes under the `## [Unpublished]` header. **Verify that this section does not duplicate previous entries.**
+3.  Run `npm run deploy [patch | minor | major | <version>]`. This script will:
+    -   Use the provided increment type or version, or prompt if no argument is given.
+    -   Update `package.json`.
+    -   Update `angular.json` with the new version.
+    -   **Update `CHANGELOG.md` by replacing `## [Unpublished]` with the new version and current date.**
+    -   Commit the version and changelog changes.
+    -   Create a git tag.
+    -   Push the changes and tags to GitHub.
+    -   Deploy backend components (Functions, Firestore, Storage) to Firebase.
 
 ## CI/CD & Deployment
 
@@ -195,17 +197,6 @@ For a full release including backend components:
 - **Regional Constraints**: Use Firebase services exclusively in **EU (europe-west4)**.
 - **Cloud Build**: Monitor CI/CD builds for success; fix errors and address warnings promptly.
 - **Post-Deployment**: Verify the live version matches the intended `package.json` version.
-
-.
-- **Component Reactivity**: UI components (like the Game Board) must subscribe to these events to auto-trigger state changes (e.g., opening the planting modal, selecting a parcel) that guide the user through the interface.
-- **Cleanup**: Components must handle tour completion/cancellation to reset any temporary states or selections.
-
-## Angular Performance & NgZone
-
-Heavy background monitoring or frequently recurring logic (like FPS checks) must be optimized.
-
-- **Outside the Zone**: Use `NgZone.runOutsideAngular(() => { ... })` for any logic using `requestAnimationFrame`, `setTimeout`, or `setInterval` that does not directly require Angular Change Detection every tick.
-- **Manual Detection**: If state changes occur outside the zone that *do* need to be reflected in the UI, use `ChangeDetectorRef.detectChanges()` or `ngZone.run()` specifically for that update.
 
 ## Performance & Rendering Tiers
 

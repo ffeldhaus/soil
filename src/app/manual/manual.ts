@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, type ElementRef, inject, type OnInit, PLATFORM_ID, viewChild } from '@angular/core';
+import { type AfterViewInit, Component, type ElementRef, inject, type OnInit, PLATFORM_ID, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../game-constants';
@@ -21,35 +21,52 @@ import { ManualPrintModalComponent } from './components/manual-print-modal';
   templateUrl: './manual.html',
   styleUrl: './manual.scss',
 })
-export class ManualComponent implements OnInit {
+export class ManualComponent implements AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
 
   scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
 
-  ngOnInit() {
+  ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
+      // Listen to fragment changes
       this.route.fragment.subscribe((fragment) => {
         if (fragment) {
-          setTimeout(() => {
-            const element = document.getElementById(fragment);
-            const container = this.scrollContainer()?.nativeElement;
-            if (element && container) {
-              const headerOffset = 100;
-              const elementPosition = element.getBoundingClientRect().top;
-              const offsetPosition = elementPosition + container.scrollTop - headerOffset;
-
-              container.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth',
-              });
-            }
-          }, 100);
+          this.scrollToFragment(fragment);
         } else {
-          this.scrollContainer()?.nativeElement.scrollTo(0, 0);
+          this.scrollContainer()?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
         }
       });
     }
+  }
+
+  scrollToFragment(fragment: string) {
+    if (!fragment) return;
+    
+    // Attempt multiple times to handle rendering delays
+    const attemptScroll = () => {
+      const element = document.getElementById(fragment);
+      const container = this.scrollContainer()?.nativeElement;
+      
+      if (element && container) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const relativeTop = elementRect.top - containerRect.top;
+        const targetScrollTop = container.scrollTop + relativeTop - 100;
+
+        container.scrollTo({
+          top: targetScrollTop,
+          behavior: 'smooth',
+        });
+        return true;
+      }
+      return false;
+    };
+
+    if (!attemptScroll()) {
+      setTimeout(attemptScroll, 100);
+    }
+    setTimeout(attemptScroll, 300);
   }
 
   t(key: string): string {
