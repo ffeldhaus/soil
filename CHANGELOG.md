@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.24] - 2026-02-25
 ### Changed
 - Stabilized all buttons across the application by removing hover translation and scale animations that caused layout shifts.
 - Aligned the background color of the icons in the "Handbuch" and "Hintergrund" links on the landing page with the parent link's background, ensuring a consistent look in both normal and hover states.
