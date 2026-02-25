@@ -143,7 +143,7 @@
 
           <!-- Points -->
           @for (point of getGraphPoints(p.capitalHistory); track point.round) {
-          <g class="transition-all duration-500 hover:scale-150 transform-gpu cursor-pointer">
+          <g class="transition-colors duration-500 cursor-pointer">
             <circle [attr.cx]="point.x" [attr.cy]="point.y" [attr.r]="p.isCurrentPlayer ? 5 : 3"
               [attr.fill]="p.isCurrentPlayer ? '#10b981' : '#3b82f6'"
               [attr.stroke]="p.isCurrentPlayer ? '#064e3b' : '#1e3a8a'" stroke-width="1"

@@ -60,7 +60,7 @@ import { AuthService } from '../auth/auth.service';
             <a
               routerLink="/admin"
               data-testid="landing-manage-games"
-              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden flex-1"
+              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-lg transition-colors overflow-hidden flex-1"
             >
               <span class="relative z-10 flex items-center justify-center gap-2"
                 >Spiele erstellen & verwalten</span

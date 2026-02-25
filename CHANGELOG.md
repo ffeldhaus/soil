@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
-- Removed hover translation animations from buttons on the Admin Dashboard and Auth Action pages to ensure a stable position on hover.
+- Stabilized all buttons across the application by removing hover translation and scale animations that caused layout shifts.
 - Aligned the background color of the icons in the "Handbuch" and "Hintergrund" links on the landing page with the parent link's background, ensuring a consistent look in both normal and hover states.
 - Further increased the transparency of "Tier 3" (Default) glassmorphism container backgrounds from `0.6` to `0.4` for an even more modern and glassy aesthetic.
+### Fixed
+- Fixed compilation errors in login components by using the correct loading state property in templates.
+- Fixed an issue where the data processing hint on the game creation screen was always visible; it now correctly toggles based on the "Anonymisierte Daten teilen" setting.
 
 ## [2.6.23] - 2026-02-23
 ### Changed

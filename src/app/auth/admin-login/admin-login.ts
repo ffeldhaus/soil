@@ -106,11 +106,11 @@ import { AuthService } from '../auth.service';
               </div>
             </div>
 
-            <button
-              type="submit"
-              [disabled]="loginForm.invalid || isLoading"
-              class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition transform active:scale-95 shadow-lg"
-            >
+              <button
+                type="submit"
+                [disabled]="loginForm.invalid || isLoading"
+                class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg"
+              >
               @if (isLoading) {
                 <ng-container>Anmeldung läuft...</ng-container>
               } @else {

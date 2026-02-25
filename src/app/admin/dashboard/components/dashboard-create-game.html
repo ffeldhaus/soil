@@ -191,10 +191,12 @@
     }
   </button>
 
-  <div class="mt-4 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
-    <p class="text-[9px] text-white leading-relaxed italic">
-      <strong>Hinweis:</strong> Spieldaten werden für Forschungszwecke und die Spielbalance **anonymisiert** ausgewertet. 
-      Details zur Datenverarbeitung finden Sie in der 
-      <a routerLink="/privacy" class="text-emerald-500 hover:underline">Datenschutzerklärung</a>.
-    </p>
-  </div>
+  @if (newGameConfig.analyticsEnabled) {
+    <div class="mt-4 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
+      <p class="text-[9px] text-white leading-relaxed italic">
+        <strong>Hinweis:</strong> Spieldaten werden für Forschungszwecke und die Spielbalance **anonymisiert** ausgewertet. 
+        Details zur Datenverarbeitung finden Sie in der 
+        <a routerLink="/privacy" class="text-emerald-500 hover:underline">Datenschutzerklärung</a>.
+      </p>
+    </div>
+  }
