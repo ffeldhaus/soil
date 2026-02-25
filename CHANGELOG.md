@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Changed
+- Removed hover translation animations from buttons on the Admin Dashboard and Auth Action pages to ensure a stable position on hover.
 - Aligned the background color of the icons in the "Handbuch" and "Hintergrund" links on the landing page with the parent link's background, ensuring a consistent look in both normal and hover states.
 - Further increased the transparency of "Tier 3" (Default) glassmorphism container backgrounds from `0.6` to `0.4` for an even more modern and glassy aesthetic.
 

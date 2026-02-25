@@ -71,7 +71,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
               <button
                 type="submit"
                 [disabled]="resetForm.invalid || isSubmitting"
-                class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 disabled:bg-gray-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden disabled:transform-none disabled:shadow-none"
+                class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 disabled:bg-gray-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden disabled:shadow-none"
               >
                 @if (isSubmitting) {
                   <span class="relative z-10">Wird gespeichert...</span>
@@ -94,11 +94,10 @@ import { FIREBASE_AUTH } from '../../firebase.config';
                   </p>
                 </div>
               </div>
-              <a
-                routerLink="/admin/login"
-                class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
-
-              >
+                            <a
+                              routerLink="/admin/login"
+                              class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-all hover:shadow-[0_0_30px_rgba(6,95,70,0.6)] overflow-hidden"
+                            >
                 <span class="relative z-10">Zum Login</span>
               </a>
             </div>
@@ -116,11 +115,10 @@ import { FIREBASE_AUTH } from '../../firebase.config';
                   </p>
                 </div>
               </div>
-              <a
-                routerLink="/"
-                class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white text-lg font-bold rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 overflow-hidden"
-
-              >
+                            <a
+                              routerLink="/"
+                              class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white text-lg font-bold rounded-2xl shadow-xl transition-all overflow-hidden"
+                            >
                 <span class="relative z-10">Zurück zur Startseite</span>
               </a>
             </div>
