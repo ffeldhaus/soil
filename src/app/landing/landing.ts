@@ -102,7 +102,7 @@ import { AuthService } from '../auth/auth.service';
               </div>
               <div class="space-y-4 text-lg leading-relaxed text-white">
                 <p>
-                  Soil ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
+                  SOIL ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
                   ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen
                   die Lernenden über zehn Runden einen landwirtschaftlichen Betrieb auf.
                 </p>

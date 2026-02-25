@@ -21,6 +21,6 @@ export class App {
   version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
 
   constructor() {
-    console.warn(`Soil Version ${this.version} (app.ts)`);
+    console.warn(`SOIL Version ${this.version} (app.ts)`);
   }
 }

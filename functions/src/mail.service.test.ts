@@ -54,8 +54,8 @@ describe('MailService', () => {
     it('sendPlayerLoginInfo should use German template', async () => {
       await mailService.sendPlayerLoginInfo('test@example.com', 'http://link');
       const args = sendEmailStub.firstCall.args[0];
-      expect(args.subject).to.equal('Dein Login-Link für Soil');
-      expect(args.text).to.contain('Willkommen bei Soil!');
+      expect(args.subject).to.equal('Dein Login-Link für SOIL');
+      expect(args.text).to.contain('Willkommen bei SOIL!');
     });
 
     it('sendGameInvite should include game info in German', async () => {

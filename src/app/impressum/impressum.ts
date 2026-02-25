@@ -50,7 +50,7 @@ import { RouterLink } from '@angular/router';
         <!-- Projekt -->
         <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">Projekt</h2>
-          <p class="text-gray-300">© {{ year }} Soil Projekt. Entwickelt für Bildungszwecke.</p>
+          <p class="text-gray-400">© {{ year }} SOIL Projekt. Entwickelt für Bildungszwecke.</p>
         </section>
 
         <!-- Kontakt -->

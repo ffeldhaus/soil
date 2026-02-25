@@ -1,7 +1,7 @@
-# Product Guidelines: Soil
+# Product Guidelines: SOIL
 
 ## Tone & Voice
-- **Serious Game:** Soil is classified as a "Serious Game," specifically designed for education and training in agricultural and ecological resource management.
+- **Serious Game:** SOIL is classified as a "Serious Game," specifically designed for education and training in agricultural and ecological resource management.
 - **Encouraging & Academic:** The application should use a supportive and guiding tone. Terminology should be precise and scientifically accurate to maintain educational integrity, while remaining accessible to casual players.
 - **Scientifically Grounded:** All guidance and feedback should be rooted in real-world agricultural data and research, providing a bridge between simulation and reality.
 

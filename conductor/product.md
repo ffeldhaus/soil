@@ -1,10 +1,9 @@
 # Initial Concept
-Transform Soil into a true cross-platform Progressive Web App (PWA) and native mobile application (Apple App Store & Google Play Store). Introduce a single-player offline mode with optional AI players and background synchronization to the Firebase backend. Expand authentication to include Google, Apple, and Email/Password sign-ins, while maintaining a no-registration "guest" entry to maximize accessibility and simplify app store approvals.
+Transform SOIL into a true cross-platform Progressive Web App (PWA) and native mobile application (Apple App Store & Google Play Store). Introduce a single-player offline mode with optional AI players and background synchronization to the Firebase backend. Expand authentication to include Google, Apple, and Email/Password sign-ins, while maintaining a no-registration "guest" entry to maximize accessibility and simplify app store approvals.
 
-# Product Definition: Soil
+# Product Definition: SOIL
 
-## Vision
-Soil is an immersive, educational agricultural simulation that empowers players to explore the delicate balance between resource management, agricultural productivity, and environmental sustainability. It bridges the gap between casual strategy gaming and classroom-ready educational tools.
+SOIL is an immersive, educational agricultural simulation that empowers players to explore the delicate balance between resource management, agricultural productivity, and environmental sustainability. It bridges the gap between casual strategy gaming and classroom-ready educational tools.
 
 ## Target Audience
 - **Educational Institutions:** Schools and universities using the simulation to teach resource management, ecology, and agricultural science.

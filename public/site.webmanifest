@@ -1,6 +1,6 @@
 {
   "id": "soil-simulation-game",
-  "name": "Soil - Kostenloses Lernspiel & Simulation",
+  "name": "SOIL - Landwirtschaftssimulation",
   "short_name": "SOIL",
   "description": "Kostenloses Lernspiel und Simulation für den Biologie-Unterricht über Landwirtschaft und Bodenqualität.",
   "start_url": "/",
@@ -50,21 +50,21 @@
       "sizes": "1920x1377",
       "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "Soil Simulationsspiel Dashboard"
+      "label": "SOIL Simulationsspiel Dashboard"
     },
     {
       "src": "/assets/images/bauernhof-portrait-hd.webp",
       "sizes": "1288x1920",
       "type": "image/webp",
       "form_factor": "narrow",
-      "label": "Soil Simulationsspiel Mobile Ansicht"
+      "label": "SOIL Simulationsspiel Mobile Ansicht"
     }
   ],
   "shortcuts": [
     {
       "name": "Spiel starten",
       "short_name": "Spielen",
-      "description": "Starte eine neue Runde Soil",
+      "description": "Starte eine neue Runde SOIL",
       "url": "/",
       "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
     }

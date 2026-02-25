@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Renamed the application from "Soil - Kostenloses Lernspiel & Simulation" to "SOIL - Landwirtschaftssimulation" in all metadata and site titles.
+- Enforced consistent uppercase "SOIL" throughout the entire application, including user manuals, landing pages, legal documents, and email templates.
+
 ## [2.6.24] - 2026-02-25
 ### Changed
 - Stabilized all buttons across the application by removing hover translation and scale animations that caused layout shifts.

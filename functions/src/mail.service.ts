@@ -126,15 +126,15 @@ export class MailService {
   }
 
   async sendPlayerLoginInfo(email: string, loginLink: string): Promise<void> {
-    const subject = 'Dein Login-Link für Soil';
-    const text = `Willkommen bei Soil!\n\nBitte nutze den folgenden Link, um dich einzuloggen:\n${loginLink}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
+    const subject = 'Dein Login-Link für SOIL';
+    const text = `Willkommen bei SOIL!\n\nBitte nutze den folgenden Link, um dich einzuloggen:\n${loginLink}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
 
     const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>Willkommen bei Soil!</h2>
+        <h2>Willkommen bei SOIL!</h2>
         <p>Bitte nutze den folgenden Button, um dich einzuloggen:</p>
         <p>
-          <a href="${loginLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Bei Soil einloggen</a>
+          <a href="${loginLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Bei SOIL einloggen</a>
         </p>
         <p style="font-size: 12px; color: #777;">Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:<br>${loginLink}</p>
       </div>
@@ -144,7 +144,7 @@ export class MailService {
   }
 
   async sendVerificationEmail(email: string, link: string): Promise<void> {
-    const subject = 'Bestätige deine E-Mail für Soil';
+    const subject = 'Bestätige deine E-Mail für SOIL';
     const text = `Hallo,\n\nbitte bestätige deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
 
     const html = `
@@ -162,7 +162,7 @@ export class MailService {
   }
 
   async sendPasswordResetEmail(email: string, link: string): Promise<void> {
-    const subject = 'Passwort zurücksetzen für Soil';
+    const subject = 'Passwort zurücksetzen für SOIL';
     const text = `Hallo,\n\ndu kannst dein Passwort zurücksetzen, indem du auf den folgenden Link klickst:\n${link}\n\nWenn du dies nicht angefordert hast, ignoriere diese E-Mail bitte.`;
 
     const html = `
@@ -180,17 +180,17 @@ export class MailService {
   }
 
   async sendGameInvite(email: string, gameName: string, gameId: string): Promise<void> {
-    const subject = `Einladung zum Soil-Spiel: ${gameName}`;
-    const text = `Du wurdest eingeladen, Soil zu spielen!\n\nSpiel: ${gameName}\nSpiel-ID: ${gameId}\n\nBitte frage deine Lehrkraft nach deinem persönlichen PIN.\n\nGehe auf ${APP_DOMAIN} um beizutreten.`;
+    const subject = `Einladung zum SOIL-Spiel: ${gameName}`;
+    const text = `Du wurdest eingeladen, SOIL zu spielen!\n\nSpiel: ${gameName}\nSpiel-ID: ${gameId}\n\nBitte frage deine Lehrkraft nach deinem persönlichen PIN.\n\nGehe auf ${APP_DOMAIN} um beizutreten.`;
 
     const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>Einladung zu Soil!</h2>
+        <h2>Einladung zu SOIL!</h2>
         <p>Du wurdest eingeladen, dem Spiel <strong>${gameName}</strong> beizutreten.</p>
         <p><strong>Spiel-ID:</strong> ${gameId}</p>
         <p>Bitte frage deine Lehrkraft nach deinem persönlichen PIN.</p>
         <p>
-          <a href="${APP_DOMAIN}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Zu Soil gehen</a>
+          <a href="${APP_DOMAIN}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Zu SOIL gehen</a>
         </p>
       </div>
     `;
@@ -199,15 +199,15 @@ export class MailService {
   }
 
   async sendAdminNewRegistrationNotification(adminEmail: string, userData: any): Promise<void> {
-    const subject = 'New Admin Registration for Soil';
+    const subject = 'New Admin Registration for SOIL';
     const institution = userData.onboarding?.institution || userData.institution || 'N/A';
     const explanation = userData.onboarding?.explanation || userData.explanation || 'N/A';
 
-    const text = `A new user has requested admin access for Soil.\n\nName: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nInstitution: ${institution}\nExplanation: ${explanation}\n\nPlease review the request in the system dashboard.`;
+    const text = `A new user has requested admin access for SOIL.\n\nName: ${userData.firstName} ${userData.lastName}\nEmail: ${userData.email}\nInstitution: ${institution}\nExplanation: ${explanation}\n\nPlease review the request in the system dashboard.`;
     const html = `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h2>New Admin Registration</h2>
-        <p>A new user has requested admin access for Soil:</p>
+        <p>A new user has requested admin access for SOIL:</p>
         <ul>
           <li><strong>Name:</strong> ${userData.firstName} ${userData.lastName}</li>
           <li><strong>Email:</strong> ${userData.email}</li>

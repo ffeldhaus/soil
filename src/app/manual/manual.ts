@@ -4,7 +4,6 @@ import {
   Component,
   type ElementRef,
   inject,
-  type OnInit,
   PLATFORM_ID,
   viewChild,
 } from '@angular/core';
@@ -82,11 +81,11 @@ export class ManualComponent implements AfterViewInit {
       'manual.print': 'Drucken',
       'board.logout': 'Abmelden',
       'manual.title': 'Handbuch',
-      'manual.subtitle': 'Alles was Sie über nachhaltige Landwirtschaft in Soil wissen müssen',
+      'manual.subtitle': 'Alles was Sie über nachhaltige Landwirtschaft in SOIL wissen müssen',
       'manual.intro.title': 'Einleitung',
       'manual.intro.goal.title': 'Das Ziel',
       'manual.intro.goal.text':
-        'In Soil schlüpfst du in die Rolle einer Landwirtin oder eines Landwirts. Dein Ziel ist es, deinen Betrieb wirtschaftlich erfolgreich zu führen und gleichzeitig die langfristige Gesundheit deines Bodens zu erhalten. Du musst die richtige Balance zwischen Ertrag, Kosten und ökologischer Nachhaltigkeit finden.',
+        'In SOIL schlüpfst du in die Rolle einer Landwirtin oder eines Landwirts. Dein Ziel ist es, deinen Betrieb wirtschaftlich erfolgreich zu führen und gleichzeitig die langfristige Gesundheit deines Bodens zu erhalten. Du musst die richtige Balance zwischen Ertrag, Kosten und ökologischer Nachhaltigkeit finden.',
       'manual.intro.mechanics.title': 'Mechanik & Finanzen',
       'manual.intro.mechanics.text':
         'Ökologischer Anbau führt zu geringeren Erträgen, wird aber durch höhere Bio-Preise und die Öko-Prämie belohnt. Du musst jedoch die hohen Fixkosten (Personal, Pacht, Maschinen) im Blick behalten, die deinen Gewinn schmälern.',

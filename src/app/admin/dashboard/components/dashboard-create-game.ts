@@ -48,7 +48,7 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.aiLevel': 'KI-Niveau',
       'dashboard.createGame.advancedPricing': 'Fortgeschrittener Markt (Preisbildung durch Angebot & Nachfrage)',
       'dashboard.createGame.analytics':
-        'Anonymisierte Daten für Forschung & Analyse teilen (hilft uns Soil zu verbessern)',
+        'Anonymisierte Daten für Forschung & Analyse teilen (hilft uns SOIL zu verbessern)',
       'dashboard.createGame.advisor': 'Landwirtschaftlicher Berater (gibt Tipps nach jeder Runde)',
       'dashboard.createGame.submit': '+ Neues Spiel erstellen',
       'dashboard.createGame.creating': 'Wird erstellt...',

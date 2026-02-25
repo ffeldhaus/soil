@@ -46,7 +46,7 @@ console.warn = (...args) => {
     message.includes('NG0505') ||
     message.includes('NG0508') ||
     message.includes('Draft saved') ||
-    message.includes('Soil Version') ||
+    message.includes('SOIL Version') ||
     message.includes('Successfully migrated') ||
     message.includes('Mock:') ||
     message.includes('SuperAdmin:')
@@ -59,7 +59,7 @@ console.warn = (...args) => {
 const originalConsoleLog = console.log;
 console.log = (...args) => {
   const message = args[0]?.toString() || '';
-  if (message.includes('Soil Version') || message.includes('Mock:') || message.includes('SuperAdmin:')) {
+  if (message.includes('SOIL Version') || message.includes('Mock:') || message.includes('SuperAdmin:')) {
     return;
   }
   originalConsoleLog.apply(console, args);

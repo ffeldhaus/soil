@@ -401,7 +401,7 @@ export const analyzeSystemBalance = onCall(async (request) => {
   });
 
   const prompt = `
-    Analyze the following dataset of ${gameData.length} games from the "Soil" agricultural management game.
+    Analyze the following dataset of ${gameData.length} games from the "SOIL" agricultural management game.
     
     Task 1: Clustering and Strategies
     Review the player strategies. Cluster them into logical groups. 
@@ -2361,7 +2361,7 @@ export const evaluateGame = onCall(async (request) => {
   const existingCategories = await getExistingCategories();
 
   const prompt = `
-    Analyze the following game data for a player in the "Soil" agricultural management game.
+    Analyze the following game data for a player in the "SOIL" agricultural management game.
     Cluster the player's play style into one of the existing categories if it fits, or create a new one if it is significantly different.
     
     Existing Categories: ${existingCategories.join(', ')}

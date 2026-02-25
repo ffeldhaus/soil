@@ -1,6 +1,6 @@
-# Soil - Multiplayer Resource Management
+# SOIL - Multiplayer Resource Management
 
-Soil is a web-based agricultural simulation game built on the Firebase platform. It features a real-time multiplayer environment where players manage parcels of land, plant crops, and compete or cooperate.
+SOIL is a web-based agricultural simulation game built on the Firebase platform. It features a real-time multiplayer environment where players manage parcels of land, plant crops, and compete or cooperate.
 
 ## ✨ Features
 

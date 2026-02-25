@@ -1,6 +1,6 @@
-# Soil Quality Assurance (QA) Guide
+# SOIL Quality Assurance (QA) Guide
 
-This document provides a comprehensive guide for manual Quality Assurance testing of the Soil application.
+This document provides a comprehensive guide for manual Quality Assurance testing of the SOIL application.
 
 ## Prerequisites
 - Run the application locally: `npm run start`
