@@ -1,12 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import {
-  type AfterViewInit,
-  Component,
-  type ElementRef,
-  inject,
-  PLATFORM_ID,
-  viewChild,
-} from '@angular/core';
+import { type AfterViewInit, Component, type ElementRef, inject, PLATFORM_ID, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../game-constants';
