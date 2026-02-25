@@ -96,7 +96,7 @@ import { AuthService } from '../auth/auth.service';
                   routerLink="/manual"
                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-800/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white rounded-xl border border-emerald-500/30 transition-all shadow-lg font-bold text-lg min-w-[220px]"
                 >
-                  <span class="p-1 bg-emerald-900/30 rounded-lg">📖</span>
+                  <span>📖</span>
                   <span>Handbuch</span>
                 </a>
               </div>
@@ -130,7 +130,7 @@ import { AuthService } from '../auth/auth.service';
                   routerLink="/info"
                   class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-800/40 hover:bg-blue-700/60 text-blue-300 hover:text-white rounded-xl border border-blue-500/30 transition-all shadow-lg font-bold text-lg min-w-[220px]"
                 >
-                  <span class="p-1 bg-blue-900/30 rounded-lg">🎓</span>
+                  <span>🎓</span>
                   <span>Hintergrund</span>
                 </a>
               </div>
