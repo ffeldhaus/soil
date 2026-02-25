@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Further increased the transparency of "Tier 3" (Default) glassmorphism container backgrounds from `0.6` to `0.4` for an even more modern and glassy aesthetic.
+
 ## [2.6.23] - 2026-02-23
 ### Changed
 - Refined the "Tier 3" (Default) glassmorphism container backgrounds to use a premium, semi-transparent black (`rgba(0, 0, 0, 0.6)`) with a slightly reduced blur (`8px`) instead of the default bluish Tailwind `gray-900` with `12px` blur. This aligns the visual style with Tier 2 while retaining a high-quality, glassy `backdrop-blur` effect with excellent readability.

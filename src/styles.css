@@ -199,7 +199,7 @@ body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-900/80"],
 body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-900/95"],
 body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-950/80"],
 body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-950/95"] {
-  background-color: rgba(0, 0, 0, 0.6) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
 }
