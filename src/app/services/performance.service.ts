@@ -41,7 +41,6 @@ export class PerformanceService {
     body.classList.add(`perf-tier-${this.currentTier}`);
 
     localStorage.setItem(this.tierKey, this.currentTier.toString());
-    console.log(`[Performance] Applied Tier ${this.currentTier}`);
   }
 
   private isMonitoring = false;

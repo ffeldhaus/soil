@@ -199,9 +199,9 @@ body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-900/80"],
 body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-900/95"],
 body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-950/80"],
 body:not(.perf-tier-1):not(.perf-tier-2) [class*="bg-gray-950/95"] {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 body.perf-tier-3 {
   /* No special overrides needed */
@@ -212,16 +212,16 @@ body.perf-tier-2 [class*="backdrop-blur"],
 body.perf-tier-2 [style*="backdrop-filter"],
 body.perf-tier-2 [class*="blur-"],
 body.perf-tier-2 [style*="filter: blur"] {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  filter: none !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  filter: none;
 }
 
 /* Slightly increase opacity for common dark overlays in Tier 2 since blur is gone */
 body.perf-tier-2 [class*="bg-black/"],
 body.perf-tier-2 [class*="bg-gray-900/"],
 body.perf-tier-2 [class*="bg-gray-950/"] {
-  background-color: rgba(0, 0, 0, 0.9) !important;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 /* Tier 1: Low (Fully Opaque, No Transparency, No Animations) */
@@ -231,24 +231,24 @@ body.perf-tier-1 .fixed.inset-0.z-50,
 body.perf-tier-1 .fixed.inset-0.z-\[80\],
 body.perf-tier-1 .fixed.inset-0.bg-black\/60,
 body.perf-tier-1 .absolute.inset-0.bg-black\/60 {
-  background-color: #000000 !important;
-  opacity: 1 !important;
-  backdrop-filter: none !important;
+  background-color: #000000;
+  opacity: 1;
+  backdrop-filter: none;
 }
 
 /* Ensure modal content (dialogs) remains opaque and visible */
 body.perf-tier-1 [role="dialog"] {
-  background-color: #111827 !important;
+  background-color: #111827;
   /* solid gray-900 */
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 /* Ensure common transparent background classes used for overlays are opaque and black */
 body.perf-tier-1 [class*="bg-black/"],
 body.perf-tier-1 [class*="bg-gray-900/"],
 body.perf-tier-1 [class*="bg-gray-950/"] {
-  background-color: #000000 !important;
-  opacity: 1 !important;
+  background-color: #000000;
+  opacity: 1;
 }
 
 /* Standardizing transition and animation removal without universal selector */
@@ -260,20 +260,20 @@ body.perf-tier-1 .animate-pulse,
 body.perf-tier-1 .animate-fade-in,
 body.perf-tier-1 .animate-modal-entrance,
 body.perf-tier-1 [class*="blur-"] {
-  transition: none !important;
-  animation: none !important;
-  backdrop-filter: none !important;
-  filter: none !important;
+  transition: none;
+  animation: none;
+  backdrop-filter: none;
+  filter: none;
 }
 
 /* Remove all shadows in Tier 1 */
 body.perf-tier-1 [class*="shadow"] {
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 /* Handle the game grid separation since shadows are gone */
 body.perf-tier-1 .game-grid {
-  gap: 2px !important;
+  gap: 2px;
 }
 
 /* Shepherd Tour Custom Styles */
@@ -290,52 +290,52 @@ body.perf-tier-1 .game-grid {
 body.shepherd-active *,
 body.shepherd-active ::before,
 body.shepherd-active ::after {
-  backdrop-filter: none !important;
+  backdrop-filter: none;
   /* Disable transitions during tour to prevent GPU spikes during step changes */
-  transition: none !important;
-  animation: none !important;
+  transition: none;
+  animation: none;
 }
 
 /* Specifically disable the library's SVG path transition which is very heavy on Intel GPUs */
 .shepherd-modal-overlay-container,
 .shepherd-modal-overlay-container svg,
 .shepherd-modal-overlay-container path {
-  transition: none !important;
-  animation: none !important;
-  will-change: auto !important;
+  transition: none;
+  animation: none;
+  will-change: auto;
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-header {
   @apply bg-black border-b border-gray-800 py-1.5 px-4 rounded-t-2xl flex items-center justify-between;
-  background-color: black !important;
+  background-color: black;
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-title {
   @apply text-emerald-500 font-bold text-sm;
-  color: var(--color-emerald-500) !important;
-  font-size: var(--text-sm) !important;
+  color: var(--color-emerald-500);
+  font-size: var(--text-sm);
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-text {
   @apply p-4 text-gray-200 leading-relaxed text-sm;
-  color: var(--color-gray-200) !important;
+  color: var(--color-gray-200);
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-footer {
   @apply p-3 flex justify-end gap-2 bg-black/40 rounded-b-2xl;
-  background-color: rgba(0, 0, 0, 0.4) !important;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-button-primary {
   @apply px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-sm font-bold rounded-lg transition-colors border border-emerald-500;
-  color: white !important;
-  font-size: var(--text-sm) !important;
+  color: white;
+  font-size: var(--text-sm);
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-button-secondary {
   @apply px-4 py-2 bg-gray-800 hover:bg-gray-700 text-sm font-bold rounded-lg transition-colors border border-gray-700;
-  color: white !important;
-  font-size: var(--text-sm) !important;
+  color: white;
+  font-size: var(--text-sm);
 }
 
 /* Hard override for any Shepherd library button styles that might still be active */
@@ -343,16 +343,16 @@ body.shepherd-active ::after {
 .shepherd-element.shepherd-theme-custom .shepherd-button:hover,
 .shepherd-element.shepherd-theme-custom .shepherd-button:focus,
 .shepherd-element.shepherd-theme-custom .shepherd-button:not(:disabled) {
-  color: white !important;
+  color: white;
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-cancel-icon {
   @apply text-gray-400 hover:text-white transition-colors text-2xl;
-  color: var(--color-gray-400) !important;
+  color: var(--color-gray-400);
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-cancel-icon:hover {
-  color: white !important;
+  color: white;
 }
 
 .shepherd-element.shepherd-theme-custom .shepherd-arrow:before {
@@ -364,7 +364,7 @@ body.shepherd-active ::after {
 }
 
 body.perf-tier-1 .shepherd-modal-overlay-container {
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 /* Custom Scrollbar Utility */
@@ -379,7 +379,7 @@ body.perf-tier-1 .shepherd-modal-overlay-container {
   gap: 1rem;
   margin: 0 auto;
   width: 100%;
-  overflow: visible !important;
+  overflow: visible;
 
   /* Default: Portrait 3x4 */
   --cols: 3;
@@ -425,26 +425,26 @@ body.perf-tier-1 .shepherd-modal-overlay-container {
 /* Further refinements for very short screens */
 @media (max-height: 500px) {
   #planting-title {
-    font-size: 1.1rem !important;
-    margin-bottom: 0.5rem !important;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
   }
 
   .planting-grid {
-    gap: 0.6rem !important;
+    gap: 0.6rem;
   }
 
   .planting-grid + div {
-    margin-top: 0.5rem !important;
+    margin-top: 0.5rem;
   }
 
   .planting-modal-container {
-    padding: 1rem !important;
+    padding: 1rem;
   }
 }
 
 .planting-modal-container {
-  width: fit-content !important;
-  max-width: 95vw !important;
+  width: fit-content;
+  max-width: 95vw;
   min-width: min(90vw, 320px);
   margin: 0 auto;
 }

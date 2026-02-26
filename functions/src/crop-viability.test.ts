@@ -52,8 +52,7 @@ describe('Crop Viability and Balance', () => {
     });
   });
 
-  it('Perfect AI should pick a variety of crops over a long simulation', function () {
-    this.timeout(10000);
+  it('Perfect AI should pick a variety of crops over a long simulation', () => {
     let lastRound: Round | undefined;
     let capital = 100000;
     const pickedCrops = new Set<string>();

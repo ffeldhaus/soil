@@ -1,34 +1,34 @@
 import { expect } from 'chai';
 import * as nodemailer from 'nodemailer';
-import * as sinon from 'sinon';
+import { afterEach, beforeEach, describe, it, vi } from 'vitest';
 import { MailService } from './mail.service';
+
+vi.mock('nodemailer');
 
 describe('MailService', () => {
   let mailService: MailService;
-  let sandbox: sinon.SinonSandbox;
   let transporterMock: any;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
     mailService = new MailService();
 
     transporterMock = {
-      sendMail: sandbox.stub().resolves({}),
+      sendMail: vi.fn().mockResolvedValue({}),
     };
-    sandbox.stub(nodemailer, 'createTransport').returns(transporterMock);
+    vi.mocked(nodemailer.createTransport).mockReturnValue(transporterMock);
   });
 
   afterEach(() => {
-    sandbox.restore();
+    vi.restoreAllMocks();
     process.env.GMAIL_SERVICE_ACCOUNT_EMAIL = undefined;
     process.env.GMAIL_IMPERSONATED_USER = undefined;
   });
 
   it('should not send email if not configured', async () => {
-    const warnStub = sandbox.stub(console, 'warn');
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     await mailService.sendEmail({ to: 'test@example.com', subject: 'Test', text: 'Test' });
-    expect(warnStub.calledOnce).to.be.true;
-    expect(transporterMock.sendMail.called).to.be.false;
+    expect(warnSpy).toHaveBeenCalledOnce();
+    expect(transporterMock.sendMail).not.toHaveBeenCalled();
   });
 
   it('should attempt to get access token if configured', async () => {
@@ -36,31 +36,31 @@ describe('MailService', () => {
     process.env.GMAIL_IMPERSONATED_USER = 'user@example.com';
 
     // We mock getAccessToken as it involves complex Google Auth
-    const getAccessTokenStub = sandbox.stub(mailService as any, 'getAccessToken').resolves('fake-token');
+    const getAccessTokenSpy = vi.spyOn(mailService as any, 'getAccessToken').mockResolvedValue('fake-token');
 
     await mailService.sendEmail({ to: 'test@example.com', subject: 'Test', text: 'Test' });
 
-    expect(getAccessTokenStub.calledOnce).to.be.true;
-    expect(transporterMock.sendMail.calledOnce).to.be.true;
+    expect(getAccessTokenSpy).toHaveBeenCalledOnce();
+    expect(transporterMock.sendMail).toHaveBeenCalledOnce();
   });
 
   describe('Template Methods', () => {
-    let sendEmailStub: sinon.SinonStub;
+    let sendEmailSpy: any;
 
     beforeEach(() => {
-      sendEmailStub = sandbox.stub(mailService, 'sendEmail').resolves();
+      sendEmailSpy = vi.spyOn(mailService, 'sendEmail').mockResolvedValue(undefined as any);
     });
 
     it('sendPlayerLoginInfo should use German template', async () => {
       await mailService.sendPlayerLoginInfo('test@example.com', 'http://link');
-      const args = sendEmailStub.firstCall.args[0];
+      const args = sendEmailSpy.mock.calls[0][0];
       expect(args.subject).to.equal('Dein Login-Link für SOIL');
       expect(args.text).to.contain('Willkommen bei SOIL!');
     });
 
     it('sendGameInvite should include game info in German', async () => {
       await mailService.sendGameInvite('test@example.com', 'My Game', 'ID123');
-      const args = sendEmailStub.firstCall.args[0];
+      const args = sendEmailSpy.mock.calls[0][0];
       expect(args.subject).to.contain('My Game');
       expect(args.text).to.contain('Spiel: My Game');
       expect(args.text).to.contain('Spiel-ID: ID123');

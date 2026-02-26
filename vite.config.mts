@@ -50,6 +50,12 @@ export default defineConfig(({ mode }) => ({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
+      thresholds: {
+        statements: 60,
+        branches: 43,
+        functions: 59,
+        lines: 63,
+      },
       include: ['src/**/*.ts'],
       exclude: [
         'src/main.ts',

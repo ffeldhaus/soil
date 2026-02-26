@@ -6,9 +6,7 @@ import type { PlayerState, Round } from './types';
 describe('AI Variety and Performance Simulation', () => {
   const NUM_ROUNDS = 20;
 
-  it('should simulate AI players and verify diverse, successful outcomes', function () {
-    this.timeout(15000);
-
+  it('should simulate AI players and verify diverse, successful outcomes', () => {
     const levels: ('elementary' | 'middle' | 'high' | 'perfect')[] = [
       'elementary',
       'middle',
@@ -78,8 +76,7 @@ describe('AI Variety and Performance Simulation', () => {
     expect(avgHighSoil, 'High AI should have reasonable soil').to.be.at.least(avgMiddleSoil - 5);
   });
 
-  it('should simulate Perfect AI with market price fluctuations', function () {
-    this.timeout(5000);
+  it('should simulate Perfect AI with market price fluctuations', () => {
     let capital = 100000;
     let lastRound: Round | undefined;
 

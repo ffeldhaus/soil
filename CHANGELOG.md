@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Created comprehensive 10-round E2E local game test (`full-local-game.cy.ts`) that verifies the full gameplay loop, end-game triggers, and the anonymized research upload process.
+- Added responsive design E2E tests (`viewport.cy.ts`) verifying both Portrait (Mobile) and Landscape (Desktop) layouts.
+- Established global test coverage thresholds in `vite.config.mts` to prevent regression in code quality metrics.
+### Changed
+- Migrated Cloud Functions test runner from Mocha/NYC to Vitest for unified testing architecture and corrected coverage reporting (Statement coverage now correctly reported at ~84%).
+- Significantly improved frontend unit test coverage for `TourService` by adding exhaustive step-attachment and event-handling mocks.
+- Enhanced Super Admin research table with `data-testid` attributes for more reliable automated verification.
+- Refined performance tier CSS by standardizing transparency overrides and removing redundant `!important` flags.
+
 ## [2.6.25] - 2026-02-25
 ### Changed
 - Renamed the application from "Soil - Kostenloses Lernspiel & Simulation" to "SOIL - Landwirtschaftssimulation" in all metadata and site titles.
@@ -173,3 +184,4 @@ All notable changes to this project will be documented in this file.
 ### Initial Development
 - Initial project setup and prototype of the game engine.
 - Setup Firebase project structure (Auth, Firestore, Functions).
+

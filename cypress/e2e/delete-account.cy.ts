@@ -30,7 +30,7 @@ describe('Account Deletion', () => {
     cy.contains('Ja, endgültig löschen').click();
 
     // 5. Verify local storage is cleared and redirected to landing
-    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
     cy.window().then((win) => {
       expect(win.localStorage.getItem('soil_guest_uid')).to.be.null;
       expect(win.localStorage.getItem('soil_active_local_game')).to.be.null;
@@ -66,7 +66,7 @@ describe('Account Deletion', () => {
     // 5. Verify call was made and storage cleared
     cy.wait('@deleteAccountCall').its('request.body').should('exist');
 
-    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
     cy.window().then((win) => {
       expect(win.localStorage.getItem('soil_active_local_game')).to.be.null;
       // test_mode might be cleared by logout logic

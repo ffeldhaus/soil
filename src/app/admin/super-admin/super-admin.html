@@ -173,6 +173,7 @@
                         <td class="p-4 text-right">
                           <button 
                             (click)="viewAsPlayer(game.id, player.uid)" 
+                            data-testid="view-research-game"
                             class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs transition font-bold shadow-lg shadow-emerald-900/20"
                           >
                             {{ t('superadmin.actions.view') || 'Ansehen' }}
