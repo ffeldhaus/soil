@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.26] - 2026-02-26
 ### Added
 - Created comprehensive 10-round E2E local game test (`full-local-game.cy.ts`) that verifies the full gameplay loop, end-game triggers, and the anonymized research upload process.
 - Added responsive design E2E tests (`viewport.cy.ts`) verifying both Portrait (Mobile) and Landscape (Desktop) layouts.
