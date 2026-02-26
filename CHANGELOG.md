@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added responsive design E2E tests (`viewport.cy.ts`) verifying both Portrait (Mobile) and Landscape (Desktop) layouts.
 - Established global test coverage thresholds in `vite.config.mts` to prevent regression in code quality metrics.
 ### Changed
+- Updated `assetlinks.json` with the new production SHA256 certificate fingerprint for the Android TWA.
 - Migrated Cloud Functions test runner from Mocha/NYC to Vitest for unified testing architecture and corrected coverage reporting (Statement coverage now correctly reported at ~84%).
 - Significantly improved frontend unit test coverage for `TourService` by adding exhaustive step-attachment and event-handling mocks.
 - Enhanced Super Admin research table with `data-testid` attributes for more reliable automated verification.
