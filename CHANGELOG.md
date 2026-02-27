@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.29] - 2026-02-27
 ### Fixed
 - Fixed an issue where the Service Worker would intermittently serve the SPA `index.html` instead of `assetlinks.json`, `robots.txt`, or `sitemap.xml` by explicitly excluding these paths from the navigation fallback.
 
