@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.28] - 2026-02-27
 ### Fixed
 - Synchronized `package-lock.json` to resolve build failures in Firebase App Hosting caused by missing sub-dependencies.
 
