@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.27] - 2026-02-27
 ### Fixed
 - Fixed a 404 error for `/.well-known/assetlinks.json` in the SSR server by updating the fingerprint and ensuring the route is correctly matched.
 ### Added
