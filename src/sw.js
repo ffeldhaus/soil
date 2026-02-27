@@ -60,8 +60,13 @@ registerRoute(
 );
 
 // Fallback to index.html for navigation requests (SPA)
+// Exclude .well-known, robots.txt, and sitemap.xml to let the server handle them
 registerRoute(
-  ({ request }) => request.mode === 'navigate',
+  ({ request, url }) =>
+    request.mode === 'navigate' &&
+    !url.pathname.startsWith('/.well-known/') &&
+    url.pathname !== '/robots.txt' &&
+    url.pathname !== '/sitemap.xml',
   async () => {
     return (await caches.match('/index.html')) || fetch('/index.html');
   },
