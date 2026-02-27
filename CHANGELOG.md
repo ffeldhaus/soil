@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Fixed a 404 error for `/.well-known/assetlinks.json` in the SSR server by updating the fingerprint and ensuring the route is correctly matched.
+### Added
+- Added an E2E routing test to verify that `/.well-known/assetlinks.json` is served correctly with the right content.
+
 ## [2.6.26] - 2026-02-26
 ### Added
 - Created comprehensive 10-round E2E local game test (`full-local-game.cy.ts`) that verifies the full gameplay loop, end-game triggers, and the anonymized research upload process.

@@ -48,4 +48,16 @@ describe('Important Routes', () => {
       expect(response.body).to.include('https://soil.app/admin');
     });
   });
+
+  it('should serve /.well-known/assetlinks.json correctly', () => {
+    cy.request('/.well-known/assetlinks.json').then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.headers['content-type']).to.include('application/json');
+      const body = typeof response.body === 'string' ? JSON.parse(response.body) : response.body;
+      expect(body[0].target.package_name).to.eq('app.soil.twa');
+      expect(body[0].target.sha256_cert_fingerprints[0]).to.eq(
+        'CA:EF:E7:D1:58:CF:4C:E1:7A:A1:D0:2E:E7:80:29:E3:E5:21:56:A0:13:41:C8:21:F6:68:AE:69:82:63:B5:42',
+      );
+    });
+  });
 });

@@ -59,16 +59,18 @@ app.get('/sitemap.xml', (_req, res) => {
 </urlset>`);
 });
 
-app.get('/.well-known/assetlinks.json', (_req, res) => {
+app.get(['/.well-known/assetlinks.json', '/.well-known/assetlinks.json/'], (_req, res) => {
   res.type('application/json');
-  res.send(`[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "app.soil.twa",
-    "sha256_cert_fingerprints": ["A7:D5:AB:FE:C2:09:B5:BA:53:F1:71:8E:DC:C0:25:D2:53:66:7C:10:8A:0C:F2:AA:99:5C:BC:54:D4:BD:69:5E"]
+  res.send(`[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.soil.twa",
+      "sha256_cert_fingerprints": ["CA:EF:E7:D1:58:CF:4C:E1:7A:A1:D0:2E:E7:80:29:E3:E5:21:56:A0:13:41:C8:21:F6:68:AE:69:82:63:B5:42"]
+    }
   }
-}]`);
+]`);
 });
 
 /**
