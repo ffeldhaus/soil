@@ -95,6 +95,10 @@ export class LocalGameService {
       allRounds[pUid] = [round0];
     }
 
+    const isTestEnv =
+      typeof window !== 'undefined' &&
+      (window.localStorage?.getItem('soil_test_mode') === 'true' || !!(window as any).Cypress);
+
     const game: Game = {
       id: gameId,
       name: name,
@@ -106,7 +110,7 @@ export class LocalGameService {
         difficulty: 'normal',
         playerLabel: config.playerLabel || 'Team',
       },
-      config: config,
+      config: isTestEnv ? { ...config, isTest: true } : config,
       players: players,
       playerSecrets: playerSecrets,
       createdAt: new Date(),
@@ -252,6 +256,51 @@ export class LocalGameService {
     }
 
     const events = { weather, vermin };
+    const roundLimit = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+
+    let marketPrices: Record<string, { organic: number; conventional: number }> | undefined;
+    if (state.game.config?.advancedPricingEnabled) {
+      const totalYields: Record<string, number> = {};
+      for (const uid in state.game.players) {
+        const p = state.game.players[uid];
+        const prevRound = state.allRounds[uid][state.game.currentRoundNumber];
+        const tempRound = GameEngine.calculateRound(
+          nextRoundNum,
+          prevRound,
+          p.pendingDecisions!,
+          events,
+          0,
+          roundLimit,
+        );
+        const harvest = tempRound.result?.harvestSummary || {};
+        for (const [crop, amount] of Object.entries(harvest)) {
+          totalYields[crop] = (totalYields[crop] || 0) + (amount as number);
+        }
+      }
+
+      marketPrices = {};
+      const numPlayers = Object.keys(state.game.players).length;
+      for (const crop of Object.keys(GAME_CONSTANTS.CROPS)) {
+        const cropConfig = GAME_CONSTANTS.CROPS[crop];
+        if (!cropConfig || crop === 'Fallow' || crop === 'Grass') continue;
+
+        const baseYieldPerPlayer = cropConfig.baseYield * 40;
+        const totalExpectedYield = baseYieldPerPlayer * numPlayers;
+        const actualYield = totalYields[crop] || 0;
+
+        let priceFactor = 1.0;
+        if (totalExpectedYield > 0 && actualYield > 0) {
+          const yieldRatio = actualYield / totalExpectedYield;
+          priceFactor = 1.0 + (1.0 - yieldRatio) * 0.5;
+          priceFactor = Math.max(0.7, Math.min(1.3, priceFactor));
+        }
+
+        marketPrices[crop] = {
+          organic: Math.round(cropConfig.marketValue.organic * priceFactor * 10) / 10,
+          conventional: Math.round(cropConfig.marketValue.conventional * priceFactor * 10) / 10,
+        };
+      }
+    }
 
     for (const uid in state.game.players) {
       const p = state.game.players[uid];
@@ -263,7 +312,8 @@ export class LocalGameService {
         p.pendingDecisions!,
         events,
         p.capital,
-        state.game.settings?.length,
+        roundLimit,
+        { marketPrices },
       );
 
       state.allRounds[uid].push(newRound);
@@ -278,7 +328,6 @@ export class LocalGameService {
     }
 
     state.game.currentRoundNumber = nextRoundNum;
-    const roundLimit = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
     if (nextRoundNum >= roundLimit) {
       state.game.status = 'finished';
     }

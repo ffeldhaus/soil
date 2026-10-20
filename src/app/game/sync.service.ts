@@ -23,6 +23,7 @@ export class SyncService {
     : null;
 
   private isSyncing = false;
+  private uploadingGameIds = new Set<string>();
 
   constructor() {
     this.initSyncListener();
@@ -83,8 +84,9 @@ export class SyncService {
   }
 
   async uploadFinishedGameForResearch(gameId: string) {
-    if (!this.uploadFinishedGameFn) return;
+    if (!this.uploadFinishedGameFn || this.uploadingGameIds.has(gameId)) return;
 
+    this.uploadingGameIds.add(gameId);
     try {
       const fullState = await this.localGameService.loadGame(gameId);
       if (
@@ -118,6 +120,8 @@ export class SyncService {
         if (error.message) window.console.error(`Error Message: ${error.message}`);
         if (error.details) window.console.error(`Error Details:`, error.details);
       }
+    } finally {
+      this.uploadingGameIds.delete(gameId);
     }
   }
 }

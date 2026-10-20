@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { generateRandomPassword } from './utils';
+import { escapeHtml, generateRandomPassword } from './utils';
 
 describe('Utils', () => {
   describe('generateRandomPassword', () => {
@@ -27,6 +27,14 @@ describe('Utils', () => {
       for (const char of password) {
         expect(ambiguous).to.not.contain(char);
       }
+    });
+  });
+
+  describe('escapeHtml', () => {
+    it('should escape HTML special characters', () => {
+      expect(escapeHtml('<script>alert("xss" & \'test\')</script>')).to.equal(
+        '&lt;script&gt;alert(&quot;xss&quot; &amp; &#39;test&#39;)&lt;/script&gt;',
+      );
     });
   });
 });

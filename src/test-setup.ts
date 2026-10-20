@@ -56,6 +56,7 @@ console.warn = (...args) => {
   originalConsoleWarn.apply(console, args);
 };
 
+// biome-ignore lint/suspicious/noConsole: Intentionally filtering noisy console.log output in unit tests
 const originalConsoleLog = console.log;
 console.log = (...args) => {
   const message = args[0]?.toString() || '';

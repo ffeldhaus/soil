@@ -1,4 +1,4 @@
-import { Injectable, inject, NgZone } from '@angular/core';
+import { Injectable, inject, isDevMode, NgZone } from '@angular/core';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -54,6 +54,16 @@ export class AuthService {
     return this.userSubject.value;
   }
 
+  private isTestMode(): boolean {
+    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return false;
+    const isAllowedEnv =
+      isDevMode() ||
+      window.location?.hostname === 'localhost' ||
+      window.location?.hostname === '127.0.0.1' ||
+      !!(window as any).Cypress;
+    return isAllowedEnv && window.localStorage.getItem('soil_test_mode') === 'true';
+  }
+
   constructor() {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
     // Subscribe to real auth state using native SDK
@@ -67,7 +77,7 @@ export class AuthService {
               window.localStorage.removeItem('soil_active_local_game');
               window.localStorage.removeItem('soil_active_local_pin');
             }
-            if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
+            if (!this.isTestMode()) {
               this.userSubject.next(u);
             }
           } else {
@@ -79,7 +89,7 @@ export class AuthService {
               return;
             }
 
-            if (!isBrowser || !window.localStorage.getItem('soil_test_mode')) {
+            if (!this.isTestMode()) {
               this.userSubject.next(null);
             }
           }
@@ -88,7 +98,7 @@ export class AuthService {
     }
 
     // Check for test mode immediate override
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       this.userSubject.next(this.getMockUser());
     } else if (isBrowser && window.localStorage.getItem('soil_active_local_game')) {
       const gameId = window.localStorage.getItem('soil_active_local_game')!;
@@ -150,7 +160,7 @@ export class AuthService {
       return { user: currentUser };
     }
 
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       const user = this.getMockUser();
       this.userSubject.next(user);
       return { user };
@@ -200,8 +210,7 @@ export class AuthService {
   }
 
   async loginWithGoogle() {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       const user = this.getMockUser();
       this.userSubject.next(user);
       return { user };
@@ -211,8 +220,7 @@ export class AuthService {
   }
 
   async loginWithApple() {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       const user = this.getMockUser();
       this.userSubject.next(user);
       return { user };
@@ -222,8 +230,7 @@ export class AuthService {
   }
 
   async registerWithEmail(email: string, pass: string) {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       const user = this.getMockUser();
       this.userSubject.next(user);
       return { user };
@@ -233,8 +240,7 @@ export class AuthService {
 
   async sendVerificationEmail() {
     if (this.auth?.currentUser) {
-      const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-      if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      if (this.isTestMode()) {
         if (window.console) console.warn('Mock: Verification email sent');
         return;
       }
@@ -250,8 +256,7 @@ export class AuthService {
   }
 
   async sendPasswordResetEmail(email: string) {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Password reset email sent to', email);
       return;
     }
@@ -267,8 +272,7 @@ export class AuthService {
   }
 
   async loginWithEmail(email: string, pass: string) {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       const user = this.getMockUser();
       this.userSubject.next(user);
       return { user };
@@ -277,8 +281,7 @@ export class AuthService {
   }
 
   async registerPlayer(email: string, pass: string) {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+    if (this.isTestMode()) {
       const user = this.getMockUser();
       this.userSubject.next(user);
       return { user };
@@ -350,7 +353,7 @@ export class AuthService {
     }
 
     if (this.auth?.currentUser) {
-      if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true') {
+      if (this.isTestMode()) {
         const user = this.getMockUser();
         this.userSubject.next({ ...user, displayName: name } as any);
         return;

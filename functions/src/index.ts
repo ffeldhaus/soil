@@ -10,7 +10,72 @@ import { GAME_CONSTANTS, GEMINI_MODEL } from './constants';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
 import type { Round } from './types';
-import { generateRandomPassword } from './utils';
+import { escapeHtml, generateRandomPassword } from './utils';
+
+const DEFAULT_ORIGIN = 'https://soil.app';
+const ALLOWED_ORIGINS = new Set([DEFAULT_ORIGIN, 'https://soil--soil-602ea.europe-west4.hosted.app']);
+
+export function sanitizeOrigin(origin?: string): string {
+  if (!origin || typeof origin !== 'string') return DEFAULT_ORIGIN;
+  const trimmed = origin.trim().replace(/\/+$/, '');
+  if (ALLOWED_ORIGINS.has(trimmed)) return trimmed;
+  if (process.env.FUNCTIONS_EMULATOR === 'true' && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(trimmed)) {
+    return trimmed;
+  }
+  return DEFAULT_ORIGIN;
+}
+
+export function isTestEmail(email?: string | null): boolean {
+  if (!email) return false;
+  return /(\+test|@example\.com$|^test@|^e2e@)/i.test(email.trim());
+}
+
+export function isTestOrDegenerateGame(game: any, allRounds?: Record<string, any[]>): boolean {
+  if (!game) return true;
+  if (game.isTest === true || game.config?.isTest === true) return true;
+  if (game.hostUid === 'test-admin-uid' || isTestEmail(game.hostEmail)) return true;
+  if (/^(Research E2E|E2E Test|Cypress)/i.test(String(game.name || '').trim())) return true;
+
+  // Filter out 100%-Fallow click-through test games where human parcel decisions exist
+  // (at least 1 full round of 40 parcels) and zero actual crops were ever planted.
+  if (allRounds && typeof allRounds === 'object') {
+    let totalHumanParcelDecisions = 0;
+    let nonFallowCount = 0;
+    for (const uid of Object.keys(allRounds)) {
+      const p = game.players?.[uid];
+      if (p?.isAi) continue;
+      const rounds = allRounds[uid] || [];
+      for (const r of rounds) {
+        if (r && r.number > 0 && r.decision?.parcels && typeof r.decision.parcels === 'object') {
+          const crops = Object.values(r.decision.parcels);
+          for (const crop of crops) {
+            totalHumanParcelDecisions++;
+            if (crop && crop !== 'Fallow') {
+              nonFallowCount++;
+            }
+          }
+        }
+      }
+    }
+    if (totalHumanParcelDecisions >= 40 && nonFallowCount === 0) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+async function deleteGamePlayerAuthAccounts(gameId: string, maxPlayers = 10) {
+  const uids: string[] = [];
+  for (let i = 1; i <= maxPlayers; i++) {
+    uids.push(`player-${gameId}-${i}`);
+  }
+  try {
+    await admin.auth().deleteUsers(uids);
+  } catch (e) {
+    console.warn(`Failed to clean up player auth accounts for game ${gameId}:`, e);
+  }
+}
 
 setGlobalOptions({
   region: 'europe-west4',
@@ -172,6 +237,11 @@ async function incrementGameAnalysisCounter() {
  * Works for both local games (with allRounds provided) and cloud games (rounds fetched from DB).
  */
 export async function internalAnonymizeAndUploadForResearch(game: any, allRounds?: Record<string, any[]>) {
+  // 0. Prevent test or degenerate click-through games from leaking into research analytics
+  if (isTestOrDegenerateGame(game, allRounds)) {
+    return { success: true, status: 'skipped_test_data' };
+  }
+
   const oldGameId = game.id;
 
   // 1. Check if already uploaded
@@ -180,7 +250,8 @@ export async function internalAnonymizeAndUploadForResearch(game: any, allRounds
     return { success: true, gameId: existingSnap.docs[0].id, status: 'already_uploaded' };
   }
 
-  const targetGameId = db.collection('research_games').doc().id;
+  const targetDocRef = db.collection('research_games').doc(`research_${oldGameId}`);
+  const targetGameId = targetDocRef.id || `research_${oldGameId}`;
 
   // 2. Fetch rounds if not provided (for cloud games)
   const resolvedRounds: Record<string, any[]> = allRounds || {};
@@ -193,6 +264,9 @@ export async function internalAnonymizeAndUploadForResearch(game: any, allRounds
         if (!resolvedRounds[uid]) resolvedRounds[uid] = [];
         resolvedRounds[uid][roundNum] = data.playerData[uid];
       }
+    }
+    if (isTestOrDegenerateGame(game, resolvedRounds)) {
+      return { success: true, status: 'skipped_test_data' };
     }
   }
 
@@ -1046,10 +1120,26 @@ export const calculateNextRound = onCall(async (request) => {
     throw new HttpsError('invalid-argument', 'Missing gameId or decision');
   }
 
+  const callerUid = request.auth.uid;
+  const callerSnap = await db.collection('users').doc(callerUid).get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
   let gameWasFinished = false;
   try {
     const result = await db.runTransaction(async (transaction) => {
-      const calcResult = await performCalculation(gameId, decision, transaction);
+      const gameDoc = await transaction.get(db.collection('games').doc(gameId));
+      if (!gameDoc.exists) {
+        throw new HttpsError('not-found', 'Game not found');
+      }
+      const game = gameDoc.data()!;
+      const isParticipant = game.hostUid === callerUid || !!game.players?.[callerUid];
+      if (!isParticipant && !isSuper) {
+        throw new HttpsError('permission-denied', 'Not authorized to calculate rounds for this game');
+      }
+
+      const calcResult = await performCalculation(gameId, decision, transaction, game);
       gameWasFinished = !!calcResult?.isFinished;
       return calcResult;
     });
@@ -1066,16 +1156,26 @@ export const calculateNextRound = onCall(async (request) => {
 
     return result;
   } catch (error: any) {
+    if (error instanceof HttpsError) throw error;
     console.error('Error in calculateNextRound:', error);
     throw new HttpsError('internal', error.message || 'Internal Error');
   }
 });
 
 export const setAdminRole = onCall(async (request) => {
-  // Development helper: promote self to admin
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-  await admin.auth().setCustomUserClaims(request.auth.uid, { role: 'admin' });
+  const callerSnap = await db.collection('users').doc(request.auth.uid).get();
+  const isSuper =
+    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+    request.auth.token.email === 'florian.feldhaus@gmail.com';
+
+  if (!isSuper) {
+    throw new HttpsError('permission-denied', 'Super-Administratoren only');
+  }
+
+  const targetUid = request.data?.targetUid || request.auth.uid;
+  await admin.auth().setCustomUserClaims(targetUid, { role: 'admin' });
   return { success: true };
 });
 
@@ -1216,7 +1316,9 @@ export const createGame = onCall(async (request) => {
     id: gameId,
     name: name || `Game ${gameId.substr(0, 6)}`,
     hostUid: uid,
+    hostEmail: request.auth.token.email || undefined,
     hostRole: userRole,
+    isTest: isTestEmail(request.auth.token.email) || !!config?.isTest || !!request.data?.isTest,
     status: 'waiting',
     currentRoundNumber: 0,
     settings,
@@ -1311,8 +1413,12 @@ export const submitOnboarding = onCall(
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
-    const { firstName, lastName } = request.data;
-    const email = request.auth.token.email || '';
+    const { firstName, lastName } = request.data || {};
+    const email = (request.auth.token.email || '').trim();
+
+    if (!email || request.auth.uid.startsWith('player-') || request.auth.token.role === 'player') {
+      throw new HttpsError('permission-denied', 'A valid registered email account is required for onboarding.');
+    }
 
     // Check Banned Emails
     const bannedSnap = await db.collection('banned_emails').doc(email).get();
@@ -1322,35 +1428,47 @@ export const submitOnboarding = onCall(
     }
 
     // Basic Validation
-    if (!firstName || !lastName) {
+    const cleanFirst = String(firstName || '')
+      .trim()
+      .slice(0, 100);
+    const cleanLast = String(lastName || '')
+      .trim()
+      .slice(0, 100);
+    if (!cleanFirst || !cleanLast) {
       console.warn(`submitOnboarding: Missing fields for ${email}.`, request.data);
       throw new HttpsError('invalid-argument', 'Missing fields');
     }
 
     const uid = request.auth.uid;
     const userRef = db.collection('users').doc(uid);
+    const existingSnap = await userRef.get();
+    if (existingSnap.exists && existingSnap.data()?.role === 'banned') {
+      throw new HttpsError('permission-denied', 'Account is banned.');
+    }
 
     const userData = {
       uid,
       email,
-      firstName,
-      lastName,
-      displayName: `${firstName} ${lastName}`,
-      role: 'admin',
+      firstName: cleanFirst,
+      lastName: cleanLast,
+      displayName: `${cleanFirst} ${cleanLast}`,
+      role: existingSnap.data()?.role === 'superadmin' ? 'superadmin' : 'admin',
       status: 'active',
-      quota: 5,
-      gameCount: 0,
-      createdAt: Timestamp.now(),
+      quota: existingSnap.data()?.quota ?? 5,
+      gameCount: existingSnap.data()?.gameCount ?? 0,
+      createdAt: existingSnap.data()?.createdAt || Timestamp.now(),
     };
 
     await userRef.set(userData, { merge: true });
 
-    // Notify System-Administrator
+    // Notify System-Administrator (skip for test emails)
     const adminEmail = 'florian.feldhaus@gmail.com';
-    try {
-      await mailService.sendAdminNewRegistrationNotification(adminEmail, userData);
-    } catch (e) {
-      console.error('submitOnboarding: Failed to send admin notification', e);
+    if (!isTestEmail(email)) {
+      try {
+        await mailService.sendAdminNewRegistrationNotification(adminEmail, userData);
+      } catch (e) {
+        console.error('submitOnboarding: Failed to send admin notification', e);
+      }
     }
 
     return { success: true };
@@ -1514,13 +1632,14 @@ export const getAdminGames = onCall(async (request) => {
     throw new HttpsError('unauthenticated', 'User must be logged in');
   }
 
-  const { page = 1, pageSize = 10, showDeleted = false, targetUid } = request.data;
+  const { page = 1, pageSize = 10, showDeleted = false, targetUid, adminUid } = request.data;
+  const requestedUid = targetUid || adminUid;
   const offset = (page - 1) * pageSize;
 
   let searchUid = request.auth.uid;
 
   // Super Admin Override
-  if (targetUid && targetUid !== request.auth.uid) {
+  if (requestedUid && requestedUid !== request.auth.uid) {
     const callerRef = db.collection('users').doc(request.auth.uid);
     const callerSnap = await callerRef.get();
     const isSuper =
@@ -1530,7 +1649,7 @@ export const getAdminGames = onCall(async (request) => {
     if (!isSuper) {
       throw new HttpsError('permission-denied', 'Only System-Administratoren can view other users games.');
     }
-    searchUid = targetUid;
+    searchUid = requestedUid;
   }
 
   // Return games hosted by the target user
@@ -1707,6 +1826,7 @@ export const deleteGames = onCall(async (request) => {
         if (force) {
           // Hard Delete
           await db.recursiveDelete(gameRef);
+          await deleteGamePlayerAuthAccounts(gameId, doc.data()?.config?.numPlayers || 10);
         } else {
           // Soft Delete
           batch.update(gameRef, {
@@ -1788,7 +1908,7 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   const softDeleteBatch = db.batch();
   let softDelCount = 0;
 
-  activeGamesSnap.forEach((doc) => {
+  for (const doc of activeGamesSnap.docs) {
     const data = doc.data();
     const retentionDays = data.retentionDays || 90;
     // Use updatedAt if available, otherwise fallback to createdAt
@@ -1796,13 +1916,21 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
     const expiresAt = lastPlayed + retentionDays * oneDayMs;
 
     if (nowMillis > expiresAt) {
+      // Preserve played classroom/cloud games in research_games before expiring
+      if ((data.currentRoundNumber || 0) >= 1 && data.config?.analyticsEnabled !== false) {
+        try {
+          await internalAnonymizeAndUploadForResearch(data);
+        } catch (err) {
+          console.error(`Failed to archive expired game ${doc.id} for research:`, err);
+        }
+      }
       softDeleteBatch.update(doc.ref, {
         deletedAt: now,
         status: 'expired',
       });
       softDelCount++;
     }
-  });
+  }
 
   if (softDelCount > 0) {
     await softDeleteBatch.commit();
@@ -1814,7 +1942,16 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   const trashSnap = await db.collection('games').where('deletedAt', '<', purgeThreshold).get();
 
   for (const doc of trashSnap.docs) {
+    const data = doc.data();
+    if ((data.currentRoundNumber || 0) >= 1 && data.config?.analyticsEnabled !== false) {
+      try {
+        await internalAnonymizeAndUploadForResearch(data);
+      } catch (err) {
+        console.error(`Failed to archive purged game ${doc.id} for research:`, err);
+      }
+    }
     await db.recursiveDelete(doc.ref);
+    await deleteGamePlayerAuthAccounts(doc.id, data.config?.numPlayers || 10);
   }
 
   // 3. Purge unverified admin registrations
@@ -1881,11 +2018,19 @@ export const playerLogin = onCall(async (request) => {
 });
 
 export const triggerAiTurn = onCall(async (request) => {
-  const { gameId, level = 'rotation' } = request.data;
-  // Logic to fetch game state, run AiAgent.makeDecision, and then call calculateRound logic (or return decision)
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+  const { gameId, level = 'rotation' } = request.data || {};
+  if (!gameId) throw new HttpsError('invalid-argument', 'Missing gameId');
 
-  // For now, just return a decision
   const gameRef = db.collection('games').doc(gameId);
+  const gameSnap = await gameRef.get();
+  if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
+  const game = gameSnap.data()!;
+  const callerUid = request.auth.uid;
+  if (game.hostUid !== callerUid && !game.players?.[callerUid]) {
+    throw new HttpsError('permission-denied', 'Not authorized for this game');
+  }
+
   const roundsRef = gameRef.collection('rounds');
   const roundsSnap = await roundsRef.orderBy('number', 'desc').limit(1).get();
   const lastRound = roundsSnap.docs[0]?.data() as Round | undefined;
@@ -1896,11 +2041,22 @@ export const triggerAiTurn = onCall(async (request) => {
 export const submitFeedback = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
   async (request) => {
-    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
-
-    const { category, rating, comment } = request.data;
+    const { category, rating, comment, isTest } = request.data || {};
     if (!category || rating === undefined || !comment) {
       throw new HttpsError('invalid-argument', 'Missing feedback fields');
+    }
+
+    const cleanCategory = String(category).trim().slice(0, 50);
+    const cleanRating = Math.min(5, Math.max(1, Math.round(Number(rating) || 1)));
+    const cleanComment = String(comment).trim().slice(0, 2000);
+
+    if (!cleanCategory || cleanComment.length < 3) {
+      throw new HttpsError('invalid-argument', 'Feedback comment is too short');
+    }
+
+    const callerEmail = request.auth?.token?.email;
+    if (isTest === true || isTestEmail(callerEmail) || /^(E2E|Cypress Test)/i.test(cleanComment)) {
+      return { success: true, status: 'skipped_test_data' };
     }
 
     const feedbackId = db.collection('feedback').doc().id;
@@ -1908,9 +2064,9 @@ export const submitFeedback = onCall(
 
     const feedbackData: any = {
       id: feedbackId,
-      category,
-      rating,
-      comment,
+      category: cleanCategory,
+      rating: cleanRating,
+      comment: cleanComment,
       status: 'new',
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
@@ -1923,9 +2079,9 @@ export const submitFeedback = onCall(
     try {
       const prompt = `
         Analyze the following feedback from a user of the SOIL agricultural simulation game.
-        Category: ${category}
-        Rating: ${rating}/5
-        Comment: ${comment}
+        Category: ${cleanCategory}
+        Rating: ${cleanRating}/5
+        Comment: ${cleanComment}
 
         Provide a JSON response with the following fields:
         - summary: A concise summary of the feedback.
@@ -1961,26 +2117,31 @@ export const submitFeedback = onCall(
       superAdminEmails.push('florian.feldhaus@gmail.com');
     }
 
-    const notificationSubject = `New Feedback Received: ${category} (${rating}/5)`;
-    const notificationText = `New anonymous feedback received:\n\nCategory: ${category}\nRating: ${rating}/5\nComment: ${comment}\n\nAI Analysis:\nSummary: ${feedbackData.aiAnalysis?.summary || 'N/A'}\nSentiment: ${feedbackData.aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${(feedbackData.aiAnalysis?.suggestedActions || []).join(', ')}`;
+    const safeCategory = escapeHtml(cleanCategory);
+    const safeComment = escapeHtml(cleanComment);
+    const safeSentiment = escapeHtml(feedbackData.aiAnalysis?.sentiment || 'N/A');
+    const safeSummary = escapeHtml(feedbackData.aiAnalysis?.summary || 'N/A');
+
+    const notificationSubject = `New Feedback Received: ${cleanCategory} (${cleanRating}/5)`;
+    const notificationText = `New anonymous feedback received:\n\nCategory: ${cleanCategory}\nRating: ${cleanRating}/5\nComment: ${cleanComment}\n\nAI Analysis:\nSummary: ${feedbackData.aiAnalysis?.summary || 'N/A'}\nSentiment: ${feedbackData.aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${(feedbackData.aiAnalysis?.suggestedActions || []).join(', ')}`;
 
     const notificationHtml = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #059669;">New Anonymous Feedback Received</h2>
-        <p><strong>Category:</strong> ${category}</p>
-        <p><strong>Rating:</strong> ${rating}/5</p>
+        <p><strong>Category:</strong> ${safeCategory}</p>
+        <p><strong>Rating:</strong> ${cleanRating}/5</p>
         <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-          <p style="margin: 0;">${comment}</p>
+          <p style="margin: 0;">${safeComment}</p>
         </div>
         ${
           feedbackData.aiAnalysis
             ? `
           <h3 style="color: #10b981;">Gemini Analysis</h3>
-          <p><strong>Sentiment:</strong> ${feedbackData.aiAnalysis.sentiment}</p>
-          <p><strong>Summary:</strong> ${feedbackData.aiAnalysis.summary}</p>
+          <p><strong>Sentiment:</strong> ${safeSentiment}</p>
+          <p><strong>Summary:</strong> ${safeSummary}</p>
           <p><strong>Suggested Actions:</strong></p>
           <ul>
-            ${feedbackData.aiAnalysis.suggestedActions.map((a: string) => `<li>${a}</li>`).join('')}
+            ${(feedbackData.aiAnalysis.suggestedActions || []).map((a: string) => `<li>${escapeHtml(a)}</li>`).join('')}
           </ul>
         `
             : ''
@@ -2115,33 +2276,25 @@ export const saveDraft = onCall(async (request) => {
   }
 
   const gameRef = db.collection('games').doc(gameId);
-
-  // We update the specific player's state.
-  // We assume the player fields map is keyed by UID as per data model.
-  // We need to know WHICH player key to update.
-  // In createGame, we keyed by UID. In playerLogin, we key by 'player-gameId-number'.
-  // The request.auth.uid SHOULD match the key in the map.
-
-  // However, the players map is a nested object "players: { [uid]: state }".
-  // Firestore dot notation allows updating a specific key.
-
   const uid = request.auth.uid;
-  const fieldPath = `players.${uid}.pendingDecisions`;
-
-  // Verify game exists? Or just blind update?
-  // Blind update is faster/cheaper, but risky if game deleted.
-  // Let's allow blind update for draft saving efficiency, but catch "not found".
-
-  // Actually, we should check if user is part of the game to be safe?
-  // Using a precondition or update allows us to fail if doc doesn't exist.
 
   try {
+    const gameSnap = await gameRef.get();
+    if (!gameSnap.exists) {
+      throw new HttpsError('not-found', 'Game not found');
+    }
+    const gameData = gameSnap.data()!;
+    if (!gameData.players?.[uid]) {
+      throw new HttpsError('permission-denied', 'Not a player in this game');
+    }
+
+    const fieldPath = `players.${uid}.pendingDecisions`;
     await gameRef.update({
       [fieldPath]: decision,
       updatedAt: Timestamp.now(),
     });
   } catch (error: any) {
-    // If error is NOT FOUND, throw.
+    if (error instanceof HttpsError) throw error;
     console.error('saveDraft failed:', error);
     throw new HttpsError('internal', 'Failed to save draft');
   }
@@ -2174,8 +2327,8 @@ export const sendPlayerInvite = onCall(
       throw new HttpsError('not-found', 'Player or PIN not found');
     }
 
-    // Construct login link
-    const loginLink = `${origin}/game-login?gameId=${gameId}&pin=${secret.password}`;
+    const safeOrigin = sanitizeOrigin(origin);
+    const loginLink = `${safeOrigin}/game-login?gameId=${encodeURIComponent(gameId)}&pin=${encodeURIComponent(secret.password)}`;
 
     await mailService.sendPlayerLoginInfo(email, loginLink);
 
@@ -2192,8 +2345,9 @@ export const sendVerificationEmail = onCall(
     const email = request.auth.token.email;
     if (!email) throw new HttpsError('invalid-argument', 'No email found for user');
 
+    const safeOrigin = sanitizeOrigin(origin);
     const link = await admin.auth().generateEmailVerificationLink(email, {
-      url: `${origin}/admin/login?email=${email}&verified=true`,
+      url: `${safeOrigin}/admin/login?email=${encodeURIComponent(email)}&verified=true`,
     });
 
     await mailService.sendVerificationEmail(email, link);
@@ -2207,8 +2361,9 @@ export const sendPasswordResetEmail = onCall(
     const { email, origin } = request.data;
     if (!email) throw new HttpsError('invalid-argument', 'Email is required');
 
+    const safeOrigin = sanitizeOrigin(origin);
     const link = await admin.auth().generatePasswordResetLink(email, {
-      url: `${origin}/admin/login?email=${email}`,
+      url: `${safeOrigin}/admin/login?email=${encodeURIComponent(email)}`,
     });
 
     await mailService.sendPasswordResetEmail(email, link);
@@ -2249,35 +2404,39 @@ export const manageFeedback = onCall(
       updates.status = 'replied';
       updates.adminResponse = response;
 
-      // Send email to the admin who provided feedback
-      const subject = `Re: Your feedback on SOIL (${feedback.category})`;
-      const text = `Hello ${feedback.userName},\n\nThank you for your feedback. A system administrator has replied to your comment:\n\n"${feedback.comment}"\n\nReply:\n${response}\n\nBest regards,\nThe SOIL Team`;
-      const html = `
-        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-          <h2>Reply to your Feedback</h2>
-          <p>Hello ${feedback.userName},</p>
-          <p>Thank you for your feedback. A system administrator has replied to your comment:</p>
-          <div style="border-left: 4px solid #e5e7eb; padding-left: 15px; font-style: italic; color: #4b5563; margin: 20px 0;">
-            "${feedback.comment}"
+      if (feedback.userEmail) {
+        const safeUserName = escapeHtml(feedback.userName || 'User');
+        const safeComment = escapeHtml(feedback.comment || '');
+        const safeResponse = escapeHtml(response);
+        const subject = `Re: Your feedback on SOIL (${feedback.category})`;
+        const text = `Hello ${feedback.userName || 'User'},\n\nThank you for your feedback. A system administrator has replied to your comment:\n\n"${feedback.comment}"\n\nReply:\n${response}\n\nBest regards,\nThe SOIL Team`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+            <h2>Reply to your Feedback</h2>
+            <p>Hello ${safeUserName},</p>
+            <p>Thank you for your feedback. A system administrator has replied to your comment:</p>
+            <div style="border-left: 4px solid #e5e7eb; padding-left: 15px; font-style: italic; color: #4b5563; margin: 20px 0;">
+              "${safeComment}"
+            </div>
+            <p><strong>Reply:</strong></p>
+            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px;">
+              ${safeResponse}
+            </div>
+            <p>Best regards,<br>The SOIL Team</p>
           </div>
-          <p><strong>Reply:</strong></p>
-          <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px;">
-            ${response}
-          </div>
-          <p>Best regards,<br>The SOIL Team</p>
-        </div>
-      `;
+        `;
 
-      try {
-        await mailService.sendEmail({
-          to: feedback.userEmail,
-          subject,
-          text,
-          html,
-        });
-      } catch (e) {
-        console.error('Failed to send feedback reply email', e);
-        throw new HttpsError('internal', 'Failed to send email');
+        try {
+          await mailService.sendEmail({
+            to: feedback.userEmail,
+            subject,
+            text,
+            html,
+          });
+        } catch (e) {
+          console.error('Failed to send feedback reply email', e);
+          throw new HttpsError('internal', 'Failed to send email');
+        }
       }
     } else if (action === 'resolve') {
       updates.status = 'resolved';

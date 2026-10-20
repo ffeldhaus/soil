@@ -132,4 +132,45 @@ describe('Upload Logic Security', () => {
     expect(result.success).to.be.true;
     expect(result.status).to.equal('uploaded');
   });
+
+  it('should skip uploading test games or 100% Fallow click-through games to analytics', async () => {
+    const testFlagResult = await internalUploadFinishedGame({
+      gameData: {
+        game: {
+          id: 'local-test1',
+          isTest: true,
+          players: { p1: { uid: 'p1', playerNumber: 1, history: [] } },
+          settings: { length: 10 },
+          currentRoundNumber: 10,
+          status: 'finished',
+        },
+        allRounds: { p1: Array(11).fill({ number: 1, result: { events: {} } }) },
+      },
+    });
+    expect(testFlagResult.success).to.be.true;
+    expect(testFlagResult.status).to.equal('skipped_test_data');
+
+    const fallowParcels: Record<string, string> = {};
+    for (let i = 0; i < 40; i++) fallowParcels[String(i)] = 'Fallow';
+
+    const fallowClickThroughResult = await internalUploadFinishedGame({
+      gameData: {
+        game: {
+          id: 'local-fallow1',
+          players: { p1: { uid: 'p1', playerNumber: 1, isAi: false, history: [] } },
+          settings: { length: 10 },
+          currentRoundNumber: 10,
+          status: 'finished',
+        },
+        allRounds: {
+          p1: [
+            { number: 0, decision: { parcels: {} } },
+            ...Array(10).fill({ number: 1, decision: { parcels: fallowParcels }, result: { events: {} } }),
+          ],
+        },
+      },
+    });
+    expect(fallowClickThroughResult.success).to.be.true;
+    expect(fallowClickThroughResult.status).to.equal('skipped_test_data');
+  });
 });

@@ -1,4 +1,4 @@
-import { computed, Injectable, inject } from '@angular/core';
+import { computed, Injectable, inject, isDevMode } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject, debounceTime, type Observable, Subject } from 'rxjs';
@@ -71,7 +71,7 @@ export class GameService {
   private get getAdminGamesFn() {
     if (!this.functions || typeof window === 'undefined') return null;
     return httpsCallable<
-      { page: number; pageSize: number; showDeleted: boolean; adminUid?: string },
+      { page: number; pageSize: number; showDeleted: boolean; adminUid?: string; targetUid?: string },
       { games: Game[]; total: number }
     >(this.functions, 'getAdminGames');
   }
@@ -188,6 +188,13 @@ export class GameService {
     return this.stateSubject.value;
   }
 
+  private isTestMode(): boolean {
+    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return false;
+    const isAllowedEnv =
+      isDevMode() || window.location?.hostname === 'localhost' || window.location?.hostname === '127.0.0.1';
+    return isAllowedEnv && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress;
+  }
+
   isCloudGame = computed(() => {
     const state = this.stateSignal();
     if (!state || !state.game) return false;
@@ -293,8 +300,7 @@ export class GameService {
       return null;
     }
 
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       const mockState = this.getMockGameState();
       this.currentRound = mockState.lastRound || null;
       this.parcelsSubject.next(mockState.lastRound?.parcelsSnapshot || this.createInitialParcels());
@@ -380,8 +386,7 @@ export class GameService {
       return;
     }
 
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Draft saved locally');
       return;
     }
@@ -488,8 +493,7 @@ export class GameService {
       advisorEnabled?: boolean;
     },
   ): Promise<{ gameId: string; password?: string }> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       return { gameId: `test-game-${Math.random().toString(36).substr(2, 9)}`, password: '1234' };
     }
     const numHumanPlayers = config.numPlayers - (config.numAi || 0);
@@ -522,8 +526,7 @@ export class GameService {
     showTrash = false,
     adminUid?: string,
   ): Promise<{ games: Game[]; total: number }> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       const mockGame = this.getMockGameState().game;
       return {
         games: [
@@ -546,7 +549,7 @@ export class GameService {
             throw new Error('Functions not available');
           }
         } else {
-          const result = await fn({ page, pageSize, showDeleted: showTrash, adminUid });
+          const result = await fn({ page, pageSize, showDeleted: showTrash, adminUid, targetUid: adminUid });
           cloudResponse = result.data;
         }
       } catch (e) {
@@ -575,8 +578,7 @@ export class GameService {
   }
 
   async getResearchGames(page: number, pageSize: number): Promise<{ games: Game[]; total: number }> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       const mockGame = this.getMockGameState().game;
       return {
         games: [{ ...mockGame, id: 'research-game-1', name: 'Research Game 1' }],
@@ -604,8 +606,7 @@ export class GameService {
   }
 
   async getUserStatus(): Promise<UserStatus | null> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       const fullRole = window.localStorage.getItem('soil_test_role') || 'admin';
       const role = fullRole.startsWith('player') ? 'player' : fullRole;
       return { uid: 'mock-uid', email: `mock-${role}@example.com`, role, status: 'active' } as any;
@@ -616,8 +617,7 @@ export class GameService {
   }
 
   async getAllAdmins(): Promise<(UserStatus & { gameCount: number; quota: number })[]> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       return [
         { uid: 'admin-1', email: 'admin@example.com', role: 'admin', status: 'active', gameCount: 5, quota: 10 } as any,
       ];
@@ -628,8 +628,7 @@ export class GameService {
   }
 
   async getSystemStats(): Promise<SystemStats> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       return {
         games: { total: 100, active: 80, deleted: 20 },
         users: { total: 50, admins: 40, banned: 2 },
@@ -647,8 +646,7 @@ export class GameService {
     institution: string;
     institutionLink?: string;
   }): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Onboarding submitted', data);
       return;
     }
@@ -663,8 +661,7 @@ export class GameService {
     value?: { rejectionReasons?: string[]; customMessage?: string; banEmail?: boolean } | number,
     origin?: string,
   ): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Manage admin', { targetUid, action, value });
       return;
     }
@@ -674,8 +671,7 @@ export class GameService {
   }
 
   async sendPlayerInvite(gameId: string, playerNumber: number, email: string, origin: string): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Player invite sent', { gameId, playerNumber, email });
       return;
     }
@@ -696,8 +692,7 @@ export class GameService {
   }
 
   async sendGameInvite(gameId: string, email: string): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Game invite sent', { gameId, email });
       return;
     }
@@ -723,8 +718,7 @@ export class GameService {
 
     if (cloudIds.length === 0) return;
 
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Games deleted', { gameIds, force });
       return;
     }
@@ -750,8 +744,7 @@ export class GameService {
 
     if (cloudIds.length === 0) return;
 
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Games undeleted', { gameIds });
       return;
     }
@@ -766,8 +759,7 @@ export class GameService {
   }
 
   async updatePlayerType(gameId: string, playerNumber: number, type: 'human' | 'ai', aiLevel?: string): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Player type updated', { gameId, playerNumber, type, aiLevel });
       return;
     }
@@ -782,8 +774,7 @@ export class GameService {
   }
 
   async updateRoundDeadline(gameId: string, roundNumber: number, deadline: string): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Round deadline updated', { gameId, roundNumber, deadline });
       return;
     }
@@ -798,8 +789,7 @@ export class GameService {
   }
 
   async submitFeedback(feedback: { category: string; rating: number; comment: string }): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Feedback submitted', feedback);
       return;
     }
@@ -814,8 +804,7 @@ export class GameService {
   }
 
   async getAllFeedback(): Promise<Feedback[]> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       return [
         {
           id: 'fb-1',
@@ -843,8 +832,7 @@ export class GameService {
     action: 'reply' | 'resolve' | 'reject',
     value?: { response?: string; externalReference?: string },
   ): Promise<void> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Manage feedback', { feedbackId, action, value });
       return;
     }
@@ -865,8 +853,7 @@ export class GameService {
   }
 
   async getSystemInsights(): Promise<any[]> {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    if (isBrowser && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress) {
+    if (this.isTestMode()) {
       return [
         {
           createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },

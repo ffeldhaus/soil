@@ -44,6 +44,18 @@ const performDeployment = async (newVersion) => {
     fs.writeFileSync(angularJsonPath, `${JSON.stringify(angularJson, null, 2)}\n`);
     execSync(`git add ${angularJsonPath}`, { stdio: 'inherit' });
 
+    // Update src/index.html
+    const indexHtmlPath = 'src/index.html';
+    if (fs.existsSync(indexHtmlPath)) {
+      let indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+      indexHtml = indexHtml.replace(
+        /<meta name="app-version" content="[^"]*" \/>/,
+        `<meta name="app-version" content="${newVersion}" />`,
+      );
+      fs.writeFileSync(indexHtmlPath, indexHtml);
+      execSync(`git add ${indexHtmlPath}`, { stdio: 'inherit' });
+    }
+
     // Update CHANGELOG.md
     const changelogPath = 'CHANGELOG.md';
     if (fs.existsSync(changelogPath)) {

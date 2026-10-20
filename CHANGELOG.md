@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Security
+- Locked down `firestore.rules` and `storage.rules` (`allow read, write: if false`) since all data access goes through authenticated Cloud Functions.
+- Restricted `setAdminRole` exclusively to `superadmin` callers and prevented custom-token player accounts (`player-*`) from submitting admin onboarding requests.
+- Enforced caller host/player authorization on `calculateNextRound`, `triggerAiTurn`, and `saveDraft`.
+- Added HTML escaping (`escapeHtml`) and strict origin validation (`sanitizeOrigin`) across email and feedback Cloud Functions.
+- Replaced `Math.random()` with cryptographically secure `crypto.randomInt()` in password generation.
+- Restricted `soil_test_mode` mock bypasses in `AuthService` and `GameService` to local development and Cypress test environments.
+### Fixed
+- Prevented E2E/Cypress test games, test user accounts, and 100%-fallow click-through test games from leaking into `research_games`, `system_metadata/analysis`, and `feedback`.
+- Made `uploadGameForResearch` idempotent using deterministic document IDs (`research_<gameId>`) and added client-side in-flight deduplication in `SyncService`.
+- Archived active multiplayer games (`currentRoundNumber >= 1`) to `research_games` before hard deletion or 30-day automatic purge, and cleaned up associated `player-*` Firebase Auth accounts.
+- Fixed `getAdminGames` parameter mismatch (`targetUid` vs. `adminUid`) when Super Admins inspect another administrator's games.
+- Aligned `LocalGameService` dynamic market pricing and backend `makePerfectDecision` AI logic with the primary `GameEngine`.
+- Allowed unauthenticated local-mode players to submit anonymized feedback and guarded feedback replies when no email address is present.
+- Synchronized `app-version` in `src/index.html` and `/sitemap.xml` in `src/server.ts`.
+
 ## [2.6.30] - 2026-02-27
 ### Changed
 - Finalized production deployment configuration and verified service worker navigation fallback fixes.

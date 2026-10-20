@@ -56,6 +56,14 @@ app.get('/sitemap.xml', (_req, res) => {
     <loc>https://soil.app/admin</loc>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://soil.app/impressum</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://soil.app/privacy</loc>
+    <priority>0.5</priority>
+  </url>
 </urlset>`);
 });
 

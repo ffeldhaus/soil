@@ -6,7 +6,7 @@ import { TourService } from './tour.service';
 describe('TourService', () => {
   let service: TourService;
   let shepherdServiceMock: any;
-  let eventHandlers: Record<string, Function>;
+  let eventHandlers: Record<string, (...args: any[]) => any>;
 
   beforeEach(() => {
     eventHandlers = {};
@@ -16,7 +16,7 @@ describe('TourService', () => {
       start: vi.fn(),
       cancel: vi.fn(),
       tourObject: {
-        on: vi.fn((event: string, callback: Function) => {
+        on: vi.fn((event: string, callback: (...args: any[]) => any) => {
           eventHandlers[event] = callback;
         }),
       },
