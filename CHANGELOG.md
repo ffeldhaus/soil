@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [2.6.31] - 2026-10-20
 ### Security
 - Locked down `firestore.rules` and `storage.rules` (`allow read, write: if false`) since all data access goes through authenticated Cloud Functions.
 - Restricted `setAdminRole` exclusively to `superadmin` callers and prevented custom-token player accounts (`player-*`) from submitting admin onboarding requests.
@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - Aligned `LocalGameService` dynamic market pricing and backend `makePerfectDecision` AI logic with the primary `GameEngine`.
 - Allowed unauthenticated local-mode players to submit anonymized feedback and guarded feedback replies when no email address is present.
 - Synchronized `app-version` in `src/index.html` and `/sitemap.xml` in `src/server.ts`.
+### Changed
+- Updated frontend and backend dependencies to latest minor and patch versions within semver constraints.
 
 ## [2.6.30] - 2026-02-27
 ### Changed
