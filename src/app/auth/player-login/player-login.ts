@@ -13,7 +13,7 @@ import { AuthService } from '../auth.service';
     <div class="min-h-screen relative text-gray-100 font-sans overflow-hidden flex flex-col">
       <!-- Navigation Bar -->
       <nav
-        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
+        class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
       >
         <div class="flex items-center gap-4">
           <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
@@ -41,7 +41,7 @@ import { AuthService } from '../auth.service';
         </div>
 
         <div
-          class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
+          class="relative z-10 w-full max-w-md bg-gray-900 rounded-xl shadow-2xl p-5 sm:p-6 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
         >
           <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
             <ng-container>Spiel beitreten</ng-container>
@@ -57,7 +57,7 @@ import { AuthService } from '../auth.service';
                 type="text"
                 autocomplete="username"
                 data-testid="player-login-gameid"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
+                class="w-full px-4 py-3 bg-gray-950 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase"
                 placeholder="Game ID"
                 [placeholder]="t('playerLogin.placeholder.gameId')"
               />
@@ -73,7 +73,7 @@ import { AuthService } from '../auth.service';
                   [type]="showPassword ? 'text' : 'password'"
                   autocomplete="current-password"
                   data-testid="player-login-pin"
-                  class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase pr-12"
+                  class="w-full px-4 py-3 bg-gray-950 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white uppercase pr-12"
                   placeholder="Unique Player PIN"
                   [placeholder]="t('playerLogin.placeholder.pin')"
                 />
@@ -115,11 +115,11 @@ import { AuthService } from '../auth.service';
       <!-- Error Modal -->
       @if (showErrorModal) {
         <div
-          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in portrait:p-0"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 animate-fade-in portrait:p-0"
           (click)="closeModal()"
         >
           <div
-            class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
+            class="bg-gray-800 border border-red-500/50 p-6 rounded-xl w-full max-w-sm shadow-2xl relative portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
             (click)="$event.stopPropagation()"
           >
             <div class="flex flex-col items-center text-center gap-4">

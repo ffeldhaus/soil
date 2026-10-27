@@ -1,17 +1,31 @@
-<div data-testid="round-result-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-  <div class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl p-6 max-w-xl w-full relative" role="dialog" aria-modal="true" aria-labelledby="result-title">
-    <h2 id="result-title" class="text-2xl font-bold text-white mb-6 text-center">Rundenergebnis</h2>
+<div data-testid="round-result-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75">
+  <div class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4 sm:p-5 max-w-2xl w-full relative" role="dialog" aria-modal="true" aria-labelledby="result-title">
+    <h2 id="result-title" class="text-xl sm:text-2xl font-bold text-white mb-4 text-center tracking-tight">Rundenergebnis — Jahr {{ round.number }}</h2>
 
-    <div class="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+    <div class="space-y-5 max-h-[65vh] overflow-y-auto pr-2 custom-scrollbar">
+      @if (insolvent) {
+        <div
+          data-testid="insolvency-banner"
+          role="alert"
+          class="bg-rose-950 border border-rose-600 rounded-lg p-3 flex items-start gap-3"
+        >
+          <span class="text-rose-400 font-mono font-bold text-sm shrink-0">▼ WARNUNG</span>
+          <div class="text-xs text-rose-200">
+            <span class="font-bold text-white block mb-0.5">Überschuldung / Insolvenzgefahr</span>
+            Das Betriebskapital liegt unter −50.000 €. Hohe Überziehungszinsen belasten das Ergebnis und mindern den Zukunfts-Score erheblich.
+          </div>
+        </div>
+      }
+
       <!-- Profit -->
-      <div class="flex justify-between items-center border-b border-gray-700 pb-4">
-        <span class="text-white">Rundengewinn</span>
-        <div class="text-right">
-          <span class="text-xl font-bold block" [class.text-emerald-400]="profit >= 0" [class.text-red-400]="profit < 0">
-            {{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
+      <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
+        <span class="text-white font-medium">Rundengewinn</span>
+        <div class="text-right font-mono tabular-nums">
+          <span class="text-xl font-bold block" [class.text-emerald-400]="profit >= 0" [class.text-rose-400]="0 > profit">
+            {{ profit >= 0 ? '+' : '' }}{{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
           </span>
           @if (subsidies > 0) {
-            <span class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">
+            <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
               Inkl. {{ subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }} Subventionen
             </span>
           }
@@ -19,34 +33,50 @@
       </div>
 
       <!-- Financial Breakdown -->
-      <div class="grid grid-cols-2 gap-4 text-xs">
-        <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
-          <span class="text-white block uppercase tracking-tighter">Einnahmen</span>
-          <span class="text-white font-mono">{{ income + subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div class="bg-gray-950 p-3 rounded-lg border border-gray-800 flex flex-col justify-between gap-1">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-300 uppercase tracking-tight font-semibold">Einnahmen</span>
+            <span class="text-white font-mono tabular-nums font-bold">{{ income + subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+          </div>
+          @if (contractBonus > 0) {
+            <div data-testid="contract-bonus-row" class="flex justify-between items-center text-[11px] text-emerald-300 pt-1 border-t border-gray-700/60 font-mono tabular-nums">
+              <span>▲ Regionalvertrag-Prämie</span>
+              <span>+{{ contractBonus | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
         </div>
-        <div class="bg-gray-800/30 p-2 rounded border border-gray-700/50">
-          <span class="text-white block uppercase tracking-tighter">Ausgaben</span>
-          <span class="text-white font-mono">{{ expenses | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+        <div class="bg-gray-950 p-3 rounded-lg border border-gray-800 flex flex-col justify-between gap-1">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-300 uppercase tracking-tight font-semibold">Ausgaben</span>
+            <span class="text-white font-mono tabular-nums font-bold">{{ expenses | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+          </div>
+          @if (overdraftInterest > 0) {
+            <div data-testid="overdraft-interest-row" class="flex justify-between items-center text-[11px] text-rose-300 pt-1 border-t border-gray-700/60 font-mono tabular-nums">
+              <span>▼ Überziehungszinsen</span>
+              <span>-{{ overdraftInterest | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
         </div>
       </div>
 
       <!-- Bio Siegel -->
-      <div class="flex justify-between items-center border-b border-gray-700 pb-4">
+      <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
         <div class="flex flex-col">
-          <span class="text-white">EU-Bio-Siegel</span>
+          <span class="text-white font-medium">EU-Bio-Siegel</span>
           @if (!bioSiegel) {
-            <span class="text-xs text-gray-300">Kriterien nicht erfüllt</span>
+            <span class="text-xs text-slate-300">Kriterien nicht erfüllt</span>
           }
           @if (bioSiegel) {
-            <span class="text-xs text-emerald-500">Kriterien erfüllt!</span>
+            <span class="text-xs text-emerald-400">Kriterien erfüllt!</span>
           }
         </div>
 
-        <div [class.bg-emerald-500]="bioSiegel" [class.bg-gray-700]="!bioSiegel" class="p-2 rounded-full">
+        <div [class.bg-emerald-600]="bioSiegel" [class.bg-slate-700]="!bioSiegel" class="p-2 rounded-full">
           @if (bioSiegel) {
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-white"
+              class="h-5 w-5 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -57,7 +87,7 @@
           @if (!bioSiegel) {
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-gray-400"
+              class="h-5 w-5 text-slate-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -68,16 +98,140 @@
         </div>
       </div>
 
-      <!-- Weather / Events -->
-      <div class="bg-gray-800/50 rounded-lg p-4">
-        <h3 class="text-sm font-bold text-white mb-2">Bedingungen</h3>
-        <div class="flex justify-between mb-1">
-          <span class="text-white">Wetter</span>
-          <span class="text-white">{{ t(events?.weather || 'Normal') }}</span>
+      <!-- Newly Unlocked Stickers / Hof-Auszeichnungen -->
+      @let unlockedStickers = getUnlockedStickerDetails();
+      @if (unlockedStickers.length > 0) {
+        <div data-testid="unlocked-stickers-section" class="bg-gray-950 border border-gray-800 rounded-lg p-3.5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-white tracking-tight">Hof-Auszeichnungen freigeschaltet</h3>
+            <span class="text-[11px] font-mono tabular-nums text-amber-300">{{ unlockedStickers.length }} Neu</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            @for (sticker of unlockedStickers; track sticker.id) {
+              <div
+                [attr.data-testid]="'sticker-card-' + sticker.id"
+                class="rounded-lg bg-gray-900 border overflow-hidden flex flex-col"
+                [class.border-amber-400]="sticker.rarity === 'gold'"
+                [class.border-slate-300]="sticker.rarity === 'silver'"
+                [class.border-amber-700]="sticker.rarity === 'bronze'"
+              >
+                @if (sticker.image) {
+                  <div class="relative aspect-[4/3] w-full overflow-hidden bg-gray-950 border-b border-gray-800">
+                    <img [src]="sticker.image" [alt]="sticker.title" class="w-full h-full object-cover" />
+                  </div>
+                }
+                <div class="p-3 min-w-0 flex-1">
+                  <div class="flex items-center justify-between gap-1 mb-1">
+                    <span class="text-xs font-bold text-white truncate">{{ sticker.title }}</span>
+                    <span
+                      class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border shrink-0"
+                      [class.text-amber-300]="sticker.rarity === 'gold'"
+                      [class.border-amber-500]="sticker.rarity === 'gold'"
+                      [class.bg-amber-950]="sticker.rarity === 'gold'"
+                      [class.text-slate-200]="sticker.rarity === 'silver'"
+                      [class.border-slate-400]="sticker.rarity === 'silver'"
+                      [class.bg-slate-800]="sticker.rarity === 'silver'"
+                      [class.text-amber-400]="sticker.rarity === 'bronze'"
+                      [class.border-amber-700]="sticker.rarity === 'bronze'"
+                      [class.bg-amber-950]="sticker.rarity === 'bronze'"
+                    >
+                      {{ getCategoryLabel(sticker.category) }}
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-slate-300 leading-snug">{{ sticker.description }}</p>
+                </div>
+              </div>
+            }
+          </div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-white">Schädlinge</span>
-          <span class="text-white">
+      }
+
+      <!-- Animated Round Leaderboard ("Hof-Rangliste — Zukunftsfähigkeit") -->
+      @if (leaderboard.length > 0) {
+        <div data-testid="round-leaderboard" class="bg-gray-950 border border-gray-800 rounded-lg p-3.5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-white tracking-tight">Hof-Rangliste — Zukunftsfähigkeit</h3>
+            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Kapital + Boden</span>
+          </div>
+          <div class="space-y-1.5">
+            @for (entry of leaderboard; track entry.uid) {
+              @let scoreDelta = entry.score - entry.prevScore;
+              <div
+                [attr.data-testid]="'leaderboard-row-' + entry.uid"
+                class="leaderboard-row flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-xs"
+                [class.bg-emerald-950]="entry.isCurrentPlayer"
+                [class.border-emerald-500]="entry.isCurrentPlayer"
+                [class.bg-slate-900]="!entry.isCurrentPlayer"
+                [class.border-slate-700]="!entry.isCurrentPlayer"
+                [class.rank-up]="entry.rankDelta > 0"
+                [class.rank-down]="0 > entry.rankDelta"
+              >
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="font-mono tabular-nums font-bold text-slate-200 w-6">#{{ entry.rank }}</span>
+                  <span
+                    data-testid="rank-delta-badge"
+                    class="font-mono tabular-nums text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0"
+                    [class.bg-emerald-950]="entry.rankDelta > 0"
+                    [class.text-emerald-300]="entry.rankDelta > 0"
+                    [class.border-emerald-500]="entry.rankDelta > 0"
+                    [class.bg-rose-950]="0 > entry.rankDelta"
+                    [class.text-rose-300]="0 > entry.rankDelta"
+                    [class.border-rose-500]="0 > entry.rankDelta"
+                    [class.bg-slate-800]="entry.rankDelta === 0"
+                    [class.text-slate-400]="entry.rankDelta === 0"
+                    [class.border-slate-700]="entry.rankDelta === 0"
+                    [attr.aria-label]="entry.rankDelta > 0 ? 'Rang verbessert um ' + entry.rankDelta : 0 > entry.rankDelta ? 'Rang verschlechtert um ' + (-entry.rankDelta) : 'Rang unverändert'"
+                  >
+                    @if (entry.rankDelta > 0) {
+                      ▲ +{{ entry.rankDelta }}
+                    } @else if (0 > entry.rankDelta) {
+                      ▼ {{ entry.rankDelta }}
+                    } @else {
+                      ━
+                    }
+                  </span>
+                  <span class="font-semibold text-white truncate">
+                    {{ entry.name }}
+                    @if (entry.isCurrentPlayer) {
+                      <span class="text-[10px] text-emerald-400 font-mono ml-1">(Du)</span>
+                    }
+                  </span>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0 font-mono tabular-nums">
+                  <div class="hidden sm:flex items-center gap-2 text-[11px] text-slate-300">
+                    <span>{{ entry.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+                    <span class="text-slate-600">|</span>
+                    <span>Ø {{ entry.avgSoil | number: '1.0-0' }}%</span>
+                  </div>
+                  <div class="text-right min-w-[78px]">
+                    <span class="font-bold text-white">{{ entry.score }} Pkt</span>
+                    <span
+                      class="block text-[10px]"
+                      [class.text-emerald-400]="scoreDelta > 0"
+                      [class.text-rose-400]="0 > scoreDelta"
+                      [class.text-slate-400]="scoreDelta === 0"
+                    >
+                      {{ scoreDelta > 0 ? '+' : '' }}{{ scoreDelta }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Weather / Events -->
+      <div class="bg-gray-950 border border-gray-800 rounded-lg p-3.5">
+        <h3 class="text-sm font-bold text-white mb-2">Bedingungen</h3>
+        <div class="flex justify-between mb-1 text-xs">
+          <span class="text-slate-300">Wetter</span>
+          <span class="text-white font-medium">{{ t(events?.weather || 'Normal') }}</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-300">Schädlinge</span>
+          <span class="text-white font-medium">
             @if (events?.vermin?.length) {
               @for (v of events?.vermin; track v; let last = $last) {
                 {{ t(v) }}{{ !last ? ', ' : '' }}
@@ -93,12 +247,12 @@
       <app-game-advisor [currentRound]="round" [previousRound]="previousRound" [enabled]="advisorEnabled" context="result"></app-game-advisor>
     </div>
 
-    <div class="mt-8 flex justify-center">
+    <div class="mt-6 flex justify-center">
       <button
+        type="button"
         (click)="onClose()"
         data-testid="close-round-result"
-
-        class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-8 rounded-full transition-all shadow-lg shadow-emerald-900/20"
+        class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-8 rounded-lg transition-colors border border-emerald-500"
       >
         Weiter
       </button>

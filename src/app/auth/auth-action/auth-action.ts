@@ -39,7 +39,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
         </div>
 
         <div
-          class="bg-gray-800/40 backdrop-blur-md border border-white/10 py-8 px-4 shadow-2xl rounded-3xl sm:px-10 text-center"
+          class="bg-gray-900 border border-white/10 py-8 px-4 shadow-2xl rounded-xl sm:px-10 text-center"
         >
           @if (status === 'loading') {
             <div class="text-center py-8">
@@ -52,7 +52,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
             <form [formGroup]="resetForm" (ngSubmit)="onResetPassword()" class="space-y-6 text-left py-4">
               <div>
                 <p class="text-sm text-gray-300 mb-6">
-                  Geben Sie ein neues Passwort für <strong>{{ resetEmail }}</strong> ein.
+                  Gib ein neues Passwort für <strong>{{ resetEmail }}</strong> ein.
                 </p>
                 <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Neues Passwort</label>
                 <input
@@ -61,7 +61,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
                   type="password"
                   autocomplete="new-password"
                   required
-                  class="appearance-none block w-full px-4 py-3 bg-gray-900/50 border border-white/10 rounded-xl shadow-sm placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm transition-all"
+                  class="appearance-none block w-full px-4 py-3 bg-gray-950 border border-white/10 rounded-xl shadow-sm placeholder-gray-500 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent sm:text-sm transition-all"
                 />
                 @if (resetForm.get('password')?.touched && resetForm.get('password')?.invalid) {
                   <p class="mt-2 text-sm text-red-400">Das Passwort muss mindestens 6 Zeichen lang sein.</p>
@@ -71,7 +71,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
               <button
                 type="submit"
                 [disabled]="resetForm.invalid || isSubmitting"
-                class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 disabled:bg-gray-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-colors overflow-hidden disabled:shadow-none"
+                class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 disabled:bg-gray-700 text-white text-lg font-bold rounded-xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-colors overflow-hidden disabled:shadow-none"
               >
                 @if (isSubmitting) {
                   <span class="relative z-10">Wird gespeichert...</span>
@@ -84,7 +84,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
 
           @if (status === 'success') {
             <div class="text-center py-8">
-              <div class="rounded-2xl bg-emerald-900/30 border border-emerald-500/20 p-4 mb-6">
+              <div class="rounded-xl bg-emerald-900/30 border border-emerald-500/20 p-4 mb-6">
                 <div class="flex items-center justify-center">
                   <svg class="h-6 w-6 text-emerald-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -96,7 +96,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
               </div>
                                           <a
                                             routerLink="/admin/login"
-                                            class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-colors overflow-hidden"
+                                            class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-xl shadow-[0_0_20px_rgba(6,95,70,0.4)] transition-colors overflow-hidden"
                                           >                <span class="relative z-10">Zum Login</span>
               </a>
             </div>
@@ -104,7 +104,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
 
           @if (status === 'error') {
             <div class="text-center py-8">
-              <div class="rounded-2xl bg-red-900/30 border border-red-500/20 p-4 mb-6">
+              <div class="rounded-xl bg-red-900/30 border border-red-500/20 p-4 mb-6">
                 <div class="flex items-center justify-center">
                   <svg class="h-6 w-6 text-red-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -116,7 +116,7 @@ import { FIREBASE_AUTH } from '../../firebase.config';
               </div>
                                           <a
                                             routerLink="/"
-                                            class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white text-lg font-bold rounded-2xl shadow-xl transition-colors overflow-hidden"
+                                            class="group relative inline-flex items-center justify-center w-full px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white text-lg font-bold rounded-xl shadow-xl transition-colors overflow-hidden"
                                           >                <span class="relative z-10">Zurück zur Startseite</span>
               </a>
             </div>
@@ -218,11 +218,11 @@ export class AuthActionComponent implements OnInit {
 
       await confirmPasswordReset(this.auth, this.oobCode, newPassword);
       this.status = 'success';
-      this.successMessage = 'Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich nun anmelden.';
+      this.successMessage = 'Dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich nun anmelden.';
       this.cdr.detectChanges();
     } catch (error: unknown) {
       console.error('Confirm password reset error:', error);
-      this.errorMessage = 'Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut.';
+      this.errorMessage = 'Fehler beim Zurücksetzen des Passworts. Bitte versuche es erneut.';
       this.status = 'error';
       this.cdr.detectChanges();
     } finally {

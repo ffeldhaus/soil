@@ -16,37 +16,46 @@
     <img
       [src]="'assets/images/' + getConfig(parcel.crop).image"
       [alt]="t('parcel.crop')"
-      class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+      draggable="false"
+      class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity select-none pointer-events-none"
       onerror="this.style.display = 'none'"
-      [attr.draggable]="!isReadOnly"
     />
   }
 
   <!-- Overlays Container -->
-  <div class="absolute inset-0 flex flex-col justify-evenly items-center pointer-events-none z-20 py-0.5">
+  <div class="absolute inset-0 flex flex-col justify-evenly items-center pointer-events-none z-20 py-0.5 px-0.5 overflow-hidden">
     <!-- Text Overlay (Name) -->
     @if (showLabels) {
-      <div class="bg-gray-300/90 text-gray-900 text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap">
+      <div class="bg-gray-300/90 text-gray-900 text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-gray-400/50 whitespace-nowrap max-w-full truncate">
         {{ t(getConfig(parcel.crop).label) }}
       </div>
     }
 
-  @if (showSoil) {
-    <div class="bg-emerald-700/90 text-white text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-emerald-400/50">
-      {{ parcel.soil }}%
-    </div>
-  }
+    @if (hasBadRotation) {
+      <div
+        data-testid="parcel-bad-rotation-badge"
+        class="bg-rose-950/95 text-rose-200 text-[clamp(6px,9.5cqw,11px)] leading-tight font-bold px-1.5 py-px rounded shadow-sm border border-rose-500/80 whitespace-nowrap max-w-full truncate"
+      >
+        Fruchtfolge ▼
+      </div>
+    }
 
-  @if (showHarvest && parcel.yield) {
-    <div class="bg-yellow-500/90 text-black text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-yellow-300">
-      {{ parcel.yield }} ({{ yieldPercentage }}%)
-    </div>
-  }
+    @if (showSoil) {
+      <div data-testid="parcel-soil-badge" class="bg-amber-900/90 text-white text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-amber-700/60 whitespace-nowrap">
+        {{ parcel.soil }}%
+      </div>
+    }
 
-  @if (showNutrition) {
-    <div class="bg-blue-600/90 text-white text-[clamp(7px,13cqw,14px)] font-bold px-1 rounded shadow-sm border border-blue-400/50">
-      {{ parcel.nutrition }}%
-    </div>
-  }
+    @if (showNutrition) {
+      <div class="bg-blue-600/90 text-white text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-blue-400/50 whitespace-nowrap">
+        {{ parcel.nutrition }}%
+      </div>
+    }
+
+    @if (showHarvest) {
+      <div data-testid="parcel-harvest-badge" class="bg-yellow-500/90 text-black text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-yellow-300 whitespace-nowrap">
+        {{ parcel.yield || 0 }} dt ({{ yieldPercentage }}%)
+      </div>
+    }
   </div>
 </div>

@@ -108,4 +108,196 @@ describe('GameEngine Consistency (Frontend)', () => {
     // Soil: 100 + 0.5 - 2.0 = 98.5 -> 99
     expect(round.parcelsSnapshot[0].soil).toBe(99);
   });
+
+  it('should create balanced heterogeneous starting parcels with exact 100.0 averages', () => {
+    const easyParcels = GameEngine.createInitialParcels('easy', 0);
+    expect(easyParcels.every((p) => p.soil === 100 && p.nutrition === 100)).toBe(true);
+
+    const normalP0 = GameEngine.createInitialParcels('normal', 0);
+    const normalP1 = GameEngine.createInitialParcels('normal', 1);
+    const avgSoilNormal = normalP0.reduce((s, p) => s + p.soil, 0) / 40;
+    const avgNutrNormal = normalP0.reduce((s, p) => s + p.nutrition, 0) / 40;
+    expect(avgSoilNormal).toBe(100);
+    expect(avgNutrNormal).toBe(100);
+    expect(normalP0[0].soil).not.toBe(normalP1[0].soil);
+
+    const hardP0 = GameEngine.createInitialParcels('hard', 0);
+    const avgSoilHard = hardP0.reduce((s, p) => s + p.soil, 0) / 40;
+    const avgNutrHard = hardP0.reduce((s, p) => s + p.nutrition, 0) / 40;
+    expect(avgSoilHard).toBe(100);
+    expect(avgNutrHard).toBe(100);
+    expect(Math.min(...hardP0.map((p) => p.soil))).toBe(76);
+    expect(Math.max(...hardP0.map((p) => p.soil))).toBe(124);
+  });
+
+  it('should enforce 2 grace rounds, roll HeatWave, and apply hard climate escalation', () => {
+    const r1 = GameEngine.rollRoundEvents(1, 20, 'hard');
+    const r2 = GameEngine.rollRoundEvents(2, 20, 'hard');
+    expect(r1).toEqual({ weather: 'Normal', vermin: [] });
+    expect(r2).toEqual({ weather: 'Normal', vermin: [] });
+
+    // HeatWave rolls in middle bucket for round 3+
+    const heatWave = GameEngine.rollWeather(5, 20, 'normal', 0.6);
+    expect(heatWave).toBe('HeatWave');
+
+    // Climate escalation on hard in later rounds intensifies yield loss
+    const prevRound: Round = {
+      number: 19,
+      parcelsSnapshot: GameEngine.createInitialParcels('easy'),
+      avgSoil: 100,
+      avgNutrition: 100,
+      decision: { parcels: {} } as any,
+    };
+    const decision: RoundDecision = {
+      machines: 0,
+      organic: false,
+      fertilizer: false,
+      pesticide: false,
+      organisms: false,
+      parcels: { 0: 'Beet' },
+    };
+    const normalDiffRound = GameEngine.calculateRound(
+      20,
+      prevRound,
+      decision,
+      { weather: 'Flood', vermin: [] },
+      100000,
+      20,
+      { difficulty: 'normal' },
+    );
+    const hardDiffRound = GameEngine.calculateRound(
+      20,
+      prevRound,
+      decision,
+      { weather: 'Flood', vermin: [] },
+      100000,
+      20,
+      { difficulty: 'hard' },
+    );
+    expect(hardDiffRound.parcelsSnapshot[0].yield!).toBeLessThan(normalDiffRound.parcelsSnapshot[0].yield!);
+  });
+
+  it('should calculate overdraft interest, regional contracts, sustainability score, and stickers', () => {
+    const prevParcels = GameEngine.createInitialParcels('easy').map((p) => ({
+      ...p,
+      soil: 106,
+      crop: 'Grass' as const,
+    }));
+    const prevRound: Round = {
+      number: 2,
+      parcelsSnapshot: prevParcels,
+      avgSoil: 106,
+      avgNutrition: 100,
+      decision: { parcels: {} } as any,
+    };
+    const parcels: Record<number, any> = {};
+    for (let i = 0; i < 30; i++) parcels[i] = 'Fieldbean';
+    for (let i = 30; i < 40; i++) parcels[i] = 'Wheat';
+
+    const decision: RoundDecision = {
+      machines: 0,
+      organic: true,
+      fertilizer: false,
+      pesticide: false,
+      organisms: true,
+      parcels,
+    };
+
+    const round = GameEngine.calculateRound(
+      2,
+      prevRound,
+      decision,
+      { weather: 'Drought', vermin: ['aphid-black'] },
+      -60000,
+      20,
+      { difficulty: 'hard' },
+    );
+
+    // Overdraft interest on -60,000 at 10% (hard) = 6,000
+    expect(round.result?.overdraftInterest).toBe(6000);
+    expect(round.result?.expenses.overdraftInterest).toBe(6000);
+    // Legume contract fulfilled in round 2 (+3,500)
+    expect(round.result?.contractBonus).toBe(3500);
+    expect(round.result?.unlockedStickers).toContain('humus-pionier');
+    expect(round.result?.unlockedStickers).toContain('fruchtfolge-meister');
+    expect(round.result?.unlockedStickers).toContain('vertrags-partner');
+    expect(round.result?.unlockedStickers).toContain('nuetzlings-allianz');
+    expect(typeof round.result?.sustainabilityScore).toBe('number');
+  });
+
+  it('should evaluate all 4 regional contracts accurately', () => {
+    const baseDecision = {
+      machines: 1,
+      organic: false,
+      fertilizer: false,
+      pesticide: false,
+      organisms: false,
+      parcels: {} as Record<number, any>,
+    };
+
+    const makeParcels = (crops: string[]) =>
+      Array.from({ length: 40 }, (_, i) => ({
+        index: i,
+        crop: (crops[i] || 'Fallow') as any,
+        soil: 100,
+        nutrition: 100,
+        yield: 0,
+      }));
+
+    // 1. legume-initiative: >= 6 Fieldbean or Pea
+    expect(
+      GameEngine.evaluateContractFulfillment('legume-initiative', makeParcels(Array(6).fill('Pea')), baseDecision, 90),
+    ).toBe(true);
+    expect(
+      GameEngine.evaluateContractFulfillment('legume-initiative', makeParcels(Array(5).fill('Pea')), baseDecision, 100),
+    ).toBe(false);
+
+    // 2. humus-steward: avgSoil >= 100 and >= 5 Grass or Fallow
+    expect(
+      GameEngine.evaluateContractFulfillment('humus-steward', makeParcels(Array(35).fill('Wheat')), baseDecision, 100),
+    ).toBe(true);
+    expect(
+      GameEngine.evaluateContractFulfillment('humus-steward', makeParcels(Array(35).fill('Wheat')), baseDecision, 99),
+    ).toBe(false);
+
+    // 3. regional-grain: >= 12 grain parcels across >= 2 grain species and avgSoil >= 95
+    expect(
+      GameEngine.evaluateContractFulfillment(
+        'regional-grain',
+        makeParcels([...Array(6).fill('Wheat'), ...Array(6).fill('Rye')]),
+        baseDecision,
+        95,
+      ),
+    ).toBe(true);
+    // Fails if only 1 grain species (monoculture windfall guard)
+    expect(
+      GameEngine.evaluateContractFulfillment('regional-grain', makeParcels(Array(15).fill('Wheat')), baseDecision, 100),
+    ).toBe(false);
+
+    // 4. eco-pioneer: !pesticide, >= 30 cultivated parcels, avgSoil >= 95
+    expect(
+      GameEngine.evaluateContractFulfillment(
+        'eco-pioneer',
+        makeParcels(Array(30).fill('Wheat')),
+        { ...baseDecision, pesticide: false },
+        95,
+      ),
+    ).toBe(true);
+    expect(
+      GameEngine.evaluateContractFulfillment(
+        'eco-pioneer',
+        makeParcels(Array(29).fill('Wheat')),
+        { ...baseDecision, pesticide: false },
+        95,
+      ),
+    ).toBe(false);
+    expect(
+      GameEngine.evaluateContractFulfillment(
+        'eco-pioneer',
+        makeParcels(Array(35).fill('Wheat')),
+        { ...baseDecision, pesticide: true },
+        100,
+      ),
+    ).toBe(false);
+  });
 });

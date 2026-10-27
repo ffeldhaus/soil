@@ -60,7 +60,7 @@ import { AuthService } from '../auth/auth.service';
             <a
               routerLink="/admin"
               data-testid="landing-manage-games"
-              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-2xl shadow-lg transition-colors overflow-hidden flex-1"
+              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-xl shadow-lg transition-colors overflow-hidden flex-1"
             >
               <span class="relative z-10 flex items-center justify-center gap-2"
                 >Spiele erstellen & verwalten</span
@@ -85,7 +85,7 @@ import { AuthService } from '../auth/auth.service';
       @defer (hydrate on viewport) {
         <div id="info-section" class="relative z-10 py-24 px-6 portrait:px-0">
           <div class="max-w-6xl mx-auto grid min-[860px]:grid-cols-2 gap-8 portrait:max-w-none">
-            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
+            <section class="bg-gray-900 p-5 md:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2
                   class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
@@ -119,7 +119,7 @@ import { AuthService } from '../auth/auth.service';
               </div>
             </section>
 
-            <section class="bg-gray-900/80 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
+            <section class="bg-gray-900 p-5 md:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2
                   class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
@@ -150,7 +150,7 @@ import { AuthService } from '../auth/auth.service';
 
           <!-- Test Mode (Dev Only) -->
           @if (showTestMode) {
-            <div class="mt-16 p-6 bg-red-900/20 border border-red-500/30 rounded-2xl max-w-xl mx-auto">
+            <div class="mt-16 p-6 bg-red-900/20 border border-red-500/30 rounded-xl max-w-xl mx-auto">
               <h3 class="text-red-400 font-bold mb-4">Test Mode (Dev Only)</h3>
               <div class="flex flex-wrap gap-4 justify-center">
                 <button (click)="enableTestMode('admin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Admin</button>

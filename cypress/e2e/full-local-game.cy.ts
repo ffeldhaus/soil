@@ -20,7 +20,10 @@ describe('Full Local Game & Research Upload', () => {
     cy.get('[data-testid="num-rounds-input"]').invoke('val', 10).trigger('change').trigger('input');
 
     // Intercept upload to verify it happens
-    cy.intercept('POST', '**/uploadFinishedGame').as('uploadFinished');
+    cy.intercept('POST', '**/uploadFinishedGame', {
+      statusCode: 200,
+      body: { result: { success: true } },
+    }).as('uploadFinished');
 
     cy.get('[data-testid="create-game-submit"]').click();
 

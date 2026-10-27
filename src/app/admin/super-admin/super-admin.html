@@ -20,7 +20,7 @@
       <!-- Loading Overlay -->
       @if (isLoadingData) {
         <div
-          class="absolute inset-0 z-40 bg-gray-900/50 backdrop-blur-sm flex items-start justify-center pt-12 animate-fade-in rounded-xl portrait:rounded-none"
+          class="absolute inset-0 z-40 bg-gray-950 flex items-start justify-center pt-12 animate-fade-in rounded-xl portrait:rounded-none"
         >
           <div
             class="flex flex-col items-center gap-3 bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700 portrait:rounded-none portrait:border-x-0"
@@ -44,7 +44,7 @@
       }
 
       <header
-        class="bg-gray-900/80 backdrop-blur-md p-8 rounded-3xl border border-gray-700 shadow-2xl flex justify-between items-center portrait:rounded-none portrait:border-x-0"
+        class="bg-gray-900 p-5 sm:p-6 rounded-xl border border-gray-700 shadow-2xl flex justify-between items-center portrait:rounded-none portrait:border-x-0"
       >
         <div class="space-y-1">
           <h2 class="text-3xl font-bold text-white">{{ t('superadmin.dashboard.title') }}</h2>
@@ -81,10 +81,10 @@
           </div>
           {{ t('superadmin.research.title') || 'Forschungsdaten (Cloud & Lokale Spiele)' }}
         </h2>
-        <div class="bg-gray-900/80 backdrop-blur-md rounded-3xl overflow-hidden border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
+        <div class="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-              <thead class="bg-gray-950/50 text-gray-400 text-xs uppercase tracking-wider">
+              <thead class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
                 <tr>
                   <th class="p-4 font-medium w-10"></th>
                   <th class="p-4 font-medium">{{ t('superadmin.table.game') || 'Spiel' }}</th>
@@ -98,7 +98,7 @@
                   <!-- Game Row (Collapsed/Main) -->
                   <tr 
                     (click)="toggleGameExpansion(game.id)"
-                    class="hover:bg-gray-800/50 transition cursor-pointer group"
+                    class="hover:bg-gray-950 transition cursor-pointer group"
                   >
                     <td class="p-4 text-center">
                       <svg 
@@ -138,7 +138,7 @@
                   <!-- Expanded Player Rows -->
                   @if (expandedGames.has(game.id)) {
                     @for (player of getPlayers(game); track player.uid) {
-                      <tr class="bg-gray-950/30 border-l-2 border-emerald-500/50 animate-fade-in">
+                      <tr class="bg-gray-950 border-l-2 border-emerald-500/50 animate-fade-in">
                         <td></td>
                         <td class="p-4 pl-8">
                           <div class="flex items-center gap-2">
@@ -212,11 +212,11 @@
           {{ t('superadmin.admins.title') }}
         </h2>
         <div
-          class="bg-gray-900/80 backdrop-blur-md rounded-3xl overflow-hidden border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0"
+          class="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0"
         >
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-              <thead class="bg-gray-950/50 text-gray-400 text-xs uppercase tracking-wider">
+              <thead class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
                 <tr>
                   <th class="p-4 font-medium">{{ t('superadmin.table.user') }}</th>
                   <th class="p-4 font-medium">{{ t('superadmin.table.role') }}</th>
@@ -228,7 +228,7 @@
               </thead>
               <tbody class="divide-y divide-gray-800 text-sm">
                 @for (admin of admins; track admin) {
-                  <tr class="hover:bg-gray-800/50 transition group">
+                  <tr class="hover:bg-gray-950 transition group">
                     <td class="p-4">
                       <div class="font-bold text-white">{{ admin.email }}</div>
                       <div class="text-xs text-gray-500 font-mono">{{ admin.uid }}</div>
@@ -362,7 +362,7 @@
 
                     <!-- Strategy Clusters -->
 
-                    <div class="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 border border-gray-700 shadow-2xl space-y-6">
+                    <div class="bg-gray-900 rounded-xl p-5 sm:p-6 border border-gray-700 shadow-2xl space-y-6">
 
                       <h3 class="text-xl font-bold text-white border-b border-gray-800 pb-4 flex justify-between items-center">
 
@@ -376,7 +376,7 @@
 
                         @for (strat of systemInsights[0].strategies; track strat.name) {
 
-                          <div class="bg-gray-950/50 p-4 rounded-2xl border border-white/5 group hover:border-purple-500/30 transition">
+                          <div class="bg-gray-950 p-4 rounded-xl border border-white/5 group hover:border-purple-500/30 transition">
 
                             <div class="flex justify-between items-start mb-2">
 
@@ -420,7 +420,7 @@
 
                     <!-- Balancing Report -->
 
-                    <div class="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 border border-gray-700 shadow-2xl space-y-6">
+                    <div class="bg-gray-900 rounded-xl p-5 sm:p-6 border border-gray-700 shadow-2xl space-y-6">
 
                       <h3 class="text-xl font-bold text-white border-b border-gray-800 pb-4">
 
@@ -430,7 +430,7 @@
 
                       
 
-                      <div class="bg-purple-900/10 p-4 rounded-2xl border border-purple-900/30 text-sm text-purple-200 leading-relaxed italic">
+                      <div class="bg-purple-900/10 p-4 rounded-xl border border-purple-900/30 text-sm text-purple-200 leading-relaxed italic">
 
                         {{ systemInsights[0].balancingReport.summary }}
 
@@ -446,7 +446,7 @@
 
                         @for (issue of systemInsights[0].balancingReport.issues; track issue.description) {
 
-                          <div class="flex gap-4 p-3 rounded-xl bg-gray-950/50 border border-white/5">
+                          <div class="flex gap-4 p-3 rounded-xl bg-gray-950 border border-white/5">
 
                             <div [ngClass]="{
 
@@ -492,7 +492,7 @@
 
                           @for (crop of systemInsights[0].balancingReport.cropAnalysis; track crop.crop) {
 
-                            <div class="p-2 rounded-lg bg-gray-950/30 border border-white/5 flex flex-col">
+                            <div class="p-2 rounded-lg bg-gray-950 border border-white/5 flex flex-col">
 
                               <div class="flex justify-between items-center mb-1">
 
@@ -519,7 +519,7 @@
                 }
 
          @else {
-          <div class="bg-gray-900/80 backdrop-blur-md rounded-3xl p-12 text-center border border-gray-700 border-dashed">
+          <div class="bg-gray-900 rounded-xl p-12 text-center border border-gray-700 border-dashed">
             <p class="text-gray-500">Noch keine System-Analysen verfügbar. Klicke auf "Jetzt analysieren", um die KI zu starten.</p>
           </div>
         }
@@ -541,11 +541,11 @@
           {{ t('superadmin.feedback.title') }}
         </h2>
         <div
-          class="bg-gray-900/80 backdrop-blur-md rounded-3xl overflow-hidden border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0"
+          class="bg-gray-900 rounded-xl overflow-hidden border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0"
         >
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-              <thead class="bg-gray-950/50 text-gray-400 text-xs uppercase tracking-wider">
+              <thead class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
                 <tr>
                   <th class="p-4 font-medium">{{ t('superadmin.feedback.table.user') }}</th>
                   <th class="p-4 font-medium">{{ t('superadmin.feedback.table.category') }}</th>
@@ -556,13 +556,13 @@
               </thead>
               <tbody class="divide-y divide-gray-800 text-sm">
                 @for (item of feedback; track item) {
-                  <tr class="hover:bg-gray-800/50 transition group">
+                  <tr class="hover:bg-gray-950 transition group">
                     <td class="p-4">
                       <div class="font-bold text-white">{{ item.userName }}</div>
                       <div class="text-xs text-gray-500">{{ item.userEmail }}</div>
                       <div class="mt-2 text-gray-300 italic">"{{ item.comment }}"</div>
                       @if (item.aiAnalysis) {
-                        <div class="mt-2 p-2 bg-gray-950/50 rounded text-xs border border-white/5">
+                        <div class="mt-2 p-2 bg-gray-950 rounded text-xs border border-white/5">
                           <div class="text-emerald-400 font-bold">AI Summary:</div>
                           <div class="text-gray-400">{{ item.aiAnalysis.summary }}</div>
                           <div class="text-emerald-400 font-bold mt-1">Suggested Actions:</div>
@@ -713,7 +713,7 @@
 
           @if (!isLoadingGames && adminGames.length === 0) {
             <div
-              class="p-12 bg-gray-900/80 backdrop-blur-md rounded-3xl text-center text-gray-500 border border-gray-700 border-dashed portrait:rounded-none portrait:border-x-0"
+              class="p-12 bg-gray-900 rounded-xl text-center text-gray-500 border border-gray-700 border-dashed portrait:rounded-none portrait:border-x-0"
             >
               <p class="text-lg">{{ t('superadmin.games.none') }}</p>
             </div>
@@ -725,7 +725,7 @@
             >
               @for (game of adminGames; track game) {
                 <div
-                  class="bg-gray-900/80 backdrop-blur-md rounded-3xl p-6 border border-gray-700 hover:border-emerald-500/50 transition shadow-2xl group relative portrait:rounded-none portrait:border-x-0"
+                  class="bg-gray-900 rounded-xl p-6 border border-gray-700 hover:border-emerald-500/50 transition shadow-2xl group relative portrait:rounded-none portrait:border-x-0"
                 >
                   <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition">
                     <button
@@ -772,7 +772,7 @@
                       <span class="text-gray-500">{{ t('superadmin.games.created') }}</span>
                       <span class="text-gray-300">{{ formatDate(game.createdAt) | date: 'shortDate' }}</span>
                     </div>
-                    <div class="text-[10px] text-gray-600 font-mono mt-2 truncate bg-gray-950/50 p-1 rounded">
+                    <div class="text-[10px] text-gray-600 font-mono mt-2 truncate bg-gray-950 p-1 rounded">
                       {{ game.id }}
                     </div>
                   </div>
@@ -780,7 +780,7 @@
                   <!-- Players & Evaluation -->
                   <div class="mt-4 pt-4 border-t border-gray-800 space-y-4">
                     @for (player of getPlayers(game); track player.uid) {
-                      <div class="bg-gray-950/30 p-3 rounded-xl border border-white/5">
+                      <div class="bg-gray-950 p-3 rounded-xl border border-white/5">
                         <div class="flex justify-between items-center mb-2">
                           <span class="text-sm font-bold text-gray-200">{{ player.displayName }}</span>
                           <button
@@ -864,7 +864,7 @@
     <!-- Delete Confirmation Modal -->
     @if (gameToDelete) {
       <div
-        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm portrait:p-0"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 portrait:p-0"
         (click)="cancelDelete()"
       >
         <div
@@ -955,7 +955,7 @@
               <input
                 [(ngModel)]="deleteConfirmInput"
                 placeholder="DELETE"
-                class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-red-500 focus:outline-none placeholder-gray-600"
+                class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:border-red-500 focus:outline-none placeholder-gray-600"
               />
             </div>
           }
@@ -990,13 +990,13 @@
     @if (showQuotaModal) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
         <!-- Modal Backdrop -->
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeQuotaModal()"></div>
+        <div class="absolute inset-0 bg-black/75" (click)="closeQuotaModal()"></div>
 
         <!-- Modal Content -->
         <div
-          class="relative bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden transform transition-all scale-100 portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
+          class="relative bg-gray-900 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden transform transition-all scale-100 portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
         >
-          <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/50">
+          <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-950">
             <h3 class="text-xl font-bold text-white flex items-center gap-2">
               <div class="p-1.5 bg-blue-500/20 rounded-lg text-blue-400">
                 <svg
@@ -1049,7 +1049,7 @@
             </div>
           </div>
 
-          <div class="p-6 bg-gray-800/50 border-t border-gray-800 flex justify-end gap-3">
+          <div class="p-6 bg-gray-950 border-t border-gray-800 flex justify-end gap-3">
             <button
               (click)="closeQuotaModal()"
               [disabled]="isSavingQuota"
@@ -1085,7 +1085,7 @@
     <!-- Feedback Action Modals -->
     @if (feedbackToManage) {
       <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="cancelFeedbackAction()"></div>
+        <div class="absolute inset-0 bg-black/75" (click)="cancelFeedbackAction()"></div>
         <div
           class="relative bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
           (click)="$event.stopPropagation()"
@@ -1136,7 +1136,7 @@
             </h3>
           </div>
 
-          <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-2">
+          <div class="bg-gray-950 p-4 rounded-lg border border-gray-700 mb-2">
             <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">
               Feedback from {{ feedbackToManage.userName }}
             </div>
@@ -1156,14 +1156,14 @@
                 <textarea
                   [(ngModel)]="feedbackValue"
                   rows="4"
-                  class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
+                  class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
                   placeholder="Write your response..."
                 ></textarea>
               }
               @if (feedbackAction === 'resolve') {
                 <input
                   [(ngModel)]="feedbackValue"
-                  class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 text-sm"
+                  class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 text-sm"
                   placeholder="GitHub issue link, etc."
                 />
               }

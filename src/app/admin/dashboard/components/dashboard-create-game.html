@@ -12,7 +12,7 @@
         placeholder="Game Name"
         data-testid="game-name-input"
         [placeholder]="t('dashboard.createGame.phName')"
-        class="w-full px-4 py-2 bg-gray-900/50 border rounded-lg text-white focus:outline-none mb-1"
+        class="w-full px-4 py-2 bg-gray-950 border rounded-lg text-white focus:outline-none mb-1"
         [class.border-red-500]="!newGameConfig.name"
         [class.border-gray-600]="newGameConfig.name"
         [class.focus:border-emerald-500]="newGameConfig.name"
@@ -32,7 +32,7 @@
         placeholder="Player"
         data-testid="player-label-input"
         [placeholder]="t('dashboard.createGame.phPlayer')"
-        class="w-full px-4 py-2 bg-gray-900/50 border rounded-lg text-white focus:outline-none mb-1"
+        class="w-full px-4 py-2 bg-gray-950 border rounded-lg text-white focus:outline-none mb-1"
         [class.border-red-500]="!newGameConfig.playerLabel"
         [class.border-gray-600]="newGameConfig.playerLabel"
         [class.focus:border-emerald-500]="newGameConfig.playerLabel"
@@ -73,6 +73,59 @@
     </div>
   </div>
 
+  <div class="mb-4">
+    <label class="block text-xs text-white mb-2">{{ t('dashboard.createGame.difficulty') }}</label>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3" role="radiogroup" [attr.aria-label]="t('dashboard.createGame.difficulty')">
+      <button
+        type="button"
+        role="radio"
+        data-testid="difficulty-easy"
+        [attr.aria-checked]="newGameConfig.difficulty === 'easy'"
+        (click)="onDifficultyChange('easy')"
+        class="text-left p-3 rounded-lg border transition-colors cursor-pointer"
+        [class.bg-emerald-950]="newGameConfig.difficulty === 'easy'"
+        [class.border-emerald-500]="newGameConfig.difficulty === 'easy'"
+        [class.bg-gray-900]="newGameConfig.difficulty !== 'easy'"
+        [class.border-gray-700]="newGameConfig.difficulty !== 'easy'"
+      >
+        <div class="text-sm font-bold text-white mb-1">{{ t('difficulty.easy.title') }}</div>
+        <div class="text-[11px] text-gray-300 leading-snug">{{ t('difficulty.easy.desc') }}</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        data-testid="difficulty-normal"
+        [attr.aria-checked]="newGameConfig.difficulty === 'normal'"
+        (click)="onDifficultyChange('normal')"
+        class="text-left p-3 rounded-lg border transition-colors cursor-pointer"
+        [class.bg-emerald-950]="newGameConfig.difficulty === 'normal'"
+        [class.border-emerald-500]="newGameConfig.difficulty === 'normal'"
+        [class.bg-gray-900]="newGameConfig.difficulty !== 'normal'"
+        [class.border-gray-700]="newGameConfig.difficulty !== 'normal'"
+      >
+        <div class="text-sm font-bold text-white mb-1">{{ t('difficulty.normal.title') }}</div>
+        <div class="text-[11px] text-gray-300 leading-snug">{{ t('difficulty.normal.desc') }}</div>
+      </button>
+
+      <button
+        type="button"
+        role="radio"
+        data-testid="difficulty-hard"
+        [attr.aria-checked]="newGameConfig.difficulty === 'hard'"
+        (click)="onDifficultyChange('hard')"
+        class="text-left p-3 rounded-lg border transition-colors cursor-pointer"
+        [class.bg-emerald-950]="newGameConfig.difficulty === 'hard'"
+        [class.border-emerald-500]="newGameConfig.difficulty === 'hard'"
+        [class.bg-gray-900]="newGameConfig.difficulty !== 'hard'"
+        [class.border-gray-700]="newGameConfig.difficulty !== 'hard'"
+      >
+        <div class="text-sm font-bold text-white mb-1">{{ t('difficulty.hard.title') }}</div>
+        <div class="text-[11px] text-gray-300 leading-snug">{{ t('difficulty.hard.desc') }}</div>
+      </button>
+    </div>
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
     <div>
       <div class="flex justify-between items-center mb-1">
@@ -94,7 +147,7 @@
         <select
           [(ngModel)]="newGameConfig.aiLevel"
           data-testid="ai-level-select"
-          class="w-full h-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none appearance-none cursor-pointer transition-colors"
+          class="w-full h-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none appearance-none cursor-pointer transition-colors"
         >
           <option value="elementary" class="bg-gray-900 text-white">{{ t('ai.level.elementary') }}</option>
           <option value="middle" class="bg-gray-900 text-white">{{ t('ai.level.middle') }}</option>
@@ -109,7 +162,7 @@
     </div>
   </div>
 
-  <div class="space-y-3 mb-6 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
+  <div class="space-y-3 mb-6 p-3 bg-gray-950 rounded-lg border border-gray-700/50">
     <div class="flex items-center gap-3">
       <input
         type="checkbox"
@@ -149,7 +202,7 @@
   </div>
 
   @if (numHumanPlayers > 1 && isGuest) {
-    <div class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-2xl flex items-start gap-3 animate-fade-in">
+    <div class="mb-6 p-4 bg-blue-900/30 border border-blue-500/50 rounded-xl flex items-start gap-3 animate-fade-in">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
@@ -192,10 +245,10 @@
   </button>
 
   @if (newGameConfig.analyticsEnabled) {
-    <div class="mt-4 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
+    <div class="mt-4 p-3 bg-gray-950 rounded-lg border border-gray-700/50">
       <p class="text-[9px] text-white leading-relaxed italic">
         <strong>Hinweis:</strong> Spieldaten werden für Forschungszwecke und die Spielbalance **anonymisiert** ausgewertet. 
-        Details zur Datenverarbeitung finden Sie in der 
+        Details zur Datenverarbeitung stehen in der 
         <a routerLink="/privacy" class="text-emerald-500 hover:underline">Datenschutzerklärung</a>.
       </p>
     </div>

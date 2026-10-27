@@ -480,6 +480,10 @@ export class GameService {
     return this.parcels$;
   }
 
+  hasPendingParcelDecisions(): boolean {
+    return Object.keys(this.pendingDecisions).length > 0;
+  }
+
   async createGame(
     name: string,
     config: {
@@ -487,6 +491,7 @@ export class GameService {
       numRounds: number;
       numAi: number;
       aiLevel?: string;
+      difficulty?: 'easy' | 'normal' | 'hard';
       playerLabel: string;
       advancedPricingEnabled?: boolean;
       analyticsEnabled?: boolean;
@@ -507,7 +512,7 @@ export class GameService {
     try {
       const settings = {
         length: config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS,
-        difficulty: 'normal',
+        difficulty: config.difficulty || 'normal',
         playerLabel: config.playerLabel || 'Player',
       };
       const fn = this.createGameFn;

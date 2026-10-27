@@ -1,9 +1,9 @@
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75"
   (click)="settingsCancelled.emit()"
 >
   <div
-    class="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl p-6 max-w-xl w-full"
+    class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4 sm:p-5 max-w-xl w-full"
     (click)="$event.stopPropagation()"
     role="dialog"
     aria-modal="true"
@@ -108,10 +108,10 @@
                 [attr.data-testid]="'price-fixing-' + crop"
                 class="flex items-center justify-between px-3 py-2 rounded-lg border transition-all text-sm"
                 [class]="{
-                  'bg-amber-900/30': isPriceFixed(crop),
-                  'border-amber-500/50': isPriceFixed(crop),
+                  'bg-amber-950': isPriceFixed(crop),
+                  'border-amber-500': isPriceFixed(crop),
                   'text-amber-200': isPriceFixed(crop),
-                  'bg-gray-800/50': !isPriceFixed(crop),
+                  'bg-gray-800': !isPriceFixed(crop),
                   'border-gray-700': !isPriceFixed(crop),
                   'text-gray-300': !isPriceFixed(crop)
                 }"

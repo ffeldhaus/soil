@@ -1,9 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { GAME_CONSTANTS } from '../../game-constants';
-import type { Round } from '../../types';
+import { GAME_CONSTANTS, STICKER_DEFINITIONS } from '../../game-constants';
+import type { CollectibleSticker, Round } from '../../types';
 import { GameAdvisorComponent } from '../advisor/advisor';
+
+export interface LeaderboardEntry {
+  uid: string;
+  name: string;
+  isAi?: boolean;
+  score: number;
+  prevScore: number;
+  rank: number;
+  prevRank: number;
+  rankDelta: number;
+  capital: number;
+  avgSoil: number;
+  isCurrentPlayer: boolean;
+}
 
 @Component({
   selector: 'app-round-result-modal',
@@ -16,6 +30,8 @@ export class RoundResultModal {
   @Input() round!: Round;
   @Input() previousRound?: Round;
   @Input() advisorEnabled = true;
+  @Input() leaderboard: LeaderboardEntry[] = [];
+  @Input() difficulty: 'easy' | 'normal' | 'hard' = 'normal';
   @Output() resultClosed = new EventEmitter<void>();
 
   t(key: string): string {
@@ -49,6 +65,24 @@ export class RoundResultModal {
     return this.round.result?.subsidies ?? 0;
   }
 
+  get contractBonus(): number {
+    const res = this.round?.result;
+    if (!res) return 0;
+    if (typeof res.contractBonus === 'number') return res.contractBonus;
+    const subAny = res.subsidies as unknown as { contractBonus?: number } | undefined;
+    return typeof subAny?.contractBonus === 'number' ? subAny.contractBonus : 0;
+  }
+
+  get overdraftInterest(): number {
+    const res = this.round?.result;
+    if (!res) return 0;
+    return res.overdraftInterest ?? res.expenses?.overdraftInterest ?? 0;
+  }
+
+  get insolvent(): boolean {
+    return Boolean(this.round?.result?.insolvent);
+  }
+
   get income() {
     return this.round.result?.income ?? 0;
   }
@@ -63,6 +97,23 @@ export class RoundResultModal {
 
   get machineLevel() {
     return this.round.result?.machineRealLevel ?? 0;
+  }
+
+  getUnlockedStickerDetails(): CollectibleSticker[] {
+    const ids = this.round?.result?.unlockedStickers || [];
+    return ids
+      .map((id) => STICKER_DEFINITIONS.find((s) => s.id === id))
+      .filter((s): s is CollectibleSticker => Boolean(s));
+  }
+
+  getCategoryLabel(category: CollectibleSticker['category']): string {
+    const labels: Record<CollectibleSticker['category'], string> = {
+      soil: 'Boden',
+      economy: 'Ökonomie',
+      resilience: 'Resilienz',
+      mastery: 'Meisterschaft',
+    };
+    return labels[category] || category;
   }
 
   onClose() {

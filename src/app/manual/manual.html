@@ -1,5 +1,4 @@
 <div class="flex flex-col h-full text-white font-sans overflow-hidden">
-  <!-- Navigation Bar -->
   <div #scrollContainer class="flex-1 overflow-y-auto custom-scrollbar relative"
     [ngClass]="{
       'print-a4': printSize === 'A4',
@@ -10,7 +9,7 @@
   >
     <!-- Navigation Bar -->
     <nav
-      class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
+      class="bg-gray-900 border-b border-gray-800 shadow-md px-4 sm:px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
     >
       <div class="flex items-center gap-4">
         <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
@@ -19,10 +18,10 @@
       <div class="flex items-center gap-3">
         <button
           (click)="showPrintModal = true"
-          class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-10 h-10 flex items-center justify-center"
+          class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-8 h-8 flex items-center justify-center"
           [title]="t('manual.print')"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -42,92 +41,98 @@
       </picture>
     </div>
 
-    <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-[72px] pb-12 portrait:px-0 portrait:max-w-none flex flex-col gap-8">
+    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-14 pb-8">
       <header
-        class="order-1 text-left bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0 relative"
+        class="mb-5 p-4 sm:p-5 bg-gray-900 rounded-xl border border-gray-800 shadow-lg"
       >
-        <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">
+        <h1 class="text-2xl sm:text-4xl font-bold text-emerald-500 mb-1.5 tracking-tight">
           {{ t('manual.title') }}
         </h1>
-        <p class="text-xl text-white max-w-2xl">{{ t('manual.subtitle') }}</p>
+        <p class="text-sm sm:text-base text-gray-200 max-w-2xl">{{ t('manual.subtitle') }}</p>
       </header>
 
-      <!-- Table of Contents -->
-      <aside
-        class="order-2 w-full min-[1400px]:w-52 min-[1400px]:absolute min-[1400px]:left-full min-[1400px]:ml-2 min-[1400px]:top-[72px] min-[1400px]:order-none print:hidden shrink-0 z-40 portrait:border-x-0"
-      >
-        <div class="min-[1400px]:sticky min-[1400px]:top-12 bg-gray-900/80 backdrop-blur-md p-6 rounded-3xl border border-gray-700 shadow-xl h-fit portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
-            <span>📋</span>
+      <div class="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-6 items-start">
+        <!-- Table of Contents -->
+        <aside
+          class="mb-5 lg:mb-0 lg:sticky lg:top-14 bg-gray-900 border border-gray-800 rounded-xl p-3 print:hidden"
+        >
+          <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 px-2">
             {{ t('manual.toc.title') }}
           </h2>
-          <nav class="flex flex-col gap-2">
+          <nav class="flex flex-row flex-wrap lg:flex-col gap-1">
             <a
               routerLink="."
               fragment="intro"
-              class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              class="text-xs sm:text-sm text-gray-200 hover:text-white hover:bg-gray-800 px-2.5 py-1.5 rounded-lg transition"
             >
-              <span class="text-sm">📖</span>
               {{ t('manual.intro.title') }}
             </a>
             <a
               routerLink="."
-              fragment="concepts"
-              class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              fragment="difficulty"
+              class="text-xs sm:text-sm text-gray-200 hover:text-white hover:bg-gray-800 px-2.5 py-1.5 rounded-lg transition"
             >
-              <span class="text-sm">💡</span>
+              {{ t('manual.difficulty.title') }}
+            </a>
+            <a
+              routerLink="."
+              fragment="scoring"
+              class="text-xs sm:text-sm text-gray-200 hover:text-white hover:bg-gray-800 px-2.5 py-1.5 rounded-lg transition"
+            >
+              {{ t('manual.scoring.title') }}
+            </a>
+            <a
+              routerLink="."
+              fragment="concepts"
+              class="text-xs sm:text-sm text-gray-200 hover:text-white hover:bg-gray-800 px-2.5 py-1.5 rounded-lg transition"
+            >
               {{ t('manual.concepts.title') }}
             </a>
             <a
               routerLink="."
               fragment="husbandry"
-              class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              class="text-xs sm:text-sm text-gray-200 hover:text-white hover:bg-gray-800 px-2.5 py-1.5 rounded-lg transition"
             >
-              <span class="text-sm">🐖</span>
               {{ t('manual.husbandry.title') }}
             </a>
             <a
               routerLink="."
               fragment="crops"
-              class="text-white hover:text-white hover:bg-white/5 px-3 py-2 rounded-xl transition flex items-center gap-2"
+              class="text-xs sm:text-sm text-gray-200 hover:text-white hover:bg-gray-800 px-2.5 py-1.5 rounded-lg transition"
             >
-              <span class="text-sm">🌾</span>
               {{ t('manual.crops.title') }}
             </a>
-            <div class="ml-4 flex flex-col gap-1 mt-1 border-l border-gray-800">
+            <div class="hidden lg:flex flex-col gap-0.5 ml-2 pl-2 border-l border-gray-800 mt-0.5">
               @for (crop of crops; track crop.id) {
                 <a
                   routerLink="."
                   [fragment]="crop.id.toLowerCase()"
-                  class="text-sm text-white hover:text-emerald-400 px-3 py-1 transition"
+                  class="text-xs text-gray-400 hover:text-emerald-400 px-2 py-1 rounded transition"
                 >
                   {{ crop.name }}
                 </a>
               }
             </div>
           </nav>
-        </div>
-      </aside>
+        </aside>
 
-      <div class="order-3 relative flex flex-col gap-8">
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col gap-8 w-full min-w-0">
+        <div class="space-y-6 min-w-0">
           <!-- General Section -->
           <section
             id="intro"
-            class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl scroll-mt-24 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
+            class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg scroll-mt-16 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-6"
           >
-            <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
-              <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">📖</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 mb-4 print:text-emerald-700 tracking-tight">
               {{ t('manual.intro.title') }}
             </h2>
-            <div class="grid md:grid-cols-2 gap-12 text-white leading-relaxed print:text-gray-700">
-              <div>
-                <h3 class="text-xl font-bold text-white mb-4 print:text-black">{{ t('manual.intro.goal.title') }}</h3>
+            <div class="grid md:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base text-gray-200 leading-relaxed print:text-gray-700">
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h3 class="text-base font-bold text-white mb-2 print:text-black">{{ t('manual.intro.goal.title') }}</h3>
                 <p>{{ t('manual.intro.goal.text') }}</p>
               </div>
-              <div>
-                <h3 class="text-xl font-bold text-white mb-4 print:text-black">
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h3 class="text-base font-bold text-white mb-2 print:text-black">
                   {{ t('manual.intro.mechanics.title') }}
                 </h3>
                 <p>{{ t('manual.intro.mechanics.text') }}</p>
@@ -135,16 +140,87 @@
             </div>
           </section>
 
+          <!-- Difficulty & Weather/Contracts Section -->
+          <section
+            id="difficulty"
+            class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg scroll-mt-16 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-6"
+          >
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 mb-4 print:text-emerald-700 tracking-tight">
+              {{ t('manual.difficulty.title') }}
+            </h2>
+            <div class="grid md:grid-cols-3 gap-4 text-gray-200 leading-relaxed print:text-gray-700 mb-6">
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h3 class="text-base font-bold text-emerald-400 mb-1.5 print:text-emerald-700">
+                  {{ t('manual.difficulty.easy.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm">{{ t('manual.difficulty.easy.text') }}</p>
+              </div>
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h3 class="text-base font-bold text-emerald-400 mb-1.5 print:text-emerald-700">
+                  {{ t('manual.difficulty.normal.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm">{{ t('manual.difficulty.normal.text') }}</p>
+              </div>
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h3 class="text-base font-bold text-emerald-400 mb-1.5 print:text-emerald-700">
+                  {{ t('manual.difficulty.hard.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm">{{ t('manual.difficulty.hard.text') }}</p>
+              </div>
+            </div>
+
+            <h3 class="text-lg font-bold text-emerald-400 mb-3 print:text-emerald-700">
+              {{ t('manual.weatherContracts.title') }}
+            </h3>
+            <div class="grid md:grid-cols-2 gap-4 text-gray-200 leading-relaxed print:text-gray-700">
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h4 class="text-sm font-bold text-white mb-1.5 print:text-black">
+                  {{ t('manual.weatherContracts.grace.title') }}
+                </h4>
+                <p class="text-xs sm:text-sm">{{ t('manual.weatherContracts.grace.text') }}</p>
+              </div>
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h4 class="text-sm font-bold text-white mb-1.5 print:text-black">
+                  {{ t('manual.weatherContracts.contracts.title') }}
+                </h4>
+                <p class="text-xs sm:text-sm">{{ t('manual.weatherContracts.contracts.text') }}</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sustainability Score & Hof-Sticker Section -->
+          <section
+            id="scoring"
+            class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg scroll-mt-16 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-6"
+          >
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 mb-4 print:text-emerald-700 tracking-tight">
+              {{ t('manual.scoring.title') }}
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4 sm:gap-6 text-sm sm:text-base text-gray-200 leading-relaxed print:text-gray-700">
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h3 class="text-base font-bold text-white mb-2 print:text-black">
+                  {{ t('manual.scoring.viability.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm">{{ t('manual.scoring.viability.text') }}</p>
+              </div>
+              <div class="bg-gray-950 p-4 rounded-lg border border-gray-800 print:bg-gray-50 print:border-gray-200">
+                <h3 class="text-base font-bold text-white mb-2 print:text-black">
+                  {{ t('manual.scoring.stickers.title') }}
+                </h3>
+                <p class="text-xs sm:text-sm">{{ t('manual.scoring.stickers.text') }}</p>
+              </div>
+            </div>
+          </section>
+
           <!-- Concepts Section -->
           <section
             id="concepts"
-            class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl scroll-mt-24 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
+            class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg scroll-mt-16 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-6"
           >
-            <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
-              <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">💡</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 mb-4 print:text-emerald-700 tracking-tight">
               {{ t('manual.concepts.title') }}
             </h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 portrait:gap-8 portrait:divide-y-0">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               @for (
                 concept of ['units', 'pest', 'rotation', 'requirements', 'weather', 'yield', 'price', 'machines', 'bio'];
                 track concept;
@@ -160,48 +236,41 @@
           <!-- Husbandry Section -->
           <section
             id="husbandry"
-            class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl scroll-mt-24 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
+            class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg scroll-mt-16 print-page-break-after print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-6"
           >
-            <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
-              <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">🐖</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 mb-3 print:text-emerald-700 tracking-tight">
               {{ t('manual.husbandry.title') }}
             </h2>
-            <div class="flex flex-col gap-12 sm:gap-20 leading-relaxed text-white print:text-gray-700">
+            <div class="flex flex-col gap-4 leading-relaxed text-sm sm:text-base text-gray-200 print:text-gray-700">
               <p>{{ t('manual.husbandry.text') }}</p>
               @for (crop of husbandryCrops; track crop.id) {
-                <div class="flex flex-col gap-12 sm:gap-20">
-                  @defer (hydrate on viewport) {
-                    <app-manual-crop-card [id]="crop.id.toLowerCase()" [crop]="crop"></app-manual-crop-card>
-                  }
-                </div>
+                @defer (hydrate on viewport) {
+                  <app-manual-crop-card [id]="crop.id.toLowerCase()" [crop]="crop"></app-manual-crop-card>
+                }
               }
             </div>
           </section>
 
-                          <!-- Crops Section -->
-                          <section
-                            id="crops"
-                            class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl scroll-mt-24 print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-8 portrait:rounded-none portrait:border-x-0"
-                          >            <h2 class="text-3xl font-bold text-emerald-400 mb-8 flex items-center gap-3 print:text-emerald-700">
-              <span class="bg-emerald-900/50 p-2 rounded-xl text-2xl print:bg-emerald-100">🌾</span>
+          <!-- Crops Section -->
+          <section
+            id="crops"
+            class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg scroll-mt-16 print:bg-white print:border-gray-200 print:shadow-none print:m-0 print:mb-6"
+          >
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 mb-4 print:text-emerald-700 tracking-tight">
               {{ t('manual.crops.title') }}
             </h2>
-            <div class="flex flex-col gap-12 sm:gap-20">
+            <div class="flex flex-col gap-5">
               @for (crop of crops; track crop.id) {
-                <div class="flex flex-col gap-12 sm:gap-20">
-                  @defer (hydrate on viewport) {
-                    <app-manual-crop-card [id]="crop.id.toLowerCase()" [crop]="crop"></app-manual-crop-card>
-                  }
-                  @if (!$last) {
-                    <div class="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
-                  }
-                </div>
-                          }
-                        </div>
-                      </section>
-                    </div>
-                  </div>
-                </div>  </div>
+                @defer (hydrate on viewport) {
+                  <app-manual-crop-card [id]="crop.id.toLowerCase()" [crop]="crop"></app-manual-crop-card>
+                }
+              }
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
 
   <!-- Print Settings Modal -->
   @if (showPrintModal) {

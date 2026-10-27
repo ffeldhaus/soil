@@ -1,0 +1,89 @@
+@reference "tailwindcss";
+
+.planting-modal-container {
+  width: 96vw;
+  max-width: min(96vw, 980px);
+  min-width: min(92vw, 320px);
+  margin: 0 auto;
+}
+
+.planting-grid {
+  display: grid;
+  --grid-gap: 0.625rem;
+  gap: var(--grid-gap);
+  margin: 0 auto;
+  overflow: hidden;
+
+  --cols: 3;
+  --rows: 4;
+  --modal-overhead: 135px;
+  --avail-h: calc(100dvh - var(--modal-overhead));
+
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), max-content);
+
+  width: min(
+    100%,
+    calc(
+      (var(--avail-h) - 8px - (var(--rows) - 1) * var(--grid-gap)) * (var(--cols) / var(--rows))
+      + (var(--cols) - 1) * var(--grid-gap)
+      + 8px
+    )
+  );
+  max-width: none;
+  max-height: none;
+}
+
+@media (min-width: 640px) {
+  .planting-grid {
+    --grid-gap: 0.75rem;
+    --modal-overhead: 160px;
+  }
+}
+
+@media (orientation: landscape) {
+  .planting-grid {
+    --cols: 4;
+    --rows: 3;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .planting-grid {
+    --cols: 6;
+    --rows: 2;
+    --grid-gap: 0.5rem;
+    --modal-overhead: 120px;
+  }
+}
+
+.crop-tile {
+  transition:
+    border-color 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+.crop-tile img {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.impact-badge-strong-positive {
+  background-color: #064e3b;
+  color: #ecfdf5;
+  border-color: #10b981;
+}
+
+.impact-badge-slight-positive {
+  background-color: #47594e;
+  color: #dce6df;
+  border-color: #759180;
+}
+
+.impact-badge-neutral {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+

@@ -225,4 +225,8 @@ The application implements an automatic performance monitoring and tiering syste
 - **Cognitive Complexity**: Refactor `functions/src/game-engine.ts` (specifically `calculateRound`) to reduce cognitive complexity from ~54 to below 15.
 - **Biome HTML**: Re-enable Biome's HTML linter and formatter once the parser better supports Tailwind's opacity syntax (`/30`) in Angular class bindings.
 - **Naming Conventions**: Periodically review and align project naming conventions closer to Biome defaults (e.g., removing the need for `$`, `_`, or `CONSTANT_CASE` object properties where possible).
+- **Public Research Data & API/MCP**: Make the anonymized analytic and research game data publicly accessible via a dedicated website view, a public API, and an MCP server so researchers can easily query and analyze it.
+- **Parcel Graphics**: Replace the pixel graphics for the parcels with high-quality, animated SVG graphics (with GIF fallback).
+- **Multiple Pests & Intensities**: Evaluate whether rounds should support multiple simultaneous pests or varying pest outbreak intensities.
+- **Multiple Pests & Intensities**: Evaluate whether rounds should support multiple simultaneous pests or varying pest outbreak intensities.
 

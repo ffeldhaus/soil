@@ -111,6 +111,9 @@ export class AiAgent {
     const mainCrops: CropType[] = ['Wheat', 'Barley', 'Potato', 'Corn', 'Beet', 'Rapeseed', 'Pea'];
     const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
     const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 100;
+    const averageNutrition = hasParcels
+      ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.nutrition, 0) / 40
+      : 100;
     const currentCapital = previousRound?.result?.capital ?? 100000;
 
     const isEcoFriendly = strategyVariant > 0.7;
@@ -128,9 +131,10 @@ export class AiAgent {
     }
 
     if (!decision.organic) {
-      decision.fertilizer = averageSoil < 110 + (personality - 0.5) * 20;
+      decision.fertilizer = averageNutrition < 90 + (personality - 0.5) * 15;
       decision.pesticide = Math.random() > (isIndustrialist ? 0.05 : 0.15);
     } else {
+      decision.fertilizer = averageNutrition < 85;
       decision.organisms = isCriticallyLow ? false : Math.random() > (isEcoFriendly ? 0.1 : 0.3);
     }
 
@@ -199,6 +203,9 @@ export class AiAgent {
     const crops = Object.keys(GAME_CONSTANTS.CROPS) as CropType[];
     const hasParcels = previousRound?.parcelsSnapshot && previousRound.parcelsSnapshot.length === 40;
     const averageSoil = hasParcels ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.soil, 0) / 40 : 100;
+    const averageNutrition = hasParcels
+      ? previousRound.parcelsSnapshot.reduce((acc, p) => acc + p.nutrition, 0) / 40
+      : 100;
     const currentCapital = previousRound?.result?.capital ?? 100000;
 
     // Perfect AI: Strictly profit-oriented with soil as secondary constraint
@@ -213,7 +220,7 @@ export class AiAgent {
       decision.machines = 1;
     }
 
-    decision.fertilizer = averageSoil < 100 && currentCapital > 50000;
+    decision.fertilizer = averageNutrition < 90 && currentCapital > 50000;
     decision.pesticide = currentCapital > 40000; // Only use if we can afford
 
     // 4. OPTIMAL CROP SELECTION

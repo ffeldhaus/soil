@@ -18,6 +18,7 @@ describe('PWA Restructure & Offline-First Scenarios', () => {
 
     // 3. Auto-join redirect to Game Board
     cy.url().should('include', '/game');
+    cy.get('[data-testid="welcome-close-btn"]').should('be.visible').click();
     cy.get('[data-testid="round-indicator"]').should('contain', '0');
 
     // 4. Play Round 1
@@ -53,6 +54,7 @@ describe('PWA Restructure & Offline-First Scenarios', () => {
     cy.get('[data-testid="game-name-input"]').clear().type('Guest Game');
     cy.get('[data-testid="create-game-submit"]').click();
     cy.url().should('include', '/game');
+    cy.get('[data-testid="welcome-close-btn"]').should('be.visible').click();
 
     // Play one round to have some state
     cy.get('[data-testid="parcel"]').eq(0).click();

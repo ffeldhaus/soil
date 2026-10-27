@@ -3,3 +3,30 @@
   scrollbar-width: thin;
   scrollbar-color: #374151 rgba(17, 24, 39, 0.5);
 }
+
+@keyframes leaderboardRowSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.leaderboard-row {
+  animation: leaderboardRowSlide 220ms ease-out both;
+  transition:
+    background-color 180ms ease-out,
+    border-color 180ms ease-out;
+}
+
+.leaderboard-row.rank-up {
+  border-left: 2px solid #10b981;
+}
+
+.leaderboard-row.rank-down {
+  border-left: 2px solid #f43f5e;
+}
+

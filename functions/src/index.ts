@@ -934,52 +934,21 @@ async function performCalculation(
   }
 
   const nextRoundNumber = currentRound + 1;
-
-  const weatherRoll = Math.random();
-  const weather =
-    nextRoundNumber === 1
-      ? 'Normal'
-      : weatherRoll > 0.75
-        ? 'Drought'
-        : weatherRoll > 0.6
-          ? 'LateFrost'
-          : weatherRoll < 0.1
-            ? 'Flood'
-            : weatherRoll < 0.2
-              ? 'Storm'
-              : 'Normal';
-
-  const vermin: string[] = [];
-  const pestRoll = Math.random();
-  // 80% chance of at least one pest (mostly 1 or 2)
-  const numPests = pestRoll < 0.2 ? 0 : pestRoll < 0.6 ? 1 : 2;
-
-  if (numPests > 0) {
-    const availablePests = [
-      'aphid-black',
-      'aphid-cereal',
-      'potato-beetle',
-      'corn-borer',
-      'pollen-beetle',
-      'pea-moth',
-      'oat-rust',
-      'nematode',
-      'swine-fever',
-    ];
-    for (let i = 0; i < numPests; i++) {
-      const p = availablePests[Math.floor(Math.random() * availablePests.length)];
-      if (!vermin.includes(p)) vermin.push(p);
-    }
-  }
-  const events = {
-    weather,
-    vermin,
-  };
+  const difficulty = (game.settings?.difficulty || 'normal') as 'easy' | 'normal' | 'hard';
 
   // Fetch previous round data once for all players
   const prevRoundRef = gameRef.collection('rounds').doc(`round_${game.currentRoundNumber || 0}`);
   const prevRoundSnap = await transaction.get(prevRoundRef);
   const prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : undefined;
+
+  const firstPlayerUid = Object.keys(players)[0];
+  const prevRoundForWeather =
+    firstPlayerUid && prevRoundGlobalData?.playerData?.[firstPlayerUid]
+      ? (prevRoundGlobalData.playerData[firstPlayerUid] as Round)
+      : undefined;
+
+  const events = GameEngine.rollRoundEvents(nextRoundNumber, roundLimit, difficulty, prevRoundForWeather?.nextWeather);
+  const upcomingWeather = GameEngine.rollWeather(nextRoundNumber + 1, roundLimit, difficulty);
 
   const allPlayerRounds: Record<string, Round> = {};
   const totalYields: Record<string, number> = {};
@@ -1007,6 +976,7 @@ async function performCalculation(
       events,
       0, // capital doesn't matter for yields
       game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS,
+      { difficulty, nextWeather: upcomingWeather },
     );
 
     playerHarvests[uid] = tempRound.result?.harvestSummary || {};
@@ -1068,6 +1038,8 @@ async function performCalculation(
       roundLimit,
       {
         marketPrices,
+        difficulty,
+        nextWeather: upcomingWeather,
       },
     );
 
@@ -1085,6 +1057,10 @@ async function performCalculation(
     player.capital = nextRound.result?.capital; // Sync current capital
     player.avgSoil = nextRound.avgSoil;
     player.avgNutrition = nextRound.avgNutrition;
+    player.sustainabilityScore = nextRound.result?.sustainabilityScore;
+    player.insolvent = nextRound.result?.insolvent;
+    const mergedStickers = new Set([...(player.unlockedStickers || []), ...(nextRound.result?.unlockedStickers || [])]);
+    player.unlockedStickers = Array.from(mergedStickers);
 
     // Reset pending decisions for next round (Firestore doesn't allow undefined)
     (player as any).pendingDecisions = undefined;
@@ -1333,28 +1309,42 @@ export const createGame = onCall(async (request) => {
 
   await db.runTransaction(async (t) => {
     // Initialize Round 0 Metrics for all players
-    const initialParcels = GameEngine.createInitialParcels();
-    const startSoil = Math.round(initialParcels.reduce((sum, p) => sum + p.soil, 0) / initialParcels.length);
-    const startNutrition = Math.round(initialParcels.reduce((sum, p) => sum + p.nutrition, 0) / initialParcels.length);
-
-    const lightweightRound0 = {
-      number: 0,
-      parcelsSnapshot: [],
-      avgSoil: startSoil,
-      avgNutrition: startNutrition,
-    };
-
+    const difficulty = (settings.difficulty || 'normal') as 'easy' | 'normal' | 'hard';
+    const initialForecast = GameEngine.generateWeatherForecast(1, 'Normal', difficulty);
     const playerData: Record<string, any> = {};
+    const playerKeys = Object.keys(newGame.players);
 
-    for (const uid of Object.keys(newGame.players)) {
+    for (let idx = 0; idx < playerKeys.length; idx++) {
+      const uid = playerKeys[idx];
+      const initialParcels = GameEngine.createInitialParcels(difficulty, idx);
+      const startSoil = Math.round(initialParcels.reduce((sum, p) => sum + p.soil, 0) / initialParcels.length);
+      const startNutrition = Math.round(
+        initialParcels.reduce((sum, p) => sum + p.nutrition, 0) / initialParcels.length,
+      );
+      const startScore = GameEngine.calculateSustainabilityScore(100000, startSoil);
+
+      const lightweightRound0 = {
+        number: 0,
+        parcelsSnapshot: [],
+        avgSoil: startSoil,
+        avgNutrition: startNutrition,
+        nextWeather: 'Normal',
+        weatherForecast: initialForecast,
+      };
+
       newGame.players[uid].avgSoil = startSoil;
       newGame.players[uid].avgNutrition = startNutrition;
+      newGame.players[uid].sustainabilityScore = startScore;
+      newGame.players[uid].insolvent = false;
+      newGame.players[uid].unlockedStickers = [];
       newGame.players[uid].history = [lightweightRound0];
       playerData[uid] = {
         number: 0,
         parcelsSnapshot: initialParcels,
         avgSoil: startSoil,
         avgNutrition: startNutrition,
+        nextWeather: 'Normal',
+        weatherForecast: initialForecast,
       };
     }
 

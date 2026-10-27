@@ -116,6 +116,21 @@ describe('TourService', () => {
       expect(stepShowId).toBe('test-step');
     });
 
+    it('should cancel the tour when clicking the shepherd modal overlay backdrop', () => {
+      service.startTour();
+      shepherdServiceMock.cancel.mockClear();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'shepherd-modal-overlay-container';
+      document.body.appendChild(overlay);
+
+      overlay.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      expect(shepherdServiceMock.cancel).toHaveBeenCalledTimes(1);
+
+      eventHandlers.cancel();
+      document.body.removeChild(overlay);
+    });
+
     it('should handle attachTo.element as functions in specific steps', async () => {
       service.startTour();
       const steps = shepherdServiceMock.addSteps.mock.calls[0][0];

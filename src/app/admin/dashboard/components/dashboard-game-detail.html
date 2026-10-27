@@ -1,4 +1,4 @@
-<div class="ml-12">
+<div class="pl-2 sm:pl-6">
   <div class="flex justify-between items-center mb-4">
     <h4 class="text-sm font-bold text-gray-300 uppercase tracking-wide">
       {{ t('dashboard.details.players') }}
@@ -41,7 +41,7 @@
 
   <!-- Deadline Manager (Collapsible) -->
   @if (showDeadlineManager) {
-    <div class="mb-6 p-4 bg-gray-900/60 rounded-xl border border-blue-500/20 portrait:rounded-none portrait:border-x-0 animate-fade-in">
+    <div class="mb-6 p-4 bg-gray-950 rounded-xl border border-blue-500/20 portrait:rounded-none portrait:border-x-0 animate-fade-in">
       <h5 class="text-xs font-bold text-blue-400 mb-3 uppercase tracking-widest">
         {{ t('dashboard.deadline.title') }}
       </h5>
@@ -51,7 +51,7 @@
           <div class="relative h-[30px]">
             <select
               [(ngModel)]="selectedDeadlineRound"
-              class="w-full h-full bg-gray-800/50 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:border-blue-500 outline-none appearance-none cursor-pointer pr-8 transition-colors"
+              class="w-full h-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-sm text-white focus:border-blue-500 outline-none appearance-none cursor-pointer pr-8 transition-colors"
             >
               @for (r of getRounds(); track r) {
                 <option [value]="r" class="bg-gray-900 text-white">Runde {{ r }}</option>
@@ -140,7 +140,7 @@
         </div>
         <!-- Stats -->
         <div
-          class="grid grid-cols-2 gap-4 text-xs bg-black/20 p-3 rounded-xl border border-white/5 portrait:rounded-none"
+          class="grid grid-cols-2 gap-4 text-xs bg-gray-950 p-3 rounded-xl border border-white/5 portrait:rounded-none"
         >
           <div>
             <span class="block text-gray-300 text-[10px] uppercase font-bold mb-1">{{

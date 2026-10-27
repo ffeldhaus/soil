@@ -1,7 +1,7 @@
 <div class="min-h-screen relative text-gray-100 font-sans overflow-hidden flex flex-col">
   <!-- Navigation Bar -->
   <nav
-    class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-10 print:hidden">
+    class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-10 print:hidden">
     <div class="flex items-center gap-4">
       <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
     </div>
@@ -24,13 +24,13 @@
     </div>
 
     <div
-      class="relative z-10 w-full max-w-md bg-gray-900/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-gray-700 my-8 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:my-0">
+      class="relative z-10 w-full max-w-md bg-gray-900 rounded-xl shadow-2xl p-5 sm:p-6 border border-gray-700 my-8 portrait:max-w-none portrait:rounded-none portrait:border-x-0 portrait:my-0">
       <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-emerald-400 mb-2">
                   <ng-container>Registrierung</ng-container>
                 </h1>
         <p class="text-gray-400">
-          <ng-container>Treten Sie der
+          <ng-container>Tritt der
             SOIL-Community bei</ng-container>
         </p>
       </div>
@@ -116,7 +116,7 @@
               {{ t('adminRegister.firstName') }} <span class="text-emerald-500">*</span>
             </label>
             <input formControlName="firstName" type="text"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+              class="w-full px-4 py-3 bg-gray-950 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
               [class.border-red-500]="
                 registerForm.get('firstName')?.touched && registerForm.get('firstName')?.errors?.['required']
               " [placeholder]="t('adminRegister.placeholder.firstName')" />
@@ -130,7 +130,7 @@
               {{ t('adminRegister.lastName') }} <span class="text-emerald-500">*</span>
             </label>
             <input formControlName="lastName" type="text"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+              class="w-full px-4 py-3 bg-gray-950 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
               [class.border-red-500]="
                 registerForm.get('lastName')?.touched && registerForm.get('lastName')?.errors?.['required']
               " [placeholder]="t('adminRegister.placeholder.lastName')" />
@@ -149,7 +149,7 @@
               {{ t('adminRegister.email') }} <span class="text-emerald-500">*</span>
             </label>
             <input formControlName="email" type="email" autocomplete="email"
-              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
+              class="w-full px-4 py-3 bg-gray-950 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white"
               [class.border-red-500]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
               placeholder="admin@school.edu" [placeholder]="t('adminRegister.placeholder.email')" />
             <div class="text-red-400 text-xs mt-1 min-h-[1rem]"
@@ -164,7 +164,7 @@
             </label>
             <div class="relative">
               <input formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete="new-password"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white pr-12"
+                class="w-full px-4 py-3 bg-gray-950 border border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-white pr-12"
                 [class.border-red-500]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
                 placeholder="Minimum 6 characters" [placeholder]="t('adminRegister.placeholder.password')" />
               <button type="button" (click)="togglePassword()"
@@ -221,11 +221,11 @@
           </button>
         </div>
 
-        <div class="mt-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
+        <div class="mt-6 p-4 bg-gray-950 rounded-xl border border-gray-700">
           <p class="text-[10px] text-gray-400 leading-relaxed">
             <span class="text-emerald-500 font-bold uppercase tracking-wider block mb-1">Hinweis zum Datenschutz</span>
-            Ihre Registrierungsdaten werden ausschließlich zur Bereitstellung der Cloud-Funktionen und zur **Prävention von Missbrauch** verwendet. 
-            Spieldaten werden für statistische Auswertungen **anonymisiert**. Weitere Details finden Sie in unserer 
+            Registrierungsdaten werden ausschließlich zur Bereitstellung der Cloud-Funktionen und zur **Prävention von Missbrauch** verwendet. 
+            Spieldaten werden für statistische Auswertungen **anonymisiert**. Weitere Details stehen in unserer 
             <a routerLink="/privacy" class="text-emerald-400 hover:underline">Datenschutzerklärung</a>.
           </p>
         </div>
@@ -236,9 +236,9 @@
   <!-- Error Modal -->
   @if (showErrorModal) {
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in portrait:p-0">
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 animate-fade-in portrait:p-0">
     <div
-      class="bg-gray-800 border border-red-500/50 p-6 rounded-2xl w-full max-w-sm shadow-2xl relative portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
+      class="bg-gray-800 border border-red-500/50 p-6 rounded-xl w-full max-w-sm shadow-2xl relative portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
       (click)="$event.stopPropagation()">
       <div class="flex flex-col items-center text-center gap-4">
         <div class="p-3 bg-red-900/30 rounded-full text-red-500">

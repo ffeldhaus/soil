@@ -1,0 +1,100 @@
+<div
+  class="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/75"
+  (click)="plantingCancelled.emit()"
+>
+  <div
+    class="planting-modal-container bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-3 sm:p-5 max-h-[96dvh] flex flex-col overflow-hidden"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="planting-title"
+  >
+    <div class="flex items-start justify-between gap-3 mb-2 sm:mb-2.5 shrink-0 border-b border-gray-800 pb-2">
+      <div>
+        <h2
+          id="planting-title"
+          data-tour="planting-modal-title"
+          class="text-lg sm:text-2xl font-bold text-white tracking-tight text-left"
+        >
+          Was möchtest du anbauen?
+        </h2>
+        @if (selectedParcels.length > 0) {
+          <p
+            data-testid="planting-selection-summary"
+            class="text-xs text-slate-300 font-mono tabular-nums mt-0.5 text-left"
+          >
+            {{ getSelectionSummary() }}
+          </p>
+        }
+      </div>
+      <button
+        type="button"
+        data-testid="close-planting-modal-btn"
+        aria-label="Abbrechen"
+        (click)="plantingCancelled.emit()"
+        class="text-gray-400 hover:text-white transition-colors text-2xl leading-none cursor-pointer px-1 shrink-0"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="planting-grid p-1">
+      @for (crop of crops; track crop; let first = $first) {
+        @let preview = getCropPreview(crop);
+        <button
+          type="button"
+          (click)="select(crop)"
+          [attr.data-testid]="'crop-' + crop.toLowerCase()"
+          [attr.data-tour]="first ? 'planting-modal-first-crop' : null"
+          [attr.aria-label]="t(getConfig(crop).label) + ': ' + (hasUniformPreviousCrop() ? preview.rotationLabel + ', ' : '') + preview.soilLabel + ', ' + preview.nutritionLabel"
+          class="crop-tile group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700 bg-gray-800 hover:z-10 hover:border-emerald-400/80 focus-visible:outline-2 focus-visible:outline-emerald-400 [container-type:size] text-left"
+        >
+          <img
+            [src]="'assets/images/' + getConfig(crop).image"
+            [alt]="t(getConfig(crop).label)"
+            draggable="false"
+            class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-150 select-none pointer-events-none"
+          />
+
+          <!-- Top: Crop Name Only -->
+          <div class="absolute top-1.5 inset-x-1.5 flex justify-center pointer-events-none z-20">
+            <div
+              class="bg-gray-900 text-white text-[clamp(9px,12cqw,14px)] font-bold px-2 py-0.5 rounded border border-slate-600/70 whitespace-nowrap max-w-full truncate"
+            >
+              {{ t(getConfig(crop).label) }}
+            </div>
+          </div>
+
+          <!-- Bottom-Right: Status Lines (Label + Indicator Icon, No Numbers) -->
+          <div class="absolute bottom-1.5 right-1.5 flex flex-col items-end gap-1 pointer-events-none z-20">
+            @if (hasUniformPreviousCrop()) {
+              <span
+                data-testid="crop-rotation-badge"
+                [class]="'inline-flex items-center gap-1 text-[clamp(8px,8.5cqw,10px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.rotationClass)"
+              >
+                <span>Fruchtfolge</span>
+                <span>{{ preview.rotationIcon }}</span>
+              </span>
+            }
+
+            <span
+              data-testid="crop-soil-pill"
+              [class]="'inline-flex items-center gap-1 text-[clamp(8px,8.5cqw,10px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.soilClass)"
+            >
+              <span>Boden</span>
+              <span>{{ preview.soilIcon }}</span>
+            </span>
+
+            <span
+              data-testid="crop-nutrition-pill"
+              [class]="'inline-flex items-center gap-1 text-[clamp(8px,8.5cqw,10px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.nutritionClass)"
+            >
+              <span>Nährstoffe</span>
+              <span>{{ preview.nutritionIcon }}</span>
+            </span>
+          </div>
+        </button>
+      }
+    </div>
+  </div>
+</div>

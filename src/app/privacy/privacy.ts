@@ -23,7 +23,7 @@ import { RouterLink } from '@angular/router';
 
       <!-- Navigation Bar -->
       <nav
-        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
+        class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
       >
         <div class="flex items-center gap-4">
           <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
@@ -35,13 +35,13 @@ import { RouterLink } from '@angular/router';
 
       <div class="relative z-10 max-w-5xl mx-auto pt-[72px] pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
         <!-- Header -->
-        <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
+        <header class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
           <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">Datenschutzerklärung</h1>
-          <p class="text-xl text-white max-w-2xl">Informationen über die Verarbeitung Ihrer personenbezogenen Daten</p>
+          <p class="text-xl text-white max-w-2xl">Informationen über die Verarbeitung deiner personenbezogenen Daten</p>
         </header>
 
         <!-- Allgemein -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">1. Verantwortliche Personen</h2>
           <p class="text-gray-300">
             Verantwortlich für die Datenverarbeitung auf dieser Webseite/App sind die im
@@ -50,14 +50,14 @@ import { RouterLink } from '@angular/router';
         </section>
 
         <!-- Datenerfassung -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">2. Datenerfassung und Anonymisierung</h2>
           
           <h3 class="text-xl font-bold text-gray-200 mt-4">Lokale Spiele (On-Device)</h3>
           <p class="text-gray-300">
-            Wenn Sie "Lokale Spiele" spielen, werden Ihre Spieldaten ausschließlich lokal in Ihrem Browser (localStorage) gespeichert. 
-            Es erfolgt keine Übertragung personenbezogener Daten an unsere Server, sofern Sie die optionale Übermittlung von anonymisierten 
-            Spielergebnissen zu Forschungszwecken nicht explizit aktivieren.
+            Wenn du "Lokale Spiele" spielst, werden deine Spieldaten ausschließlich lokal in deinem Browser (localStorage) gespeichert. 
+            Es erfolgt keine Übertragung personenbezogener Daten an unsere Server, sofern du die optionale Übermittlung von anonymisierten 
+            Spielergebnissen zu Forschungszwecken nicht explizit aktivierst.
           </p>
 
           <h3 class="text-xl font-bold text-gray-200 mt-4">Server-basierte Spiele (Cloud)</h3>
@@ -67,31 +67,31 @@ import { RouterLink } from '@angular/router';
             (z. B. Schutz vor automatisierten Angriffen oder unbefugter Erstellung von Inhalten).
           </p>
           <ul class="list-disc list-inside text-gray-300 space-y-2 ml-4">
-            <li><strong>Registrierungsdaten:</strong> E-Mail-Adressen und Passwörter werden sicher über Firebase Authentication verarbeitet. Diese Daten werden ausschließlich zur Identifizierung Ihres Spielkontos und im Falle von Systemmissbrauch verwendet. Ein Abgleich mit anderen Datenquellen findet nicht statt.</li>
-            <li><strong>Spieldaten:</strong> Ihre Spielentscheidungen werden in unserer Datenbank gespeichert. Diese Daten sind für Spielzwecke mit Ihrem Konto verknüpft, um den Spielstand über mehrere Sitzungen hinweg zu erhalten.</li>
+            <li><strong>Registrierungsdaten:</strong> E-Mail-Adressen und Passwörter werden sicher über Firebase Authentication verarbeitet. Diese Daten werden ausschließlich zur Identifizierung deines Spielkontos und im Falle von Systemmissbrauch verwendet. Ein Abgleich mit anderen Datenquellen findet nicht statt.</li>
+            <li><strong>Spieldaten:</strong> Deine Spielentscheidungen werden in unserer Datenbank gespeichert. Diese Daten sind für Spielzwecke mit deinem Konto verknüpft, um den Spielstand über mehrere Sitzungen hinweg zu erhalten.</li>
           </ul>
 
           <h3 class="text-xl font-bold text-gray-200 mt-4">Anonymisierung für Forschung & Statistik</h3>
           <p class="text-gray-300">
             Abgeschlossene Spiele werden standardmäßig in einer **vollständig anonymisierten Form** für statistische Auswertungen und Spielbalance-Analysen verwendet. 
-            Dabei werden alle Bezüge zu Ihrem Benutzerkonto dauerhaft entfernt.
+            Dabei werden alle Bezüge zu deinem Benutzerkonto dauerhaft entfernt.
           </p>
           <p class="text-gray-300 mt-2">
-            Diese Funktion hilft uns, das Spiel kontinuierlich zu verbessern. Sie können die Übermittlung dieser anonymisierten Daten bei der Erstellung eines neuen Spiels jederzeit **deaktivieren**.
+            Diese Funktion hilft uns, das Spiel kontinuierlich zu verbessern. Du kannst die Übermittlung dieser anonymisierten Daten bei der Erstellung eines neuen Spiels jederzeit **deaktivieren**.
           </p>
         </section>
 
         <!-- Feedback -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">3. Feedback-Funktion</h2>
           <p class="text-gray-300">
-            Wenn Sie uns Feedback über die integrierte Funktion senden, erfolgt dies **vollständig anonym**. 
+            Wenn du uns Feedback über die integrierte Funktion sendest, erfolgt dies **vollständig anonym**. 
             Es werden keine personenbezogenen Daten wie Name, E-Mail-Adresse oder Benutzer-IDs mit dem Feedback übermittelt oder gespeichert.
           </p>
         </section>
 
         <!-- Dienstleister -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">4. Hosting und Infrastruktur (Firebase)</h2>
           <p class="text-gray-300">
             Diese App nutzt Google Firebase zur Bereitstellung von Datenbanken, Hosting und Authentifizierung. 
@@ -101,15 +101,15 @@ import { RouterLink } from '@angular/router';
         </section>
 
         <!-- Rechte -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-2xl font-bold text-white">5. Ihre Betroffenenrechte</h2>
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+          <h2 class="text-2xl font-bold text-white">5. Deine Betroffenenrechte</h2>
           <p class="text-gray-300">
-            Sie haben im Rahmen der geltenden gesetzlichen Bestimmungen (DSGVO) jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten.
+            Du hast im Rahmen der geltenden gesetzlichen Bestimmungen (DSGVO) jederzeit das Recht auf unentgeltliche Auskunft über deine gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten.
           </p>
           <p class="text-gray-300">
-            Sie können Ihr Konto und alle damit verbundenen Daten jederzeit selbstständig über unsere 
+            Du kannst dein Konto und alle damit verbundenen Daten jederzeit selbstständig über unsere 
             <a routerLink="/delete-account" class="text-emerald-400 hover:underline">Seite zur Kontolöschung</a> 
-            löschen. Alternativ wenden Sie sich hierzu bitte an die im Impressum genannten Kontaktpersonen.
+            löschen. Alternativ wende dich hierzu bitte an die im Impressum genannten Kontaktpersonen.
           </p>
         </section>
       </div>

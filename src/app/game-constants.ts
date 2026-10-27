@@ -1,4 +1,4 @@
-import type { CropType } from './types';
+import type { CollectibleSticker, CropType, RegionalContract } from './types';
 
 interface CropConfig {
   id: CropType;
@@ -476,3 +476,116 @@ export const GAME_CONSTANTS = {
     },
   } as Record<CropType, Record<CropType, 'good' | 'ok' | 'bad'>>,
 };
+
+export const CONTRACT_DEFINITIONS: RegionalContract[] = [
+  {
+    id: 'legume-initiative',
+    name: 'Regionale Eiweiß-Initiative',
+    description: 'Mindestens 6 Parzellen Ackerbohne oder Erbse zur regionalen Stickstoffbindung anbauen.',
+    reward: 3500,
+  },
+  {
+    id: 'humus-steward',
+    name: 'Humus-Programm der Wasserwerke',
+    description:
+      'Durchschnittliche Bodenqualität bei mindestens 100 halten und mindestens 5 Parzellen mit Tieren (Wiese) oder Brachland bewirtschaften.',
+    reward: 4000,
+  },
+  {
+    id: 'regional-grain',
+    name: 'Mühlenvertrag Regionalgetreide',
+    description:
+      'Mindestens 12 Parzellen aus mindestens 2 Getreidearten (Weizen, Roggen, Hafer, Gerste) bei einer Bodenqualität ab 95 anbauen.',
+    reward: 3500,
+  },
+  {
+    id: 'eco-pioneer',
+    name: 'Pionier-Prämie Pflanzenschutz',
+    description:
+      'Auf mindestens 30 bewirtschafteten Parzellen komplett auf synthetische Pestizide verzichten und eine Bodenqualität ab 95 halten.',
+    reward: 4000,
+  },
+];
+
+export const STICKER_DEFINITIONS: CollectibleSticker[] = [
+  {
+    id: 'humus-pionier',
+    title: 'Humus-Pionier',
+    subtitle: 'Bodenaufbau-Meisterschaft',
+    description: 'Durchschnittliche Bodenqualität von mindestens 105 erreicht.',
+    category: 'soil',
+    icon: '🌱',
+    image: 'assets/images/stickers/humus-pionier.jpg',
+    rarity: 'gold',
+  },
+  {
+    id: 'fruchtfolge-meister',
+    title: 'Fruchtfolge-Ass',
+    subtitle: 'Vielfalt auf dem Acker',
+    description: 'Optimale Vorfrucht-Kombination auf mindestens 25 Parzellen in einer Runde erreicht.',
+    category: 'mastery',
+    icon: '🔄',
+    image: 'assets/images/stickers/fruchtfolge-meister.jpg',
+    rarity: 'silver',
+  },
+  {
+    id: 'krisenfest',
+    title: 'Krisenfest',
+    subtitle: 'Widerstandskraft bei Extremwetter',
+    description: 'Trotz Dürre, Hitzewelle, Hochwasser oder Spätfrost über 5.000 € Gewinn erwirtschaftet.',
+    category: 'resilience',
+    icon: '🛡️',
+    image: 'assets/images/stickers/krisenfest.jpg',
+    rarity: 'gold',
+  },
+  {
+    id: 'bio-leuchtturm',
+    title: 'Bio-Leuchtturm',
+    subtitle: 'Ökologischer Vorzeigebetrieb',
+    description: 'Bio-Siegel mit positivem Rundengewinn und einer Bodenqualität von mindestens 98 erreicht.',
+    category: 'soil',
+    icon: '🌿',
+    image: 'assets/images/stickers/bio-leuchtturm.jpg',
+    rarity: 'gold',
+  },
+  {
+    id: 'vertrags-partner',
+    title: 'Vertrags-Partner',
+    subtitle: 'Regionale Wertschöpfung',
+    description: 'Einen regionalen Fördervertrag erfolgreich erfüllt.',
+    category: 'economy',
+    icon: '🤝',
+    image: 'assets/images/stickers/vertrags-partner.jpg',
+    rarity: 'bronze',
+  },
+  {
+    id: 'boden-retter',
+    title: 'Boden-Wächter',
+    subtitle: 'Regenerative Bewirtschaftung',
+    description: 'Durchschnittliche Bodenqualität in einer einzelnen Runde um mindestens +1,5 Punkte gesteigert.',
+    category: 'soil',
+    icon: '🪱',
+    image: 'assets/images/stickers/boden-retter.jpg',
+    rarity: 'silver',
+  },
+  {
+    id: 'nuetzlings-allianz',
+    title: 'Nützlings-Allianz',
+    subtitle: 'Biologische Schädlingsabwehr',
+    description: 'Einen Schädlingsbefall erfolgreich mit Nützlingen statt synthetischen Pestiziden abgewehrt.',
+    category: 'resilience',
+    icon: '🐞',
+    image: 'assets/images/stickers/nuetzlings-allianz.jpg',
+    rarity: 'bronze',
+  },
+  {
+    id: 'zukunfts-hof',
+    title: 'Zukunftsfähiger Hof',
+    subtitle: 'Ökonomie & Ökologie in Balance',
+    description: 'Einen Nachhaltigkeits- & Zukunftsfähigkeits-Score von mindestens 1.150 erreicht.',
+    category: 'mastery',
+    icon: '🏆',
+    image: 'assets/images/stickers/zukunfts-hof.jpg',
+    rarity: 'gold',
+  },
+];

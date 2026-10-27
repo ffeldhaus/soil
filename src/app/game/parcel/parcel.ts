@@ -13,12 +13,14 @@ import type { CropType, Parcel as ParcelType } from '../../types';
 })
 export class Parcel {
   @Input() parcel!: ParcelType;
+  @Input() previousCrop?: CropType;
   @Input() @HostBinding('class.selected') selected = false;
   @Input() showLabels = true;
   @Input() showNutrition = false;
   @Input() showHarvest = false;
   @Input() showSoil = false;
   @Input() isReadOnly = false;
+  readonly nonDraggableImages = true;
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -54,8 +56,8 @@ export class Parcel {
     Fallow: { label: 'crop.fallow', image: 'acker.webp' },
   };
 
-  getConfig(crop: CropType) {
-    return this.cropConfig[crop] || { label: crop, image: 'acker.webp' };
+  getConfig(crop: CropType): { label: string; image: string } {
+    return this.cropConfig[crop] ?? { label: crop, image: 'acker.webp' };
   }
 
   get soilPercentage(): number {
@@ -72,6 +74,16 @@ export class Parcel {
     return Math.round((this.parcel.yield / base) * 100);
   }
 
+  get hasBadRotation(): boolean {
+    const curr = this.parcel?.crop;
+    const prev = this.previousCrop;
+    if (!curr || !prev || curr === 'Fallow' || prev === 'Fallow') {
+      return false;
+    }
+    const matrixEntry = GAME_CONSTANTS.ROTATION_MATRIX[prev]?.[curr];
+    return matrixEntry === 'bad' || (curr === prev && curr !== 'Grass');
+  }
+
   getOverlayColor(): string {
     if (this.showNutrition) {
       // 0 = red (0), 100 = green (120)
@@ -79,8 +91,7 @@ export class Parcel {
       return `hsla(${hue}, 80%, 45%, 0.3)`;
     }
     if (this.showHarvest) {
-      // Assume 500 is a good yield for green
-      const hue = Math.min(120, ((this.parcel.yield || 0) / 500) * 120);
+      const hue = Math.min(120, (this.yieldPercentage / 100) * 120);
       return `hsla(${hue}, 80%, 45%, 0.3)`;
     }
     if (this.showSoil) {

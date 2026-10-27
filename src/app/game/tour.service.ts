@@ -11,6 +11,12 @@ export class TourService {
   private tourDisabledKey = 'soil_tour_disabled';
 
   public stepShow$ = new Subject<string>();
+  private overlayClickListener = (event: MouseEvent) => {
+    const target = event.target as Element | null;
+    if (target?.closest('.shepherd-modal-overlay-container') && !target.closest('.shepherd-element')) {
+      this.shepherdService.cancel();
+    }
+  };
 
   private defaultStepOptions: any = {
     classes: 'shepherd-theme-custom',
@@ -379,14 +385,18 @@ export class TourService {
     this.shepherdService.modal = true;
     this.shepherdService.confirmCancel = false;
     this.shepherdService.addSteps(this.steps);
+    document.removeEventListener('click', this.overlayClickListener, true);
+    document.addEventListener('click', this.overlayClickListener, true);
     this.shepherdService.start();
 
     this.shepherdService.tourObject?.on('complete', () => {
+      document.removeEventListener('click', this.overlayClickListener, true);
       this.markTourAsSeen();
       this.stepShow$.next('tour-finished');
     });
 
     this.shepherdService.tourObject?.on('cancel', () => {
+      document.removeEventListener('click', this.overlayClickListener, true);
       this.markTourAsSeen();
       this.stepShow$.next('tour-cancelled');
     });

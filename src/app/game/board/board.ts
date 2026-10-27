@@ -5,14 +5,24 @@ import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router
 import type { User } from 'firebase/auth';
 import { combineLatest, type Subscription, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
-import { GAME_CONSTANTS } from '../../game-constants';
-import { PerformanceService } from '../../services/performance.service';
-import type { CropType, Game, Parcel as ParcelType, PlayerState, Round, RoundDecision } from '../../types';
+import { GAME_CONSTANTS, STICKER_DEFINITIONS } from '../../game-constants';
+import type {
+  CollectibleSticker,
+  CropType,
+  Game,
+  Parcel as ParcelType,
+  PlayerState,
+  RegionalContract,
+  Round,
+  RoundDecision,
+  WeatherForecast,
+} from '../../types';
+import { GameEngine } from '../engine/game-engine';
 import { Finance } from '../finance/finance';
 import { GameService } from '../game.service';
 import { Parcel } from '../parcel/parcel';
 import { PlantingModal } from '../planting-modal/planting-modal';
-import { RoundResultModal } from '../round-result-modal/round-result-modal';
+import { type LeaderboardEntry, RoundResultModal } from '../round-result-modal/round-result-modal';
 import { type RoundSettings, RoundSettingsModal } from '../round-settings-modal/round-settings-modal';
 import { TourService } from '../tour.service';
 import { BoardHudComponent } from './components/board-hud';
@@ -28,7 +38,6 @@ import { BoardHudComponent } from './components/board-hud';
     RoundResultModal,
     RouterLink,
     FormsModule,
-
     Finance,
     BoardHudComponent,
   ],
@@ -47,17 +56,15 @@ export class Board implements OnInit, OnDestroy {
       'board.nav.harvest': 'Ernte',
       'board.nav.soil': 'Bodenqualität',
       'board.nav.finance': 'Finanzen',
-      'board.nav.options': 'Optionen',
       'board.nav.waiting': 'Warten...',
       'board.nav.nextRound': 'Nächste Runde',
       'board.logout': 'Abmelden',
       'board.logout.title': 'Logout',
     };
-    return translations[key] || key;
+    return translations[key] ?? key;
   }
   private gameService = inject(GameService);
   public tourService = inject(TourService);
-  public performanceService = inject(PerformanceService);
   gameServicePublic = this.gameService; // Expose for template if needed, or just specific streams
   gameState$ = this.gameService.state$;
   version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
@@ -127,8 +134,39 @@ export class Board implements OnInit, OnDestroy {
 
   // Game End Logic
   showGameEndModal = false;
+  overallWinner: { name: string; score: number; capital: number; avgSoil: number } | null = null;
   financialWinner: { name: string; capital: number } | null = null;
   soilWinner: { name: string; avgSoil: number } | null = null;
+  finalStandings: LeaderboardEntry[] = [];
+
+  // Collectible Stickers
+  collectedStickerIds: string[] = [];
+  allStickers: CollectibleSticker[] = STICKER_DEFINITIONS;
+  showStickerAlbumModal = false;
+  showWelcomeModal = false;
+  activeHudPopover: 'weather' | 'pests' | 'contract' | null = null;
+  showContractPopover = false;
+
+  toggleHudPopover(type: 'weather' | 'pests' | 'contract', event?: Event) {
+    event?.stopPropagation();
+    this.activeHudPopover = this.activeHudPopover === type ? null : type;
+    this.showContractPopover = this.activeHudPopover === 'contract';
+  }
+
+  closeWelcomeModal() {
+    this.showWelcomeModal = false;
+    this.tourService.markTourAsSeen();
+    if (typeof window !== 'undefined' && this.gameId) {
+      localStorage.setItem(`soil_welcome_seen_${this.gameId}`, 'true');
+    }
+  }
+
+  startTourFromWelcome() {
+    this.closeWelcomeModal();
+    this.tourService.setTourDisabled(false);
+    this.tourService.resetTour();
+    this.tourService.startTour();
+  }
 
   // Feedback Logic
   feedback: {
@@ -180,6 +218,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
   private updateParcelsForViewingRound(targetUid?: string) {
+    this.ensurePreviousRoundParcelsLoaded(this.viewingRound, targetUid);
     if (this.viewingRound === this.maxRoundNumber) {
       // Current round: use parcels from gameService (which handles drafts)
       this.gameService
@@ -215,6 +254,20 @@ export class Board implements OnInit, OnDestroy {
     }
   }
 
+  private ensurePreviousRoundParcelsLoaded(roundNumber: number, targetUid?: string) {
+    if (roundNumber <= 0 || !this.gameId) return;
+    const prevRound = this.history.find((r) => r.number === roundNumber - 1);
+    if (prevRound && (!prevRound.parcelsSnapshot || prevRound.parcelsSnapshot.length === 0)) {
+      this.gameService
+        .getRoundData(this.gameId, roundNumber - 1, targetUid)
+        .then((fullRound) => {
+          prevRound.parcelsSnapshot = fullRound.parcelsSnapshot;
+          this.cdr.detectChanges();
+        })
+        .catch(() => {});
+    }
+  }
+
   onFeedbackSubmit() {
     this.isSubmittingFeedback = true;
     this.gameService
@@ -231,18 +284,22 @@ export class Board implements OnInit, OnDestroy {
   }
 
   toggleLabels() {
+    if (this.showFinance) return;
     this.showLabels = !this.showLabels;
   }
 
   toggleNutrition() {
+    if (this.showFinance) return;
     this.showNutritionOverlay = !this.showNutritionOverlay;
   }
 
   toggleHarvest() {
+    if (this.showFinance) return;
     this.showHarvestOverlay = !this.showHarvestOverlay;
   }
 
   toggleSoil() {
+    if (this.showFinance) return;
     this.showSoilOverlay = !this.showSoilOverlay;
   }
 
@@ -256,6 +313,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.syncCollectedStickers();
     this.tourSub = this.tourService.stepShow$.subscribe((stepId) => {
       if (stepId === 'planting-modal' || stepId === 'planting-modal-crop') {
         if (this.selectedIndices.size === 0) {
@@ -319,6 +377,7 @@ export class Board implements OnInit, OnDestroy {
                   this.playerLabel = state.game.settings?.playerLabel || 'Player';
                   this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
                   this.history = state.playerState?.history || [];
+                  this.syncCollectedStickers(state.playerState?.unlockedStickers);
 
                   if (wasAtMax || this.viewingRound === 0) {
                     this.viewingRound = this.maxRoundNumber;
@@ -344,13 +403,17 @@ export class Board implements OnInit, OnDestroy {
                     this.showGameEndModal = true;
                   }
 
-                  // Start tour if not seen yet
-                  if (!this.tourService.isTourSeen() && !this.tourStarted) {
+                  // Show compact Welcome Dialog on first visit instead of auto-starting full walkthrough
+                  if (
+                    !this.isReadOnly &&
+                    !this.tourStarted &&
+                    typeof window !== 'undefined' &&
+                    !this.tourService.isTourSeen() &&
+                    !this.tourService.isTourDisabled() &&
+                    localStorage.getItem(`soil_welcome_seen_${this.gameId}`) !== 'true'
+                  ) {
                     this.tourStarted = true;
-                    // Small delay to ensure everything is rendered
-                    setTimeout(() => {
-                      this.tourService.startTour();
-                    }, 1000);
+                    this.showWelcomeModal = true;
                   }
                 }
               });
@@ -469,6 +532,21 @@ export class Board implements OnInit, OnDestroy {
     });
   }
 
+  openTeamAndAchievementsModal() {
+    this.authService.user$.pipe(take(1)).subscribe((user) => {
+      this.tempName = this.getDisplayName(user);
+    });
+    this.showStickerAlbumModal = true;
+  }
+
+  openTeamModal() {
+    this.openTeamAndAchievementsModal();
+  }
+
+  saveTeamNameFromModal() {
+    this.onSaveName(this.tempName);
+  }
+
   async saveName() {
     if (this.tempName && this.tempName.trim().length > 0) {
       try {
@@ -486,6 +564,7 @@ export class Board implements OnInit, OnDestroy {
   private dragStartIndex: number | null = null;
   cols = 8; // Dynamic columns
   rows = 5; // Dynamic rows
+  showSideCards = false;
 
   @HostListener('window:resize')
   onResize() {
@@ -498,34 +577,40 @@ export class Board implements OnInit, OnDestroy {
       this.cols = 4;
     } else if (aspectRatio < 1.0) {
       this.cols = 5;
-    } else if (aspectRatio < 2.0) {
+    } else if (aspectRatio < 2.4) {
       this.cols = 8;
     } else {
       this.cols = 10;
     }
-    this.rows = Math.ceil(this.parcels.length / this.cols);
+    const parcelCount = this.parcels.length || 40;
+    this.rows = Math.ceil(parcelCount / this.cols);
+
+    const availHeight = Math.max(200, window.innerHeight - 128);
+    const gridPad = Math.min(10, Math.max(6, window.innerWidth * 0.008));
+    const gridGap = 4;
+    const cellSize = (availHeight - 2 * gridPad - (this.rows - 1) * gridGap) / this.rows;
+    const fullHeightGridWidth = cellSize * this.cols + (this.cols - 1) * gridGap + 2 * gridPad;
+    const remainingWidth = window.innerWidth - fullHeightGridWidth - 48;
+    this.showSideCards = this.cols >= 8 && remainingWidth >= 290;
   }
 
   // --- Touch Events ---
 
   // Prevent default scroll when touching the grid
   onTouchStart(event: TouchEvent) {
-    if (this.isReadOnly) return;
-    // Don't prevent default immediately if we want to allow scrolling elsewhere?
-    // But user requested "Selection of multiple parcels should also be possible on mobile"
-    // and "prevent overscroll".
-    // If we are touching the GRID, we probably want to select.
+    if (this.isReadOnly || this.showFinance) return;
     if (event.cancelable) event.preventDefault();
 
     this.isDragging = true;
+    if (!event.metaKey && !event.shiftKey) {
+      this.selectedIndices.clear();
+    }
     const index = this.getParcelIndexFromTouch(event.touches[0]);
     if (index !== -1) {
-      if (!event.metaKey && !event.shiftKey) {
-        // Meta/Shift unlikely on mobile but good practice
-        this.selectedIndices.clear();
-      }
       this.dragStartIndex = index;
       this.updateSelection(index);
+    } else {
+      this.dragStartIndex = null;
     }
   }
 
@@ -535,6 +620,9 @@ export class Board implements OnInit, OnDestroy {
 
     const index = this.getParcelIndexFromTouch(event.touches[0]);
     if (index !== -1) {
+      if (this.dragStartIndex === null) {
+        this.dragStartIndex = index;
+      }
       this.updateSelection(index);
     }
   }
@@ -549,19 +637,24 @@ export class Board implements OnInit, OnDestroy {
 
   private getParcelIndexFromTouch(touch: Touch): number {
     const element = document.elementFromPoint(touch.clientX, touch.clientY);
-    // We need to find the parcel index. The element might be the img or div inside app-parcel.
-    // We can assume app-parcel has the index? Or we can just calculate from coordinates?
-    // Using elementFromPoint is safer if layout is complex.
-    // Let's assume the element or its parent is app-parcel.
     const parcelElement = element?.closest('app-parcel');
     if (!parcelElement) return -1;
 
-    // We need to associate the element with an index.
-    // We can extract it from DOM if we bind it, or...
-    // Let's verify how app-parcel is rendered. It's in an *ngFor with index.
-    // We can bind [attr.data-index]="i" to app-parcel in HTML.
     const indexStr = parcelElement.getAttribute('data-index');
     return indexStr ? parseInt(indexStr, 10) : -1;
+  }
+
+  onBoardAreaMouseDown(event: MouseEvent) {
+    if (this.isReadOnly || this.showFinance || event.button !== 0) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('button, a, input, select, textarea, [role="dialog"]')) {
+      return;
+    }
+    if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+      this.selectedIndices.clear();
+    }
+    this.isDragging = true;
+    this.dragStartIndex = null;
   }
 
   onMouseDown(index: number, event: MouseEvent) {
@@ -573,10 +666,14 @@ export class Board implements OnInit, OnDestroy {
     this.dragStartIndex = index;
     this.updateSelection(index);
     event.preventDefault(); // Prevent native drag to ensure custom selection works
+    event.stopPropagation();
   }
 
   onMouseEnter(index: number) {
-    if (this.isDragging && this.dragStartIndex !== null) {
+    if (this.isDragging) {
+      if (this.dragStartIndex === null) {
+        this.dragStartIndex = index;
+      }
       this.updateSelection(index);
     }
   }
@@ -704,6 +801,7 @@ export class Board implements OnInit, OnDestroy {
         this.viewingRound = this.maxRoundNumber;
         this.isSubmitted = false;
         this.updateReadOnly();
+        this.syncCollectedStickers(round.result?.unlockedStickers);
 
         // Show Result Modal
         this.roundResultRound = round;
@@ -719,12 +817,19 @@ export class Board implements OnInit, OnDestroy {
   }
 
   onBackgroundClick(_event: MouseEvent) {
+    this.activeHudPopover = null;
+    this.showContractPopover = false;
     if (this.selectedIndices.size > 0 && !this.showPlantingModal) {
       this.selectedIndices.clear();
     }
   }
 
   get backgroundImage(): string {
+    if (this.showFinance) {
+      const orientation = this.cols <= 5 ? 'portrait' : 'landscape';
+      return `assets/images/bauernhof-${orientation}-dunkel.webp`;
+    }
+
     const round = this.history.find((r) => r.number === this.viewingRound);
     const weather = (round?.result?.events?.weather || 'Normal') as keyof typeof GAME_CONSTANTS.WEATHER_EFFECTS;
 
@@ -751,7 +856,7 @@ export class Board implements OnInit, OnDestroy {
     return this.history.find((r) => r.number === roundNumber - 1);
   }
 
-  get selectedRoundWeatherData(): { icon: string; name: string } {
+  get selectedRoundWeatherData(): { icon: string; name: string; image: string } {
     const round = this.history.find((r) => r.number === this.viewingRound);
     const weather = (round?.result?.events?.weather || 'Normal') as keyof typeof GAME_CONSTANTS.WEATHER_EFFECTS;
     const icons: Record<string, string> = {
@@ -766,10 +871,38 @@ export class Board implements OnInit, OnDestroy {
     return {
       icon: icons[weather] || '☀️',
       name: GAME_CONSTANTS.WEATHER_EFFECTS[weather]?.name || weather,
+      image: this.getWeatherImage(weather as string),
     };
   }
 
-  get selectedRoundPestsData(): { icon: string; name: string }[] {
+  getWeatherImage(weatherType?: string): string {
+    const weatherMap: Record<string, string> = {
+      Normal: 'assets/images/weather/normal.jpg',
+      Drought: 'assets/images/weather/drought.jpg',
+      HeatWave: 'assets/images/weather/heatwave.jpg',
+      LateFrost: 'assets/images/weather/late-frost.jpg',
+      Flood: 'assets/images/weather/flood.jpg',
+      Storm: 'assets/images/weather/storm.jpg',
+    };
+    return (weatherType && weatherMap[weatherType]) || 'assets/images/weather/normal.jpg';
+  }
+
+  getForecastWeatherImage(forecast?: WeatherForecast | null): string {
+    const primary = forecast?.likelyWeathers?.[0] || 'Normal';
+    return this.getWeatherImage(primary);
+  }
+
+  getContractImage(contractId?: string): string {
+    const imageMap: Record<string, string> = {
+      'legume-initiative': 'assets/images/contracts/legume-initiative.jpg',
+      'humus-steward': 'assets/images/contracts/humus-steward.jpg',
+      'regional-grain': 'assets/images/contracts/regional-grain.jpg',
+      'eco-pioneer': 'assets/images/contracts/eco-pioneer.jpg',
+    };
+    return (contractId && imageMap[contractId]) || 'assets/images/contracts/legume-initiative.jpg';
+  }
+
+  get selectedRoundPestsData(): { icon: string; name: string; image: string; targetLabel: string }[] {
     const round = this.history.find((r) => r.number === this.viewingRound);
     const pests = round?.result?.events?.vermin;
     if (!Array.isArray(pests) || pests.length === 0) return [];
@@ -786,19 +919,73 @@ export class Board implements OnInit, OnDestroy {
       'swine-fever': '🐖',
     };
 
+    const imageMap: Record<string, string> = {
+      'potato-beetle': 'assets/images/pests/potato-beetle.jpg',
+      'corn-borer': 'assets/images/pests/caterpillar-beetle.jpg',
+      'aphid-black': 'assets/images/pests/aphid.jpg',
+      'aphid-cereal': 'assets/images/pests/aphid.jpg',
+      'pollen-beetle': 'assets/images/pests/caterpillar-beetle.jpg',
+      nematode: 'assets/images/pests/soil-fungus.jpg',
+      'pea-moth': 'assets/images/pests/caterpillar-beetle.jpg',
+      'oat-rust': 'assets/images/pests/soil-fungus.jpg',
+      'swine-fever': 'assets/images/hausschwein.webp',
+    };
+
+    const targetMap: Record<string, string> = {
+      'potato-beetle': 'Kartoffel',
+      'corn-borer': 'Mais',
+      'aphid-black': 'Ackerbohne',
+      'aphid-cereal': 'Weizen, Gerste, Roggen',
+      'pollen-beetle': 'Raps',
+      nematode: 'Zuckerrübe',
+      'pea-moth': 'Erbse',
+      'oat-rust': 'Hafer',
+      'swine-fever': 'Tierhaltung',
+    };
+
     return pests.map((p) => ({
       name: GAME_CONSTANTS.VERMIN_EFFECTS[p as keyof typeof GAME_CONSTANTS.VERMIN_EFFECTS]?.name || p,
       icon: iconMap[p] || '🐛',
+      image: imageMap[p] || 'assets/images/pests/none.jpg',
+      targetLabel: targetMap[p] || 'Ackerbau',
     }));
   }
 
-  private calculateWinners(game: Game) {
+  get primaryPestBannerImage(): string {
+    const pests = this.selectedRoundPestsData;
+    return pests.length > 0 ? pests[0].image : 'assets/images/pests/none.jpg';
+  }
+
+  calculateWinners(game: Game) {
     if (!game.players) return;
     const playerList = Object.values(game.players);
     if (playerList.length === 0) return;
 
     const getPlayerName = (p: PlayerState) =>
       p.displayName || `${this.playerLabel} ${p.uid.startsWith('player-') ? p.uid.split('-')[2] : ''}`;
+
+    // Overall Sustainability Winner (Primary)
+    let bestOverall = playerList[0];
+    let bestScore = -Infinity;
+    let bestOverallSoil = 100;
+
+    playerList.forEach((p) => {
+      const cap = p.capital ?? 0;
+      const soil = Math.round(this.calculateAvgSoil(p));
+      const score = p.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(cap, soil);
+      if (score > bestScore || (score === bestScore && cap > (bestOverall.capital ?? 0))) {
+        bestScore = score;
+        bestOverall = p;
+        bestOverallSoil = soil;
+      }
+    });
+
+    this.overallWinner = {
+      name: getPlayerName(bestOverall),
+      score: bestScore === -Infinity ? 0 : bestScore,
+      capital: bestOverall.capital || 0,
+      avgSoil: bestOverallSoil,
+    };
 
     // Financial Winner
     let bestFinancial = playerList[0];
@@ -828,16 +1015,261 @@ export class Board implements OnInit, OnDestroy {
       name: getPlayerName(bestSoilPlayer),
       avgSoil: Math.round(bestAvgSoil),
     };
+
+    this.finalStandings = this.getRoundLeaderboard(game.currentRoundNumber);
   }
 
   private calculateAvgSoil(player: PlayerState): number {
+    if (typeof player.avgSoil === 'number') return player.avgSoil;
     const history = player.history || [];
-    if (history.length === 0) return 0;
+    if (history.length === 0) return 100;
     const lastRound = history[history.length - 1];
+    if (typeof lastRound.avgSoil === 'number') return lastRound.avgSoil;
     const parcels = lastRound.parcelsSnapshot || [];
-    if (parcels.length === 0) return 0;
+    if (parcels.length === 0) return 100;
     const totalSoil = parcels.reduce((sum: number, p: ParcelType) => sum + (p.soil || 0), 0);
     return totalSoil / parcels.length;
+  }
+
+  get game(): Game | null {
+    return this.gameService.state?.game || null;
+  }
+
+  get gameDifficulty(): 'easy' | 'normal' | 'hard' {
+    return this.game?.settings?.difficulty || 'normal';
+  }
+
+  get currentWeatherForecast(): WeatherForecast | null {
+    const round =
+      this.history.find((r) => r.number === this.viewingRound) ||
+      this.history[this.history.length - 1] ||
+      this.gameService.state?.lastRound;
+    if (round?.weatherForecast) {
+      return round.weatherForecast;
+    }
+    if (this.viewingRound === this.maxRoundNumber) {
+      return {
+        hintText: 'Ruhige Wetterlage erwartet.',
+        likelyWeathers: ['Normal'],
+        confidence: 'exact',
+      };
+    }
+    return null;
+  }
+
+  getFormattedWeatherForecastText(hintText?: string): string {
+    if (!hintText) {
+      return 'Ruhige Wetterlage erwartet.';
+    }
+    const lower = hintText.toLowerCase();
+    if (
+      lower.includes('einführungswetter') ||
+      lower.includes('ohne extremereignisse') ||
+      lower.includes('normale witterung') ||
+      lower.includes('ruhige wetterlage erwartet') ||
+      lower === 'normal'
+    ) {
+      return 'Ruhige Wetterlage erwartet.';
+    }
+    const tendenzMatch = hintText.match(/deutet sich\s+(.+?)\s+an\.?$/i);
+    if (tendenzMatch) {
+      const cleaned = tendenzMatch[1].replace(/\bNormal\b/gi, 'Ruhige Wetterlage').trim();
+      return `${cleaned} möglich.`;
+    }
+    const exactMatch = hintText.match(/Wetterbericht:\s*(.+?)\s+erwartet\.?$/i);
+    if (exactMatch) {
+      const cleaned = exactMatch[1].replace(/\bNormal\b/gi, 'Ruhige Wetterlage').trim();
+      return `${cleaned} erwartet.`;
+    }
+    if (lower.includes('klimamodell')) {
+      return 'Wechselhafte Wetterlage möglich.';
+    }
+    const formatted = hintText
+      .replace(/Ruhiges Einführungswetter:?/gi, '')
+      .replace(/Stabiles Einführungswetter:?/gi, '')
+      .replace(/ohne Extremereignisse/gi, '')
+      .replace(/\bNormal\b/g, 'Ruhige Wetterlage')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!formatted) {
+      return 'Ruhige Wetterlage erwartet.';
+    }
+    return /[.!?]$/.test(formatted) ? formatted : `${formatted}.`;
+  }
+
+  get currentActiveContract(): RegionalContract | null {
+    const targetRound = this.viewingRound === this.maxRoundNumber ? this.maxRoundNumber + 1 : this.viewingRound;
+    if (targetRound < 2) {
+      return null;
+    }
+    const timeScale = this.totalRounds > 0 ? GAME_CONSTANTS.DEFAULT_ROUNDS / this.totalRounds : 1;
+    const scheduled = GameEngine.getActiveContract(targetRound, timeScale);
+    if (scheduled) {
+      return scheduled;
+    }
+    const round =
+      this.history.find((r) => r.number === this.viewingRound) ||
+      this.history[this.history.length - 1] ||
+      this.gameService.state?.lastRound;
+    return round?.activeContract ?? null;
+  }
+
+  getForecastConfidenceLabel(confidence?: 'exact' | 'tendency' | 'uncertain'): string {
+    if (confidence === 'exact') return 'Exakt';
+    if (confidence === 'tendency') return 'Trend';
+    return 'Klima-Trend';
+  }
+
+  getPreviousCropForParcel(index: number): CropType | undefined {
+    const uid = this.gameService.state?.playerState?.uid || '';
+    const isPlanningCurrentRound =
+      this.viewingRound === this.maxRoundNumber &&
+      !this.isReadOnly &&
+      (this.gameService.hasPendingParcelDecisions() || this.maxRoundNumber === 0);
+
+    if (isPlanningCurrentRound) {
+      const lastHist = this.history.length > 0 ? this.history[this.history.length - 1] : undefined;
+      const histResultsSnapshot = (
+        lastHist as unknown as { results?: Record<string, { parcelsSnapshot?: ParcelType[] }> }
+      )?.results?.[uid]?.parcelsSnapshot;
+      const baseline =
+        (lastHist?.parcelsSnapshot?.length ? lastHist.parcelsSnapshot : undefined) ||
+        (histResultsSnapshot?.length ? histResultsSnapshot : undefined) ||
+        (this.gameService.state?.lastRound?.parcelsSnapshot?.length
+          ? this.gameService.state.lastRound.parcelsSnapshot
+          : undefined);
+      return baseline?.[index]?.crop;
+    }
+
+    if (this.viewingRound <= 0) return undefined;
+    const prevRound = this.getPreviousRound(this.viewingRound);
+    const prevResultsSnapshot = (
+      prevRound as unknown as { results?: Record<string, { parcelsSnapshot?: ParcelType[] }> }
+    )?.results?.[uid]?.parcelsSnapshot;
+    const prevParcels =
+      (prevRound?.parcelsSnapshot?.length ? prevRound.parcelsSnapshot : undefined) ||
+      (prevResultsSnapshot?.length ? prevResultsSnapshot : undefined);
+    return prevParcels?.[index]?.crop;
+  }
+
+  getSelectedBaselineParcels(): ParcelType[] {
+    if (this.selectedIndices.size === 0) return [];
+    const uid = this.gameService.state?.playerState?.uid || '';
+    const lastHist = this.history.length > 0 ? this.history[this.history.length - 1] : undefined;
+    const histResultsSnapshot = (
+      lastHist as unknown as { results?: Record<string, { parcelsSnapshot?: ParcelType[] }> }
+    )?.results?.[uid]?.parcelsSnapshot;
+    const baseline =
+      (lastHist?.parcelsSnapshot?.length ? lastHist.parcelsSnapshot : undefined) ||
+      (histResultsSnapshot?.length ? histResultsSnapshot : undefined) ||
+      (this.gameService.state?.lastRound?.parcelsSnapshot?.length
+        ? this.gameService.state.lastRound.parcelsSnapshot
+        : undefined) ||
+      this.parcels;
+
+    const selected: ParcelType[] = [];
+    this.selectedIndices.forEach((idx) => {
+      if (baseline[idx]) {
+        selected.push(baseline[idx]);
+      }
+    });
+    return selected;
+  }
+
+  getRoundLeaderboard(targetRoundNumber?: number): LeaderboardEntry[] {
+    const game = this.gameService.state?.game;
+    if (!game?.players) return [];
+    const players = Object.values(game.players);
+    if (players.length === 0) return [];
+
+    const currentUid = this.gameService.state?.playerState?.uid || '';
+    const roundNum = targetRoundNumber ?? this.roundResultRound?.number ?? this.maxRoundNumber;
+
+    const getPlayerName = (p: PlayerState) =>
+      p.displayName || `${this.playerLabel} ${p.uid.startsWith('player-') ? p.uid.split('-')[2] : ''}`;
+
+    const rawEntries = players.map((p) => {
+      const pHistory = p.history || [];
+      const currRound = pHistory.find((r) => r.number === roundNum) || pHistory[pHistory.length - 1];
+      const prevRound = pHistory.find((r) => r.number === Math.max(0, roundNum - 1)) || pHistory[0];
+
+      const capital = currRound?.result?.capital ?? p.capital ?? 100000;
+      const avgSoil = Math.round(currRound?.avgSoil ?? this.calculateAvgSoil(p));
+      const score =
+        currRound?.result?.sustainabilityScore ??
+        p.sustainabilityScore ??
+        GameEngine.calculateSustainabilityScore(capital, avgSoil);
+
+      const prevCapital = prevRound?.result?.capital ?? 100000;
+      const prevAvgSoil = Math.round(prevRound?.avgSoil ?? 100);
+      const prevScore =
+        prevRound?.result?.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(prevCapital, prevAvgSoil);
+
+      return {
+        uid: p.uid,
+        name: getPlayerName(p),
+        isAi: p.isAi,
+        score,
+        prevScore,
+        capital,
+        avgSoil,
+        isCurrentPlayer: p.uid === currentUid,
+      };
+    });
+
+    const prevSorted = [...rawEntries].sort((a, b) => b.prevScore - a.prevScore || a.uid.localeCompare(b.uid));
+    const prevRankMap = new Map<string, number>();
+    prevSorted.forEach((e, idx) => {
+      prevRankMap.set(e.uid, idx + 1);
+    });
+
+    const currSorted = [...rawEntries].sort(
+      (a, b) => b.score - a.score || b.capital - a.capital || a.uid.localeCompare(b.uid),
+    );
+
+    return currSorted.map((entry, idx) => {
+      const rank = idx + 1;
+      const prevRank = prevRankMap.get(entry.uid) ?? rank;
+      return {
+        ...entry,
+        rank,
+        prevRank,
+        rankDelta: roundNum > 0 ? prevRank - rank : 0,
+      };
+    });
+  }
+
+  syncCollectedStickers(extraStickerIds?: string[]) {
+    try {
+      const storedRaw = typeof window !== 'undefined' ? window.localStorage?.getItem('soil_collected_stickers') : null;
+      const stored: string[] = storedRaw ? JSON.parse(storedRaw) : [];
+      const fromHistory = (this.history || []).flatMap((r) => r.result?.unlockedStickers || []);
+      const fromPlayer = this.gameService.state?.playerState?.unlockedStickers || [];
+      const merged = Array.from(
+        new Set([...stored, ...fromHistory, ...fromPlayer, ...(extraStickerIds || [])].filter(Boolean)),
+      );
+      this.collectedStickerIds = merged;
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('soil_collected_stickers', JSON.stringify(merged));
+      }
+    } catch {
+      // Fallback if localStorage is unavailable or invalid
+      this.collectedStickerIds = Array.from(new Set(extraStickerIds || []));
+    }
+  }
+
+  isStickerCollected(stickerId: string): boolean {
+    return this.collectedStickerIds.includes(stickerId);
+  }
+
+  getStickerCategoryLabel(category: CollectibleSticker['category']): string {
+    const labels: Record<CollectibleSticker['category'], string> = {
+      soil: 'Boden',
+      economy: 'Ökonomie',
+      resilience: 'Resilienz',
+      mastery: 'Meisterschaft',
+    };
+    return labels[category] || category;
   }
 
   closeGameEndModal() {

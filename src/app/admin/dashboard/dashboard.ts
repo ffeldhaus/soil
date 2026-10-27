@@ -218,8 +218,9 @@ export class Dashboard implements OnInit, OnDestroy {
     numRounds: 20,
     numAi: 3,
     playerLabel: 'Team',
-    aiLevel: 'elementary',
-    advancedPricingEnabled: false,
+    aiLevel: 'middle',
+    difficulty: 'normal' as 'easy' | 'normal' | 'hard',
+    advancedPricingEnabled: true,
     analyticsEnabled: true,
     advisorEnabled: true,
   };
@@ -456,6 +457,7 @@ export class Dashboard implements OnInit, OnDestroy {
     numRounds: number;
     numAi: number;
     playerLabel: string;
+    difficulty?: 'easy' | 'normal' | 'hard';
     advancedPricingEnabled: boolean;
     analyticsEnabled: boolean;
     advisorEnabled: boolean;
@@ -496,6 +498,7 @@ export class Dashboard implements OnInit, OnDestroy {
       numRounds: this.newGameConfig.numRounds,
       numAi: this.newGameConfig.numAi,
       aiLevel: this.newGameConfig.aiLevel,
+      difficulty: this.newGameConfig.difficulty,
       playerLabel: this.newGameConfig.playerLabel,
       advancedPricingEnabled: this.newGameConfig.advancedPricingEnabled,
       analyticsEnabled: this.newGameConfig.analyticsEnabled,

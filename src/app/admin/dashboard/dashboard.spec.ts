@@ -148,7 +148,7 @@ describe('Dashboard Component', () => {
 
   it('should handle player conversion', async () => {
     await component.convertPlayer({ id: 'g1' } as any, { number: 1, isAi: false });
-    expect(gameServiceMock.updatePlayerType).toHaveBeenCalledWith('g1', 1, 'ai', 'elementary');
+    expect(gameServiceMock.updatePlayerType).toHaveBeenCalledWith('g1', 1, 'ai', 'middle');
   });
 
   it('should handle game selection', () => {

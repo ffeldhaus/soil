@@ -287,7 +287,7 @@
             </tr>
             <!-- Expanded Details Row -->
             @if (expandedGameId === game.id) {
-              <tr class="bg-gray-800/40 border-b border-gray-700">
+              <tr class="bg-gray-900 border-b border-gray-700">
                 <td colspan="8" class="px-4 py-4">
                   <app-dashboard-game-detail
                     [game]="game"
@@ -332,7 +332,7 @@
         >
           {{ t('dashboard.pagination.prev') }}
         </button>
-        <span class="px-3 py-1 bg-gray-800/50 rounded border border-gray-700">
+        <span class="px-3 py-1 bg-gray-950 rounded border border-gray-700">
           <ng-container>{{ t('dashboard.pagination.page') }}</ng-container>
           {{ currentPage }} {{ t('dashboard.pagination.of') }} {{ totalPages }}
         </span>

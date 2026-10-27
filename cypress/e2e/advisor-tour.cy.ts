@@ -66,17 +66,25 @@ describe('Advisor and Tour E2E', () => {
     cy.visit('/game?gameId=test-game-id');
     cy.wait('@getGameState');
 
+    // Welcome modal should be visible on first visit
+    cy.get('[data-testid="welcome-modal"]').should('be.visible');
+    cy.contains('Willkommen auf deinem Hof!').should('be.visible');
+
+    // Start the guided tour from the welcome modal
+    cy.get('[data-testid="welcome-start-tour-btn"]').click();
+
     // Tour should be visible
     cy.get('.shepherd-element').should('be.visible');
     cy.contains('Willkommen bei SOIL!').should('be.visible');
 
-    // Click "Überspringen"
-    cy.contains('Überspringen').click();
+    // Click "Nicht mehr anzeigen"
+    cy.contains('Nicht mehr anzeigen').click();
     cy.get('.shepherd-element').should('not.exist');
 
-    // Reload - tour should NOT show again
+    // Reload - welcome modal and tour should NOT show again
     cy.reload();
     cy.wait('@getGameState');
+    cy.get('[data-testid="welcome-modal"]').should('not.exist');
     cy.get('.shepherd-element').should('not.exist');
   });
 
@@ -101,24 +109,54 @@ describe('Advisor and Tour E2E', () => {
   });
 
   it('should show advisor in Round Result Modal', () => {
-    cy.visit('/game?gameId=test-game-id');
+    cy.intercept('POST', '**/submitDecision', {
+      body: {
+        result: {
+          status: 'calculated',
+          nextRound: {
+            number: 2,
+            parcelsSnapshot: Array(40)
+              .fill(null)
+              .map((_, i) => ({ index: i, crop: 'Wheat', soil: 75, nutrition: 80 })),
+            decision: { parcels: {}, machines: 0 },
+            result: {
+              profit: -6000,
+              capital: 91000,
+              harvestSummary: { Wheat: 10 },
+              expenses: { seeds: 2000, labor: 2000, running: 4000, investments: 0, total: 8000 },
+              income: 2000,
+              events: { weather: 'Normal', vermin: [] },
+            },
+          },
+        },
+      },
+    }).as('submitRound');
+
+    cy.visit('/game?gameId=test-game-id', {
+      onBeforeLoad: (win) => {
+        win.localStorage.setItem('soil_test_mode', 'true');
+        win.localStorage.setItem('soil_tour_seen', 'true');
+      },
+    });
     cy.wait('@getGameState');
 
-    // Manually trigger result modal by clicking round indicator (since we are at round 1)
-    // Actually, in the real app it shows after submission. Here we mock history.
-    // Let's mock a transition to see it.
-
-    // For this test, we can just check if the advisor is rendered in the settings modal
+    // Open settings and submit round to trigger Round Result Modal
     cy.get('[data-testid="next-round-button"]').click();
-    cy.get('app-game-advisor').should('be.visible');
-    cy.contains('Landwirtschaftlicher Berater').should('be.visible');
+    cy.get('[data-testid="confirm-round-settings"]').click();
+    cy.wait('@submitRound');
 
-    // Check for specific insights based on our mock data (profit -3000 -> Hoher Verlust)
-    cy.contains('Hoher Verlust').should('be.visible');
-    cy.contains('Bodenqualität sinkt').should('be.visible');
+    cy.get('[data-testid="round-result-modal"] app-game-advisor').scrollIntoView().should('be.visible');
+    cy.contains('Landwirtschaftlicher Berater').scrollIntoView().should('be.visible');
+
+    // Check for specific insights based on our mock data (profit -6000 -> Hoher Verlust, soil 90 -> 75 -> Bodenqualität sinkt)
+    cy.contains('Hoher Verlust').scrollIntoView().should('be.visible');
+    cy.contains('Bodenqualität sinkt').scrollIntoView().should('be.visible');
   });
 
   it('should respect advisorEnabled config', () => {
+    cy.window().then((win) => {
+      win.localStorage.setItem('soil_tour_seen', 'true');
+    });
     // Change intercept to disabled advisor
     cy.intercept('POST', '**/getGameState', {
       body: {
@@ -144,6 +182,7 @@ describe('Advisor and Tour E2E', () => {
     cy.wait('@getGameStateDisabled');
 
     cy.get('[data-testid="next-round-button"]').click();
-    cy.get('app-game-advisor').should('not.exist');
+    cy.get('app-game-advisor').should('not.be.visible');
+    cy.contains('Landwirtschaftlicher Berater').should('not.exist');
   });
 });

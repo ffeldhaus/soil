@@ -1,9 +1,9 @@
 <div
-  class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden portrait:p-0"
+  class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 print:hidden"
   (click)="cancelPrint.emit()"
 >
   <div
-    class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-md w-full portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
+    class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-5 max-w-md w-full"
     (click)="$event.stopPropagation()"
   >
     <h2 class="text-2xl font-bold text-white mb-6">{{ t('manual.printModal.title') }}</h2>

@@ -7,13 +7,13 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule],
   template: `
     <div
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 animate-fade-in"
       (click)="closeModal.emit()"
       (keyup.esc)="closeModal.emit()"
       tabindex="-1"
     >
       <div
-        class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-6 sm:p-8 max-w-lg w-full transform transition-all scale-100"
+        class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 sm:p-8 max-w-lg w-full transform transition-all scale-100"
         (click)="$event.stopPropagation()"
         (keyup)="$event.stopPropagation()"
         tabindex="0"

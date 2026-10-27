@@ -1,5 +1,9 @@
 @reference "tailwindcss";
 
+:host {
+  display: block;
+}
+
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #374151 rgba(17, 24, 39, 0.5);

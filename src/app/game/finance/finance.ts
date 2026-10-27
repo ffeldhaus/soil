@@ -284,8 +284,8 @@ export class Finance implements OnChanges {
   // --- Graph Helpers ---
 
   readonly VIEWBOX_WIDTH = 1000;
-  readonly VIEWBOX_HEIGHT = 300;
-  readonly GRAPH_MARGIN = { top: 30, right: 40, bottom: 60, left: 120 };
+  readonly VIEWBOX_HEIGHT = 240;
+  readonly GRAPH_MARGIN = { top: 20, right: 32, bottom: 38, left: 105 };
 
   getMaxCapital(): number {
     let max = 1000;

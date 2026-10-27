@@ -1,5 +1,14 @@
-import { GAME_CONSTANTS } from '../../game-constants';
-import type { CropType, Parcel, Round, RoundDecision, RoundResult } from '../../types';
+import { CONTRACT_DEFINITIONS, GAME_CONSTANTS } from '../../game-constants';
+import type {
+  CropType,
+  Parcel,
+  RegionalContract,
+  Round,
+  RoundDecision,
+  RoundResult,
+  WeatherForecast,
+  WeatherType,
+} from '../../types';
 
 export class GameEngine {
   static calculateRound(
@@ -11,9 +20,14 @@ export class GameEngine {
     totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS,
     options?: {
       marketPrices?: Record<string, { organic: number; conventional: number }>;
+      difficulty?: 'easy' | 'normal' | 'hard';
+      nextWeather?: WeatherType;
     },
   ): Round {
-    const previousParcels = previousRound ? previousRound.parcelsSnapshot : GameEngine.createInitialParcels();
+    const difficulty = options?.difficulty ?? 'normal';
+    const previousParcels = previousRound
+      ? previousRound.parcelsSnapshot
+      : GameEngine.createInitialParcels(options?.difficulty ?? 'easy');
     const parcelupdates: Parcel[] = [];
     const harvestSummary: Record<string, number> = {};
 
@@ -24,6 +38,7 @@ export class GameEngine {
 
     // -- 1. Pre-calculate global factors --
     const numParcels = previousParcels.length;
+    const prevAvgSoil = previousParcels.reduce((sum, p) => sum + p.soil, 0) / numParcels;
     const animalParcels = Object.values(decision.parcels).filter((c) => c === 'Grass').length;
 
     // Machine Decay & Growth Logic
@@ -37,7 +52,15 @@ export class GameEngine {
 
     const bioSiegel = decision.organic && !decision.fertilizer && !decision.pesticide;
 
-    const weather = GAME_CONSTANTS.WEATHER_EFFECTS[events.weather] || GAME_CONSTANTS.WEATHER_EFFECTS.Normal;
+    const baseWeather = GAME_CONSTANTS.WEATHER_EFFECTS[events.weather] || GAME_CONSTANTS.WEATHER_EFFECTS.Normal;
+    const climateEscalation =
+      difficulty === 'hard' && currentRoundNumber > 2 && events.weather !== 'Normal'
+        ? 1 + 0.35 * Math.min(1, Math.max(0, (currentRoundNumber - 2) / Math.max(1, totalRounds - 2)))
+        : 1.0;
+    const weather = {
+      ...baseWeather,
+      soil: baseWeather.soil < 0 ? baseWeather.soil * climateEscalation : baseWeather.soil,
+    };
 
     const machineYieldBonus = GAME_CONSTANTS.MACHINE_FACTORS.YIELD_BONUS[machineLevel];
     const machineSoilImpact = GAME_CONSTANTS.SOIL.MACHINE_IMPACT[machineLevel];
@@ -84,6 +107,7 @@ export class GameEngine {
           decision,
           weather,
           machineYieldBonus,
+          climateEscalation,
         );
 
         const harvestIntensity = yieldAmount / cropConfig.baseYield;
@@ -102,6 +126,11 @@ export class GameEngine {
       });
     });
 
+    const avgSoil = parcelupdates.reduce((sum, p) => sum + p.soil, 0) / numParcels;
+    const avgNutrition = parcelupdates.reduce((sum, p) => sum + p.nutrition, 0) / numParcels;
+    const roundedAvgSoil = Math.round(avgSoil);
+    const roundedAvgNutrition = Math.round(avgNutrition);
+
     // -- 3. Financials --
     const result = GameEngine.calculateFinancials(
       parcelupdates,
@@ -116,32 +145,304 @@ export class GameEngine {
       costScale,
       timeScale,
       currentCapital,
+      currentRoundNumber,
+      roundedAvgSoil,
+      difficulty,
       options,
     );
 
-    const avgSoil = parcelupdates.reduce((sum, p) => sum + p.soil, 0) / numParcels;
-    const avgNutrition = parcelupdates.reduce((sum, p) => sum + p.nutrition, 0) / numParcels;
+    result.sustainabilityScore = GameEngine.calculateSustainabilityScore(result.capital, avgSoil);
+    result.unlockedStickers = GameEngine.evaluateRoundStickers(
+      previousParcels,
+      decision,
+      events,
+      result,
+      avgSoil,
+      prevAvgSoil,
+      previousRound !== undefined,
+    );
+
+    const nextWeather = options?.nextWeather ?? GameEngine.rollWeather(currentRoundNumber + 1, totalRounds, difficulty);
+    const weatherForecast = GameEngine.generateWeatherForecast(currentRoundNumber + 1, nextWeather, difficulty);
+    const activeContract = GameEngine.getActiveContract(currentRoundNumber + 1, timeScale) ?? undefined;
 
     return {
       number: currentRoundNumber,
       decision,
       result,
       parcelsSnapshot: parcelupdates,
-      avgSoil: Math.round(avgSoil),
-      avgNutrition: Math.round(avgNutrition),
+      avgSoil: roundedAvgSoil,
+      avgNutrition: roundedAvgNutrition,
+      nextWeather,
+      weatherForecast,
+      activeContract,
     };
   }
 
-  static createInitialParcels(): Parcel[] {
+  static createInitialParcels(difficulty: 'easy' | 'normal' | 'hard' = 'easy', seedIndex = 0): Parcel[] {
+    if (difficulty === 'easy') {
+      return Array(40)
+        .fill(null)
+        .map((_, i) => ({
+          index: i,
+          crop: 'Fallow',
+          soil: GAME_CONSTANTS.SOIL.START,
+          nutrition: GAME_CONSTANTS.NUTRITION.START,
+          yield: 0,
+        }));
+    }
+
+    const soilZones = difficulty === 'hard' ? [76, 88, 100, 112, 124] : [88, 94, 100, 106, 112];
+    const nutritionZones = difficulty === 'hard' ? [80, 90, 100, 110, 120] : [90, 95, 100, 105, 110];
+    const shift = Math.abs(seedIndex) % 5;
+
     return Array(40)
       .fill(null)
-      .map((_, i) => ({
-        index: i,
-        crop: 'Fallow',
-        soil: GAME_CONSTANTS.SOIL.START,
-        nutrition: GAME_CONSTANTS.NUTRITION.START,
-        yield: 0,
-      }));
+      .map((_, i) => {
+        const row = Math.floor(i / 8);
+        const soilIdx = (row * 2 + shift) % 5;
+        const nutrIdx = (row * 2 + 1 + shift) % 5;
+        return {
+          index: i,
+          crop: 'Fallow',
+          soil: soilZones[soilIdx],
+          nutrition: nutritionZones[nutrIdx],
+          yield: 0,
+        };
+      });
+  }
+
+  static rollWeather(
+    roundNumber: number,
+    totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS,
+    difficulty: 'easy' | 'normal' | 'hard' = 'normal',
+    randomValue = Math.random(),
+  ): WeatherType {
+    if (roundNumber <= 2) {
+      return 'Normal';
+    }
+
+    const progress =
+      difficulty === 'hard' ? Math.min(1, Math.max(0, (roundNumber - 2) / Math.max(1, totalRounds - 2))) : 0;
+    const normalProb = Math.max(0.1, 0.35 - 0.25 * progress);
+    const extremeScale = (1 - normalProb) / 0.65;
+
+    const droughtProb = 0.2 * extremeScale;
+    const heatWaveProb = 0.15 * extremeScale;
+    const lateFrostProb = 0.12 * extremeScale;
+    const stormProb = 0.1 * extremeScale;
+
+    if (randomValue < normalProb) return 'Normal';
+    if (randomValue < normalProb + droughtProb) return 'Drought';
+    if (randomValue < normalProb + droughtProb + heatWaveProb) return 'HeatWave';
+    if (randomValue < normalProb + droughtProb + heatWaveProb + lateFrostProb) return 'LateFrost';
+    if (randomValue < normalProb + droughtProb + heatWaveProb + lateFrostProb + stormProb) return 'Storm';
+    return 'Flood';
+  }
+
+  static rollRoundEvents(
+    roundNumber: number,
+    totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS,
+    difficulty: 'easy' | 'normal' | 'hard' = 'normal',
+    preRolledWeather?: WeatherType,
+  ): { weather: WeatherType; vermin: string[] } {
+    if (roundNumber <= 2) {
+      return { weather: 'Normal', vermin: [] };
+    }
+
+    const weather = preRolledWeather ?? GameEngine.rollWeather(roundNumber, totalRounds, difficulty);
+    const vermin: string[] = [];
+    const pestRoll = Math.random();
+    const numPests = pestRoll < 0.2 ? 0 : pestRoll < 0.6 ? 1 : 2;
+
+    if (numPests > 0) {
+      const availablePests = [
+        'aphid-black',
+        'aphid-cereal',
+        'potato-beetle',
+        'corn-borer',
+        'pollen-beetle',
+        'pea-moth',
+        'oat-rust',
+        'nematode',
+        'swine-fever',
+      ];
+      for (let i = 0; i < numPests; i++) {
+        const p = availablePests[Math.floor(Math.random() * availablePests.length)];
+        if (!vermin.includes(p)) vermin.push(p);
+      }
+    }
+
+    return { weather, vermin };
+  }
+
+  static generateWeatherForecast(
+    nextRoundNumber: number,
+    targetWeather: WeatherType,
+    difficulty: 'easy' | 'normal' | 'hard' = 'normal',
+  ): WeatherForecast {
+    if (nextRoundNumber <= 2) {
+      return {
+        hintText: 'Ruhige Wetterlage erwartet.',
+        likelyWeathers: ['Normal'],
+        confidence: 'exact',
+      };
+    }
+
+    const labelMap: Record<WeatherType, string> = {
+      Normal: 'Ruhige Wetterlage',
+      Drought: 'Dürre',
+      HeatWave: 'Hitzewelle',
+      LateFrost: 'Spätfrost',
+      Storm: 'Sturm',
+      Flood: 'Starkregen',
+    };
+
+    if (difficulty === 'easy') {
+      return {
+        hintText: `${labelMap[targetWeather] || labelMap.Normal} erwartet.`,
+        likelyWeathers: [targetWeather],
+        confidence: 'exact',
+      };
+    }
+
+    if (difficulty === 'normal') {
+      const canonicalOrder: WeatherType[] = ['Normal', 'Drought', 'HeatWave', 'LateFrost', 'Storm', 'Flood'];
+      const alternatives = canonicalOrder.filter((w) => w !== targetWeather);
+      const altWeather =
+        alternatives[(nextRoundNumber * 3 + canonicalOrder.indexOf(targetWeather)) % alternatives.length];
+      const likelyWeathers = canonicalOrder.filter((w) => w === targetWeather || w === altWeather);
+      const names = likelyWeathers.map((w) => labelMap[w] || w);
+      return {
+        hintText: `${names.join(' oder ')} möglich.`,
+        likelyWeathers,
+        confidence: 'tendency',
+      };
+    }
+
+    return {
+      hintText: 'Wechselhafte Wetterlage möglich.',
+      likelyWeathers: [],
+      confidence: 'uncertain',
+    };
+  }
+
+  static getActiveContract(roundNumber: number, timeScale = 1): RegionalContract | null {
+    if (roundNumber < 2) return null;
+    const totalRounds = Math.round(GAME_CONSTANTS.DEFAULT_ROUNDS / Math.max(0.2, timeScale));
+    const interval = totalRounds > 20 ? 3 : 2;
+    if ((roundNumber - 2) % interval !== 0) return null;
+
+    const contractSlot = Math.floor((roundNumber - 2) / interval);
+    const contractIndex = contractSlot % CONTRACT_DEFINITIONS.length;
+    const baseContract = CONTRACT_DEFINITIONS[contractIndex];
+    return {
+      ...baseContract,
+      reward: Math.round(baseContract.reward * timeScale),
+    };
+  }
+
+  static evaluateContractFulfillment(
+    contractId: string,
+    parcels: Parcel[],
+    decision: RoundDecision,
+    avgSoil: number,
+  ): boolean {
+    switch (contractId) {
+      case 'legume-initiative': {
+        const count = parcels.filter((p) => p.crop === 'Fieldbean' || p.crop === 'Pea').length;
+        return count >= 6;
+      }
+      case 'humus-steward': {
+        const greenCount = parcels.filter((p) => p.crop === 'Grass' || p.crop === 'Fallow').length;
+        return avgSoil >= 100 && greenCount >= 5;
+      }
+      case 'regional-grain': {
+        const grainParcels = parcels.filter(
+          (p) => p.crop === 'Rye' || p.crop === 'Wheat' || p.crop === 'Barley' || p.crop === 'Oat',
+        );
+        const distinctGrainTypes = new Set(grainParcels.map((p) => p.crop));
+        return grainParcels.length >= 12 && distinctGrainTypes.size >= 2 && avgSoil >= 95;
+      }
+      case 'eco-pioneer': {
+        const cultivatedCount = parcels.filter((p) => p.crop !== 'Fallow').length;
+        return !decision.pesticide && cultivatedCount >= 30 && avgSoil >= 95;
+      }
+      default:
+        return false;
+    }
+  }
+
+  static calculateSustainabilityScore(capital: number, avgSoil: number): number {
+    const financialPoints =
+      capital < 0
+        ? Math.max(0, 350 + capital / 150)
+        : capital < 100000
+          ? 350 + (capital / 100000) * 150
+          : 500 + Math.sqrt((capital - 100000) / 1000) * 15;
+    const soilPoints = avgSoil <= 100 ? Math.max(0, (avgSoil - 50) * 10) : 500 + (avgSoil - 100) * 18;
+    const soilViability =
+      avgSoil < 75 ? 0.45 : avgSoil < 85 ? 0.7 : avgSoil < 95 ? 0.85 + ((avgSoil - 85) / 10) * 0.15 : 1.0;
+    const capitalViability =
+      capital < -50000 ? 0.35 : capital < 0 ? 0.65 : capital < 50000 ? 0.85 + (capital / 50000) * 0.15 : 1.0;
+    return Math.round((financialPoints + soilPoints) * soilViability * capitalViability);
+  }
+
+  static evaluateRoundStickers(
+    previousParcels: Parcel[],
+    decision: RoundDecision,
+    events: { weather: string; vermin: string[] },
+    result: RoundResult,
+    avgSoil: number,
+    prevAvgSoil: number,
+    hasPreviousRound = true,
+  ): string[] {
+    const unlocked: string[] = [];
+
+    if (avgSoil >= 105) {
+      unlocked.push('humus-pionier');
+    }
+
+    const goodRotations = hasPreviousRound
+      ? previousParcels.filter((prevP, idx) => {
+          const nextCrop = (decision.parcels[idx] || 'Fallow') as CropType;
+          return (
+            prevP.crop !== 'Fallow' &&
+            nextCrop !== 'Fallow' &&
+            prevP.crop !== nextCrop &&
+            GAME_CONSTANTS.ROTATION_MATRIX[prevP.crop]?.[nextCrop] === 'good'
+          );
+        }).length
+      : 0;
+    if (goodRotations >= 25) {
+      unlocked.push('fruchtfolge-meister');
+    }
+
+    if (['Drought', 'HeatWave', 'Flood', 'LateFrost'].includes(events.weather) && result.profit > 5000) {
+      unlocked.push('krisenfest');
+    }
+
+    if (result.bioSiegel && result.profit > 0 && avgSoil >= 98) {
+      unlocked.push('bio-leuchtturm');
+    }
+
+    if ((result.contractBonus ?? 0) > 0) {
+      unlocked.push('vertrags-partner');
+    }
+
+    if (hasPreviousRound && avgSoil - prevAvgSoil >= 1.0) {
+      unlocked.push('boden-retter');
+    }
+
+    if (events.vermin.length > 0 && decision.organisms && !decision.pesticide) {
+      unlocked.push('nuetzlings-allianz');
+    }
+
+    if (hasPreviousRound && avgSoil >= 95 && (result.sustainabilityScore ?? 0) >= 1150) {
+      unlocked.push('zukunfts-hof');
+    }
+
+    return unlocked;
   }
 
   private static calculateMachineLevel(
@@ -186,7 +487,7 @@ export class GameEngine {
 
     const prevCrop = prevParcel.crop;
     const sequenceQuality = GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[cropKey] || 'ok';
-    if (sequenceQuality === 'good') {
+    if (sequenceQuality === 'good' && !(prevCrop === 'Fallow' && cropKey === 'Fallow')) {
       const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
       const bonusMultiplier = soilRatio > 1.2 ? 0.5 : 1.0;
       soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_BONUS * bonusMultiplier * timeScale;
@@ -267,6 +568,7 @@ export class GameEngine {
     decision: RoundDecision,
     weather: { yield: number },
     machineYieldBonus: number,
+    climateEscalation = 1.0,
   ): number {
     const soilEffect = Math.min(
       1.2,
@@ -304,7 +606,7 @@ export class GameEngine {
       }
       const sensitivityMultiplierMap: Record<string, number> = { Stark: 1.0, Mäßig: 0.6, Gering: 0.3, Keine: 0 };
       const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 0.6;
-      weatherYieldEffect = Math.max(0, 1.0 - penalty * multiplier);
+      weatherYieldEffect = Math.max(0, 1.0 - penalty * multiplier * climateEscalation);
     }
 
     let yieldAmount =
@@ -326,6 +628,9 @@ export class GameEngine {
     costScale: number,
     timeScale: number,
     currentCapital: number,
+    currentRoundNumber: number,
+    avgSoil: number,
+    difficulty: 'easy' | 'normal' | 'hard',
     options?: { marketPrices?: Record<string, { organic: number; conventional: number }> },
   ): RoundResult {
     let seedCost = 0;
@@ -385,17 +690,31 @@ export class GameEngine {
       (decision.fertilizer ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE * timeScale : 0) +
       (decision.pesticide ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE * timeScale : 0) +
       (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS * timeScale : 0);
-    const totalExpenses = seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost;
+
+    const overdraftRate = difficulty === 'hard' ? 0.1 : difficulty === 'normal' ? 0.06 : 0;
+    const overdraftInterest =
+      currentCapital < 0 && overdraftRate > 0 ? Math.round(Math.abs(currentCapital) * overdraftRate * timeScale) : 0;
+
+    const totalExpenses =
+      seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost + overdraftInterest;
 
     // Subsidies Calculation
     const greenParcels = parcelupdates.filter((p) => p.crop === 'Fallow' || p.crop === 'Grass').length;
     const greenStripParcels = Math.min(greenParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
     const regularParcels = numParcels - greenStripParcels;
+    const bioEligibleParcels = parcelupdates.filter((p) => p.crop !== 'Fallow').length;
+
+    const activeContract = GameEngine.getActiveContract(currentRoundNumber, timeScale);
+    const contractBonus =
+      activeContract && GameEngine.evaluateContractFulfillment(activeContract.id, parcelupdates, decision, avgSoil)
+        ? activeContract.reward
+        : 0;
 
     const subsidies =
       regularParcels * GAME_CONSTANTS.SUBSIDIES.BASE +
       greenStripParcels * GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP +
-      (bioSiegel ? numParcels * GAME_CONSTANTS.SUBSIDIES.BIO : 0);
+      (bioSiegel ? bioEligibleParcels * GAME_CONSTANTS.SUBSIDIES.BIO : 0) +
+      contractBonus;
 
     let income = 0;
     const marketPricesUsed: Record<string, number> = {};
@@ -417,19 +736,26 @@ export class GameEngine {
     });
 
     const profit = income + subsidies - totalExpenses;
+    const finalCapital = currentCapital + profit;
+    const insolvent = difficulty !== 'easy' && finalCapital < -50000;
+
     return {
       profit,
-      capital: currentCapital + profit,
+      capital: finalCapital,
       harvestSummary,
       expenses: {
         seeds: seedCost,
         labor: laborCost,
         running: runningCost + animalMaintenance - laborCost,
         investments: machineInvestment + suppliesCost,
+        overdraftInterest,
         total: totalExpenses,
       },
       income,
       subsidies,
+      contractBonus,
+      overdraftInterest,
+      insolvent,
       marketPrices: marketPricesUsed,
       events,
       bioSiegel,

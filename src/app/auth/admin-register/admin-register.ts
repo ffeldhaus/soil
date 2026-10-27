@@ -38,20 +38,20 @@ export class AdminRegisterComponent implements OnInit {
     const translations: Record<string, string> = {
       'adminRegister.signedInAs': 'Angemeldet als',
       'adminRegister.viaGoogle': 'über Google',
-      'adminRegister.completeApp': 'Bitte vervollständigen Sie Ihren Antrag',
+      'adminRegister.completeApp': 'Bitte vervollständige deinen Antrag',
       'adminRegister.firstName': 'Vorname',
       'adminRegister.placeholder.firstName': 'Max',
       'adminRegister.lastName': 'Nachname',
       'adminRegister.placeholder.lastName': 'Mustermann',
       'adminRegister.email': 'E-Mail-Adresse',
       'adminRegister.placeholder.email': 'admin@schule.de',
-      'adminRegister.error.email': 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
+      'adminRegister.error.email': 'Bitte gib eine gültige E-Mail-Adresse ein',
       'adminRegister.password': 'Passwort',
       'adminRegister.placeholder.password': 'Mindestens 6 Zeichen',
       'adminRegister.error.password': 'Das Passwort muss mindestens 6 Zeichen lang sein',
       'adminRegister.error.required': 'Dieses Feld ist ein Pflichtfeld',
       'adminRegister.success.verificationSent':
-        'Registrierung erfolgreich! Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.',
+        'Registrierung erfolgreich! Bitte prüfe deine E-Mails, um deine E-Mail-Adresse zu bestätigen.',
       'adminRegister.error.title': 'Registrierung fehlgeschlagen',
       'adminRegister.error.retry': 'Erneut versuchen',
       'adminRegister.error.offline': 'Registrierung ist nur im Online-Modus möglich.',
@@ -124,7 +124,7 @@ export class AdminRegisterComponent implements OnInit {
 
       // Google users are already verified, show success and maybe redirect to home after a delay
       this.successMessage = this.t('adminRegister.success.verificationSent').replace(
-        ' Bitte prüfen Sie Ihre E-Mails, um Ihre E-Mail-Adresse zu bestätigen.',
+        ' Bitte prüfe deine E-Mails, um deine E-Mail-Adresse zu bestätigen.',
         '',
       );
       this.isLoading = false;
@@ -132,8 +132,7 @@ export class AdminRegisterComponent implements OnInit {
       setTimeout(() => this.router.navigate(['/']), 5000);
     } catch (error: unknown) {
       console.error('Registration error:', error);
-      this.errorMessage =
-        (error as Error).message || 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+      this.errorMessage = (error as Error).message || 'Ein Fehler ist aufgetreten. Bitte versuche es später erneut.';
       this.showErrorModal = true;
       this.cdr.detectChanges();
     } finally {

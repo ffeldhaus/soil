@@ -6,27 +6,27 @@
   </div>
 
   @if (user$ | async; as user) {
-  <div class="relative z-10 h-full flex flex-col pt-10">
-    @defer (hydrate on idle) {
+  <div class="relative h-full flex flex-col pt-10">
     <app-board-hud [user]="user" [gameState]="gameState$ | async" [isPlayer]="isPlayer" [playerLabel]="playerLabel"
       [playerNumber]="playerNumber" [showLabels]="showLabels" [showNutritionOverlay]="showNutritionOverlay"
       [showHarvestOverlay]="showHarvestOverlay" [showSoilOverlay]="showSoilOverlay" [showFinance]="showFinance"
       [maxRoundNumber]="maxRoundNumber" [isReadOnly]="isReadOnly" [isSubmitted]="isSubmitted"
-      [viewingRound]="viewingRound" [pendingNextRound]="pendingNextRound" (logout)="logout()"
-      (toggleMobileMenu)="toggleMobileMenu()" (updateName)="onSaveName($event)" (toggleLabels)="toggleLabels()"
+      [viewingRound]="viewingRound" [pendingNextRound]="pendingNextRound"
+      [collectedStickersCount]="collectedStickerIds.length" [totalStickersCount]="allStickers.length"
+      (logout)="logout()" (toggleMobileMenu)="toggleMobileMenu()" (updateName)="onSaveName($event)"
+      (openTeamModal)="openTeamAndAchievementsModal()" (toggleLabels)="toggleLabels()"
       (toggleNutrition)="toggleNutrition()" (toggleHarvest)="toggleHarvest()" (toggleSoil)="toggleSoil()"
-      (toggleFinance)="toggleFinance()" (openRoundSettings)="openRoundSettings()" (nextRound)="nextRound()"
+      (toggleFinance)="toggleFinance()" (nextRound)="nextRound()"
       (showGameEnd)="showGameEndModal = true"></app-board-hud>
-    }
 
     <!-- Mobile Side Menu Overlay -->
     @if (showMobileMenu) {
     <div class="fixed inset-0 z-[100] lg:hidden">
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="toggleMobileMenu()"></div>
+      <div class="absolute inset-0 bg-black/75" (click)="toggleMobileMenu()"></div>
       <!-- Menu Content -->
       <div
-        class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900/80 backdrop-blur-md shadow-2xl flex flex-col border-r border-gray-700 animate-slide-in-left">
+        class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900 shadow-2xl flex flex-col border-r border-gray-700 animate-slide-in-left">
         <div class="p-6 border-b border-gray-800 flex justify-between items-center">
           <h2 class="text-xl font-bold text-emerald-500">MENU</h2>
           <button (click)="toggleMobileMenu()" class="text-gray-400" aria-label="Close menu">
@@ -62,42 +62,54 @@
             <label
               class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Einblendungen</label>
             <div class="grid grid-cols-1 gap-2">
-              <button (click)="toggleLabels(); toggleMobileMenu()"
-                class="w-full text-left px-4 py-3 rounded-xl border transition" [class.bg-emerald-600]="showLabels"
-                [class.border-emerald-500]="showLabels" [class.bg-gray-800]="!showLabels"
-                [class.border-gray-700]="!showLabels">
-                <ng-container
->Feldnamen</ng-container>
+              <button (click)="toggleLabels(); toggleMobileMenu()" [disabled]="showFinance"
+                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                [class.bg-gray-300]="showLabels" [class.hover:bg-gray-200]="showLabels"
+                [class.text-gray-900]="showLabels" [class.border-gray-400]="showLabels"
+                [class.bg-gray-800]="!showLabels" [class.hover:bg-gray-700]="!showLabels"
+                [class.text-white]="!showLabels" [class.border-gray-700]="!showLabels">
+                <ng-container>Feldnamen</ng-container>
               </button>
-              <button (click)="toggleNutrition(); toggleMobileMenu()"
-                class="w-full text-left px-4 py-3 rounded-xl border transition"
-                [class.bg-blue-600]="showNutritionOverlay" [class.border-blue-500]="showNutritionOverlay"
-                [class.bg-gray-800]="!showNutritionOverlay" [class.text-gray-400]="!showNutritionOverlay"
-                [class.border-gray-700]="!showNutritionOverlay">
-                <ng-container
->Nährstoffe</ng-container>
+              <button (click)="toggleSoil(); toggleMobileMenu()" [disabled]="showFinance"
+                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold text-white disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                [class.bg-amber-900]="showSoilOverlay" [class.hover:bg-amber-800]="showSoilOverlay"
+                [class.border-amber-700]="showSoilOverlay" [class.bg-gray-800]="!showSoilOverlay"
+                [class.hover:bg-gray-700]="!showSoilOverlay" [class.border-gray-700]="!showSoilOverlay">
+                <ng-container>Bodenqualität</ng-container>
               </button>
-              <button (click)="toggleHarvest(); toggleMobileMenu()"
-                class="w-full text-left px-4 py-3 rounded-xl border transition"
-                [class.bg-yellow-600]="showHarvestOverlay" [class.border-yellow-500]="showHarvestOverlay"
-                [class.bg-gray-800]="!showHarvestOverlay" [class.text-gray-400]="!showHarvestOverlay"
-                [class.border-gray-700]="!showHarvestOverlay">
-                <ng-container
->Ertrag</ng-container>
+              <button (click)="toggleNutrition(); toggleMobileMenu()" [disabled]="showFinance"
+                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold text-white disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                [class.bg-blue-600]="showNutritionOverlay" [class.hover:bg-blue-500]="showNutritionOverlay"
+                [class.border-blue-400]="showNutritionOverlay" [class.bg-gray-800]="!showNutritionOverlay"
+                [class.hover:bg-gray-700]="!showNutritionOverlay" [class.border-gray-700]="!showNutritionOverlay">
+                <ng-container>Mineralstoffe</ng-container>
               </button>
-              <button (click)="toggleSoil(); toggleMobileMenu()"
-                class="w-full text-left px-4 py-3 rounded-xl border transition" [class.bg-emerald-700]="showSoilOverlay"
-                [class.border-emerald-600]="showSoilOverlay" [class.bg-gray-800]="!showSoilOverlay"
-                [class.text-gray-400]="!showSoilOverlay" [class.border-gray-700]="!showSoilOverlay">
-                <ng-container
->Bodenqualität</ng-container>
+              <button (click)="toggleHarvest(); toggleMobileMenu()" [disabled]="showFinance"
+                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                [class.bg-yellow-500]="showHarvestOverlay" [class.hover:bg-yellow-400]="showHarvestOverlay"
+                [class.text-gray-950]="showHarvestOverlay" [class.border-yellow-300]="showHarvestOverlay"
+                [class.bg-gray-800]="!showHarvestOverlay" [class.hover:bg-gray-700]="!showHarvestOverlay"
+                [class.text-white]="!showHarvestOverlay" [class.border-gray-700]="!showHarvestOverlay">
+                <ng-container>Ernte</ng-container>
               </button>
               <button (click)="toggleFinance(); toggleMobileMenu()" [disabled]="maxRoundNumber === 0"
-                class="w-full text-left px-4 py-3 rounded-xl border transition" [class.bg-emerald-600]="showFinance"
-                [class.border-emerald-500]="showFinance" [class.bg-gray-800]="!showFinance"
-                [class.border-gray-700]="!showFinance" [class.opacity-50]="maxRoundNumber === 0">
-                <ng-container
->Finanzen</ng-container>
+                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold flex items-center justify-between gap-2 disabled:cursor-default"
+                [class.bg-gray-200]="showFinance" [class.hover:bg-white]="showFinance"
+                [class.text-gray-950]="showFinance" [class.border-gray-300]="showFinance"
+                [class.bg-gray-800]="!showFinance" [class.hover:bg-gray-700]="!showFinance && maxRoundNumber > 0"
+                [class.text-white]="!showFinance" [class.border-gray-700]="!showFinance">
+                <span>Finanzen</span>
+                @if (gameState$ | async; as gs) {
+                  @if (gs.playerState; as ps) {
+                    <span
+                      class="font-mono tabular-nums text-xs font-bold whitespace-nowrap"
+                      [class.text-gray-950]="showFinance"
+                      [class.text-amber-400]="!showFinance"
+                    >{{
+                      (ps.history[viewingRound]?.result?.capital ?? gs.lastRound?.result?.capital ?? ps.capital) | currency: 'EUR' : 'symbol' : '1.0-0'
+                    }}</span>
+                  }
+                }
               </button>
             </div>
           </nav>
@@ -106,11 +118,6 @@
           <div class="space-y-3">
             <label
               class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Aktionen</label>
-            <button (click)="openRoundSettings(); toggleMobileMenu()" [disabled]="isReadOnly"
-              class="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl border border-gray-700 transition flex items-center justify-center gap-2">
-              <ng-container
->Runden-Optionen</ng-container>
-            </button>
             @if ((gameState$ | async)?.game?.status !== 'finished') {
             <button (click)="nextRound(); toggleMobileMenu()"
               [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
@@ -126,7 +133,7 @@
             }
             @if ((gameState$ | async)?.game?.status === 'finished') {
             <button (click)="showGameEndModal = true; toggleMobileMenu()"
-              class="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl border border-amber-500 transition shadow-lg flex items-center justify-center">
+              class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl border border-emerald-500 transition shadow-lg flex items-center justify-center">
               <ng-container>Spiel
                 beendet</ng-container>
             </button>
@@ -142,11 +149,14 @@
             }
             <div class="flex flex-col">
               @if (!isEditingName) {
-              <span
-                class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200"
-                (click)="startEditName(); $event.stopPropagation()">
-                {{ getDisplayName(user) | uppercase }}
-              </span>
+              <button
+                type="button"
+                data-testid="mobile-team-modal-btn"
+                class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 font-mono tabular-nums bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500"
+                (click)="openTeamAndAchievementsModal(); toggleMobileMenu(); $event.stopPropagation()">
+                <span>{{ getDisplayName(user) | uppercase }}</span>
+                <span>🏅 {{ collectedStickerIds.length }}/{{ allStickers.length }}</span>
+              </button>
               } @else {
               <input [(ngModel)]="tempName" (keyup.enter)="saveName()" (blur)="saveName()"
                 class="bg-gray-900 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1" />
@@ -177,12 +187,17 @@
     <!-- Main Board Area -->
     <div
       class="relative flex-1 w-full min-h-0 flex flex-col items-center justify-start overflow-hidden board-container no-overscroll"
+      [class.show-side-cards]="showSideCards"
+      (mousedown)="onBoardAreaMouseDown($event)"
+      (touchstart)="onTouchStart($event)"
+      (touchmove)="onTouchMove($event)"
+      (touchend)="onTouchEnd($event)"
       (click)="onBackgroundClick($event)">
       <!-- Read Only Banner -->
       @if (showReadOnlyBanner) {
       <div class="absolute top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
         <div
-          class="bg-amber-500/90 text-black px-6 py-2 rounded-full font-bold shadow-lg border-2 border-amber-300 backdrop-blur-sm animate-pulse">
+          class="bg-amber-500 text-black px-4 py-1.5 rounded-lg font-bold shadow-lg border border-amber-300 animate-pulse">
           <ng-container>Nur
             Lesezugriff (Admin-Vorschau)</ng-container>
         </div>
@@ -191,9 +206,9 @@
 
       <!-- Error Modal -->
       @if (errorMessage) {
-      <div class="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      <div class="fixed inset-0 z-[80] bg-black/75 flex items-center justify-center p-4"
         (click)="errorMessage = ''">
-        <div class="bg-red-900/90 border border-red-500 p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center"
+        <div class="bg-red-950 border border-red-500 p-5 rounded-xl shadow-2xl max-w-sm w-full text-center"
           (click)="$event.stopPropagation()">
           <div class="text-red-200 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24"
@@ -223,72 +238,212 @@
       }
 
       @if (showPlantingModal) {
-      <app-planting-modal [crops]="availableCrops" (cropSelected)="onCropSelected($event)"
-        (plantingCancelled)="onPlantingCancel()">
+      <app-planting-modal [crops]="availableCrops" [selectedParcels]="getSelectedBaselineParcels()"
+        (cropSelected)="onCropSelected($event)" (plantingCancelled)="onPlantingCancel()">
       </app-planting-modal>
       }
 
       @if (showRoundResultModal && roundResultRound) {
       <app-round-result-modal [round]="roundResultRound!" [previousRound]="getPreviousRound(roundResultRound!.number)" 
         [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false"
+        [leaderboard]="getRoundLeaderboard(roundResultRound!.number)"
+        [difficulty]="gameDifficulty"
         (resultClosed)="closeRoundResultModal()">
       </app-round-result-modal>
       }
 
       <!-- Round Header (Static Flex Item) -->
-      <div class="shrink-0 pt-4 pb-1 flex flex-col items-center gap-1 z-30 w-full">
-        <!-- Round Selector (History) -->
+      <div
+        class="shrink-0 py-1.5 flex flex-col items-center gap-1 z-30 w-full relative"
+        (mousedown)="$event.stopPropagation()"
+        (touchstart)="$event.stopPropagation()"
+      >
+        <!-- Round Selector + Compact HUD (for portrait and narrower/quadratic landscape) -->
         @if (viewingRound >= 0) {
-        <div class="flex items-center justify-center w-full max-w-4xl px-4 gap-2 min-h-[40px] sm:min-h-[48px]">
-          <!-- Weather (Left) -->
-          <div class="flex-1 flex justify-end portrait:hidden">
-            @if (selectedRoundWeatherData.name !== 'Normal') {
-            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 bg-blue-950 px-3 py-1 rounded border border-blue-500 shadow-sm whitespace-nowrap" [title]="selectedRoundWeatherData.name">
-              {{ selectedRoundWeatherData.name }}
-            </span>
-            }
+        <div class="flex flex-wrap lg:flex-nowrap items-center justify-center w-full max-w-6xl px-2 sm:px-4 gap-1 sm:gap-2 min-h-[32px] sm:min-h-[36px]">
+          <!-- Round Indicator: Row 1 on <lg, Center on lg+ -->
+          <div class="w-full lg:w-auto flex justify-center order-1 lg:order-2 shrink-0">
+            <div data-testid="round-indicator" data-tour="round-selector"
+              class="shrink-0 flex items-center gap-1 bg-gray-900 px-3 py-1 rounded-lg border border-gray-700 shadow-md">
+              <button (click)="goToRound(viewingRound - 1)" [disabled]="viewingRound === 0"
+                class="text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clip-rule="evenodd" />
+                </svg>
+              </button>
+              <span class="text-xs font-mono tabular-nums px-1.5 sm:px-2 min-w-[90px] sm:min-w-[100px] text-center transition-colors"
+                [class.text-emerald-400]="viewingRound === maxRoundNumber"
+                [class.text-white]="viewingRound < maxRoundNumber">
+                <ng-container>Runde</ng-container> {{ viewingRound }} von {{ totalRounds }}
+              </span>
+              <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
+                class="text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <div data-testid="round-indicator" data-tour="round-selector"
-            class="shrink-0 flex items-center gap-1 bg-gray-900/60 backdrop-blur rounded-full px-4 py-1 border border-gray-700">
-            <button (click)="goToRound(viewingRound - 1)" [disabled]="viewingRound === 0"
-              class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                  clip-rule="evenodd" />
-              </svg>
-            </button>
-            <span class="text-xs font-mono px-2 min-w-[100px] text-center transition-colors"
-              [class.text-emerald-400]="viewingRound === maxRoundNumber"
-              [class.text-white]="viewingRound < maxRoundNumber">
-              <ng-container>Runde</ng-container> {{ viewingRound }} von {{ totalRounds }}
-            </span>
-            <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
-              class="text-gray-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd" />
-              </svg>
-            </button>
+          <!-- Weather & Weather Forecast (Left on lg+, Row 2 on <lg) -->
+          <div class="board-compact-hud order-2 lg:order-1 lg:flex-1 flex-wrap items-center justify-center lg:justify-end gap-1 min-w-0 max-w-full">
+            <div
+              class="relative min-w-0 max-w-full"
+              (mouseenter)="activeHudPopover = 'weather'"
+              (mouseleave)="activeHudPopover = activeHudPopover === 'weather' ? null : activeHudPopover"
+            >
+              <button
+                type="button"
+                data-testid="hud-weather-forecast"
+                (click)="toggleHudPopover('weather', $event)"
+                class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg pl-1.5 pr-2 py-0.5 sm:pl-1.5 sm:pr-2.5 sm:py-1 text-[10px] sm:text-[11px] text-slate-200 min-w-0 max-w-full transition-colors cursor-pointer"
+              >
+                <img
+                  [src]="selectedRoundWeatherData.image"
+                  alt=""
+                  class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-gray-700 shrink-0"
+                />
+                @if (selectedRoundWeatherData.name !== 'Normal') {
+                  <span class="font-bold text-sky-300 whitespace-nowrap shrink-0">{{ selectedRoundWeatherData.name }} ·</span>
+                }
+                @if (currentWeatherForecast; as forecast) {
+                  <span class="leading-tight truncate">{{ getFormattedWeatherForecastText(forecast.hintText) }}</span>
+                } @else {
+                  <span class="leading-tight truncate">Ruhige Wetterlage erwartet.</span>
+                }
+              </button>
+
+              @if (activeHudPopover === 'weather') {
+                <div
+                  (click)="$event.stopPropagation()"
+                  class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-24 max-sm:w-auto sm:absolute sm:left-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
+                >
+                  <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-950">
+                    <img
+                      [src]="selectedRoundWeatherData.image"
+                      [alt]="selectedRoundWeatherData.name"
+                      class="w-full h-full object-cover"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
+                    <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
+                      {{ selectedRoundWeatherData.name === 'Normal' ? 'Ruhige Wetterlage' : selectedRoundWeatherData.name }}
+                    </span>
+                  </div>
+                  @if (currentWeatherForecast; as forecast) {
+                    <div class="p-3.5 bg-gray-950 border-t border-gray-700/80">
+                      <div class="text-xs font-bold text-white mb-1 leading-snug">
+                        Prognose
+                      </div>
+                      <p class="text-[11px] text-slate-300 leading-relaxed">
+                        {{ getFormattedWeatherForecastText(forecast.hintText) }}
+                      </p>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
           </div>
 
-          <!-- Pests (Right) -->
-          <div class="flex-1 flex flex-wrap gap-1 justify-start portrait:hidden" data-tour="weather-pests">
-            @for (pest of selectedRoundPestsData; track $index) {
-            <span class="text-[10px] font-bold uppercase tracking-widest text-red-400 bg-red-950 px-3 py-1 rounded border border-red-500 shadow-sm whitespace-nowrap" [title]="pest.name">
-              {{ pest.name }}
-            </span>
+          <!-- Pests & Regional Contract (Right on lg+, Row 2 on <lg) -->
+          @if (selectedRoundPestsData.length > 0 || currentActiveContract) {
+          <div class="board-compact-hud order-3 lg:order-3 lg:flex-1 flex-wrap items-center justify-center lg:justify-start gap-1 min-w-0 max-w-full" data-tour="weather-pests">
+            @if (selectedRoundPestsData.length > 0) {
+            <div
+              class="relative min-w-0 max-w-full"
+              (mouseenter)="activeHudPopover = 'pests'"
+              (mouseleave)="activeHudPopover = activeHudPopover === 'pests' ? null : activeHudPopover"
+            >
+              <button
+                type="button"
+                data-testid="hud-pests-pill"
+                (click)="toggleHudPopover('pests', $event)"
+                class="flex items-center gap-1.5 bg-rose-950 hover:bg-rose-900 border border-rose-500/70 rounded-lg pl-1.5 pr-2 py-0.5 sm:pl-1.5 sm:pr-2.5 sm:py-1 text-[10px] sm:text-[11px] text-rose-200 min-w-0 max-w-full transition-colors cursor-pointer"
+              >
+                <img
+                  [src]="primaryPestBannerImage"
+                  alt=""
+                  class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-gray-700 shrink-0"
+                />
+                <span class="font-bold truncate">
+                  {{ selectedRoundPestsData[0].name }}{{ selectedRoundPestsData.length > 1 ? ' +' + (selectedRoundPestsData.length - 1) : '' }}
+                </span>
+              </button>
+
+              @if (activeHudPopover === 'pests') {
+                <div
+                  (click)="$event.stopPropagation()"
+                  class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-24 max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
+                >
+                  @for (pest of selectedRoundPestsData; track $index; let first = $first) {
+                    <div
+                      class="relative aspect-square w-full overflow-hidden bg-slate-950 border-gray-700/80"
+                      [class.border-t]="!first"
+                    >
+                      <img [src]="pest.image" [alt]="pest.name" class="w-full h-full object-cover" />
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
+                      <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
+                        {{ pest.name }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            }
+
+            @if (currentActiveContract; as contract) {
+            <div
+              class="relative min-w-0 max-w-full"
+              (mouseenter)="activeHudPopover = 'contract'; showContractPopover = true"
+              (mouseleave)="activeHudPopover = activeHudPopover === 'contract' ? null : activeHudPopover; showContractPopover = false"
+            >
+              <button
+                type="button"
+                data-testid="hud-active-contract"
+                (click)="toggleHudPopover('contract', $event)"
+                class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-amber-500/50 rounded-lg pl-1.5 pr-2 py-0.5 sm:pl-1.5 sm:pr-2.5 sm:py-1 text-[10px] sm:text-[11px] text-slate-200 min-w-0 max-w-full transition-colors cursor-pointer"
+              >
+                <img [src]="getContractImage(contract.id)" alt="" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-amber-500/40 shrink-0" />
+                <span class="font-semibold text-amber-300 truncate">{{ contract.name }}</span>
+                <span class="font-mono tabular-nums font-bold text-emerald-400 shrink-0">
+                  +{{ contract.reward | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </span>
+              </button>
+              @if (activeHudPopover === 'contract' || showContractPopover) {
+              <div
+                (click)="$event.stopPropagation()"
+                class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-24 max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-80 bg-gray-900 border border-amber-500/50 rounded-xl shadow-2xl overflow-hidden text-left"
+              >
+                <div class="relative aspect-square w-full overflow-hidden bg-slate-950 border-b border-amber-500/40">
+                  <img [src]="getContractImage(contract.id)" [alt]="contract.name" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
+                </div>
+                <div class="p-3.5 bg-gray-950">
+                  <div class="text-xs font-bold text-white mb-1 leading-snug">{{ contract.name }}</div>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">{{ contract.description }}</p>
+                  <div class="mt-2 text-xs font-mono tabular-nums font-bold text-emerald-400">
+                    Bonus: +{{ contract.reward | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
             }
           </div>
+          } @else {
+          <div class="board-compact-hud hidden lg:flex lg:order-3 lg:flex-1" aria-hidden="true"></div>
+          }
         </div>
         }
 
         <!-- NEW Timer Component -->
         @if (countdownText && viewingRound === maxRoundNumber && !isSubmitted) {
         <div
-          class="flex items-center gap-2 bg-red-900/60 backdrop-blur rounded-full px-4 py-1 border border-red-500/50 mt-1 animate-pulse shadow-lg shadow-red-900/20" data-tour="timer">
+          class="flex items-center gap-2 bg-red-950 rounded-lg px-3 py-1 border border-red-500/60 mt-0.5 animate-pulse shadow-md" data-tour="timer">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -301,15 +456,68 @@
 
       <!-- Grid or Finance (Flex Grow) -->
       @if (!showFinance) {
-        <div class="flex-1 w-full min-h-0 pt-3 pb-10 portrait:pb-4 px-4 flex items-center justify-center board-grid-wrapper">
+        <div class="flex-1 w-full min-h-0 pt-1 pb-9 portrait:pb-3 px-3 flex items-center justify-center board-grid-wrapper">
+          <!-- Left Side Cards (Wide Landscape Only) -->
+          <aside class="board-side-column" aria-label="Wetter und Schädlinge">
+            <div
+              data-testid="side-card-weather"
+              class="board-side-card bg-gray-900 border-[3px] border-slate-600 rounded-xl overflow-hidden text-left flex flex-col"
+            >
+              <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-950">
+                <img
+                  [src]="selectedRoundWeatherData.image"
+                  [alt]="selectedRoundWeatherData.name"
+                  class="w-full h-full object-cover"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
+                <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
+                  {{ selectedRoundWeatherData.name === 'Normal' ? 'Ruhige Wetterlage' : selectedRoundWeatherData.name }}
+                </span>
+              </div>
+              @if (currentWeatherForecast; as forecast) {
+                <div class="p-2.5 sm:p-3 bg-gray-950 border-t border-slate-600/80">
+                  <div class="text-xs font-bold text-white mb-0.5 leading-snug">
+                    Prognose
+                  </div>
+                  <p class="text-[11px] text-slate-300 leading-snug break-words">
+                    {{ getFormattedWeatherForecastText(forecast.hintText) }}
+                  </p>
+                </div>
+              }
+            </div>
+
+            @if (selectedRoundPestsData.length > 0) {
+              <div
+                data-testid="side-card-pests"
+                class="board-side-card bg-gray-900 border-[3px] border-slate-600 rounded-xl overflow-hidden text-left flex flex-col"
+              >
+                @for (pest of selectedRoundPestsData; track $index; let first = $first) {
+                  <div
+                    class="relative aspect-square w-full overflow-hidden bg-slate-950 border-gray-700/80"
+                    [class.border-t]="!first"
+                  >
+                    <img
+                      [src]="pest.image"
+                      [alt]="pest.name"
+                      class="w-full h-full object-cover"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
+                    <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
+                      {{ pest.name }}
+                    </span>
+                  </div>
+                }
+              </div>
+            }
+          </aside>
+
           <div class="game-grid grid gap-1 touch-none sm:mt-0" [style.--cols]="cols" [style.--rows]="rows"
             data-tour="game-grid"
             role="grid" aria-label="Game board"
             (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
             (click)="$event.stopPropagation()">
-            @defer (hydrate on idle) {
             @for (parcel of parcels; track parcel.index; let i = $index) {
-            <app-parcel [parcel]="parcel" [attr.data-index]="i" data-testid="parcel" 
+            <app-parcel [parcel]="parcel" [previousCrop]="getPreviousCropForParcel(parcel.index)" [attr.data-index]="i" data-testid="parcel" 
               [attr.data-tour]="i === 0 ? 'first-parcel' : null"
               class="aspect-square"
               [class.parcel-selected]="selectedIndices.has(i)"
@@ -318,8 +526,37 @@
               (mousedown)="onMouseDown(parcel.index, $event)" (mouseenter)="onMouseEnter(parcel.index)">
             </app-parcel>
             }
-            }
           </div>
+
+          <!-- Right Side Cards (Wide Landscape Only) -->
+          <aside class="board-side-column" aria-label="Herausforderungen und Aufträge">
+            @if (currentActiveContract; as contract) {
+              <div
+                data-testid="side-card-contract"
+                class="board-side-card bg-gray-900 border-[3px] border-slate-600 rounded-xl overflow-hidden text-left flex flex-col"
+              >
+                <div class="relative aspect-square w-full overflow-hidden bg-slate-950 border-b border-slate-600/80">
+                  <img
+                    [src]="getContractImage(contract.id)"
+                    [alt]="contract.name"
+                    class="w-full h-full object-cover"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
+                </div>
+                <div class="p-2.5 sm:p-3 bg-gray-950">
+                  <h3 class="text-xs font-bold text-white mb-1 leading-snug break-words">
+                    {{ contract.name }}
+                  </h3>
+                  <p class="text-[11px] text-slate-300 leading-snug break-words">
+                    {{ contract.description }}
+                  </p>
+                  <div class="mt-1.5 text-xs font-mono tabular-nums font-bold text-emerald-400">
+                    Bonus: +{{ contract.reward | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </div>
+                </div>
+              </div>
+            }
+          </aside>
         </div>
       } @else {
         <div class="flex-1 w-full min-h-0 pt-1 pb-8 flex items-start justify-center overflow-y-auto custom-scrollbar">
@@ -334,50 +571,100 @@
     <!-- Game End Celebration Modal -->
     @if (showGameEndModal) {
     <div
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-hidden">
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 overflow-hidden">
       <!-- Confetti/Sparkles Container -->
-      @if (performanceService.getTier() === 3) {
-        <div class="absolute inset-0 pointer-events-none celebration-container">
-          @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]; track i) {
+      <div class="absolute inset-0 pointer-events-none celebration-container">
+        @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]; track i) {
           <div class="confetti"></div>
-          }
-        </div>
-      }
+        }
+      </div>
 
       <div
-        class="relative bg-gray-900 border border-gray-700 shadow-2xl rounded-3xl max-w-2xl w-full p-8 text-center transform transition-all animate-modal-entrance">
-        <div class="mb-6">
+        class="relative bg-gray-900 border border-gray-700 shadow-2xl rounded-xl max-w-2xl w-full p-4 sm:p-5 text-center transform transition-all animate-modal-entrance max-h-[92vh] overflow-y-auto custom-scrollbar">
+        <div class="mb-5">
           <h2
-            class="text-4xl sm:text-5xl font-black text-white mb-2 tracking-tight">
+            class="text-3xl sm:text-4xl font-black text-white mb-1 tracking-tight">
             Spiel beendet!
           </h2>
           <p
-            class="text-white text-lg sm:text-xl">
-            Herausragende Leistung aller Landwirte.
+            class="text-slate-300 text-sm sm:text-base">
+            Abschlussbilanz für nachhaltige Hofbewirtschaftung
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-8">
-          <!-- Financial Champion -->
-          <div class="flex flex-col items-center p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-            <div class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-2">Finanz-Sieger</div>
-            <div class="text-xl font-bold text-white mb-1">{{ financialWinner?.name }}</div>
-            <div class="text-amber-200/70 text-sm font-mono">{{ financialWinner?.capital | currency: 'EUR' : 'symbol' :
-              '1.0-0' }}</div>
+        <!-- Primary Winner: Gesamtsieger (Zukunftsfähiger Hof) -->
+        @if (overallWinner) {
+          <div
+            data-testid="overall-winner-card"
+            class="p-4 mb-4 rounded-lg bg-emerald-950 border border-emerald-500/60 text-center"
+          >
+            <div class="text-[11px] font-mono font-bold text-emerald-300 uppercase tracking-widest mb-1">
+              Gesamtsieger — Zukunftsfähiger Hof
+            </div>
+            <div class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
+              {{ overallWinner.name }}
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-mono tabular-nums text-slate-200">
+              <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-emerald-500/40 text-emerald-300 font-bold">
+                {{ overallWinner.score }} Zukunfts-Punkte
+              </span>
+              <span>Kapital: {{ overallWinner.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+              <span>Ø Boden: {{ overallWinner.avgSoil | number: '1.0-1' }}%</span>
+            </div>
+          </div>
+        }
+
+        <!-- Secondary Categories: Finanz-Sieger & Boden-Wächter -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+          <div class="flex flex-col items-center p-3.5 bg-gray-950 rounded-lg border border-gray-800">
+            <div class="text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-1">Finanz-Sieger</div>
+            <div class="text-base font-bold text-white mb-0.5">{{ financialWinner?.name }}</div>
+            <div class="text-slate-300 text-xs font-mono tabular-nums">
+              {{ financialWinner?.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            </div>
           </div>
 
-          <!-- Soil Guardian -->
-          <div
-            class="bg-gradient-to-br from-emerald-500/20 to-teal-600/10 border border-emerald-500/30 p-6 rounded-2xl shadow-lg transition-colors group">
-            <div class="text-4xl mb-3 group-hover:animate-bounce">🌿</div>
-            <h3
-              class="text-emerald-400 font-bold uppercase text-xs tracking-widest mb-1">
-              Boden-Wächter
-            </h3>
-            <div class="text-white text-xl font-black mb-1">{{ soilWinner?.name }}</div>
-            <div class="text-emerald-200/70 text-sm font-mono">{{ soilWinner?.avgSoil | number: '1.0-1' }}% / 200%</div>
+          <div class="flex flex-col items-center p-3.5 bg-gray-950 rounded-lg border border-gray-800">
+            <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Boden-Wächter</div>
+            <div class="text-base font-bold text-white mb-0.5">{{ soilWinner?.name }}</div>
+            <div class="text-slate-300 text-xs font-mono tabular-nums">
+              Ø {{ soilWinner?.avgSoil | number: '1.0-1' }}% Bodenqualität
+            </div>
           </div>
         </div>
+
+        <!-- Final Leaderboard -->
+        @if (finalStandings.length > 0) {
+          <div data-testid="final-leaderboard" class="my-4 bg-gray-950 border border-gray-800 rounded-lg p-3.5 text-left">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-white uppercase tracking-wider">Abschluss-Rangliste</span>
+              <button
+                type="button"
+                (click)="showStickerAlbumModal = true"
+                class="text-xs font-mono text-amber-300 hover:text-amber-200 underline"
+              >
+                Hof-Sticker-Album ({{ collectedStickerIds.length }}/{{ allStickers.length }})
+              </button>
+            </div>
+            <div class="space-y-1.5">
+              @for (entry of finalStandings; track entry.uid) {
+                <div
+                  class="flex items-center justify-between px-3 py-1.5 rounded bg-slate-900/80 border border-slate-700/60 text-xs font-mono tabular-nums"
+                >
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="font-bold text-slate-300 w-6">#{{ entry.rank }}</span>
+                    <span class="font-sans font-semibold text-white truncate">{{ entry.name }}</span>
+                  </div>
+                  <div class="flex items-center gap-3 shrink-0">
+                    <span class="text-slate-400 hidden sm:inline">{{ entry.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+                    <span class="text-slate-400 hidden sm:inline">Ø {{ entry.avgSoil }}%</span>
+                    <span class="text-emerald-400 font-bold">{{ entry.score }} Pkt</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
 
         <!-- Integrated Feedback Form -->
         <div class="mt-8 pt-8 border-t border-gray-800 text-left">
@@ -418,7 +705,7 @@
                   name="comment"
                   rows="3"
                   placeholder="Was können wir verbessern?"
-                  class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none text-sm"
+                  class="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none text-sm"
                 ></textarea>
               </div>
 
@@ -441,25 +728,221 @@
               </div>
             </form>
           } @else {
-            <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 text-center animate-fade-in">
+            <div class="bg-emerald-950 border border-emerald-700 rounded-lg p-3.5 text-center animate-fade-in">
               <span class="text-emerald-400 font-bold">✨ Vielen Dank für dein Feedback!</span>
             </div>
           }
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
           <button (click)="closeGameEndModal()"
-            class="px-8 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition border border-gray-600 shadow-lg">
+            class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition border border-slate-600">
             Ergebnisse ansehen
           </button>
+          <button type="button" (click)="showStickerAlbumModal = true"
+            class="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition border border-amber-500">
+            Hof-Sticker ({{ collectedStickerIds.length }}/{{ allStickers.length }})
+          </button>
           <button routerLink="/admin"
-            class="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg shadow-emerald-900/40">
+            class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500">
             Zur Admin-Konsole
           </button>
         </div>
       </div>
     </div>
     }
-  </div>
+
+    <!-- Unified Team & Auszeichnungen Modal -->
+    @if (showStickerAlbumModal) {
+      <div
+        data-testid="sticker-album-modal"
+        class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/75"
+        (click)="showStickerAlbumModal = false"
+      >
+        <div
+          class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-4xl w-full max-h-[90vh] flex flex-col"
+          (click)="$event.stopPropagation()"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sticker-album-title"
+        >
+          <div class="flex items-center justify-between border-b border-gray-800 pb-3 mb-4">
+            <div>
+              <h2 id="sticker-album-title" class="text-xl font-bold text-white tracking-tight">
+                Team & Hof-Auszeichnungen
+              </h2>
+              <p class="text-xs text-slate-300 font-mono tabular-nums mt-0.5">
+                Freigeschaltet: {{ collectedStickerIds.length }} von {{ allStickers.length }}
+              </p>
+            </div>
+            <button
+              type="button"
+              data-testid="close-team-modal-btn"
+              aria-label="Schließen"
+              (click)="showStickerAlbumModal = false"
+              class="text-gray-400 hover:text-white transition-colors text-2xl leading-none cursor-pointer px-1 shrink-0"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <!-- Team Name Edit Section -->
+          <div class="mb-4 p-3 rounded-lg bg-gray-950 border border-gray-800 flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <label for="team-name-modal-input" class="text-xs font-bold text-slate-300 uppercase tracking-wider shrink-0">
+              Teamname
+            </label>
+            <div class="flex-1 flex items-center gap-2">
+              <input
+                id="team-name-modal-input"
+                data-testid="team-name-modal-input"
+                type="text"
+                [(ngModel)]="tempName"
+                (keyup.enter)="saveTeamNameFromModal()"
+                placeholder="Hof- oder Teamname"
+                class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-emerald-500"
+              />
+              <button
+                type="button"
+                data-testid="save-team-name-modal-btn"
+                (click)="saveTeamNameFromModal()"
+                class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg border border-emerald-500 transition-colors shrink-0"
+              >
+                Speichern
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 overflow-y-auto pr-1 custom-scrollbar">
+            @for (sticker of allStickers; track sticker.id) {
+              @let collected = isStickerCollected(sticker.id);
+              <div
+                [attr.data-testid]="'album-sticker-' + sticker.id"
+                class="rounded-xl border overflow-hidden flex flex-col transition-opacity"
+                [class.bg-black]="collected"
+                [class.bg-gray-950]="!collected"
+                [class.opacity-65]="!collected"
+                [class.border-amber-400]="collected && sticker.rarity === 'gold'"
+                [class.border-slate-300]="collected && sticker.rarity === 'silver'"
+                [class.border-amber-700]="collected && sticker.rarity === 'bronze'"
+                [class.border-gray-800]="!collected"
+              >
+                <div class="relative aspect-[4/3] w-full overflow-hidden bg-slate-950 border-b border-slate-800">
+                  @if (sticker.image) {
+                    <img
+                      [src]="sticker.image"
+                      [alt]="sticker.title"
+                      class="w-full h-full object-cover transition-transform duration-150"
+                      [class.grayscale]="!collected"
+                      [class.brightness-50]="!collected"
+                    />
+                  }
+                  <div class="absolute top-2 left-2 right-2 flex items-center justify-between gap-1">
+                    <span class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-200 border border-slate-700">
+                      {{ getStickerCategoryLabel(sticker.category) }}
+                    </span>
+                    @if (!collected) {
+                      <span class="text-xs px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-300 border border-slate-700" aria-hidden="true">
+                        🔒
+                      </span>
+                    }
+                  </div>
+                </div>
+                <div class="p-3 flex-1 flex flex-col">
+                  <div class="text-xs font-bold text-white mb-0.5 leading-snug">{{ sticker.title }}</div>
+                  <div class="text-[10px] text-amber-300 font-medium mb-1.5">{{ sticker.subtitle }}</div>
+                  <p class="text-[11px] text-slate-300 leading-snug">{{ sticker.description }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+    <!-- Welcome & Initial Conditions Modal -->
+      @if (showWelcomeModal) {
+        <div
+          data-testid="welcome-modal"
+          class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/75"
+          (click)="closeWelcomeModal()"
+          (mousedown)="$event.stopPropagation()"
+          (touchstart)="$event.stopPropagation()"
+        >
+          <div
+            class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-lg w-full text-left"
+            (click)="$event.stopPropagation()"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="welcome-modal-title"
+          >
+            <div class="border-b border-gray-800 pb-3 mb-4">
+              <h2 id="welcome-modal-title" class="text-xl font-bold text-white tracking-tight">
+                Willkommen auf deinem Hof!
+              </h2>
+              <p class="text-xs text-slate-300 mt-0.5">
+                Starte in das erste Anbaujahr und halte Ertrag, Finanzen und Bodenqualität im Gleichgewicht.
+              </p>
+            </div>
+
+            <div class="space-y-3 mb-5">
+              <div class="p-3 rounded-lg bg-gray-950 border border-gray-800">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold mb-1.5">
+                  Startbedingungen
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs text-slate-200">
+                  <div class="flex items-center gap-2">
+                    <img src="assets/images/weather/normal.jpg" alt="" class="w-8 h-8 rounded object-cover border border-gray-700 shrink-0" />
+                    <div>
+                      <div class="font-bold text-white">Ruhige Wetterlage</div>
+                      <div class="text-[11px] text-slate-400">Normales Wetter zum Start</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <img src="assets/images/pests/none.jpg" alt="" class="w-8 h-8 rounded object-cover border border-gray-700 shrink-0" />
+                    <div>
+                      <div class="font-bold text-white">Keine Schädlinge</div>
+                      <div class="text-[11px] text-slate-400">Befallsfreier Start</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-gray-950 border border-gray-800 space-y-1.5 text-xs text-slate-200">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-sky-300 font-bold">
+                  Steuerung & Anbau-Auswahl
+                </div>
+                <p class="leading-relaxed">
+                  <strong class="text-white">Felder bepflanzen:</strong> Klicke auf ein einzelnes Feld oder halte die Maustaste (bzw. den Finger) gedrückt und ziehe über mehrere Parzellen – du kannst das Ziehen auch direkt neben dem Acker starten.
+                </p>
+                <p class="leading-relaxed">
+                  <strong class="text-white">Runde abschließen:</strong> Über <span class="font-mono text-emerald-400">Nächste Runde</span> legst du Maschinen, Düngung und Pflanzenschutz fest.
+                </p>
+                <p class="leading-relaxed text-slate-300 pt-1 border-t border-gray-800">
+                  <strong class="text-white">Tipp:</strong> Eine interaktive Schritt-für-Schritt-Tour kannst du jederzeit über das <span class="inline-flex items-center justify-center px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 font-mono text-[10px] text-white">?</span>-Symbol oben in der Kopfleiste starten.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                data-testid="welcome-start-tour-btn"
+                (click)="startTourFromWelcome()"
+                class="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-slate-200 text-xs font-bold rounded-lg border border-gray-700 transition-colors"
+              >
+                Tour starten
+              </button>
+              <button
+                type="button"
+                data-testid="welcome-close-btn"
+                (click)="closeWelcomeModal()"
+                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg border border-emerald-500 transition-colors"
+              >
+                Direkt loslegen
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
   }
 </div>

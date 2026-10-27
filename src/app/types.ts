@@ -11,6 +11,32 @@ export type CropType =
   | 'Pea'
   | 'Fallow'
   | 'Grass';
+
+export type WeatherType = 'Normal' | 'Drought' | 'LateFrost' | 'HeatWave' | 'Flood' | 'Storm';
+
+export interface WeatherForecast {
+  hintText: string;
+  likelyWeathers: WeatherType[];
+  confidence: 'exact' | 'tendency' | 'uncertain';
+}
+
+export interface RegionalContract {
+  id: string;
+  name: string;
+  description: string;
+  reward: number;
+}
+
+export interface CollectibleSticker {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  category: 'soil' | 'economy' | 'resilience' | 'mastery';
+  icon: string;
+  image?: string;
+  rarity: 'bronze' | 'silver' | 'gold';
+}
 // Grass corresponds to 'Tiere' (Animals) usage in original game or similar fallow with animals.
 // Original map: 'Ackerbohne' -> Fieldbean, 'Gerste' -> Barley, 'Hafer' -> Oat, 'Kartoffel' -> Potato, 'Mais' -> Corn, 'Roggen' -> Rye, 'Weizen' -> Wheat, 'Zuckerruebe' -> Beet. 'Brachland' -> Fallow. 'Tiere' -> Animals (Grass).
 
@@ -42,10 +68,16 @@ export interface RoundResult {
     labor: number; // mechanical/machines
     running: number;
     investments: number;
+    overdraftInterest?: number;
     total: number;
   };
   income: number;
   subsidies?: number;
+  contractBonus?: number;
+  overdraftInterest?: number;
+  sustainabilityScore?: number;
+  insolvent?: boolean;
+  unlockedStickers?: string[];
   marketPrices?: Record<string, number>;
   events: {
     weather: string;
@@ -62,6 +94,9 @@ export interface Round {
   parcelsSnapshot: Parcel[]; // State of parcels AFTER the round calculation
   avgSoil?: number;
   avgNutrition?: number;
+  nextWeather?: WeatherType;
+  weatherForecast?: WeatherForecast;
+  activeContract?: RegionalContract;
 }
 
 export interface PlayerState {
@@ -76,6 +111,9 @@ export interface PlayerState {
   history: Round[]; // Store full history
   avgSoil?: number;
   avgNutrition?: number;
+  sustainabilityScore?: number;
+  insolvent?: boolean;
+  unlockedStickers?: string[];
   playerNumber?: number;
 }
 

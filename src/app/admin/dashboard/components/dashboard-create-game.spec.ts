@@ -42,4 +42,29 @@ describe('DashboardCreateGameComponent', () => {
     component.newGameConfig.numAi = 3;
     expect(component.numHumanPlayers).toBe(7);
   });
+
+  it('should update difficulty and recommended defaults on difficulty change while allowing individual AI level override', () => {
+    component.onDifficultyChange('easy');
+    expect(component.newGameConfig.difficulty).toBe('easy');
+    expect(component.newGameConfig.aiLevel).toBe('elementary');
+    expect(component.newGameConfig.advisorEnabled).toBe(true);
+    expect(component.newGameConfig.advancedPricingEnabled).toBe(false);
+
+    component.onDifficultyChange('normal');
+    expect(component.newGameConfig.difficulty).toBe('normal');
+    expect(component.newGameConfig.aiLevel).toBe('middle');
+    expect(component.newGameConfig.advisorEnabled).toBe(true);
+    expect(component.newGameConfig.advancedPricingEnabled).toBe(true);
+
+    component.onDifficultyChange('hard');
+    expect(component.newGameConfig.difficulty).toBe('hard');
+    expect(component.newGameConfig.aiLevel).toBe('high');
+    expect(component.newGameConfig.advisorEnabled).toBe(false);
+    expect(component.newGameConfig.advancedPricingEnabled).toBe(true);
+
+    // Individual override of aiLevel should keep difficulty unchanged
+    component.newGameConfig.aiLevel = 'elementary';
+    expect(component.newGameConfig.difficulty).toBe('hard');
+    expect(component.newGameConfig.aiLevel).toBe('elementary');
+  });
 });

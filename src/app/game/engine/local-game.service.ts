@@ -36,6 +36,7 @@ export class LocalGameService {
     const numPlayers = parseInt(config.numPlayers, 10) || 1;
     const numAi = parseInt(config.numAi, 10) || 0;
     const numRounds = parseInt(config.numRounds, 10) || GAME_CONSTANTS.DEFAULT_ROUNDS;
+    const difficulty = (config.difficulty || 'normal') as 'easy' | 'normal' | 'hard';
 
     // Get current user UID for hosting
     let currentUserUid = 'local-host';
@@ -46,6 +47,7 @@ export class LocalGameService {
     const players: Record<string, PlayerState> = {};
     const allRounds: Record<string, Round[]> = {};
     const playerSecrets: Record<string, { password: string }> = {};
+    const initialForecast = GameEngine.generateWeatherForecast(1, 'Normal', difficulty);
 
     for (let i = 1; i <= numPlayers; i++) {
       const pUid = `player-${gameId}-${i}`;
@@ -53,25 +55,33 @@ export class LocalGameService {
       const pin = Math.floor(1000 + Math.random() * 9000).toString();
       playerSecrets[String(i)] = { password: pin };
 
-      const initialParcels = GameEngine.createInitialParcels();
+      const initialParcels = GameEngine.createInitialParcels(difficulty, i - 1);
       const startSoil = Math.round(initialParcels.reduce((sum, p) => sum + p.soil, 0) / initialParcels.length);
       const startNutrition = Math.round(
         initialParcels.reduce((sum, p) => sum + p.nutrition, 0) / initialParcels.length,
       );
+      const startScore = GameEngine.calculateSustainabilityScore(100000, startSoil);
 
       const round0: Round = {
         number: 0,
         parcelsSnapshot: initialParcels,
         avgSoil: startSoil,
         avgNutrition: startNutrition,
+        nextWeather: 'Normal',
+        weatherForecast: initialForecast,
         decision: { parcels: {} } as any,
         result: {
           profit: 0,
           capital: 100000,
           harvestSummary: {} as any,
-          expenses: { seeds: 0, labor: 0, running: 0, investments: 0, total: 0 },
+          expenses: { seeds: 0, labor: 0, running: 0, investments: 0, overdraftInterest: 0, total: 0 },
           income: 0,
           subsidies: 0,
+          contractBonus: 0,
+          overdraftInterest: 0,
+          sustainabilityScore: startScore,
+          insolvent: false,
+          unlockedStickers: [],
           marketPrices: {},
           events: { weather: 'Normal', vermin: [] },
           bioSiegel: false,
@@ -90,6 +100,9 @@ export class LocalGameService {
         history: [{ ...round0, parcelsSnapshot: [] }], // Lightweight history
         avgSoil: startSoil,
         avgNutrition: startNutrition,
+        sustainabilityScore: startScore,
+        insolvent: false,
+        unlockedStickers: [],
       };
 
       allRounds[pUid] = [round0];
@@ -107,7 +120,7 @@ export class LocalGameService {
       currentRoundNumber: 0,
       settings: {
         length: numRounds,
-        difficulty: 'normal',
+        difficulty,
         playerLabel: config.playerLabel || 'Team',
       },
       config: isTestEnv ? { ...config, isTest: true } : config,
@@ -215,48 +228,16 @@ export class LocalGameService {
     // biome-ignore lint/suspicious/noConsole: Debug mode
     console.log('Calculating next round', state.game.currentRoundNumber + 1);
     const nextRoundNum = state.game.currentRoundNumber + 1;
-
-    // Weather Generation
-    const weatherRoll = Math.random();
-    const weather =
-      nextRoundNum === 1
-        ? 'Normal'
-        : weatherRoll > 0.75
-          ? 'Drought'
-          : weatherRoll > 0.6
-            ? 'LateFrost'
-            : weatherRoll < 0.1
-              ? 'Flood'
-              : weatherRoll < 0.2
-                ? 'Storm'
-                : 'Normal';
-
-    // Pest Generation
-    const vermin: string[] = [];
-    const pestRoll = Math.random();
-    // 80% chance of at least one pest (mostly 1 or 2)
-    const numPests = pestRoll < 0.2 ? 0 : pestRoll < 0.6 ? 1 : 2;
-
-    if (numPests > 0) {
-      const availablePests = [
-        'aphid-black',
-        'aphid-cereal',
-        'potato-beetle',
-        'corn-borer',
-        'pollen-beetle',
-        'pea-moth',
-        'oat-rust',
-        'nematode',
-        'swine-fever',
-      ];
-      for (let i = 0; i < numPests; i++) {
-        const p = availablePests[Math.floor(Math.random() * availablePests.length)];
-        if (!vermin.includes(p)) vermin.push(p);
-      }
-    }
-
-    const events = { weather, vermin };
     const roundLimit = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+    const difficulty = state.game.settings?.difficulty || 'normal';
+
+    const firstPlayerUid = Object.keys(state.game.players)[0];
+    const prevRoundForWeather = firstPlayerUid
+      ? state.allRounds[firstPlayerUid]?.[state.game.currentRoundNumber]
+      : undefined;
+
+    const events = GameEngine.rollRoundEvents(nextRoundNum, roundLimit, difficulty, prevRoundForWeather?.nextWeather);
+    const upcomingWeather = GameEngine.rollWeather(nextRoundNum + 1, roundLimit, difficulty);
 
     let marketPrices: Record<string, { organic: number; conventional: number }> | undefined;
     if (state.game.config?.advancedPricingEnabled) {
@@ -271,6 +252,7 @@ export class LocalGameService {
           events,
           0,
           roundLimit,
+          { difficulty, nextWeather: upcomingWeather },
         );
         const harvest = tempRound.result?.harvestSummary || {};
         for (const [crop, amount] of Object.entries(harvest)) {
@@ -313,7 +295,7 @@ export class LocalGameService {
         events,
         p.capital,
         roundLimit,
-        { marketPrices },
+        { marketPrices, difficulty, nextWeather: upcomingWeather },
       );
 
       state.allRounds[uid].push(newRound);
@@ -323,6 +305,10 @@ export class LocalGameService {
       p.currentRound = nextRoundNum;
       p.avgSoil = newRound.avgSoil;
       p.avgNutrition = newRound.avgNutrition;
+      p.sustainabilityScore = newRound.result?.sustainabilityScore;
+      p.insolvent = newRound.result?.insolvent;
+      const mergedStickers = new Set([...(p.unlockedStickers || []), ...(newRound.result?.unlockedStickers || [])]);
+      p.unlockedStickers = Array.from(mergedStickers);
       p.history.push({ ...newRound, parcelsSnapshot: [] });
       p.pendingDecisions = undefined;
     }

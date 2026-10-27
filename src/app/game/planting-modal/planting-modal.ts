@@ -1,69 +1,41 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-import type { CropType } from '../../types';
+import { GAME_CONSTANTS } from '../../game-constants';
+import type { CropType, Parcel } from '../../types';
+
+export type ImpactLevel = 'strong-positive' | 'slight-positive' | 'neutral' | 'slight-negative' | 'strong-negative';
+
+export interface CropPreview {
+  rotationDelta: number;
+  rotationIcon: '▲' | '━' | '▼';
+  rotationDetail: string;
+  rotationLabel: string;
+  rotationClass: ImpactLevel;
+  soilDelta: number;
+  soilIcon: '▲' | '━' | '▼';
+  soilDetail: string;
+  soilLabel: string;
+  soilClass: ImpactLevel;
+  nutritionDelta: number;
+  nutritionIcon: '▲' | '━' | '▼';
+  nutritionDetail: string;
+  nutritionLabel: string;
+  nutritionClass: ImpactLevel;
+}
 
 @Component({
   selector: 'app-planting-modal',
   standalone: true,
   imports: [],
-  template: `
-    <div
-      class="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm"
-      (click)="plantingCancelled.emit()"
-    >
-      <div
-        class="planting-modal-container bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 max-h-[98vh] sm:max-h-[90vh] flex flex-col"
-        (click)="$event.stopPropagation()"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="planting-title"
-      >
-        <h2 id="planting-title" data-tour="planting-modal-title" class="text-lg sm:text-2xl font-bold text-white mb-4 sm:mb-6 shrink-0 text-center sm:text-left">
-          Was möchtest du anbauen?
-        </h2>
-
-        <div class="planting-grid p-2">
-          @for (crop of crops; track crop; let first = $first) {
-            <button
-              (click)="select(crop)"
-              [attr.data-testid]="'crop-' + crop.toLowerCase()"
-              [attr.data-tour]="first ? 'planting-modal-first-crop' : null"
-              class="group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700/50 bg-gray-800/80 hover:z-10 hover:shadow-[0_0_20px_5px_rgba(52,211,153,0.7)] hover:border-emerald-400/50 transition-all duration-200 [container-type:size]"
-            >
-              <img
-                [src]="'assets/images/' + getConfig(crop).image"
-                [alt]="t(getConfig(crop).label)"
-                class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-              />
-              <div
-                class="absolute inset-0 flex flex-col justify-start items-center pointer-events-none z-20 pt-1"
-              >
-                <div
-                  class="bg-gray-300/90 text-gray-900 text-[clamp(8px,15cqw,16px)] font-bold px-1 rounded shadow-sm border border-gray-400/50 whitespace-nowrap"
-                >
-                  {{ t(getConfig(crop).label) }}
-                </div>
-              </div>
-            </button>
-          }
-        </div>
-
-        <div class="flex justify-end gap-3 mt-4 sm:mt-8 shrink-0">
-          <button
-            (click)="plantingCancelled.emit()"
-            class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm sm:text-base font-bold rounded-lg transition-colors border border-gray-700 shadow-md"
-          >
-            Abbrechen
-          </button>
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: './planting-modal.html',
+  styleUrl: './planting-modal.scss',
 })
 export class PlantingModal {
   @Input() crops: CropType[] = [];
+  @Input() selectedParcels: Parcel[] = [];
   @Output() cropSelected = new EventEmitter<CropType>();
   @Output() plantingCancelled = new EventEmitter<void>();
+  readonly nonDraggableImages = true;
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -102,7 +74,185 @@ export class PlantingModal {
     return this.cropConfig[crop] || { label: crop, image: 'acker.webp' };
   }
 
+  hasUniformPreviousCrop(): boolean {
+    if (!this.selectedParcels || this.selectedParcels.length === 0) return false;
+    const uniquePrevCrops = new Set(this.selectedParcels.map((p) => p.crop || 'Fallow'));
+    return uniquePrevCrops.size === 1;
+  }
+
+  getSelectionSummary(): string {
+    const count = this.selectedParcels?.length || 0;
+    if (count === 0) return '';
+    const parcelWord = count === 1 ? 'Parzelle' : 'Parzellen';
+    if (this.hasUniformPreviousCrop()) {
+      const prevCrop = this.selectedParcels[0]?.crop || 'Fallow';
+      const prevCropName = this.t(this.getConfig(prevCrop).label);
+      return `Auswahl: ${count} ${parcelWord} (Vorfrucht: ${prevCropName})`;
+    }
+    return `Auswahl: ${count} ${parcelWord} (Gemischte Vorfrucht)`;
+  }
+
+  getImpactBadgeClasses(level: ImpactLevel): string {
+    switch (level) {
+      case 'strong-positive':
+        return 'impact-badge-strong-positive bg-emerald-950 text-emerald-100 border-emerald-400';
+      case 'slight-positive':
+        return 'impact-badge-slight-positive bg-[#47594e] text-[#dce6df] border-[#759180]';
+      case 'slight-negative':
+        return 'impact-badge-slight-negative bg-amber-950 text-amber-300 border-amber-500';
+      case 'strong-negative':
+        return 'impact-badge-strong-negative bg-rose-950 text-rose-300 border-rose-500';
+      default:
+        return 'impact-badge-neutral bg-slate-900 text-slate-300 border-slate-600';
+    }
+  }
+
+  getCropPreview(crop: CropType): CropPreview {
+    // 1. Fruchtfolge / Vorfrucht-Effekt
+    let rotationDelta = 0;
+    let rotationClass: ImpactLevel = 'neutral';
+    let rotationIcon: '▲' | '━' | '▼' = '━';
+    let rotationDetail = 'Fruchtfolge ±0%';
+
+    if (crop !== 'Fallow' && crop !== 'Grass' && this.selectedParcels && this.selectedParcels.length > 0) {
+      const totalDelta = this.selectedParcels.reduce((sum, parcel) => {
+        const prevCrop = parcel.crop || 'Fallow';
+        const matrixEntry = (GAME_CONSTANTS.ROTATION_MATRIX as Record<string, Record<string, unknown>>)[prevCrop]?.[
+          crop
+        ];
+        if (typeof matrixEntry === 'number') {
+          return sum + (matrixEntry - 100);
+        }
+        if (prevCrop === crop) {
+          return sum - 15;
+        }
+        if (matrixEntry === 'good') {
+          return sum + 10;
+        }
+        if (matrixEntry === 'bad') {
+          return sum - 10;
+        }
+        return sum;
+      }, 0);
+
+      rotationDelta = Math.round(totalDelta / this.selectedParcels.length);
+      if (rotationDelta >= 8) {
+        rotationClass = 'strong-positive';
+        rotationIcon = '▲';
+        rotationDetail = `Fruchtfolge +${rotationDelta}%`;
+      } else if (rotationDelta >= 3) {
+        rotationClass = 'slight-positive';
+        rotationIcon = '▲';
+        rotationDetail = `Fruchtfolge +${rotationDelta}%`;
+      } else if (rotationDelta <= -12) {
+        rotationClass = 'strong-negative';
+        rotationIcon = '▼';
+        rotationDetail = `Fruchtfolge ${rotationDelta}%`;
+      } else if (rotationDelta <= -3) {
+        rotationClass = 'slight-negative';
+        rotationIcon = '▼';
+        rotationDetail = `Fruchtfolge ${rotationDelta}%`;
+      }
+    }
+    const rotationLabel = `${rotationDetail} ${rotationIcon}`;
+
+    // 2. Soil Impact (Boden)
+    const customSoilImpact = (GAME_CONSTANTS.SOIL as Record<string, unknown>).CROP_IMPACT as
+      | Record<string, number>
+      | undefined;
+    const soilDelta =
+      customSoilImpact?.[crop] !== undefined
+        ? customSoilImpact[crop]
+        : crop === 'Fallow'
+          ? GAME_CONSTANTS.SOIL.FALLOW_RECOVERY
+          : (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[crop] ?? 0) + (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[crop] ?? 0);
+
+    let soilClass: ImpactLevel = 'neutral';
+    let soilIcon: '▲' | '━' | '▼' = '━';
+    let soilDetail = 'Boden ±0.0';
+    if (soilDelta >= 1.5) {
+      soilClass = 'strong-positive';
+      soilIcon = '▲';
+      soilDetail = `Boden +${soilDelta.toFixed(1)}`;
+    } else if (soilDelta > 0) {
+      soilClass = 'slight-positive';
+      soilIcon = '▲';
+      soilDetail = `Boden +${soilDelta.toFixed(1)}`;
+    } else if (soilDelta <= -1.0) {
+      soilClass = 'strong-negative';
+      soilIcon = '▼';
+      soilDetail = `Boden ${soilDelta.toFixed(1)}`;
+    } else if (soilDelta < 0) {
+      soilClass = 'slight-negative';
+      soilIcon = '▼';
+      soilDetail = `Boden ${soilDelta.toFixed(1)}`;
+    }
+    const soilLabel = `${soilDetail} ${soilIcon}`;
+
+    // 3. Nutrition Impact (Nährst.)
+    const customNutritionImpact = (GAME_CONSTANTS.NUTRITION as Record<string, unknown>).CROP_IMPACT as
+      | Record<string, number>
+      | undefined;
+    let nutritionDelta = 0;
+    if (customNutritionImpact?.[crop] !== undefined) {
+      nutritionDelta = customNutritionImpact[crop];
+    } else if (crop === 'Fieldbean') {
+      nutritionDelta = GAME_CONSTANTS.NUTRITION.FIELDBEAN_BONUS;
+    } else if (crop === 'Pea') {
+      nutritionDelta = 10;
+    } else if (crop === 'Fallow' || crop === 'Grass') {
+      nutritionDelta = 5;
+    } else {
+      const cropSensitivity = GAME_CONSTANTS.CROPS[crop]?.nutritionSensitivity ?? 1.0;
+      nutritionDelta = -Math.round(
+        GAME_CONSTANTS.NUTRITION.BASE_DECLINE * GAME_CONSTANTS.NUTRITION.START * cropSensitivity,
+      );
+    }
+
+    let nutritionClass: ImpactLevel = 'neutral';
+    let nutritionIcon: '▲' | '━' | '▼' = '━';
+    let nutritionDetail = 'Nährst. ±0';
+    if (nutritionDelta >= 15) {
+      nutritionClass = 'strong-positive';
+      nutritionIcon = '▲';
+      nutritionDetail = `Nährst. +${nutritionDelta}`;
+    } else if (nutritionDelta > 0) {
+      nutritionClass = 'slight-positive';
+      nutritionIcon = '▲';
+      nutritionDetail = `Nährst. +${nutritionDelta}`;
+    } else if (nutritionDelta <= -15) {
+      nutritionClass = 'strong-negative';
+      nutritionIcon = '▼';
+      nutritionDetail = `Nährst. ${nutritionDelta}`;
+    } else if (nutritionDelta < 0) {
+      nutritionClass = 'slight-negative';
+      nutritionIcon = '▼';
+      nutritionDetail = `Nährst. ${nutritionDelta}`;
+    }
+    const nutritionLabel = `${nutritionDetail} ${nutritionIcon}`;
+
+    return {
+      rotationDelta,
+      rotationIcon,
+      rotationDetail,
+      rotationLabel,
+      rotationClass,
+      soilDelta,
+      soilIcon,
+      soilDetail,
+      soilLabel,
+      soilClass,
+      nutritionDelta,
+      nutritionIcon,
+      nutritionDetail,
+      nutritionLabel,
+      nutritionClass,
+    };
+  }
+
   select(crop: CropType) {
-    this.cropSelected.emit(crop);
+    if (crop) {
+      this.cropSelected.emit(crop);
+    }
   }
 }

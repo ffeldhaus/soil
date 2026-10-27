@@ -23,7 +23,7 @@ import { AuthService } from '../auth.service';
 
       <!-- Navigation Bar -->
       <nav
-        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
+        class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
       >
         <div class="flex items-center gap-4">
           <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
@@ -34,17 +34,17 @@ import { AuthService } from '../auth.service';
       </nav>
 
       <div class="relative z-10 max-w-2xl mx-auto pt-[100px] pb-12 px-4 space-y-8 animate-fade-in">
-        <div class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-6">
+        <div class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-6">
           <h1 class="text-3xl font-bold text-red-500">
             {{ isGuest() ? 'Lokale Daten löschen' : 'Konto löschen' }}
           </h1>
           
           <p class="text-white leading-relaxed">
-            Wir bedauern, dass Sie uns verlassen möchten. Bitte beachten Sie, dass die Löschung 
-            {{ isGuest() ? 'Ihrer lokalen Spieldaten' : 'Ihres Kontos' }} endgültig ist.
+            Schade, dass du uns verlassen möchtest. Bitte beachte, dass die Löschung 
+            {{ isGuest() ? 'deiner lokalen Spieldaten' : 'deines Kontos' }} endgültig ist.
           </p>
 
-          <div class="bg-red-900/20 border border-red-500/30 rounded-2xl p-6 space-y-4">
+          <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6 space-y-4">
             <h2 class="text-lg font-bold text-red-400 flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -53,14 +53,14 @@ import { AuthService } from '../auth.service';
             </h2>
             <ul class="list-disc list-inside text-gray-200 space-y-2 text-sm ml-2">
               @if (isGuest()) {
-                <li>Alle lokal in Ihrem Browser gespeicherten Spieldaten (z.B. lokale Spiele) werden unwiderruflich gelöscht.</li>
-                <li>Ihre anonyme Gast-Sitzung wird beendet.</li>
+                <li>Alle lokal in deinem Browser gespeicherten Spieldaten (z.B. lokale Spiele) werden unwiderruflich gelöscht.</li>
+                <li>Deine anonyme Gast-Sitzung wird beendet.</li>
               } @else {
-                <li>Alle Ihre persönlichen Daten (Name, E-Mail) werden unwiderruflich gelöscht.</li>
-                <li>Sämtliche von Ihnen erstellten Cloud-Spiele und deren Spielstände werden vollständig entfernt.</li>
+                <li>Alle deine persönlichen Daten (Name, E-Mail) werden unwiderruflich gelöscht.</li>
+                <li>Sämtliche von dir erstellten Cloud-Spiele und deren Spielstände werden vollständig entfernt.</li>
                 <li>Lokal gespeicherte Entwürfe und Einstellungen werden ebenfalls gelöscht.</li>
               }
-              <li>Anonymisierte Forschungsdaten und anonymes Feedback bleiben erhalten, können aber nicht mehr mit Ihnen in Verbindung gebracht werden.</li>
+              <li>Anonymisierte Forschungsdaten und anonymes Feedback bleiben erhalten, können aber nicht mehr mit dir in Verbindung gebracht werden.</li>
               <li>Dieser Vorgang kann nicht rückgängig gemacht werden.</li>
             </ul>
           </div>
@@ -103,11 +103,11 @@ import { AuthService } from '../auth.service';
     <!-- Modal for final confirmation -->
     @if (showConfirmModal()) {
       <div class="fixed inset-0 z-[200] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" (click)="showConfirmModal.set(false)"></div>
-        <div class="bg-gray-900 border border-gray-700 p-8 rounded-3xl shadow-2xl relative z-10 max-w-md w-full space-y-6">
-          <h3 class="text-2xl font-bold text-white">Sind Sie absolut sicher?</h3>
+        <div class="absolute inset-0 bg-black/75" (click)="showConfirmModal.set(false)"></div>
+        <div class="bg-gray-900 border border-gray-700 p-5 sm:p-6 rounded-xl shadow-2xl relative z-10 max-w-md w-full space-y-6">
+          <h3 class="text-2xl font-bold text-white">Bist du dir absolut sicher?</h3>
           <p class="text-white">
-            Diese Aktion löscht {{ isGuest() ? 'alle Ihre lokalen Spieldaten' : 'alle Ihre Daten und Ihr Konto' }} dauerhaft. Eine Wiederherstellung ist nicht möglich.
+            Diese Aktion löscht {{ isGuest() ? 'alle deine lokalen Spieldaten' : 'alle deine Daten und dein Konto' }} dauerhaft. Eine Wiederherstellung ist nicht möglich.
           </p>
           <div class="flex gap-4">
             <button
@@ -193,7 +193,7 @@ export class DeleteAccountComponent {
       // After successful deletion, navigate to landing page
       this.router.navigate(['/']);
     } catch (err: any) {
-      this.error.set(err.message || 'Fehler beim Löschen. Bitte versuchen Sie es später erneut.');
+      this.error.set(err.message || 'Fehler beim Löschen. Bitte versuche es später erneut.');
       this.loading.set(false);
     }
   }

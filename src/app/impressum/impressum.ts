@@ -22,7 +22,7 @@ import { RouterLink } from '@angular/router';
           </div>
       <!-- Navigation Bar -->
       <nav
-        class="bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
+        class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
       >
         <div class="flex items-center gap-4">
           <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
@@ -37,7 +37,7 @@ import { RouterLink } from '@angular/router';
 
       <div class="relative z-10 max-w-5xl mx-auto pt-[72px] pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
         <!-- Header -->
-        <header class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 portrait:rounded-none portrait:border-x-0">
+        <header class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 portrait:rounded-none portrait:border-x-0">
           <div>
             <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">Impressum</h1>
             <p class="text-xl text-white max-w-2xl">Rechtliche Informationen & Kontakt</p>
@@ -48,13 +48,13 @@ import { RouterLink } from '@angular/router';
         </header>
 
         <!-- Projekt -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">Projekt</h2>
           <p class="text-gray-400">© {{ year }} SOIL Projekt. Entwickelt für Bildungszwecke.</p>
         </section>
 
         <!-- Kontakt -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">Kontakt</h2>
           <div class="text-gray-300 space-y-1">
             <p class="font-bold text-white">Florian Feldhaus</p>
@@ -70,7 +70,7 @@ import { RouterLink } from '@angular/router';
         </section>
 
         <!-- Disclaimer -->
-        <section class="bg-gray-900/80 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
+        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">Haftungsausschluss</h2>
           <div class="text-sm leading-relaxed space-y-4 text-gray-300">
             <p>

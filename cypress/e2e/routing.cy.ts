@@ -12,6 +12,12 @@ describe('Important Routes', () => {
   it('should load the info page', () => {
     cy.visit('/info');
     cy.get('h1').contains('Hintergrund').should('be.visible');
+    cy.get('main section')
+      .first()
+      .should('have.attr', 'id', 'research')
+      .and('contain', 'Zentrale Forschungsarbeit & Publikationen')
+      .find('#publications')
+      .should('exist');
   });
 
   it('should load the impressum page', () => {
@@ -43,7 +49,7 @@ describe('Important Routes', () => {
   it('should serve sitemap.xml correctly', () => {
     cy.request('/sitemap.xml').then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.headers['content-type']).to.include('application/xml');
+      expect(response.headers['content-type']).to.match(/(application|text)\/xml/);
       expect(response.body).to.include('<urlset');
       expect(response.body).to.include('https://soil.app/admin');
     });

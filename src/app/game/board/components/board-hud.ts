@@ -15,7 +15,7 @@ import { TourService } from '../../tour.service';
   templateUrl: './board-hud.html',
 })
 export class BoardHudComponent {
-  private gameService = inject(GameService);
+  private readonly gameService = inject(GameService);
   private tourService = inject(TourService);
   private cdr = inject(ChangeDetectorRef);
   @Input() user: User | null = null;
@@ -35,10 +35,13 @@ export class BoardHudComponent {
   @Input() isSubmitted = false;
   @Input() viewingRound = 0;
   @Input() pendingNextRound = false;
+  @Input() collectedStickersCount = 0;
+  @Input() totalStickersCount = 8;
 
   @Output() logout = new EventEmitter<void>();
   @Output() toggleMobileMenu = new EventEmitter<void>();
   @Output() updateName = new EventEmitter<string>();
+  @Output() openTeamModal = new EventEmitter<void>();
 
   @Output() toggleLabels = new EventEmitter<void>();
   @Output() toggleNutrition = new EventEmitter<void>();
@@ -46,7 +49,6 @@ export class BoardHudComponent {
   @Output() toggleSoil = new EventEmitter<void>();
   @Output() toggleFinance = new EventEmitter<void>();
 
-  @Output() openRoundSettings = new EventEmitter<void>();
   @Output() nextRound = new EventEmitter<void>();
   @Output() showGameEnd = new EventEmitter<void>();
 
@@ -135,7 +137,9 @@ export class BoardHudComponent {
   }
 
   saveName() {
-    this.updateName.emit(this.tempName);
+    if (this.tempName !== undefined) {
+      this.updateName.emit(this.tempName);
+    }
     this.isEditingName = false;
   }
 

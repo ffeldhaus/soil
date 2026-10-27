@@ -67,4 +67,4 @@ const baseRoutes: Routes = [
   },
 ];
 
-export const routes: Routes = [...baseRoutes];
+export const routes: Routes = baseRoutes;

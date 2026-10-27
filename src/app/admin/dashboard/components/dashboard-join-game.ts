@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
               name="gameId"
               [(ngModel)]="joinConfig.gameId"
               placeholder="z.B. abc-123"
-              class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+              class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-emerald-500"
               required
             />
           </div>
@@ -29,7 +29,7 @@ import { FormsModule } from '@angular/forms';
               type="password"
               autocomplete="current-password"
               placeholder="••••"
-              class="w-full px-4 py-2 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+              class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>

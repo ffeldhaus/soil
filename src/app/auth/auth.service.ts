@@ -161,6 +161,13 @@ export class AuthService {
     }
 
     if (this.isTestMode()) {
+      const pinMatch = pin?.match(/^p(\d+)/i);
+      const playerNum = pinMatch ? Number(pinMatch[1]) : 1;
+      if (isBrowser) {
+        window.localStorage.setItem('soil_test_role', 'player');
+        window.localStorage.setItem('soil_test_game_id', gameId);
+        window.localStorage.setItem('soil_test_player_number', String(playerNum));
+      }
       const user = this.getMockUser();
       this.userSubject.next(user);
       return { user };
@@ -309,6 +316,8 @@ export class AuthService {
     if (isBrowser) {
       window.localStorage.removeItem('soil_test_mode');
       window.localStorage.removeItem('soil_test_role');
+      window.localStorage.removeItem('soil_test_game_id');
+      window.localStorage.removeItem('soil_test_player_number');
       window.localStorage.removeItem('soil_active_local_game');
       window.localStorage.removeItem('soil_active_local_pin');
 
@@ -366,9 +375,12 @@ export class AuthService {
   }
 
   private getMockUser(): User {
-    const fullRole = (typeof window !== 'undefined' && window.localStorage.getItem('soil_test_role')) || 'player';
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    const fullRole = (isBrowser && window.localStorage.getItem('soil_test_role')) || 'player';
     const role = fullRole.startsWith('player') ? 'player' : fullRole;
-    const uid = role === 'player' ? 'player-test-game-id-1' : `mock-${role}-uid`;
+    const gameId = (isBrowser && window.localStorage.getItem('soil_test_game_id')) || 'test-game-id';
+    const playerNumber = Number((isBrowser && window.localStorage.getItem('soil_test_player_number')) || 1);
+    const uid = role === 'player' ? `player-${gameId}-${playerNumber}` : `mock-${role}-uid`;
     return {
       uid,
       displayName: `Mock ${role.charAt(0).toUpperCase() + role.slice(1)}`,
@@ -392,8 +404,8 @@ export class AuthService {
         signInSecondFactor: null,
         claims: {
           role: role,
-          gameId: role === 'player' ? 'test-game-id' : undefined,
-          playerNumber: role === 'player' ? 1 : undefined,
+          gameId: role === 'player' ? gameId : undefined,
+          playerNumber: role === 'player' ? playerNumber : undefined,
         },
       }),
       reload: async () => {

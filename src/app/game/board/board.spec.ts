@@ -334,13 +334,27 @@ describe('Board', () => {
       expect(component.cols).toBe(5);
       expect(component.rows).toBe(8);
 
-      // Landscape (1.0 <= AR < 2.0)
+      // Landscape (1.0 <= AR < 2.4) without enough side space
       setViewport(1200, 1000);
       component.checkOrientation();
       expect(component.cols).toBe(8);
       expect(component.rows).toBe(5);
+      expect(component.showSideCards).toBe(false);
 
-      // Very wide (AR >= 2.0)
+      // Landscape 16:9 Viewports (1440x812 and 1920x1080) with enough side space
+      setViewport(1440, 812);
+      component.checkOrientation();
+      expect(component.cols).toBe(8);
+      expect(component.rows).toBe(5);
+      expect(component.showSideCards).toBe(true);
+
+      setViewport(1920, 1080);
+      component.checkOrientation();
+      expect(component.cols).toBe(8);
+      expect(component.rows).toBe(5);
+      expect(component.showSideCards).toBe(true);
+
+      // Very wide (AR >= 2.4)
       setViewport(2500, 1000);
       component.checkOrientation();
       expect(component.cols).toBe(10);
@@ -348,5 +362,150 @@ describe('Board', () => {
     } finally {
       setViewport(originalWidth, originalHeight);
     }
+  });
+
+  it('should prevent toggling overlays when showFinance is true', () => {
+    component.showFinance = true;
+    component.showLabels = true;
+    component.showNutritionOverlay = false;
+    component.showHarvestOverlay = false;
+    component.showSoilOverlay = false;
+
+    component.toggleLabels();
+    component.toggleNutrition();
+    component.toggleHarvest();
+    component.toggleSoil();
+
+    expect(component.showLabels).toBe(true);
+    expect(component.showNutritionOverlay).toBe(false);
+    expect(component.showHarvestOverlay).toBe(false);
+    expect(component.showSoilOverlay).toBe(false);
+  });
+
+  it('should compute overallWinner, financialWinner, and soilWinner in calculateWinners', () => {
+    const mockGame: any = {
+      currentRoundNumber: 5,
+      players: {
+        'player-1': {
+          uid: 'player-1',
+          displayName: 'Hof Balance',
+          capital: 135000,
+          avgSoil: 106,
+          history: [],
+        },
+        'player-2': {
+          uid: 'player-2',
+          displayName: 'Hof Raubbau',
+          capital: 150000,
+          avgSoil: 70,
+          history: [],
+        },
+      },
+    };
+
+    component.calculateWinners(mockGame);
+    expect(component.overallWinner?.name).toBe('Hof Balance');
+    expect(component.financialWinner?.name).toBe('Hof Raubbau');
+    expect(component.soilWinner?.name).toBe('Hof Balance');
+  });
+
+  it('should return baseline parcels for selected indices and persist unlocked stickers', () => {
+    component.history = [
+      {
+        number: 1,
+        decision: { parcels: {} } as any,
+        parcelsSnapshot: [{ index: 0, crop: 'Fieldbean', soil: 102, nutrition: 110 }],
+      },
+    ];
+    component.selectedIndices = new Set([0]);
+    const baseline = component.getSelectedBaselineParcels();
+    expect(baseline.length).toBe(1);
+    expect(baseline[0].crop).toBe('Fieldbean');
+
+    component.syncCollectedStickers(['humus-pionier']);
+    expect(component.isStickerCollected('humus-pionier')).toBe(true);
+    expect(component.isStickerCollected('krisenfest')).toBe(false);
+  });
+
+  it('should format weather forecast text to show "Ruhige Wetterlage erwartet." for calm/normal weather', () => {
+    expect(component.getFormattedWeatherForecastText()).toBe('Ruhige Wetterlage erwartet.');
+    expect(
+      component.getFormattedWeatherForecastText(
+        'Stabiles Einführungswetter: Ruhige Wetterlage (Normal) ohne Extremereignisse erwartet.',
+      ),
+    ).toBe('Ruhige Wetterlage erwartet.');
+    expect(
+      component.getFormattedWeatherForecastText(
+        'Wetterbericht: Normale Witterung erwartet – ideale Bedingungen für alle Kulturen.',
+      ),
+    ).toBe('Ruhige Wetterlage erwartet.');
+    expect(
+      component.getFormattedWeatherForecastText(
+        'Wetterdienst-Tendenz: Für das kommende Jahr deutet sich Normal oder Trockenheit an.',
+      ),
+    ).toBe('Ruhige Wetterlage oder Trockenheit möglich.');
+  });
+
+  it('should open unified team and achievements modal and save team name from modal', async () => {
+    component.openTeamAndAchievementsModal();
+    expect(component.showStickerAlbumModal).toBe(true);
+    expect(component.tempName).toBe('Test User');
+
+    component.tempName = 'Hof Zukunft';
+    component.saveTeamNameFromModal();
+    expect(TestBed.inject(AuthService).updateDisplayName).toHaveBeenCalledWith('Hof Zukunft');
+  });
+
+  it('should allow starting multi-selection outside the parcel grid and dragging into parcels', () => {
+    component.parcels = Array(40)
+      .fill(null)
+      .map((_, i) => ({
+        index: i,
+        crop: 'Fallow',
+        soil: 100,
+        nutrition: 100,
+        yield: 0,
+      })) as any;
+    component.isReadOnly = false;
+    component.showFinance = false;
+    component.cols = 8;
+    component.rows = 5;
+
+    const bgEvent = new MouseEvent('mousedown', { button: 0 });
+    component.onBoardAreaMouseDown(bgEvent);
+    expect(component.isDragging).toBe(true);
+
+    component.onMouseEnter(0);
+    component.onMouseEnter(1);
+    expect(component.selectedIndices.has(0)).toBe(true);
+    expect(component.selectedIndices.has(1)).toBe(true);
+  });
+
+  it('should hide pest and challenge side cards when there are no active pests or challenges', () => {
+    expect(fixture.nativeElement.querySelector('[data-testid="side-card-weather"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('[data-testid="side-card-pests"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-testid="side-card-contract"]')).toBeNull();
+    expect(component.selectedRoundPestsData.length).toBe(0);
+    expect(component.currentActiveContract).toBeNull();
+
+    // Now simulate Round 1 (planning for Round 2 -> legume-initiative active) and active pests
+    component.viewingRound = 1;
+    component.maxRoundNumber = 1;
+    component.history = [
+      {
+        number: 0,
+        decision: { parcels: {} } as any,
+        parcelsSnapshot: [],
+      },
+      {
+        number: 1,
+        decision: { parcels: {} } as any,
+        parcelsSnapshot: [],
+        result: { events: { weather: 'Normal', vermin: ['potato-beetle'] } } as any,
+      },
+    ];
+
+    expect(component.selectedRoundPestsData.length).toBe(1);
+    expect(component.currentActiveContract?.id).toBe('legume-initiative');
   });
 });

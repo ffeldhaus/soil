@@ -704,5 +704,39 @@
         "reviewed": true
       }
     }
+  },
+  "CONTRACT_DEFINITIONS": {
+    "legume-initiative": {
+      "reward": {
+        "range": [2400, 4500]
+      },
+      "description": "Regionale Eiweiß-Initiative (>= 6 Parzellen Ackerbohne/Erbse). Modelliert nach GAP Öko-Regelung 2 (Vielfältige Kulturen mit >= 10% Leguminosen, 60 €/ha auf 40 ha = 2.400 € Basis + Länder-AUKM/Eiweißpflanzenstrategie-Zuschlag). Wissenschaftliche Referenz: Šišić et al. (2022, DOI: 10.3389/fpls.2022.1009906) und Hubbard et al. (2023, DOI: 10.3389/fpls.2023.1120435).",
+      "uri": "https://www.bmel.de/DE/themen/landwirtschaft/eu-agrarpolitik-und-foerderung/gap/oeko-regelungen.html",
+      "reviewed": true
+    },
+    "humus-steward": {
+      "reward": {
+        "range": [3000, 5000]
+      },
+      "description": "Humus-Programm der Wasserwerke (ø Boden >= 100 und >= 5 Parzellen Wiese/Brachland, 100 €/ha betriebsweit = 4.000 €). Modelliert nach dem kooperativen Trinkwasserschutz deutscher Wasserwerke (Ausgleichszahlungen 80–250 €/ha für Grundwasserschutz durch Dauergrünland/Brache und Humusaufbau). Wissenschaftliche Referenz: Tzemi et al. (2022, DOI: 10.1016/j.jrurstud.2022.03.006) und Hagemann et al. (2024, DOI: 10.1007/s10113-024-02324-2).",
+      "uri": "https://doi.org/10.1007/s10113-024-02324-2",
+      "reviewed": true
+    },
+    "regional-grain": {
+      "reward": {
+        "range": [2500, 4500]
+      },
+      "description": "Mühlenvertrag Regionalgetreide (>= 12 Parzellen aus >= 2 Getreidearten bei ø Boden >= 95). Modelliert nach regionalen Qualitäts- und Nachhaltigkeits-Mühlenverträgen (15–40 €/t Aufschlag bzw. ~250–350 €/ha bei mehrgliedriger Fruchtfolge). Wissenschaftliche Referenz: Weituschat et al. (2023, DOI: 10.1016/j.ecolecon.2023.107876) und Bertoni et al. (2019, DOI: 10.1016/j.foodpol.2019.101790).",
+      "uri": "https://doi.org/10.1016/j.ecolecon.2023.107876",
+      "reviewed": true
+    },
+    "eco-pioneer": {
+      "reward": {
+        "range": [3000, 6000]
+      },
+      "description": "Pionier-Prämie Pflanzenschutz (Verzicht auf chemisch-synthetische Pestizide auf >= 30 bewirtschafteten Parzellen bei ø Boden >= 95, 100 €/ha betriebsweit = 4.000 €). Modelliert nach GAP Öko-Regelung 6 (ÖR 6: Verzicht auf chemisch-synthetische Pflanzenschutzmittel, 50–150 €/ha) sowie mineralisch-ökologischen Anbausystemen (NOcsPS). Wissenschaftliche Referenz: Saile et al. (2023, DOI: 10.1111/wre.12581) und Colnenne-David et al. (2023, DOI: 10.1007/s13593-023-00931-7).",
+      "uri": "https://doi.org/10.1111/wre.12581",
+      "reviewed": true
+    }
   }
 }

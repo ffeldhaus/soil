@@ -21,7 +21,7 @@ describe('Account Deletion', () => {
 
     // 3. Verify description for Guest
     cy.contains('Lokale Daten löschen').should('be.visible');
-    cy.contains('Alle lokal in Ihrem Browser gespeicherten Spieldaten').should('be.visible');
+    cy.contains('Alle lokal in deinem Browser gespeicherten Spieldaten').should('be.visible');
 
     // 4. Click delete and confirm
     cy.contains('Lokale Daten jetzt unwiderruflich löschen').click();
@@ -57,7 +57,7 @@ describe('Account Deletion', () => {
 
     // 3. Verify description for Authenticated User
     cy.contains('Konto löschen').should('be.visible');
-    cy.contains('Alle Ihre persönlichen Daten (Name, E-Mail) werden unwiderruflich gelöscht').should('be.visible');
+    cy.contains('Alle deine persönlichen Daten (Name, E-Mail) werden unwiderruflich gelöscht').should('be.visible');
 
     // 4. Trigger deletion
     cy.contains('Konto und Daten jetzt unwiderruflich löschen').click();

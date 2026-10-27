@@ -17,6 +17,7 @@ export class DashboardCreateGameComponent {
     numAi: number;
     playerLabel: string;
     aiLevel: 'elementary' | 'middle' | 'high';
+    difficulty: 'easy' | 'normal' | 'hard';
     advancedPricingEnabled: boolean;
     analyticsEnabled: boolean;
     advisorEnabled: boolean;
@@ -29,8 +30,9 @@ export class DashboardCreateGameComponent {
     numRounds: 20,
     numAi: 3,
     playerLabel: 'Team',
-    aiLevel: 'elementary' as 'elementary' | 'middle' | 'high',
-    advancedPricingEnabled: false,
+    aiLevel: 'middle' as 'elementary' | 'middle' | 'high',
+    difficulty: 'normal' as 'easy' | 'normal' | 'hard',
+    advancedPricingEnabled: true,
     analyticsEnabled: true,
     advisorEnabled: true,
   };
@@ -58,8 +60,33 @@ export class DashboardCreateGameComponent {
       'ai.level.elementary': 'Unterstufe',
       'ai.level.middle': 'Mittelstufe',
       'ai.level.high': 'Oberstufe',
+      'dashboard.createGame.difficulty': 'Zielgruppe & Schwierigkeit',
+      'difficulty.easy.title': 'Einsteiger / Unterstufe',
+      'difficulty.easy.desc': 'Einheitliche Startfelder (100/100), präzise Wettervorhersage, keine Überziehungszinsen.',
+      'difficulty.normal.title': 'Standard / Mittelstufe',
+      'difficulty.normal.desc': '5 ausgewogene Boden-Zonen, Wetter-Trend, 6 % Überziehungszins, Regionalverträge.',
+      'difficulty.hard.title': 'Profi / Oberstufe',
+      'difficulty.hard.desc':
+        'Stark variierende Boden-Zonen, zunehmender Klimastress, 10 % Dispozins & Insolvenz-Limit.',
     };
     return translations[key] || key;
+  }
+
+  onDifficultyChange(difficulty: 'easy' | 'normal' | 'hard') {
+    this.newGameConfig.difficulty = difficulty;
+    if (difficulty === 'easy') {
+      this.newGameConfig.aiLevel = 'elementary';
+      this.newGameConfig.advisorEnabled = true;
+      this.newGameConfig.advancedPricingEnabled = false;
+    } else if (difficulty === 'normal') {
+      this.newGameConfig.aiLevel = 'middle';
+      this.newGameConfig.advisorEnabled = true;
+      this.newGameConfig.advancedPricingEnabled = true;
+    } else if (difficulty === 'hard') {
+      this.newGameConfig.aiLevel = 'high';
+      this.newGameConfig.advisorEnabled = false;
+      this.newGameConfig.advancedPricingEnabled = true;
+    }
   }
 
   onSubmit() {

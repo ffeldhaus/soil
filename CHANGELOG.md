@@ -2,178 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.6.31] - 2026-10-20
+## [Unpublished]
+### Added
+- Added Audience & Difficulty presets (`Einsteiger / Unterstufe`, `Standard / Mittelstufe`, `Profi / Oberstufe`) to the game creation UI and backend/local game initialization, configuring 5-zone starting field distributions, weather forecast precision, overdraft interest (`0 %` / `6 %` / `10 %`), and insolvency limits.
+- Implemented a 2-round weather grace period at game start, full-sentence seasonal weather forecasts (`Prognose`), late-game climate escalation on `hard` difficulty, and the `Hitzewelle` (`HeatWave`) weather event.
+- Added scientifically and policy-grounded 3-round Regional Contracts (`Leguminosen-Initiative`, `Humus-Pakt`, `Brotgetreide-Vertrag`, `Öko-Pionier`) starting in Round 3, modeled after German GAP 2024/2025 Eco-Schemes (`ÖR 1a`, `ÖR 2`, `ÖR 6`) and peer-reviewed agronomy literature (`sources.json`).
+- Introduced the unified **Zukunftsfähiger Hof** (Sustainability & Viability) primary score combining financial health and living soil (`avgSoil`), accompanied by an animated round leaderboard, 8 collectible **Hof-Sticker** milestones, and custom square artwork across weather, pests, contracts, and stickers.
+- Added an accessible pre-decision crop rotation (`Fruchtfolge`), soil impact, and requirement preview inside the planting modal (shown when selected parcels share a uniform previous crop), as well as `Fruchtfolge ▼` warnings and `dt` harvest units on board parcels.
+### Changed
+- Replaced glassmorphism (`backdrop-blur`, `backdrop-filter`, `rounded-3xl`, and dynamic `PerformanceService` tiering) across the entire application with a crisp, high-contrast, opaque surface hierarchy (`bg-gray-900` / `bg-gray-950`) and a semi-transparent blur-free global footer (`bg-gray-950/85`).
+- Redesigned `/manual` (`Handbuch`) and `/info` (`Hintergrund`) with a responsive 2-column Table of Contents layout, external crop rotation flow arrows (`→ [ Kultur ] →`), combined **Zentrale Forschungsarbeit & Publikationen** (`#research` & `#publications`) at the top of `/info` with direct links to Dr. Nina Wolf's 2014 dissertation and public references, and global German auto-hyphenation (`hyphens: auto`, `text-wrap: pretty`).
+- Standardized all user-facing copy across the game, manual, legal pages, and authentication flows to use informal `"du"` or neutral phrasing instead of formal `"Sie"`.
+- Conditionally hid inactive Pest and Challenge side cards on the game board so only active round events and the Weather + Prognose card are displayed.
+- Updated and expanded frontend unit tests (`Vitest`), backend & balancing tests (`functions`), and all 12 Cypress E2E test suites (`cypress/e2e/`).
+
+## [2.6.0] to [2.6.31] - 2026-02-22 to 2026-10-20
 ### Security
-- Locked down `firestore.rules` and `storage.rules` (`allow read, write: if false`) since all data access goes through authenticated Cloud Functions.
-- Restricted `setAdminRole` exclusively to `superadmin` callers and prevented custom-token player accounts (`player-*`) from submitting admin onboarding requests.
-- Enforced caller host/player authorization on `calculateNextRound`, `triggerAiTurn`, and `saveDraft`.
-- Added HTML escaping (`escapeHtml`) and strict origin validation (`sanitizeOrigin`) across email and feedback Cloud Functions.
-- Replaced `Math.random()` with cryptographically secure `crypto.randomInt()` in password generation.
-- Restricted `soil_test_mode` mock bypasses in `AuthService` and `GameService` to local development and Cypress test environments.
-### Fixed
-- Prevented E2E/Cypress test games, test user accounts, and 100%-fallow click-through test games from leaking into `research_games`, `system_metadata/analysis`, and `feedback`.
-- Made `uploadGameForResearch` idempotent using deterministic document IDs (`research_<gameId>`) and added client-side in-flight deduplication in `SyncService`.
-- Archived active multiplayer games (`currentRoundNumber >= 1`) to `research_games` before hard deletion or 30-day automatic purge, and cleaned up associated `player-*` Firebase Auth accounts.
-- Fixed `getAdminGames` parameter mismatch (`targetUid` vs. `adminUid`) when Super Admins inspect another administrator's games.
-- Aligned `LocalGameService` dynamic market pricing and backend `makePerfectDecision` AI logic with the primary `GameEngine`.
-- Allowed unauthenticated local-mode players to submit anonymized feedback and guarded feedback replies when no email address is present.
-- Synchronized `app-version` in `src/index.html` and `/sitemap.xml` in `src/server.ts`.
-### Changed
-- Updated frontend and backend dependencies to latest minor and patch versions within semver constraints.
-
-## [2.6.30] - 2026-02-27
-### Changed
-- Finalized production deployment configuration and verified service worker navigation fallback fixes.
-
-## [2.6.29] - 2026-02-27
-### Fixed
-- Fixed an issue where the Service Worker would intermittently serve the SPA `index.html` instead of `assetlinks.json`, `robots.txt`, or `sitemap.xml` by explicitly excluding these paths from the navigation fallback.
-
-## [2.6.28] - 2026-02-27
-### Fixed
-- Synchronized `package-lock.json` to resolve build failures in Firebase App Hosting caused by missing sub-dependencies.
-
-## [2.6.27] - 2026-02-27
-### Fixed
-- Fixed a 404 error for `/.well-known/assetlinks.json` in the SSR server by updating the fingerprint and ensuring the route is correctly matched.
+- Locked down `firestore.rules` and `storage.rules` (`allow read, write: if false`) so all data access goes through authenticated Cloud Functions.
+- Enforced strict role and caller authorization across `setAdminRole`, `calculateNextRound`, `triggerAiTurn`, and `saveDraft`, added HTML escaping and origin validation across email/feedback functions, and replaced `Math.random()` with `crypto.randomInt()` for PIN generation.
 ### Added
-- Added an E2E routing test to verify that `/.well-known/assetlinks.json` is served correctly with the right content.
-
-## [2.6.26] - 2026-02-26
-### Added
-- Created comprehensive 10-round E2E local game test (`full-local-game.cy.ts`) that verifies the full gameplay loop, end-game triggers, and the anonymized research upload process.
-- Added responsive design E2E tests (`viewport.cy.ts`) verifying both Portrait (Mobile) and Landscape (Desktop) layouts.
-- Established global test coverage thresholds in `vite.config.mts` to prevent regression in code quality metrics.
+- Implemented the agricultural advisor (`GameAdvisorComponent`), interactive Shepherd.js guided tour (`TourService`), GDPR-compliant privacy policy (`/privacy`), account and local data deletion (`/delete-account`), 404 Not Found page, Android TWA `assetlinks.json` verification route, and comprehensive unit/E2E test suites with coverage thresholds.
 ### Changed
-- Updated `assetlinks.json` with the new production SHA256 certificate fingerprint for the Android TWA.
-- Migrated Cloud Functions test runner from Mocha/NYC to Vitest for unified testing architecture and corrected coverage reporting (Statement coverage now correctly reported at ~84%).
-- Significantly improved frontend unit test coverage for `TourService` by adding exhaustive step-attachment and event-handling mocks.
-- Enhanced Super Admin research table with `data-testid` attributes for more reliable automated verification.
-- Refined performance tier CSS by standardizing transparency overrides and removing redundant `!important` flags.
-
-## [2.6.25] - 2026-02-25
-### Changed
-- Renamed the application from "Soil - Kostenloses Lernspiel & Simulation" to "SOIL - Landwirtschaftssimulation" in all metadata and site titles.
-- Enforced consistent uppercase "SOIL" throughout the entire application, including user manuals, landing pages, legal documents, and email templates.
-
-## [2.6.24] - 2026-02-25
-### Changed
-- Stabilized all buttons across the application by removing hover translation and scale animations that caused layout shifts.
-- Aligned the background color of the icons in the "Handbuch" and "Hintergrund" links on the landing page with the parent link's background, ensuring a consistent look in both normal and hover states.
-- Further increased the transparency of "Tier 3" (Default) glassmorphism container backgrounds from `0.6` to `0.4` for an even more modern and glassy aesthetic.
+- Migrated from `@angular/fire` to the native Firebase SDK and unified Cloud Functions tests under Vitest.
+- Standardized navigation headers, SEO metadata, and `SOIL` branding across all views.
 ### Fixed
-- Fixed compilation errors in login components by using the correct loading state property in templates.
-- Fixed an issue where the data processing hint on the game creation screen was always visible; it now correctly toggles based on the "Anonymisierte Daten teilen" setting.
-
-## [2.6.23] - 2026-02-23
-### Changed
-- Refined the "Tier 3" (Default) glassmorphism container backgrounds to use a premium, semi-transparent black (`rgba(0, 0, 0, 0.6)`) with a slightly reduced blur (`8px`) instead of the default bluish Tailwind `gray-900` with `12px` blur. This aligns the visual style with Tier 2 while retaining a high-quality, glassy `backdrop-blur` effect with excellent readability.
-- Unified the "Home" navigation experience across the application by making the "SOIL" logo (and "ADMIN" logo on the Super Admin dashboard) a clickable link to the start page or dashboard.
-- Removed redundant and inconsistent "Zur Startseite" house icon buttons from the right side of navigation bars on all informational and authentication pages.
-- Updated the "SOIL" logo in the game HUD to smartly navigate back to the Admin Dashboard for authenticated users or the Start Page for guest players, resolving confusion between the home action and the "Logout" (exit) button.
-- Styled the "Abbrechen" text link in the parcel selection (planting) dialog into a proper, prominent button.
-- Removed `target="_blank"` from the "Handbuch" and "Hintergrund" links on the landing page, so they open in the current tab instead of a new one.
-- Removed the hover translate animation from the "Spiele erstellen & verwalten" button on the landing page to prevent unwanted movement on hover.
-- Improved the responsive layout of the landing page info sections to stack vertically below 860px and expand to full width in portrait mode, matching the layout of other informational pages.
-- Cleaned up unused imports in the `Board` unit tests.
-### Fixed
-- Fixed an issue where the logout button was confusingly displayed for guest users on the Admin Dashboard by hiding it and the account deletion button when in anonymous mode.
-- Fixed an issue where the green selection glow was cut off for crops on the edges of the round selection (planting) dialog by removing `overflow: hidden` from the planting grid.
-- Fixed an issue where custom scrollbars were invisible on several pages (like Manual, Info, Dashboard) by removing `-webkit-scrollbar` overrides and replacing them with standard CSS `scrollbar-width` and `scrollbar-color`. Adjusted z-indices of background images and removed conflicting background colors from root containers.
-- Fixed text boxes displaying a bluish semi-transparent background on performance tier 1 by forcing all Tailwind dark backgrounds (`bg-gray-900`, `bg-gray-950`, `bg-black`) to solid `#000000` with full opacity.
-
-## [2.6.22] - 2026-02-23
-### Changed
-- Optimized site metadata for SEO by updating the title, description, and keywords with educational and agricultural terminology.
-- Updated Open Graph and Twitter card tags for better social sharing.
-- Updated the Web App Manifest (site.webmanifest) name and description for consistency with SEO improvements.
-
-## [2.6.21] - 2026-02-23
-### Added
-- Registered Play Store verification user (`no-reply@example.com`) in Firestore and verified their email to facilitate app store approval.
-### Changed
-- Replaced the misleading gear icon for "Delete Account" in the Admin Dashboard HUD with a "user-circle-off" icon for better clarity.
-- Updated terminology from "Lehrkräfte" (Teachers) to "Administratoren" (Administrators) across the application and documentation for a more universal administrative context.
-- Improved contrast and feedback for the delete-account link.
-- Removed sensitive `auth_users.json` export file from the repository.
-
-## [2.6.20] - 2026-02-23
-### Changed
-- Unified modal background styling (Round Settings, Round Result, Financial Report) with the standard glassmorphism look (bg-gray-900/80 + backdrop-blur-md).
-- Improved readability in HUD and mobile menus by switching low-contrast text to white.
-- Standardized parcel names to be enabled by default on the game board.
-- Replaced linter-incompatible opacity text classes with standard Tailwind equivalents.
-### Fixed
-- Fixed "Namen" (Labels) toggle in the game view which was previously unresponsive.
-### Added
-- Improved readability across the entire application by replacing low-contrast grey text with white or light grey.
-- Updated footer links and version number to black for better contrast against semi-transparent backgrounds.
-- Unified primary container styles with modern glassmorphism (bg-gray-900/80 + backdrop-blur-md) across Admin and Game sections.
-- Finalized UI consistency by standardizing container backgrounds and alignments across all informational and administrative pages.
-### Fixed
-- Fixed 404 error for `/.well-known/assetlinks.json` by adding an explicit route in the server and allowing dotfiles in static serving.
-
-## [2.6.17] - 2026-02-23
-### Changed
-- Standardized container background styling across Admin Dashboard and Game components (Finance, Planting Modal) to use glassmorphism (bg-gray-900/80 + backdrop-blur-md) for UI consistency.
-### Fixed
-- Fixed internal Table of Contents links on Info and Manual pages by implementing robust manual fragment scrolling logic in `AfterViewInit`.
-
-## [2.6.15] - 2026-02-23
-### Added
-- Added a Table of Contents sidebar to the "Info" page for better navigation.
-### Changed
-- Standardized heading styles and alignment across Manual, Info, Impressum, Privacy, and Error pages (all are now left-aligned).
-- Standardized subtitle font size (text-xl) and color (white) across Manual, Info, Impressum, and Privacy pages.
-- Standardized container width and layout between Manual and Info pages.
-- Refined Impressum page by removing the redundant "Verantwortlich" section.
-### Fixed
-- Fixed inconsistent top gap on the Manual page by standardizing navigation bar behavior.
-- Fixed alignment of the Table of Contents on the Manual page to match the header.
-
-## [2.6.14] - 2026-02-23
-### Added
-- Added a link to the version number in the footer of all pages pointing to the Changelog on GitHub.
-- Added unit tests for the 404 "Not Found" page.
-### Changed
-- Standardized font usage to exclusively use Sans Serif across the entire application, removing all serif font declarations.
-### Fixed
-- Fixed 404 page layout to prevent overlapping of the "404" text and "Seite nicht gefunden" heading.
-- Removed redundant "SOIL" text from the bottom of the 404 page.
-
-## [2.6.13] - 2026-02-23
-### Added
-- Added a dedicated 404 "Not Found" page for invalid routes.
-- Added dedicated "Delete Account" page at `/delete-account` with data purging logic.
-- Implemented `deleteAccount` Cloud Function to purge user profile, hosted games, and auth data.
-- Added logic to clear `localStorage` for guest users and all data (local & remote) for authenticated users.
-- Added Cypress E2E tests for account and data deletion flows.
-- Added a pre-commit check to ensure `CHANGELOG.md` is updated before every commit.
-### Changed
-- Refactored project to remove `@angular/fire` and migrate to the native Firebase SDK.
-- Optimized release process: `npm run deploy` now handles `CHANGELOG.md` versioning automatically.
-- Updated `GEMINI.md` with instructions for minor version consolidation and mandatory changelog updates.
-### Fixed
-- Fixed vertical alignment of the "Abbrechen" button on the account deletion page.
-- Improved data deletion descriptions to clarify status-based purging.
-
-## [2.6.0] to [2.6.12] - 2026-02-22 to 2026-02-23
-### Added
-- Feat: implement game advisor and guided tour with comprehensive tests.
-- Feat: implement GDPR-compliant privacy policy and anonymized user data handling.
-- Feat: improve advisor insights, dialog layout, and crop selection UI.
-- Feat: add automated `CHANGELOG.md` versioning and pre-push verification.
-- Feat: add privacy and impressum pages to sitemap.
-- Docs: add instructions to `GEMINI.md` for consolidating changelog entries on every minor version release.
-### Changed
-- Style: refine manual layout and crop card designs (removed NPK/labor icons).
-- Refactor: move advisor styles to separate file and update performance tiers.
-- Perf: optimize animations (fireworks) and rendering tiers.
-- Build: refined `scripts/deploy.js` to automate changelog management during releases.
-### Fixed
-- Fix: resolve manual scrolling issues and footer link behavior.
-- Fix: remove duplicate footers and ensure assetlinks.json is served correctly.
-- Fix: align "Abbrechen" button and improve data deletion descriptions.
+- Made `uploadGameForResearch` idempotent (`research_<gameId>`), prevented test games/accounts from polluting research analytics, archived active multiplayer games prior to deletion, and excluded static SEO/TWA files from Service Worker navigation fallbacks.
 
 ## [2.5.0] to [2.5.15] - 2026-02-05 to 2026-02-16
 ### Added

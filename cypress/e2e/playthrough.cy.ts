@@ -43,7 +43,7 @@ describe('Full Game Playthrough', () => {
             game: { id: 'test-game-id', status: 'in_progress', currentRoundNumber: 0, settings: {} },
             playerState: {
               uid: 'player-test-game-id-1',
-              capital: callCount === 1 ? 100000 : 105000,
+              capital: callCount === 1 ? 100000 : 100500,
               currentRound: 0,
               history: [
                 {
@@ -63,6 +63,7 @@ describe('Full Game Playthrough', () => {
     cy.visit('/game?gameId=test-game-id', {
       onBeforeLoad: (win) => {
         win.localStorage.setItem('soil_test_mode', 'true');
+        win.localStorage.setItem('soil_tour_seen', 'true');
       },
     });
   });

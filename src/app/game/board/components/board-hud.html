@@ -1,5 +1,5 @@
 <div
-  class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 border-b border-gray-700 backdrop-blur shadow-lg px-2 sm:px-6 py-1 flex items-center h-10"
+  class="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-md px-2 sm:px-6 py-1 flex items-center h-10"
 >
   <!-- Left Section: Logo & Stats -->
   <div class="flex-1 flex items-center gap-2 sm:gap-4 min-w-0">
@@ -15,43 +15,100 @@
     </button>
     
     <a [routerLink]="user?.isAnonymous ? '/' : '/admin'" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors hidden md:block shrink-0 cursor-pointer" [title]="user?.isAnonymous ? 'Zur Startseite' : 'Zum Dashboard'">SOIL</a>
-    
-    @if (gameState) {
-      <div class="hidden sm:flex gap-4 text-gray-200 font-mono text-sm md:text-base truncate" data-tour="hud-stats">
-        <span class="text-yellow-400 whitespace-nowrap" data-testid="hud-capital">{{
-          getDisplayCapital() | currency: 'EUR' : 'symbol' : '1.0-0'
-        }}</span>
-      </div>
-    }
   </div>
 
   <!-- Center Section: Controls -->
   <div class="flex-none flex items-center justify-center">
     <!-- Mobile Controls (Visible on small screens) -->
     <div class="flex lg:hidden items-center gap-0.5 sm:gap-1" data-tour="mobile-overlays">
-      <button (click)="toggleLabels.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showLabels" [class.text-white]="showLabels" [class.text-gray-300]="!showLabels" title="Feldnamen">
+      <button
+        (click)="toggleLabels.emit()"
+        [disabled]="showFinance"
+        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        [class.bg-gray-300]="showLabels"
+        [class.text-gray-900]="showLabels"
+        [class.border-gray-400]="showLabels"
+        [class.bg-gray-800]="!showLabels"
+        [class.text-gray-300]="!showLabels"
+        [class.border-gray-700]="!showLabels"
+        title="Feldnamen"
+      >
         <span class="text-sm">🏷️</span>
       </button>
-      <button (click)="toggleNutrition.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-blue-600]="showNutritionOverlay" [class.text-white]="showNutritionOverlay" [class.text-gray-300]="!showNutritionOverlay" title="Nährstoffe">
-        <span class="text-sm">🧪</span>
-      </button>
-      <button (click)="toggleHarvest.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-yellow-600]="showHarvestOverlay" [class.text-white]="showHarvestOverlay" [class.text-gray-300]="!showHarvestOverlay" title="Ertrag">
-        <span class="text-sm">🌾</span>
-      </button>
-      <button (click)="toggleSoil.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-700]="showSoilOverlay" [class.text-white]="showSoilOverlay" [class.text-gray-300]="!showSoilOverlay" title="Bodenqualität">
+      <button
+        (click)="toggleSoil.emit()"
+        [disabled]="showFinance"
+        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        [class.bg-amber-900]="showSoilOverlay"
+        [class.text-white]="showSoilOverlay"
+        [class.border-amber-700]="showSoilOverlay"
+        [class.bg-gray-800]="!showSoilOverlay"
+        [class.text-gray-300]="!showSoilOverlay"
+        [class.border-gray-700]="!showSoilOverlay"
+        title="Bodenqualität"
+      >
         <span class="text-sm">🌿</span>
       </button>
-      <button (click)="toggleFinance.emit()" [disabled]="maxRoundNumber === 0" class="w-8 h-8 flex items-center justify-center rounded-lg transition" [class.bg-emerald-600]="showFinance" [class.text-white]="showFinance" [class.text-gray-300]="!showFinance" [class.opacity-50]="maxRoundNumber === 0" title="Finanzen">
-        <span class="text-sm">📊</span>
+      <button
+        (click)="toggleNutrition.emit()"
+        [disabled]="showFinance"
+        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        [class.bg-blue-600]="showNutritionOverlay"
+        [class.text-white]="showNutritionOverlay"
+        [class.border-blue-400]="showNutritionOverlay"
+        [class.bg-gray-800]="!showNutritionOverlay"
+        [class.text-gray-300]="!showNutritionOverlay"
+        [class.border-gray-700]="!showNutritionOverlay"
+        title="Mineralstoffe"
+      >
+        <span class="text-sm">🧪</span>
+      </button>
+      <button
+        (click)="toggleHarvest.emit()"
+        [disabled]="showFinance"
+        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        [class.bg-yellow-500]="showHarvestOverlay"
+        [class.text-gray-950]="showHarvestOverlay"
+        [class.border-yellow-300]="showHarvestOverlay"
+        [class.bg-gray-800]="!showHarvestOverlay"
+        [class.text-gray-300]="!showHarvestOverlay"
+        [class.border-gray-700]="!showHarvestOverlay"
+        title="Ernte"
+      >
+        <span class="text-sm">🌾</span>
       </button>
 
-      <div class="w-px h-6 bg-gray-700 mx-1"></div>
+      <div class="w-px h-5 sm:h-6 bg-gray-700 mx-0.5 sm:mx-1"></div>
+
+      <button
+        (click)="toggleFinance.emit()"
+        [disabled]="maxRoundNumber === 0"
+        class="px-2 sm:px-2.5 h-7 sm:h-8 flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg border transition disabled:cursor-default"
+        [class.bg-gray-200]="showFinance"
+        [class.text-gray-950]="showFinance"
+        [class.border-gray-300]="showFinance"
+        [class.bg-gray-800]="!showFinance"
+        [class.text-white]="!showFinance"
+        [class.border-gray-700]="!showFinance"
+        title="Finanzen"
+      >
+        <span class="text-sm leading-none">📊</span>
+        @if (gameState) {
+          <span
+            class="font-mono tabular-nums text-[11px] sm:text-xs font-bold whitespace-nowrap"
+            [class.text-gray-950]="showFinance"
+            [class.text-amber-400]="!showFinance"
+          >{{ getDisplayCapital() | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+        }
+      </button>
+
+      <div class="w-px h-5 sm:h-6 bg-gray-700 mx-0.5 sm:mx-1"></div>
 
       @if (gameState?.game?.status !== 'finished') {
         <button (click)="nextRound.emit()" 
           data-tour="next-round"
           [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound" 
-          class="w-8 h-8 flex items-center justify-center bg-emerald-600 rounded-lg text-white disabled:bg-gray-700 disabled:text-gray-500 shadow-sm"
+          class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 border border-emerald-500 rounded-lg text-white disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500 shadow-sm"
           [title]="isSubmitted ? 'Warten auf andere...' : 'Nächste Runde'">
           @if (isSubmitted || pendingNextRound) {
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,20 +124,23 @@
     </div>
 
     <!-- Desktop Controls -->
-    <div class="hidden lg:flex items-center gap-3" data-tour="desktop-controls">
+    <div class="hidden lg:flex items-center gap-1.5" data-tour="desktop-controls">
       <!-- User Info -->
-      <div class="flex items-center gap-2 mr-2">
+      <div class="flex items-center gap-2">
         @if (!isPlayer) {
           <img [src]="t('user.photoURL')" alt="Profile picture" class="w-6 h-6 rounded-full border border-gray-600" />
         }
         @if (user) {
           @if (!isEditingName) {
-            <span
-              class="text-[10px] font-bold text-gray-900 bg-gray-300 px-2 py-0.5 rounded shadow-sm border border-gray-400/50 cursor-pointer hover:bg-gray-200 transition-colors"
-              (click)="startEditName(); $event.stopPropagation()"
+            <button
+              type="button"
+              data-testid="team-modal-btn"
+              class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 font-mono tabular-nums bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500"
+              (click)="openTeamModal.emit(); $event.stopPropagation()"
             >
-              {{ getDisplayName() | uppercase }}
-            </span>
+              <span>{{ getDisplayName() | uppercase }}</span>
+              <span>🏅 {{ collectedStickersCount }}/{{ totalStickersCount }}</span>
+            </button>
           } @else {
             <input
               [(ngModel)]="tempName"
@@ -93,15 +153,20 @@
         }
       </div>
 
-      <!-- Toggle Buttons -->
+      <div class="h-6 w-px bg-gray-700 mx-1"></div>
+
+      <!-- Toggle Buttons: 1. Namen, 2. Bodenqualität, 3. Mineralstoffe, 4. Ernte -->
       <div class="flex items-center gap-1" data-tour="desktop-overlays">
         <button
           (click)="toggleLabels.emit()"
-          class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-          [class.bg-emerald-600]="showLabels"
-          [class.text-white]="showLabels"
-          [class.border-emerald-500]="showLabels"
+          [disabled]="showFinance"
+          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+          [class.bg-gray-300]="showLabels"
+          [class.hover:bg-gray-200]="showLabels"
+          [class.text-gray-900]="showLabels"
+          [class.border-gray-400]="showLabels"
           [class.bg-gray-800]="!showLabels"
+          [class.hover:bg-gray-700]="!showLabels"
           [class.text-white]="!showLabels"
           [class.border-gray-700]="!showLabels"
           [attr.aria-pressed]="showLabels"
@@ -110,13 +175,31 @@
           {{ t('board.nav.names') }}
         </button>
         <button
+          (click)="toggleSoil.emit()"
+          [disabled]="showFinance"
+          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+          [class.bg-amber-900]="showSoilOverlay"
+          [class.hover:bg-amber-800]="showSoilOverlay"
+          [class.text-white]="true"
+          [class.border-amber-700]="showSoilOverlay"
+          [class.bg-gray-800]="!showSoilOverlay"
+          [class.hover:bg-gray-700]="!showSoilOverlay"
+          [class.border-gray-700]="!showSoilOverlay"
+          [attr.aria-pressed]="showSoilOverlay"
+          aria-label="Toggle soil quality overlay"
+        >
+          {{ t('board.nav.soil') }}
+        </button>
+        <button
           (click)="toggleNutrition.emit()"
-          class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
+          [disabled]="showFinance"
+          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
           [class.bg-blue-600]="showNutritionOverlay"
-          [class.text-white]="showNutritionOverlay"
-          [class.border-blue-500]="showNutritionOverlay"
+          [class.hover:bg-blue-500]="showNutritionOverlay"
+          [class.text-white]="true"
+          [class.border-blue-400]="showNutritionOverlay"
           [class.bg-gray-800]="!showNutritionOverlay"
-          [class.text-white]="!showNutritionOverlay"
+          [class.hover:bg-gray-700]="!showNutritionOverlay"
           [class.border-gray-700]="!showNutritionOverlay"
           [attr.aria-pressed]="showNutritionOverlay"
           aria-label="Toggle nutrition overlay"
@@ -125,11 +208,14 @@
         </button>
         <button
           (click)="toggleHarvest.emit()"
-          class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-          [class.bg-yellow-600]="showHarvestOverlay"
-          [class.text-white]="showHarvestOverlay"
-          [class.border-yellow-500]="showHarvestOverlay"
+          [disabled]="showFinance"
+          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+          [class.bg-yellow-500]="showHarvestOverlay"
+          [class.hover:bg-yellow-400]="showHarvestOverlay"
+          [class.text-gray-950]="showHarvestOverlay"
+          [class.border-yellow-300]="showHarvestOverlay"
           [class.bg-gray-800]="!showHarvestOverlay"
+          [class.hover:bg-gray-700]="!showHarvestOverlay"
           [class.text-white]="!showHarvestOverlay"
           [class.border-gray-700]="!showHarvestOverlay"
           [attr.aria-pressed]="showHarvestOverlay"
@@ -137,66 +223,54 @@
         >
           {{ t('board.nav.harvest') }}
         </button>
-        <button
-          (click)="toggleSoil.emit()"
-          class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-          [class.bg-emerald-700]="showSoilOverlay"
-          [class.text-white]="showSoilOverlay"
-          [class.border-emerald-600]="showSoilOverlay"
-          [class.bg-gray-800]="!showSoilOverlay"
-          [class.text-white]="!showSoilOverlay"
-          [class.border-gray-700]="!showSoilOverlay"
-          [attr.aria-pressed]="showSoilOverlay"
-          aria-label="Toggle soil quality overlay"
-        >
-          {{ t('board.nav.soil') }}
-        </button>
-        <button
-          (click)="toggleFinance.emit()"
-          [disabled]="maxRoundNumber === 0"
-          class="px-3 py-1 font-bold text-[10px] rounded-lg border transition"
-          [class.bg-emerald-600]="showFinance"
-          [class.text-white]="showFinance || maxRoundNumber > 0"
-          [class.border-emerald-500]="showFinance"
-          [class.bg-gray-800]="!showFinance"
-          [class.text-white]="!showFinance && maxRoundNumber === 0"
-          [class.border-gray-700]="!showFinance"
-          [class.opacity-50]="maxRoundNumber === 0"
-          [attr.aria-pressed]="showFinance"
-          aria-label="Toggle financial report"
-        >
-          {{ t('board.nav.finance') }}
-        </button>
       </div>
 
       <div class="h-6 w-px bg-gray-700 mx-1"></div>
 
+      <!-- Finanzen Button -->
+      <button
+        (click)="toggleFinance.emit()"
+        [disabled]="maxRoundNumber === 0"
+        data-tour="hud-stats"
+        class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 disabled:cursor-default"
+        [class.bg-gray-200]="showFinance"
+        [class.hover:bg-white]="showFinance"
+        [class.text-gray-950]="showFinance"
+        [class.border-gray-300]="showFinance"
+        [class.bg-gray-800]="!showFinance"
+        [class.hover:bg-gray-700]="!showFinance && maxRoundNumber > 0"
+        [class.text-white]="!showFinance"
+        [class.border-gray-700]="!showFinance"
+        [attr.aria-pressed]="showFinance"
+        aria-label="Toggle financial report"
+      >
+        <span>{{ t('board.nav.finance') }}</span>
+        @if (gameState) {
+          <span
+            class="w-px h-3.5 shrink-0"
+            [class.bg-gray-400]="showFinance"
+            [class.bg-gray-600]="!showFinance"
+            aria-hidden="true"
+          ></span>
+          <span
+            data-testid="hud-capital"
+            class="font-mono tabular-nums font-bold whitespace-nowrap"
+            [class.text-gray-950]="showFinance"
+            [class.text-amber-400]="!showFinance"
+          >{{ getDisplayCapital() | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+        }
+      </button>
+
+      <div class="h-6 w-px bg-gray-700 mx-1"></div>
+
       <!-- Action Buttons -->
-      <button
-        (click)="openRoundSettings.emit()"
-        [disabled]="isReadOnly"
-        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg border border-gray-600 transition text-[10px] flex items-center gap-1 disabled:opacity-50"
-        aria-label="Open round options"
-        data-tour="round-options"
-      >
-        {{ t('board.nav.options') }}
-      </button>
-      <button
-        (click)="startTour()"
-        class="w-7 h-7 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg border border-gray-700 transition"
-        title="Geführte Tour starten"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </button>
       @if (gameState?.game?.status !== 'finished') {
         <button
           (click)="nextRound.emit()"
           data-testid="next-round-button"
           data-tour="next-round"
           [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
-          class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-[10px] disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-400"
+          class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-xs cursor-pointer disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-400 disabled:cursor-default"
           [attr.aria-label]="isSubmitted ? 'Waiting for other players' : 'Submit round and proceed'"
         >
           @if (isSubmitted || pendingNextRound) {
@@ -209,7 +283,7 @@
       @if (gameState?.game?.status === 'finished') {
         <button
           (click)="showGameEnd.emit()"
-          class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg border border-amber-500 transition text-[10px] shadow-lg shadow-amber-900/40"
+          class="px-3 py-1 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-lg border border-amber-500 transition text-xs shadow-lg shadow-amber-900/40"
           aria-label="Game finished, view results"
         >
           <ng-container>Spiel beendet</ng-container>
@@ -218,12 +292,12 @@
     </div>
   </div>
 
-  <!-- Right Section: Dev & Logout -->
-  <div class="flex-1 flex items-center justify-end gap-3 min-w-0">
+  <!-- Right Section: Dev, Tour & Logout -->
+  <div class="flex-1 flex items-center justify-end gap-0.5 sm:gap-2 min-w-0">
     @if (isDev) {
       <button
         (click)="copyGameState()"
-        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-bold rounded-lg border border-gray-700 transition text-[10px] hidden sm:block"
+        class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white font-bold rounded-lg border border-gray-700 transition text-xs hidden sm:block cursor-pointer"
         title="Copy Game State JSON"
         aria-label="Copy game state as JSON"
       >
@@ -231,9 +305,20 @@
       </button>
     }
     <button
+      (click)="startTour()"
+      data-testid="tour-button"
+      class="p-1.5 sm:p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0 cursor-pointer"
+      title="Geführte Tour starten"
+      aria-label="Geführte Tour starten"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </button>
+    <button
       (click)="logout.emit()"
       data-testid="logout-button"
-      class="p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-10 h-10 flex items-center justify-center shrink-0"
+      class="p-1.5 sm:p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0 cursor-pointer"
       [title]="t('board.logout.title')"
       [attr.aria-label]="t('board.logout.title')"
     >
