@@ -329,8 +329,8 @@
                       class="w-full h-full object-cover"
                     />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
-                    <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
-                      {{ selectedRoundWeatherData.name === 'Normal' ? 'Ruhige Wetterlage' : selectedRoundWeatherData.name }}
+                    <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
+                      {{ selectedRoundWeatherData.name === 'Normal' ? 'Ruhige Wetterlage' : selectedRoundWeatherData.name.replace('/', '/\u200B') }}
                     </span>
                   </div>
                   @if (currentWeatherForecast; as forecast) {
@@ -385,7 +385,7 @@
                     >
                       <img [src]="pest.image" [alt]="pest.name" class="w-full h-full object-cover" />
                       <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
-                      <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
+                      <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
                         {{ pest.name }}
                       </span>
                     </div>
@@ -470,8 +470,8 @@
                   class="w-full h-full object-cover"
                 />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
-                <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
-                  {{ selectedRoundWeatherData.name === 'Normal' ? 'Ruhige Wetterlage' : selectedRoundWeatherData.name }}
+                <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
+                  {{ selectedRoundWeatherData.name === 'Normal' ? 'Ruhige Wetterlage' : selectedRoundWeatherData.name.replace('/', '/\u200B') }}
                 </span>
               </div>
               @if (currentWeatherForecast; as forecast) {
@@ -502,7 +502,7 @@
                       class="w-full h-full object-cover"
                     />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
-                    <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight">
+                    <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
                       {{ pest.name }}
                     </span>
                   </div>
@@ -766,7 +766,7 @@
           aria-modal="true"
           aria-labelledby="sticker-album-title"
         >
-          <div class="flex items-center justify-between border-b border-gray-800 pb-3 mb-4">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-3 mb-4 shrink-0">
             <div>
               <h2 id="sticker-album-title" class="text-xl font-bold text-white tracking-tight">
                 Team & Hof-Auszeichnungen
@@ -786,74 +786,154 @@
             </button>
           </div>
 
-          <!-- Team Name Edit Section -->
-          <div class="mb-4 p-3 rounded-lg bg-gray-950 border border-gray-800 flex flex-col sm:flex-row sm:items-center gap-2.5">
-            <label for="team-name-modal-input" class="text-xs font-bold text-slate-300 uppercase tracking-wider shrink-0">
-              Teamname
-            </label>
-            <div class="flex-1 flex items-center gap-2">
-              <input
-                id="team-name-modal-input"
-                data-testid="team-name-modal-input"
-                type="text"
-                [(ngModel)]="tempName"
-                (keyup.enter)="saveTeamNameFromModal()"
-                placeholder="Hof- oder Teamname"
-                class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-emerald-500"
-              />
-              <button
-                type="button"
-                data-testid="save-team-name-modal-btn"
-                (click)="saveTeamNameFromModal()"
-                class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg border border-emerald-500 transition-colors shrink-0"
-              >
-                Speichern
-              </button>
+          <div class="flex-1 min-h-0 overflow-y-auto pr-1 custom-scrollbar space-y-4">
+            <!-- Team Name Edit Section -->
+            <div class="p-3 rounded-lg bg-gray-950 border border-gray-800 flex flex-col sm:flex-row sm:items-center gap-2.5">
+              <label for="team-name-modal-input" class="text-xs font-bold text-slate-300 uppercase tracking-wider shrink-0">
+                Teamname
+              </label>
+              <div class="flex-1 flex items-center gap-2">
+                <input
+                  id="team-name-modal-input"
+                  data-testid="team-name-modal-input"
+                  type="text"
+                  [(ngModel)]="tempName"
+                  (keyup.enter)="saveTeamNameFromModal()"
+                  placeholder="Hof- oder Teamname"
+                  class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-emerald-500"
+                />
+                <button
+                  type="button"
+                  data-testid="save-team-name-modal-btn"
+                  (click)="saveTeamNameFromModal()"
+                  class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg border border-emerald-500 transition-colors shrink-0"
+                >
+                  Speichern
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 overflow-y-auto pr-1 custom-scrollbar">
-            @for (sticker of allStickers; track sticker.id) {
-              @let collected = isStickerCollected(sticker.id);
-              <div
-                [attr.data-testid]="'album-sticker-' + sticker.id"
-                class="rounded-xl border overflow-hidden flex flex-col transition-opacity"
-                [class.bg-black]="collected"
-                [class.bg-gray-950]="!collected"
-                [class.opacity-65]="!collected"
-                [class.border-amber-400]="collected && sticker.rarity === 'gold'"
-                [class.border-slate-300]="collected && sticker.rarity === 'silver'"
-                [class.border-amber-700]="collected && sticker.rarity === 'bronze'"
-                [class.border-gray-800]="!collected"
-              >
-                <div class="relative aspect-[4/3] w-full overflow-hidden bg-slate-950 border-b border-slate-800">
-                  @if (sticker.image) {
-                    <img
-                      [src]="sticker.image"
-                      [alt]="sticker.title"
-                      class="w-full h-full object-cover transition-transform duration-150"
-                      [class.grayscale]="!collected"
-                      [class.brightness-50]="!collected"
-                    />
-                  }
-                  <div class="absolute top-2 left-2 right-2 flex items-center justify-between gap-1">
-                    <span class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-200 border border-slate-700">
-                      {{ getStickerCategoryLabel(sticker.category) }}
-                    </span>
-                    @if (!collected) {
-                      <span class="text-xs px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-300 border border-slate-700" aria-hidden="true">
-                        🔒
-                      </span>
-                    }
-                  </div>
+            <!-- Hof-Rangliste (Leaderboard) -->
+            @let modalLeaderboard = getRoundLeaderboard(viewingRound);
+            @if (modalLeaderboard.length > 0) {
+              <div data-testid="team-modal-leaderboard" class="bg-gray-950 border border-gray-800 rounded-lg p-3.5 text-left">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-sm font-bold text-white tracking-tight">Hof-Rangliste — Zukunftsfähigkeit</h3>
+                  <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Kapital + Boden</span>
                 </div>
-                <div class="p-3 flex-1 flex flex-col">
-                  <div class="text-xs font-bold text-white mb-0.5 leading-snug">{{ sticker.title }}</div>
-                  <div class="text-[10px] text-amber-300 font-medium mb-1.5">{{ sticker.subtitle }}</div>
-                  <p class="text-[11px] text-slate-300 leading-snug">{{ sticker.description }}</p>
+                <div class="space-y-1.5">
+                  @for (entry of modalLeaderboard; track entry.uid) {
+                    @let scoreDelta = entry.score - entry.prevScore;
+                    <div
+                      [attr.data-testid]="'team-leaderboard-row-' + entry.uid"
+                      class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-xs"
+                      [class.bg-emerald-950]="entry.isCurrentPlayer"
+                      [class.border-emerald-500]="entry.isCurrentPlayer"
+                      [class.bg-slate-900]="!entry.isCurrentPlayer"
+                      [class.border-slate-700]="!entry.isCurrentPlayer"
+                    >
+                      <div class="flex items-center gap-2 min-w-0">
+                        <span class="font-mono tabular-nums font-bold text-slate-200 w-6">#{{ entry.rank }}</span>
+                        <span
+                          class="font-mono tabular-nums text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0"
+                          [class.bg-emerald-950]="entry.rankDelta > 0"
+                          [class.text-emerald-300]="entry.rankDelta > 0"
+                          [class.border-emerald-500]="entry.rankDelta > 0"
+                          [class.bg-rose-950]="0 > entry.rankDelta"
+                          [class.text-rose-300]="0 > entry.rankDelta"
+                          [class.border-rose-500]="0 > entry.rankDelta"
+                          [class.bg-slate-800]="entry.rankDelta === 0"
+                          [class.text-slate-400]="entry.rankDelta === 0"
+                          [class.border-slate-700]="entry.rankDelta === 0"
+                          [attr.aria-label]="entry.rankDelta > 0 ? 'Rang verbessert um ' + entry.rankDelta : 0 > entry.rankDelta ? 'Rang verschlechtert um ' + (-entry.rankDelta) : 'Rang unverändert'"
+                        >
+                          @if (entry.rankDelta > 0) {
+                            ▲ +{{ entry.rankDelta }}
+                          } @else if (0 > entry.rankDelta) {
+                            ▼ {{ entry.rankDelta }}
+                          } @else {
+                            ━
+                          }
+                        </span>
+                        <span class="font-semibold text-white truncate">
+                          {{ entry.name }}
+                          @if (entry.isCurrentPlayer) {
+                            <span class="text-[10px] text-emerald-400 font-mono ml-1">(Du)</span>
+                          }
+                        </span>
+                      </div>
+
+                      <div class="flex items-center gap-3 shrink-0 font-mono tabular-nums">
+                        <div class="hidden sm:flex items-center gap-2 text-[11px] text-slate-300">
+                          <span>{{ entry.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+                          <span class="text-slate-600">|</span>
+                          <span>Ø {{ entry.avgSoil | number: '1.0-0' }}%</span>
+                        </div>
+                        <div class="text-right min-w-[78px]">
+                          <span class="font-bold text-white">{{ entry.score }} Pkt</span>
+                          <span
+                            class="block text-[10px]"
+                            [class.text-emerald-400]="scoreDelta > 0"
+                            [class.text-rose-400]="0 > scoreDelta"
+                            [class.text-slate-400]="scoreDelta === 0"
+                          >
+                            {{ scoreDelta > 0 ? '+' : '' }}{{ scoreDelta }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  }
                 </div>
               </div>
             }
+
+            <!-- Hof-Auszeichnungen (Stickers) -->
+            <div>
+              <h3 class="text-sm font-bold text-white tracking-tight mb-2.5 text-left">Hof-Auszeichnungen</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                @for (sticker of allStickers; track sticker.id) {
+                  @let collected = isStickerCollected(sticker.id);
+                  <div
+                    [attr.data-testid]="'album-sticker-' + sticker.id"
+                    class="rounded-xl border overflow-hidden flex flex-col transition-opacity"
+                    [class.bg-black]="collected"
+                    [class.bg-gray-950]="!collected"
+                    [class.opacity-65]="!collected"
+                    [class.border-amber-400]="collected && sticker.rarity === 'gold'"
+                    [class.border-slate-300]="collected && sticker.rarity === 'silver'"
+                    [class.border-amber-700]="collected && sticker.rarity === 'bronze'"
+                    [class.border-gray-800]="!collected"
+                  >
+                    <div class="relative aspect-[4/3] w-full overflow-hidden bg-slate-950 border-b border-slate-800">
+                      @if (sticker.image) {
+                        <img
+                          [src]="sticker.image"
+                          [alt]="sticker.title"
+                          class="w-full h-full object-cover transition-transform duration-150"
+                          [class.grayscale]="!collected"
+                          [class.brightness-50]="!collected"
+                        />
+                      }
+                      <div class="absolute top-2 left-2 right-2 flex items-center justify-between gap-1">
+                        <span class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-200 border border-slate-700">
+                          {{ getStickerCategoryLabel(sticker.category) }}
+                        </span>
+                        @if (!collected) {
+                          <span class="text-xs px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-300 border border-slate-700" aria-hidden="true">
+                            🔒
+                          </span>
+                        }
+                      </div>
+                    </div>
+                    <div class="p-3 flex-1 flex flex-col">
+                      <div class="text-xs font-bold text-white mb-0.5 leading-snug">{{ sticker.title }}</div>
+                      <div class="text-[10px] text-amber-300 font-medium mb-1.5">{{ sticker.subtitle }}</div>
+                      <p class="text-[11px] text-slate-300 leading-snug">{{ sticker.description }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
           </div>
         </div>
       </div>

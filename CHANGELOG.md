@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added the live `Hof-Rangliste — Zukunftsfähigkeit` leaderboard to the unified `Team & Hof-Auszeichnungen` modal (`board.html`) so players can inspect standings, rank deltas, capital, and soil scores at any time during a round.
+### Fixed
+- Fixed text clipping on compound weather labels such as `Starkregen/Hochwasser` in the game board weather card and HUD popover by allowing line breaks after slashes (`/\u200B`) with `break-words`.
+
 ## [3.0.0] - 2026-10-27
 ### Added
 - Added Audience & Difficulty presets (`Einsteiger / Unterstufe`, `Standard / Mittelstufe`, `Profi / Oberstufe`) to the game creation UI and backend/local game initialization, configuring 5-zone starting field distributions, weather forecast precision, overdraft interest (`0 %` / `6 %` / `10 %`), and insolvency limits.

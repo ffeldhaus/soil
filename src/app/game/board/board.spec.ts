@@ -446,10 +446,44 @@ describe('Board', () => {
     ).toBe('Ruhige Wetterlage oder Trockenheit möglich.');
   });
 
-  it('should open unified team and achievements modal and save team name from modal', async () => {
+  it('should open unified team and achievements modal, display leaderboard, and save team name from modal', async () => {
+    (TestBed.inject(GameService) as any).state = {
+      game: {
+        id: 'test-game',
+        currentRoundNumber: 1,
+        players: {
+          'test-user': {
+            uid: 'test-user',
+            displayName: 'Test User',
+            isAi: false,
+            capital: 112000,
+            avgSoil: 102,
+            history: [],
+          },
+          'ai-1': {
+            uid: 'ai-1',
+            displayName: 'Hof Nord',
+            isAi: true,
+            capital: 98000,
+            avgSoil: 96,
+            history: [],
+          },
+        },
+      },
+      playerState: {
+        uid: 'test-user',
+        displayName: 'Test User',
+        isAi: false,
+        history: [],
+      },
+    };
+
     component.openTeamAndAchievementsModal();
+    fixture.changeDetectorRef.detectChanges();
     expect(component.showStickerAlbumModal).toBe(true);
     expect(component.tempName).toBe('Test User');
+    expect(fixture.nativeElement.querySelector('[data-testid="team-modal-leaderboard"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('[data-testid="team-leaderboard-row-test-user"]')).toBeTruthy();
 
     component.tempName = 'Hof Zukunft';
     component.saveTeamNameFromModal();
