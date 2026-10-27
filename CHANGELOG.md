@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.0.1] - 2026-10-27
 ### Added
 - Added the live `Hof-Rangliste — Zukunftsfähigkeit` leaderboard to the unified `Team & Hof-Auszeichnungen` modal (`board.html`) so players can inspect standings, rank deltas, capital, and soil scores at any time during a round.
 ### Fixed
