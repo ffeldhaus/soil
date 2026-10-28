@@ -53,14 +53,14 @@ export class ResearchComponent implements OnInit, AfterViewInit {
   expandedGameIds = new Set<string>();
   copiedKey: string | null = null;
 
-  readonly apiEndpoint = 'https://europe-west4-soil-602ea.cloudfunctions.net/researchApi';
-  readonly mcpEndpoint = 'https://europe-west4-soil-602ea.cloudfunctions.net/researchMcp';
+  readonly apiEndpoint = 'https://soil.app/api/research';
+  readonly mcpEndpoint = 'https://soil.app/api/mcp';
 
   readonly mcpConfigJson = JSON.stringify(
     {
       mcpServers: {
         'soil-research': {
-          url: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchMcp',
+          url: 'https://soil.app/api/mcp',
         },
       },
     },

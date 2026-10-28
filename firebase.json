@@ -27,6 +27,27 @@
     ],
     "rewrites": [
       {
+        "source": "/api/research",
+        "function": {
+          "functionId": "researchApi",
+          "region": "europe-west4"
+        }
+      },
+      {
+        "source": "/api/mcp",
+        "function": {
+          "functionId": "researchMcp",
+          "region": "europe-west4"
+        }
+      },
+      {
+        "source": "/mcp",
+        "function": {
+          "functionId": "researchMcp",
+          "region": "europe-west4"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

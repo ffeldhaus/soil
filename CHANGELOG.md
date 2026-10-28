@@ -3,7 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
+### Added
+- Exposed the public read-only Research REST/CSV API (`https://soil.app/api/research`, `https://soil.app/api/research?format=csv`) and JSON-RPC 2.0 MCP Server (`https://soil.app/api/mcp` and `https://soil.app/mcp`) directly on `soil.app` via SSR Express reverse-proxy routes (`src/server.ts`) and Firebase Hosting rewrites (`firebase.json`).
 ### Changed
+- Updated the `/research` view (`src/app/research/research.ts`) to display and copy the canonical first-party `https://soil.app/api/research` and `https://soil.app/api/mcp` endpoints.
 - Configured `lychee.toml` to accept HTTP `403` status codes (`accept = ["100..=103", "200..=299", "403"]`) and `exclude_all_private = true` instead of excluding external URLs that block automated link checkers.
 
 ## [3.1.0] - 2026-10-28

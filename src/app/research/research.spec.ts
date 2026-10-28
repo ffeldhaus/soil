@@ -172,6 +172,14 @@ describe('ResearchComponent', () => {
     expect(el.querySelector('[data-testid="research-api-mcp-section"]')?.textContent).toContain(
       'get_research_game_trajectory',
     );
+    expect(component.apiEndpoint).toBe('https://soil.app/api/research');
+    expect(component.mcpEndpoint).toBe('https://soil.app/api/mcp');
+    expect(el.querySelector('[data-testid="research-api-mcp-section"]')?.textContent).toContain(
+      'https://soil.app/api/research?format=csv',
+    );
+    expect(el.querySelector('[data-testid="research-api-mcp-section"]')?.textContent).toContain(
+      'https://soil.app/api/mcp',
+    );
   });
 
   it('should pass filter criteria when filters change', async () => {

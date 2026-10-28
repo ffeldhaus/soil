@@ -12,6 +12,84 @@ import express from 'express';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
+const UPSTREAM_ENDPOINTS = {
+  researchApi: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchApi',
+  researchMcp: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchMcp',
+} as const;
+
+const PROXY_RESPONSE_HEADERS = [
+  'content-type',
+  'cache-control',
+  'content-disposition',
+  'access-control-allow-origin',
+  'access-control-allow-methods',
+  'access-control-allow-headers',
+  'x-ratelimit-limit',
+  'x-ratelimit-remaining',
+] as const;
+
+function buildProxyRequestHeaders(req: express.Request): Record<string, string> {
+  const headers: Record<string, string> = {};
+  if (typeof req.headers.accept === 'string') {
+    headers.accept = req.headers.accept;
+  }
+  if (typeof req.headers['content-type'] === 'string') {
+    headers['content-type'] = req.headers['content-type'];
+  }
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const clientIp = typeof forwardedFor === 'string' ? forwardedFor : req.ip || '';
+  if (clientIp) {
+    headers['x-forwarded-for'] = clientIp;
+  }
+  return headers;
+}
+
+function copyUpstreamHeaders(upstream: Response, res: express.Response): void {
+  for (const header of PROXY_RESPONSE_HEADERS) {
+    const value = upstream.headers.get(header);
+    if (value) {
+      res.setHeader(header, value);
+    }
+  }
+}
+
+function extractProxyRequestBody(req: express.Request): string | undefined {
+  if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') {
+    return undefined;
+  }
+  if (Buffer.isBuffer(req.body)) {
+    return req.body.length > 0 ? req.body.toString('utf-8') : undefined;
+  }
+  if (typeof req.body === 'string' && req.body.length > 0) {
+    return req.body;
+  }
+  return undefined;
+}
+
+async function proxyToCloudFunction(
+  req: express.Request,
+  res: express.Response,
+  functionName: keyof typeof UPSTREAM_ENDPOINTS,
+): Promise<void> {
+  try {
+    const queryIndex = req.originalUrl.indexOf('?');
+    const search = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+    const targetUrl = `${UPSTREAM_ENDPOINTS[functionName]}${search}`;
+
+    const upstream = await fetch(targetUrl, {
+      method: req.method,
+      headers: buildProxyRequestHeaders(req),
+      body: extractProxyRequestBody(req),
+    });
+
+    copyUpstreamHeaders(upstream, res);
+    const buffer = Buffer.from(await upstream.arrayBuffer());
+    res.status(upstream.status).send(buffer);
+  } catch (err) {
+    console.error(`Error proxying ${req.originalUrl} to ${functionName}:`, err);
+    res.status(502).json({ error: 'Upstream research service unavailable' });
+  }
+}
 
 const app = express();
 app.use(compression());
@@ -83,6 +161,17 @@ app.get(['/.well-known/assetlinks.json', '/.well-known/assetlinks.json/'], (_req
     }
   }
 ]`);
+});
+
+/**
+ * Reverse-proxy public read-only Research REST/CSV API and MCP Server under soil.app.
+ */
+app.all(['/api/research', '/api/research/'], async (req, res) => {
+  await proxyToCloudFunction(req, res, 'researchApi');
+});
+
+app.all(['/api/mcp', '/api/mcp/', '/mcp', '/mcp/'], express.raw({ type: '*/*', limit: '256kb' }), async (req, res) => {
+  await proxyToCloudFunction(req, res, 'researchMcp');
 });
 
 /**
