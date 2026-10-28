@@ -6,21 +6,17 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Added the public **Offene Forschungsdaten** view (`/research`), a rate-limited read-only REST/CSV endpoint (`researchApi`), and a stateless JSON-RPC 2.0 Model Context Protocol server (`researchMcp`) exposing strictly anonymized `research_games` trajectories, summary metrics, crop/input distributions, and empirical strategy clusters (#19).
 - Enabled unauthenticated read-only board replay on `/game?gameId=research_...&playerUid=...&viewOnly=true` so educators and researchers can inspect anonymized round-by-round field states without logging in.
+- Implemented ecological pest outbreak intensity scaling (`GAME_CONSTANTS.PEST_INTENSITY`) in `GameEngine.calculateYield` and `sources.json` (grounded in Dainese et al., 2019 *Science Advances* & ISIP), dampening pest yield losses in diverse crop rotations (`≤ 20 %` crop share) relative to monocultures (`≥ 50 %` crop share) (#21).
 ### Changed
 - Consolidated agent rules into `AGENTS.md` and on-demand workspace skills in `.agents/skills/` (`soil-release-deploy`, `soil-local-dev-qa`).
+- Refactored `GameEngine`, `AiAgent`, Cloud Functions (`functions/src/index.ts`, `functions/src/research.service.ts`), and frontend services/components to reduce cognitive complexity across all 181 files below 15 (`maxAllowedComplexity: 15` in `biome.json`) and enabled Biome's HTML linter (`html.linter.enabled: true`) across all Angular templates (#16, #17).
 
-## [3.0.1] - 2026-10-27
-### Added
-- Added the live `Hof-Rangliste — Zukunftsfähigkeit` leaderboard to the unified `Team & Hof-Auszeichnungen` modal (`board.html`) so players can inspect standings, rank deltas, capital, and soil scores at any time during a round.
-### Fixed
-- Fixed text clipping on compound weather labels such as `Starkregen/Hochwasser` in the game board weather card and HUD popover by allowing line breaks after slashes (`/\u200B`) with `break-words`.
-
-## [3.0.0] - 2026-10-27
+## [3.0.0] to [3.0.1] - 2026-10-27
 ### Added
 - Added Audience & Difficulty presets (`Einsteiger / Unterstufe`, `Standard / Mittelstufe`, `Profi / Oberstufe`) to the game creation UI and backend/local game initialization, configuring 5-zone starting field distributions, weather forecast precision, overdraft interest (`0 %` / `6 %` / `10 %`), and insolvency limits.
 - Implemented a 2-round weather grace period at game start, full-sentence seasonal weather forecasts (`Prognose`), late-game climate escalation on `hard` difficulty, and the `Hitzewelle` (`HeatWave`) weather event.
 - Added scientifically and policy-grounded 3-round Regional Contracts (`Leguminosen-Initiative`, `Humus-Pakt`, `Brotgetreide-Vertrag`, `Öko-Pionier`) starting in Round 3, modeled after German GAP 2024/2025 Eco-Schemes (`ÖR 1a`, `ÖR 2`, `ÖR 6`) and peer-reviewed agronomy literature (`sources.json`).
-- Introduced the unified **Zukunftsfähiger Hof** (Sustainability & Viability) primary score combining financial health and living soil (`avgSoil`), accompanied by an animated round leaderboard, 8 collectible **Hof-Sticker** milestones, and custom square artwork across weather, pests, contracts, and stickers.
+- Introduced the unified **Zukunftsfähiger Hof** (Sustainability & Viability) primary score combining financial health and living soil (`avgSoil`), accompanied by an animated round leaderboard (also accessible live in the `Team & Hof-Auszeichnungen` modal), 8 collectible **Hof-Sticker** milestones, and custom square artwork across weather, pests, contracts, and stickers.
 - Added an accessible pre-decision crop rotation (`Fruchtfolge`), soil impact, and requirement preview inside the planting modal (shown when selected parcels share a uniform previous crop), as well as `Fruchtfolge ▼` warnings and `dt` harvest units on board parcels.
 ### Changed
 - Replaced glassmorphism (`backdrop-blur`, `backdrop-filter`, `rounded-3xl`, and dynamic `PerformanceService` tiering) across the entire application with a crisp, high-contrast, opaque surface hierarchy (`bg-gray-900` / `bg-gray-950`) and a semi-transparent blur-free global footer (`bg-gray-950/85`).
@@ -29,6 +25,8 @@ All notable changes to this project will be documented in this file.
 - Conditionally hid inactive Pest and Challenge side cards on the game board so only active round events and the Weather + Prognose card are displayed.
 - Updated and expanded frontend unit tests (`Vitest`), backend & balancing tests (`functions`), and all 12 Cypress E2E test suites (`cypress/e2e/`).
 - Updated frontend dependencies within semver constraints (`@angular/cli`, `@angular/build`, `@angular/ssr`, `@analogjs/*`, `firebase-tools`, `postcss`, `autoprefixer`).
+### Fixed
+- Fixed text clipping on compound weather labels such as `Starkregen/Hochwasser` in the game board weather card and HUD popover by allowing line breaks after slashes (`/\u200B`) with `break-words`.
 
 ## [2.6.0] to [2.6.31] - 2026-02-22 to 2026-10-20
 ### Security

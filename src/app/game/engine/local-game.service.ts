@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
-import type { Game, PlayerState, Round, RoundDecision } from '../../types';
+import type { Game, PlayerState, Round, RoundDecision, WeatherType } from '../../types';
 import { AiAgent } from './ai-agent';
 import { GameEngine } from './game-engine';
 
@@ -165,6 +165,23 @@ export class LocalGameService {
     this.stateSubject.next({ ...state });
   }
 
+  private processAiDecisionsForRound(state: LocalGameState, currentRound: number): void {
+    for (const uid of Object.keys(state.game.players)) {
+      const p = state.game.players[uid];
+      if (!p.isAi || (p.submittedRound !== undefined && p.submittedRound >= currentRound)) continue;
+
+      const rounds = state.allRounds[uid];
+      const lastRound = rounds && rounds.length > 0 ? rounds[rounds.length - 1] : undefined;
+      const aiLevel = p.aiLevel || 'middle';
+      try {
+        p.pendingDecisions = AiAgent.makeDecision(aiLevel as any, lastRound, uid);
+        p.submittedRound = currentRound;
+      } catch (e) {
+        console.error(`Error generating AI decision for ${uid}:`, e);
+      }
+    }
+  }
+
   async submitDecision(gameId: string, decision: RoundDecision): Promise<void> {
     const state = this.stateSubject.value;
     if (!state || state.game.id !== gameId || state.game.status === 'finished') return;
@@ -172,32 +189,12 @@ export class LocalGameService {
     const currentRound = state.game.currentRoundNumber;
     const playerUid = state.playerState.uid;
 
-    // 1. Store player decision
     state.game.players[playerUid].pendingDecisions = decision;
     state.game.players[playerUid].submittedRound = currentRound;
     state.playerState = state.game.players[playerUid];
 
-    // 2. Process AI Decisions
-    for (const uid in state.game.players) {
-      const p = state.game.players[uid];
-      if (p.isAi && (p.submittedRound === undefined || p.submittedRound < currentRound)) {
-        // Use player's own history for decision context
-        const lastRound =
-          state.allRounds[uid] && state.allRounds[uid].length > 0
-            ? state.allRounds[uid][state.allRounds[uid].length - 1]
-            : undefined;
-        const aiLevel = p.aiLevel || 'middle';
-        try {
-          const decision = AiAgent.makeDecision(aiLevel as any, lastRound, uid);
-          p.pendingDecisions = decision;
-          p.submittedRound = currentRound;
-        } catch (e) {
-          console.error(`Error generating AI decision for ${uid}:`, e);
-        }
-      }
-    }
+    this.processAiDecisionsForRound(state, currentRound);
 
-    // 3. Check if all human players submitted (in local mode usually only 1)
     const allSubmitted = Object.values(state.game.players).every((p) => {
       const submitted = p.submittedRound === currentRound;
       if (!submitted) {
@@ -224,6 +221,48 @@ export class LocalGameService {
     this.stateSubject.next({ ...state });
   }
 
+  private computeLocalAdvancedMarketPrices(
+    state: LocalGameState,
+    nextRoundNum: number,
+    events: { weather: WeatherType; vermin: string[] },
+    roundLimit: number,
+    difficulty: 'easy' | 'normal' | 'hard',
+    upcomingWeather: WeatherType,
+  ): Record<string, { organic: number; conventional: number }> {
+    const totalYields: Record<string, number> = {};
+    for (const uid of Object.keys(state.game.players)) {
+      const p = state.game.players[uid];
+      const prevRound = state.allRounds[uid][state.game.currentRoundNumber];
+      const tempRound = GameEngine.calculateRound(nextRoundNum, prevRound, p.pendingDecisions!, events, 0, roundLimit, {
+        difficulty,
+        nextWeather: upcomingWeather,
+      });
+      const harvest = tempRound.result?.harvestSummary || {};
+      for (const [crop, amount] of Object.entries(harvest)) {
+        totalYields[crop] = (totalYields[crop] || 0) + (amount as number);
+      }
+    }
+
+    const marketPrices: Record<string, { organic: number; conventional: number }> = {};
+    const numPlayers = Object.keys(state.game.players).length;
+    for (const crop of Object.keys(GAME_CONSTANTS.CROPS)) {
+      const cropConfig = GAME_CONSTANTS.CROPS[crop];
+      if (!cropConfig || crop === 'Fallow' || crop === 'Grass') continue;
+
+      const totalExpectedYield = cropConfig.baseYield * 40 * numPlayers;
+      const actualYield = totalYields[crop] || 0;
+      const rawFactor =
+        totalExpectedYield > 0 && actualYield > 0 ? 1.0 + (1.0 - actualYield / totalExpectedYield) * 0.5 : 1.0;
+      const priceFactor = Math.max(0.7, Math.min(1.3, rawFactor));
+
+      marketPrices[crop] = {
+        organic: Math.round(cropConfig.marketValue.organic * priceFactor * 10) / 10,
+        conventional: Math.round(cropConfig.marketValue.conventional * priceFactor * 10) / 10,
+      };
+    }
+    return marketPrices;
+  }
+
   private calculateNextRound(state: LocalGameState) {
     // biome-ignore lint/suspicious/noConsole: Debug mode
     console.log('Calculating next round', state.game.currentRoundNumber + 1);
@@ -239,52 +278,11 @@ export class LocalGameService {
     const events = GameEngine.rollRoundEvents(nextRoundNum, roundLimit, difficulty, prevRoundForWeather?.nextWeather);
     const upcomingWeather = GameEngine.rollWeather(nextRoundNum + 1, roundLimit, difficulty);
 
-    let marketPrices: Record<string, { organic: number; conventional: number }> | undefined;
-    if (state.game.config?.advancedPricingEnabled) {
-      const totalYields: Record<string, number> = {};
-      for (const uid in state.game.players) {
-        const p = state.game.players[uid];
-        const prevRound = state.allRounds[uid][state.game.currentRoundNumber];
-        const tempRound = GameEngine.calculateRound(
-          nextRoundNum,
-          prevRound,
-          p.pendingDecisions!,
-          events,
-          0,
-          roundLimit,
-          { difficulty, nextWeather: upcomingWeather },
-        );
-        const harvest = tempRound.result?.harvestSummary || {};
-        for (const [crop, amount] of Object.entries(harvest)) {
-          totalYields[crop] = (totalYields[crop] || 0) + (amount as number);
-        }
-      }
+    const marketPrices = state.game.config?.advancedPricingEnabled
+      ? this.computeLocalAdvancedMarketPrices(state, nextRoundNum, events, roundLimit, difficulty, upcomingWeather)
+      : undefined;
 
-      marketPrices = {};
-      const numPlayers = Object.keys(state.game.players).length;
-      for (const crop of Object.keys(GAME_CONSTANTS.CROPS)) {
-        const cropConfig = GAME_CONSTANTS.CROPS[crop];
-        if (!cropConfig || crop === 'Fallow' || crop === 'Grass') continue;
-
-        const baseYieldPerPlayer = cropConfig.baseYield * 40;
-        const totalExpectedYield = baseYieldPerPlayer * numPlayers;
-        const actualYield = totalYields[crop] || 0;
-
-        let priceFactor = 1.0;
-        if (totalExpectedYield > 0 && actualYield > 0) {
-          const yieldRatio = actualYield / totalExpectedYield;
-          priceFactor = 1.0 + (1.0 - yieldRatio) * 0.5;
-          priceFactor = Math.max(0.7, Math.min(1.3, priceFactor));
-        }
-
-        marketPrices[crop] = {
-          organic: Math.round(cropConfig.marketValue.organic * priceFactor * 10) / 10,
-          conventional: Math.round(cropConfig.marketValue.conventional * priceFactor * 10) / 10,
-        };
-      }
-    }
-
-    for (const uid in state.game.players) {
+    for (const uid of Object.keys(state.game.players)) {
       const p = state.game.players[uid];
       const prevRound = state.allRounds[uid][state.game.currentRoundNumber];
 
@@ -300,7 +298,6 @@ export class LocalGameService {
 
       state.allRounds[uid].push(newRound);
 
-      // Update player state
       p.capital = newRound.result!.capital;
       p.currentRound = nextRoundNum;
       p.avgSoil = newRound.avgSoil;

@@ -149,48 +149,34 @@ export class DeleteAccountComponent {
     this.showConfirmModal.set(true);
   }
 
+  private clearSoilLocalStorage(): void {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (!isBrowser) return;
+
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.startsWith('soil') || key.startsWith('firebase:'))) {
+        keysToRemove.push(key);
+      }
+    }
+    for (const key of keysToRemove) {
+      localStorage.removeItem(key);
+    }
+  }
+
   async deleteAccount() {
     this.showConfirmModal.set(false);
     this.loading.set(true);
     this.error.set(null);
 
     try {
+      this.clearSoilLocalStorage();
       if (this.isGuest()) {
-        // Clear all local data related to the game
-        const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-        if (isBrowser) {
-          // Find all keys starting with 'soil-' or other relevant prefixes
-          const keysToRemove: string[] = [];
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && (key.startsWith('soil') || key.startsWith('firebase:'))) {
-              keysToRemove.push(key);
-            }
-          }
-          for (const key of keysToRemove) {
-            localStorage.removeItem(key);
-          }
-        }
         await this.authService.logout();
       } else {
-        // Clear local storage too for authenticated users
-        const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-        if (isBrowser) {
-          const keysToRemove: string[] = [];
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && (key.startsWith('soil') || key.startsWith('firebase:'))) {
-              keysToRemove.push(key);
-            }
-          }
-          for (const key of keysToRemove) {
-            localStorage.removeItem(key);
-          }
-        }
         await this.authService.deleteAccount();
       }
-
-      // After successful deletion, navigate to landing page
       this.router.navigate(['/']);
     } catch (err: any) {
       this.error.set(err.message || 'Fehler beim Löschen. Bitte versuche es später erneut.');

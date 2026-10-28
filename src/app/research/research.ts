@@ -309,6 +309,71 @@ export class ResearchComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private escapeCsvField(val: unknown): string {
+    if (val === null || val === undefined) return '';
+    const str = String(val);
+    return /[",\r\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+  }
+
+  private buildHistoryCsvRow(game: Game, sourceType: string, difficulty: string, player: any, h: any): string {
+    const parcels = h?.decision?.parcels || {};
+    const counts: Record<string, number> = {
+      Wheat: 0,
+      Corn: 0,
+      Potato: 0,
+      Beet: 0,
+      Barley: 0,
+      Oat: 0,
+      Rye: 0,
+      Fieldbean: 0,
+      Rapeseed: 0,
+      Pea: 0,
+      Grass: 0,
+      Fallow: 0,
+    };
+    for (const crop of Object.values(parcels)) {
+      const c = String(crop || 'Fallow');
+      counts[c] = (counts[c] || 0) + 1;
+    }
+    const vermin = Array.isArray(h?.result?.events?.vermin) ? h.result.events.vermin.join(';') : '';
+    const row = [
+      game.id,
+      sourceType,
+      difficulty,
+      game.currentRoundNumber,
+      player.uid,
+      player.displayName,
+      player.isAi,
+      Number(h?.number ?? 0),
+      !!h?.decision?.organic,
+      !!h?.decision?.fertilizer,
+      !!h?.decision?.pesticide,
+      !!h?.decision?.organisms,
+      Number(h?.result?.profit ?? 0),
+      Number(h?.result?.capital ?? player.capital ?? 0),
+      Number(h?.result?.income ?? 0),
+      Number(h?.result?.subsidies ?? 0),
+      Number(h?.result?.expenses?.total ?? 0),
+      Number(h?.avgSoil ?? 0),
+      Number(h?.avgNutrition ?? 0),
+      String(h?.result?.events?.weather || 'Normal'),
+      vermin,
+      counts.Wheat,
+      counts.Corn,
+      counts.Potato,
+      counts.Beet,
+      counts.Barley,
+      counts.Oat,
+      counts.Rye,
+      counts.Fieldbean,
+      counts.Rapeseed,
+      counts.Pea,
+      counts.Grass,
+      counts.Fallow,
+    ];
+    return row.map((v) => this.escapeCsvField(v)).join(',');
+  }
+
   buildCsvString(games: Game[]): string {
     const columns = [
       'gameId',
@@ -346,12 +411,6 @@ export class ResearchComponent implements OnInit, AfterViewInit {
       'fallowParcels',
     ];
 
-    const escapeField = (val: unknown): string => {
-      if (val === null || val === undefined) return '';
-      const str = String(val);
-      return /[",\r\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
-    };
-
     const lines = [columns.join(',')];
     for (const game of games) {
       const sourceType = this.getSourceLabel(game) === 'Lokal' ? 'local' : 'cloud';
@@ -359,62 +418,7 @@ export class ResearchComponent implements OnInit, AfterViewInit {
       for (const player of this.getAllPlayers(game)) {
         const sortedHistory = [...(player.history || [])].sort((a, b) => Number(a.number || 0) - Number(b.number || 0));
         for (const h of sortedHistory) {
-          const parcels = h?.decision?.parcels || {};
-          const counts: Record<string, number> = {
-            Wheat: 0,
-            Corn: 0,
-            Potato: 0,
-            Beet: 0,
-            Barley: 0,
-            Oat: 0,
-            Rye: 0,
-            Fieldbean: 0,
-            Rapeseed: 0,
-            Pea: 0,
-            Grass: 0,
-            Fallow: 0,
-          };
-          for (const crop of Object.values(parcels)) {
-            const c = String(crop || 'Fallow');
-            counts[c] = (counts[c] || 0) + 1;
-          }
-          const vermin = Array.isArray(h?.result?.events?.vermin) ? h.result.events.vermin.join(';') : '';
-          const row = [
-            game.id,
-            sourceType,
-            difficulty,
-            game.currentRoundNumber,
-            player.uid,
-            player.displayName,
-            player.isAi,
-            Number(h?.number ?? 0),
-            !!h?.decision?.organic,
-            !!h?.decision?.fertilizer,
-            !!h?.decision?.pesticide,
-            !!h?.decision?.organisms,
-            Number(h?.result?.profit ?? 0),
-            Number(h?.result?.capital ?? player.capital ?? 0),
-            Number(h?.result?.income ?? 0),
-            Number(h?.result?.subsidies ?? 0),
-            Number(h?.result?.expenses?.total ?? 0),
-            Number(h?.avgSoil ?? 0),
-            Number(h?.avgNutrition ?? 0),
-            String(h?.result?.events?.weather || 'Normal'),
-            vermin,
-            counts.Wheat,
-            counts.Corn,
-            counts.Potato,
-            counts.Beet,
-            counts.Barley,
-            counts.Oat,
-            counts.Rye,
-            counts.Fieldbean,
-            counts.Rapeseed,
-            counts.Pea,
-            counts.Grass,
-            counts.Fallow,
-          ];
-          lines.push(row.map(escapeField).join(','));
+          lines.push(this.buildHistoryCsvRow(game, sourceType, difficulty, player, h));
         }
       }
     }
@@ -434,74 +438,112 @@ export class ResearchComponent implements OnInit, AfterViewInit {
     URL.revokeObjectURL(url);
   }
 
+  private accumulateFallbackHistory(
+    h: any,
+    stats: {
+      totalDecisions: number;
+      orgCount: number;
+      fertCount: number;
+      pestCount: number;
+      orgsCount: number;
+      totalParcels: number;
+    },
+    cropCounts: Record<string, number>,
+  ) {
+    if (!h || Number(h.number || 0) <= 0 || !h.decision) return;
+    stats.totalDecisions += 1;
+    if (h.decision.organic) stats.orgCount += 1;
+    if (h.decision.fertilizer) stats.fertCount += 1;
+    if (h.decision.pesticide) stats.pestCount += 1;
+    if (h.decision.organisms) stats.orgsCount += 1;
+    for (const crop of Object.values(h.decision.parcels || {})) {
+      const c = String(crop || 'Fallow');
+      cropCounts[c] = (cropCounts[c] || 0) + 1;
+      stats.totalParcels += 1;
+    }
+  }
+
+  private accumulateFallbackPlayer(
+    p: any,
+    stats: {
+      totalHumans: number;
+      totalAi: number;
+      sumCap: number;
+      sumSoil: number;
+      sumNutr: number;
+      sumSust: number;
+      totalDecisions: number;
+      orgCount: number;
+      fertCount: number;
+      pestCount: number;
+      orgsCount: number;
+      totalParcels: number;
+    },
+    cropCounts: Record<string, number>,
+  ) {
+    if (p.isAi) {
+      stats.totalAi += 1;
+      return;
+    }
+    stats.totalHumans += 1;
+    stats.sumCap += Number(p.capital || 0);
+    stats.sumSoil += Number(p.avgSoil || 0);
+    stats.sumNutr += Number(p.avgNutrition || 0);
+    stats.sumSust += this.getPlayerSustainabilityScore(p);
+    for (const h of p.history || []) {
+      this.accumulateFallbackHistory(h, stats, cropCounts);
+    }
+  }
+
   private computeFallbackSummary(games: Game[]): PublicResearchSummary {
     const cropCounts: Record<string, number> = {};
     Object.keys(GAME_CONSTANTS.CROPS).forEach((c) => {
       cropCounts[c] = 0;
     });
 
-    let totalHumans = 0;
-    let totalAi = 0;
     let totalRounds = 0;
-    let sumCap = 0;
-    let sumSoil = 0;
-    let sumNutr = 0;
-    let sumSust = 0;
-    let totalDecisions = 0;
-    let orgCount = 0;
-    let fertCount = 0;
-    let pestCount = 0;
-    let orgsCount = 0;
-    let totalParcels = 0;
+    const stats = {
+      totalHumans: 0,
+      totalAi: 0,
+      sumCap: 0,
+      sumSoil: 0,
+      sumNutr: 0,
+      sumSust: 0,
+      totalDecisions: 0,
+      orgCount: 0,
+      fertCount: 0,
+      pestCount: 0,
+      orgsCount: 0,
+      totalParcels: 0,
+    };
 
     for (const g of games) {
       totalRounds += Number(g.currentRoundNumber || 0);
       for (const p of Object.values(g.players || {})) {
-        if (p.isAi) {
-          totalAi += 1;
-          continue;
-        }
-        totalHumans += 1;
-        sumCap += Number(p.capital || 0);
-        sumSoil += Number(p.avgSoil || 0);
-        sumNutr += Number(p.avgNutrition || 0);
-        sumSust += this.getPlayerSustainabilityScore(p);
-
-        for (const h of p.history || []) {
-          if (!h || Number(h.number || 0) <= 0 || !h.decision) continue;
-          totalDecisions += 1;
-          if (h.decision.organic) orgCount += 1;
-          if (h.decision.fertilizer) fertCount += 1;
-          if (h.decision.pesticide) pestCount += 1;
-          if (h.decision.organisms) orgsCount += 1;
-          for (const crop of Object.values(h.decision.parcels || {})) {
-            const c = String(crop || 'Fallow');
-            cropCounts[c] = (cropCounts[c] || 0) + 1;
-            totalParcels += 1;
-          }
-        }
+        this.accumulateFallbackPlayer(p, stats, cropCounts);
       }
     }
 
     const pct = (num: number, den: number) => (den > 0 ? Math.round((num / den) * 1000) / 10 : 0);
+    const avg1 = (sum: number, den: number) => (den > 0 ? Math.round((sum / den) * 10) / 10 : 0);
     const cropShares: Record<string, number> = {};
     for (const [k, v] of Object.entries(cropCounts)) {
-      cropShares[k] = pct(v, totalParcels);
+      cropShares[k] = pct(v, stats.totalParcels);
     }
 
     return {
       totalGames: games.length,
-      totalHumanPlayers: totalHumans,
-      totalAiPlayers: totalAi,
+      totalHumanPlayers: stats.totalHumans,
+      totalAiPlayers: stats.totalAi,
       totalRoundsPlayed: totalRounds,
-      avgFinalCapital: totalHumans > 0 ? Math.round(sumCap / totalHumans) : 0,
-      avgFinalSoil: totalHumans > 0 ? Math.round((sumSoil / totalHumans) * 10) / 10 : 0,
-      avgFinalNutrition: totalHumans > 0 ? Math.round((sumNutr / totalHumans) * 10) / 10 : 0,
-      avgSustainabilityScore: totalHumans > 0 ? Math.round((sumSust / totalHumans) * 10) / 10 : 0,
-      organicDecisionShare: pct(orgCount, totalDecisions),
-      fertilizerDecisionShare: pct(fertCount, totalDecisions),
-      pesticideDecisionShare: pct(pestCount, totalDecisions),
-      organismsDecisionShare: pct(orgsCount, totalDecisions),
+      avgFinalCapital: stats.totalHumans > 0 ? Math.round(stats.sumCap / stats.totalHumans) : 0,
+      avgFinalSoil: avg1(stats.sumSoil, stats.totalHumans),
+      avgFinalNutrition: avg1(stats.sumNutr, stats.totalHumans),
+      avgSustainabilityScore: avg1(stats.sumSust, stats.totalHumans),
+      organicDecisionShare: pct(stats.orgCount, stats.totalDecisions),
+      fertilizerDecisionShare: pct(stats.fertCount, stats.totalDecisions),
+      pesticideDecisionShare: pct(stats.pestCount, stats.totalDecisions),
+      organismsDecisionShare: pct(stats.orgsCount, stats.totalDecisions),
       cropShares,
       difficultyBreakdown: { easy: 0, normal: games.length, hard: 0 },
       sourceBreakdown: { local: games.length, cloud: 0 },

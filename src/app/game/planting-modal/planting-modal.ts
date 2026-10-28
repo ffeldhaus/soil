@@ -107,146 +107,102 @@ export class PlantingModal {
     }
   }
 
-  getCropPreview(crop: CropType): CropPreview {
-    // 1. Fruchtfolge / Vorfrucht-Effekt
-    let rotationDelta = 0;
-    let rotationClass: ImpactLevel = 'neutral';
-    let rotationIcon: '▲' | '━' | '▼' = '━';
-    let rotationDetail = 'Fruchtfolge ±0%';
+  private getParcelRotationDelta(prevCrop: string, crop: CropType): number {
+    const matrixEntry = (GAME_CONSTANTS.ROTATION_MATRIX as Record<string, Record<string, unknown>>)[prevCrop]?.[crop];
+    if (typeof matrixEntry === 'number') return matrixEntry - 100;
+    if (prevCrop === crop) return -15;
+    if (matrixEntry === 'good') return 10;
+    if (matrixEntry === 'bad') return -10;
+    return 0;
+  }
 
-    if (crop !== 'Fallow' && crop !== 'Grass' && this.selectedParcels && this.selectedParcels.length > 0) {
-      const totalDelta = this.selectedParcels.reduce((sum, parcel) => {
-        const prevCrop = parcel.crop || 'Fallow';
-        const matrixEntry = (GAME_CONSTANTS.ROTATION_MATRIX as Record<string, Record<string, unknown>>)[prevCrop]?.[
-          crop
-        ];
-        if (typeof matrixEntry === 'number') {
-          return sum + (matrixEntry - 100);
-        }
-        if (prevCrop === crop) {
-          return sum - 15;
-        }
-        if (matrixEntry === 'good') {
-          return sum + 10;
-        }
-        if (matrixEntry === 'bad') {
-          return sum - 10;
-        }
-        return sum;
-      }, 0);
-
-      rotationDelta = Math.round(totalDelta / this.selectedParcels.length);
-      if (rotationDelta >= 8) {
-        rotationClass = 'strong-positive';
-        rotationIcon = '▲';
-        rotationDetail = `Fruchtfolge +${rotationDelta}%`;
-      } else if (rotationDelta >= 3) {
-        rotationClass = 'slight-positive';
-        rotationIcon = '▲';
-        rotationDetail = `Fruchtfolge +${rotationDelta}%`;
-      } else if (rotationDelta <= -12) {
-        rotationClass = 'strong-negative';
-        rotationIcon = '▼';
-        rotationDetail = `Fruchtfolge ${rotationDelta}%`;
-      } else if (rotationDelta <= -3) {
-        rotationClass = 'slight-negative';
-        rotationIcon = '▼';
-        rotationDetail = `Fruchtfolge ${rotationDelta}%`;
-      }
+  private classifyImpact(
+    value: number,
+    strongPos: number,
+    slightPos: number,
+    strongNeg: number,
+    slightNeg: number,
+    prefix: string,
+    formatValue: (v: number) => string,
+    neutralDetail: string,
+  ): { impactClass: ImpactLevel; icon: '▲' | '━' | '▼'; detail: string; label: string } {
+    let impactClass: ImpactLevel = 'neutral';
+    let icon: '▲' | '━' | '▼' = '━';
+    let detail = neutralDetail;
+    if (value >= strongPos) {
+      impactClass = 'strong-positive';
+      icon = '▲';
+      detail = `${prefix} +${formatValue(value)}`;
+    } else if (value > slightPos) {
+      impactClass = 'slight-positive';
+      icon = '▲';
+      detail = `${prefix} +${formatValue(value)}`;
+    } else if (value <= strongNeg) {
+      impactClass = 'strong-negative';
+      icon = '▼';
+      detail = `${prefix} ${formatValue(value)}`;
+    } else if (value < slightNeg) {
+      impactClass = 'slight-negative';
+      icon = '▼';
+      detail = `${prefix} ${formatValue(value)}`;
     }
-    const rotationLabel = `${rotationDetail} ${rotationIcon}`;
+    return { impactClass, icon, detail, label: `${detail} ${icon}` };
+  }
 
-    // 2. Soil Impact (Boden)
+  private computeSoilDelta(crop: CropType): number {
     const customSoilImpact = (GAME_CONSTANTS.SOIL as Record<string, unknown>).CROP_IMPACT as
       | Record<string, number>
       | undefined;
-    const soilDelta =
-      customSoilImpact?.[crop] !== undefined
-        ? customSoilImpact[crop]
-        : crop === 'Fallow'
-          ? GAME_CONSTANTS.SOIL.FALLOW_RECOVERY
-          : (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[crop] ?? 0) + (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[crop] ?? 0);
+    if (customSoilImpact?.[crop] !== undefined) return customSoilImpact[crop];
+    if (crop === 'Fallow') return GAME_CONSTANTS.SOIL.FALLOW_RECOVERY;
+    return (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[crop] ?? 0) + (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[crop] ?? 0);
+  }
 
-    let soilClass: ImpactLevel = 'neutral';
-    let soilIcon: '▲' | '━' | '▼' = '━';
-    let soilDetail = 'Boden ±0.0';
-    if (soilDelta >= 1.5) {
-      soilClass = 'strong-positive';
-      soilIcon = '▲';
-      soilDetail = `Boden +${soilDelta.toFixed(1)}`;
-    } else if (soilDelta > 0) {
-      soilClass = 'slight-positive';
-      soilIcon = '▲';
-      soilDetail = `Boden +${soilDelta.toFixed(1)}`;
-    } else if (soilDelta <= -1.0) {
-      soilClass = 'strong-negative';
-      soilIcon = '▼';
-      soilDetail = `Boden ${soilDelta.toFixed(1)}`;
-    } else if (soilDelta < 0) {
-      soilClass = 'slight-negative';
-      soilIcon = '▼';
-      soilDetail = `Boden ${soilDelta.toFixed(1)}`;
-    }
-    const soilLabel = `${soilDetail} ${soilIcon}`;
-
-    // 3. Nutrition Impact (Nährst.)
+  private computeNutritionDelta(crop: CropType): number {
     const customNutritionImpact = (GAME_CONSTANTS.NUTRITION as Record<string, unknown>).CROP_IMPACT as
       | Record<string, number>
       | undefined;
-    let nutritionDelta = 0;
-    if (customNutritionImpact?.[crop] !== undefined) {
-      nutritionDelta = customNutritionImpact[crop];
-    } else if (crop === 'Fieldbean') {
-      nutritionDelta = GAME_CONSTANTS.NUTRITION.FIELDBEAN_BONUS;
-    } else if (crop === 'Pea') {
-      nutritionDelta = 10;
-    } else if (crop === 'Fallow' || crop === 'Grass') {
-      nutritionDelta = 5;
-    } else {
-      const cropSensitivity = GAME_CONSTANTS.CROPS[crop]?.nutritionSensitivity ?? 1.0;
-      nutritionDelta = -Math.round(
-        GAME_CONSTANTS.NUTRITION.BASE_DECLINE * GAME_CONSTANTS.NUTRITION.START * cropSensitivity,
-      );
-    }
+    if (customNutritionImpact?.[crop] !== undefined) return customNutritionImpact[crop];
+    if (crop === 'Fieldbean') return GAME_CONSTANTS.NUTRITION.FIELDBEAN_BONUS;
+    if (crop === 'Pea') return 10;
+    if (crop === 'Fallow' || crop === 'Grass') return 5;
+    const cropSensitivity = GAME_CONSTANTS.CROPS[crop]?.nutritionSensitivity ?? 1.0;
+    return -Math.round(GAME_CONSTANTS.NUTRITION.BASE_DECLINE * GAME_CONSTANTS.NUTRITION.START * cropSensitivity);
+  }
 
-    let nutritionClass: ImpactLevel = 'neutral';
-    let nutritionIcon: '▲' | '━' | '▼' = '━';
-    let nutritionDetail = 'Nährst. ±0';
-    if (nutritionDelta >= 15) {
-      nutritionClass = 'strong-positive';
-      nutritionIcon = '▲';
-      nutritionDetail = `Nährst. +${nutritionDelta}`;
-    } else if (nutritionDelta > 0) {
-      nutritionClass = 'slight-positive';
-      nutritionIcon = '▲';
-      nutritionDetail = `Nährst. +${nutritionDelta}`;
-    } else if (nutritionDelta <= -15) {
-      nutritionClass = 'strong-negative';
-      nutritionIcon = '▼';
-      nutritionDetail = `Nährst. ${nutritionDelta}`;
-    } else if (nutritionDelta < 0) {
-      nutritionClass = 'slight-negative';
-      nutritionIcon = '▼';
-      nutritionDetail = `Nährst. ${nutritionDelta}`;
+  getCropPreview(crop: CropType): CropPreview {
+    let rotationDelta = 0;
+    if (crop !== 'Fallow' && crop !== 'Grass' && this.selectedParcels && this.selectedParcels.length > 0) {
+      const totalDelta = this.selectedParcels.reduce(
+        (sum, parcel) => sum + this.getParcelRotationDelta(parcel.crop || 'Fallow', crop),
+        0,
+      );
+      rotationDelta = Math.round(totalDelta / this.selectedParcels.length);
     }
-    const nutritionLabel = `${nutritionDetail} ${nutritionIcon}`;
+    const rot = this.classifyImpact(rotationDelta, 8, 2, -12, -2, 'Fruchtfolge', (v) => `${v}%`, 'Fruchtfolge ±0%');
+
+    const soilDelta = this.computeSoilDelta(crop);
+    const soil = this.classifyImpact(soilDelta, 1.5, 0, -1.0, 0, 'Boden', (v) => v.toFixed(1), 'Boden ±0.0');
+
+    const nutritionDelta = this.computeNutritionDelta(crop);
+    const nutr = this.classifyImpact(nutritionDelta, 15, 0, -15, 0, 'Nährst.', (v) => `${v}`, 'Nährst. ±0');
 
     return {
       rotationDelta,
-      rotationIcon,
-      rotationDetail,
-      rotationLabel,
-      rotationClass,
+      rotationIcon: rot.icon,
+      rotationDetail: rot.detail,
+      rotationLabel: rot.label,
+      rotationClass: rot.impactClass,
       soilDelta,
-      soilIcon,
-      soilDetail,
-      soilLabel,
-      soilClass,
+      soilIcon: soil.icon,
+      soilDetail: soil.detail,
+      soilLabel: soil.label,
+      soilClass: soil.impactClass,
       nutritionDelta,
-      nutritionIcon,
-      nutritionDetail,
-      nutritionLabel,
-      nutritionClass,
+      nutritionIcon: nutr.icon,
+      nutritionDetail: nutr.detail,
+      nutritionLabel: nutr.label,
+      nutritionClass: nutr.impactClass,
     };
   }
 

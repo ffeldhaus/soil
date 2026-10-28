@@ -364,6 +364,53 @@
         "uri": ""
       }
     },
+    "PEST_INTENSITY": {
+      "BASE_PENALTY": {
+        "exact": 0.6,
+        "description": "Baseline untreated yield loss (60%) under heavy monoculture pest outbreak.",
+        "uri": "https://www.isip.de/"
+      },
+      "ORGANIC_MULTIPLIER": {
+        "exact": 1.2,
+        "description": "Higher untreated pest vulnerability multiplier in organic systems without beneficial organisms.",
+        "uri": "https://www.isip.de/"
+      },
+      "PESTICIDE_YIELD_FACTOR": {
+        "exact": 0.95,
+        "description": "Retained yield factor (95%) when synthetic pesticides are applied against an active pest outbreak.",
+        "uri": "https://www.isip.de/"
+      },
+      "ORGANISMS_YIELD_FACTOR": {
+        "exact": 0.9,
+        "description": "Baseline retained yield factor (90%) when beneficial organisms are deployed against an active pest outbreak.",
+        "uri": "https://doi.org/10.1126/sciadv.aax0121"
+      },
+      "ORGANISMS_DIVERSITY_BONUS": {
+        "exact": 0.03,
+        "description": "Additional biocontrol efficacy bonus (+3% retained yield, up to 93%) when beneficial organisms operate in a diverse crop rotation (<= 20% crop share).",
+        "uri": "https://doi.org/10.1126/sciadv.aax0121"
+      },
+      "DIVERSITY_THRESHOLD_SHARE": {
+        "exact": 0.2,
+        "description": "Farm parcel share threshold (<= 20%, i.e. <= 8 of 40 parcels) below which crop diversity maximizes natural pest regulation (resource dilution & natural enemy abundance).",
+        "uri": "https://doi.org/10.1126/sciadv.aax0121"
+      },
+      "MONOCULTURE_THRESHOLD_SHARE": {
+        "exact": 0.5,
+        "description": "Farm parcel share threshold (>= 50%, i.e. >= 20 of 40 parcels) at or above which host-plant concentration causes full monoculture outbreak intensity.",
+        "uri": "https://doi.org/10.1126/sciadv.aax0121"
+      },
+      "DIVERSE_INTENSITY_MULTIPLIER": {
+        "exact": 0.65,
+        "description": "Outbreak intensity multiplier (0.65x base penalty, reducing untreated loss from 60% to 39%) in diverse crop rotations (<= 20% parcel share), grounded in Dainese et al. (2019) global synthesis on biodiversity-mediated biological pest control.",
+        "uri": "https://doi.org/10.1126/sciadv.aax0121"
+      },
+      "MONOCULTURE_INTENSITY_MULTIPLIER": {
+        "exact": 1.0,
+        "description": "Outbreak intensity multiplier (1.0x base penalty) in monoculture-dominated rotations (>= 50% parcel share).",
+        "uri": "https://doi.org/10.1126/sciadv.aax0121"
+      }
+    },
     "EXPENSES": {
       "RUNNING": {
         "ORGANIC_CONTROL": {

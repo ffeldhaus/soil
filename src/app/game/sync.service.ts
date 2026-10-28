@@ -48,39 +48,52 @@ export class SyncService {
     });
   }
 
+  private async migrateSingleLocalGame(game: any): Promise<void> {
+    if (!this.migrateLocalGameFn) return;
+    try {
+      const fullState = await this.localGameService.loadGame(game.id);
+      if (!fullState) return;
+      if (game.status === 'finished' && !game.uploadedAt) {
+        await this.uploadFinishedGameForResearch(game.id);
+      }
+      await this.migrateLocalGameFn({ gameData: fullState });
+      await this.localGameService.deleteGame(game.id, true);
+      if (window.console) console.warn(`Successfully migrated game ${game.id} to cloud`);
+    } catch (error) {
+      if (window.console) console.error(`Failed to migrate game ${game.id}:`, error);
+    }
+  }
+
   async syncLocalGames() {
     if (!this.migrateLocalGameFn || this.isSyncing) return;
 
     this.isSyncing = true;
     try {
       const allLocalGames = await this.localGameService.getLocalGames();
-      // We only migrate active or finished games (not deleted)
       const localGames = allLocalGames.filter((g) => g.status !== 'deleted');
-      if (localGames.length === 0) return;
-
       for (const game of localGames) {
-        try {
-          const fullState = await this.localGameService.loadGame(game.id);
-          if (fullState) {
-            // 1. If finished, upload to research collection first
-            if (game.status === 'finished' && !game.uploadedAt) {
-              await this.uploadFinishedGameForResearch(game.id);
-            }
-
-            // 2. Migrate to user's cloud games
-            await this.migrateLocalGameFn({ gameData: fullState });
-
-            // 3. Delete locally after successful migration
-            await this.localGameService.deleteGame(game.id, true);
-            if (window.console) console.warn(`Successfully migrated game ${game.id} to cloud`);
-          }
-        } catch (error) {
-          if (window.console) console.error(`Failed to migrate game ${game.id}:`, error);
-        }
+        await this.migrateSingleLocalGame(game);
       }
     } finally {
       this.isSyncing = false;
     }
+  }
+
+  private isEligibleForResearchUpload(fullState: any): boolean {
+    return Boolean(
+      fullState &&
+        fullState.game.status === 'finished' &&
+        !fullState.game.uploadedAt &&
+        fullState.game.config?.analyticsEnabled !== false,
+    );
+  }
+
+  private logUploadError(gameId: string, error: any): void {
+    if (!window.console) return;
+    window.console.error(`Failed to upload finished game ${gameId} for research:`, error);
+    if (error.code) window.console.error(`Error Code: ${error.code}`);
+    if (error.message) window.console.error(`Error Message: ${error.message}`);
+    if (error.details) window.console.error(`Error Details:`, error.details);
   }
 
   async uploadFinishedGameForResearch(gameId: string) {
@@ -89,37 +102,24 @@ export class SyncService {
     this.uploadingGameIds.add(gameId);
     try {
       const fullState = await this.localGameService.loadGame(gameId);
-      if (
-        fullState &&
-        fullState.game.status === 'finished' &&
-        !fullState.game.uploadedAt &&
-        fullState.game.config?.analyticsEnabled !== false
-      ) {
+      if (!this.isEligibleForResearchUpload(fullState)) return;
+
+      if (window.console) {
+        // biome-ignore lint/suspicious/noConsole: Background sync logging
+        window.console.log(`Attempting to upload finished local game ${gameId} for research...`);
+      }
+      const result = await this.uploadFinishedGameFn({ gameData: fullState });
+      if (result.data.success) {
+        fullState!.game.uploadedAt = new Date();
+        localStorage.setItem(`soil_game_${gameId}`, JSON.stringify(fullState));
         if (window.console) {
-          // biome-ignore lint/suspicious/noConsole: Background sync logging
-          window.console.log(`Attempting to upload finished local game ${gameId} for research...`);
+          window.console.warn(`Successfully uploaded finished local game ${gameId} for research`);
         }
-        const result = await this.uploadFinishedGameFn({ gameData: fullState });
-        if (result.data.success) {
-          fullState.game.uploadedAt = new Date();
-          // Update local storage so we don't try again
-          localStorage.setItem(`soil_game_${gameId}`, JSON.stringify(fullState));
-          if (window.console) {
-            window.console.warn(`Successfully uploaded finished local game ${gameId} for research`);
-          }
-        } else {
-          if (window.console) {
-            window.console.error(`Failed to upload finished game ${gameId}: Server returned success=false`);
-          }
-        }
+      } else if (window.console) {
+        window.console.error(`Failed to upload finished game ${gameId}: Server returned success=false`);
       }
     } catch (error: any) {
-      if (window.console) {
-        window.console.error(`Failed to upload finished game ${gameId} for research:`, error);
-        if (error.code) window.console.error(`Error Code: ${error.code}`);
-        if (error.message) window.console.error(`Error Message: ${error.message}`);
-        if (error.details) window.console.error(`Error Details:`, error.details);
-      }
+      this.logUploadError(gameId, error);
     } finally {
       this.uploadingGameIds.delete(gameId);
     }

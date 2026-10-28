@@ -255,26 +255,31 @@ export class GameService {
     return this.parcelsSubject.value;
   }
 
+  private cacheRoundParcels(roundNumber: number, round?: Round): void {
+    if (round?.parcelsSnapshot) {
+      this.parcelCache[roundNumber] = round.parcelsSnapshot;
+    }
+  }
+
+  private async getLocalRoundData(gameId: string, roundNumber: number, targetUid?: string): Promise<Round> {
+    const state = await this.localGame.loadGame(gameId);
+    if (!state) throw new Error('Local game not found');
+    const playerUid = targetUid || state.playerState.uid;
+    const round = state.allRounds[playerUid][roundNumber];
+    if (!round) throw new Error('Round not found');
+    this.cacheRoundParcels(roundNumber, round);
+    return round;
+  }
+
   async getRoundData(gameId: string, roundNumber: number, targetUid?: string): Promise<Round> {
     if (gameId.startsWith('local-')) {
-      const state = await this.localGame.loadGame(gameId);
-      if (!state) throw new Error('Local game not found');
-      // For local games, all rounds for player 1 are in state.allRounds
-      const playerUid = targetUid || state.playerState.uid;
-      const round = state.allRounds[playerUid][roundNumber];
-      if (!round) throw new Error('Round not found');
-      if (round.parcelsSnapshot) {
-        this.parcelCache[roundNumber] = round.parcelsSnapshot;
-      }
-      return round;
+      return this.getLocalRoundData(gameId, roundNumber, targetUid);
     }
 
     if (this.isTestMode()) {
       const history = this.createMockHistory(Math.max(10, roundNumber), 1);
       const round = history[roundNumber] || history[history.length - 1];
-      if (round?.parcelsSnapshot) {
-        this.parcelCache[roundNumber] = round.parcelsSnapshot;
-      }
+      this.cacheRoundParcels(roundNumber, round);
       return round;
     }
 
@@ -285,31 +290,50 @@ export class GameService {
     }
     const result = await fn({ gameId, roundNumber, targetUid });
     const round = result.data;
-    if (round.parcelsSnapshot) {
-      this.parcelCache[roundNumber] = round.parcelsSnapshot;
-    }
+    this.cacheRoundParcels(roundNumber, round);
     return round;
+  }
+
+  private async loadLocalGameState(gameId: string, targetUid?: string): Promise<GameState | null> {
+    const localState = await this.localGame.loadGame(gameId);
+    if (!localState || localState.game.status === 'deleted') return null;
+
+    const playerState = targetUid ? localState.game.players[targetUid] : localState.playerState;
+    const targetRounds = targetUid ? localState.allRounds[targetUid] : undefined;
+    const lastRound = targetRounds ? targetRounds[targetRounds.length - 1] : localState.lastRound;
+
+    this.currentRound = lastRound || null;
+    this.parcelsSubject.next(lastRound?.parcelsSnapshot || this.createInitialParcels());
+    this.stateSubject.next({
+      game: localState.game,
+      playerState,
+      lastRound,
+    });
+    return this.stateSubject.value;
+  }
+
+  private applyRemoteLastRoundState(data: GameState): void {
+    if (!data.lastRound) return;
+    this.currentRound = data.lastRound;
+    let parcels = data.lastRound.parcelsSnapshot || this.createInitialParcels();
+
+    const currentRoundNum = data.game.currentRoundNumber;
+    const isSubmitted = data.playerState?.submittedRound === currentRoundNum;
+    const drafts = data.playerState?.pendingDecisions?.parcels;
+
+    if (!isSubmitted && drafts) {
+      this.pendingDecisions = drafts;
+      parcels = parcels.map((p: Parcel) => ({
+        ...p,
+        crop: drafts[p.index] || p.crop,
+      }));
+    }
+    this.parcelsSubject.next(parcels);
   }
 
   async loadGame(gameId: string, targetUid?: string): Promise<GameState | null> {
     if (gameId.startsWith('local-')) {
-      const localState = await this.localGame.loadGame(gameId);
-      if (localState && localState.game.status !== 'deleted') {
-        const playerState = targetUid ? localState.game.players[targetUid] : localState.playerState;
-        const lastRound = targetUid
-          ? localState.allRounds[targetUid][localState.allRounds[targetUid].length - 1]
-          : localState.lastRound;
-
-        this.currentRound = lastRound || null;
-        this.parcelsSubject.next(lastRound?.parcelsSnapshot || this.createInitialParcels());
-        this.stateSubject.next({
-          game: localState.game,
-          playerState: playerState,
-          lastRound: lastRound,
-        });
-        return this.stateSubject.value;
-      }
-      return null;
+      return this.loadLocalGameState(gameId, targetUid);
     }
 
     if (this.isTestMode()) {
@@ -330,28 +354,7 @@ export class GameService {
       }
       const result = await fn({ gameId, targetUid });
       const data = result.data;
-
-      if (data.lastRound) {
-        this.currentRound = data.lastRound;
-        // Initialize parcels from last round
-        let parcels = data.lastRound.parcelsSnapshot || this.createInitialParcels();
-
-        // Apply Pending Decisions (Drafts) if current round not submitted
-        const currentRoundNum = data.game.currentRoundNumber;
-        const isSubmitted = data.playerState?.submittedRound === currentRoundNum;
-
-        if (!isSubmitted && data.playerState?.pendingDecisions?.parcels) {
-          const drafts = data.playerState.pendingDecisions.parcels;
-          this.pendingDecisions = drafts;
-
-          parcels = parcels.map((p: Parcel) => ({
-            ...p,
-            crop: drafts[p.index] || p.crop,
-          }));
-        }
-
-        this.parcelsSubject.next(parcels);
-      }
+      this.applyRemoteLastRoundState(data);
       this.stateSubject.next(data);
       return data;
     } catch (error: unknown) {
@@ -377,42 +380,13 @@ export class GameService {
     }
   }
 
-  async saveDraft(gameId: string) {
-    if (gameId.startsWith('local-')) {
-      // For local games, save the draft to LocalGameService
-      const fullParcels: Record<number, CropType> = {};
-      const currentParcels = this.parcelsSubject.value;
-      for (let i = 0; i < 40; i++) {
-        fullParcels[i] = this.pendingDecisions[i] || currentParcels[i].crop || 'Fallow';
-      }
-
-      const decision: RoundDecision = {
-        machines: 0,
-        organic: false,
-        fertilizer: false,
-        pesticide: false,
-        organisms: false,
-        parcels: fullParcels,
-        priceFixing: {},
-      };
-
-      await this.localGame.saveDraft(gameId, decision);
-      return;
-    }
-
-    if (this.isTestMode()) {
-      if (window.console) console.warn('Mock: Draft saved locally');
-      return;
-    }
-
-    // Construct full decision for draft to ensure no undefined values
+  private buildDraftDecision(): RoundDecision {
     const fullParcels: Record<number, CropType> = {};
     const currentParcels = this.parcelsSubject.value;
     for (let i = 0; i < 40; i++) {
-      fullParcels[i] = this.pendingDecisions[i] || currentParcels[i].crop || 'Fallow';
+      fullParcels[i] = this.pendingDecisions[i] || currentParcels[i]?.crop || 'Fallow';
     }
-
-    const decision: RoundDecision = {
+    return {
       machines: 0,
       organic: false,
       fertilizer: false,
@@ -421,6 +395,19 @@ export class GameService {
       parcels: fullParcels,
       priceFixing: {},
     };
+  }
+
+  async saveDraft(gameId: string) {
+    const decision = this.buildDraftDecision();
+    if (gameId.startsWith('local-')) {
+      await this.localGame.saveDraft(gameId, decision);
+      return;
+    }
+
+    if (this.isTestMode()) {
+      if (window.console) console.warn('Mock: Draft saved locally');
+      return;
+    }
 
     try {
       const fn = this.saveDraftFn;
@@ -436,50 +423,44 @@ export class GameService {
     }
   }
 
+  private async submitLocalDecision(gameId: string, decision: RoundDecision): Promise<any> {
+    await this.localGame.submitDecision(gameId, decision);
+    const localState = await this.localGame.loadGame(gameId);
+    if (!localState) return { status: 'submitted' };
+
+    this.currentRound = localState.lastRound || null;
+    this.parcelsSubject.next(localState.lastRound?.parcelsSnapshot || this.createInitialParcels());
+    this.stateSubject.next({
+      game: localState.game,
+      playerState: localState.playerState,
+      lastRound: localState.lastRound,
+    });
+    return localState.lastRound;
+  }
+
   async submitDecision(gameId: string, decision: RoundDecision): Promise<any> {
     if (gameId.startsWith('local-')) {
-      await this.localGame.submitDecision(gameId, decision);
-      // LocalGameService updates its own stateSubject, but we need to refresh our local state$
-      const localState = await this.localGame.loadGame(gameId);
-      if (localState) {
-        this.currentRound = localState.lastRound || null;
-        this.parcelsSubject.next(localState.lastRound?.parcelsSnapshot || this.createInitialParcels());
-        this.stateSubject.next({
-          game: localState.game,
-          playerState: localState.playerState,
-          lastRound: localState.lastRound,
-        });
-
-        return localState.lastRound;
-      }
-      return { status: 'submitted' };
+      return this.submitLocalDecision(gameId, decision);
     }
 
     try {
       const fn = this.submitDecisionFn;
       if (!fn) throw new Error('Functions not available');
-      const result = await fn({
-        gameId,
-        decision,
-      });
+      const result = await fn({ gameId, decision });
       const data = result.data;
 
       if (data.status === 'calculated' && data.nextRound) {
         const round = data.nextRound;
         this.currentRound = round;
-        // Refresh full game state to ensure status='finished' is picked up
         await this.loadGame(gameId);
         this.pendingDecisions = {};
         this.parcelsSubject.next(round.parcelsSnapshot);
         return round;
-      } else {
-        // Just submitted, wait for others.
-        return { status: 'submitted' };
       }
+      return { status: 'submitted' };
     } catch (error: any) {
       if (!this.offlineService.isOnline()) {
         if (window.console) console.warn('Offline: Decision queued for background sync');
-        // We return a "pseudo-submitted" state so the UI can progress
         return { status: 'submitted', offline: true };
       }
       if (window.console) console.error('Failed to submit round:', error);
@@ -908,6 +889,23 @@ export class GameService {
     return (await fn()).data;
   }
 
+  private async fetchPlayerRoundHistory(gameId: string, player: PlayerState, maxRound: number): Promise<Round[]> {
+    const fullHistory: Round[] = [];
+    for (let r = 0; r <= maxRound; r++) {
+      try {
+        const fn = this.getRoundDataFn;
+        if (!fn) throw new Error('Functions not available');
+        const result = await fn({ gameId, roundNumber: r, targetUid: player.uid });
+        fullHistory.push(result.data);
+      } catch (error) {
+        if (window.console) console.error(`Failed to fetch round ${r} for player ${player.uid}`, error);
+        const existing = player.history.find((h) => h.number === r);
+        if (existing) fullHistory.push(existing);
+      }
+    }
+    return fullHistory;
+  }
+
   async exportFullGameState(gameId: string): Promise<any> {
     if (gameId.startsWith('local-')) {
       const localState = await this.localGame.loadGame(gameId);
@@ -926,23 +924,8 @@ export class GameService {
     const game = JSON.parse(JSON.stringify(state.game));
     const players = Object.values(game.players) as PlayerState[];
 
-    // Fetch all rounds for all players
     for (const player of players) {
-      const fullHistory: Round[] = [];
-      for (let r = 0; r <= game.currentRoundNumber; r++) {
-        try {
-          const fn = this.getRoundDataFn;
-          if (!fn) throw new Error('Functions not available');
-          const result = await fn({ gameId, roundNumber: r, targetUid: player.uid });
-          fullHistory.push(result.data);
-        } catch (error) {
-          if (window.console) console.error(`Failed to fetch round ${r} for player ${player.uid}`, error);
-          // If it fails, we keep what we have (lightweight or nothing)
-          const existing = player.history.find((h) => h.number === r);
-          if (existing) fullHistory.push(existing);
-        }
-      }
-      player.history = fullHistory;
+      player.history = await this.fetchPlayerRoundHistory(gameId, player, game.currentRoundNumber);
       game.players[player.uid] = player;
     }
 
@@ -1040,15 +1023,34 @@ export class GameService {
     return history;
   }
 
-  private getMockGameState(): GameState {
+  private resolveMockRoleParameters(): {
+    isEnd: boolean;
+    numRounds: number;
+    currentRound: number;
+    historyCount: number;
+    numPlayers: number;
+    gameName: string;
+  } {
     const role = (typeof window !== 'undefined' && window.localStorage.getItem('soil_test_role')) || 'player';
     const isRound6 = role === 'player_round_6';
     const isEnd = role === 'player_end';
 
-    const numRounds = isRound6 ? 12 : GAME_CONSTANTS.DEFAULT_ROUNDS / 2;
-    const currentRound = isEnd ? 11 : isRound6 ? 6 : 1;
-    const historyCount = isEnd ? 10 : isRound6 ? 5 : 0;
-    const numPlayers = isRound6 ? 10 : isEnd ? 4 : 1;
+    let gameName = 'Mock Test Game';
+    if (isEnd) gameName = 'Finished Mock Game';
+    else if (isRound6) gameName = 'Mid-Game Mock';
+
+    return {
+      isEnd,
+      numRounds: isRound6 ? 12 : GAME_CONSTANTS.DEFAULT_ROUNDS / 2,
+      currentRound: isEnd ? 11 : isRound6 ? 6 : 1,
+      historyCount: isEnd ? 10 : isRound6 ? 5 : 0,
+      numPlayers: isRound6 ? 10 : isEnd ? 4 : 1,
+      gameName,
+    };
+  }
+
+  private getMockGameState(): GameState {
+    const { isEnd, numRounds, currentRound, historyCount, numPlayers, gameName } = this.resolveMockRoleParameters();
 
     const players: Record<string, PlayerState> = {};
     const playerSecrets: Record<string, { password: string }> = {};
@@ -1066,7 +1068,7 @@ export class GameService {
         displayName: `Player ${i}`,
         isAi: false,
         capital: lastRound?.result?.capital || 5000,
-        currentRound: currentRound,
+        currentRound,
         submittedRound: isEnd ? 10 : historyCount,
         history: playerHistory,
         playerNumber: i,
@@ -1075,25 +1077,25 @@ export class GameService {
       };
     }
 
-    const firstPlayerUid = `player-test-game-id-1`;
+    const firstPlayerUid = 'player-test-game-id-1';
     const playerState = players[firstPlayerUid];
     const lastRound = playerState.history[playerState.history.length - 1];
 
     return {
       game: {
         id: 'test-game-id',
-        name: isEnd ? 'Finished Mock Game' : isRound6 ? 'Mid-Game Mock' : 'Mock Test Game',
+        name: gameName,
         hostUid: 'mock-admin',
         status: isEnd ? 'finished' : 'in_progress',
         currentRoundNumber: isEnd ? 10 : currentRound,
-        config: { numPlayers: numPlayers, numRounds, numAi: 0 },
+        config: { numPlayers, numRounds, numAi: 0 },
         settings: { length: numRounds, difficulty: 'normal', playerLabel: 'Player' },
-        players: players,
-        playerSecrets: playerSecrets,
+        players,
+        playerSecrets,
         createdAt: { seconds: Date.now() / 1000, nanoseconds: 0 },
       },
-      playerState: playerState,
-      lastRound: lastRound,
+      playerState,
+      lastRound,
     };
   }
 

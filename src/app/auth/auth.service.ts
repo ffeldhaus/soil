@@ -64,65 +64,96 @@ export class AuthService {
     return isAllowedEnv && window.localStorage.getItem('soil_test_mode') === 'true';
   }
 
-  constructor() {
-    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
-    // Subscribe to real auth state using native SDK
-    if (this.auth) {
-      onAuthStateChanged(this.auth, (u) => {
-        this.ngZone.run(() => {
-          if (u) {
-            // If we have a real user, clear guest/local state to avoid conflicts
-            if (isBrowser) {
-              window.localStorage.removeItem('soil_guest_uid');
-              window.localStorage.removeItem('soil_active_local_game');
-              window.localStorage.removeItem('soil_active_local_pin');
-            }
-            if (!this.isTestMode()) {
-              this.userSubject.next(u);
-            }
-          } else {
-            const guestUid = isBrowser ? window.localStorage.getItem('soil_guest_uid') : null;
-            const activeLocalGame = isBrowser ? window.localStorage.getItem('soil_active_local_game') : null;
-
-            if (guestUid || activeLocalGame) {
-              // Respect the local session if no Firebase user
-              return;
-            }
-
-            if (!this.isTestMode()) {
-              this.userSubject.next(null);
-            }
-          }
-        });
-      });
+  private handleAuthStateChange(u: User | null, isBrowser: boolean): void {
+    if (u) {
+      if (isBrowser) {
+        window.localStorage.removeItem('soil_guest_uid');
+        window.localStorage.removeItem('soil_active_local_game');
+        window.localStorage.removeItem('soil_active_local_pin');
+      }
+      if (!this.isTestMode()) {
+        this.userSubject.next(u);
+      }
+      return;
     }
 
-    // Check for test mode immediate override
+    const hasLocalSession =
+      isBrowser &&
+      Boolean(window.localStorage.getItem('soil_guest_uid') || window.localStorage.getItem('soil_active_local_game'));
+    if (!hasLocalSession && !this.isTestMode()) {
+      this.userSubject.next(null);
+    }
+  }
+
+  private restoreInitialBrowserSession(isBrowser: boolean): void {
     if (this.isTestMode()) {
       this.userSubject.next(this.getMockUser());
-    } else if (isBrowser && window.localStorage.getItem('soil_active_local_game')) {
-      const gameId = window.localStorage.getItem('soil_active_local_game')!;
-      if (window.localStorage.getItem('soil_guest_uid')) {
-        const guestUid = window.localStorage.getItem('soil_guest_uid')!;
-        const guestName = window.localStorage.getItem('soil_guest_name') || 'Guest';
-        const guestUser = this.createGuestUser(guestUid, guestName);
-        const localUser = {
-          ...guestUser,
-          getIdTokenResult: async () => ({
-            claims: {
-              role: 'player',
-              gameId: gameId,
-              playerNumber: 1,
-            },
-          }),
-        };
-        this.userSubject.next(localUser as any);
-      }
-    } else if (isBrowser && window.localStorage.getItem('soil_guest_uid')) {
-      const guestUid = window.localStorage.getItem('soil_guest_uid')!;
-      const guestName = window.localStorage.getItem('soil_guest_name') || 'Guest';
-      this.userSubject.next(this.createGuestUser(guestUid, guestName));
+      return;
     }
+    if (!isBrowser) return;
+
+    const guestUid = window.localStorage.getItem('soil_guest_uid');
+    if (!guestUid) return;
+
+    const guestName = window.localStorage.getItem('soil_guest_name') || 'Guest';
+    const guestUser = this.createGuestUser(guestUid, guestName);
+    const activeLocalGame = window.localStorage.getItem('soil_active_local_game');
+    if (activeLocalGame) {
+      this.userSubject.next(this.wrapLocalPlayerUser(guestUser, activeLocalGame) as any);
+    } else {
+      this.userSubject.next(guestUser);
+    }
+  }
+
+  private wrapLocalPlayerUser(baseUser: User, gameId: string): User {
+    return {
+      ...baseUser,
+      getIdTokenResult: async () => ({
+        claims: {
+          role: 'player',
+          gameId,
+          playerNumber: 1,
+        },
+      }),
+    } as any;
+  }
+
+  constructor() {
+    const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    if (this.auth) {
+      onAuthStateChanged(this.auth, (u) => {
+        this.ngZone.run(() => this.handleAuthStateChange(u, isBrowser));
+      });
+    }
+    this.restoreInitialBrowserSession(isBrowser);
+  }
+
+  private loginLocalPlayer(gameId: string, pin: string, isBrowser: boolean): { user: User | null } {
+    if (isBrowser) {
+      window.localStorage.setItem('soil_active_local_game', gameId);
+      window.localStorage.setItem('soil_active_local_pin', pin);
+    }
+    const guestName = (isBrowser && window.localStorage.getItem('soil_guest_name')) || 'Guest';
+    const currentUser =
+      this.userSubject.value ||
+      (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp', guestName) : null);
+    if (!currentUser) return { user: null };
+    const localUser = this.wrapLocalPlayerUser(currentUser, gameId);
+    this.userSubject.next(localUser);
+    return { user: localUser };
+  }
+
+  private loginTestPlayer(gameId: string, pin: string, isBrowser: boolean): { user: User } {
+    const pinMatch = pin?.match(/^p(\d+)/i);
+    const playerNum = pinMatch ? Number(pinMatch[1]) : 1;
+    if (isBrowser) {
+      window.localStorage.setItem('soil_test_role', 'player');
+      window.localStorage.setItem('soil_test_game_id', gameId);
+      window.localStorage.setItem('soil_test_player_number', String(playerNum));
+    }
+    const user = this.getMockUser();
+    this.userSubject.next(user);
+    return { user };
   }
 
   async loginAsPlayer(gameId: string, pin: string) {
@@ -134,43 +165,11 @@ export class AuthService {
     }
 
     if (gameId.startsWith('local-')) {
-      if (isBrowser) {
-        window.localStorage.setItem('soil_active_local_game', gameId);
-        window.localStorage.setItem('soil_active_local_pin', pin);
-      }
-
-      const guestName = (isBrowser && window.localStorage.getItem('soil_guest_name')) || 'Guest';
-      const currentUser =
-        this.userSubject.value ||
-        (isBrowser ? this.createGuestUser(window.localStorage.getItem('soil_guest_uid') || 'temp', guestName) : null);
-      if (currentUser) {
-        const localUser = {
-          ...currentUser,
-          getIdTokenResult: async () => ({
-            claims: {
-              role: 'player',
-              gameId: gameId,
-              playerNumber: 1,
-            },
-          }),
-        };
-        this.userSubject.next(localUser as any);
-        return { user: localUser };
-      }
-      return { user: currentUser };
+      return this.loginLocalPlayer(gameId, pin, isBrowser);
     }
 
     if (this.isTestMode()) {
-      const pinMatch = pin?.match(/^p(\d+)/i);
-      const playerNum = pinMatch ? Number(pinMatch[1]) : 1;
-      if (isBrowser) {
-        window.localStorage.setItem('soil_test_role', 'player');
-        window.localStorage.setItem('soil_test_game_id', gameId);
-        window.localStorage.setItem('soil_test_player_number', String(playerNum));
-      }
-      const user = this.getMockUser();
-      this.userSubject.next(user);
-      return { user };
+      return this.loginTestPlayer(gameId, pin, isBrowser);
     }
 
     try {

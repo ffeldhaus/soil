@@ -254,6 +254,12 @@ describe('Game Balance Simulation', () => {
           17: 'LateFrost',
         };
 
+        const getRoundVermin = (r: number): string[] => {
+          if (r === 7) return ['potato-beetle'];
+          if (r === 14) return ['aphid-cereal'];
+          return [];
+        };
+
         const results = archetypes.map((arch, playerIdx) => {
           let capital = 100000;
           let lastRound: Round | undefined = {
@@ -274,7 +280,7 @@ describe('Game Balance Simulation', () => {
           for (let r = 1; r <= 20; r++) {
             const decision = arch.decide(r, lastRound);
             const weather = deterministicWeathers[r] || 'Normal';
-            const vermin = r === 7 ? ['potato-beetle'] : r === 14 ? ['aphid-cereal'] : [];
+            const vermin = getRoundVermin(r);
             lastRound = GameEngine.calculateRound(r, lastRound, decision, { weather, vermin }, capital, 20, {
               difficulty,
             });

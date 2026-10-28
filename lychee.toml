@@ -28,6 +28,7 @@ exclude = [
   'site.webmanifest',                                     # Relative link in index.html
   'https://mcp.context7.com/mcp',                         # MCP Server URL
   'https://europe-west4-soil-602ea.cloudfunctions.net/.*', # Cloud Functions API & MCP endpoints
+  'https://doi.org/10.1126/sciadv.aax0121',               # Science.org returns Cloudflare 403 to automated checkers
   '/impressum',                                           # Internal route
   '/privacy',                                             # Internal route
   '/research'                                             # Internal route

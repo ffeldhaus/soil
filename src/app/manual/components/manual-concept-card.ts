@@ -22,7 +22,7 @@ export class ManualConceptCardComponent {
       'manual.concepts.units.text': 'Fläche in Hektar (ha), Ertrag in Dezitonnen (dt).',
       'manual.concepts.pest.title': 'Schädlinge & Seuchen',
       'manual.concepts.pest.text':
-        'Jede Pflanze hat spezifische natürliche Feinde. Hochinfektiöse Tierseuchen (ASP) belasten zudem die Wirtschaftlichkeit der Tierhaltung durch hohe Auflagen.',
+        'Jede Pflanze hat spezifische natürliche Feinde. Vielfältige Fruchtfolgen (≤ 8 Parzellen pro Kultur) dämpfen den Befallsdruck auf natürliche Weise, während große Monokulturen Ausbrüche verstärken. Hochinfektiöse Tierseuchen (ASP) belasten zudem die Tierhaltung durch strenge Auflagen.',
       'manual.concepts.rotation.title': 'Fruchtfolge',
       'manual.concepts.rotation.text':
         'Der Vorfruchtwert bestimmt die Bodengesundheit. Brachen helfen dem Boden, sich zu regenerieren.',

@@ -17,8 +17,7 @@
       "!package-lock.json",
       "!angular.json",
       "!public",
-      "!docs/references",
-      "!src/app/admin/dashboard/components/dashboard-game-detail.html"
+      "!docs/references"
     ]
   },
   "formatter": {
@@ -39,7 +38,7 @@
       "complexity": {
         "noExcessiveCognitiveComplexity": {
           "level": "warn",
-          "options": { "maxAllowedComplexity": 60 }
+          "options": { "maxAllowedComplexity": 15 }
         },
         "noVoid": "error",
         "noStaticOnlyClass": "off",
@@ -147,7 +146,7 @@
       "enabled": false
     },
     "linter": {
-      "enabled": false
+      "enabled": true
     },
     "parser": {
       "interpolation": true
@@ -234,6 +233,16 @@
         "rules": {
           "suspicious": {
             "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/index.html"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
           }
         }
       }

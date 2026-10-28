@@ -300,4 +300,60 @@ describe('GameEngine Consistency (Frontend)', () => {
       ),
     ).toBe(false);
   });
+
+  it('should scale pest outbreak intensity down in diverse rotations compared to monocultures', () => {
+    expect(GameEngine.calculatePestIntensityMultiplier(0.1)).toBeCloseTo(0.65, 3);
+    expect(GameEngine.calculatePestIntensityMultiplier(0.2)).toBeCloseTo(0.65, 3);
+    expect(GameEngine.calculatePestIntensityMultiplier(0.35)).toBeCloseTo(0.825, 3);
+    expect(GameEngine.calculatePestIntensityMultiplier(0.5)).toBeCloseTo(1.0, 3);
+    expect(GameEngine.calculatePestIntensityMultiplier(1.0)).toBeCloseTo(1.0, 3);
+
+    const prevParcels = GameEngine.createInitialParcels('easy');
+    const prevRound: Round = {
+      number: 2,
+      parcelsSnapshot: prevParcels,
+      avgSoil: 100,
+      avgNutrition: 100,
+      decision: { parcels: {} } as any,
+    };
+
+    const diverseParcels: Record<number, any> = {};
+    for (let i = 0; i < 6; i++) diverseParcels[i] = 'Potato';
+    for (let i = 6; i < 16; i++) diverseParcels[i] = 'Wheat';
+    for (let i = 16; i < 26; i++) diverseParcels[i] = 'Rye';
+    for (let i = 26; i < 34; i++) diverseParcels[i] = 'Pea';
+    for (let i = 34; i < 40; i++) diverseParcels[i] = 'Grass';
+
+    const monoParcels: Record<number, any> = {};
+    for (let i = 0; i < 40; i++) monoParcels[i] = 'Potato';
+
+    const baseDecision = {
+      machines: 0,
+      organic: false,
+      fertilizer: false,
+      pesticide: false,
+      organisms: false,
+    };
+
+    const diverseRound = GameEngine.calculateRound(
+      3,
+      prevRound,
+      { ...baseDecision, parcels: diverseParcels },
+      { weather: 'Normal', vermin: ['potato-beetle'] },
+      100000,
+    );
+    const monoRound = GameEngine.calculateRound(
+      3,
+      prevRound,
+      { ...baseDecision, parcels: monoParcels },
+      { weather: 'Normal', vermin: ['potato-beetle'] },
+      100000,
+    );
+
+    // Diverse rotation (6/40 = 15% share <= 20%): penalty 0.6 * 0.65 = 0.39 -> 61% yield (400 * 0.61 = 244)
+    // Monoculture (40/40 = 100% share >= 50%): penalty 0.6 * 1.0 = 0.60 -> 40% yield (400 * 0.40 = 160)
+    expect(diverseRound.parcelsSnapshot[0].yield).toBe(244);
+    expect(monoRound.parcelsSnapshot[0].yield).toBe(160);
+    expect(diverseRound.parcelsSnapshot[0].yield!).toBeGreaterThan(monoRound.parcelsSnapshot[0].yield! + 80);
+  });
 });

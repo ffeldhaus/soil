@@ -324,33 +324,7 @@ export class Dashboard implements OnInit, OnDestroy {
         // For non-anonymous users, fetch status
         const initialUserData = await this.gameService.getUserStatus();
         this.ngZone.run(() => {
-          if (initialUserData) {
-            this.userStatus = initialUserData;
-            if (initialUserData.role === 'superadmin') {
-              this.isLoading = false;
-              this.router.navigate(['/admin/super']);
-              return;
-            }
-            if (initialUserData.role === 'new') {
-              this.isLoading = false;
-              this.router.navigate(['/admin/register']);
-              return;
-            }
-            this.isLoading = false;
-            this.loadGames();
-          } else {
-            // Fallback for bootstrap Super Admin
-            if (user.email === 'florian.feldhaus@gmail.com') {
-              this.userStatus = { uid: user.uid, role: 'superadmin', status: 'active', email: user.email || '' };
-              this.isLoading = false;
-              this.router.navigate(['/admin/super']);
-              return;
-            }
-
-            this.isLoading = false;
-            this.router.navigate(['/admin/register']);
-          }
-          this.cdr.detectChanges();
+          this.applyFetchedUserStatus(user, initialUserData);
         });
       } else {
         this.isLoading = true;
@@ -375,6 +349,30 @@ export class Dashboard implements OnInit, OnDestroy {
     if (this.userStatusSub) {
       this.userStatusSub.unsubscribe();
     }
+  }
+
+  private applyFetchedUserStatus(user: any, initialUserData: any): void {
+    this.isLoading = false;
+    if (initialUserData) {
+      this.userStatus = initialUserData;
+      if (initialUserData.role === 'superadmin') {
+        this.router.navigate(['/admin/super']);
+      } else if (initialUserData.role === 'new') {
+        this.router.navigate(['/admin/register']);
+      } else {
+        this.loadGames();
+      }
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (user.email === 'florian.feldhaus@gmail.com') {
+      this.userStatus = { uid: user.uid, role: 'superadmin', status: 'active', email: user.email || '' };
+      this.router.navigate(['/admin/super']);
+    } else {
+      this.router.navigate(['/admin/register']);
+    }
+    this.cdr.detectChanges();
   }
 
   // Loading State

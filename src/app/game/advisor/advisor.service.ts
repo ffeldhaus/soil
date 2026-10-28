@@ -119,6 +119,15 @@ export class AdvisorService {
     }
   }
 
+  private isRapidNutritionDepletion(currentAvgNut: number, prevAvgNut: number): boolean {
+    if (Number.isNaN(prevAvgNut)) return false;
+    return (
+      currentAvgNut < prevAvgNut &&
+      currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.8 &&
+      prevAvgNut - currentAvgNut > 10
+    );
+  }
+
   private addNutritionInsights(
     insights: AdvisorInsight[],
     current: Round,
@@ -126,8 +135,9 @@ export class AdvisorService {
     context: AdvisorContext,
   ) {
     const currentAvgNut = this.calculateAvgNutrition(current.parcelsSnapshot);
+    if (Number.isNaN(currentAvgNut)) return;
 
-    if (!Number.isNaN(currentAvgNut) && currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.5) {
+    if (currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.5) {
       insights.push({
         type: 'nutrition',
         level: 'danger',
@@ -142,23 +152,18 @@ export class AdvisorService {
 
     if (previous && context === 'result') {
       const prevAvgNut = this.calculateAvgNutrition(previous.parcelsSnapshot);
-      if (!Number.isNaN(currentAvgNut) && !Number.isNaN(prevAvgNut)) {
-        if (currentAvgNut < prevAvgNut && currentAvgNut < GAME_CONSTANTS.NUTRITION.START * 0.8) {
-          const diff = prevAvgNut - currentAvgNut;
-          if (diff > 10) {
-            insights.push({
-              type: 'nutrition',
-              level: 'warning',
-              title: 'Hoher Nährstoffverbrauch',
-              message: 'Diese Runde hat dem Boden überdurchschnittlich viele Nährstoffe entzogen.',
-              hint: 'Starkzehrer benötigen viel Nahrung. Achte auf den Nährstoffhaushalt deiner Flächen.',
-            });
-          }
-        }
+      if (this.isRapidNutritionDepletion(currentAvgNut, prevAvgNut)) {
+        insights.push({
+          type: 'nutrition',
+          level: 'warning',
+          title: 'Hoher Nährstoffverbrauch',
+          message: 'Diese Runde hat dem Boden überdurchschnittlich viele Nährstoffe entzogen.',
+          hint: 'Starkzehrer benötigen viel Nahrung. Achte auf den Nährstoffhaushalt deiner Flächen.',
+        });
       }
     }
 
-    if (!Number.isNaN(currentAvgNut) && currentAvgNut > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
+    if (currentAvgNut > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
       insights.push({
         type: 'nutrition',
         level: 'warning',

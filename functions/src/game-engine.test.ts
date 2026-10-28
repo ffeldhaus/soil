@@ -391,4 +391,58 @@ describe('GameEngine', () => {
       ),
     ).to.be.false;
   });
+
+  it('should scale pest outbreak intensity down in diverse rotations compared to monocultures', () => {
+    expect(GameEngine.calculatePestIntensityMultiplier(0.1)).to.be.closeTo(0.65, 0.001);
+    expect(GameEngine.calculatePestIntensityMultiplier(0.2)).to.be.closeTo(0.65, 0.001);
+    expect(GameEngine.calculatePestIntensityMultiplier(0.35)).to.be.closeTo(0.825, 0.001);
+    expect(GameEngine.calculatePestIntensityMultiplier(0.5)).to.be.closeTo(1.0, 0.001);
+    expect(GameEngine.calculatePestIntensityMultiplier(1.0)).to.be.closeTo(1.0, 0.001);
+
+    const prevParcels = GameEngine.createInitialParcels('easy');
+    const prevRound: Round = {
+      number: 2,
+      parcelsSnapshot: prevParcels,
+      avgSoil: 100,
+      avgNutrition: 100,
+      decision: { parcels: {} } as any,
+    };
+
+    const diverseParcels: Record<number, any> = {};
+    for (let i = 0; i < 6; i++) diverseParcels[i] = 'Potato';
+    for (let i = 6; i < 16; i++) diverseParcels[i] = 'Wheat';
+    for (let i = 16; i < 26; i++) diverseParcels[i] = 'Rye';
+    for (let i = 26; i < 34; i++) diverseParcels[i] = 'Pea';
+    for (let i = 34; i < 40; i++) diverseParcels[i] = 'Grass';
+
+    const monoParcels: Record<number, any> = {};
+    for (let i = 0; i < 40; i++) monoParcels[i] = 'Potato';
+
+    const baseDecision = {
+      machines: 0,
+      organic: false,
+      fertilizer: false,
+      pesticide: false,
+      organisms: false,
+    };
+
+    const diverseRound = GameEngine.calculateRound(
+      3,
+      prevRound,
+      { ...baseDecision, parcels: diverseParcels },
+      { weather: 'Normal', vermin: ['potato-beetle'] },
+      100000,
+    );
+    const monoRound = GameEngine.calculateRound(
+      3,
+      prevRound,
+      { ...baseDecision, parcels: monoParcels },
+      { weather: 'Normal', vermin: ['potato-beetle'] },
+      100000,
+    );
+
+    expect(diverseRound.parcelsSnapshot[0].yield).to.equal(244);
+    expect(monoRound.parcelsSnapshot[0].yield).to.equal(160);
+    expect(diverseRound.parcelsSnapshot[0].yield!).to.be.greaterThan(monoRound.parcelsSnapshot[0].yield! + 80);
+  });
 });

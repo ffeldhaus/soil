@@ -65,6 +65,12 @@ export class GameEngine {
     const machineYieldBonus = GAME_CONSTANTS.MACHINE_FACTORS.YIELD_BONUS[machineLevel];
     const machineSoilImpact = GAME_CONSTANTS.SOIL.MACHINE_IMPACT[machineLevel];
 
+    const cropParcelCounts: Record<string, number> = {};
+    previousParcels.forEach((_, idx) => {
+      const c = decision.parcels[idx] || 'Fallow';
+      cropParcelCounts[c] = (cropParcelCounts[c] || 0) + 1;
+    });
+
     // -- 2. Calculate Parcel Updates --
     previousParcels.forEach((prevParcel, index) => {
       const newCrop = decision.parcels[index] || 'Fallow';
@@ -99,6 +105,7 @@ export class GameEngine {
       // C. HARVEST CALCULATION
       let yieldAmount = 0;
       if (cropKey !== 'Fallow' && cropKey !== 'Grass' && cropConfig) {
+        const cropShare = (cropParcelCounts[cropKey] || 1) / numParcels;
         yieldAmount = GameEngine.calculateYield(
           cropConfig,
           prevParcel.soil,
@@ -108,6 +115,7 @@ export class GameEngine {
           weather,
           machineYieldBonus,
           climateEscalation,
+          cropShare,
         );
 
         const harvestIntensity = yieldAmount / cropConfig.baseYield;
@@ -374,18 +382,31 @@ export class GameEngine {
   }
 
   static calculateSustainabilityScore(capital: number, avgSoil: number): number {
-    const financialPoints =
-      capital < 0
-        ? Math.max(0, 350 + capital / 150)
-        : capital < 100000
-          ? 350 + (capital / 100000) * 150
-          : 500 + Math.sqrt((capital - 100000) / 1000) * 15;
+    const financialPoints = GameEngine.getFinancialScorePoints(capital);
     const soilPoints = avgSoil <= 100 ? Math.max(0, (avgSoil - 50) * 10) : 500 + (avgSoil - 100) * 18;
-    const soilViability =
-      avgSoil < 75 ? 0.45 : avgSoil < 85 ? 0.7 : avgSoil < 95 ? 0.85 + ((avgSoil - 85) / 10) * 0.15 : 1.0;
-    const capitalViability =
-      capital < -50000 ? 0.35 : capital < 0 ? 0.65 : capital < 50000 ? 0.85 + (capital / 50000) * 0.15 : 1.0;
+    const soilViability = GameEngine.getSoilViabilityMultiplier(avgSoil);
+    const capitalViability = GameEngine.getCapitalViabilityMultiplier(capital);
     return Math.round((financialPoints + soilPoints) * soilViability * capitalViability);
+  }
+
+  private static getFinancialScorePoints(capital: number): number {
+    if (capital < 0) return Math.max(0, 350 + capital / 150);
+    if (capital < 100000) return 350 + (capital / 100000) * 150;
+    return 500 + Math.sqrt((capital - 100000) / 1000) * 15;
+  }
+
+  private static getSoilViabilityMultiplier(avgSoil: number): number {
+    if (avgSoil < 75) return 0.45;
+    if (avgSoil < 85) return 0.7;
+    if (avgSoil < 95) return 0.85 + ((avgSoil - 85) / 10) * 0.15;
+    return 1.0;
+  }
+
+  private static getCapitalViabilityMultiplier(capital: number): number {
+    if (capital < -50000) return 0.35;
+    if (capital < 0) return 0.65;
+    if (capital < 50000) return 0.85 + (capital / 50000) * 0.15;
+    return 1.0;
   }
 
   static evaluateRoundStickers(
@@ -397,52 +418,30 @@ export class GameEngine {
     prevAvgSoil: number,
     hasPreviousRound = true,
   ): string[] {
-    const unlocked: string[] = [];
+    const severeWeather = ['Drought', 'HeatWave', 'Flood', 'LateFrost'].includes(events.weather);
+    const rules: [string, boolean][] = [
+      ['humus-pionier', avgSoil >= 105],
+      ['fruchtfolge-meister', hasPreviousRound && GameEngine.countOptimalRotations(previousParcels, decision) >= 25],
+      ['krisenfest', severeWeather && result.profit > 5000],
+      ['bio-leuchtturm', Boolean(result.bioSiegel && result.profit > 0 && avgSoil >= 98)],
+      ['vertrags-partner', (result.contractBonus ?? 0) > 0],
+      ['boden-retter', hasPreviousRound && avgSoil - prevAvgSoil >= 1.0],
+      ['nuetzlings-allianz', Boolean(events.vermin.length > 0 && decision.organisms && !decision.pesticide)],
+      ['zukunfts-hof', hasPreviousRound && avgSoil >= 95 && (result.sustainabilityScore ?? 0) >= 1150],
+    ];
+    return rules.filter(([, earned]) => earned).map(([id]) => id);
+  }
 
-    if (avgSoil >= 105) {
-      unlocked.push('humus-pionier');
-    }
-
-    const goodRotations = hasPreviousRound
-      ? previousParcels.filter((prevP, idx) => {
-          const nextCrop = (decision.parcels[idx] || 'Fallow') as CropType;
-          return (
-            prevP.crop !== 'Fallow' &&
-            nextCrop !== 'Fallow' &&
-            prevP.crop !== nextCrop &&
-            GAME_CONSTANTS.ROTATION_MATRIX[prevP.crop]?.[nextCrop] === 'good'
-          );
-        }).length
-      : 0;
-    if (goodRotations >= 25) {
-      unlocked.push('fruchtfolge-meister');
-    }
-
-    if (['Drought', 'HeatWave', 'Flood', 'LateFrost'].includes(events.weather) && result.profit > 5000) {
-      unlocked.push('krisenfest');
-    }
-
-    if (result.bioSiegel && result.profit > 0 && avgSoil >= 98) {
-      unlocked.push('bio-leuchtturm');
-    }
-
-    if ((result.contractBonus ?? 0) > 0) {
-      unlocked.push('vertrags-partner');
-    }
-
-    if (hasPreviousRound && avgSoil - prevAvgSoil >= 1.0) {
-      unlocked.push('boden-retter');
-    }
-
-    if (events.vermin.length > 0 && decision.organisms && !decision.pesticide) {
-      unlocked.push('nuetzlings-allianz');
-    }
-
-    if (hasPreviousRound && avgSoil >= 95 && (result.sustainabilityScore ?? 0) >= 1150) {
-      unlocked.push('zukunfts-hof');
-    }
-
-    return unlocked;
+  private static countOptimalRotations(previousParcels: Parcel[], decision: RoundDecision): number {
+    return previousParcels.filter((prevP, idx) => {
+      const nextCrop = (decision.parcels[idx] || 'Fallow') as CropType;
+      return (
+        prevP.crop !== 'Fallow' &&
+        nextCrop !== 'Fallow' &&
+        prevP.crop !== nextCrop &&
+        GAME_CONSTANTS.ROTATION_MATRIX[prevP.crop]?.[nextCrop] === 'good'
+      );
+    }).length;
   }
 
   private static calculateMachineLevel(
@@ -469,40 +468,14 @@ export class GameEngine {
     machineSoilImpact: number,
     timeScale: number,
   ): number {
-    let soilFactor = 0;
-
-    if (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey]) {
-      // Diminishing returns for soil gains at high levels
-      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
-      const gainMultiplier = soilRatio > 1.5 ? 0.2 : soilRatio > 1.2 ? 0.5 : 1.0;
-      soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] * gainMultiplier * timeScale;
-    }
-    if (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey])
-      soilFactor += GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
-
-    if (cropKey === 'Fallow') {
-      const diff = Math.max(GAME_CONSTANTS.SOIL.START - prevParcel.soil, 0);
-      soilFactor += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * 10 * timeScale;
-    }
-
-    const prevCrop = prevParcel.crop;
-    const sequenceQuality = GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[cropKey] || 'ok';
-    if (sequenceQuality === 'good' && !(prevCrop === 'Fallow' && cropKey === 'Fallow')) {
-      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
-      const bonusMultiplier = soilRatio > 1.2 ? 0.5 : 1.0;
-      soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_BONUS * bonusMultiplier * timeScale;
-    }
-    if (sequenceQuality === 'bad') soilFactor += GAME_CONSTANTS.SOIL.CROP_ROTATION_PENALTY * timeScale;
-
-    if (prevCrop === cropKey && cropKey !== 'Fallow' && cropKey !== 'Grass') {
-      soilFactor += GAME_CONSTANTS.SOIL.MONOCULTURE_PENALTY * timeScale;
-    }
+    let soilFactor =
+      GameEngine.calculateCropSoilDelta(prevParcel, cropKey, timeScale) +
+      GameEngine.calculateRotationSoilDelta(prevParcel, cropKey, timeScale);
 
     if (decision.fertilizer) soilFactor += GAME_CONSTANTS.SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale;
     if (decision.pesticide) soilFactor += GAME_CONSTANTS.SOIL.PESTICIDE_IMPACT * timeScale;
 
-    soilFactor += machineSoilImpact * timeScale;
-    soilFactor += weather.soil * timeScale;
+    soilFactor += (machineSoilImpact + weather.soil) * timeScale;
 
     if (prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
       soilFactor +=
@@ -520,6 +493,41 @@ export class GameEngine {
     }
 
     return soilFactor;
+  }
+
+  private static calculateCropSoilDelta(prevParcel: Parcel, cropKey: CropType, timeScale: number): number {
+    let delta = 0;
+    if (GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey]) {
+      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
+      const gainMultiplier = soilRatio > 1.5 ? 0.2 : soilRatio > 1.2 ? 0.5 : 1.0;
+      delta += GAME_CONSTANTS.SOIL.PLANTATION_GAINS[cropKey] * gainMultiplier * timeScale;
+    }
+    if (GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey]) {
+      delta += GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
+    }
+    if (cropKey === 'Fallow') {
+      const diff = Math.max(GAME_CONSTANTS.SOIL.START - prevParcel.soil, 0);
+      delta += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * 10 * timeScale;
+    }
+    return delta;
+  }
+
+  private static calculateRotationSoilDelta(prevParcel: Parcel, cropKey: CropType, timeScale: number): number {
+    let delta = 0;
+    const prevCrop = prevParcel.crop;
+    const sequenceQuality = GAME_CONSTANTS.ROTATION_MATRIX[prevCrop]?.[cropKey] || 'ok';
+    if (sequenceQuality === 'good' && !(prevCrop === 'Fallow' && cropKey === 'Fallow')) {
+      const soilRatio = prevParcel.soil / GAME_CONSTANTS.SOIL.START;
+      const bonusMultiplier = soilRatio > 1.2 ? 0.5 : 1.0;
+      delta += GAME_CONSTANTS.SOIL.CROP_ROTATION_BONUS * bonusMultiplier * timeScale;
+    }
+    if (sequenceQuality === 'bad') {
+      delta += GAME_CONSTANTS.SOIL.CROP_ROTATION_PENALTY * timeScale;
+    }
+    if (prevCrop === cropKey && cropKey !== 'Fallow' && cropKey !== 'Grass') {
+      delta += GAME_CONSTANTS.SOIL.MONOCULTURE_PENALTY * timeScale;
+    }
+    return delta;
   }
 
   private static calculateNutritionGain(
@@ -560,6 +568,83 @@ export class GameEngine {
     return prevNutrition + nutritionGain * uptakeEfficiency;
   }
 
+  static calculatePestIntensityMultiplier(cropShare: number): number {
+    const {
+      DIVERSITY_THRESHOLD_SHARE,
+      MONOCULTURE_THRESHOLD_SHARE,
+      DIVERSE_INTENSITY_MULTIPLIER,
+      MONOCULTURE_INTENSITY_MULTIPLIER,
+    } = GAME_CONSTANTS.PEST_INTENSITY;
+    if (cropShare <= DIVERSITY_THRESHOLD_SHARE) {
+      return DIVERSE_INTENSITY_MULTIPLIER;
+    }
+    if (cropShare >= MONOCULTURE_THRESHOLD_SHARE) {
+      return MONOCULTURE_INTENSITY_MULTIPLIER;
+    }
+    const progress =
+      (cropShare - DIVERSITY_THRESHOLD_SHARE) / (MONOCULTURE_THRESHOLD_SHARE - DIVERSITY_THRESHOLD_SHARE);
+    return DIVERSE_INTENSITY_MULTIPLIER + progress * (MONOCULTURE_INTENSITY_MULTIPLIER - DIVERSE_INTENSITY_MULTIPLIER);
+  }
+
+  private static calculatePestImpact(
+    cropConfig: any,
+    events: { vermin: string[] },
+    decision: RoundDecision,
+    cropShare: number,
+  ): number {
+    const cropPestKey = GameEngine.getPestKey(cropConfig.pest);
+    if (!events.vermin.includes(cropPestKey)) {
+      return 1.0;
+    }
+    const {
+      BASE_PENALTY,
+      ORGANIC_MULTIPLIER,
+      PESTICIDE_YIELD_FACTOR,
+      ORGANISMS_YIELD_FACTOR,
+      ORGANISMS_DIVERSITY_BONUS,
+      DIVERSITY_THRESHOLD_SHARE,
+    } = GAME_CONSTANTS.PEST_INTENSITY;
+    if (decision.pesticide) {
+      return PESTICIDE_YIELD_FACTOR;
+    }
+    if (decision.organisms) {
+      const diversityBonus = cropShare <= DIVERSITY_THRESHOLD_SHARE ? ORGANISMS_DIVERSITY_BONUS : 0;
+      return Math.min(PESTICIDE_YIELD_FACTOR, ORGANISMS_YIELD_FACTOR + diversityBonus);
+    }
+    const organicMultiplier = decision.organic ? ORGANIC_MULTIPLIER : 1.0;
+    const intensityMultiplier = GameEngine.calculatePestIntensityMultiplier(cropShare);
+    return Math.max(0, 1.0 - BASE_PENALTY * organicMultiplier * intensityMultiplier);
+  }
+
+  private static calculateWeatherYieldEffect(
+    cropConfig: any,
+    events: { weather: string },
+    weather: { yield: number },
+    climateEscalation: number,
+  ): number {
+    if (weather.yield >= 1.0) {
+      return weather.yield;
+    }
+    const penalty = 1.0 - weather.yield;
+    const sensitivityLevel = GameEngine.getWeatherSensitivityLevel(cropConfig, events.weather);
+    const sensitivityMultiplierMap: Record<string, number> = { Stark: 1.0, Mäßig: 0.6, Gering: 0.3, Keine: 0 };
+    const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 0.6;
+    return Math.max(0, 1.0 - penalty * multiplier * climateEscalation);
+  }
+
+  private static getWeatherSensitivityLevel(cropConfig: any, weatherType: string): string {
+    if (weatherType === 'Drought' || weatherType === 'HeatWave') {
+      return cropConfig.weatherSensitivity.drought;
+    }
+    if (weatherType === 'LateFrost') {
+      return cropConfig.weatherSensitivity.cold;
+    }
+    if (weatherType === 'Flood' || weatherType === 'Storm') {
+      return cropConfig.weatherSensitivity.flood;
+    }
+    return 'Mäßig';
+  }
+
   private static calculateYield(
     cropConfig: any,
     newSoil: number,
@@ -569,6 +654,7 @@ export class GameEngine {
     weather: { yield: number },
     machineYieldBonus: number,
     climateEscalation = 1.0,
+    cropShare = 1.0,
   ): number {
     const soilEffect = Math.min(
       1.2,
@@ -578,41 +664,83 @@ export class GameEngine {
       1.2,
       (Math.max(0, newNutrition) / GAME_CONSTANTS.NUTRITION.START) ** (cropConfig.nutritionSensitivity || 1),
     );
-
-    let pestImpact = 1.0;
-    const cropPestKey = GameEngine.getPestKey(cropConfig.pest);
-    if (events.vermin.includes(cropPestKey)) {
-      if (decision.pesticide) {
-        pestImpact = 0.95;
-      } else if (decision.organisms) {
-        pestImpact = 0.9;
-      } else {
-        const basePenalty = 1.0 - 0.4;
-        const multiplier = decision.organic ? 1.2 : 1.0;
-        pestImpact = Math.max(0, 1.0 - basePenalty * multiplier);
-      }
-    }
-
-    let weatherYieldEffect = weather.yield;
-    if (weatherYieldEffect < 1.0) {
-      const penalty = 1.0 - weatherYieldEffect;
-      let sensitivityLevel = 'Mäßig';
-      if (events.weather === 'Drought' || events.weather === 'HeatWave') {
-        sensitivityLevel = cropConfig.weatherSensitivity.drought;
-      } else if (events.weather === 'LateFrost') {
-        sensitivityLevel = cropConfig.weatherSensitivity.cold;
-      } else if (events.weather === 'Flood' || events.weather === 'Storm') {
-        sensitivityLevel = cropConfig.weatherSensitivity.flood;
-      }
-      const sensitivityMultiplierMap: Record<string, number> = { Stark: 1.0, Mäßig: 0.6, Gering: 0.3, Keine: 0 };
-      const multiplier = sensitivityMultiplierMap[sensitivityLevel] ?? 0.6;
-      weatherYieldEffect = Math.max(0, 1.0 - penalty * multiplier * climateEscalation);
-    }
+    const pestImpact = GameEngine.calculatePestImpact(cropConfig, events, decision, cropShare);
+    const weatherYieldEffect = GameEngine.calculateWeatherYieldEffect(cropConfig, events, weather, climateEscalation);
 
     let yieldAmount =
       cropConfig.baseYield * soilEffect * nutritionEffect * weatherYieldEffect * pestImpact * (1 + machineYieldBonus);
     if (decision.organic) yieldAmount *= 0.4;
     return yieldAmount;
+  }
+
+  private static tallySeedsAndCropCounts(
+    parcelupdates: Parcel[],
+    isOrganic: boolean,
+  ): { seedCost: number; cropCounts: Record<string, number> } {
+    let seedCost = 0;
+    const cropCounts: Record<string, number> = {};
+
+    for (const p of parcelupdates) {
+      if (!p.crop) continue;
+      cropCounts[p.crop] = (cropCounts[p.crop] || 0) + 1;
+      if (p.crop !== 'Fallow' && p.crop !== 'Grass') {
+        const cropConfig = GAME_CONSTANTS.CROPS[p.crop];
+        if (cropConfig) {
+          seedCost += isOrganic ? cropConfig.seedPrice.organic : cropConfig.seedPrice.conventional;
+        }
+      }
+    }
+
+    return { seedCost, cropCounts };
+  }
+
+  private static calculateEfficientLaborHours(cropCounts: Record<string, number>): number {
+    let efficientLaborHours = 0;
+    for (const [crop, count] of Object.entries(cropCounts)) {
+      const unitHours =
+        crop === 'Grass'
+          ? GAME_CONSTANTS.CROPS.Grass.laborHours || 0
+          : crop === 'Fallow'
+            ? 2
+            : GAME_CONSTANTS.CROPS[crop as CropType]?.laborHours || 0;
+      const efficiencyFactor = Math.max(0.7, 1.0 - (count - 1) * 0.0077);
+      efficientLaborHours += count * unitHours * efficiencyFactor;
+    }
+    return efficientLaborHours;
+  }
+
+  private static resolveCropSalePrice(
+    cropKey: string,
+    cropConfig: any,
+    decision: RoundDecision,
+    bioSiegel: boolean,
+    marketPrices?: Record<string, { organic: number; conventional: number }>,
+  ): number {
+    const isFixed = Boolean(decision.priceFixing?.[cropKey]);
+    const customPrice = marketPrices?.[cropKey];
+    if (isFixed || !customPrice) {
+      const basePrice = bioSiegel ? cropConfig.marketValue.organic : cropConfig.marketValue.conventional;
+      return isFixed && customPrice ? basePrice * 0.95 : basePrice;
+    }
+    return bioSiegel ? customPrice.organic : customPrice.conventional;
+  }
+
+  private static calculateHarvestIncome(
+    harvestSummary: Record<CropType, number>,
+    decision: RoundDecision,
+    bioSiegel: boolean,
+    marketPrices?: Record<string, { organic: number; conventional: number }>,
+  ): { income: number; marketPricesUsed: Record<string, number> } {
+    let income = 0;
+    const marketPricesUsed: Record<string, number> = {};
+    for (const [cropKey, amount] of Object.entries(harvestSummary)) {
+      const cropConfig = GAME_CONSTANTS.CROPS[cropKey];
+      if (!cropConfig) continue;
+      const price = GameEngine.resolveCropSalePrice(cropKey, cropConfig, decision, bioSiegel, marketPrices);
+      income += amount * price;
+      marketPricesUsed[cropKey] = price;
+    }
+    return { income, marketPricesUsed };
   }
 
   private static calculateFinancials(
@@ -633,46 +761,8 @@ export class GameEngine {
     difficulty: 'easy' | 'normal' | 'hard',
     options?: { marketPrices?: Record<string, { organic: number; conventional: number }> },
   ): RoundResult {
-    let seedCost = 0;
-    let totalLaborHours = 0;
-    const cropCounts: Record<string, number> = {};
-
-    parcelupdates.forEach((p) => {
-      if (p.crop) {
-        cropCounts[p.crop] = (cropCounts[p.crop] || 0) + 1;
-      }
-
-      if (p.crop && p.crop !== 'Fallow' && p.crop !== 'Grass') {
-        const cropConfig = GAME_CONSTANTS.CROPS[p.crop];
-        if (cropConfig) {
-          seedCost += decision.organic ? cropConfig.seedPrice.organic : cropConfig.seedPrice.conventional;
-          totalLaborHours += cropConfig.laborHours || 0;
-        }
-      } else if (p.crop === 'Grass') {
-        totalLaborHours += GAME_CONSTANTS.CROPS.Grass.laborHours || 0;
-      } else if (p.crop === 'Fallow') {
-        totalLaborHours += 2; // Base labor for fallow (mulching/maintenance)
-      }
-    });
-
-    // Apply labor efficiency (economies of scale)
-    // If many parcels have the same crop, labor per parcel reduces
-    let efficientLaborHours = 0;
-    Object.entries(cropCounts).forEach(([crop, count]) => {
-      let baseHours = 0;
-      if (crop === 'Grass') baseHours = count * (GAME_CONSTANTS.CROPS.Grass.laborHours || 0);
-      else if (crop === 'Fallow') baseHours = count * 2;
-      else {
-        const cropConfig = GAME_CONSTANTS.CROPS[crop as CropType];
-        baseHours = count * (cropConfig?.laborHours || 0);
-      }
-
-      // Efficiency factor: 1.0 for 1 parcel, down to 0.7 for 40 parcels
-      // Specialization reduces setup and logistics time
-      const efficiencyFactor = Math.max(0.7, 1.0 - (count - 1) * 0.0077);
-      efficientLaborHours += baseHours * efficiencyFactor;
-    });
-    totalLaborHours = efficientLaborHours;
+    const { seedCost, cropCounts } = GameEngine.tallySeedsAndCropCounts(parcelupdates, decision.organic);
+    const totalLaborHours = GameEngine.calculateEfficientLaborHours(cropCounts);
 
     const laborCost =
       GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST +
@@ -716,24 +806,12 @@ export class GameEngine {
       (bioSiegel ? bioEligibleParcels * GAME_CONSTANTS.SUBSIDIES.BIO : 0) +
       contractBonus;
 
-    let income = 0;
-    const marketPricesUsed: Record<string, number> = {};
-    Object.entries(harvestSummary).forEach(([cropKey, amount]) => {
-      const cropConfig = GAME_CONSTANTS.CROPS[cropKey];
-      if (cropConfig) {
-        let price: number;
-        const isFixed = decision.priceFixing?.[cropKey];
-        const useOrganicPrice = bioSiegel;
-        if (isFixed || !options?.marketPrices?.[cropKey]) {
-          price = useOrganicPrice ? cropConfig.marketValue.organic : cropConfig.marketValue.conventional;
-          if (isFixed && options?.marketPrices?.[cropKey]) price *= 0.95;
-        } else {
-          price = useOrganicPrice ? options.marketPrices[cropKey].organic : options.marketPrices[cropKey].conventional;
-        }
-        income += amount * price;
-        marketPricesUsed[cropKey] = price;
-      }
-    });
+    const { income, marketPricesUsed } = GameEngine.calculateHarvestIncome(
+      harvestSummary,
+      decision,
+      bioSiegel,
+      options?.marketPrices,
+    );
 
     const profit = income + subsidies - totalExpenses;
     const finalCapital = currentCapital + profit;

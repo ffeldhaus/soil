@@ -123,9 +123,124 @@ export function toIsoString(val: any): string {
  * Strictly sanitizes a `research_games` document for public consumption.
  * Explicitly strips internal provenance fields (`migratedFrom`) and enforces schema limits.
  */
+function resolveResearchSourceType(
+  gameDoc: any,
+  rawId: string,
+  rawMigratedFrom: string,
+  numPlayers: number,
+): 'cloud' | 'local' {
+  if (gameDoc?.sourceType === 'local' || gameDoc?.sourceType === 'cloud') {
+    return gameDoc.sourceType;
+  }
+  if (rawMigratedFrom) {
+    return rawMigratedFrom.startsWith('local-') ? 'local' : 'cloud';
+  }
+  if (rawId.startsWith('research_local-') || rawId.startsWith('local-')) {
+    return 'local';
+  }
+  return numPlayers > 1 ? 'cloud' : 'local';
+}
+
+function sanitizeResearchExpenses(exp: any): any {
+  if (!exp) return undefined;
+  return {
+    seeds: Number(exp.seeds || 0),
+    labor: Number(exp.labor || 0),
+    running: Number(exp.running || 0),
+    investments: Number(exp.investments || 0),
+    total: Number(exp.total || 0),
+  };
+}
+
+function sanitizeResearchEvents(events: any): { weather: string; vermin: string[] } {
+  if (!events) return { weather: 'Normal', vermin: [] };
+  return {
+    weather: String(events.weather || 'Normal'),
+    vermin: Array.isArray(events.vermin) ? events.vermin.slice(0, 10) : [],
+  };
+}
+
+function sanitizeResearchHistoryResult(res: any): any {
+  if (!res) return undefined;
+  return {
+    profit: Number(res.profit || 0),
+    capital: Number(res.capital || 0),
+    income: Number(res.income || 0),
+    subsidies: Number(res.subsidies || 0),
+    expenses: sanitizeResearchExpenses(res.expenses),
+    events: sanitizeResearchEvents(res.events),
+    harvestSummary: typeof res.harvestSummary === 'object' && res.harvestSummary ? res.harvestSummary : {},
+  };
+}
+
+function sanitizeResearchHistoryEntry(h: any): any {
+  const dec = h?.decision;
+  return {
+    number: Number(h?.number ?? 0),
+    avgSoil: Number(h?.avgSoil ?? 0),
+    avgNutrition: Number(h?.avgNutrition ?? 0),
+    decision: dec
+      ? {
+          machines: Number(dec.machines || 0),
+          organic: !!dec.organic,
+          fertilizer: !!dec.fertilizer,
+          pesticide: !!dec.pesticide,
+          organisms: !!dec.organisms,
+          parcels: typeof dec.parcels === 'object' && dec.parcels ? dec.parcels : {},
+        }
+      : undefined,
+    result: sanitizeResearchHistoryResult(h?.result),
+    parcelsSnapshot: Array.isArray(h?.parcelsSnapshot) ? h.parcelsSnapshot : [],
+  };
+}
+
+function sanitizeResearchPlayer(key: string, idx: number, p: any, gameId: string): PublicResearchPlayer {
+  const playerNumber = Number(p.playerNumber || idx + 1);
+  const safeUid = key.startsWith('player-') ? key : `player-${gameId}-${playerNumber}`;
+  const capital = Number(p.capital || 0);
+  const avgSoil = Number(p.avgSoil ?? 0);
+  const avgNutrition = Number(p.avgNutrition ?? 0);
+  const sustainabilityScore =
+    typeof p.sustainabilityScore === 'number'
+      ? Math.round(p.sustainabilityScore * 10) / 10
+      : GameEngine.calculateSustainabilityScore(capital, avgSoil);
+
+  const history = Array.isArray(p.history) ? p.history.slice(0, 101).map(sanitizeResearchHistoryEntry) : [];
+
+  const playerObj: PublicResearchPlayer = {
+    uid: safeUid,
+    displayName: `Team ${playerNumber}`,
+    isAi: !!p.isAi,
+    playerNumber,
+    capital,
+    currentRound: Number(p.currentRound || 0),
+    avgSoil,
+    avgNutrition,
+    sustainabilityScore,
+    history,
+  };
+  if (p.aiLevel === 'elementary' || p.aiLevel === 'middle' || p.aiLevel === 'high') {
+    playerObj.aiLevel = p.aiLevel;
+  }
+  return playerObj;
+}
+
+function normalizeResearchId(rawId: string): string {
+  if (!rawId) return 'research_unknown';
+  return rawId.startsWith('research_') ? rawId : `research_${rawId}`;
+}
+
+function normalizeDifficulty(rawDiff: string): 'easy' | 'normal' | 'hard' {
+  return rawDiff === 'easy' || rawDiff === 'normal' || rawDiff === 'hard' ? rawDiff : 'normal';
+}
+
+/**
+ * Strictly sanitizes a `research_games` document for public consumption.
+ * Explicitly strips internal provenance fields (`migratedFrom`) and enforces schema limits.
+ */
 export function sanitizeResearchGameForPublic(gameDoc: any): PublicResearchGame {
   const rawId = String(gameDoc?.id || '');
-  const id = rawId.startsWith('research_') ? rawId : rawId ? `research_${rawId}` : 'research_unknown';
+  const id = normalizeResearchId(rawId);
 
   const rawMigratedFrom = String(gameDoc?.migratedFrom || '');
   const rawPlayers = gameDoc?.players && typeof gameDoc.players === 'object' ? gameDoc.players : {};
@@ -138,97 +253,13 @@ export function sanitizeResearchGameForPublic(gameDoc: any): PublicResearchGame 
     Math.max(1, Number(gameDoc?.config?.numRounds || gameDoc?.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS)),
   );
   const numAi = Math.min(20, Math.max(0, Number(gameDoc?.config?.numAi || 0)));
-
-  let sourceType: 'cloud' | 'local';
-  if (gameDoc?.sourceType === 'local' || gameDoc?.sourceType === 'cloud') {
-    sourceType = gameDoc.sourceType;
-  } else if (rawMigratedFrom) {
-    sourceType = rawMigratedFrom.startsWith('local-') ? 'local' : 'cloud';
-  } else if (rawId.startsWith('research_local-') || rawId.startsWith('local-')) {
-    sourceType = 'local';
-  } else {
-    sourceType = numPlayers > 1 ? 'cloud' : 'local';
-  }
-
-  const rawDiff = String(gameDoc?.settings?.difficulty || 'normal');
-  const difficulty: 'easy' | 'normal' | 'hard' =
-    rawDiff === 'easy' || rawDiff === 'normal' || rawDiff === 'hard' ? rawDiff : 'normal';
+  const sourceType = resolveResearchSourceType(gameDoc, rawId, rawMigratedFrom, numPlayers);
+  const difficulty = normalizeDifficulty(String(gameDoc?.settings?.difficulty || 'normal'));
 
   const sanitizedPlayers: Record<string, PublicResearchPlayer> = {};
-  const playerKeys = Object.keys(rawPlayers);
-
-  playerKeys.forEach((key, idx) => {
-    const p = rawPlayers[key] || {};
-    const playerNumber = Number(p.playerNumber || idx + 1);
-    const safeUid = key.startsWith('player-') ? key : `player-${id}-${playerNumber}`;
-    const capital = Number(p.capital || 0);
-    const avgSoil = Number(p.avgSoil ?? 0);
-    const avgNutrition = Number(p.avgNutrition ?? 0);
-    const sustainabilityScore =
-      typeof p.sustainabilityScore === 'number'
-        ? Math.round(p.sustainabilityScore * 10) / 10
-        : GameEngine.calculateSustainabilityScore(capital, avgSoil);
-
-    const history = Array.isArray(p.history)
-      ? p.history.slice(0, 101).map((h: any) => ({
-          number: Number(h?.number ?? 0),
-          avgSoil: Number(h?.avgSoil ?? 0),
-          avgNutrition: Number(h?.avgNutrition ?? 0),
-          decision: h?.decision
-            ? {
-                machines: Number(h.decision.machines || 0),
-                organic: !!h.decision.organic,
-                fertilizer: !!h.decision.fertilizer,
-                pesticide: !!h.decision.pesticide,
-                organisms: !!h.decision.organisms,
-                parcels: typeof h.decision.parcels === 'object' && h.decision.parcels ? h.decision.parcels : {},
-              }
-            : undefined,
-          result: h?.result
-            ? {
-                profit: Number(h.result.profit || 0),
-                capital: Number(h.result.capital || 0),
-                income: Number(h.result.income || 0),
-                subsidies: Number(h.result.subsidies || 0),
-                expenses: h.result.expenses
-                  ? {
-                      seeds: Number(h.result.expenses.seeds || 0),
-                      labor: Number(h.result.expenses.labor || 0),
-                      running: Number(h.result.expenses.running || 0),
-                      investments: Number(h.result.expenses.investments || 0),
-                      total: Number(h.result.expenses.total || 0),
-                    }
-                  : undefined,
-                events: h.result.events
-                  ? {
-                      weather: String(h.result.events.weather || 'Normal'),
-                      vermin: Array.isArray(h.result.events.vermin) ? h.result.events.vermin.slice(0, 10) : [],
-                    }
-                  : { weather: 'Normal', vermin: [] },
-                harvestSummary:
-                  typeof h.result.harvestSummary === 'object' && h.result.harvestSummary ? h.result.harvestSummary : {},
-              }
-            : undefined,
-          parcelsSnapshot: Array.isArray(h?.parcelsSnapshot) ? h.parcelsSnapshot : [],
-        }))
-      : [];
-
-    const playerObj: PublicResearchPlayer = {
-      uid: safeUid,
-      displayName: `Team ${playerNumber}`,
-      isAi: !!p.isAi,
-      playerNumber,
-      capital,
-      currentRound: Number(p.currentRound || 0),
-      avgSoil,
-      avgNutrition,
-      sustainabilityScore,
-      history,
-    };
-    if (p.aiLevel === 'elementary' || p.aiLevel === 'middle' || p.aiLevel === 'high') {
-      playerObj.aiLevel = p.aiLevel;
-    }
-    sanitizedPlayers[safeUid] = playerObj;
+  Object.keys(rawPlayers).forEach((key, idx) => {
+    const playerObj = sanitizeResearchPlayer(key, idx, rawPlayers[key] || {}, id);
+    sanitizedPlayers[playerObj.uid] = playerObj;
   });
 
   const createdAt = toIsoString(gameDoc?.createdAt);
@@ -261,92 +292,105 @@ export function isPredominantlyOrganicGame(game: PublicResearchGame): boolean {
   let humanDecisionCount = 0;
   let organicDecisionCount = 0;
 
-  for (const player of Object.values(game.players || {})) {
-    if (player.isAi) continue;
+  const humanPlayers = Object.values(game.players || {}).filter((p) => !p.isAi);
+  for (const player of humanPlayers) {
     for (const round of player.history || []) {
-      if (round && round.number > 0 && round.decision) {
-        humanDecisionCount += 1;
-        if (round.decision.organic) {
-          organicDecisionCount += 1;
-        }
-      }
+      if (!round || round.number <= 0 || !round.decision) continue;
+      humanDecisionCount += 1;
+      if (round.decision.organic) organicDecisionCount += 1;
     }
   }
 
   return humanDecisionCount > 0 && organicDecisionCount / humanDecisionCount >= 0.5;
 }
 
+interface SummaryAccumulator {
+  difficultyBreakdown: { easy: number; normal: number; hard: number };
+  sourceBreakdown: { local: number; cloud: number };
+  cropCounts: Record<string, number>;
+  totalHumanPlayers: number;
+  totalAiPlayers: number;
+  totalRoundsPlayed: number;
+  sumHumanCapital: number;
+  sumHumanSoil: number;
+  sumHumanNutrition: number;
+  sumHumanSustainability: number;
+  totalHumanRoundDecisions: number;
+  organicRoundDecisions: number;
+  fertilizerRoundDecisions: number;
+  pesticideRoundDecisions: number;
+  organismsRoundDecisions: number;
+  totalParcelDecisions: number;
+}
+
+function accumulateHumanHistoryDecision(acc: SummaryAccumulator, h: any): void {
+  if (!h || Number(h.number || 0) <= 0 || !h.decision) return;
+  acc.totalHumanRoundDecisions += 1;
+  if (h.decision.organic) acc.organicRoundDecisions += 1;
+  if (h.decision.fertilizer) acc.fertilizerRoundDecisions += 1;
+  if (h.decision.pesticide) acc.pesticideRoundDecisions += 1;
+  if (h.decision.organisms) acc.organismsRoundDecisions += 1;
+
+  for (const crop of Object.values(h.decision.parcels || {})) {
+    const cropKey = String(crop || 'Fallow');
+    acc.cropCounts[cropKey] = (acc.cropCounts[cropKey] || 0) + 1;
+    acc.totalParcelDecisions += 1;
+  }
+}
+
+function accumulatePlayerIntoSummary(acc: SummaryAccumulator, p: PublicResearchPlayer): void {
+  if (p.isAi) {
+    acc.totalAiPlayers += 1;
+    return;
+  }
+  acc.totalHumanPlayers += 1;
+  acc.sumHumanCapital += Number(p.capital || 0);
+  acc.sumHumanSoil += Number(p.avgSoil || 0);
+  acc.sumHumanNutrition += Number(p.avgNutrition || 0);
+  acc.sumHumanSustainability += Number(
+    typeof p.sustainabilityScore === 'number'
+      ? p.sustainabilityScore
+      : GameEngine.calculateSustainabilityScore(Number(p.capital || 0), Number(p.avgSoil || 0)),
+  );
+  for (const h of p.history || []) {
+    accumulateHumanHistoryDecision(acc, h);
+  }
+}
+
 export function computeResearchSummary(games: PublicResearchGame[]): PublicResearchSummary {
-  const difficultyBreakdown = { easy: 0, normal: 0, hard: 0 };
-  const sourceBreakdown = { local: 0, cloud: 0 };
   const cropCounts: Record<string, number> = {};
   Object.keys(GAME_CONSTANTS.CROPS).forEach((crop) => {
     cropCounts[crop] = 0;
   });
 
-  let totalHumanPlayers = 0;
-  let totalAiPlayers = 0;
-  let totalRoundsPlayed = 0;
-
-  let sumHumanCapital = 0;
-  let sumHumanSoil = 0;
-  let sumHumanNutrition = 0;
-  let sumHumanSustainability = 0;
-
-  let totalHumanRoundDecisions = 0;
-  let organicRoundDecisions = 0;
-  let fertilizerRoundDecisions = 0;
-  let pesticideRoundDecisions = 0;
-  let organismsRoundDecisions = 0;
-  let totalParcelDecisions = 0;
+  const acc: SummaryAccumulator = {
+    difficultyBreakdown: { easy: 0, normal: 0, hard: 0 },
+    sourceBreakdown: { local: 0, cloud: 0 },
+    cropCounts,
+    totalHumanPlayers: 0,
+    totalAiPlayers: 0,
+    totalRoundsPlayed: 0,
+    sumHumanCapital: 0,
+    sumHumanSoil: 0,
+    sumHumanNutrition: 0,
+    sumHumanSustainability: 0,
+    totalHumanRoundDecisions: 0,
+    organicRoundDecisions: 0,
+    fertilizerRoundDecisions: 0,
+    pesticideRoundDecisions: 0,
+    organismsRoundDecisions: 0,
+    totalParcelDecisions: 0,
+  };
 
   for (const g of games) {
     const diff = g.settings?.difficulty || 'normal';
-    if (diff === 'easy' || diff === 'normal' || diff === 'hard') {
-      difficultyBreakdown[diff] += 1;
-    } else {
-      difficultyBreakdown.normal += 1;
-    }
-
-    if (g.sourceType === 'cloud') {
-      sourceBreakdown.cloud += 1;
-    } else {
-      sourceBreakdown.local += 1;
-    }
-
-    totalRoundsPlayed += Number(g.currentRoundNumber || 0);
+    const validDiff = diff === 'easy' || diff === 'normal' || diff === 'hard' ? diff : 'normal';
+    acc.difficultyBreakdown[validDiff] += 1;
+    acc.sourceBreakdown[g.sourceType === 'cloud' ? 'cloud' : 'local'] += 1;
+    acc.totalRoundsPlayed += Number(g.currentRoundNumber || 0);
 
     for (const p of Object.values(g.players || {})) {
-      if (p.isAi) {
-        totalAiPlayers += 1;
-        continue;
-      }
-
-      totalHumanPlayers += 1;
-      sumHumanCapital += Number(p.capital || 0);
-      sumHumanSoil += Number(p.avgSoil || 0);
-      sumHumanNutrition += Number(p.avgNutrition || 0);
-      sumHumanSustainability += Number(
-        typeof p.sustainabilityScore === 'number'
-          ? p.sustainabilityScore
-          : GameEngine.calculateSustainabilityScore(Number(p.capital || 0), Number(p.avgSoil || 0)),
-      );
-
-      for (const h of p.history || []) {
-        if (!h || Number(h.number || 0) <= 0 || !h.decision) continue;
-        totalHumanRoundDecisions += 1;
-        if (h.decision.organic) organicRoundDecisions += 1;
-        if (h.decision.fertilizer) fertilizerRoundDecisions += 1;
-        if (h.decision.pesticide) pesticideRoundDecisions += 1;
-        if (h.decision.organisms) organismsRoundDecisions += 1;
-
-        const parcels = h.decision.parcels || {};
-        for (const crop of Object.values(parcels)) {
-          const cropKey = String(crop || 'Fallow');
-          cropCounts[cropKey] = (cropCounts[cropKey] || 0) + 1;
-          totalParcelDecisions += 1;
-        }
-      }
+      accumulatePlayerIntoSummary(acc, p);
     }
   }
 
@@ -358,27 +402,45 @@ export function computeResearchSummary(games: PublicResearchGame[]): PublicResea
   };
 
   const cropShares: Record<string, number> = {};
-  for (const [crop, count] of Object.entries(cropCounts)) {
-    cropShares[crop] = pct(count, totalParcelDecisions);
+  for (const [crop, count] of Object.entries(acc.cropCounts)) {
+    cropShares[crop] = pct(count, acc.totalParcelDecisions);
   }
 
   return {
     totalGames: games.length,
-    totalHumanPlayers,
-    totalAiPlayers,
-    totalRoundsPlayed,
-    avgFinalCapital: avg(sumHumanCapital, totalHumanPlayers, 0),
-    avgFinalSoil: avg(sumHumanSoil, totalHumanPlayers, 1),
-    avgFinalNutrition: avg(sumHumanNutrition, totalHumanPlayers, 1),
-    avgSustainabilityScore: avg(sumHumanSustainability, totalHumanPlayers, 1),
-    organicDecisionShare: pct(organicRoundDecisions, totalHumanRoundDecisions),
-    fertilizerDecisionShare: pct(fertilizerRoundDecisions, totalHumanRoundDecisions),
-    pesticideDecisionShare: pct(pesticideRoundDecisions, totalHumanRoundDecisions),
-    organismsDecisionShare: pct(organismsRoundDecisions, totalHumanRoundDecisions),
+    totalHumanPlayers: acc.totalHumanPlayers,
+    totalAiPlayers: acc.totalAiPlayers,
+    totalRoundsPlayed: acc.totalRoundsPlayed,
+    avgFinalCapital: avg(acc.sumHumanCapital, acc.totalHumanPlayers, 0),
+    avgFinalSoil: avg(acc.sumHumanSoil, acc.totalHumanPlayers, 1),
+    avgFinalNutrition: avg(acc.sumHumanNutrition, acc.totalHumanPlayers, 1),
+    avgSustainabilityScore: avg(acc.sumHumanSustainability, acc.totalHumanPlayers, 1),
+    organicDecisionShare: pct(acc.organicRoundDecisions, acc.totalHumanRoundDecisions),
+    fertilizerDecisionShare: pct(acc.fertilizerRoundDecisions, acc.totalHumanRoundDecisions),
+    pesticideDecisionShare: pct(acc.pesticideRoundDecisions, acc.totalHumanRoundDecisions),
+    organismsDecisionShare: pct(acc.organismsRoundDecisions, acc.totalHumanRoundDecisions),
     cropShares,
-    difficultyBreakdown,
-    sourceBreakdown,
+    difficultyBreakdown: acc.difficultyBreakdown,
+    sourceBreakdown: acc.sourceBreakdown,
   };
+}
+
+async function fetchLatestSystemInsight(db: admin.firestore.Firestore): Promise<any> {
+  try {
+    const insightCollection = db.collection('system_insights');
+    if (!insightCollection || typeof insightCollection.orderBy !== 'function') return null;
+    const insightSnap = await insightCollection.orderBy('createdAt', 'desc').limit(1).get();
+    if (!insightSnap || insightSnap.empty || !insightSnap.docs?.length) return null;
+    const d = insightSnap.docs[0].data() || {};
+    return {
+      strategies: Array.isArray(d.strategies) ? d.strategies : [],
+      balancingReport: d.balancingReport || null,
+      gameCount: Number(d.gameCount || 0),
+      createdAt: toIsoString(d.createdAt),
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function buildPublicResearchDataset(
@@ -397,41 +459,17 @@ export async function buildPublicResearchDataset(
     return sanitizeResearchGameForPublic({ id: doc.id || raw.id, ...raw });
   });
 
-  const filtered = allSanitized.filter((g) => {
-    if (options.difficulty && g.settings.difficulty !== options.difficulty) {
-      return false;
-    }
-    if (options.sourceType && g.sourceType !== options.sourceType) {
-      return false;
-    }
-    if (options.organicOnly && !isPredominantlyOrganicGame(g)) {
-      return false;
-    }
-    return true;
-  });
+  const filtered = allSanitized.filter(
+    (g) =>
+      (!options.difficulty || g.settings.difficulty === options.difficulty) &&
+      (!options.sourceType || g.sourceType === options.sourceType) &&
+      (!options.organicOnly || isPredominantlyOrganicGame(g)),
+  );
 
   const summary = computeResearchSummary(filtered);
   const offset = (page - 1) * pageSize;
   const pagedGames = filtered.slice(offset, offset + pageSize);
-
-  let latestInsight: any = null;
-  try {
-    const insightCollection = db.collection('system_insights');
-    if (insightCollection && typeof insightCollection.orderBy === 'function') {
-      const insightSnap = await insightCollection.orderBy('createdAt', 'desc').limit(1).get();
-      if (insightSnap && !insightSnap.empty && insightSnap.docs?.length > 0) {
-        const d = insightSnap.docs[0].data() || {};
-        latestInsight = {
-          strategies: Array.isArray(d.strategies) ? d.strategies : [],
-          balancingReport: d.balancingReport || null,
-          gameCount: Number(d.gameCount || 0),
-          createdAt: toIsoString(d.createdAt),
-        };
-      }
-    }
-  } catch {
-    latestInsight = null;
-  }
+  const latestInsight = await fetchLatestSystemInsight(db);
 
   return {
     games: pagedGames,
@@ -536,77 +574,78 @@ export const CSV_COLUMNS = [
   'fallowParcels',
 ] as const;
 
+function formatHistoryEntryCsvRow(game: PublicResearchGame, player: PublicResearchPlayer, h: any): string {
+  const parcels = h?.decision?.parcels || {};
+  const cropCounts: Record<string, number> = {
+    Wheat: 0,
+    Corn: 0,
+    Potato: 0,
+    Beet: 0,
+    Barley: 0,
+    Oat: 0,
+    Rye: 0,
+    Fieldbean: 0,
+    Rapeseed: 0,
+    Pea: 0,
+    Grass: 0,
+    Fallow: 0,
+  };
+
+  for (const crop of Object.values(parcels)) {
+    const c = String(crop || 'Fallow');
+    cropCounts[c] = (cropCounts[c] || 0) + 1;
+  }
+
+  const verminList = Array.isArray(h?.result?.events?.vermin) ? h.result.events.vermin.join(';') : '';
+
+  const rowValues = [
+    game.id,
+    game.sourceType,
+    game.settings?.difficulty || 'normal',
+    game.currentRoundNumber,
+    player.uid,
+    player.displayName,
+    player.isAi,
+    Number(h?.number ?? 0),
+    !!h?.decision?.organic,
+    !!h?.decision?.fertilizer,
+    !!h?.decision?.pesticide,
+    !!h?.decision?.organisms,
+    Number(h?.result?.profit ?? 0),
+    Number(h?.result?.capital ?? player.capital ?? 0),
+    Number(h?.result?.income ?? 0),
+    Number(h?.result?.subsidies ?? 0),
+    Number(h?.result?.expenses?.total ?? 0),
+    Number(h?.avgSoil ?? 0),
+    Number(h?.avgNutrition ?? 0),
+    String(h?.result?.events?.weather || 'Normal'),
+    verminList,
+    cropCounts.Wheat,
+    cropCounts.Corn,
+    cropCounts.Potato,
+    cropCounts.Beet,
+    cropCounts.Barley,
+    cropCounts.Oat,
+    cropCounts.Rye,
+    cropCounts.Fieldbean,
+    cropCounts.Rapeseed,
+    cropCounts.Pea,
+    cropCounts.Grass,
+    cropCounts.Fallow,
+  ];
+
+  return rowValues.map(escapeCsvField).join(',');
+}
+
 export function formatResearchGamesAsCsv(rawGames: any[]): string {
   const lines: string[] = [CSV_COLUMNS.join(',')];
 
   for (const rawGame of rawGames || []) {
     const game = rawGame?.sourceType ? (rawGame as PublicResearchGame) : sanitizeResearchGameForPublic(rawGame);
-    const players = Object.values(game.players || {});
-
-    for (const player of players) {
+    for (const player of Object.values(game.players || {})) {
       const sortedHistory = [...(player.history || [])].sort((a, b) => Number(a.number || 0) - Number(b.number || 0));
-
       for (const h of sortedHistory) {
-        const parcels = h?.decision?.parcels || {};
-        const cropCounts: Record<string, number> = {
-          Wheat: 0,
-          Corn: 0,
-          Potato: 0,
-          Beet: 0,
-          Barley: 0,
-          Oat: 0,
-          Rye: 0,
-          Fieldbean: 0,
-          Rapeseed: 0,
-          Pea: 0,
-          Grass: 0,
-          Fallow: 0,
-        };
-
-        for (const crop of Object.values(parcels)) {
-          const c = String(crop || 'Fallow');
-          cropCounts[c] = (cropCounts[c] || 0) + 1;
-        }
-
-        const verminList = Array.isArray(h?.result?.events?.vermin) ? h.result.events.vermin.join(';') : '';
-
-        const rowValues = [
-          game.id,
-          game.sourceType,
-          game.settings?.difficulty || 'normal',
-          game.currentRoundNumber,
-          player.uid,
-          player.displayName,
-          player.isAi,
-          Number(h?.number ?? 0),
-          !!h?.decision?.organic,
-          !!h?.decision?.fertilizer,
-          !!h?.decision?.pesticide,
-          !!h?.decision?.organisms,
-          Number(h?.result?.profit ?? 0),
-          Number(h?.result?.capital ?? player.capital ?? 0),
-          Number(h?.result?.income ?? 0),
-          Number(h?.result?.subsidies ?? 0),
-          Number(h?.result?.expenses?.total ?? 0),
-          Number(h?.avgSoil ?? 0),
-          Number(h?.avgNutrition ?? 0),
-          String(h?.result?.events?.weather || 'Normal'),
-          verminList,
-          cropCounts.Wheat,
-          cropCounts.Corn,
-          cropCounts.Potato,
-          cropCounts.Beet,
-          cropCounts.Barley,
-          cropCounts.Oat,
-          cropCounts.Rye,
-          cropCounts.Fieldbean,
-          cropCounts.Rapeseed,
-          cropCounts.Pea,
-          cropCounts.Grass,
-          cropCounts.Fallow,
-        ];
-
-        lines.push(rowValues.map(escapeCsvField).join(','));
+        lines.push(formatHistoryEntryCsvRow(game, player, h));
       }
     }
   }
@@ -733,6 +772,47 @@ export function getMcpServerMetadata() {
   };
 }
 
+function buildMcpTextResult(id: any, payload: unknown, isError = false): any {
+  return {
+    jsonrpc: '2.0',
+    id: id ?? null,
+    result: {
+      content: [{ type: 'text', text: JSON.stringify(payload, null, 2) }],
+      isError,
+    },
+  };
+}
+
+async function handleTrajectoryToolCall(db: admin.firestore.Firestore, id: any, args: any): Promise<any> {
+  const gameId = String(args.gameId || '').trim();
+  if (!gameId) {
+    return buildMcpTextResult(id, { error: 'Missing required argument: gameId' }, true);
+  }
+  const data = await getPublicResearchGameWithRounds(db, gameId, true);
+  if (!data) {
+    return buildMcpTextResult(id, { error: `Research game not found: ${gameId}` }, true);
+  }
+  return buildMcpTextResult(id, data, false);
+}
+
+function handleConstantsToolCall(id: any, args: any): any {
+  const section = String(args.section || 'all');
+  const sectionMap: Record<string, any> = {
+    crops: { crops: GAME_CONSTANTS.CROPS },
+    soil: { soil: GAME_CONSTANTS.SOIL },
+    nutrition: { nutrition: GAME_CONSTANTS.NUTRITION },
+    weather: { weatherEffects: GAME_CONSTANTS.WEATHER_EFFECTS },
+    vermin: { verminEffects: GAME_CONSTANTS.VERMIN_EFFECTS, pestIntensity: GAME_CONSTANTS.PEST_INTENSITY },
+    contracts: { contracts: CONTRACT_DEFINITIONS },
+  };
+  const payload = sectionMap[section] || {
+    constants: GAME_CONSTANTS,
+    contracts: CONTRACT_DEFINITIONS,
+    stickers: STICKER_DEFINITIONS,
+  };
+  return buildMcpTextResult(id, payload, false);
+}
+
 async function executeMcpToolCall(db: admin.firestore.Firestore, id: any, params: any): Promise<any> {
   const toolName = String(params?.name || '');
   const args = params?.arguments && typeof params.arguments === 'object' ? params.arguments : {};
@@ -745,19 +825,7 @@ async function executeMcpToolCall(db: admin.firestore.Firestore, id: any, params
       sourceType: args.sourceType,
       organicOnly: !!args.organicOnly,
     });
-    return {
-      jsonrpc: '2.0',
-      id: id ?? null,
-      result: {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({ summary: dataset.summary, latestInsight: dataset.latestInsight }, null, 2),
-          },
-        ],
-        isError: false,
-      },
-    };
+    return buildMcpTextResult(id, { summary: dataset.summary, latestInsight: dataset.latestInsight });
   }
 
   if (toolName === 'list_research_games') {
@@ -771,77 +839,15 @@ async function executeMcpToolCall(db: admin.firestore.Firestore, id: any, params
       sourceType: args.sourceType,
       organicOnly: !!args.organicOnly,
     });
-    return {
-      jsonrpc: '2.0',
-      id: id ?? null,
-      result: {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({ total: dataset.total, limit, offset, games: dataset.games }, null, 2),
-          },
-        ],
-        isError: false,
-      },
-    };
+    return buildMcpTextResult(id, { total: dataset.total, limit, offset, games: dataset.games });
   }
 
   if (toolName === 'get_research_game_trajectory') {
-    const gameId = String(args.gameId || '').trim();
-    if (!gameId) {
-      return {
-        jsonrpc: '2.0',
-        id: id ?? null,
-        result: {
-          content: [{ type: 'text', text: JSON.stringify({ error: 'Missing required argument: gameId' }) }],
-          isError: true,
-        },
-      };
-    }
-    const data = await getPublicResearchGameWithRounds(db, gameId, true);
-    if (!data) {
-      return {
-        jsonrpc: '2.0',
-        id: id ?? null,
-        result: {
-          content: [{ type: 'text', text: JSON.stringify({ error: `Research game not found: ${gameId}` }) }],
-          isError: true,
-        },
-      };
-    }
-    return {
-      jsonrpc: '2.0',
-      id: id ?? null,
-      result: {
-        content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
-        isError: false,
-      },
-    };
+    return await handleTrajectoryToolCall(db, id, args);
   }
 
   if (toolName === 'get_game_constants_and_sources') {
-    const section = String(args.section || 'all');
-    const sectionMap: Record<string, any> = {
-      crops: { crops: GAME_CONSTANTS.CROPS },
-      soil: { soil: GAME_CONSTANTS.SOIL },
-      nutrition: { nutrition: GAME_CONSTANTS.NUTRITION },
-      weather: { weatherEffects: GAME_CONSTANTS.WEATHER_EFFECTS },
-      vermin: { verminEffects: GAME_CONSTANTS.VERMIN_EFFECTS },
-      contracts: { contracts: CONTRACT_DEFINITIONS },
-    };
-    const payload = sectionMap[section] || {
-      constants: GAME_CONSTANTS,
-      contracts: CONTRACT_DEFINITIONS,
-      stickers: STICKER_DEFINITIONS,
-    };
-    return {
-      jsonrpc: '2.0',
-      id: id ?? null,
-      result: {
-        content: [{ type: 'text', text: JSON.stringify(payload, null, 2) }],
-        isError: false,
-      },
-    };
+    return handleConstantsToolCall(id, args);
   }
 
   return {
@@ -891,6 +897,26 @@ async function executeMcpResourceRead(db: admin.firestore.Firestore, id: any, pa
   };
 }
 
+function buildMcpInitializeResult(id: any, params: any): any {
+  const requestedVersion = String(params?.protocolVersion || '2024-11-05');
+  const protocolVersion = requestedVersion === '2025-03-26' ? '2025-03-26' : '2024-11-05';
+  return {
+    jsonrpc: '2.0',
+    id: id ?? null,
+    result: {
+      protocolVersion,
+      capabilities: {
+        tools: { listChanged: false },
+        resources: { subscribe: false, listChanged: false },
+      },
+      serverInfo: {
+        name: 'soil-research-mcp',
+        version: '1.0.0',
+      },
+    },
+  };
+}
+
 export async function executeMcpSingleRequest(db: admin.firestore.Firestore, rpc: any): Promise<any | null> {
   if (!rpc || typeof rpc !== 'object' || rpc.jsonrpc !== '2.0' || typeof rpc.method !== 'string') {
     return {
@@ -901,56 +927,32 @@ export async function executeMcpSingleRequest(db: admin.firestore.Firestore, rpc
   }
 
   const { id, method, params = {} } = rpc;
-  const isNotification = id === undefined;
-
-  if (method === 'notifications/initialized' || method.startsWith('notifications/')) {
+  if (method.startsWith('notifications/')) {
     return null;
   }
 
   try {
     switch (method) {
-      case 'initialize': {
-        const requestedVersion = String(params?.protocolVersion || '2024-11-05');
-        const protocolVersion = requestedVersion === '2025-03-26' ? '2025-03-26' : '2024-11-05';
-        return {
-          jsonrpc: '2.0',
-          id: id ?? null,
-          result: {
-            protocolVersion,
-            capabilities: {
-              tools: { listChanged: false },
-              resources: { subscribe: false, listChanged: false },
-            },
-            serverInfo: {
-              name: 'soil-research-mcp',
-              version: '1.0.0',
-            },
-          },
-        };
-      }
-
+      case 'initialize':
+        return buildMcpInitializeResult(id, params);
       case 'ping':
         return { jsonrpc: '2.0', id: id ?? null, result: {} };
-
       case 'tools/list':
         return { jsonrpc: '2.0', id: id ?? null, result: { tools: MCP_TOOLS } };
-
       case 'tools/call':
         return await executeMcpToolCall(db, id, params);
-
       case 'resources/list':
         return { jsonrpc: '2.0', id: id ?? null, result: { resources: MCP_RESOURCES } };
-
       case 'resources/read':
         return await executeMcpResourceRead(db, id, params);
-
       default:
-        if (isNotification) return null;
-        return {
-          jsonrpc: '2.0',
-          id: id ?? null,
-          error: { code: -32601, message: `Method not found: ${method}` },
-        };
+        return id === undefined
+          ? null
+          : {
+              jsonrpc: '2.0',
+              id: id ?? null,
+              error: { code: -32601, message: `Method not found: ${method}` },
+            };
     }
   } catch (err: any) {
     return {
@@ -985,6 +987,81 @@ function extractClientIp(req: any): string {
   return String(req?.ip || req?.socket?.remoteAddress || 'unknown');
 }
 
+function parseResearchFilterQuery(query: any): {
+  difficulty?: 'easy' | 'normal' | 'hard';
+  sourceType?: 'local' | 'cloud';
+  organicOnly: boolean;
+} {
+  const rawDiff = String(query.difficulty || '');
+  const difficulty =
+    rawDiff === 'easy' || rawDiff === 'normal' || rawDiff === 'hard'
+      ? (rawDiff as 'easy' | 'normal' | 'hard')
+      : undefined;
+  const rawSource = String(query.sourceType || '');
+  const sourceType = rawSource === 'local' || rawSource === 'cloud' ? (rawSource as 'local' | 'cloud') : undefined;
+  const organicOnly = query.organicOnly === 'true' || query.organicOnly === '1' || query.organicOnly === true;
+  return { difficulty, sourceType, organicOnly };
+}
+
+function applyRateLimitHeaders(res: any, key: string): boolean {
+  const rate = checkPublicRateLimit(key, 60, 60_000);
+  if (typeof res.setHeader === 'function') {
+    res.setHeader('X-RateLimit-Limit', '60');
+    res.setHeader('X-RateLimit-Remaining', String(rate.remaining));
+  }
+  return rate.allowed;
+}
+
+async function executeResearchGetQuery(db: admin.firestore.Firestore, req: any, res: any): Promise<void> {
+  const query = req.query || {};
+  const pathStr = String(req.path || req.url || '');
+  const pathGameMatch = /\/games\/([^/?#]+)/.exec(pathStr);
+  const gameId = String(query.gameId || pathGameMatch?.[1] || '').trim();
+
+  if (gameId) {
+    const includeRounds = query.includeRounds !== 'false' && query.includeRounds !== '0';
+    const data = await getPublicResearchGameWithRounds(db, gameId, includeRounds);
+    if (!data) {
+      res.status(404).json({ error: `Research game not found: ${gameId}` });
+      return;
+    }
+    res.status(200).json(data);
+    return;
+  }
+
+  const { difficulty, sourceType, organicOnly } = parseResearchFilterQuery(query);
+  const isCsv = String(query.format || '').toLowerCase() === 'csv' || pathStr.endsWith('.csv');
+  if (isCsv) {
+    const dataset = await buildPublicResearchDataset(db, {
+      page: 1,
+      pageSize: 100,
+      maxSampleSize: 200,
+      difficulty,
+      sourceType,
+      organicOnly,
+    });
+    const csv = formatResearchGamesAsCsv(dataset.games);
+    if (typeof res.setHeader === 'function') {
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="soil-research-data.csv"');
+    }
+    res.status(200).send(csv);
+    return;
+  }
+
+  const page = Math.max(1, Number(query.page || 1));
+  const pageSize = Math.min(100, Math.max(1, Number(query.pageSize || query.limit || 20)));
+  const dataset = await buildPublicResearchDataset(db, {
+    page,
+    pageSize,
+    difficulty,
+    sourceType,
+    organicOnly,
+  });
+
+  res.status(200).json(dataset);
+}
+
 export async function handleResearchApiHttpRequest(db: admin.firestore.Firestore, req: any, res: any): Promise<void> {
   if (req.method === 'OPTIONS') {
     res.status(204).send('');
@@ -996,13 +1073,7 @@ export async function handleResearchApiHttpRequest(db: admin.firestore.Firestore
     return;
   }
 
-  const ip = extractClientIp(req);
-  const rate = checkPublicRateLimit(`api:${ip}`, 60, 60_000);
-  if (typeof res.setHeader === 'function') {
-    res.setHeader('X-RateLimit-Limit', '60');
-    res.setHeader('X-RateLimit-Remaining', String(rate.remaining));
-  }
-  if (!rate.allowed) {
+  if (!applyRateLimitHeaders(res, `api:${extractClientIp(req)}`)) {
     res.status(429).json({ error: 'Too Many Requests. Rate limit is 60 requests per minute.' });
     return;
   }
@@ -1012,61 +1083,7 @@ export async function handleResearchApiHttpRequest(db: admin.firestore.Firestore
   }
 
   try {
-    const query = req.query || {};
-    const pathStr = String(req.path || req.url || '');
-    const pathGameMatch = /\/games\/([^/?#]+)/.exec(pathStr);
-    const gameId = String(query.gameId || pathGameMatch?.[1] || '').trim();
-
-    if (gameId) {
-      const includeRounds = query.includeRounds !== 'false' && query.includeRounds !== '0';
-      const data = await getPublicResearchGameWithRounds(db, gameId, includeRounds);
-      if (!data) {
-        res.status(404).json({ error: `Research game not found: ${gameId}` });
-        return;
-      }
-      res.status(200).json(data);
-      return;
-    }
-
-    const rawDiff = String(query.difficulty || '');
-    const difficulty =
-      rawDiff === 'easy' || rawDiff === 'normal' || rawDiff === 'hard'
-        ? (rawDiff as 'easy' | 'normal' | 'hard')
-        : undefined;
-    const rawSource = String(query.sourceType || '');
-    const sourceType = rawSource === 'local' || rawSource === 'cloud' ? (rawSource as 'local' | 'cloud') : undefined;
-    const organicOnly = query.organicOnly === 'true' || query.organicOnly === '1' || query.organicOnly === true;
-
-    const isCsv = String(query.format || '').toLowerCase() === 'csv' || pathStr.endsWith('.csv');
-    if (isCsv) {
-      const dataset = await buildPublicResearchDataset(db, {
-        page: 1,
-        pageSize: 100,
-        maxSampleSize: 200,
-        difficulty,
-        sourceType,
-        organicOnly,
-      });
-      const csv = formatResearchGamesAsCsv(dataset.games);
-      if (typeof res.setHeader === 'function') {
-        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', 'attachment; filename="soil-research-data.csv"');
-      }
-      res.status(200).send(csv);
-      return;
-    }
-
-    const page = Math.max(1, Number(query.page || 1));
-    const pageSize = Math.min(100, Math.max(1, Number(query.pageSize || query.limit || 20)));
-    const dataset = await buildPublicResearchDataset(db, {
-      page,
-      pageSize,
-      difficulty,
-      sourceType,
-      organicOnly,
-    });
-
-    res.status(200).json(dataset);
+    await executeResearchGetQuery(db, req, res);
   } catch (err: any) {
     res.status(500).json({ error: err?.message || 'Internal Server Error' });
   }

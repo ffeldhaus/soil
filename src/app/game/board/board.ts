@@ -340,130 +340,7 @@ export class Board implements OnInit, OnDestroy {
 
     this.routeSub = combineLatest([this.route.queryParams, this.user$]).subscribe(
       async ([params, user]: [Params, User | null]) => {
-        const viewOnly = params.viewOnly === 'true';
-        const rawGameId = String(params.gameId || '');
-        const isResearchGame = rawGameId.startsWith('research');
-        const isTestMode =
-          typeof window !== 'undefined' &&
-          typeof window.localStorage !== 'undefined' &&
-          window.localStorage.getItem('soil_test_mode') === 'true';
-        const allowPublicReadOnly = viewOnly && (isResearchGame || isTestMode);
-        this.isResearchReplay = isResearchGame;
-
-        if (!user && !allowPublicReadOnly) {
-          this.router.navigate(['/']);
-          return;
-        }
-
-        let claims: Record<string, unknown> = {};
-        if (user) {
-          const idTokenResult = await user.getIdTokenResult();
-          claims = idTokenResult.claims;
-        }
-
-        // Extract Game ID
-        let activeGameId = params.gameId || (claims.gameId as string);
-        if (!activeGameId && user) {
-          if (user.uid.startsWith('player-')) {
-            const parts = user.uid.split('-');
-            if (parts.length >= 3) {
-              activeGameId = parts[1];
-            }
-          } else if (claims.gameId) {
-            activeGameId = claims.gameId as string;
-          }
-        }
-
-        const targetUid = params.playerUid as string;
-
-        if (activeGameId) {
-          this.gameId = activeGameId;
-          if (allowPublicReadOnly) {
-            this.isReadOnly = true;
-            this.showReadOnlyBanner = true;
-            this.isPlayer = false;
-          }
-          const gameState = await this.gameService.loadGame(activeGameId, targetUid);
-          if (gameState) {
-            // Cleanup old subscriptions if this is a re-load on same component
-            if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
-            if (this.parcelsSub) this.parcelsSub.unsubscribe();
-
-            this.gameStatusSub = this.gameService.state$.subscribe((state) => {
-              if (state?.game) {
-                this.maxRoundNumber = state.game.currentRoundNumber;
-                this.totalRounds = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
-                // Only move viewingRound to max if it was previously at the old max
-                const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
-
-                this.playerLabel = state.game.settings?.playerLabel || 'Player';
-                this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
-                this.history = state.playerState?.history || [];
-                this.syncCollectedStickers(state.playerState?.unlockedStickers);
-
-                if (wasAtMax || this.viewingRound === 0) {
-                  this.viewingRound = this.maxRoundNumber;
-                }
-
-                this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
-
-                if (viewOnly) {
-                  this.isReadOnly = true;
-                  this.showReadOnlyBanner = true;
-                } else {
-                  this.updateReadOnly();
-                }
-
-                this.updateParcelsForViewingRound(targetUid);
-
-                // Timer Logic
-                this.updateTimer(state.game);
-
-                // Detect Game Finished
-                if (state.game.status === 'finished' && !this.showGameEndModal) {
-                  this.calculateWinners(state.game);
-                  this.showGameEndModal = true;
-                }
-
-                // Show compact Welcome Dialog on first visit instead of auto-starting full walkthrough
-                if (
-                  !this.isReadOnly &&
-                  !this.tourStarted &&
-                  typeof window !== 'undefined' &&
-                  !this.tourService.isTourSeen() &&
-                  !this.tourService.isTourDisabled() &&
-                  localStorage.getItem(`soil_welcome_seen_${this.gameId}`) !== 'true'
-                ) {
-                  this.tourStarted = true;
-                  this.showWelcomeModal = true;
-                }
-              }
-            });
-
-            this.parcelsSub = this.gameService.getParcels().subscribe((parcels) => {
-              if (this.viewingRound === this.maxRoundNumber) {
-                this.parcels = parcels;
-                this.checkOrientation();
-              }
-            });
-          }
-        }
-
-        if (allowPublicReadOnly) {
-          this.isPlayer = false;
-        } else if (user && (claims.role === 'player' || user.uid.startsWith('player-'))) {
-          Promise.resolve().then(() => {
-            this.isPlayer = true;
-          });
-        } else if (
-          user &&
-          (claims.role === 'superadmin' || claims.role === 'admin' || user.email === 'florian.feldhaus@gmail.com')
-        ) {
-          // Admin/Super-Admin can view games
-          this.isPlayer = false;
-        } else {
-          this.router.navigate(['/admin']);
-        }
+        await this.handleRouteAndUserChange(params, user);
       },
     );
 
@@ -481,6 +358,141 @@ export class Board implements OnInit, OnDestroy {
     if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
     if (this.parcelsSub) this.parcelsSub.unsubscribe();
     if (this.tourSub) this.tourSub.unsubscribe();
+  }
+
+  private isBrowserTestMode(): boolean {
+    return (
+      typeof window !== 'undefined' &&
+      typeof window.localStorage !== 'undefined' &&
+      window.localStorage.getItem('soil_test_mode') === 'true'
+    );
+  }
+
+  private resolveActiveGameId(params: Params, user: User | null, claims: Record<string, unknown>): string | undefined {
+    const directId = params.gameId || (claims.gameId as string | undefined);
+    if (directId || !user) return directId;
+    if (user.uid.startsWith('player-')) {
+      const parts = user.uid.split('-');
+      return parts.length >= 3 ? parts[1] : undefined;
+    }
+    return claims.gameId as string | undefined;
+  }
+
+  private shouldShowFirstVisitWelcome(): boolean {
+    if (this.isReadOnly || this.tourStarted || typeof window === 'undefined') return false;
+    if (this.tourService.isTourSeen() || this.tourService.isTourDisabled()) return false;
+    return localStorage.getItem(`soil_welcome_seen_${this.gameId}`) !== 'true';
+  }
+
+  private applyGameStateUpdate(
+    state: NonNullable<typeof this.gameService.state>,
+    viewOnly: boolean,
+    targetUid: string,
+  ): void {
+    const game = state.game;
+    if (!game) return;
+
+    this.maxRoundNumber = game.currentRoundNumber;
+    this.totalRounds = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+    const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
+
+    this.playerLabel = game.settings?.playerLabel || 'Player';
+    this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
+    this.history = state.playerState?.history || [];
+    this.syncCollectedStickers(state.playerState?.unlockedStickers);
+
+    if (wasAtMax || this.viewingRound === 0) {
+      this.viewingRound = this.maxRoundNumber;
+    }
+    this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
+
+    if (viewOnly) {
+      this.isReadOnly = true;
+      this.showReadOnlyBanner = true;
+    } else {
+      this.updateReadOnly();
+    }
+
+    this.updateParcelsForViewingRound(targetUid);
+    this.updateTimer(game);
+
+    if (game.status === 'finished' && !this.showGameEndModal) {
+      this.calculateWinners(game);
+      this.showGameEndModal = true;
+    }
+
+    if (this.shouldShowFirstVisitWelcome()) {
+      this.tourStarted = true;
+      this.showWelcomeModal = true;
+    }
+  }
+
+  private subscribeToLoadedGame(viewOnly: boolean, targetUid: string): void {
+    if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
+    if (this.parcelsSub) this.parcelsSub.unsubscribe();
+
+    this.gameStatusSub = this.gameService.state$.subscribe((state) => {
+      if (state) this.applyGameStateUpdate(state, viewOnly, targetUid);
+    });
+
+    this.parcelsSub = this.gameService.getParcels().subscribe((parcels) => {
+      if (this.viewingRound === this.maxRoundNumber) {
+        this.parcels = parcels;
+        this.checkOrientation();
+      }
+    });
+  }
+
+  private applyUserRoleState(user: User | null, claims: Record<string, unknown>, allowPublicReadOnly: boolean): void {
+    if (allowPublicReadOnly) {
+      this.isPlayer = false;
+      return;
+    }
+    if (user && (claims.role === 'player' || user.uid.startsWith('player-'))) {
+      Promise.resolve().then(() => {
+        this.isPlayer = true;
+      });
+      return;
+    }
+    const isAdminUser =
+      user && (claims.role === 'superadmin' || claims.role === 'admin' || user.email === 'florian.feldhaus@gmail.com');
+    if (isAdminUser) {
+      this.isPlayer = false;
+    } else {
+      this.router.navigate(['/admin']);
+    }
+  }
+
+  private async handleRouteAndUserChange(params: Params, user: User | null): Promise<void> {
+    const viewOnly = params.viewOnly === 'true';
+    const rawGameId = String(params.gameId || '');
+    const isResearchGame = rawGameId.startsWith('research');
+    const allowPublicReadOnly = viewOnly && (isResearchGame || this.isBrowserTestMode());
+    this.isResearchReplay = isResearchGame;
+
+    if (!user && !allowPublicReadOnly) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    const claims = user ? (await user.getIdTokenResult()).claims : {};
+    const activeGameId = this.resolveActiveGameId(params, user, claims);
+    const targetUid = params.playerUid as string;
+
+    if (activeGameId) {
+      this.gameId = activeGameId;
+      if (allowPublicReadOnly) {
+        this.isReadOnly = true;
+        this.showReadOnlyBanner = true;
+        this.isPlayer = false;
+      }
+      const gameState = await this.gameService.loadGame(activeGameId, targetUid);
+      if (gameState) {
+        this.subscribeToLoadedGame(viewOnly, targetUid);
+      }
+    }
+
+    this.applyUserRoleState(user, claims, allowPublicReadOnly);
   }
 
   private updateTimer(game: Game) {
@@ -1142,6 +1154,22 @@ export class Board implements OnInit, OnDestroy {
     return 'Klima-Trend';
   }
 
+  private extractRoundSnapshot(round: Round | undefined, uid: string): ParcelType[] | undefined {
+    if (!round) return undefined;
+    if (round.parcelsSnapshot?.length) return round.parcelsSnapshot;
+    const resultsSnapshot = (round as unknown as { results?: Record<string, { parcelsSnapshot?: ParcelType[] }> })
+      .results?.[uid]?.parcelsSnapshot;
+    return resultsSnapshot?.length ? resultsSnapshot : undefined;
+  }
+
+  private resolveCurrentBaselineParcels(uid: string): ParcelType[] | undefined {
+    const lastHist = this.history.length > 0 ? this.history[this.history.length - 1] : undefined;
+    const fromHist = this.extractRoundSnapshot(lastHist, uid);
+    if (fromHist) return fromHist;
+    const lastRoundSnapshot = this.gameService.state?.lastRound?.parcelsSnapshot;
+    return lastRoundSnapshot?.length ? lastRoundSnapshot : undefined;
+  }
+
   getPreviousCropForParcel(index: number): CropType | undefined {
     const uid = this.gameService.state?.playerState?.uid || '';
     const isPlanningCurrentRound =
@@ -1150,44 +1178,18 @@ export class Board implements OnInit, OnDestroy {
       (this.gameService.hasPendingParcelDecisions() || this.maxRoundNumber === 0);
 
     if (isPlanningCurrentRound) {
-      const lastHist = this.history.length > 0 ? this.history[this.history.length - 1] : undefined;
-      const histResultsSnapshot = (
-        lastHist as unknown as { results?: Record<string, { parcelsSnapshot?: ParcelType[] }> }
-      )?.results?.[uid]?.parcelsSnapshot;
-      const baseline =
-        (lastHist?.parcelsSnapshot?.length ? lastHist.parcelsSnapshot : undefined) ||
-        (histResultsSnapshot?.length ? histResultsSnapshot : undefined) ||
-        (this.gameService.state?.lastRound?.parcelsSnapshot?.length
-          ? this.gameService.state.lastRound.parcelsSnapshot
-          : undefined);
-      return baseline?.[index]?.crop;
+      return this.resolveCurrentBaselineParcels(uid)?.[index]?.crop;
     }
 
     if (this.viewingRound <= 0) return undefined;
     const prevRound = this.getPreviousRound(this.viewingRound);
-    const prevResultsSnapshot = (
-      prevRound as unknown as { results?: Record<string, { parcelsSnapshot?: ParcelType[] }> }
-    )?.results?.[uid]?.parcelsSnapshot;
-    const prevParcels =
-      (prevRound?.parcelsSnapshot?.length ? prevRound.parcelsSnapshot : undefined) ||
-      (prevResultsSnapshot?.length ? prevResultsSnapshot : undefined);
-    return prevParcels?.[index]?.crop;
+    return this.extractRoundSnapshot(prevRound, uid)?.[index]?.crop;
   }
 
   getSelectedBaselineParcels(): ParcelType[] {
     if (this.selectedIndices.size === 0) return [];
     const uid = this.gameService.state?.playerState?.uid || '';
-    const lastHist = this.history.length > 0 ? this.history[this.history.length - 1] : undefined;
-    const histResultsSnapshot = (
-      lastHist as unknown as { results?: Record<string, { parcelsSnapshot?: ParcelType[] }> }
-    )?.results?.[uid]?.parcelsSnapshot;
-    const baseline =
-      (lastHist?.parcelsSnapshot?.length ? lastHist.parcelsSnapshot : undefined) ||
-      (histResultsSnapshot?.length ? histResultsSnapshot : undefined) ||
-      (this.gameService.state?.lastRound?.parcelsSnapshot?.length
-        ? this.gameService.state.lastRound.parcelsSnapshot
-        : undefined) ||
-      this.parcels;
+    const baseline = this.resolveCurrentBaselineParcels(uid) || this.parcels;
 
     const selected: ParcelType[] = [];
     this.selectedIndices.forEach((idx) => {

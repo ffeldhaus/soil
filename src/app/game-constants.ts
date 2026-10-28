@@ -120,6 +120,19 @@ export const GAME_CONSTANTS = {
     'oat-rust': { name: 'Haferkronenrost' },
     'swine-fever': { name: 'Afrikanische Schweinepest' }, // Affects Animals (Pigs)
   } as Record<string, { name: string }>,
+  PEST_INTENSITY: {
+    // Ecological pest outbreak scaling based on crop diversity vs. monoculture concentration:
+    // https://doi.org/10.1126/sciadv.aax0121 (Dainese et al., 2019, Science Advances)
+    BASE_PENALTY: 0.6,
+    ORGANIC_MULTIPLIER: 1.2,
+    PESTICIDE_YIELD_FACTOR: 0.95,
+    ORGANISMS_YIELD_FACTOR: 0.9,
+    ORGANISMS_DIVERSITY_BONUS: 0.03,
+    DIVERSITY_THRESHOLD_SHARE: 0.2,
+    MONOCULTURE_THRESHOLD_SHARE: 0.5,
+    DIVERSE_INTENSITY_MULTIPLIER: 0.65,
+    MONOCULTURE_INTENSITY_MULTIPLIER: 1.0,
+  },
   CROPS: {
     // Yields & Prices based on 2024/2025 Data:
     // https://www.bmel-statistik.de/landwirtschaft/ernte-und-qualitaet/getreideernte/ergebnisse
