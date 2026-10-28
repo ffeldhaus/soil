@@ -130,7 +130,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
                     </section>
                   </div>
 
-                  <div class="pt-1">
+                  <div class="pt-1 flex flex-wrap items-center gap-3">
                     <a
                       href="https://eldorado.tu-dortmund.de/items/49a1bf1d-288a-464a-a818-373ef41d7fb1"
                       target="_blank"
@@ -152,6 +152,13 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
                           d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                         />
                       </svg>
+                    </a>
+                    <a
+                      routerLink="/research"
+                      data-testid="info-research-data-link"
+                      class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-emerald-400 hover:text-emerald-300 text-xs sm:text-sm font-bold rounded-lg border border-gray-700 transition-colors"
+                    >
+                      <span>Offene Forschungsdaten, API &amp; MCP-Server ansehen →</span>
                     </a>
                   </div>
                 </div>

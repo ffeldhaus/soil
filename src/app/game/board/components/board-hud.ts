@@ -32,6 +32,7 @@ export class BoardHudComponent {
   @Input() maxRoundNumber = 0;
 
   @Input() isReadOnly = false;
+  @Input() isResearchReplay = false;
   @Input() isSubmitted = false;
   @Input() viewingRound = 0;
   @Input() pendingNextRound = false;
@@ -144,12 +145,12 @@ export class BoardHudComponent {
   }
 
   getDisplayName(): string {
-    if (!this.user) return '';
-
-    // If we have a player state (either we are the player or an admin viewing the player)
+    // If we have a player state (either we are the player or an admin/researcher viewing the player)
     if (this.gameState?.playerState?.displayName) {
       return this.gameState.playerState.displayName;
     }
+
+    if (!this.user) return `${this.playerLabel} ${this.playerNumber || '1'}`.trim();
 
     // Fallback to user display name
     if (this.user.displayName && this.user.displayName !== 'Guest') {

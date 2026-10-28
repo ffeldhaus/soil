@@ -112,6 +112,7 @@ export class Board implements OnInit, OnDestroy {
 
   isReadOnly = false;
   showReadOnlyBanner = false;
+  isResearchReplay = false;
   isPlayer = false;
   viewingRound = 0;
   maxRoundNumber = 0;
@@ -308,6 +309,10 @@ export class Board implements OnInit, OnDestroy {
   }
 
   async logout() {
+    if (this.isResearchReplay) {
+      this.router.navigate(['/research']);
+      return;
+    }
     await this.authService.logout();
     this.router.navigate(['/']);
   }
@@ -335,112 +340,129 @@ export class Board implements OnInit, OnDestroy {
 
     this.routeSub = combineLatest([this.route.queryParams, this.user$]).subscribe(
       async ([params, user]: [Params, User | null]) => {
-        if (!user) {
+        const viewOnly = params.viewOnly === 'true';
+        const rawGameId = String(params.gameId || '');
+        const isResearchGame = rawGameId.startsWith('research');
+        const isTestMode =
+          typeof window !== 'undefined' &&
+          typeof window.localStorage !== 'undefined' &&
+          window.localStorage.getItem('soil_test_mode') === 'true';
+        const allowPublicReadOnly = viewOnly && (isResearchGame || isTestMode);
+        this.isResearchReplay = isResearchGame;
+
+        if (!user && !allowPublicReadOnly) {
           this.router.navigate(['/']);
           return;
         }
+
+        let claims: Record<string, unknown> = {};
         if (user) {
           const idTokenResult = await user.getIdTokenResult();
-          const claims = idTokenResult.claims;
+          claims = idTokenResult.claims;
+        }
 
-          // Extract Game ID
-          let activeGameId = params.gameId || (claims.gameId as string);
-          if (!activeGameId) {
-            if (user.uid.startsWith('player-')) {
-              const parts = user.uid.split('-');
-              if (parts.length >= 3) {
-                activeGameId = parts[1];
-              }
-            } else if (claims.gameId) {
-              activeGameId = claims.gameId as string;
+        // Extract Game ID
+        let activeGameId = params.gameId || (claims.gameId as string);
+        if (!activeGameId && user) {
+          if (user.uid.startsWith('player-')) {
+            const parts = user.uid.split('-');
+            if (parts.length >= 3) {
+              activeGameId = parts[1];
             }
+          } else if (claims.gameId) {
+            activeGameId = claims.gameId as string;
           }
+        }
 
-          const viewOnly = params.viewOnly === 'true';
-          const targetUid = params.playerUid as string;
+        const targetUid = params.playerUid as string;
 
-          if (activeGameId) {
-            this.gameId = activeGameId;
-            const gameState = await this.gameService.loadGame(activeGameId, targetUid);
-            if (gameState) {
-              // Cleanup old subscriptions if this is a re-load on same component
-              if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
-              if (this.parcelsSub) this.parcelsSub.unsubscribe();
-
-              this.gameStatusSub = this.gameService.state$.subscribe((state) => {
-                if (state?.game) {
-                  this.maxRoundNumber = state.game.currentRoundNumber;
-                  this.totalRounds = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
-                  // Only move viewingRound to max if it was previously at the old max
-                  const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
-
-                  this.playerLabel = state.game.settings?.playerLabel || 'Player';
-                  this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
-                  this.history = state.playerState?.history || [];
-                  this.syncCollectedStickers(state.playerState?.unlockedStickers);
-
-                  if (wasAtMax || this.viewingRound === 0) {
-                    this.viewingRound = this.maxRoundNumber;
-                  }
-
-                  this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
-
-                  if (viewOnly) {
-                    this.isReadOnly = true;
-                    this.showReadOnlyBanner = true;
-                  } else {
-                    this.updateReadOnly();
-                  }
-
-                  this.updateParcelsForViewingRound(targetUid);
-
-                  // Timer Logic
-                  this.updateTimer(state.game);
-
-                  // Detect Game Finished
-                  if (state.game.status === 'finished' && !this.showGameEndModal) {
-                    this.calculateWinners(state.game);
-                    this.showGameEndModal = true;
-                  }
-
-                  // Show compact Welcome Dialog on first visit instead of auto-starting full walkthrough
-                  if (
-                    !this.isReadOnly &&
-                    !this.tourStarted &&
-                    typeof window !== 'undefined' &&
-                    !this.tourService.isTourSeen() &&
-                    !this.tourService.isTourDisabled() &&
-                    localStorage.getItem(`soil_welcome_seen_${this.gameId}`) !== 'true'
-                  ) {
-                    this.tourStarted = true;
-                    this.showWelcomeModal = true;
-                  }
-                }
-              });
-
-              this.parcelsSub = this.gameService.getParcels().subscribe((parcels) => {
-                if (this.viewingRound === this.maxRoundNumber) {
-                  this.parcels = parcels;
-                  this.checkOrientation();
-                }
-              });
-            }
-          }
-
-          if (claims.role === 'player' || user.uid.startsWith('player-')) {
-            Promise.resolve().then(() => {
-              this.isPlayer = true;
-            });
-          } else if (
-            claims.role === 'superadmin' ||
-            claims.role === 'admin' ||
-            user.email === 'florian.feldhaus@gmail.com'
-          ) {
-            // Admin/Super-Admin can view games
+        if (activeGameId) {
+          this.gameId = activeGameId;
+          if (allowPublicReadOnly) {
+            this.isReadOnly = true;
+            this.showReadOnlyBanner = true;
             this.isPlayer = false;
-          } else {
-            this.router.navigate(['/admin']);
           }
+          const gameState = await this.gameService.loadGame(activeGameId, targetUid);
+          if (gameState) {
+            // Cleanup old subscriptions if this is a re-load on same component
+            if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
+            if (this.parcelsSub) this.parcelsSub.unsubscribe();
+
+            this.gameStatusSub = this.gameService.state$.subscribe((state) => {
+              if (state?.game) {
+                this.maxRoundNumber = state.game.currentRoundNumber;
+                this.totalRounds = state.game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+                // Only move viewingRound to max if it was previously at the old max
+                const wasAtMax = this.viewingRound === this.maxRoundNumber - 1 || this.maxRoundNumber === 0;
+
+                this.playerLabel = state.game.settings?.playerLabel || 'Player';
+                this.playerNumber = state.playerState?.playerNumber ? String(state.playerState.playerNumber) : null;
+                this.history = state.playerState?.history || [];
+                this.syncCollectedStickers(state.playerState?.unlockedStickers);
+
+                if (wasAtMax || this.viewingRound === 0) {
+                  this.viewingRound = this.maxRoundNumber;
+                }
+
+                this.isSubmitted = state.playerState?.submittedRound === this.maxRoundNumber;
+
+                if (viewOnly) {
+                  this.isReadOnly = true;
+                  this.showReadOnlyBanner = true;
+                } else {
+                  this.updateReadOnly();
+                }
+
+                this.updateParcelsForViewingRound(targetUid);
+
+                // Timer Logic
+                this.updateTimer(state.game);
+
+                // Detect Game Finished
+                if (state.game.status === 'finished' && !this.showGameEndModal) {
+                  this.calculateWinners(state.game);
+                  this.showGameEndModal = true;
+                }
+
+                // Show compact Welcome Dialog on first visit instead of auto-starting full walkthrough
+                if (
+                  !this.isReadOnly &&
+                  !this.tourStarted &&
+                  typeof window !== 'undefined' &&
+                  !this.tourService.isTourSeen() &&
+                  !this.tourService.isTourDisabled() &&
+                  localStorage.getItem(`soil_welcome_seen_${this.gameId}`) !== 'true'
+                ) {
+                  this.tourStarted = true;
+                  this.showWelcomeModal = true;
+                }
+              }
+            });
+
+            this.parcelsSub = this.gameService.getParcels().subscribe((parcels) => {
+              if (this.viewingRound === this.maxRoundNumber) {
+                this.parcels = parcels;
+                this.checkOrientation();
+              }
+            });
+          }
+        }
+
+        if (allowPublicReadOnly) {
+          this.isPlayer = false;
+        } else if (user && (claims.role === 'player' || user.uid.startsWith('player-'))) {
+          Promise.resolve().then(() => {
+            this.isPlayer = true;
+          });
+        } else if (
+          user &&
+          (claims.role === 'superadmin' || claims.role === 'admin' || user.email === 'florian.feldhaus@gmail.com')
+        ) {
+          // Admin/Super-Admin can view games
+          this.isPlayer = false;
+        } else {
+          this.router.navigate(['/admin']);
         }
       },
     );
@@ -496,13 +518,13 @@ export class Board implements OnInit, OnDestroy {
   }
 
   getDisplayName(user: User | null): string {
-    if (!user) return '';
-
-    // If we have a player state (either we are the player or an admin viewing the player)
+    // If we have a player state (either we are the player or an admin/researcher viewing the player)
     const state = this.gameService.state;
     if (state?.playerState?.displayName) {
       return state.playerState.displayName;
     }
+
+    if (!user) return `${this.playerLabel} ${this.playerNumber || '1'}`.trim();
 
     // If it's a real user (not anonymous) OR a guest who changed their name
     if (user.displayName && user.displayName !== 'Guest') {

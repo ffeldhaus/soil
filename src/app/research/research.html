@@ -1,0 +1,564 @@
+<div class="flex flex-col h-full text-white font-sans overflow-hidden">
+  <!-- Top Navigation Bar -->
+  <nav
+    class="bg-gray-900 border-b border-gray-800 shadow-md px-4 sm:px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
+  >
+    <div class="flex items-center gap-4">
+      <a
+        routerLink="/"
+        class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer"
+        title="Zur Startseite"
+      >
+        SOIL
+      </a>
+    </div>
+
+    <div class="flex items-center gap-4 text-xs font-mono">
+      <a routerLink="/manual" class="text-gray-300 hover:text-white transition-colors">Handbuch</a>
+      <a routerLink="/info" class="text-gray-300 hover:text-white transition-colors">Hintergrund</a>
+    </div>
+  </nav>
+
+  <div #scrollContainer class="flex-1 overflow-y-auto custom-scrollbar relative">
+    <!-- Background Image -->
+    <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none print:hidden">
+      <picture>
+        <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
+        <img
+          src="assets/images/bauernhof-landscape-dunkel.webp"
+          alt=""
+          fetchpriority="high"
+          class="w-full h-full object-cover portrait:object-center landscape:object-center"
+        />
+      </picture>
+    </div>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-14 pb-12 space-y-6">
+      <!-- Header & Filter/Export Controls -->
+      <header class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-4">
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div class="space-y-1.5 max-w-3xl">
+            <h1 data-testid="research-heading" class="text-2xl sm:text-4xl font-bold text-emerald-500 tracking-tight">
+              Offene Forschungsdaten
+            </h1>
+            <p class="text-xs sm:text-sm text-gray-200 leading-relaxed">
+              Alle abgeschlossenen SOIL-Spiele mit aktivierter Forschungsfreigabe werden hier vollständig anonymisiert
+              für Didaktik, Agrarökonomie und KI-Forschung bereitgestellt. Sämtliche Kontobezüge, Namen und
+              E-Mail-Adressen sind dauerhaft entfernt; Testläufe und reine Durchklick-Spiele werden automatisch
+              herausgefiltert.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              data-testid="export-csv-btn"
+              (click)="exportCsv()"
+              [disabled]="isLoading || researchGames.length === 0"
+              class="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-40 text-white text-xs font-mono font-bold rounded-lg border border-gray-700 transition-colors cursor-pointer"
+            >
+              CSV-Export
+            </button>
+            <button
+              type="button"
+              data-testid="export-json-btn"
+              (click)="exportJson()"
+              [disabled]="isLoading || researchGames.length === 0"
+              class="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-40 text-white text-xs font-mono font-bold rounded-lg border border-emerald-600 transition-colors cursor-pointer"
+            >
+              JSON-Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Strip -->
+        <div
+          class="pt-3 border-t border-gray-800 flex flex-wrap items-center justify-between gap-3 text-xs"
+          data-testid="research-filters"
+        >
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="flex items-center gap-2 text-gray-300">
+              <span class="font-semibold text-gray-400">Stufe:</span>
+              <select
+                data-testid="filter-difficulty"
+                [(ngModel)]="filterDifficulty"
+                (change)="onFilterChange()"
+                class="bg-gray-950 border border-gray-700 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              >
+                <option value="">Alle</option>
+                <option value="easy">Einsteiger</option>
+                <option value="normal">Standard</option>
+                <option value="hard">Profi</option>
+              </select>
+            </label>
+
+            <label class="flex items-center gap-2 text-gray-300">
+              <span class="font-semibold text-gray-400">Spieltyp:</span>
+              <select
+                data-testid="filter-source-type"
+                [(ngModel)]="filterSourceType"
+                (change)="onFilterChange()"
+                class="bg-gray-950 border border-gray-700 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:outline-none focus:border-emerald-500"
+              >
+                <option value="">Alle</option>
+                <option value="local">Lokal</option>
+                <option value="cloud">Cloud</option>
+              </select>
+            </label>
+
+            <label class="inline-flex items-center gap-2 text-gray-200 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                data-testid="filter-organic-only"
+                [(ngModel)]="filterOrganicOnly"
+                (change)="onFilterChange()"
+                class="rounded bg-gray-950 border-gray-700 text-emerald-600 focus:ring-emerald-500"
+              />
+              <span>Nur Bio-Betriebe (≥ 50 % Bio-Runden)</span>
+            </label>
+          </div>
+
+          <div class="flex items-center gap-3 text-gray-400 font-mono">
+            <a
+              routerLink="."
+              fragment="api-mcp"
+              (click)="scrollToFragment('api-mcp')"
+              class="text-emerald-400 hover:text-emerald-300 hover:underline"
+            >
+              REST-API & MCP-Server →
+            </a>
+          </div>
+        </div>
+      </header>
+
+      @if (errorMessage) {
+        <div
+          data-testid="research-error"
+          class="p-4 bg-gray-900 border border-rose-500/60 rounded-xl text-rose-200 text-sm flex items-center justify-between"
+        >
+          <span>{{ errorMessage }}</span>
+          <button
+            type="button"
+            (click)="loadDataset()"
+            class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white text-xs font-mono rounded border border-gray-700"
+          >
+            Erneut versuchen
+          </button>
+        </div>
+      }
+
+      <!-- 1. Kennzahlen-Übersicht (Summary Metrics) -->
+      @if (summary; as s) {
+        <section
+          id="summary"
+          data-testid="research-summary-strip"
+          class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
+        >
+          <div class="p-4 bg-gray-900 rounded-xl border border-gray-800">
+            <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Ausgewertete Spiele</div>
+            <div
+              data-testid="metric-total-games"
+              class="mt-1 text-2xl sm:text-3xl font-bold text-white font-mono tabular-nums"
+            >
+              {{ s.totalGames }}
+            </div>
+            <div class="mt-1 text-xs text-gray-400 font-mono tabular-nums">
+              {{ s.totalHumanPlayers }} Teams · {{ s.sourceBreakdown.local }} Lokal / {{ s.sourceBreakdown.cloud }} Cloud
+            </div>
+          </div>
+
+          <div class="p-4 bg-gray-900 rounded-xl border border-gray-800">
+            <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Gespielte Runden</div>
+            <div
+              data-testid="metric-total-rounds"
+              class="mt-1 text-2xl sm:text-3xl font-bold text-white font-mono tabular-nums"
+            >
+              {{ s.totalRoundsPlayed }}
+            </div>
+            <div class="mt-1 text-xs text-gray-400 font-mono tabular-nums">
+              Bio-Quote: {{ s.organicDecisionShare | number: '1.0-1' }} %
+            </div>
+          </div>
+
+          <div class="p-4 bg-gray-900 rounded-xl border border-gray-800">
+            <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Ø Endkapital</div>
+            <div
+              data-testid="metric-avg-capital"
+              class="mt-1 text-2xl sm:text-3xl font-bold text-amber-400 font-mono tabular-nums"
+            >
+              {{ s.avgFinalCapital | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            </div>
+            <div class="mt-1 text-xs text-gray-400 font-mono tabular-nums">
+              Startkapital: 100.000 €
+            </div>
+          </div>
+
+          <div class="p-4 bg-gray-900 rounded-xl border border-gray-800">
+            <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">
+              Ø Bodenqualität & Zukunftsfähigkeit
+            </div>
+            <div
+              data-testid="metric-avg-soil"
+              class="mt-1 text-2xl sm:text-3xl font-bold text-emerald-400 font-mono tabular-nums"
+            >
+              {{ s.avgFinalSoil | number: '1.0-1' }} %
+            </div>
+            <div class="mt-1 text-xs text-gray-300 font-mono tabular-nums">
+              Ø Zukunftsfähigkeit: {{ s.avgSustainabilityScore | number: '1.0-1' }} Pkt
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Anbau- & Bewirtschaftungsverteilung -->
+        <section
+          id="distributions"
+          data-testid="research-distributions"
+          class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-6"
+        >
+          <div class="grid lg:grid-cols-2 gap-6">
+            <!-- Crop Shares -->
+            <div class="space-y-3">
+              <div class="flex items-baseline justify-between border-b border-gray-800 pb-2">
+                <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">
+                  Anbauverteilung (Parzellenanteil)
+                </h2>
+                <span class="text-xs text-gray-400 font-mono">Anteil in %</span>
+              </div>
+
+              <div class="space-y-2">
+                @for (row of cropShareRows; track row.key) {
+                  <div class="space-y-1">
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="text-gray-200 font-medium">{{ row.label }}</span>
+                      <span class="font-mono tabular-nums text-gray-300">{{ row.share | number: '1.1-1' }} %</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-950 rounded overflow-hidden border border-gray-800">
+                      <div
+                        class="h-full bg-emerald-600"
+                        [style.width.%]="row.share > 100 ? 100 : row.share * 2.5"
+                      ></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Input Decision Shares & Empirical Strategy Clusters -->
+            <div class="space-y-5">
+              <div class="space-y-3">
+                <div class="flex items-baseline justify-between border-b border-gray-800 pb-2">
+                  <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">
+                    Bewirtschaftungsentscheidungen
+                  </h2>
+                  <span class="text-xs text-gray-400 font-mono">Rundenanteil</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 font-mono tabular-nums">
+                  <div class="p-3 bg-gray-950 rounded-lg border border-gray-800">
+                    <div class="text-xs text-gray-400 font-sans">Bio-Landbau</div>
+                    <div class="text-lg font-bold text-emerald-400 mt-0.5">
+                      {{ s.organicDecisionShare | number: '1.0-1' }} %
+                    </div>
+                  </div>
+                  <div class="p-3 bg-gray-950 rounded-lg border border-gray-800">
+                    <div class="text-xs text-gray-400 font-sans">Nützlinge (Biolog. Schutz)</div>
+                    <div class="text-lg font-bold text-emerald-400 mt-0.5">
+                      {{ s.organismsDecisionShare | number: '1.0-1' }} %
+                    </div>
+                  </div>
+                  <div class="p-3 bg-gray-950 rounded-lg border border-gray-800">
+                    <div class="text-xs text-gray-400 font-sans">Synthetischer Dünger</div>
+                    <div class="text-lg font-bold text-sky-300 mt-0.5">
+                      {{ s.fertilizerDecisionShare | number: '1.0-1' }} %
+                    </div>
+                  </div>
+                  <div class="p-3 bg-gray-950 rounded-lg border border-gray-800">
+                    <div class="text-xs text-gray-400 font-sans">Chemische Pestizide</div>
+                    <div class="text-lg font-bold text-amber-300 mt-0.5">
+                      {{ s.pesticideDecisionShare | number: '1.0-1' }} %
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              @if (latestInsight && latestInsight.strategies && latestInsight.strategies.length > 0) {
+                <div class="space-y-2.5 pt-2 border-t border-gray-800" data-testid="research-strategy-clusters">
+                  <div class="flex items-baseline justify-between">
+                    <h3 class="text-sm sm:text-base font-bold text-emerald-400 tracking-tight">
+                      Empirische Strategie-Cluster
+                    </h3>
+                    @if (latestInsight.gameCount) {
+                      <span class="text-xs font-mono text-gray-400">Basis: {{ latestInsight.gameCount }} Spiele</span>
+                    }
+                  </div>
+                  <div class="space-y-2.5">
+                    @for (strat of latestInsight.strategies; track strat.name) {
+                      <div class="p-3.5 bg-gray-950 rounded-lg border border-gray-800 space-y-1.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                          <span class="text-xs sm:text-sm font-bold text-white">{{ strat.name }}</span>
+                          @if (strat.typicalMetrics) {
+                            <span class="text-xs font-mono tabular-nums text-emerald-400">
+                              @if (strat.typicalMetrics.capital) {
+                                Ø {{ strat.typicalMetrics.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                              }
+                              @if (strat.typicalMetrics.soil) {
+                                · {{ strat.typicalMetrics.soil | number: '1.0-1' }} % Boden
+                              }
+                            </span>
+                          }
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed">{{ strat.description }}</p>
+                        @if (strat.keyDecisions) {
+                          <div class="text-[11px] font-mono text-gray-400">
+                            Merkmale: {{ strat.keyDecisions }}
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      <!-- 3. Anonymisierte Spielverläufe (Expandable Trajectory Table) -->
+      <section
+        id="trajectories"
+        data-testid="research-games-section"
+        class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-4"
+      >
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-gray-800 pb-3">
+          <div>
+            <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight">
+              Anonymisierte Spielverläufe ({{ totalGames }})
+            </h2>
+            <p class="text-xs text-gray-400">
+              Wähle ein Spiel aus, um die Rundendaten der Teams einzusehen oder den Spielverlauf direkt im interaktiven
+              Spielbrett (Nur-Lese-Modus) zu öffnen.
+            </p>
+          </div>
+        </div>
+
+        @if (isLoading) {
+          <div class="py-8 text-center text-sm text-gray-400 font-mono">Lade anonymisierte Forschungsdaten...</div>
+        } @else if (researchGames.length === 0) {
+          <div
+            data-testid="research-empty-state"
+            class="py-8 text-center text-sm text-gray-400 bg-gray-950 rounded-lg border border-gray-800 space-y-2"
+          >
+            <p>Keine anonymisierten Spiele für die gewählten Filterkriterien gefunden.</p>
+            <button
+              type="button"
+              (click)="resetFilters()"
+              class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs font-mono text-emerald-400 rounded border border-gray-700 cursor-pointer"
+            >
+              Filter zurücksetzen
+            </button>
+          </div>
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm" data-testid="research-games-table">
+              <thead>
+                <tr class="border-b border-gray-800 text-gray-400 font-mono text-xs uppercase">
+                  <th class="py-2.5 px-3">Spiel-ID</th>
+                  <th class="py-2.5 px-3">Modus</th>
+                  <th class="py-2.5 px-3">Stufe</th>
+                  <th class="py-2.5 px-3 text-right">Runden</th>
+                  <th class="py-2.5 px-3 text-right">Teams</th>
+                  <th class="py-2.5 px-3 text-right">Ø Boden</th>
+                  <th class="py-2.5 px-3 text-right">Ø Kapital</th>
+                  <th class="py-2.5 px-3 text-right">Details</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800 font-mono tabular-nums">
+                @for (game of researchGames; track game.id) {
+                  <tr
+                    class="hover:bg-gray-800/60 transition-colors cursor-pointer"
+                    [attr.data-testid]="'research-game-row-' + game.id"
+                    (click)="toggleGameExpansion(game.id)"
+                  >
+                    <td class="py-3 px-3 font-bold text-emerald-400">{{ game.id }}</td>
+                    <td class="py-3 px-3 font-sans text-gray-200">{{ getSourceLabel(game) }}</td>
+                    <td class="py-3 px-3 font-sans text-gray-200">{{ getDifficultyLabel(game.settings.difficulty) }}</td>
+                    <td class="py-3 px-3 text-right text-gray-200">{{ game.currentRoundNumber }}</td>
+                    <td class="py-3 px-3 text-right text-gray-200">{{ getAllPlayers(game).length }}</td>
+                    <td class="py-3 px-3 text-right text-emerald-400">
+                      {{ getGameAvgSoil(game) | number: '1.0-1' }} %
+                    </td>
+                    <td class="py-3 px-3 text-right text-amber-400">
+                      {{ getGameAvgCapital(game) | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                    </td>
+                    <td class="py-3 px-3 text-right">
+                      <button
+                        type="button"
+                        class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded border border-gray-700 text-xs font-sans"
+                      >
+                        {{ isGameExpanded(game.id) ? 'Einklappen' : 'Teams & Verlauf' }}
+                      </button>
+                    </td>
+                  </tr>
+
+                  @if (isGameExpanded(game.id)) {
+                    <tr class="bg-gray-950">
+                      <td colspan="8" class="p-3 sm:p-4">
+                        <div class="space-y-3">
+                          @for (player of getAllPlayers(game); track player.uid) {
+                            <div
+                              class="p-3 bg-gray-900 rounded-lg border border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                            >
+                              <div class="space-y-1 font-sans">
+                                <div class="flex flex-wrap items-center gap-2">
+                                  <span class="font-bold text-white text-sm">{{ player.displayName }}</span>
+                                  <span class="text-xs font-mono text-gray-400">
+                                    ({{ player.isAi ? 'KI-Hof' : 'Menschliches Team' }})
+                                  </span>
+                                  <span class="text-xs font-mono text-emerald-400">
+                                    Zukunftsfähigkeit: {{ getPlayerSustainabilityScore(player) | number: '1.0-1' }} Pkt
+                                  </span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-4 text-xs font-mono tabular-nums text-gray-300">
+                                  <span>
+                                    Endkapital:
+                                    <strong class="text-amber-400">{{
+                                      player.capital | currency: 'EUR' : 'symbol' : '1.0-0'
+                                    }}</strong>
+                                  </span>
+                                  <span>
+                                    Ø Boden:
+                                    <strong class="text-emerald-400">{{ player.avgSoil | number: '1.0-1' }} %</strong>
+                                  </span>
+                                  <span>
+                                    Ø Nährstoffe:
+                                    <strong class="text-sky-300">{{ player.avgNutrition | number: '1.0-1' }} %</strong>
+                                  </span>
+                                  <span>Bio-Runden: {{ getPlayerOrganicShare(player) }} %</span>
+                                </div>
+                              </div>
+
+                              <div class="shrink-0">
+                                <button
+                                  type="button"
+                                  data-testid="inspect-research-game-btn"
+                                  (click)="inspectGame(game.id, player.uid); $event.stopPropagation()"
+                                  class="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-sans font-bold rounded-lg border border-emerald-500 transition-colors cursor-pointer"
+                                >
+                                  Im Spielbrett ansehen →
+                                </button>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+
+      <!-- 4. Offene Schnittstellen: Read-Only REST-API & MCP-Server -->
+      <section
+        id="api-mcp"
+        data-testid="research-api-mcp-section"
+        class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-6 scroll-mt-16"
+      >
+        <div class="border-b border-gray-800 pb-3 space-y-1">
+          <h2 class="text-lg sm:text-2xl font-bold text-emerald-400 tracking-tight">
+            Offene Schnittstellen: Read-Only REST-API & MCP-Server
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-300">
+            Für eigene Forschungsarbeiten, Statistik-Pipelines (R, Python, Pandas) und KI-Agenten stehen zwei
+            öffentliche, schreibgeschützte Schnittstellen in der EU-Region (<code class="font-mono text-gray-200"
+              >europe-west4</code
+            >) ohne Authentifizierung bereit (Rate-Limit: 60 Anfragen/Minute).
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6">
+          <!-- REST API -->
+          <div class="p-4 bg-gray-950 rounded-lg border border-gray-800 space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="text-sm sm:text-base font-bold text-white">1. Öffentliche Read-Only REST-API (GET)</h3>
+                <button
+                  type="button"
+                  data-testid="copy-api-url-btn"
+                  (click)="copySnippet('api', apiEndpoint)"
+                  class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-mono rounded border border-gray-700 cursor-pointer"
+                >
+                  {{ copiedKey === 'api' ? 'Kopiert' : 'URL kopieren' }}
+                </button>
+              </div>
+
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Liefert aggregierte Kennzahlen, anonymisierte Spielelisten, Einzeltrajektorien oder einen flachen
+                CSV-Datensatz (1 Zeile pro Team und Runde).
+              </p>
+
+              <div class="space-y-2 text-xs font-mono">
+                <div class="p-2.5 bg-gray-900 rounded border border-gray-800 text-emerald-400 break-all">
+                  GET {{ apiEndpoint }}
+                </div>
+                <div class="p-2.5 bg-gray-900 rounded border border-gray-800 text-gray-300 space-y-1">
+                  <div class="text-gray-400"># CSV-Datensatz für R / Python / Excel herunterladen:</div>
+                  <div class="break-all text-gray-200">{{ apiEndpoint }}?format=csv</div>
+                  <div class="text-gray-400 pt-1"># Gefilterte JSON-Abfrage (z. B. Schwierigkeit & Bio):</div>
+                  <div class="break-all text-gray-200">{{ apiEndpoint }}?difficulty=normal&amp;organicOnly=true</div>
+                  <div class="text-gray-400 pt-1"># Einzelnes Spiel inkl. Runden-Snapshots abrufen:</div>
+                  <div class="break-all text-gray-200">{{ apiEndpoint }}?gameId=research_local-1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MCP Server -->
+          <div class="p-4 bg-gray-950 rounded-lg border border-gray-800 space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="text-sm sm:text-base font-bold text-white">
+                  2. Model Context Protocol (MCP) Server (HTTP / JSON-RPC 2.0)
+                </h3>
+                <button
+                  type="button"
+                  data-testid="copy-mcp-config-btn"
+                  (click)="copySnippet('mcp', mcpConfigJson)"
+                  class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-mono rounded border border-gray-700 cursor-pointer"
+                >
+                  {{ copiedKey === 'mcp' ? 'Kopiert' : 'Konfiguration kopieren' }}
+                </button>
+              </div>
+
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Ermöglicht KI-Assistenten (Claude Desktop, Cursor, Antigravity, eigene Forschungs-Agenten) direkten
+                Lesezugriff auf anonymisierte Spielverläufe und die wissenschaftlich hinterlegten Simulationskonstanten.
+              </p>
+
+              <pre
+                class="p-2.5 bg-gray-900 rounded border border-gray-800 text-xs font-mono text-gray-200 overflow-x-auto"
+              ><code>{{ mcpConfigJson }}</code></pre>
+
+              <div class="space-y-1.5 pt-1">
+                <div class="text-xs font-bold text-gray-300">Verfügbare MCP-Tools (Read-Only):</div>
+                <div class="divide-y divide-gray-800 border border-gray-800 rounded bg-gray-900">
+                  @for (tool of mcpTools; track tool.name) {
+                    <div class="p-2 text-xs">
+                      <div class="flex flex-wrap items-center justify-between gap-1 font-mono">
+                        <span class="text-emerald-400 font-bold">{{ tool.name }}</span>
+                        <span class="text-gray-400 text-[11px]">{{ tool.args }}</span>
+                      </div>
+                      <p class="text-gray-300 mt-0.5 text-[11px]">{{ tool.description }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

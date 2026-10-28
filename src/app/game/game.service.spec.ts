@@ -39,6 +39,7 @@ describe('GameService', () => {
       'submitDecision',
       'createGame',
       'getAdminGames',
+      'getResearchGames',
       'getUserStatus',
       'getAllAdmins',
       'getSystemStats',
@@ -354,5 +355,29 @@ describe('GameService', () => {
 
     (service as any).stateSubject.next(state);
     expect(clearAppBadgeSpy).toHaveBeenCalled();
+  });
+
+  it('should fetch research games with optional filters', async () => {
+    const mockDataset = {
+      games: [{ id: 'research_local-1', status: 'finished' }],
+      total: 1,
+      summary: { totalGames: 1 },
+    };
+    mockCallables.getResearchGames.mockResolvedValue({ data: mockDataset });
+
+    const res = await service.getResearchGames(1, 20, {
+      difficulty: 'normal',
+      sourceType: 'local',
+      organicOnly: true,
+    });
+
+    expect(res.total).toBe(1);
+    expect(mockCallables.getResearchGames).toHaveBeenCalledWith({
+      page: 1,
+      pageSize: 20,
+      difficulty: 'normal',
+      sourceType: 'local',
+      organicOnly: true,
+    });
   });
 });

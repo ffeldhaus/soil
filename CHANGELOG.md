@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added the public **Offene Forschungsdaten** view (`/research`), a rate-limited read-only REST/CSV endpoint (`researchApi`), and a stateless JSON-RPC 2.0 Model Context Protocol server (`researchMcp`) exposing strictly anonymized `research_games` trajectories, summary metrics, crop/input distributions, and empirical strategy clusters (#19).
+- Enabled unauthenticated read-only board replay on `/game?gameId=research_...&playerUid=...&viewOnly=true` so educators and researchers can inspect anonymized round-by-round field states without logging in.
+### Changed
+- Consolidated agent rules into `AGENTS.md` and on-demand workspace skills in `.agents/skills/` (`soil-release-deploy`, `soil-local-dev-qa`).
+
 ## [3.0.1] - 2026-10-27
 ### Added
 - Added the live `Hof-Rangliste — Zukunftsfähigkeit` leaderboard to the unified `Team & Hof-Auszeichnungen` modal (`board.html`) so players can inspect standings, rank deltas, capital, and soil scores at any time during a round.

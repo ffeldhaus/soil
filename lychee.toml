@@ -27,8 +27,10 @@ exclude = [
   'https://fonts.gstatic.com/.*',                         # Google Fonts Assets
   'site.webmanifest',                                     # Relative link in index.html
   'https://mcp.context7.com/mcp',                         # MCP Server URL
+  'https://europe-west4-soil-602ea.cloudfunctions.net/.*', # Cloud Functions API & MCP endpoints
   '/impressum',                                           # Internal route
-  '/privacy'                                              # Internal route
+  '/privacy',                                             # Internal route
+  '/research'                                             # Internal route
 ]
 
 # Exclude paths from getting checked.

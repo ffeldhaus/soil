@@ -58,6 +58,10 @@ const baseRoutes: Routes = [
     loadComponent: () => import('./info/info').then((m) => m.InfoComponent),
   },
   {
+    path: 'research',
+    loadComponent: () => import('./research/research').then((m) => m.ResearchComponent),
+  },
+  {
     path: 'delete-account',
     loadComponent: () => import('./auth/delete-account/delete-account').then((m) => m.DeleteAccountComponent),
   },

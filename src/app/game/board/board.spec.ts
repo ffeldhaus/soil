@@ -542,4 +542,28 @@ describe('Board', () => {
     expect(component.selectedRoundPestsData.length).toBe(1);
     expect(component.currentActiveContract?.id).toBe('legume-initiative');
   });
+
+  it('should allow unauthenticated read-only replay for research games without redirecting', async () => {
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigate');
+    const authService = TestBed.inject(AuthService) as any;
+    const route = TestBed.inject(ActivatedRoute) as any;
+
+    authService.user$ = of(null);
+    route.queryParams = of({
+      gameId: 'research_local-1',
+      playerUid: 'player-research_local-1-1',
+      viewOnly: 'true',
+    });
+
+    component.ngOnInit();
+    await fixture.whenStable();
+
+    expect(component.isResearchReplay).toBe(true);
+    expect(component.isReadOnly).toBe(true);
+    expect(component.showReadOnlyBanner).toBe(true);
+    expect(component.isPlayer).toBe(false);
+    expect(navSpy).not.toHaveBeenCalledWith(['/']);
+    expect(navSpy).not.toHaveBeenCalledWith(['/admin']);
+  });
 });

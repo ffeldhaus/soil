@@ -13,6 +13,9 @@ import type {
   GameEvaluation,
   Parcel,
   PlayerState,
+  PublicResearchDatasetResponse,
+  PublicResearchInsight,
+  PublicResearchSummary,
   Round,
   RoundDecision,
   SystemStats,
@@ -77,10 +80,10 @@ export class GameService {
   }
   private get getResearchGamesFn() {
     if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ page: number; pageSize: number }, { games: Game[]; total: number }>(
-      this.functions,
-      'getResearchGames',
-    );
+    return httpsCallable<
+      { page: number; pageSize: number; difficulty?: string; sourceType?: string; organicOnly?: boolean },
+      PublicResearchDatasetResponse
+    >(this.functions, 'getResearchGames');
   }
   private get getUserStatusFn() {
     if (!this.functions || typeof window === 'undefined') return null;
@@ -266,6 +269,15 @@ export class GameService {
       return round;
     }
 
+    if (this.isTestMode()) {
+      const history = this.createMockHistory(Math.max(10, roundNumber), 1);
+      const round = history[roundNumber] || history[history.length - 1];
+      if (round?.parcelsSnapshot) {
+        this.parcelCache[roundNumber] = round.parcelsSnapshot;
+      }
+      return round;
+    }
+
     const fn = this.getRoundDataFn;
     if (!fn) {
       if (typeof window === 'undefined') return { number: roundNumber, parcelsSnapshot: [], result: undefined } as any;
@@ -301,7 +313,9 @@ export class GameService {
     }
 
     if (this.isTestMode()) {
-      const mockState = this.getMockGameState();
+      const mockState = gameId.startsWith('research')
+        ? this.getMockResearchGameState(gameId, targetUid)
+        : this.getMockGameState();
       this.currentRound = mockState.lastRound || null;
       this.parcelsSubject.next(mockState.lastRound?.parcelsSnapshot || this.createInitialParcels());
       this.stateSubject.next(mockState);
@@ -582,19 +596,32 @@ export class GameService {
     };
   }
 
-  async getResearchGames(page: number, pageSize: number): Promise<{ games: Game[]; total: number }> {
+  async getResearchGames(
+    page: number,
+    pageSize: number,
+    filters?: { difficulty?: string; sourceType?: string; organicOnly?: boolean },
+  ): Promise<PublicResearchDatasetResponse> {
     if (this.isTestMode()) {
-      const mockGame = this.getMockGameState().game;
-      return {
-        games: [{ ...mockGame, id: 'research-game-1', name: 'Research Game 1' }],
-        total: 1,
-      };
+      return this.getMockResearchDataset(filters);
     }
 
     try {
       const fn = this.getResearchGamesFn;
-      if (!fn) throw new Error('Functions not available');
-      const result = await fn({ page, pageSize });
+      if (!fn) {
+        if (typeof window === 'undefined') return { games: [], total: 0 };
+        throw new Error('Functions not available');
+      }
+      const payload: {
+        page: number;
+        pageSize: number;
+        difficulty?: string;
+        sourceType?: string;
+        organicOnly?: boolean;
+      } = { page, pageSize };
+      if (filters?.difficulty) payload.difficulty = filters.difficulty;
+      if (filters?.sourceType) payload.sourceType = filters.sourceType;
+      if (filters?.organicOnly) payload.organicOnly = true;
+      const result = await fn(payload);
       return result.data;
     } catch (error: unknown) {
       if (window.console) console.error('Failed to fetch research games:', error);
@@ -974,15 +1001,24 @@ export class GameService {
         yield: i > 0 ? Math.random() * 100 : 0,
       }));
 
+      const roundParcelMap: Record<number, CropType> = {};
+      roundParcels.forEach((p) => {
+        roundParcelMap[p.index] = p.crop;
+      });
+      const avgSoil = Math.round((roundParcels.reduce((acc, p) => acc + p.soil, 0) / 40) * 10) / 10;
+      const avgNutrition = Math.round((roundParcels.reduce((acc, p) => acc + p.nutrition, 0) / 40) * 10) / 10;
+
       history.push({
         number: i,
+        avgSoil,
+        avgNutrition,
         decision: {
           machines: playerIndex % 5,
           organic: playerIndex % 2 === 0,
           fertilizer: playerIndex % 3 === 0,
           pesticide: playerIndex % 4 === 0,
           organisms: playerIndex % 5 === 0,
-          parcels: {},
+          parcels: roundParcelMap,
         },
         parcelsSnapshot: roundParcels,
         result:
@@ -1058,6 +1094,190 @@ export class GameService {
       },
       playerState: playerState,
       lastRound: lastRound,
+    };
+  }
+
+  private getMockResearchDataset(filters?: {
+    difficulty?: string;
+    sourceType?: string;
+    organicOnly?: boolean;
+  }): PublicResearchDatasetResponse {
+    const localHistory = this.createMockHistory(8, 2); // playerIndex=2 -> organic=true
+    const cloudHistory1 = this.createMockHistory(10, 1); // playerIndex=1 -> organic=false
+    const cloudHistory2 = this.createMockHistory(10, 2); // playerIndex=2 -> organic=true
+
+    const game1: Game = {
+      id: 'research_local-1',
+      name: 'Anonymized Game',
+      hostUid: 'anonymized',
+      status: 'finished',
+      sourceType: 'local',
+      currentRoundNumber: 8,
+      config: { numPlayers: 2, numRounds: 8, numAi: 1, advancedPricingEnabled: false },
+      settings: { length: 8, difficulty: 'normal', playerLabel: 'Team' },
+      createdAt: new Date('2026-03-10T10:00:00Z'),
+      players: {
+        'player-research_local-1-1': {
+          uid: 'player-research_local-1-1',
+          displayName: 'Team 1',
+          isAi: false,
+          playerNumber: 1,
+          capital: 124500,
+          currentRound: 8,
+          avgSoil: 103.4,
+          avgNutrition: 101.2,
+          sustainabilityScore: 86.5,
+          history: localHistory,
+        },
+        'player-research_local-1-2': {
+          uid: 'player-research_local-1-2',
+          displayName: 'Team 2',
+          isAi: true,
+          aiLevel: 'middle',
+          playerNumber: 2,
+          capital: 112000,
+          currentRound: 8,
+          avgSoil: 98.5,
+          avgNutrition: 96.0,
+          sustainabilityScore: 78.2,
+          history: localHistory,
+        },
+      },
+    };
+
+    const game2: Game = {
+      id: 'research_cloud-2',
+      name: 'Anonymized Game',
+      hostUid: 'anonymized',
+      status: 'finished',
+      sourceType: 'cloud',
+      currentRoundNumber: 10,
+      config: { numPlayers: 2, numRounds: 10, numAi: 0, advancedPricingEnabled: true },
+      settings: { length: 10, difficulty: 'hard', playerLabel: 'Team' },
+      createdAt: new Date('2026-03-12T14:30:00Z'),
+      players: {
+        'player-research_cloud-2-1': {
+          uid: 'player-research_cloud-2-1',
+          displayName: 'Team 1',
+          isAi: false,
+          playerNumber: 1,
+          capital: 138200,
+          currentRound: 10,
+          avgSoil: 94.8,
+          avgNutrition: 99.1,
+          sustainabilityScore: 81.0,
+          history: cloudHistory1,
+        },
+        'player-research_cloud-2-2': {
+          uid: 'player-research_cloud-2-2',
+          displayName: 'Team 2',
+          isAi: false,
+          playerNumber: 2,
+          capital: 129800,
+          currentRound: 10,
+          avgSoil: 105.6,
+          avgNutrition: 104.0,
+          sustainabilityScore: 89.4,
+          history: cloudHistory2,
+        },
+      },
+    };
+
+    const allGames = [game1, game2].filter((g) => {
+      if (filters?.difficulty && g.settings.difficulty !== filters.difficulty) return false;
+      if (filters?.sourceType && g.sourceType !== filters.sourceType) return false;
+      if (filters?.organicOnly && g.id !== 'research_local-1') return false;
+      return true;
+    });
+
+    const summary: PublicResearchSummary = {
+      totalGames: allGames.length,
+      totalHumanPlayers: allGames.reduce((acc, g) => acc + Object.values(g.players).filter((p) => !p.isAi).length, 0),
+      totalAiPlayers: allGames.reduce((acc, g) => acc + Object.values(g.players).filter((p) => p.isAi).length, 0),
+      totalRoundsPlayed: allGames.reduce((acc, g) => acc + g.currentRoundNumber, 0),
+      avgFinalCapital: 130833,
+      avgFinalSoil: 101.3,
+      avgFinalNutrition: 101.4,
+      avgSustainabilityScore: 85.6,
+      organicDecisionShare: 64.3,
+      fertilizerDecisionShare: 35.7,
+      pesticideDecisionShare: 21.4,
+      organismsDecisionShare: 57.1,
+      cropShares: {
+        Wheat: 16.5,
+        Fieldbean: 12.8,
+        Pea: 11.4,
+        Potato: 10.6,
+        Barley: 9.8,
+        Oat: 8.5,
+        Rye: 7.9,
+        Rapeseed: 7.2,
+        Beet: 6.4,
+        Grass: 4.5,
+        Corn: 2.8,
+        Fallow: 1.6,
+      },
+      difficultyBreakdown: { easy: 0, normal: 1, hard: 1 },
+      sourceBreakdown: { local: 1, cloud: 1 },
+    };
+
+    const latestInsight: PublicResearchInsight = {
+      strategies: [
+        {
+          name: 'Regenerative Fruchtfolge (Bio + Leguminosen)',
+          description:
+            'Kombiniert mehrgliedrige Fruchtfolgen mit Ackerbohnen/Erbsen, Nützlingseinsatz und Öko-Regelungen für stabiles Boden- und Kapitalwachstum.',
+          typicalMetrics: { capital: 129800, soil: 104.5, nutrition: 102.6 },
+          keyDecisions: 'Bio-Landbau aktiv, >= 15 % Leguminosen, Nützlinge statt synthetischer Pestizide',
+        },
+        {
+          name: 'Integrierter Marktfruchtbau',
+          description:
+            'Ausgewogene Fruchtfolge mit gezieltem Mineraldüngereinsatz bei zehrenden Kulturen (Kartoffel, Raps, Weizen) und moderater Mechanisierung.',
+          typicalMetrics: { capital: 138200, soil: 96.2, nutrition: 99.8 },
+          keyDecisions: 'Gezielte mineralische Nachdüngung, strikte Einhaltung der Anbaupausen',
+        },
+      ],
+      balancingReport: {
+        summary: 'Hohe Stabilität zwischen ökologischer Bodenpflege und betriebswirtschaftlicher Rentabilität.',
+        issues: [],
+        cropAnalysis: [
+          {
+            crop: 'Wheat',
+            usageFrequency: '16.5%',
+            performanceAssessment: 'Solide Leitkultur in mehrgliedrigen Getreide-Leguminosen-Rotationen.',
+          },
+          {
+            crop: 'Fieldbean',
+            usageFrequency: '12.8%',
+            performanceAssessment: 'Schlüsselkultur für natürliche Stickstofffixierung und Regionalverträge.',
+          },
+        ],
+      },
+      gameCount: allGames.length,
+      createdAt: '2026-03-15T12:00:00Z',
+    };
+
+    return {
+      games: allGames,
+      total: allGames.length,
+      summary,
+      latestInsight,
+    };
+  }
+
+  private getMockResearchGameState(gameId: string, targetUid?: string): GameState {
+    const dataset = this.getMockResearchDataset();
+    const found = dataset.games.find((g) => g.id === gameId) || dataset.games[0];
+    const game: Game = { ...found, id: gameId };
+    const playerKeys = Object.keys(game.players);
+    const chosenUid = targetUid && game.players[targetUid] ? targetUid : playerKeys[0];
+    const playerState = game.players[chosenUid] || Object.values(game.players)[0];
+    const lastRound = playerState.history[playerState.history.length - 1];
+    return {
+      game,
+      playerState,
+      lastRound,
     };
   }
 }

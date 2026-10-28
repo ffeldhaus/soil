@@ -5,12 +5,13 @@
       class="w-full h-full object-cover select-none">
   </div>
 
-  @if (user$ | async; as user) {
+  @let currentUser = user$ | async;
+  @if (currentUser || isResearchReplay || isReadOnly) {
   <div class="relative h-full flex flex-col pt-10">
-    <app-board-hud [user]="user" [gameState]="gameState$ | async" [isPlayer]="isPlayer" [playerLabel]="playerLabel"
+    <app-board-hud [user]="currentUser" [gameState]="gameState$ | async" [isPlayer]="isPlayer" [playerLabel]="playerLabel"
       [playerNumber]="playerNumber" [showLabels]="showLabels" [showNutritionOverlay]="showNutritionOverlay"
       [showHarvestOverlay]="showHarvestOverlay" [showSoilOverlay]="showSoilOverlay" [showFinance]="showFinance"
-      [maxRoundNumber]="maxRoundNumber" [isReadOnly]="isReadOnly" [isSubmitted]="isSubmitted"
+      [maxRoundNumber]="maxRoundNumber" [isReadOnly]="isReadOnly" [isResearchReplay]="isResearchReplay" [isSubmitted]="isSubmitted"
       [viewingRound]="viewingRound" [pendingNextRound]="pendingNextRound"
       [collectedStickersCount]="collectedStickerIds.length" [totalStickersCount]="allStickers.length"
       (logout)="logout()" (toggleMobileMenu)="toggleMobileMenu()" (updateName)="onSaveName($event)"
@@ -195,12 +196,26 @@
       (click)="onBackgroundClick($event)">
       <!-- Read Only Banner -->
       @if (showReadOnlyBanner) {
-      <div class="absolute top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+      <div class="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2">
         <div
-          class="bg-amber-500 text-black px-4 py-1.5 rounded-lg font-bold shadow-lg border border-amber-300 animate-pulse">
-          <ng-container>Nur
-            Lesezugriff (Admin-Vorschau)</ng-container>
+          data-testid="read-only-banner"
+          class="bg-amber-500 text-black px-4 py-1.5 rounded-lg font-bold shadow-lg border border-amber-300 pointer-events-none"
+          [class.animate-pulse]="!isResearchReplay">
+          @if (isResearchReplay) {
+            <ng-container>Nur Lesezugriff (Forschungsdaten)</ng-container>
+          } @else {
+            <ng-container>Nur Lesezugriff (Admin-Vorschau)</ng-container>
+          }
         </div>
+        @if (isResearchReplay) {
+          <a
+            routerLink="/research"
+            data-testid="back-to-research-btn"
+            class="px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-emerald-400 hover:text-emerald-300 font-bold text-xs rounded-lg border border-gray-700 shadow-lg transition-colors"
+          >
+            Zurück zu Forschungsdaten
+          </a>
+        }
       </div>
       }
 
@@ -561,7 +576,7 @@
       } @else {
         <div class="flex-1 w-full min-h-0 pt-1 pb-8 flex items-start justify-center overflow-y-auto custom-scrollbar">
           @if (gameState$ | async; as state) {
-            <app-finance [game]="state.game" [viewingRound]="viewingRound" [playerUid]="(user$ | async)?.uid || ''">
+            <app-finance [game]="state.game" [viewingRound]="viewingRound" [playerUid]="state.playerState.uid || currentUser?.uid || ''">
             </app-finance>
           }
         </div>
@@ -743,10 +758,17 @@
             class="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition border border-amber-500">
             Hof-Sticker ({{ collectedStickerIds.length }}/{{ allStickers.length }})
           </button>
-          <button routerLink="/admin"
-            class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500">
-            Zur Admin-Konsole
-          </button>
+          @if (isResearchReplay) {
+            <a routerLink="/research"
+              class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500">
+              Zurück zu Forschungsdaten
+            </a>
+          } @else {
+            <button routerLink="/admin"
+              class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500">
+              Zur Admin-Konsole
+            </button>
+          }
         </div>
       </div>
     </div>

@@ -53,6 +53,10 @@ app.get('/sitemap.xml', (_req, res) => {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://soil.app/research</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://soil.app/admin</loc>
     <priority>0.8</priority>
   </url>

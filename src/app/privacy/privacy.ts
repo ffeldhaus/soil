@@ -74,10 +74,12 @@ import { RouterLink } from '@angular/router';
           <h3 class="text-xl font-bold text-gray-200 mt-4">Anonymisierung für Forschung & Statistik</h3>
           <p class="text-gray-300">
             Abgeschlossene Spiele werden standardmäßig in einer **vollständig anonymisierten Form** für statistische Auswertungen und Spielbalance-Analysen verwendet. 
-            Dabei werden alle Bezüge zu deinem Benutzerkonto dauerhaft entfernt.
+            Dabei werden alle Bezüge zu deinem Benutzerkonto, Namen oder E-Mail-Adressen dauerhaft entfernt und Teams ausschließlich mit generischen Bezeichnungen (z. B. <code>Team 1</code>) gespeichert.
           </p>
           <p class="text-gray-300 mt-2">
-            Diese Funktion hilft uns, das Spiel kontinuierlich zu verbessern. Du kannst die Übermittlung dieser anonymisierten Daten bei der Erstellung eines neuen Spiels jederzeit **deaktivieren**.
+            Dieser streng anonymisierte Datensatz ist für Bildung, Didaktik und wissenschaftliche Auswertungen öffentlich unter
+            <a routerLink="/research" class="text-emerald-400 hover:underline">/research</a> sowie über eine schreibgeschützte Forschungs-API und MCP-Schnittstelle einsehbar.
+            Du kannst die Übermittlung dieser anonymisierten Daten bei der Erstellung eines neuen Spiels jederzeit **deaktivieren**.
           </p>
         </section>
 

@@ -2,13 +2,20 @@ import { GoogleGenAI } from '@google/genai';
 import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import { setGlobalOptions } from 'firebase-functions/v2';
-import { HttpsError, onCall } from 'firebase-functions/v2/https';
+import { HttpsError, onCall, onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { AiAgent } from './ai-agent';
 import { GAME_CONSTANTS, GEMINI_MODEL } from './constants';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
+import {
+  buildPublicResearchDataset,
+  checkPublicRateLimit,
+  handleResearchApiHttpRequest,
+  handleResearchMcpHttpRequest,
+  sanitizeResearchGameForPublic,
+} from './research.service';
 import type { Round } from './types';
 import { escapeHtml, generateRandomPassword } from './utils';
 
@@ -662,152 +669,209 @@ export const uploadFinishedGame = onCall(async (request) => {
   return await internalUploadFinishedGame(request.data);
 });
 
-export const getGameState = onCall(async (request) => {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
-  const { gameId, targetUid } = request.data;
+async function resolveGameDocument(gameId: string): Promise<{
+  gameRef: admin.firestore.DocumentReference;
+  gameSnap: admin.firestore.DocumentSnapshot;
+  isResearchGame: boolean;
+}> {
+  const isResearchId = String(gameId).startsWith('research_');
+
+  if (isResearchId) {
+    const researchRef = db.collection('research_games').doc(gameId);
+    const researchSnap = await researchRef.get();
+    if (researchSnap.exists) {
+      return { gameRef: researchRef, gameSnap: researchSnap, isResearchGame: true };
+    }
+    const normalRef = db.collection('games').doc(gameId);
+    const normalSnap = await normalRef.get();
+    return { gameRef: normalRef, gameSnap: normalSnap, isResearchGame: false };
+  }
+
+  const normalRef = db.collection('games').doc(gameId);
+  const normalSnap = await normalRef.get();
+  if (normalSnap.exists) {
+    return { gameRef: normalRef, gameSnap: normalSnap, isResearchGame: false };
+  }
+
+  const researchRef = db.collection('research_games').doc(gameId);
+  const researchSnap = await researchRef.get();
+  return { gameRef: researchRef, gameSnap: researchSnap, isResearchGame: researchSnap.exists };
+}
+
+async function fetchPlayerRoundSnapshot(
+  gameRef: admin.firestore.DocumentReference,
+  roundNum: number,
+  playerUid?: string,
+): Promise<Round | undefined> {
+  if (roundNum < 0 || !playerUid) return undefined;
+  const roundSnap = await gameRef.collection('rounds').doc(`round_${roundNum}`).get();
+  if (!roundSnap.exists) return undefined;
+  const roundData = roundSnap.data();
+  if (roundData?.playerData?.[playerUid]) {
+    return roundData.playerData[playerUid];
+  }
+  return roundNum === 0 ? (roundData as Round) : undefined;
+}
+
+export async function internalGetGameState(request: { data?: any; auth?: any }) {
+  const { gameId, targetUid } = request.data || {};
   if (!gameId) throw new HttpsError('invalid-argument', 'Missing gameId');
 
-  const callerUid = request.auth.uid;
-  const callerRef = db.collection('users').doc(callerUid);
-  const callerSnap = await callerRef.get();
-  const isSuper =
-    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
-    request.auth.token.email === 'florian.feldhaus@gmail.com';
+  const { gameRef, gameSnap, isResearchGame } = await resolveGameDocument(gameId);
 
-  // Check if research game or normal game
-  let gameRef = db.collection('games').doc(gameId);
-  let gameSnap = await gameRef.get();
+  // Normal games require authentication and player/superadmin authorization
+  if (!isResearchGame) {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+    if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
 
-  if (!gameSnap.exists) {
-    gameRef = db.collection('research_games').doc(gameId);
-    gameSnap = await gameRef.get();
+    const callerUid = request.auth.uid;
+    const callerSnap = await db.collection('users').doc(callerUid).get();
+    const isSuper =
+      (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+      request.auth.token?.email === 'florian.feldhaus@gmail.com';
+
+    const game = gameSnap.data()!;
+    const uid = targetUid || callerUid;
+    const playerState = game.players?.[uid];
+    if (!playerState && !isSuper) throw new HttpsError('not-found', 'Player not found in this game');
+
+    const finalUid = playerState ? uid : Object.keys(game.players || {})[0];
+    const finalPlayerState = game.players?.[finalUid];
+    const lastRound = await fetchPlayerRoundSnapshot(gameRef, game.currentRoundNumber || 0, finalUid);
+
+    return {
+      game: {
+        id: game.id,
+        name: game.name,
+        status: game.status,
+        currentRoundNumber: game.currentRoundNumber,
+        settings: game.settings,
+        players: game.players,
+        config: game.config,
+        createdAt: game.createdAt?.toDate?.()?.toISOString() || game.createdAt,
+      },
+      playerState: finalPlayerState
+        ? {
+            ...finalPlayerState,
+            playerNumber: finalUid.startsWith('player-') ? finalUid.split('-')[2] : undefined,
+          }
+        : null,
+      lastRound,
+    };
   }
 
-  if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
-
-  const game = gameSnap.data()!;
-  const uid = targetUid || callerUid;
-  const playerState = game.players?.[uid];
-
-  if (!playerState && !isSuper) throw new HttpsError('not-found', 'Player not found in this game');
-
-  const finalUid = playerState ? uid : Object.keys(game.players || {})[0];
-  const finalPlayerState = game.players?.[finalUid];
-
-  const currentRoundNum = game.currentRoundNumber || 0;
-
-  // Fetch the full data for the last calculated round for this player
-  let lastRound: Round | undefined;
-  if (currentRoundNum >= 0) {
-    const roundRef = gameRef.collection('rounds').doc(`round_${currentRoundNum}`);
-    const roundSnap = await roundRef.get();
-    if (roundSnap.exists) {
-      const roundData = roundSnap.data();
-      if (roundData?.playerData?.[finalUid]) {
-        lastRound = roundData.playerData[finalUid];
-      } else if (currentRoundNum === 0) {
-        // Fallback for legacy round_0 or global round_0
-        lastRound = roundData as Round;
-      }
-    }
-  }
+  // Public anonymized research game (read-only, no auth required, strips migratedFrom)
+  const rawGame = gameSnap.data()!;
+  const sanitizedGame = sanitizeResearchGameForPublic({ id: gameSnap.id || rawGame.id || gameId, ...rawGame });
+  const playerKeys = Object.keys(sanitizedGame.players || {});
+  const requestedUid = targetUid || request.auth?.uid;
+  const finalUid = requestedUid && sanitizedGame.players?.[requestedUid] ? requestedUid : playerKeys[0];
+  const finalPlayerState = finalUid ? sanitizedGame.players?.[finalUid] : null;
+  const lastRound = await fetchPlayerRoundSnapshot(gameRef, sanitizedGame.currentRoundNumber || 0, finalUid);
 
   return {
-    game: {
-      id: game.id,
-      name: game.name,
-      status: game.status,
-      currentRoundNumber: game.currentRoundNumber,
-      settings: game.settings,
-      players: game.players,
-      config: game.config,
-      createdAt: game.createdAt?.toDate?.()?.toISOString() || game.createdAt,
-    },
+    game: sanitizedGame,
     playerState: finalPlayerState
       ? {
           ...finalPlayerState,
-          playerNumber: finalUid.startsWith('player-') ? finalUid.split('-')[2] : undefined,
-          // history in playerState is already the lightweight version (parcelsSnapshot = [])
+          playerNumber:
+            finalPlayerState.playerNumber ?? (finalUid.startsWith('player-') ? finalUid.split('-').pop() : undefined),
         }
       : null,
     lastRound,
   };
+}
+
+export const getGameState = onCall(async (request) => {
+  return await internalGetGameState(request);
 });
 
-export const getRoundData = onCall(async (request) => {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
-  const { gameId, roundNumber, targetUid } = request.data;
+export async function internalGetRoundData(request: { data?: any; auth?: any }) {
+  const { gameId, roundNumber, targetUid } = request.data || {};
   if (!gameId || roundNumber === undefined) throw new HttpsError('invalid-argument', 'Missing gameId or roundNumber');
 
-  const callerUid = request.auth.uid;
-  const callerRef = db.collection('users').doc(callerUid);
-  const callerSnap = await callerRef.get();
-  const isSuper =
-    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
-    request.auth.token.email === 'florian.feldhaus@gmail.com';
+  const { gameRef, gameSnap, isResearchGame } = await resolveGameDocument(gameId);
 
-  const uid = targetUid || callerUid;
+  if (!isResearchGame) {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+    if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
 
-  // Check if research game or normal game
-  let gameRef = db.collection('games').doc(gameId);
-  let gameSnap = await gameRef.get();
+    const callerUid = request.auth.uid;
+    const callerSnap = await db.collection('users').doc(callerUid).get();
+    const isSuper =
+      (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
+      request.auth.token?.email === 'florian.feldhaus@gmail.com';
 
-  if (!gameSnap.exists) {
-    gameRef = db.collection('research_games').doc(gameId);
-    gameSnap = await gameRef.get();
+    const uid = targetUid || callerUid;
+    const game = gameSnap.data()!;
+    if (!game.players?.[uid] && !isSuper) {
+      throw new HttpsError('permission-denied', 'Access denied');
+    }
+
+    const roundSnap = await gameRef.collection('rounds').doc(`round_${roundNumber}`).get();
+    if (!roundSnap.exists) throw new HttpsError('not-found', 'Round data not found');
+
+    const data = roundSnap.data();
+    if (data?.playerData?.[uid]) return data.playerData[uid];
+    if (roundNumber === 0) return data;
+    throw new HttpsError('not-found', 'No data for player in this round');
   }
 
-  if (!gameSnap.exists) throw new HttpsError('not-found', 'Game not found');
-
+  // Public anonymized research game round lookup
   const game = gameSnap.data()!;
-  if (!game.players?.[uid] && !isSuper) {
-    throw new HttpsError('permission-denied', 'Access denied');
-  }
+  const playerKeys = Object.keys(game.players || {});
+  const requestedUid = targetUid || request.auth?.uid;
+  const uid = requestedUid && game.players?.[requestedUid] ? requestedUid : playerKeys[0];
 
-  const roundRef = gameRef.collection('rounds').doc(`round_${roundNumber}`);
-  const roundSnap = await roundRef.get();
-
+  const roundSnap = await gameRef.collection('rounds').doc(`round_${roundNumber}`).get();
   if (!roundSnap.exists) throw new HttpsError('not-found', 'Round data not found');
 
   const data = roundSnap.data();
-  if (data?.playerData?.[uid]) {
-    return data.playerData[uid];
-  } else if (roundNumber === 0) {
-    return data; // Legacy/Global round 0
-  }
+  if (uid && data?.playerData?.[uid]) return data.playerData[uid];
+  if (roundNumber === 0) return data;
 
   throw new HttpsError('not-found', 'No data for player in this round');
+}
+
+export const getRoundData = onCall(async (request) => {
+  return await internalGetRoundData(request);
 });
 
-export const getResearchGames = onCall(async (request) => {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+export async function internalGetResearchGames(request: { data?: any; auth?: any; rawRequest?: any }) {
+  const ip =
+    request.rawRequest?.ip ||
+    request.rawRequest?.headers?.['x-forwarded-for']?.split(',')?.[0]?.trim() ||
+    request.auth?.uid ||
+    'callable';
+  const rate = checkPublicRateLimit(`callable:${ip}`, 60, 60_000);
+  if (!rate.allowed) {
+    throw new HttpsError('resource-exhausted', 'Rate limit exceeded. Please try again in a minute.');
+  }
 
-  // Super Check
-  const callerRef = db.collection('users').doc(request.auth.uid);
-  const callerSnap = await callerRef.get();
-  const isSuper =
-    (callerSnap.exists && callerSnap.data()?.role === 'superadmin') ||
-    request.auth.token.email === 'florian.feldhaus@gmail.com';
-
-  if (!isSuper) throw new HttpsError('permission-denied', 'Super-Administratoren only');
-
-  const { page = 1, pageSize = 20 } = request.data;
-  const offset = (page - 1) * pageSize;
-
-  const query = db.collection('research_games').orderBy('updatedAt', 'desc');
-  const snapshot = await query.limit(pageSize).offset(offset).get();
-  const countSnap = await query.count().get();
-
-  const games = snapshot.docs.map((doc) => {
-    const d = doc.data();
-    return {
-      ...d,
-      createdAt: d.createdAt?.toDate?.()?.toISOString() || d.createdAt,
-      updatedAt: d.updatedAt?.toDate?.()?.toISOString() || d.updatedAt,
-    };
+  const { page = 1, pageSize = 20, difficulty, sourceType, organicOnly } = request.data || {};
+  return await buildPublicResearchDataset(db, {
+    page: Number(page || 1),
+    pageSize: Number(pageSize || 20),
+    difficulty,
+    sourceType,
+    organicOnly: !!organicOnly,
   });
+}
 
-  return { games, total: countSnap.data().count };
+export const getResearchGames = onCall(async (request) => {
+  return await internalGetResearchGames(request);
+});
+
+export const getPublicResearchDataset = onCall(async (request) => {
+  return await internalGetResearchGames(request);
+});
+
+export const researchApi = onRequest({ cors: true }, async (req, res) => {
+  await handleResearchApiHttpRequest(db, req, res);
+});
+
+export const researchMcp = onRequest({ cors: true }, async (req, res) => {
+  await handleResearchMcpHttpRequest(db, req, res);
 });
 
 export const submitDecision = onCall(

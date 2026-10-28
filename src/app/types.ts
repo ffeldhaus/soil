@@ -158,6 +158,67 @@ export interface Game {
   playerSecrets?: Record<string, { password: string }>;
   roundDeadlines?: Record<number, { seconds: number; nanoseconds: number } | Date>;
   evaluations?: Record<string, GameEvaluation>;
+  sourceType?: 'local' | 'cloud';
+}
+
+export interface PublicResearchSummary {
+  totalGames: number;
+  totalHumanPlayers: number;
+  totalAiPlayers: number;
+  totalRoundsPlayed: number;
+  avgFinalCapital: number;
+  avgFinalSoil: number;
+  avgFinalNutrition: number;
+  avgSustainabilityScore: number;
+  organicDecisionShare: number;
+  fertilizerDecisionShare: number;
+  pesticideDecisionShare: number;
+  organismsDecisionShare: number;
+  cropShares: Record<string, number>;
+  difficultyBreakdown: {
+    easy: number;
+    normal: number;
+    hard: number;
+  };
+  sourceBreakdown: {
+    local: number;
+    cloud: number;
+  };
+}
+
+export interface ResearchInsightStrategy {
+  name: string;
+  description: string;
+  typicalMetrics?: {
+    capital?: number;
+    soil?: number;
+    nutrition?: number;
+  };
+  keyDecisions?: string;
+}
+
+export interface PublicResearchInsight {
+  strategies: ResearchInsightStrategy[];
+  balancingReport?: {
+    summary?: string;
+    issues?: Array<{ severity: 'low' | 'medium' | 'high'; description: string; suggestion: string }>;
+    cropAnalysis?: Array<{ crop: string; usageFrequency: string; performanceAssessment: string }>;
+  } | null;
+  gameCount?: number;
+  createdAt?: string;
+}
+
+export interface PublicResearchDatasetResponse {
+  games: Game[];
+  total: number;
+  pagination?: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+  summary?: PublicResearchSummary;
+  latestInsight?: PublicResearchInsight | null;
 }
 
 export interface UserStatus {

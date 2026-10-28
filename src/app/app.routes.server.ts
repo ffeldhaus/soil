@@ -26,6 +26,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
   },
   {
+    path: 'research',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'game-login',
     renderMode: RenderMode.Prerender,
   },
