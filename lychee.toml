@@ -6,29 +6,19 @@ root_dir = "public"
 # Test the specified file extensions for URIs when checking files locally.
 extensions = ["html", "ts", "md", "json", "scss", "css", "xlf"]
 
-# Exclude URLs and mail addresses from checking.
+# Accepted HTTP status codes (include 403 for sites blocking automated checkers)
+accept = ["100..=103", "200..=299", "403"]
+
+# Exclude private, link-local, and loopback IPs (localhost, 127.0.0.1, 0.0.0.0)
+exclude_all_private = true
+
+# Exclude POST-only REST endpoints, cookie-looping admin URL, and Angular relative/internal paths.
 exclude = [
-  'http://localhost',
-  'https://localhost',
-  'http://0.0.0.0',
-  'https://example.com',
-  '^mailto:.*',
-  '^tel:.*',
-  '^https://www.youtube.com/embed/.*', # Often blocked or requires JS
-  '^https://www.google.com/maps/.*',   # Often blocked
-  'http://link/',                      # Placeholder in tests
-  'https://iamcredentials.googleapis.com/v1/projects/.*', # Template URLs
-  'https://www.googleapis.com/oauth2/v4/token',           # Template URLs
-  'https://schule.de/',                                   # Often fails in CI
-  '&quot',                                                # Fix for XLF parsing issues
+  'https://iamcredentials.googleapis.com/v1/projects/.*', # POST-only IAM template URL
+  'https://www.googleapis.com/oauth2/v4/token',           # POST-only OAuth2 token endpoint
+  'https://admin.google.com/',                            # Redirects infinitely without Google session cookies
   'assets/.*',                                            # Angular relative asset paths
-  'https://admin.google.com/',                            # Requires login
-  'https://fonts.googleapis.com/.*',                      # Google Fonts API
-  'https://fonts.gstatic.com/.*',                         # Google Fonts Assets
   'site.webmanifest',                                     # Relative link in index.html
-  'https://mcp.context7.com/mcp',                         # MCP Server URL
-  'https://europe-west4-soil-602ea.cloudfunctions.net/.*', # Cloud Functions API & MCP endpoints
-  'https://doi.org/10.1126/sciadv.aax0121',               # Science.org returns Cloudflare 403 to automated checkers
   '/impressum',                                           # Internal route
   '/privacy',                                             # Internal route
   '/research'                                             # Internal route

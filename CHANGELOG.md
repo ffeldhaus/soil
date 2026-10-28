@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Configured `lychee.toml` to accept HTTP `403` status codes (`accept = ["100..=103", "200..=299", "403"]`) and `exclude_all_private = true` instead of excluding external URLs that block automated link checkers.
+
 ## [3.1.0] - 2026-10-28
 ### Added
 - Added the public **Offene Forschungsdaten** view (`/research`), a rate-limited read-only REST/CSV endpoint (`researchApi`), and a stateless JSON-RPC 2.0 Model Context Protocol server (`researchMcp`) exposing strictly anonymized `research_games` trajectories, summary metrics, crop/input distributions, and empirical strategy clusters (#19).

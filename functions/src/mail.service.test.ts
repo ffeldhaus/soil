@@ -52,7 +52,7 @@ describe('MailService', () => {
     });
 
     it('sendPlayerLoginInfo should use German template', async () => {
-      await mailService.sendPlayerLoginInfo('test@example.com', 'http://link');
+      await mailService.sendPlayerLoginInfo('test@example.com', 'https://example.com');
       const args = sendEmailSpy.mock.calls[0][0];
       expect(args.subject).to.equal('Dein Login-Link für SOIL');
       expect(args.text).to.contain('Willkommen bei SOIL!');
