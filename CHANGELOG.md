@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Updated the `/research` view (`src/app/research/research.ts`) to display and copy the canonical first-party `https://soil.app/api/research` and `https://soil.app/api/mcp` endpoints.
 - Configured `lychee.toml` to accept HTTP `403` status codes (`accept = ["100..=103", "200..=299", "403"]`) and `exclude_all_private = true` instead of excluding external URLs that block automated link checkers.
+- Updated `firebase-tools` (`15.34.2`).
 
 ## [3.1.0] - 2026-10-28
 ### Added
