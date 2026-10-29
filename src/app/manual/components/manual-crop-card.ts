@@ -89,7 +89,7 @@ export class ManualCropCardComponent implements OnChanges {
       'manual.crops.rotationNext': 'Nachfrucht',
       'manual.crops.requirements': 'Ansprüche',
       'manual.crops.soil': 'Bodenqualität',
-      'manual.crops.minerals': 'Mineralstoffe',
+      'manual.crops.minerals': 'Nährstoffe',
       'manual.crops.labor': 'Arbeitsaufwand',
       'sensitivity.high': 'Hoch',
       'sensitivity.moderate': 'Mäßig',

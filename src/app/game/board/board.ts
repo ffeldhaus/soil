@@ -54,7 +54,7 @@ export class Board implements OnInit, OnDestroy {
       'board.login.phPin': 'PIN',
       'user.photoURL': 'assets/images/gut.jpg',
       'board.nav.names': 'Namen',
-      'board.nav.nutrition': 'Mineralstoffe',
+      'board.nav.nutrition': 'Nährstoffe',
       'board.nav.harvest': 'Ernte',
       'board.nav.soil': 'Bodenqualität',
       'board.nav.finance': 'Finanzen',

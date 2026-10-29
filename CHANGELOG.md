@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Unified the nutrition terminology from `Mineralstoffe` to `Nährstoffe` across the HUD, board modals, advisor service, manual crop cards, and game constants (`src/app/game-constants.ts`, `src/app/game/advisor/advisor.service.ts`, `src/app/game/board/board.html`, `src/app/game/board/board.ts`, `src/app/game/board/components/board-hud.html`, `src/app/game/board/components/board-hud.ts`, `src/app/manual/components/manual-crop-card.ts`).
+- Updated the landing page trailer video (`public/assets/video/soil-trailer.mp4`) with the unified `Nährstoffe` HUD label, open `Anbau-Auswahl` live impact preview, sequential field overlays, Round 3 lead vs. Round 6 monoculture soil collapse comparison, and elevated `"Jetzt unter soil.app spielen!"` end-card CTA.
+
 ## [3.3.1] - 2026-10-29
 ### Fixed
 - Replaced the Git LFS pointer for the landing page trailer with a direct faststart MP4 binary (`public/assets/video/soil-trailer.mp4`), excluded `/assets/video/**` from `src/ngsw-config.json` so HTTP `206 Range` streaming works reliably on Firebase App Hosting, moved the scroll-down arrow into the normal flex flow below `Trailer ansehen`, and updated `openTrailer()` (`src/app/landing/landing.ts`) to launch directly into fullscreen autoplay.

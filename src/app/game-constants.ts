@@ -151,7 +151,7 @@ export const GAME_CONSTANTS = {
       seedPrice: { conventional: 220, organic: 300 },
       marketValue: { conventional: 35, organic: 55 },
       laborHours: 12,
-      special: 'Ackerbohnen erhöhen den Mineralstoffgehalt und die Bodenqualität.',
+      special: 'Ackerbohnen erhöhen den Nährstoffgehalt und die Bodenqualität.',
     },
     Barley: {
       id: 'Barley',
@@ -291,7 +291,7 @@ export const GAME_CONSTANTS = {
       seedPrice: { conventional: 180, organic: 250 },
       marketValue: { conventional: 32, organic: 52 },
       laborHours: 12,
-      special: 'Erbsen erhöhen den Mineralstoffgehalt und die Bodenqualität.',
+      special: 'Erbsen erhöhen den Nährstoffgehalt und die Bodenqualität.',
     },
     Grass: {
       id: 'Grass',

@@ -145,7 +145,7 @@ export class AdvisorService {
         message:
           context === 'result'
             ? 'Deine Felder sind nach der Ernte völlig ausgelaugt.'
-            : 'Deine Felder weisen einen erheblichen Mangel an Mineralstoffen auf.',
+            : 'Deine Felder weisen einen erheblichen Mangel an Nährstoffen auf.',
         hint: 'Ohne ausreichende Nährstoffe können Pflanzen nicht gesund wachsen und bringen kaum Ertrag.',
       });
     }
