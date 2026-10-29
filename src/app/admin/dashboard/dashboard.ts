@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, type OnDestroy, type OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectorRef, Component, inject, NgZone, type OnDestroy, type OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import type { Subscription } from 'rxjs';
@@ -159,6 +159,7 @@ export class Dashboard implements OnInit, OnDestroy {
     };
     return translations[key] || key;
   }
+  private platformId = inject(PLATFORM_ID);
   private authService = inject(AuthService);
   private gameService = inject(GameService);
   private router = inject(Router);
@@ -287,6 +288,9 @@ export class Dashboard implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.newGameConfig.name = this.getRandomName();
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     this.authService.user$.subscribe(async (user) => {
       if (user) {
         // Reset state for new user

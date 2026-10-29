@@ -1,6 +1,7 @@
 import { Component, inject, isDevMode } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { GameService } from '../game/game.service';
 
 @Component({
   selector: 'app-landing',
@@ -8,19 +9,6 @@ import { AuthService } from '../auth/auth.service';
   imports: [RouterLink],
   template: `
     <div class="h-full relative font-sans text-gray-100 overflow-y-auto custom-scrollbar">
-      <!-- Navigation Bar (Matching other pages for consistent switcher position) -->
-      <nav
-        class="bg-transparent px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-10 print:hidden"
-      >
-        <div class="flex items-center gap-4">
-        </div>
-
-        <div class="flex items-center gap-3">
-          <!-- Spacer to match the back/logout button present on other pages -->
-          <div class="w-10 h-10"></div>
-        </div>
-      </nav>
-
       <!-- Background Image -->
       <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
         <picture>
@@ -47,8 +35,7 @@ import { AuthService } from '../auth/auth.service';
             >,
             <span class="text-blue-300 font-normal" data-testid="landing-economics"
               >Ökonomie</span
-            >, <span><ng-container>und</ng-container></span
-            >&nbsp;<span
+            >, <span>und</span>&nbsp;<span
               class="text-yellow-200 font-normal"
               data-testid="landing-sustainability"
 
@@ -56,15 +43,26 @@ import { AuthService } from '../auth/auth.service';
             >.
           </p>
 
-          <div class="flex flex-col sm:flex-row gap-6 justify-center mt-12 w-full max-w-lg mx-auto">
+          <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mt-12 w-full max-w-2xl mx-auto">
+            <button
+              type="button"
+              (click)="startQuickGame()"
+              [disabled]="isStartingGame"
+              data-testid="landing-quick-play"
+              class="px-8 py-5 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white text-lg font-bold rounded-xl shadow-lg border border-emerald-500 transition-colors flex-1 cursor-pointer flex items-center justify-center gap-2"
+            >
+              @if (isStartingGame) {
+                <span>Wird gestartet...</span>
+              } @else {
+                <span>Sofort spielen</span>
+              }
+            </button>
             <a
               routerLink="/admin"
               data-testid="landing-manage-games"
-              class="group relative px-8 py-5 bg-emerald-800 hover:bg-emerald-700 text-white text-lg font-bold rounded-xl shadow-lg transition-colors overflow-hidden flex-1"
+              class="px-8 py-5 bg-gray-900/90 hover:bg-gray-800 text-emerald-300 hover:text-white text-lg font-bold rounded-xl shadow-lg border border-emerald-500/40 transition-colors flex-1 flex items-center justify-center gap-2"
             >
-              <span class="relative z-10 flex items-center justify-center gap-2"
-                >Spiele erstellen & verwalten</span
-              >
+              <span>Spiele erstellen & verwalten</span>
             </a>
           </div>
         </div>
@@ -82,44 +80,47 @@ import { AuthService } from '../auth/auth.service';
       </main>
 
       <!-- Info Sections -->
-      @defer (hydrate on viewport) {
-        <div id="info-section" class="relative z-10 py-24 px-6 portrait:px-0">
-          <div class="max-w-6xl mx-auto grid min-[860px]:grid-cols-2 gap-8 portrait:max-w-none">
-            <section class="bg-gray-900 p-5 md:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2
-                  class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
-                >
-                  Über das Spiel
-                </h2>
-                <a
-                  routerLink="/manual"
-                  class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-800/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white rounded-xl border border-emerald-500/30 transition-all shadow-lg font-bold text-lg min-w-[220px]"
-                >
-                  <span>📖</span>
-                  <span>Handbuch</span>
-                </a>
-              </div>
-              <div class="space-y-4 text-lg leading-relaxed text-white">
-                <p>
-                  SOIL ist ein interaktives Simulationsspiel, in dem Spielerinnen und Spieler ökologische und
-                  ökonomische Entscheidungen treffen und deren unmittelbare Auswirkungen erleben. In Gruppen bauen
-                  die Lernenden über zehn Runden einen landwirtschaftlichen Betrieb auf.
-                </p>
-                <p>
-                  Ziel ist es, einen profitablen Betrieb nachhaltig zu führen. Strategien wie Fruchtfolgewahl, Düngung
-                  und Schädlingsbekämpfung müssen aufeinander abgestimmt werden. Nach jeder Runde erhalten die Gruppen
-                  Rückmeldung über die ökologischen und ökonomischen Konsequenzen ihres Handelns.
-                </p>
-                <p>
-                  Das Spiel ist für Bildungszwecke konzipiert und dauerhaft kostenlos. Für Administrator-Konten ist eine
-                  Registrierung erforderlich, um eigene Spiele zu erstellen. Bei der Registrierung wird die
-                  Zugehörigkeit zu einer Bildungseinrichtung verifiziert.
-                </p>
-              </div>
-            </section>
+      <div id="info-section" class="relative z-10 py-24 px-6 portrait:px-0">
+        <div class="max-w-6xl mx-auto grid min-[860px]:grid-cols-2 gap-8 portrait:max-w-none">
+          <section class="bg-gray-900 p-5 md:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h2
+                class="text-3xl font-bold text-emerald-400 font-sans border-l-4 border-emerald-500 pl-4"
+              >
+                Über das Spiel
+              </h2>
+              <a
+                routerLink="/manual"
+                class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-800/40 hover:bg-emerald-700/60 text-emerald-300 hover:text-white rounded-xl border border-emerald-500/30 transition-all shadow-lg font-bold text-lg min-w-[220px]"
+              >
+                <span>📖</span>
+                <span>Handbuch</span>
+              </a>
+            </div>
+            <div class="space-y-4 text-lg leading-relaxed text-white">
+              <p>
+                SOIL ist ein interaktives Simulationsspiel für den Unterricht in Biologie, Geographie (Erdkunde) und
+                Wirtschaft in der Sekundarstufe I & II sowie an Hochschulen. Über zehn Runden steuern Lernende einen
+                landwirtschaftlichen Betrieb und erleben die unmittelbaren ökologischen und ökonomischen Folgen ihrer
+                Entscheidungen.
+              </p>
+              <p>
+                Ziel ist es, einen zukunftsfähigen Hof nachhaltig zu bewirtschaften. Strategien rund um Fruchtfolge,
+                Bodenqualität (Humus), Düngung, Pflanzenschutz und Agrarökonomie müssen aufeinander abgestimmt werden.
+                Nach jeder Runde erhalten die Spielenden detaillierte Rückmeldungen zu Erträgen, Bodenleben und
+                Finanzen.
+              </p>
+              <p>
+                Das Spiel ist dauerhaft kostenlos und werbefrei. Einzelspieler-Runden gegen KI-Betriebe können sofort
+                ohne Registrierung gestartet werden. Für Lehrkräfte steht nach kurzer Verifizierung ihrer
+                Bildungseinrichtung ein kostenloses Konto bereit, um Multiplayer-Spiele für ganze Kurse und
+                Schulklassen zu erstellen.
+              </p>
+            </div>
+          </section>
 
-            <section class="bg-gray-900 p-5 md:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0">
+          <section class="bg-gray-900 p-5 md:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0 flex flex-col justify-between">
+            <div class="space-y-8">
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2
                   class="text-3xl font-bold text-blue-400 font-sans border-l-4 border-blue-500 pl-4"
@@ -136,44 +137,87 @@ import { AuthService } from '../auth/auth.service';
               </div>
               <div class="space-y-4 text-lg leading-relaxed text-white">
                 <p>
-                  Auf der UN-Konferenz 1992 wurde "Nachhaltigkeit" zum globalen Entwicklungsziel erklärt. Dieses Ziel
-                  soll durch die Integration von ökonomischen, ökologischen und sozialen Perspektiven erreicht werden.
+                  Auf der UN-Konferenz 1992 wurde „Nachhaltigkeit“ zum globalen Entwicklungsziel erklärt, das
+                  ökonomische, ökologische und soziale Perspektiven integriert. Im Sinne einer Bildung für nachhaltige
+                  Entwicklung (BNE) wurde SOIL entwickelt, um dieses Konzept der Nachhaltigkeit im Unterricht
+                  erfahrbar zu machen.
                 </p>
                 <p>
-                  Das Simulationsspiel "Soil" wurde entwickelt, um dieses concept der Nachhaltigkeit begreifbar zu
-                  machen. Es ermöglicht Lernenden, die Zentralität ökologischer Variablen als natürliche Grenzen
-                  ökonomischen Handelns spielerisch zu entdecken.
+                  Das Simulationsspiel adressiert gezielt die Wissens-Handlungs-Lücke: Es ermöglicht Lernenden,
+                  systemische Wechselwirkungen zwischen Bodenfruchtbarkeit, Biodiversität und Betriebswirtschaft zu
+                  erproben und ökologische Variablen als natürliche Grundlagen ökonomischen Handelns spielerisch zu
+                  entdecken.
                 </p>
               </div>
-            </section>
-          </div>
-
-          <!-- Test Mode (Dev Only) -->
-          @if (showTestMode) {
-            <div class="mt-16 p-6 bg-red-900/20 border border-red-500/30 rounded-xl max-w-xl mx-auto">
-              <h3 class="text-red-400 font-bold mb-4">Test Mode (Dev Only)</h3>
-              <div class="flex flex-wrap gap-4 justify-center">
-                <button (click)="enableTestMode('admin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Admin</button>
-                <button (click)="enableTestMode('superadmin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Super Admin</button>
-              </div>
-              <p class="mt-2 text-xs text-gray-500">Enabling test mode will mock all backend calls and use local data.</p>
             </div>
-          }
+            <div class="pt-4 border-t border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-sm text-gray-300">
+              <span>Anonymisierte Spielverläufe für Didaktik & Agrarökonomie:</span>
+              <a
+                routerLink="/research"
+                data-testid="landing-research-link"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-blue-300 hover:text-white rounded-lg border border-gray-700 transition-colors font-semibold shrink-0"
+              >
+                <span>Forschungsdaten</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </section>
         </div>
-      }
+
+        <!-- Test Mode (Dev Only) -->
+        @if (showTestMode) {
+          <div class="mt-16 p-6 bg-red-900/20 border border-red-500/30 rounded-xl max-w-xl mx-auto">
+            <h3 class="text-red-400 font-bold mb-4">Test Mode (Dev Only)</h3>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <button (click)="enableTestMode('admin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Admin</button>
+              <button (click)="enableTestMode('superadmin')" class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">Mock Super Admin</button>
+            </div>
+            <p class="mt-2 text-xs text-gray-500">Enabling test mode will mock all backend calls and use local data.</p>
+          </div>
+        }
+      </div>
     </div>
   `,
 })
 export class Landing {
   private auth = inject(AuthService);
+  private gameService = inject(GameService);
   private router = inject(Router);
   year = new Date().getFullYear();
   showTestMode = isDevMode();
+  isStartingGame = false;
 
   scrollToInfo() {
     const element = document.getElementById('info-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  async startQuickGame() {
+    if (this.isStartingGame) return;
+    this.isStartingGame = true;
+    try {
+      const result = await this.gameService.createGame(`Hof ${new Date().toLocaleDateString('de-DE')}`, {
+        numPlayers: 4,
+        numRounds: 10,
+        numAi: 3,
+        aiLevel: 'middle',
+        difficulty: 'normal',
+        playerLabel: 'Team',
+        advancedPricingEnabled: true,
+        analyticsEnabled: true,
+        advisorEnabled: true,
+      });
+      if (result.password) {
+        await this.auth.loginAsPlayer(result.gameId, result.password);
+      }
+      await this.router.navigate(['/game']);
+    } catch (err) {
+      console.error('Quick play failed:', err);
+      await this.router.navigate(['/admin']);
+    } finally {
+      this.isStartingGame = false;
     }
   }
 

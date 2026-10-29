@@ -2214,16 +2214,18 @@ export const submitFeedback = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
   async (request) => {
     const { category, rating, comment, isTest } = request.data || {};
-    if (!category || rating === undefined || !comment) {
+    if (!category || rating === undefined) {
       throw new HttpsError('invalid-argument', 'Missing feedback fields');
     }
 
     const cleanCategory = String(category).trim().slice(0, 50);
     const cleanRating = Math.min(5, Math.max(1, Math.round(Number(rating) || 1)));
-    const cleanComment = String(comment).trim().slice(0, 2000);
+    const cleanComment = String(comment || '')
+      .trim()
+      .slice(0, 2000);
 
-    if (!cleanCategory || cleanComment.length < 3) {
-      throw new HttpsError('invalid-argument', 'Feedback comment is too short');
+    if (!cleanCategory) {
+      throw new HttpsError('invalid-argument', 'Missing feedback category');
     }
 
     const callerEmail = request.auth?.token?.email;
@@ -2244,7 +2246,10 @@ export const submitFeedback = onCall(
     };
 
     await feedbackRef.set(feedbackData);
-    feedbackData.aiAnalysis = await runFeedbackGeminiAnalysis(feedbackRef, cleanCategory, cleanRating, cleanComment);
+    feedbackData.aiAnalysis =
+      cleanComment.length >= 3
+        ? await runFeedbackGeminiAnalysis(feedbackRef, cleanCategory, cleanRating, cleanComment)
+        : null;
     await notifySuperAdminsOfFeedback(cleanCategory, cleanRating, cleanComment, feedbackData.aiAnalysis);
 
     return { success: true };

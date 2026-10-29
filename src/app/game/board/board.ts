@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, type Params, Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
 import { combineLatest, type Subscription, take } from 'rxjs';
+import { FeedbackModal } from '../../admin/components/feedback-modal/feedback-modal';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS, STICKER_DEFINITIONS } from '../../game-constants';
 import type {
@@ -40,6 +41,7 @@ import { BoardHudComponent } from './components/board-hud';
     FormsModule,
     Finance,
     BoardHudComponent,
+    FeedbackModal,
   ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
@@ -181,6 +183,26 @@ export class Board implements OnInit, OnDestroy {
   };
   isSubmittingFeedback = false;
   feedbackSubmitted = false;
+  showFeedbackModal = false;
+
+  onModalFeedbackSubmit(payload: {
+    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+    rating: number;
+    comment: string;
+  }) {
+    this.isSubmittingFeedback = true;
+    this.gameService
+      .submitFeedback(payload)
+      .then(() => {
+        this.isSubmittingFeedback = false;
+        this.feedbackSubmitted = true;
+        this.showFeedbackModal = false;
+      })
+      .catch((error) => {
+        this.isSubmittingFeedback = false;
+        console.error('Failed to submit feedback:', error);
+      });
+  }
 
   // Inline Name Editing
   isEditingName = false;

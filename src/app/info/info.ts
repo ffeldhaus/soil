@@ -1,25 +1,14 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { type AfterViewInit, Component, type ElementRef, inject, PLATFORM_ID, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { BackButtonComponent } from '../shared/back-button/back-button';
 
 @Component({
   selector: 'app-info',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, BackButtonComponent],
   template: `
     <div class="flex flex-col h-full text-white font-sans overflow-hidden">
-      <!-- Navigation Bar -->
-      <nav
-        class="bg-gray-900 border-b border-gray-800 shadow-md px-4 sm:px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
-      >
-        <div class="flex items-center gap-4">
-          <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
-        </div>
-
-        <div class="flex items-center gap-3">
-        </div>
-      </nav>
-
       <div #scrollContainer class="flex-1 overflow-y-auto custom-scrollbar relative">
         <!-- Background Image -->
         <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none print:hidden">
@@ -29,18 +18,40 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
           </picture>
         </div>
 
-        <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-14 pb-8">
-          <header class="mb-5 p-4 sm:p-5 bg-gray-900 rounded-xl border border-gray-800 shadow-lg">
-            <h1 class="text-2xl sm:text-4xl font-bold text-emerald-500 mb-1.5 tracking-tight">
-              Hintergrund
-            </h1>
-            <p class="text-sm sm:text-base text-gray-200 max-w-2xl">Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns.</p>
+        <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6 pb-8">
+          <header class="mb-5 p-4 sm:p-5 bg-gray-900 rounded-xl border border-gray-800 shadow-lg flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div>
+              <h1 class="text-2xl sm:text-4xl font-bold text-emerald-500 mb-1.5 tracking-tight">
+                Hintergrund
+              </h1>
+              <p class="text-sm sm:text-base text-gray-200 max-w-2xl">Die Simulation SOIL basiert auf umfangreichen fachdidaktischen Forschungsarbeiten zur Förderung nachhaltigen Handelns.</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0 print:hidden">
+              <app-back-button></app-back-button>
+              <button
+                type="button"
+                (click)="printPage()"
+                data-testid="info-print-btn"
+                class="inline-flex items-center gap-2 px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white rounded-lg border border-gray-700 transition-colors text-xs sm:text-sm font-medium cursor-pointer"
+                title="Drucken"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                  />
+                </svg>
+                <span>Drucken</span>
+              </button>
+            </div>
           </header>
 
           <div class="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-6 items-start">
             <!-- Table of Contents -->
             <aside
-              class="mb-5 lg:mb-0 lg:sticky lg:top-14 bg-gray-900 border border-gray-800 rounded-xl p-3 print:hidden"
+              class="mb-5 lg:mb-0 lg:sticky lg:top-6 bg-gray-900 border border-gray-800 rounded-xl p-3 print:hidden"
             >
               <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 px-2">
                 Inhalt
@@ -343,6 +354,12 @@ export class InfoComponent implements AfterViewInit {
       setTimeout(attemptScroll, 100);
     }
     setTimeout(attemptScroll, 300);
+  }
+
+  printPage(): void {
+    if (typeof window !== 'undefined') {
+      window.print();
+    }
   }
 
   publications = [

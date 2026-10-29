@@ -7,32 +7,6 @@
       'print-landscape': printOrientation === 'landscape'
     }"
   >
-    <!-- Navigation Bar -->
-    <nav
-      class="bg-gray-900 border-b border-gray-800 shadow-md px-4 sm:px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
-    >
-      <div class="flex items-center gap-4">
-        <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button
-          (click)="showPrintModal = true"
-          class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-8 h-8 flex items-center justify-center"
-          [title]="t('manual.print')"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-            />
-          </svg>
-        </button>
-      </div>
-    </nav>
-
     <!-- Background Image -->
     <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none print:hidden">
       <picture>
@@ -41,20 +15,42 @@
       </picture>
     </div>
 
-    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-14 pb-8">
+    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6 pb-8">
       <header
-        class="mb-5 p-4 sm:p-5 bg-gray-900 rounded-xl border border-gray-800 shadow-lg"
+        class="mb-5 p-4 sm:p-5 bg-gray-900 rounded-xl border border-gray-800 shadow-lg flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
       >
-        <h1 class="text-2xl sm:text-4xl font-bold text-emerald-500 mb-1.5 tracking-tight">
-          {{ t('manual.title') }}
-        </h1>
-        <p class="text-sm sm:text-base text-gray-200 max-w-2xl">{{ t('manual.subtitle') }}</p>
+        <div>
+          <h1 class="text-2xl sm:text-4xl font-bold text-emerald-500 mb-1.5 tracking-tight">
+            {{ t('manual.title') }}
+          </h1>
+          <p class="text-sm sm:text-base text-gray-200 max-w-2xl">{{ t('manual.subtitle') }}</p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 print:hidden">
+          <app-back-button></app-back-button>
+          <button
+            type="button"
+            (click)="showPrintModal = true"
+            data-testid="manual-print-btn"
+            class="inline-flex items-center gap-2 px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white rounded-lg border border-gray-700 transition-colors text-xs sm:text-sm font-medium cursor-pointer"
+            [title]="t('manual.print')"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+              />
+            </svg>
+            <span>{{ t('manual.print') }}</span>
+          </button>
+        </div>
       </header>
 
       <div class="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-6 items-start">
         <!-- Table of Contents -->
         <aside
-          class="mb-5 lg:mb-0 lg:sticky lg:top-14 bg-gray-900 border border-gray-800 rounded-xl p-3 print:hidden"
+          class="mb-5 lg:mb-0 lg:sticky lg:top-6 bg-gray-900 border border-gray-800 rounded-xl p-3 print:hidden"
         >
           <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 px-2">
             {{ t('manual.toc.title') }}

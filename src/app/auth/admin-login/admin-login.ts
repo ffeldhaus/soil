@@ -2,29 +2,15 @@ import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { BackButtonComponent } from '../../shared/back-button/back-button';
 import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, BackButtonComponent],
   template: `
     <div class="min-h-screen relative text-gray-100 font-sans overflow-hidden flex flex-col">
-      <!-- Navigation Bar -->
-      <nav
-        class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
-      >
-        <div class="flex items-center gap-4">
-          <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
-        </div>
-
-        <div class="flex items-center gap-3">
-          @defer (hydrate on interaction) {
-          }
-
-        </div>
-      </nav>
-
       <div class="flex-1 relative flex items-center justify-center p-6 portrait:p-0">
         <!-- Background Image -->
         <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
@@ -42,6 +28,10 @@ import { AuthService } from '../auth.service';
         <div
           class="relative z-10 w-full max-w-md bg-gray-900 rounded-xl shadow-2xl p-5 sm:p-6 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
         >
+          <div class="mb-4">
+            <app-back-button></app-back-button>
+          </div>
+
           <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-emerald-400 mb-2">Anmeldung</h1>
             <p class="text-gray-400">Zugang zur Admin-Konsole</p>
@@ -112,9 +102,9 @@ import { AuthService } from '../auth.service';
                 class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg"
               >
               @if (isLoading) {
-                <ng-container>Anmeldung läuft...</ng-container>
+                <span>Anmeldung läuft...</span>
               } @else {
-                <ng-container>Anmelden</ng-container>
+                <span>Anmelden</span>
               }
             </button>
           </form>
@@ -150,10 +140,9 @@ import { AuthService } from '../auth.service';
               </div>
             </button>
             <p class="text-sm text-gray-500">
-              <ng-container>Noch kein Konto?</ng-container>&nbsp;<a
+              Noch kein Konto?&nbsp;<a
                 routerLink="/admin/register"
                 class="text-emerald-400 hover:underline"
-
                 >Hier registrieren</a
               >
             </p>

@@ -6,19 +6,7 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
   },
   {
-    path: 'admin/login',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'admin/register',
-    renderMode: RenderMode.Prerender,
-  },
-  {
     path: 'manual',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'impressum',
     renderMode: RenderMode.Prerender,
   },
   {
@@ -27,18 +15,34 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'research',
-    renderMode: RenderMode.Client,
+    renderMode: RenderMode.Prerender,
+  },
+  {
+    path: 'admin',
+    renderMode: RenderMode.Prerender,
+  },
+  {
+    path: 'admin/login',
+    renderMode: RenderMode.Prerender,
+  },
+  {
+    path: 'admin/register',
+    renderMode: RenderMode.Prerender,
   },
   {
     path: 'game-login',
     renderMode: RenderMode.Prerender,
   },
   {
-    path: 'game',
-    renderMode: RenderMode.Client,
+    path: 'impressum',
+    renderMode: RenderMode.Prerender,
   },
   {
-    path: 'admin',
+    path: 'privacy',
+    renderMode: RenderMode.Prerender,
+  },
+  {
+    path: 'game',
     renderMode: RenderMode.Client,
   },
   {

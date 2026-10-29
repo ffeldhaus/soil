@@ -14,6 +14,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GameEngine } from '../game/engine/game-engine';
 import { GameService } from '../game/game.service';
 import { GAME_CONSTANTS } from '../game-constants';
+import { BackButtonComponent } from '../shared/back-button/back-button';
 import type { Game, PlayerState, PublicResearchInsight, PublicResearchSummary } from '../types';
 
 export interface CropShareRow {
@@ -25,7 +26,7 @@ export interface CropShareRow {
 @Component({
   selector: 'app-research',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, BackButtonComponent],
   templateUrl: './research.html',
   styleUrl: './research.scss',
 })

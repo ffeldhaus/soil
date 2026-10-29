@@ -3,6 +3,7 @@ import { type AfterViewInit, Component, type ElementRef, inject, PLATFORM_ID, vi
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../game-constants';
+import { BackButtonComponent } from '../shared/back-button/back-button';
 import { ManualConceptCardComponent } from './components/manual-concept-card';
 import { ManualCropCardComponent } from './components/manual-crop-card';
 import { ManualPrintModalComponent } from './components/manual-print-modal';
@@ -13,7 +14,7 @@ import { ManualPrintModalComponent } from './components/manual-print-modal';
   imports: [
     CommonModule,
     RouterLink,
-
+    BackButtonComponent,
     ManualConceptCardComponent,
     ManualCropCardComponent,
     ManualPrintModalComponent,

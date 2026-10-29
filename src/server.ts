@@ -101,15 +101,22 @@ app.use(compression());
 app.get('/robots.txt', (_req, res) => {
   res.type('text/plain');
   res.send(`User-agent: *
-# Disallow administrative and private routes
+# Disallow administrative, private, and legal utility routes
 Disallow: /game
 Disallow: /game-login
-
-# Disallow Impressum to protect contact data from indexing
-Disallow: /impressum
+Disallow: /admin/login
+Disallow: /admin/register
+Disallow: /admin/super
+Disallow: /delete-account
+Disallow: /auth/action
+Disallow: /privacy
 
 # Allow public content
 Allow: /
+Allow: /manual
+Allow: /info
+Allow: /research
+Allow: /admin
 
 Sitemap: https://soil.app/sitemap.xml`);
 });
@@ -138,14 +145,6 @@ app.get('/sitemap.xml', (_req, res) => {
     <loc>https://soil.app/admin</loc>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://soil.app/impressum</loc>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://soil.app/privacy</loc>
-    <priority>0.5</priority>
-  </url>
 </urlset>`);
 });
 
@@ -172,6 +171,21 @@ app.all(['/api/research', '/api/research/'], async (req, res) => {
 
 app.all(['/api/mcp', '/api/mcp/', '/mcp', '/mcp/'], express.raw({ type: '*/*', limit: '256kb' }), async (req, res) => {
   await proxyToCloudFunction(req, res, 'researchMcp');
+});
+
+/**
+ * 301-redirect legacy localized URLs (/de, /en, /en-US) to canonical root paths.
+ */
+app.use((req, res, next) => {
+  const match = /^\/(?:de|en|en-US)(?:\/(.*))?$/.exec(req.path);
+  if (match) {
+    const rest = match[1] || '';
+    const queryIndex = req.originalUrl.indexOf('?');
+    const search = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+    res.redirect(301, `/${rest}${search}`);
+    return;
+  }
+  next();
 });
 
 /**

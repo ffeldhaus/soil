@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Implemented declarative route-driven SEO (`RouteSeoData` in `src/app/app.routes.ts` and `App` in `src/app/app.ts`) with per-route `<title>`, `<meta name="description">`, `<meta name="robots">`, Open Graph / Twitter Card tags, canonical `<link rel="canonical">`, and Schema.org JSON-LD (`SoftwareApplication`, `LearningResource`, `TechArticle`, `AboutPage`, and `Dataset`).
+- Added a 1-click **Sofort spielen** button (`data-testid="landing-quick-play"`) on the landing page (`src/app/landing/landing.ts`) that immediately creates and launches a default 10-round local single-player game against 3 AI farms.
+- Added a reusable history-aware `BackButtonComponent` (`src/app/shared/back-button/back-button.ts`), header **Drucken** actions on `/manual` and `/info`, and an in-game feedback button (`data-testid="hud-feedback-button"`) in `BoardHudComponent`.
+- Added 301 redirects in `src/server.ts` from legacy localized URLs (`/de/*`, `/en/*`, `/en-US/*`) to canonical root paths.
+### Changed
+- Enabled build-time static prerendering (`"prerender": true` in `angular.json` and `RenderMode.Prerender` in `src/app/app.routes.server.ts`) for `/`, `/manual`, `/info`, `/research`, `/admin`, `/impressum`, and `/privacy`, and removed `@defer (hydrate on viewport)` around `#info-section` on the landing page so full semantic HTML and internal links are immediately crawlable.
+- Removed the fixed top `<nav>` bar from all non-HUD views (`/`, `/manual`, `/info`, `/research`, `/impressum`, `/privacy`, `/admin/login`, `/admin/register`, `/game-login`, `/delete-account`) in favor of `BackButtonComponent` inside page headers, and cleaned up legacy `*ngIf`, empty `@defer`, and redundant `<ng-container>` blocks.
+- Made feedback text comments optional in `FeedbackModal`, the game-end feedback form (`src/app/game/board/board.html`), and the `submitFeedback` Cloud Function (`functions/src/index.ts`) so players can submit 1-click star ratings at any point during or after a game.
+- Refined the landing page `Über das Spiel` and `Nachhaltigkeit` cards (`src/app/landing/landing.ts`) with BNE/subject keywords (`Biologie`, `Geographie`, `Wirtschaft`, `Sekundarstufe I & II`, `Wissens-Handlungs-Lücke`), clear instant single-player vs. verified teacher account explanations, a direct link to `/research`, and fixed the `"dieses concept"` typo.
+- Aligned `public/sitemap.xml`, `public/robots.txt`, and `src/server.ts` so `sitemap.xml` lists only indexable public pages (`/`, `/manual`, `/info`, `/research`, `/admin`) while allowing `/impressum` in `robots.txt` so crawlers can process its `<meta name="robots" content="noindex, nofollow">` directive.
+### Fixed
+- Fixed a sticky `<meta name="robots" content="noindex">` bug when navigating from `/impressum` or `/privacy` back to indexable pages by managing `robots` declaratively on every route navigation.
+
 ## [3.1.1] - 2026-10-29
 ### Added
 - Exposed the public read-only Research REST/CSV API (`https://soil.app/api/research`, `https://soil.app/api/research?format=csv`) and JSON-RPC 2.0 MCP Server (`https://soil.app/api/mcp` and `https://soil.app/mcp`) directly on `soil.app` via SSR Express reverse-proxy routes (`src/server.ts`) and Firebase Hosting rewrites (`firebase.json`).

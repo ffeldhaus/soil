@@ -40,7 +40,7 @@
               "entry": "src/server.ts"
             },
             "server": "src/main.server.ts",
-            "prerender": false,
+            "prerender": true,
             "allowedCommonJsDependencies": [
               "dijkstrajs",
               "compression",

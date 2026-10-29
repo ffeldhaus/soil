@@ -52,6 +52,7 @@ export class BoardHudComponent {
 
   @Output() nextRound = new EventEmitter<void>();
   @Output() showGameEnd = new EventEmitter<void>();
+  @Output() openFeedback = new EventEmitter<void>();
 
   isEditingName = false;
   tempName = '';

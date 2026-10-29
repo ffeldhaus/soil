@@ -18,7 +18,14 @@
       (openTeamModal)="openTeamAndAchievementsModal()" (toggleLabels)="toggleLabels()"
       (toggleNutrition)="toggleNutrition()" (toggleHarvest)="toggleHarvest()" (toggleSoil)="toggleSoil()"
       (toggleFinance)="toggleFinance()" (nextRound)="nextRound()"
-      (showGameEnd)="showGameEndModal = true"></app-board-hud>
+      (showGameEnd)="showGameEndModal = true" (openFeedback)="showFeedbackModal = true"></app-board-hud>
+
+    @if (showFeedbackModal) {
+      <app-feedback-modal
+        (closeModal)="showFeedbackModal = false"
+        (feedbackSubmit)="onModalFeedbackSubmit($event)"
+      ></app-feedback-modal>
+    }
 
     <!-- Mobile Side Menu Overlay -->
     @if (showMobileMenu) {
@@ -719,7 +726,7 @@
                   [(ngModel)]="feedback.comment"
                   name="comment"
                   rows="3"
-                  placeholder="Was können wir verbessern?"
+                  placeholder="Was hat dir gefallen oder was können wir verbessern? (Optional)"
                   class="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none text-sm"
                 ></textarea>
               </div>
@@ -727,7 +734,7 @@
               <div class="flex justify-end">
                 <button
                   type="submit"
-                  [disabled]="!feedback.comment || isSubmittingFeedback"
+                  [disabled]="!feedback.rating || isSubmittingFeedback"
                   class="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white px-6 py-2 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2 text-sm"
                 >
                   @if (!isSubmittingFeedback) {

@@ -1,31 +1,17 @@
 import { ChangeDetectorRef, Component, inject, NgZone, type OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
+import { BackButtonComponent } from '../../shared/back-button/back-button';
 import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-player-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, BackButtonComponent],
   template: `
     <div class="min-h-screen relative text-gray-100 font-sans overflow-hidden flex flex-col">
-      <!-- Navigation Bar -->
-      <nav
-        class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shrink-0 h-10 print:hidden"
-      >
-        <div class="flex items-center gap-4">
-          <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
-        </div>
-
-        <div class="flex items-center gap-3">
-          @defer (hydrate on interaction) {
-          }
-
-        </div>
-      </nav>
-
       <div class="flex-1 relative flex items-center justify-center p-6 portrait:p-0">
         <!-- Background Image -->
         <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
@@ -43,15 +29,15 @@ import { AuthService } from '../auth.service';
         <div
           class="relative z-10 w-full max-w-md bg-gray-900 rounded-xl shadow-2xl p-5 sm:p-6 border border-gray-700 portrait:max-w-none portrait:rounded-none portrait:border-x-0"
         >
-          <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">
-            <ng-container>Spiel beitreten</ng-container>
-          </h2>
+          <div class="mb-4">
+            <app-back-button></app-back-button>
+          </div>
+
+          <h2 class="text-3xl font-bold text-center mb-8 text-emerald-400">Spiel beitreten</h2>
 
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="space-y-6">
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2"
-                ><ng-container>Spiel-ID</ng-container></label
-              >
+              <label class="block text-sm font-medium text-gray-400 mb-2">Spiel-ID</label>
               <input
                 formControlName="gameId"
                 type="text"
@@ -64,9 +50,7 @@ import { AuthService } from '../auth.service';
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-2"
-                ><ng-container>PIN</ng-container></label
-              >
+              <label class="block text-sm font-medium text-gray-400 mb-2">PIN</label>
               <div class="relative">
                 <input
                   formControlName="password"
@@ -103,9 +87,9 @@ import { AuthService } from '../auth.service';
                 class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition shadow-lg"
               >
               @if (isLoading) {
-                <ng-container>{{ t('playerLogin.enteringGame') }}</ng-container>
+                <span>{{ t('playerLogin.enteringGame') }}</span>
               } @else {
-                <ng-container>Spiel starten</ng-container>
+                <span>Spiel starten</span>
               }
             </button>
           </form>

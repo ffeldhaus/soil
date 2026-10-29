@@ -4,12 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
 
 import { GameService } from '../../game/game.service';
+import { BackButtonComponent } from '../../shared/back-button/back-button';
 import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-admin-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, BackButtonComponent],
   templateUrl: './admin-register.html',
 })
 export class AdminRegisterComponent implements OnInit {

@@ -1,24 +1,4 @@
 <div class="flex flex-col h-full text-white font-sans overflow-hidden">
-  <!-- Top Navigation Bar -->
-  <nav
-    class="bg-gray-900 border-b border-gray-800 shadow-md px-4 sm:px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
-  >
-    <div class="flex items-center gap-4">
-      <a
-        routerLink="/"
-        class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer"
-        title="Zur Startseite"
-      >
-        SOIL
-      </a>
-    </div>
-
-    <div class="flex items-center gap-4 text-xs font-mono">
-      <a routerLink="/manual" class="text-gray-300 hover:text-white transition-colors">Handbuch</a>
-      <a routerLink="/info" class="text-gray-300 hover:text-white transition-colors">Hintergrund</a>
-    </div>
-  </nav>
-
   <div #scrollContainer class="flex-1 overflow-y-auto custom-scrollbar relative">
     <!-- Background Image -->
     <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none print:hidden">
@@ -33,7 +13,7 @@
       </picture>
     </div>
 
-    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-14 pb-12 space-y-6">
+    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6 pb-12 space-y-6">
       <!-- Header & Filter/Export Controls -->
       <header class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-4">
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -50,6 +30,7 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <app-back-button></app-back-button>
             <button
               type="button"
               data-testid="export-csv-btn"

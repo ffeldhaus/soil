@@ -55,16 +55,14 @@ import { FormsModule } from '@angular/forms';
           <!-- Comment -->
           <div>
             <label for="comment" class="block text-sm font-medium text-gray-400 mb-2"
-              >Dein Feedback</label
+              >Dein Feedback (optional)</label
             >
             <textarea
               id="comment"
               [(ngModel)]="feedback.comment"
               name="comment"
-              required
               rows="4"
-
-              placeholder="Erzähl uns mehr..."
+              placeholder="Was hat dir gefallen oder was können wir verbessern? (Optional)"
               class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none"
             ></textarea>
           </div>
@@ -73,14 +71,13 @@ import { FormsModule } from '@angular/forms';
             <button
               type="button"
               (click)="closeModal.emit()"
-
               class="px-6 py-3 text-gray-400 hover:text-white transition font-medium"
             >
               Abbrechen
             </button>
             <button
               type="submit"
-              [disabled]="!feedbackForm.valid || isSubmitting"
+              [disabled]="!feedback.rating || isSubmitting"
               class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:text-gray-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-900/20 flex items-center gap-2"
             >
               @if (!isSubmitting) {

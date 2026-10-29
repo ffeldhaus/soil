@@ -1,11 +1,11 @@
-import { Component, inject, type OnInit } from '@angular/core';
-import { Meta } from '@angular/platform-browser';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { BackButtonComponent } from '../shared/back-button/back-button';
 
 @Component({
   selector: 'app-privacy',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, BackButtonComponent],
   template: `
     <div class="h-full overflow-y-auto custom-scrollbar relative font-sans text-gray-100">
       <!-- Background Image -->
@@ -21,23 +21,14 @@ import { RouterLink } from '@angular/router';
         </picture>
       </div>
 
-      <!-- Navigation Bar -->
-      <nav
-        class="bg-gray-900 border-b border-gray-800 shadow-lg px-6 py-1 fixed top-0 left-0 right-0 z-[101] flex items-center justify-between shrink-0 h-10 print:hidden"
-      >
-        <div class="flex items-center gap-4">
-          <a routerLink="/" class="text-xl font-bold font-sans text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors cursor-pointer" title="Zur Startseite">SOIL</a>
-        </div>
-
-        <div class="flex items-center gap-3">
-        </div>
-      </nav>
-
-      <div class="relative z-10 max-w-5xl mx-auto pt-[72px] pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
+      <div class="relative z-10 max-w-5xl mx-auto pt-4 sm:pt-8 pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
         <!-- Header -->
-        <header class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl portrait:rounded-none portrait:border-x-0">
-          <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">Datenschutzerklärung</h1>
-          <p class="text-xl text-white max-w-2xl">Informationen über die Verarbeitung deiner personenbezogenen Daten</p>
+        <header class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 portrait:rounded-none portrait:border-x-0">
+          <div>
+            <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">Datenschutzerklärung</h1>
+            <p class="text-xl text-white max-w-2xl">Informationen über die Verarbeitung deiner personenbezogenen Daten</p>
+          </div>
+          <app-back-button></app-back-button>
         </header>
 
         <!-- Allgemein -->
@@ -118,10 +109,4 @@ import { RouterLink } from '@angular/router';
     </div>
   `,
 })
-export class PrivacyPolicyComponent implements OnInit {
-  private meta = inject(Meta);
-
-  ngOnInit() {
-    this.meta.addTag({ name: 'robots', content: 'noindex' });
-  }
-}
+export class PrivacyPolicyComponent {}
