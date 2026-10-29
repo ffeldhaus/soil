@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Replaced the Git LFS pointer for the landing page trailer with a direct faststart MP4 binary (`public/assets/video/soil-trailer.mp4`), excluded `/assets/video/**` from `src/ngsw-config.json` so HTTP `206 Range` streaming works reliably on Firebase App Hosting, moved the scroll-down arrow into the normal flex flow below `Trailer ansehen`, and updated `openTrailer()` (`src/app/landing/landing.ts`) to launch directly into fullscreen autoplay.
+
 ## [3.3.0] - 2026-10-29
 ### Added
 - Added a landing page trailer modal (`data-testid="landing-watch-trailer"`, `data-testid="trailer-modal"` in `src/app/landing/landing.ts`), `VideoObject` structured data in `src/app/app.routes.ts`, and Git LFS tracking (`.gitattributes`) for `public/assets/video/*.mp4`.

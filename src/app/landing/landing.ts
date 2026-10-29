@@ -1,4 +1,5 @@
-import { Component, inject, isDevMode } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectorRef, Component, HostListener, inject, isDevMode, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { GameService } from '../game/game.service';
@@ -88,7 +89,7 @@ import { GameService } from '../game/game.service';
           <div class="flex justify-center mt-4">
             <button
               type="button"
-              (click)="showTrailerModal = true"
+              (click)="openTrailer()"
               data-testid="landing-watch-trailer"
               class="bg-gray-900/90 hover:bg-gray-800 text-slate-200 hover:text-white border border-gray-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition cursor-pointer"
             >
@@ -104,18 +105,21 @@ import { GameService } from '../game/game.service';
               <span>Trailer ansehen</span>
             </button>
           </div>
-        </div>
 
-        <!-- Scroll Indicator -->
-        <button
-          (click)="scrollToInfo()"
-          class="absolute bottom-10 animate-bounce text-gray-400 hover:text-emerald-400 transition-colors cursor-pointer"
-          aria-label="Scroll to info"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </button>
+          <!-- Scroll Indicator (in normal flex flow so it never overlaps CTA buttons) -->
+          <div class="pt-4 sm:pt-6">
+            <button
+              type="button"
+              (click)="scrollToInfo()"
+              class="mx-auto flex items-center justify-center animate-bounce text-gray-400 hover:text-emerald-400 transition-colors cursor-pointer"
+              aria-label="Scroll to info"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </main>
 
       <!-- Info Sections -->
@@ -219,42 +223,35 @@ import { GameService } from '../game/game.service';
       @if (showTrailerModal) {
         <div
           data-testid="trailer-modal"
-          class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-          (click)="showTrailerModal = false"
+          class="fixed inset-0 z-50 w-screen h-dvh bg-black flex items-center justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-label="SOIL – Spielvorstellung"
         >
-          <div
-            class="max-w-5xl w-full bg-gray-900 border border-gray-700 rounded-xl overflow-hidden shadow-2xl"
-            role="dialog"
-            aria-modal="true"
-            aria-label="SOIL – Spielvorstellung"
-            (click)="$event.stopPropagation()"
+          <button
+            type="button"
+            (click)="closeTrailer()"
+            data-testid="close-trailer-modal"
+            class="fixed top-4 right-4 z-[60] p-2.5 rounded-full bg-gray-900/85 hover:bg-gray-800 text-white border border-gray-700 transition cursor-pointer"
+            aria-label="Trailer schließen"
           >
-            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-gray-950">
-              <h2 class="text-sm sm:text-base font-bold text-white tracking-tight">SOIL – Spielvorstellung</h2>
-              <button
-                type="button"
-                (click)="showTrailerModal = false"
-                data-testid="close-trailer-modal"
-                class="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition cursor-pointer"
-                aria-label="Trailer schließen"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <video
-              controls
-              autoplay
-              playsinline
-              preload="metadata"
-              poster="/SOIL-screenshot.jpg"
-              class="w-full aspect-video bg-black"
-            >
-              <source src="/assets/video/soil-marketing-trailer.mp4" type="video/mp4" />
-              <track kind="captions" src="/assets/video/soil-marketing-trailer.vtt" srclang="de" label="Deutsch" />
-            </video>
-          </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <video
+            data-testid="trailer-video"
+            src="/assets/video/soil-trailer.mp4"
+            controls
+            autoplay
+            playsinline
+            preload="auto"
+            poster="/SOIL-screenshot.jpg"
+            (ended)="closeTrailer()"
+            class="w-full h-full object-contain bg-black"
+          >
+            <track kind="captions" src="/assets/video/soil-marketing-trailer.vtt" srclang="de" label="Deutsch" />
+          </video>
         </div>
       }
     </div>
@@ -265,6 +262,8 @@ export class Landing {
   private gameService = inject(GameService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+  private platformId = inject(PLATFORM_ID);
   year = new Date().getFullYear();
   showTestMode = isDevMode();
   isStartingGame = false;
@@ -298,6 +297,49 @@ export class Landing {
     const element = document.getElementById('info-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  openTrailer() {
+    this.showTrailerModal = true;
+    this.cdr.detectChanges();
+    if (!isPlatformBrowser(this.platformId)) return;
+    const video = document.querySelector('[data-testid="trailer-video"]') as HTMLVideoElement | null;
+    if (video) {
+      video.currentTime = 0;
+      video.play().catch(() => {});
+      if (video.requestFullscreen) {
+        video.requestFullscreen().catch(() => {});
+      } else if ('webkitEnterFullscreen' in video && typeof (video as any).webkitEnterFullscreen === 'function') {
+        (video as any).webkitEnterFullscreen();
+      }
+    }
+  }
+
+  closeTrailer() {
+    if (isPlatformBrowser(this.platformId)) {
+      const video = document.querySelector('[data-testid="trailer-video"]') as HTMLVideoElement | null;
+      if (video && !video.paused) {
+        video.pause();
+      }
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    this.showTrailerModal = false;
+  }
+
+  @HostListener('document:fullscreenchange')
+  onFullscreenChange() {
+    if (this.showTrailerModal && isPlatformBrowser(this.platformId) && !document.fullscreenElement) {
+      this.closeTrailer();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey() {
+    if (this.showTrailerModal) {
+      this.closeTrailer();
     }
   }
 

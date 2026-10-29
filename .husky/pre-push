@@ -70,8 +70,4 @@ if git rev-parse --verify origin/main >/dev/null 2>&1; then
   fi
 fi
 
-if command -v git-lfs >/dev/null 2>&1; then
-  git lfs pre-push "$@"
-fi
-
 echo "Pre-push checks passed."
