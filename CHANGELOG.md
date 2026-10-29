@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.2.1] - 2026-10-29
 ### Changed
 - Added a segmented `SOIL` home logo link (`routerLink="/"`) alongside the history-aware `Zurück` button in `BackButtonComponent` (`src/app/shared/back-button/back-button.ts`).
 
