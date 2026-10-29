@@ -62,6 +62,21 @@ interface PlayerFinanceData {
 })
 export class Finance implements OnChanges {
   readonly GAME_CONSTANTS = GAME_CONSTANTS;
+  readonly INITIAL_CAPITAL = 100000;
+  readonly ALL_ARABLE_CROPS = [
+    'Wheat',
+    'Corn',
+    'Potato',
+    'Beet',
+    'Barley',
+    'Oat',
+    'Rye',
+    'Fieldbean',
+    'Rapeseed',
+    'Pea',
+  ];
+  readonly OTHER_PLAYER_COLORS = ['#38bdf8', '#f59e0b', '#a855f7', '#f43f5e', '#14b8a6'];
+
   t(key: string): string {
     const translations: Record<string, string> = {
       'crop.wheat': 'Weizen',
@@ -72,6 +87,8 @@ export class Finance implements OnChanges {
       'crop.oat': 'Hafer',
       'crop.rye': 'Roggen',
       'crop.fieldbean': 'Ackerbohne',
+      'crop.rapeseed': 'Raps',
+      'crop.pea': 'Erbse',
       'crop.animals': 'Tiere',
       'crop.fallow': 'Brachland',
       'crop.grass': 'Tiere',
@@ -145,17 +162,19 @@ export class Finance implements OnChanges {
   private processPlayerData() {
     this.players = Object.values(this.game.players)
       .map((player) => {
-        // Capital history should represent capital at the START of each round
-        // history[0] = starting capital (start of round 1)
+        // Capital history represents capital at the START of each round:
+        // history[0] = starting capital (start of round 1 = 100.000 €)
         // history[1] = result of round 1 (start of round 2)
         // ...
         // history[N] = result of round N (start of round N+1)
-        const historyData = [1000];
+        const historyData = [this.INITIAL_CAPITAL];
         player.history.forEach((r) => {
           if (r.result) {
             historyData.push(r.result.capital);
           }
         });
+
+        const prevRound = player.history.find((r) => r.number === this.currentViewingRound - 1);
 
         const data: PlayerFinanceData = {
           uid: player.uid,
@@ -163,6 +182,7 @@ export class Finance implements OnChanges {
           capitalHistory: historyData,
           profitMargin: 0,
           isCurrentPlayer: player.uid === this.playerUid,
+          prevResult: prevRound?.result,
         };
 
         // Current viewing round result
@@ -256,10 +276,11 @@ export class Finance implements OnChanges {
     const greenStripParcels = Math.min(greenParcels, GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP_MAX_PARCELS);
     const numParcels = Object.keys(decision.parcels).length || 40;
     const regularParcels = numParcels - greenStripParcels;
+    const bioEligibleParcels = Object.values(decision.parcels).filter((c) => c !== 'Fallow').length || numParcels;
 
     const baseSubsidy = regularParcels * GAME_CONSTANTS.SUBSIDIES.BASE;
     const greenStripSubsidy = greenStripParcels * GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP;
-    const bioSubsidy = result.bioSiegel ? numParcels * GAME_CONSTANTS.SUBSIDIES.BIO : 0;
+    const bioSubsidy = result.bioSiegel ? bioEligibleParcels * GAME_CONSTANTS.SUBSIDIES.BIO : 0;
 
     data.detailedIncome = {
       harvest: harvestIncome,
@@ -281,27 +302,80 @@ export class Finance implements OnChanges {
     }
   }
 
+  getPlayerColor(player: PlayerFinanceData, index: number): string {
+    if (player.isCurrentPlayer) return '#10b981';
+    return this.OTHER_PLAYER_COLORS[index % this.OTHER_PLAYER_COLORS.length];
+  }
+
+  getActiveSeedCrops(): string[] {
+    return this.ALL_ARABLE_CROPS.filter((crop) =>
+      this.players.some((p) => (p.detailedExpenses?.seeds?.[crop] || 0) > 0),
+    );
+  }
+
+  getActiveHarvestCrops(): string[] {
+    return this.ALL_ARABLE_CROPS.filter((crop) =>
+      this.players.some((p) => (p.detailedIncome?.harvest?.[crop] || 0) > 0),
+    );
+  }
+
+  hasAnyOverdraftInterest(): boolean {
+    return this.players.some((p) => (p.result?.expenses?.overdraftInterest || p.result?.overdraftInterest || 0) > 0);
+  }
+
+  hasAnyContractBonus(): boolean {
+    return this.players.some((p) => (p.result?.contractBonus || 0) > 0);
+  }
+
   // --- Graph Helpers ---
 
   readonly VIEWBOX_WIDTH = 1000;
   readonly VIEWBOX_HEIGHT = 240;
   readonly GRAPH_MARGIN = { top: 20, right: 32, bottom: 38, left: 105 };
 
+  getMinCapital(): number {
+    let min = this.INITIAL_CAPITAL;
+    this.players.forEach((p) => {
+      p.capitalHistory.forEach((c) => {
+        if (c < min) min = c;
+      });
+    });
+    const padded = min >= 0 ? Math.round(min * 0.9) : Math.round(min * 1.1);
+    const rounded = Math.floor(padded / 10000) * 10000;
+    return min >= 0 ? Math.max(0, rounded) : rounded;
+  }
+
   getMaxCapital(): number {
-    let max = 1000;
+    let max = this.INITIAL_CAPITAL;
     this.players.forEach((p) => {
       p.capitalHistory.forEach((c) => {
         if (c > max) max = c;
       });
     });
-    // Add 20% headroom
-    max = max * 1.2;
-    return Math.ceil(max / 500) * 500; // Round to nearest 500
+    const padded = max >= 0 ? Math.round(max * 1.1) : Math.round(max * 0.9);
+    const rounded = Math.ceil(padded / 10000) * 10000;
+    const minCap = this.getMinCapital();
+    return Math.max(minCap + 20000, rounded);
+  }
+
+  getGridCapital(linePercent: number): number {
+    const minCap = this.getMinCapital();
+    const maxCap = this.getMaxCapital();
+    return minCap + ((100 - linePercent) / 100) * (maxCap - minCap);
+  }
+
+  getYForCapital(cap: number): number {
+    const minCap = this.getMinCapital();
+    const maxCap = this.getMaxCapital();
+    const range = Math.max(1, maxCap - minCap);
+    const ratio = (cap - minCap) / range;
+    return (
+      this.GRAPH_MARGIN.top + (1 - ratio) * (this.VIEWBOX_HEIGHT - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom)
+    );
   }
 
   getGraphPath(history: number[]): string {
     if (history.length < 2) return '';
-    const maxCap = this.getMaxCapital();
     const maxRound = this.availableRounds.length || 1;
 
     return history
@@ -309,9 +383,7 @@ export class Finance implements OnChanges {
         const x =
           this.GRAPH_MARGIN.left +
           (roundIdx / maxRound) * (this.VIEWBOX_WIDTH - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right);
-        const y =
-          this.GRAPH_MARGIN.top +
-          (1 - cap / maxCap) * (this.VIEWBOX_HEIGHT - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom);
+        const y = this.getYForCapital(cap);
         return `${roundIdx === 0 ? 'M' : 'L'} ${x} ${y}`;
       })
       .join(' ');
@@ -331,17 +403,15 @@ export class Finance implements OnChanges {
   }
 
   getGraphPoints(history: number[]) {
-    const maxCap = this.getMaxCapital();
     const maxRound = this.availableRounds.length || 1;
     return history.map((cap, roundIdx) => ({
       x:
         this.GRAPH_MARGIN.left +
         (roundIdx / maxRound) * (this.VIEWBOX_WIDTH - this.GRAPH_MARGIN.left - this.GRAPH_MARGIN.right),
-      y:
-        this.GRAPH_MARGIN.top +
-        (1 - cap / maxCap) * (this.VIEWBOX_HEIGHT - this.GRAPH_MARGIN.top - this.GRAPH_MARGIN.bottom),
+      y: this.getYForCapital(cap),
       val: cap,
-      round: roundIdx + 1,
+      round: roundIdx === 0 ? 1 : Math.min(roundIdx, maxRound),
+      labelRound: roundIdx + 1,
     }));
   }
 }

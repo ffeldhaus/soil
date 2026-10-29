@@ -54,7 +54,13 @@
 
     @if (showHarvest) {
       <div data-testid="parcel-harvest-badge" class="bg-yellow-500/90 text-black text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-yellow-300 whitespace-nowrap">
-        {{ parcel.yield || 0 }} dt ({{ yieldPercentage }}%)
+        @if (parcel.crop === 'Grass') {
+          Weidehaltung
+        } @else if (parcel.crop === 'Fallow') {
+          Grünbrache
+        } @else {
+          {{ parcel.yield || 0 }} dt ({{ yieldPercentage }}%)
+        }
       </div>
     }
   </div>

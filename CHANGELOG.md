@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added a landing page trailer modal (`data-testid="landing-watch-trailer"`, `data-testid="trailer-modal"` in `src/app/landing/landing.ts`), `VideoObject` structured data in `src/app/app.routes.ts`, and Git LFS tracking (`.gitattributes`) for `public/assets/video/*.mp4`.
+### Changed
+- Redesigned `Finanzbericht` (`src/app/game/finance/finance.ts`, `src/app/game/finance/finance.html`) with `100.000 €` initial capital in the chart history, dynamic Y-axis scaling (`getMinCapital()` / `getMaxCapital()`), distinct team colors, a header round switcher (`R1`…`RN`), always-visible strategy badges (`Entscheidungen`), active-crop filtering (`getActiveSeedCrops()` / `getActiveHarvestCrops()`), and full breakdown rows for mineral fertilizer, overdraft interest, and regional contract bonuses.
+- Compacted `Hof-Auszeichnungen` in the sticker album modal (`src/app/game/board/board.html`) and round result modal (`src/app/game/round-result-modal/round-result-modal.html`) into horizontal thumbnail badges, and filtered `collectedStickerIds` in `src/app/game/board/board.ts` against defined sticker IDs.
+- Promoted weather and pest conditions to a top-of-modal status strip (`data-testid="round-conditions-strip"`) in `src/app/game/round-result-modal/round-result-modal.html`, and updated the harvest overlay (`src/app/game/parcel/parcel.html`, `src/app/game/parcel/parcel.ts`) to display `Weidehaltung` and `Grünbrache` with neutral green tinting instead of `0 dt (0%)`.
+- Fixed HUD header button overlap at narrow desktop widths (`src/app/game/board/components/board-hud.html`) and immediate change detection when switching `?gameId=...` on a mounted `Board` (`src/app/game/board/board.ts`).
+
 ## [3.2.3] - 2026-10-29
 ### Added
 - Added deterministic weather and pest seed support (`GameEngine.seededRandom`, `GameEngine.rollWeather`, `GameEngine.rollRoundEvents` in `src/app/game/engine/game-engine.ts` and `functions/src/game-engine.ts`, and `LocalGameService` in `src/app/game/engine/local-game.service.ts`) so local games and friend challenges replay identical weather and pest trajectories.

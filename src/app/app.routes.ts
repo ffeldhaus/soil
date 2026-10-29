@@ -48,6 +48,17 @@ const baseRoutes: Routes = [
                 'Agrarökonomie',
               ],
             },
+            {
+              '@type': 'VideoObject',
+              name: 'SOIL – Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit',
+              description:
+                'Einminütiger Überblick über die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
+              thumbnailUrl: 'https://soil.app/SOIL-screenshot.jpg',
+              uploadDate: '2026-10-29',
+              duration: 'PT1M4S',
+              contentUrl: 'https://soil.app/assets/video/soil-marketing-trailer.mp4',
+              inLanguage: 'de-DE',
+            },
           ],
         },
       } satisfies RouteSeoData,

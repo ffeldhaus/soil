@@ -463,6 +463,8 @@ export class Board implements OnInit, OnDestroy {
       this.tourStarted = true;
       this.showWelcomeModal = true;
     }
+
+    this.cdr.detectChanges();
   }
 
   private subscribeToLoadedGame(viewOnly: boolean, targetUid: string): void {
@@ -477,6 +479,7 @@ export class Board implements OnInit, OnDestroy {
       if (this.viewingRound === this.maxRoundNumber) {
         this.parcels = parcels;
         this.checkOrientation();
+        this.cdr.detectChanges();
       }
     });
   }
@@ -531,6 +534,7 @@ export class Board implements OnInit, OnDestroy {
     }
 
     this.applyUserRoleState(user, claims, allowPublicReadOnly);
+    this.cdr.detectChanges();
   }
 
   private updateTimer(game: Game) {
@@ -1352,13 +1356,18 @@ export class Board implements OnInit, OnDestroy {
   }
 
   syncCollectedStickers(extraStickerIds?: string[]) {
+    const validIds = new Set(this.allStickers.map((s) => s.id));
     try {
       const storedRaw = typeof window !== 'undefined' ? window.localStorage?.getItem('soil_collected_stickers') : null;
       const stored: string[] = storedRaw ? JSON.parse(storedRaw) : [];
       const fromHistory = (this.history || []).flatMap((r) => r.result?.unlockedStickers || []);
       const fromPlayer = this.gameService.state?.playerState?.unlockedStickers || [];
       const merged = Array.from(
-        new Set([...stored, ...fromHistory, ...fromPlayer, ...(extraStickerIds || [])].filter(Boolean)),
+        new Set(
+          [...stored, ...fromHistory, ...fromPlayer, ...(extraStickerIds || [])].filter(
+            (id): id is string => Boolean(id) && validIds.has(id),
+          ),
+        ),
       );
       this.collectedStickerIds = merged;
       if (typeof window !== 'undefined' && window.localStorage) {
@@ -1366,7 +1375,9 @@ export class Board implements OnInit, OnDestroy {
       }
     } catch {
       // Fallback if localStorage is unavailable or invalid
-      this.collectedStickerIds = Array.from(new Set(extraStickerIds || []));
+      this.collectedStickerIds = Array.from(
+        new Set((extraStickerIds || []).filter((id): id is string => Boolean(id) && validIds.has(id))),
+      );
     }
   }
 

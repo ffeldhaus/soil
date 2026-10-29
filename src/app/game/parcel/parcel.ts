@@ -91,6 +91,9 @@ export class Parcel {
       return `hsla(${hue}, 80%, 45%, 0.3)`;
     }
     if (this.showHarvest) {
+      if (this.parcel.crop === 'Grass' || this.parcel.crop === 'Fallow') {
+        return 'hsla(120, 50%, 40%, 0.18)';
+      }
       const hue = Math.min(120, (this.yieldPercentage / 100) * 120);
       return `hsla(${hue}, 80%, 45%, 0.3)`;
     }

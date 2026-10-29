@@ -1010,12 +1010,12 @@
             <!-- Hof-Auszeichnungen (Stickers) -->
             <div>
               <h3 class="text-sm font-bold text-white tracking-tight mb-2.5 text-left">Hof-Auszeichnungen</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 @for (sticker of allStickers; track sticker.id) {
                   @let collected = isStickerCollected(sticker.id);
                   <div
                     [attr.data-testid]="'album-sticker-' + sticker.id"
-                    class="rounded-xl border overflow-hidden flex flex-col transition-opacity"
+                    class="flex items-start gap-3 p-2.5 rounded-lg border transition-opacity"
                     [class.bg-black]="collected"
                     [class.bg-gray-950]="!collected"
                     [class.opacity-65]="!collected"
@@ -1024,31 +1024,34 @@
                     [class.border-amber-700]="collected && sticker.rarity === 'bronze'"
                     [class.border-gray-800]="!collected"
                   >
-                    <div class="relative aspect-[4/3] w-full overflow-hidden bg-slate-950 border-b border-slate-800">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-md overflow-hidden bg-slate-950 border border-slate-800 shrink-0 relative">
                       @if (sticker.image) {
                         <img
                           [src]="sticker.image"
                           [alt]="sticker.title"
-                          class="w-full h-full object-cover transition-transform duration-150"
+                          class="w-full h-full object-cover"
                           [class.grayscale]="!collected"
                           [class.brightness-50]="!collected"
                         />
                       }
-                      <div class="absolute top-2 left-2 right-2 flex items-center justify-between gap-1">
-                        <span class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-200 border border-slate-700">
+                      @if (!collected) {
+                        <span
+                          class="absolute inset-0 flex items-center justify-center text-xs bg-slate-950/60 text-slate-300"
+                          aria-hidden="true"
+                        >
+                          🔒
+                        </span>
+                      }
+                    </div>
+                    <div class="min-w-0 flex-1 text-left">
+                      <div class="flex items-center justify-between gap-1.5">
+                        <span class="text-xs font-bold text-white truncate">{{ sticker.title }}</span>
+                        <span class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-700 shrink-0">
                           {{ getStickerCategoryLabel(sticker.category) }}
                         </span>
-                        @if (!collected) {
-                          <span class="text-xs px-1.5 py-0.5 rounded bg-slate-950/85 text-slate-300 border border-slate-700" aria-hidden="true">
-                            🔒
-                          </span>
-                        }
                       </div>
-                    </div>
-                    <div class="p-3 flex-1 flex flex-col">
-                      <div class="text-xs font-bold text-white mb-0.5 leading-snug">{{ sticker.title }}</div>
-                      <div class="text-[10px] text-amber-300 font-medium mb-1.5">{{ sticker.subtitle }}</div>
-                      <p class="text-[11px] text-slate-300 leading-snug">{{ sticker.description }}</p>
+                      <div class="text-[10px] text-amber-300 font-medium leading-tight mt-0.5">{{ sticker.subtitle }}</div>
+                      <p class="text-[11px] text-slate-300 leading-snug mt-0.5">{{ sticker.description }}</p>
                     </div>
                   </div>
                 }

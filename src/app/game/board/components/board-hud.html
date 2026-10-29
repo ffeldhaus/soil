@@ -1,8 +1,8 @@
 <div
-  class="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-md px-2 sm:px-6 py-1 flex items-center h-10"
+  class="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-md px-2 sm:px-6 py-1 flex items-center justify-between gap-2 h-10"
 >
   <!-- Left Section: Logo & Stats -->
-  <div class="flex-1 flex items-center gap-2 sm:gap-4 min-w-0">
+  <div class="shrink-0 flex items-center gap-2 sm:gap-3">
     <button
       (click)="toggleMobileMenu.emit()"
       data-testid="mobile-menu-toggle"
@@ -133,7 +133,7 @@
     </div>
 
     <!-- Desktop Controls -->
-    <div class="hidden lg:flex items-center gap-1.5" data-tour="desktop-controls">
+    <div class="hidden lg:flex items-center gap-1 xl:gap-1.5" data-tour="desktop-controls">
       <!-- User Info -->
       <div class="flex items-center gap-2">
         @if (!isPlayer) {
@@ -144,11 +144,11 @@
             <button
               type="button"
               data-testid="team-modal-btn"
-              class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 font-mono tabular-nums bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500"
+              class="px-2 xl:px-3 py-1 max-w-[150px] xl:max-w-[220px] font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 font-mono tabular-nums bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500"
               (click)="openTeamModal.emit(); $event.stopPropagation()"
             >
-              <span>{{ getDisplayName() | uppercase }}</span>
-              <span>🏅 {{ collectedStickersCount }}/{{ totalStickersCount }}</span>
+              <span class="truncate">{{ getDisplayName() | uppercase }}</span>
+              <span class="shrink-0">🏅 {{ collectedStickersCount }}/{{ totalStickersCount }}</span>
             </button>
           } @else {
             <input
@@ -162,14 +162,14 @@
         }
       </div>
 
-      <div class="h-6 w-px bg-gray-700 mx-1"></div>
+      <div class="h-5 w-px bg-gray-700 mx-0.5 xl:mx-1"></div>
 
       <!-- Toggle Buttons: 1. Namen, 2. Bodenqualität, 3. Mineralstoffe, 4. Ernte -->
       <div class="flex items-center gap-1" data-tour="desktop-overlays">
         <button
           (click)="toggleLabels.emit()"
           [disabled]="showFinance"
-          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+          class="px-2 xl:px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
           [class.bg-gray-300]="showLabels"
           [class.hover:bg-gray-200]="showLabels"
           [class.text-gray-900]="showLabels"
@@ -186,7 +186,7 @@
         <button
           (click)="toggleSoil.emit()"
           [disabled]="showFinance"
-          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+          class="px-2 xl:px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
           [class.bg-amber-900]="showSoilOverlay"
           [class.hover:bg-amber-800]="showSoilOverlay"
           [class.text-white]="true"
@@ -202,7 +202,7 @@
         <button
           (click)="toggleNutrition.emit()"
           [disabled]="showFinance"
-          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+          class="px-2 xl:px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
           [class.bg-blue-600]="showNutritionOverlay"
           [class.hover:bg-blue-500]="showNutritionOverlay"
           [class.text-white]="true"
@@ -218,7 +218,7 @@
         <button
           (click)="toggleHarvest.emit()"
           [disabled]="showFinance"
-          class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+          class="px-2 xl:px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
           [class.bg-yellow-500]="showHarvestOverlay"
           [class.hover:bg-yellow-400]="showHarvestOverlay"
           [class.text-gray-950]="showHarvestOverlay"
@@ -234,14 +234,14 @@
         </button>
       </div>
 
-      <div class="h-6 w-px bg-gray-700 mx-1"></div>
+      <div class="h-5 w-px bg-gray-700 mx-0.5 xl:mx-1"></div>
 
       <!-- Finanzen Button -->
       <button
         (click)="toggleFinance.emit()"
         [disabled]="maxRoundNumber === 0"
         data-tour="hud-stats"
-        class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 disabled:cursor-default"
+        class="px-2 xl:px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 disabled:cursor-default"
         [class.bg-gray-200]="showFinance"
         [class.hover:bg-white]="showFinance"
         [class.text-gray-950]="showFinance"
@@ -270,7 +270,7 @@
         }
       </button>
 
-      <div class="h-6 w-px bg-gray-700 mx-1"></div>
+      <div class="h-5 w-px bg-gray-700 mx-0.5 xl:mx-1"></div>
 
       <!-- Action Buttons -->
       @if (gameState?.game?.status !== 'finished') {
@@ -279,7 +279,7 @@
           data-testid="next-round-button"
           data-tour="next-round"
           [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound"
-          class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-xs cursor-pointer disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-400 disabled:cursor-default"
+          class="px-2 xl:px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition text-xs cursor-pointer disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-400 disabled:cursor-default whitespace-nowrap"
           [attr.aria-label]="isSubmitted ? 'Waiting for other players' : 'Submit round and proceed'"
         >
           @if (isSubmitted || pendingNextRound) {
@@ -292,7 +292,7 @@
       @if (gameState?.game?.status === 'finished') {
         <button
           (click)="showGameEnd.emit()"
-          class="px-3 py-1 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-lg border border-amber-500 transition text-xs shadow-lg shadow-amber-900/40"
+          class="px-2 xl:px-3 py-1 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-lg border border-amber-500 transition text-xs shadow-lg shadow-amber-900/40 whitespace-nowrap"
           aria-label="Game finished, view results"
         >
           <ng-container>Spiel beendet</ng-container>
@@ -302,7 +302,7 @@
   </div>
 
   <!-- Right Section: Dev, Tour & Logout -->
-  <div class="flex-1 flex items-center justify-end gap-0.5 sm:gap-2 min-w-0">
+  <div class="shrink-0 flex items-center justify-end gap-0.5 sm:gap-1.5">
     @if (isDev) {
       <button
         (click)="copyGameState()"

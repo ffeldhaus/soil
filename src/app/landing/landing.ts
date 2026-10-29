@@ -84,6 +84,26 @@ import { GameService } from '../game/game.service';
               <span>Spiele erstellen & verwalten</span>
             </a>
           </div>
+
+          <div class="flex justify-center mt-4">
+            <button
+              type="button"
+              (click)="showTrailerModal = true"
+              data-testid="landing-watch-trailer"
+              class="bg-gray-900/90 hover:bg-gray-800 text-slate-200 hover:text-white border border-gray-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition cursor-pointer"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 text-emerald-400 shrink-0"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>Trailer ansehen (1 Min.)</span>
+            </button>
+          </div>
         </div>
 
         <!-- Scroll Indicator -->
@@ -195,6 +215,48 @@ import { GameService } from '../game/game.service';
           </div>
         }
       </div>
+
+      @if (showTrailerModal) {
+        <div
+          data-testid="trailer-modal"
+          class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          (click)="showTrailerModal = false"
+        >
+          <div
+            class="max-w-5xl w-full bg-gray-900 border border-gray-700 rounded-xl overflow-hidden shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-label="SOIL – Spielvorstellung (1 Min.)"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-gray-950">
+              <h2 class="text-sm sm:text-base font-bold text-white tracking-tight">SOIL – Spielvorstellung (1 Min.)</h2>
+              <button
+                type="button"
+                (click)="showTrailerModal = false"
+                data-testid="close-trailer-modal"
+                class="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition cursor-pointer"
+                aria-label="Trailer schließen"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <video
+              controls
+              autoplay
+              playsinline
+              preload="metadata"
+              poster="/SOIL-screenshot.jpg"
+              class="w-full aspect-video bg-black"
+            >
+              <source src="/assets/video/soil-marketing-trailer.mp4" type="video/mp4" />
+              <track kind="captions" src="/assets/video/soil-marketing-trailer.vtt" srclang="de" label="Deutsch" />
+            </video>
+          </div>
+        </div>
+      }
     </div>
   `,
 })
@@ -206,6 +268,7 @@ export class Landing {
   year = new Date().getFullYear();
   showTestMode = isDevMode();
   isStartingGame = false;
+  showTrailerModal = false;
 
   challengeSeed: string | null = null;
   challengeDifficulty: 'easy' | 'normal' | 'hard' = 'normal';

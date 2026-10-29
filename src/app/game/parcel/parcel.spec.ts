@@ -55,6 +55,32 @@ describe('Parcel', () => {
     expect(badge.textContent.trim()).toBe('0 dt (0%)');
   });
 
+  it('should display Weidehaltung for Grass and Grünbrache for Fallow in harvest overlay', () => {
+    fixture.componentRef.setInput('parcel', {
+      index: 0,
+      crop: 'Grass',
+      soil: 100,
+      nutrition: 100,
+    });
+    fixture.componentRef.setInput('showHarvest', true);
+    fixture.detectChanges();
+
+    const grassBadge = fixture.nativeElement.querySelector('[data-testid="parcel-harvest-badge"]');
+    expect(grassBadge.textContent.trim()).toBe('Weidehaltung');
+    expect(component.getOverlayColor()).toBe('hsla(120, 50%, 40%, 0.18)');
+
+    fixture.componentRef.setInput('parcel', {
+      index: 0,
+      crop: 'Fallow',
+      soil: 100,
+      nutrition: 100,
+    });
+    fixture.detectChanges();
+    const fallowBadge = fixture.nativeElement.querySelector('[data-testid="parcel-harvest-badge"]');
+    expect(fallowBadge.textContent.trim()).toBe('Grünbrache');
+    expect(component.getOverlayColor()).toBe('hsla(120, 50%, 40%, 0.18)');
+  });
+
   it('should display "Fruchtfolge ▼" hint only when current crop has bad rotation with previousCrop', () => {
     fixture.componentRef.setInput('parcel', {
       index: 0,

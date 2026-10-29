@@ -129,10 +129,10 @@ describe('Finance Component Logic', () => {
     expect(player?.detailedExpenses?.running?.personnel).toBe(13000);
   });
 
-  it('should calculate capital history correctly', () => {
+  it('should calculate capital history correctly starting from INITIAL_CAPITAL (100000)', () => {
     (component as any).processPlayerData();
     const player = component.players.find((p) => p.uid === 'player1');
-    expect(player?.capitalHistory).toEqual([1000, 11000, 13000]);
+    expect(player?.capitalHistory).toEqual([100000, 11000, 13000]);
   });
 
   it('should update currentViewingRound in ngOnChanges', () => {
@@ -142,8 +142,19 @@ describe('Finance Component Logic', () => {
     expect(component.currentViewingRound).toBe(1);
   });
 
-  it('should calculate max capital correctly for chart', () => {
+  it('should calculate min and max capital correctly for chart', () => {
     (component as any).processPlayerData();
-    expect(component.getMaxCapital()).toBe(16000);
+    expect(component.getMinCapital()).toBe(0);
+    expect(component.getMaxCapital()).toBe(110000);
+  });
+
+  it('should filter active seed crops and harvest crops for the selected round', () => {
+    component.setRound(1);
+    expect(component.getActiveSeedCrops()).toEqual(['Wheat', 'Corn']);
+    expect(component.getActiveHarvestCrops()).toEqual(['Wheat', 'Corn']);
+
+    component.setRound(2);
+    expect(component.getActiveSeedCrops()).toEqual(['Potato']);
+    expect(component.getActiveHarvestCrops()).toEqual(['Potato']);
   });
 });
