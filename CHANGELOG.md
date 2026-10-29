@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.0] - 2026-10-29
 ### Added
 - Added a landing page trailer modal (`data-testid="landing-watch-trailer"`, `data-testid="trailer-modal"` in `src/app/landing/landing.ts`), `VideoObject` structured data in `src/app/app.routes.ts`, and Git LFS tracking (`.gitattributes`) for `public/assets/video/*.mp4`.
 ### Changed
