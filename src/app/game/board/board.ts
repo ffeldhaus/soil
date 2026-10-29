@@ -1107,6 +1107,56 @@ export class Board implements OnInit, OnDestroy {
     return this.gameService.state?.game || null;
   }
 
+  scorecardCopied = false;
+
+  get myFinalScore(): number {
+    const ps = this.gameService.state?.playerState;
+    if (ps) {
+      const cap = ps.capital ?? 0;
+      const soil = Math.round(this.calculateAvgSoil(ps));
+      return ps.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(cap, soil);
+    }
+    return this.overallWinner?.score ?? 0;
+  }
+
+  get myFinalAvgSoil(): number {
+    const ps = this.gameService.state?.playerState;
+    if (ps) return Math.round(this.calculateAvgSoil(ps));
+    return this.overallWinner?.avgSoil ?? 100;
+  }
+
+  get myFinalCapital(): number {
+    const ps = this.gameService.state?.playerState;
+    if (ps) return Math.round(ps.capital ?? 0);
+    return Math.round(this.overallWinner?.capital ?? 100000);
+  }
+
+  copyShareScorecard(): void {
+    const seed = this.game?.config?.seed || 'STD';
+    const difficulty = this.gameDifficulty;
+    const rounds = this.game?.settings?.length || 10;
+    const myScore = this.myFinalScore;
+    const myName = this.gameService.state?.playerState?.displayName || this.overallWinner?.name || 'Hof 1';
+    const formattedCapital = new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0,
+    }).format(this.myFinalCapital);
+    const shareUrl = `https://soil.app/?challenge=${encodeURIComponent(seed)}&difficulty=${encodeURIComponent(difficulty)}&rounds=${encodeURIComponent(rounds)}&targetScore=${encodeURIComponent(myScore)}&targetName=${encodeURIComponent(myName)}`;
+    const shareText = `SOIL Hof-Bilanz (${rounds} Runden): ${myScore} Pkt | ${formattedCapital} | Ø ${this.myFinalAvgSoil}% Bodenqualität | ${this.collectedStickerIds.length}/${this.allStickers.length} Sticker.\nKannst du meinen Hof unter denselben Wetter- & Schädlingsbedingungen (Seed #${seed}) schlagen?\n${shareUrl}`;
+
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(shareText).then(() => {
+        this.scorecardCopied = true;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.scorecardCopied = false;
+          this.cdr.detectChanges();
+        }, 3000);
+      });
+    }
+  }
+
   get gameDifficulty(): 'easy' | 'normal' | 'hard' {
     return this.game?.settings?.difficulty || 'normal';
   }

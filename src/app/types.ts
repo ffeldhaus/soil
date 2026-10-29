@@ -132,6 +132,9 @@ export interface GameConfig {
   advancedPricingEnabled?: boolean;
   analyticsEnabled?: boolean;
   advisorEnabled?: boolean;
+  seed?: string;
+  challengeTargetScore?: number;
+  challengeTargetName?: string;
 }
 
 export interface GameEvaluation {

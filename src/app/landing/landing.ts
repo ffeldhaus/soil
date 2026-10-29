@@ -1,5 +1,5 @@
 import { Component, inject, isDevMode } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { GameService } from '../game/game.service';
 
@@ -43,6 +43,23 @@ import { GameService } from '../game/game.service';
             >.
           </p>
 
+          @if (challengeSeed) {
+            <div
+              data-testid="challenge-banner"
+              class="max-w-xl mx-auto mt-6 px-5 py-3.5 rounded-xl bg-gray-900 border border-emerald-500/60 shadow-lg text-sm sm:text-base text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2"
+            >
+              <span class="font-mono font-bold text-emerald-400">Herausforderung: Seed #{{ challengeSeed }}</span>
+              @if (challengeTargetScore !== undefined) {
+                <span class="text-gray-200">
+                  Schlage <strong>{{ challengeTargetName || 'den Herausforderer' }}</strong>
+                  (<span class="font-mono tabular-nums font-bold text-emerald-300">{{ challengeTargetScore }} Pkt</span>)
+                </span>
+              } @else {
+                <span class="text-gray-300">Gleiche Wetter- & Schädlingsfolge ({{ challengeRounds }} Runden)</span>
+              }
+            </div>
+          }
+
           <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mt-12 w-full max-w-2xl mx-auto">
             <button
               type="button"
@@ -53,6 +70,8 @@ import { GameService } from '../game/game.service';
             >
               @if (isStartingGame) {
                 <span>Wird gestartet...</span>
+              } @else if (challengeSeed) {
+                <span>Herausforderung starten</span>
               } @else {
                 <span>Sofort spielen</span>
               }
@@ -183,9 +202,34 @@ export class Landing {
   private auth = inject(AuthService);
   private gameService = inject(GameService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   year = new Date().getFullYear();
   showTestMode = isDevMode();
   isStartingGame = false;
+
+  challengeSeed: string | null = null;
+  challengeDifficulty: 'easy' | 'normal' | 'hard' = 'normal';
+  challengeRounds = 10;
+  challengeTargetScore?: number;
+  challengeTargetName?: string;
+
+  constructor() {
+    this.route.queryParams.subscribe((params) => {
+      const seed = typeof params.challenge === 'string' ? params.challenge.trim().toUpperCase().slice(0, 12) : '';
+      this.challengeSeed = seed || null;
+      const diff = params.difficulty;
+      this.challengeDifficulty = diff === 'easy' || diff === 'normal' || diff === 'hard' ? diff : 'normal';
+      const parsedRounds = parseInt(params.rounds, 10);
+      this.challengeRounds =
+        Number.isFinite(parsedRounds) && parsedRounds >= 3 && parsedRounds <= 30 ? parsedRounds : 10;
+      const parsedTargetScore = parseInt(params.targetScore, 10);
+      this.challengeTargetScore = Number.isFinite(parsedTargetScore) ? parsedTargetScore : undefined;
+      this.challengeTargetName =
+        typeof params.targetName === 'string' && params.targetName.trim()
+          ? params.targetName.trim().slice(0, 40)
+          : undefined;
+    });
+  }
 
   scrollToInfo() {
     const element = document.getElementById('info-section');
@@ -200,14 +244,21 @@ export class Landing {
     try {
       const result = await this.gameService.createGame(`Hof ${new Date().toLocaleDateString('de-DE')}`, {
         numPlayers: 4,
-        numRounds: 10,
+        numRounds: this.challengeSeed ? this.challengeRounds : 10,
         numAi: 3,
         aiLevel: 'middle',
-        difficulty: 'normal',
+        difficulty: this.challengeSeed ? this.challengeDifficulty : 'normal',
         playerLabel: 'Team',
         advancedPricingEnabled: true,
         analyticsEnabled: true,
         advisorEnabled: true,
+        ...(this.challengeSeed
+          ? {
+              seed: this.challengeSeed,
+              ...(this.challengeTargetScore !== undefined ? { challengeTargetScore: this.challengeTargetScore } : {}),
+              ...(this.challengeTargetName ? { challengeTargetName: this.challengeTargetName } : {}),
+            }
+          : {}),
       });
       if (result.password) {
         await this.auth.loginAsPlayer(result.gameId, result.password);

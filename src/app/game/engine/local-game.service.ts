@@ -112,6 +112,11 @@ export class LocalGameService {
       typeof window !== 'undefined' &&
       (window.localStorage?.getItem('soil_test_mode') === 'true' || !!(window as any).Cypress);
 
+    const seed =
+      (config?.seed && String(config.seed).trim().toUpperCase().slice(0, 12)) ||
+      Math.random().toString(36).substring(2, 8).toUpperCase();
+    const enrichedConfig = { ...config, seed };
+
     const game: Game = {
       id: gameId,
       name: name,
@@ -123,7 +128,7 @@ export class LocalGameService {
         difficulty,
         playerLabel: config.playerLabel || 'Team',
       },
-      config: isTestEnv ? { ...config, isTest: true } : config,
+      config: isTestEnv ? { ...enrichedConfig, isTest: true } : enrichedConfig,
       players: players,
       playerSecrets: playerSecrets,
       createdAt: new Date(),
@@ -275,8 +280,15 @@ export class LocalGameService {
       ? state.allRounds[firstPlayerUid]?.[state.game.currentRoundNumber]
       : undefined;
 
-    const events = GameEngine.rollRoundEvents(nextRoundNum, roundLimit, difficulty, prevRoundForWeather?.nextWeather);
-    const upcomingWeather = GameEngine.rollWeather(nextRoundNum + 1, roundLimit, difficulty);
+    const seed = state.game.config?.seed;
+    const events = GameEngine.rollRoundEvents(
+      nextRoundNum,
+      roundLimit,
+      difficulty,
+      prevRoundForWeather?.nextWeather,
+      seed,
+    );
+    const upcomingWeather = GameEngine.rollWeather(nextRoundNum + 1, roundLimit, difficulty, undefined, seed);
 
     const marketPrices = state.game.config?.advancedPricingEnabled
       ? this.computeLocalAdvancedMarketPrices(state, nextRoundNum, events, roundLimit, difficulty, upcomingWeather)

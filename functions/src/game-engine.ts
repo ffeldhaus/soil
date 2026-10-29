@@ -220,15 +220,33 @@ export class GameEngine {
       });
   }
 
+  static seededRandom(seed: string, key: string): number {
+    const input = `${seed}:${key}`;
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < input.length; i++) {
+      h ^= input.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    h += h << 13;
+    h ^= h >>> 7;
+    h += h << 3;
+    h ^= h >>> 17;
+    h += h << 5;
+    return (h >>> 0) / 4294967296;
+  }
+
   static rollWeather(
     roundNumber: number,
     totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS,
     difficulty: 'easy' | 'normal' | 'hard' = 'normal',
     randomValue = Math.random(),
+    seed?: string,
   ): WeatherType {
     if (roundNumber <= 2) {
       return 'Normal';
     }
+
+    const r = seed ? GameEngine.seededRandom(seed, `weather:${roundNumber}`) : randomValue;
 
     const progress =
       difficulty === 'hard' ? Math.min(1, Math.max(0, (roundNumber - 2) / Math.max(1, totalRounds - 2))) : 0;
@@ -240,11 +258,11 @@ export class GameEngine {
     const lateFrostProb = 0.12 * extremeScale;
     const stormProb = 0.1 * extremeScale;
 
-    if (randomValue < normalProb) return 'Normal';
-    if (randomValue < normalProb + droughtProb) return 'Drought';
-    if (randomValue < normalProb + droughtProb + heatWaveProb) return 'HeatWave';
-    if (randomValue < normalProb + droughtProb + heatWaveProb + lateFrostProb) return 'LateFrost';
-    if (randomValue < normalProb + droughtProb + heatWaveProb + lateFrostProb + stormProb) return 'Storm';
+    if (r < normalProb) return 'Normal';
+    if (r < normalProb + droughtProb) return 'Drought';
+    if (r < normalProb + droughtProb + heatWaveProb) return 'HeatWave';
+    if (r < normalProb + droughtProb + heatWaveProb + lateFrostProb) return 'LateFrost';
+    if (r < normalProb + droughtProb + heatWaveProb + lateFrostProb + stormProb) return 'Storm';
     return 'Flood';
   }
 
@@ -253,14 +271,15 @@ export class GameEngine {
     totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS,
     difficulty: 'easy' | 'normal' | 'hard' = 'normal',
     preRolledWeather?: WeatherType,
+    seed?: string,
   ): { weather: WeatherType; vermin: string[] } {
     if (roundNumber <= 2) {
       return { weather: 'Normal', vermin: [] };
     }
 
-    const weather = preRolledWeather ?? GameEngine.rollWeather(roundNumber, totalRounds, difficulty);
+    const weather = preRolledWeather ?? GameEngine.rollWeather(roundNumber, totalRounds, difficulty, undefined, seed);
     const vermin: string[] = [];
-    const pestRoll = Math.random();
+    const pestRoll = seed ? GameEngine.seededRandom(seed, `pestCount:${roundNumber}`) : Math.random();
     const numPests = pestRoll < 0.2 ? 0 : pestRoll < 0.6 ? 1 : 2;
 
     if (numPests > 0) {
@@ -276,7 +295,8 @@ export class GameEngine {
         'swine-fever',
       ];
       for (let i = 0; i < numPests; i++) {
-        const p = availablePests[Math.floor(Math.random() * availablePests.length)];
+        const pickRoll = seed ? GameEngine.seededRandom(seed, `pestPick:${roundNumber}:${i}`) : Math.random();
+        const p = availablePests[Math.floor(pickRoll * availablePests.length)];
         if (!vermin.includes(p)) vermin.push(p);
       }
     }

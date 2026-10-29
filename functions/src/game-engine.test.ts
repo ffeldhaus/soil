@@ -445,4 +445,22 @@ describe('GameEngine', () => {
     expect(monoRound.parcelsSnapshot[0].yield).to.equal(160);
     expect(diverseRound.parcelsSnapshot[0].yield!).to.be.greaterThan(monoRound.parcelsSnapshot[0].yield! + 80);
   });
+
+  it('should generate deterministic weather and pest sequences for identical seeds across rounds 1..10', () => {
+    const seedA = 'SOIL42';
+    const seq1 = Array.from({ length: 10 }, (_, idx) =>
+      GameEngine.rollRoundEvents(idx + 1, 10, 'normal', undefined, seedA),
+    );
+    const seq2 = Array.from({ length: 10 }, (_, idx) =>
+      GameEngine.rollRoundEvents(idx + 1, 10, 'normal', undefined, seedA),
+    );
+    const seqDifferent = Array.from({ length: 10 }, (_, idx) =>
+      GameEngine.rollRoundEvents(idx + 1, 10, 'normal', undefined, 'OTHER9'),
+    );
+
+    expect(seq1).to.deep.equal(seq2);
+    expect(seq1[0]).to.deep.equal({ weather: 'Normal', vermin: [] });
+    expect(seq1[1]).to.deep.equal({ weather: 'Normal', vermin: [] });
+    expect(seq1).to.not.deep.equal(seqDifferent);
+  });
 });

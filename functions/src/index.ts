@@ -2775,7 +2775,7 @@ function summarizeWeeklyResearchGames(docs: any[], cutoffMillis: number): Weekly
       stats.researchGamesLast7d++;
       const src = data.sourceType === 'cloud' ? 'cloud' : 'local';
       stats.sourceBreakdown[src]++;
-      const diff = data.settings?.difficulty;
+      const diff = data.settings?.difficulty as string | undefined;
       if (diff === 'easy' || diff === 'normal' || diff === 'hard') {
         stats.difficultyBreakdown[diff]++;
       }

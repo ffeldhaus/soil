@@ -63,4 +63,37 @@ describe('Landing', () => {
     expect(authServiceMock.loginAsPlayer).toHaveBeenCalledWith('local-123', 'PIN');
     expect(navSpy).toHaveBeenCalledWith(['/game']);
   });
+
+  it('should pass challenge seed, difficulty, rounds, and target score when starting a challenge game', async () => {
+    const router = TestBed.inject(Router);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const challengeFixture = TestBed.createComponent(Landing);
+    const challengeComp = challengeFixture.componentInstance;
+    challengeComp.challengeSeed = 'SEED99';
+    challengeComp.challengeDifficulty = 'hard';
+    challengeComp.challengeRounds = 12;
+    challengeComp.challengeTargetScore = 1320;
+    challengeComp.challengeTargetName = 'Gut Grün';
+    challengeFixture.detectChanges();
+
+    const bannerEl = challengeFixture.nativeElement.querySelector('[data-testid="challenge-banner"]');
+    expect(bannerEl).toBeTruthy();
+    expect(bannerEl.textContent).toContain('Seed #SEED99');
+    expect(bannerEl.textContent).toContain('Gut Grün');
+
+    await challengeComp.startQuickGame();
+
+    expect(gameServiceMock.createGame).toHaveBeenCalledWith(
+      expect.stringContaining('Hof '),
+      expect.objectContaining({
+        numRounds: 12,
+        difficulty: 'hard',
+        seed: 'SEED99',
+        challengeTargetScore: 1320,
+        challengeTargetName: 'Gut Grün',
+      }),
+    );
+    expect(navSpy).toHaveBeenCalledWith(['/game']);
+  });
 });

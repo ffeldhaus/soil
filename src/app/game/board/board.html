@@ -688,6 +688,58 @@
           </div>
         }
 
+        @if (game?.config?.challengeTargetScore !== undefined) {
+          <div
+            data-testid="challenge-result-banner"
+            class="my-3 px-4 py-2.5 rounded-lg border text-xs sm:text-sm flex items-center justify-between gap-3"
+            [class.bg-emerald-950]="myFinalScore >= (game?.config?.challengeTargetScore ?? 0)"
+            [class.border-emerald-700]="myFinalScore >= (game?.config?.challengeTargetScore ?? 0)"
+            [class.text-emerald-300]="myFinalScore >= (game?.config?.challengeTargetScore ?? 0)"
+            [class.bg-amber-950]="myFinalScore < (game?.config?.challengeTargetScore ?? 0)"
+            [class.border-amber-700]="myFinalScore < (game?.config?.challengeTargetScore ?? 0)"
+            [class.text-amber-300]="myFinalScore < (game?.config?.challengeTargetScore ?? 0)"
+          >
+            <span>
+              Herausforderung von <strong>{{ game?.config?.challengeTargetName || 'Hof' }}</strong>
+              (Ziel: <span class="font-mono tabular-nums font-bold">{{ game?.config?.challengeTargetScore }} Pkt</span>)
+            </span>
+            <span class="font-bold font-mono tabular-nums shrink-0">
+              @if (myFinalScore >= (game?.config?.challengeTargetScore ?? 0)) {
+                Geschlagen! ({{ myFinalScore }} Pkt)
+              } @else {
+                Knapp verfehlt ({{ myFinalScore }} Pkt)
+              }
+            </span>
+          </div>
+        }
+
+        <!-- Shareable Scorecard & Friend Challenge Bar -->
+        <div
+          data-testid="share-scorecard-bar"
+          class="my-4 bg-gray-950 border border-gray-800 rounded-lg p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left"
+        >
+          <div>
+            <div class="text-xs font-mono text-emerald-400 font-bold">
+              Seed #{{ game?.config?.seed || 'STD' }}
+            </div>
+            <div class="text-xs text-slate-300 mt-0.5">
+              Gleiche Wetter- & Schädlingsfolge mit Freunden teilen
+            </div>
+          </div>
+          <button
+            type="button"
+            data-testid="share-scorecard-btn"
+            (click)="copyShareScorecard()"
+            class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg border border-emerald-500 transition cursor-pointer shrink-0"
+          >
+            @if (scorecardCopied) {
+              <span>Kopiert!</span>
+            } @else {
+              <span>Ergebnis & Challenge-Link kopieren</span>
+            }
+          </button>
+        </div>
+
         <!-- Integrated Feedback Form -->
         <div class="mt-8 pt-8 border-t border-gray-800 text-left">
           @if (!feedbackSubmitted) {

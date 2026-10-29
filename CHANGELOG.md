@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added deterministic weather and pest seed support (`GameEngine.seededRandom`, `GameEngine.rollWeather`, `GameEngine.rollRoundEvents` in `src/app/game/engine/game-engine.ts` and `functions/src/game-engine.ts`, and `LocalGameService` in `src/app/game/engine/local-game.service.ts`) so local games and friend challenges replay identical weather and pest trajectories.
+- Added a shareable end-of-game scorecard and friend challenge link (`data-testid="share-scorecard-btn"` and `data-testid="challenge-result-banner"` in `src/app/game/board/board.html` and `src/app/game/board/board.ts`) plus challenge banner & launch support on the landing page (`data-testid="challenge-banner"` in `src/app/landing/landing.ts`).
+
 ## [3.2.2] - 2026-10-29
 ### Added
 - Added opt-in / optional contact email capture to `FeedbackModal` (`src/app/admin/components/feedback-modal/feedback-modal.ts`), the game-end feedback form (`src/app/game/board/board.html`, `src/app/game/board/board.ts`), and `submitFeedback` (`functions/src/index.ts`) so logged-in educators can include their email address via toggle and guests can optionally provide an email address for follow-up replies.
