@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Added a segmented `SOIL` home logo link (`routerLink="/"`) alongside the history-aware `Zurück` button in `BackButtonComponent` (`src/app/shared/back-button/back-button.ts`).
+
 ## [3.2.0] - 2026-10-29
 ### Added
 - Implemented declarative route-driven SEO (`RouteSeoData` in `src/app/app.routes.ts` and `App` in `src/app/app.ts`) with per-route `<title>`, `<meta name="description">`, `<meta name="robots">`, Open Graph / Twitter Card tags, canonical `<link rel="canonical">`, and Schema.org JSON-LD (`SoftwareApplication`, `LearningResource`, `TechArticle`, `AboutPage`, and `Dataset`).

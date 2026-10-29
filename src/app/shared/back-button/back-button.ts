@@ -1,22 +1,43 @@
 import { Location } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-back-button',
   standalone: true,
+  imports: [RouterLink],
   template: `
-    <button
-      type="button"
-      data-testid="back-button"
-      (click)="goBack()"
-      class="inline-flex items-center gap-2 px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white rounded-lg border border-gray-700 transition-colors text-xs sm:text-sm font-medium cursor-pointer print:hidden"
+    <div
+      class="inline-flex items-stretch rounded-lg border border-gray-700 bg-gray-800 overflow-hidden text-xs sm:text-sm font-medium print:hidden"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-      </svg>
-      <span>{{ label() }}</span>
-    </button>
+      <a
+        routerLink="/"
+        data-testid="home-logo-link"
+        title="Zur Startseite"
+        class="inline-flex items-center gap-2 px-3 py-2 text-emerald-400 hover:text-emerald-300 hover:bg-gray-700/80 font-bold tracking-wider transition-colors cursor-pointer"
+      >
+        <img src="favicon.svg" alt="" class="w-4 h-4 rounded-xs shrink-0" />
+        <span>SOIL</span>
+      </a>
+      <div class="w-px bg-gray-700" aria-hidden="true"></div>
+      <button
+        type="button"
+        data-testid="back-button"
+        (click)="goBack()"
+        class="inline-flex items-center gap-1.5 px-3 py-2 text-gray-200 hover:text-white hover:bg-gray-700/80 transition-colors cursor-pointer"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4 shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span>{{ label() }}</span>
+      </button>
+    </div>
   `,
 })
 export class BackButtonComponent {
