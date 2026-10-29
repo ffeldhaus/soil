@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.2] - 2026-10-29
 ### Changed
 - Unified the nutrition terminology from `Mineralstoffe` to `Nährstoffe` across the HUD, board modals, advisor service, manual crop cards, and game constants (`src/app/game-constants.ts`, `src/app/game/advisor/advisor.service.ts`, `src/app/game/board/board.html`, `src/app/game/board/board.ts`, `src/app/game/board/components/board-hud.html`, `src/app/game/board/components/board-hud.ts`, `src/app/manual/components/manual-crop-card.ts`).
 - Updated the landing page trailer video (`public/assets/video/soil-trailer.mp4`) with the unified `Nährstoffe` HUD label, open `Anbau-Auswahl` live impact preview, sequential field overlays, Round 3 lead vs. Round 6 monoculture soil collapse comparison, and elevated `"Jetzt unter soil.app spielen!"` end-card CTA.
