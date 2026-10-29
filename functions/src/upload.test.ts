@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { db, internalUploadFinishedGame } from './index';
+import { db, internalSubmitFeedback, internalUploadFinishedGame, sendWeeklyActivityDigest } from './index';
+import { mailService } from './mail.service';
 
 describe('Upload Logic Security', () => {
   let sandbox: sinon.SinonSandbox;
@@ -172,5 +173,101 @@ describe('Upload Logic Security', () => {
     });
     expect(fallowClickThroughResult.success).to.be.true;
     expect(fallowClickThroughResult.status).to.equal('skipped_test_data');
+  });
+
+  it('should store optional email in internalSubmitFeedback when provided and omit when anonymous', async () => {
+    const savedDocs: any[] = [];
+    const collectionStub = sandbox.stub(db, 'collection');
+    collectionStub.withArgs('feedback').returns({
+      doc: sandbox.stub().callsFake((id?: string) => ({
+        id: id || 'fb-doc-1',
+        set: sandbox.stub().callsFake(async (data: any) => {
+          savedDocs.push(data);
+        }),
+        update: sandbox.stub().resolves(),
+      })),
+    } as any);
+    collectionStub.withArgs('users').returns({
+      where: sandbox.stub().returns({
+        get: sandbox.stub().resolves({ docs: [] }),
+      }),
+    } as any);
+
+    const sendEmailStub = sandbox.stub(mailService, 'sendEmail').resolves();
+
+    await internalSubmitFeedback(
+      { category: 'other', rating: 5, comment: '', email: 'lehrkraft@schule.de' },
+      { uid: 'u1', token: { name: 'Frau Müller' } },
+    );
+
+    expect(savedDocs).to.have.lengthOf(1);
+    expect(savedDocs[0].userEmail).to.equal('lehrkraft@schule.de');
+    expect(savedDocs[0].userName).to.equal('Frau Müller');
+    expect(sendEmailStub.calledOnce).to.be.true;
+    expect(sendEmailStub.firstCall.args[0].text).to.contain('Contact Email: lehrkraft@schule.de');
+
+    await internalSubmitFeedback({ category: 'other', rating: 4, comment: '' });
+    expect(savedDocs).to.have.lengthOf(2);
+    expect(savedDocs[1].userEmail).to.be.undefined;
+    expect(sendEmailStub.secondCall.args[0].text).to.contain('Contact Email: Anonymous');
+  });
+
+  it('should aggregate 7-day metrics and send weekly digest email in sendWeeklyActivityDigest', async () => {
+    const nowMs = Date.now();
+    const recentTs = { toMillis: () => nowMs - 2 * 24 * 60 * 60 * 1000 };
+    const oldTs = { toMillis: () => nowMs - 14 * 24 * 60 * 60 * 1000 };
+
+    const collectionStub = sandbox.stub(db, 'collection');
+    collectionStub.withArgs('research_games').returns({
+      get: sandbox.stub().resolves({
+        docs: [
+          { data: () => ({ completedAt: recentTs, sourceType: 'local', settings: { difficulty: 'normal' } }) },
+          { data: () => ({ completedAt: oldTs, sourceType: 'cloud', settings: { difficulty: 'hard' } }) },
+        ],
+      }),
+    } as any);
+
+    collectionStub.withArgs('games').returns({
+      get: sandbox.stub().resolves({
+        docs: [{ data: () => ({ status: 'in_progress', updatedAt: recentTs }) }],
+      }),
+    } as any);
+
+    collectionStub.withArgs('feedback').returns({
+      get: sandbox.stub().resolves({
+        docs: [
+          {
+            data: () => ({
+              status: 'new',
+              rating: 5,
+              category: 'other',
+              comment: 'Tolles Spiel!',
+              userEmail: 'lehrer@gymnasium.de',
+              createdAt: recentTs,
+            }),
+          },
+        ],
+      }),
+    } as any);
+
+    collectionStub.withArgs('users').returns({
+      where: sandbox.stub().callsFake((field: string) => ({
+        get: sandbox.stub().resolves({
+          docs: field === 'status' ? [{ data: () => ({ status: 'pending' }) }] : [],
+        }),
+      })),
+    } as any);
+
+    const sendEmailStub = sandbox.stub(mailService, 'sendEmail').resolves();
+
+    const summary = await sendWeeklyActivityDigest();
+    expect(summary.researchGamesLast7d).to.equal(1);
+    expect(summary.gamesLast7d).to.equal(1);
+    expect(summary.feedbackLast7d).to.equal(1);
+    expect(sendEmailStub.calledOnce).to.be.true;
+    expect(sendEmailStub.firstCall.args[0].subject).to.contain(
+      '[SOIL] Wochenbericht: 1 abgeschlossene Spiele, 1 neues Feedback',
+    );
+    expect(sendEmailStub.firstCall.args[0].text).to.contain('lehrer@gymnasium.de');
   });
 });

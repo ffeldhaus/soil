@@ -78,8 +78,10 @@ import { BackButtonComponent } from '../shared/back-button/back-button';
         <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
           <h2 class="text-2xl font-bold text-white">3. Feedback-Funktion</h2>
           <p class="text-gray-300">
-            Wenn du uns Feedback über die integrierte Funktion sendest, erfolgt dies **vollständig anonym**. 
-            Es werden keine personenbezogenen Daten wie Name, E-Mail-Adresse oder Benutzer-IDs mit dem Feedback übermittelt oder gespeichert.
+            Du kannst uns Feedback über die integrierte Funktion jederzeit **vollständig anonym** senden.
+            Wenn du auf dein Feedback eine Rückmeldung erhalten möchtest, kannst du optional eine E-Mail-Adresse angeben
+            (oder als angemeldete Lehrkraft per Auswahlfeld einwilligen, dass deine hinterlegte E-Mail-Adresse mitgesendet wird).
+            Eine freiwillig übermittelte E-Mail-Adresse wird ausschließlich zur Beantwortung deines Feedbacks verwendet und nicht an Dritte weitergegeben.
           </p>
         </section>
 

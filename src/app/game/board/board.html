@@ -721,6 +721,7 @@
 
               <!-- Comment -->
               <div class="relative">
+                <label for="comment" class="sr-only">Dein Feedback (optional)</label>
                 <textarea
                   id="comment"
                   [(ngModel)]="feedback.comment"
@@ -730,6 +731,44 @@
                   class="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none text-sm"
                 ></textarea>
               </div>
+
+              <!-- Contact Email (Optional) -->
+              @if (currentUser && !currentUser.isAnonymous && currentUser.email) {
+                <div class="flex items-start gap-3 bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2.5">
+                  <input
+                    type="checkbox"
+                    id="board-feedback-include-email"
+                    name="includeEmail"
+                    [(ngModel)]="includeFeedbackEmail"
+                    class="mt-0.5 h-4 w-4 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
+                  />
+                  <label
+                    for="board-feedback-include-email"
+                    class="text-xs sm:text-sm text-gray-300 cursor-pointer select-none leading-snug"
+                  >
+                    Meine E-Mail-Adresse (<span class="font-mono text-emerald-400">{{ currentUser.email }}</span
+                    >) für eine Antwort mitsenden
+                  </label>
+                </div>
+              } @else {
+                <div>
+                  <label for="board-feedback-email" class="block text-xs font-medium text-gray-400 mb-1.5">
+                    E-Mail-Adresse für eine Antwort (optional)
+                  </label>
+                  <input
+                    type="email"
+                    id="board-feedback-email"
+                    name="contactEmail"
+                    [(ngModel)]="feedback.email"
+                    autocomplete="email"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    placeholder="name@schule.de"
+                    class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
+                  />
+                </div>
+              }
 
               <div class="flex justify-end">
                 <button

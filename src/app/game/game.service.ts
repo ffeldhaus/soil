@@ -155,7 +155,10 @@ export class GameService {
   }
   private get submitFeedbackFn() {
     if (!this.functions || typeof window === 'undefined') return null;
-    return httpsCallable<{ category: string; rating: number; comment: string }, void>(this.functions, 'submitFeedback');
+    return httpsCallable<{ category: string; rating: number; comment: string; email?: string }, void>(
+      this.functions,
+      'submitFeedback',
+    );
   }
   private get getAllFeedbackFn() {
     if (!this.functions || typeof window === 'undefined') return null;
@@ -801,7 +804,7 @@ export class GameService {
     }
   }
 
-  async submitFeedback(feedback: { category: string; rating: number; comment: string }): Promise<void> {
+  async submitFeedback(feedback: { category: string; rating: number; comment: string; email?: string }): Promise<void> {
     if (this.isTestMode()) {
       if (window.console) console.warn('Mock: Feedback submitted', feedback);
       return;

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-feedback-modal',
@@ -67,6 +68,44 @@ import { FormsModule } from '@angular/forms';
             ></textarea>
           </div>
 
+          <!-- Contact Email (Optional) -->
+          @if (loggedInEmail; as userEmail) {
+            <div class="flex items-start gap-3 bg-gray-800/70 border border-gray-700 rounded-xl px-4 py-3">
+              <input
+                type="checkbox"
+                id="feedback-include-email"
+                name="includeEmail"
+                [(ngModel)]="includeUserEmail"
+                class="mt-0.5 h-4 w-4 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
+              />
+              <label
+                for="feedback-include-email"
+                class="text-xs sm:text-sm text-gray-300 cursor-pointer select-none leading-snug"
+              >
+                Meine E-Mail-Adresse (<span class="font-mono text-emerald-400">{{ userEmail }}</span
+                >) für Rückfragen oder eine Antwort mitsenden
+              </label>
+            </div>
+          } @else {
+            <div>
+              <label for="feedback-contact-email" class="block text-sm font-medium text-gray-400 mb-2">
+                E-Mail-Adresse für eine Antwort (optional)
+              </label>
+              <input
+                type="email"
+                id="feedback-contact-email"
+                name="contactEmail"
+                [(ngModel)]="guestEmail"
+                autocomplete="email"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                placeholder="name@schule.de"
+                class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
+              />
+            </div>
+          }
+
           <div class="flex justify-end gap-3 pt-4">
             <button
               type="button"
@@ -104,11 +143,14 @@ import { FormsModule } from '@angular/forms';
   `,
 })
 export class FeedbackModal {
+  private authService = inject(AuthService, { optional: true });
+
   @Output() closeModal = new EventEmitter<void>();
   @Output() feedbackSubmit = new EventEmitter<{
     category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
     rating: number;
     comment: string;
+    email?: string;
   }>();
 
   feedback: {
@@ -121,10 +163,28 @@ export class FeedbackModal {
     comment: '',
   };
 
+  includeUserEmail = true;
+  guestEmail = '';
   isSubmitting = false;
+
+  get loggedInEmail(): string | null {
+    const user = this.authService?.currentUser;
+    if (user && !user.isAnonymous && user.email) {
+      return user.email;
+    }
+    return null;
+  }
 
   submitFeedback() {
     this.isSubmitting = true;
-    this.feedbackSubmit.emit(this.feedback);
+    const contactEmail = this.loggedInEmail
+      ? this.includeUserEmail
+        ? this.loggedInEmail
+        : undefined
+      : this.guestEmail.trim() || undefined;
+    this.feedbackSubmit.emit({
+      ...this.feedback,
+      ...(contactEmail ? { email: contactEmail } : {}),
+    });
   }
 }

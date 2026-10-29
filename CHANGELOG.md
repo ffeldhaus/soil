@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added opt-in / optional contact email capture to `FeedbackModal` (`src/app/admin/components/feedback-modal/feedback-modal.ts`), the game-end feedback form (`src/app/game/board/board.html`, `src/app/game/board/board.ts`), and `submitFeedback` (`functions/src/index.ts`) so logged-in educators can include their email address via toggle and guests can optionally provide an email address for follow-up replies.
+- Added the scheduled Cloud Function `weeklyActivityDigest` (`every monday 08:00` `Europe/Berlin`) and `sendWeeklyActivityDigest()` helper in `functions/src/index.ts` to email a 7-day summary of completed research games, active cloud games, pending educator accounts, and recent feedback to super-administrators.
+### Changed
+- Updated feedback buttons in `src/app/game/board/components/board-hud.html` and `src/app/admin/dashboard/dashboard.html` to use the Material Design feedback icon, and updated `/privacy` (`src/app/privacy/privacy.ts`) and `AGENTS.md` to document optional contact email submission for feedback replies.
+
 ## [3.2.1] - 2026-10-29
 ### Changed
 - Added a segmented `SOIL` home logo link (`routerLink="/"`) alongside the history-aware `Zurück` button in `BackButtonComponent` (`src/app/shared/back-button/back-button.ts`).

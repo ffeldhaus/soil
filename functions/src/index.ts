@@ -2149,15 +2149,17 @@ function buildFeedbackNotificationEmail(
   cleanRating: number,
   cleanComment: string,
   aiAnalysis?: any,
+  cleanEmail?: string,
 ): { subject: string; text: string; html: string } {
   const safeCategory = escapeHtml(cleanCategory);
   const safeComment = escapeHtml(cleanComment);
+  const safeContact = escapeHtml(cleanEmail || 'Anonymous');
   const safeSentiment = escapeHtml(aiAnalysis?.sentiment || 'N/A');
   const safeSummary = escapeHtml(aiAnalysis?.summary || 'N/A');
   const actionsList = (aiAnalysis?.suggestedActions || []) as string[];
 
   const subject = `New Feedback Received: ${cleanCategory} (${cleanRating}/5)`;
-  const text = `New anonymous feedback received:\n\nCategory: ${cleanCategory}\nRating: ${cleanRating}/5\nComment: ${cleanComment}\n\nAI Analysis:\nSummary: ${aiAnalysis?.summary || 'N/A'}\nSentiment: ${aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${actionsList.join(', ')}`;
+  const text = `New feedback received:\n\nCategory: ${cleanCategory}\nRating: ${cleanRating}/5\nContact Email: ${cleanEmail || 'Anonymous'}\nComment: ${cleanComment}\n\nAI Analysis:\nSummary: ${aiAnalysis?.summary || 'N/A'}\nSentiment: ${aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${actionsList.join(', ')}`;
 
   const analysisHtml = aiAnalysis
     ? `
@@ -2173,9 +2175,10 @@ function buildFeedbackNotificationEmail(
 
   const html = `
       <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #059669;">New Anonymous Feedback Received</h2>
+        <h2 style="color: #059669;">New Feedback Received</h2>
         <p><strong>Category:</strong> ${safeCategory}</p>
         <p><strong>Rating:</strong> ${cleanRating}/5</p>
+        <p><strong>Contact Email:</strong> ${safeContact}</p>
         <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
           <p style="margin: 0;">${safeComment}</p>
         </div>
@@ -2193,6 +2196,7 @@ async function notifySuperAdminsOfFeedback(
   cleanRating: number,
   cleanComment: string,
   aiAnalysis?: any,
+  cleanEmail?: string,
 ): Promise<void> {
   const superAdminsSnap = await db.collection('users').where('role', '==', 'superadmin').get();
   const superAdminEmails = superAdminsSnap.docs.map((doc) => doc.data().email).filter((e) => !!e);
@@ -2200,7 +2204,13 @@ async function notifySuperAdminsOfFeedback(
     superAdminEmails.push('florian.feldhaus@gmail.com');
   }
 
-  const { subject, text, html } = buildFeedbackNotificationEmail(cleanCategory, cleanRating, cleanComment, aiAnalysis);
+  const { subject, text, html } = buildFeedbackNotificationEmail(
+    cleanCategory,
+    cleanRating,
+    cleanComment,
+    aiAnalysis,
+    cleanEmail,
+  );
   for (const adminEmail of superAdminEmails) {
     try {
       await mailService.sendEmail({ to: adminEmail, subject, text, html });
@@ -2210,50 +2220,72 @@ async function notifySuperAdminsOfFeedback(
   }
 }
 
+function sanitizeOptionalFeedbackEmail(rawEmail: unknown): string | undefined {
+  if (typeof rawEmail !== 'string') return undefined;
+  const trimmed = rawEmail.trim().slice(0, 200);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) ? trimmed : undefined;
+}
+
+export async function internalSubmitFeedback(
+  data: any,
+  auth?: { uid?: string; token?: Record<string, any> },
+): Promise<{ success: boolean; status?: string }> {
+  const { category, rating, comment, email, isTest } = data || {};
+  if (!category || rating === undefined) {
+    throw new HttpsError('invalid-argument', 'Missing feedback fields');
+  }
+
+  const cleanCategory = String(category).trim().slice(0, 50);
+  const cleanRating = Math.min(5, Math.max(1, Math.round(Number(rating) || 1)));
+  const cleanComment = String(comment || '')
+    .trim()
+    .slice(0, 2000);
+  const cleanEmail = sanitizeOptionalFeedbackEmail(email);
+
+  if (!cleanCategory) {
+    throw new HttpsError('invalid-argument', 'Missing feedback category');
+  }
+
+  const callerEmail = auth?.token?.email;
+  const isTestPayload =
+    isTest === true ||
+    isTestEmail(callerEmail) ||
+    (cleanEmail !== undefined && isTestEmail(cleanEmail)) ||
+    /^(E2E|Cypress Test)/i.test(cleanComment);
+  if (isTestPayload) {
+    return { success: true, status: 'skipped_test_data' };
+  }
+
+  const feedbackId = db.collection('feedback').doc().id;
+  const feedbackRef = db.collection('feedback').doc(feedbackId);
+  const feedbackData: any = {
+    id: feedbackId,
+    category: cleanCategory,
+    rating: cleanRating,
+    comment: cleanComment,
+    status: 'new',
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  };
+
+  if (cleanEmail) {
+    feedbackData.userEmail = cleanEmail;
+    feedbackData.userName = String(auth?.token?.name || cleanEmail.split('@')[0]).slice(0, 100);
+  }
+
+  await feedbackRef.set(feedbackData);
+  feedbackData.aiAnalysis =
+    cleanComment.length >= 3
+      ? await runFeedbackGeminiAnalysis(feedbackRef, cleanCategory, cleanRating, cleanComment)
+      : null;
+  await notifySuperAdminsOfFeedback(cleanCategory, cleanRating, cleanComment, feedbackData.aiAnalysis, cleanEmail);
+
+  return { success: true };
+}
+
 export const submitFeedback = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
-  async (request) => {
-    const { category, rating, comment, isTest } = request.data || {};
-    if (!category || rating === undefined) {
-      throw new HttpsError('invalid-argument', 'Missing feedback fields');
-    }
-
-    const cleanCategory = String(category).trim().slice(0, 50);
-    const cleanRating = Math.min(5, Math.max(1, Math.round(Number(rating) || 1)));
-    const cleanComment = String(comment || '')
-      .trim()
-      .slice(0, 2000);
-
-    if (!cleanCategory) {
-      throw new HttpsError('invalid-argument', 'Missing feedback category');
-    }
-
-    const callerEmail = request.auth?.token?.email;
-    if (isTest === true || isTestEmail(callerEmail) || /^(E2E|Cypress Test)/i.test(cleanComment)) {
-      return { success: true, status: 'skipped_test_data' };
-    }
-
-    const feedbackId = db.collection('feedback').doc().id;
-    const feedbackRef = db.collection('feedback').doc(feedbackId);
-    const feedbackData: any = {
-      id: feedbackId,
-      category: cleanCategory,
-      rating: cleanRating,
-      comment: cleanComment,
-      status: 'new',
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
-    };
-
-    await feedbackRef.set(feedbackData);
-    feedbackData.aiAnalysis =
-      cleanComment.length >= 3
-        ? await runFeedbackGeminiAnalysis(feedbackRef, cleanCategory, cleanRating, cleanComment)
-        : null;
-    await notifySuperAdminsOfFeedback(cleanCategory, cleanRating, cleanComment, feedbackData.aiAnalysis);
-
-    return { success: true };
-  },
+  async (request) => internalSubmitFeedback(request.data, request.auth),
 );
 
 export const getAllFeedback = onCall(async (request) => {
@@ -2706,3 +2738,224 @@ export const deleteAccount = onCall(async (request) => {
     throw new HttpsError('internal', error.message || 'Failed to delete account');
   }
 });
+
+// --- Weekly Activity & Feedback Digest ---
+
+function toTimestampMillis(value: any): number {
+  if (!value) return 0;
+  if (typeof value.toMillis === 'function') return value.toMillis();
+  if (typeof value.seconds === 'number') return value.seconds * 1000;
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+interface WeeklyResearchDigestStats {
+  totalResearchGames: number;
+  researchGamesLast7d: number;
+  sourceBreakdown: { local: number; cloud: number };
+  difficultyBreakdown: { easy: number; normal: number; hard: number };
+}
+
+function summarizeWeeklyResearchGames(docs: any[], cutoffMillis: number): WeeklyResearchDigestStats {
+  const stats: WeeklyResearchDigestStats = {
+    totalResearchGames: docs.length,
+    researchGamesLast7d: 0,
+    sourceBreakdown: { local: 0, cloud: 0 },
+    difficultyBreakdown: { easy: 0, normal: 0, hard: 0 },
+  };
+
+  for (const doc of docs) {
+    const data = doc.data() || {};
+    const ts = Math.max(
+      toTimestampMillis(data.completedAt),
+      toTimestampMillis(data.uploadedAt),
+      toTimestampMillis(data.createdAt),
+    );
+    if (ts >= cutoffMillis) {
+      stats.researchGamesLast7d++;
+      const src = data.sourceType === 'cloud' ? 'cloud' : 'local';
+      stats.sourceBreakdown[src]++;
+      const diff = data.settings?.difficulty;
+      if (diff === 'easy' || diff === 'normal' || diff === 'hard') {
+        stats.difficultyBreakdown[diff]++;
+      }
+    }
+  }
+  return stats;
+}
+
+interface WeeklyCloudGamesDigestStats {
+  activeCloudGames: number;
+  finishedCloudGames: number;
+  gamesLast7d: number;
+}
+
+function summarizeWeeklyCloudGames(docs: any[], cutoffMillis: number): WeeklyCloudGamesDigestStats {
+  const stats: WeeklyCloudGamesDigestStats = {
+    activeCloudGames: 0,
+    finishedCloudGames: 0,
+    gamesLast7d: 0,
+  };
+
+  for (const doc of docs) {
+    const data = doc.data() || {};
+    if (data.deletedAt) continue;
+    if (data.status === 'in_progress') stats.activeCloudGames++;
+    if (data.status === 'finished') stats.finishedCloudGames++;
+    const ts = Math.max(toTimestampMillis(data.createdAt), toTimestampMillis(data.updatedAt));
+    if (ts >= cutoffMillis) {
+      stats.gamesLast7d++;
+    }
+  }
+  return stats;
+}
+
+interface WeeklyFeedbackItem {
+  rating: number;
+  category: string;
+  comment: string;
+  contact: string;
+}
+
+interface WeeklyFeedbackDigestStats {
+  totalFeedback: number;
+  unresolvedFeedback: number;
+  recentFeedback: WeeklyFeedbackItem[];
+}
+
+function summarizeWeeklyFeedback(docs: any[], cutoffMillis: number): WeeklyFeedbackDigestStats {
+  const recentFeedback: WeeklyFeedbackItem[] = [];
+  let unresolvedFeedback = 0;
+
+  for (const doc of docs) {
+    const data = doc.data() || {};
+    if (data.status === 'new') unresolvedFeedback++;
+    if (toTimestampMillis(data.createdAt) >= cutoffMillis) {
+      recentFeedback.push({
+        rating: Number(data.rating) || 0,
+        category: String(data.category || 'other'),
+        comment: String(data.comment || ''),
+        contact: String(data.userEmail || 'Anonym'),
+      });
+    }
+  }
+
+  return {
+    totalFeedback: docs.length,
+    unresolvedFeedback,
+    recentFeedback,
+  };
+}
+
+function buildWeeklyDigestEmail(
+  research: WeeklyResearchDigestStats,
+  cloud: WeeklyCloudGamesDigestStats,
+  feedback: WeeklyFeedbackDigestStats,
+  pendingEducators: number,
+): { subject: string; text: string; html: string } {
+  const feedbackLast7d = feedback.recentFeedback.length;
+  const subject = `[SOIL] Wochenbericht: ${research.researchGamesLast7d} abgeschlossene Spiele, ${feedbackLast7d} neues Feedback`;
+
+  const feedbackTextLines =
+    feedbackLast7d > 0
+      ? feedback.recentFeedback
+          .map((f) => `- [${f.rating}/5 | ${f.category} | ${f.contact}] ${f.comment || '(Kein Kommentar)'}`)
+          .join('\n')
+      : '- Kein neues Feedback in den letzten 7 Tagen.';
+
+  const text = [
+    'SOIL Wochenbericht (Letzte 7 Tage)',
+    '===================================',
+    `Abgeschlossene Spiele (Forschungsdatensatz, 7 Tage): ${research.researchGamesLast7d} (Gesamt: ${research.totalResearchGames})`,
+    `  - Lokal vs. Cloud (7 Tage): ${research.sourceBreakdown.local} lokal / ${research.sourceBreakdown.cloud} Cloud`,
+    `  - Schwierigkeitsgrad (7 Tage): Einfach ${research.difficultyBreakdown.easy}, Normal ${research.difficultyBreakdown.normal}, Schwer ${research.difficultyBreakdown.hard}`,
+    `Cloud-Spiele (aktiv in letzten 7 Tagen): ${cloud.gamesLast7d} (Laufend: ${cloud.activeCloudGames}, Beendet: ${cloud.finishedCloudGames})`,
+    `Offene Lehrkräfte-Freischaltungen: ${pendingEducators}`,
+    `Feedback (7 Tage): ${feedbackLast7d} (Offen/Ungelesen: ${feedback.unresolvedFeedback}, Gesamt: ${feedback.totalFeedback})`,
+    '',
+    'Neues Feedback:',
+    feedbackTextLines,
+  ].join('\n');
+
+  const feedbackHtmlItems =
+    feedbackLast7d > 0
+      ? feedback.recentFeedback
+          .map(
+            (f) =>
+              `<li><strong>${f.rating}/5</strong> (${escapeHtml(f.category)} – <code>${escapeHtml(f.contact)}</code>): ${escapeHtml(f.comment || '(Kein Kommentar)')}</li>`,
+          )
+          .join('')
+      : '<li>Kein neues Feedback in den letzten 7 Tagen.</li>';
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; color: #1f2937; max-width: 640px; margin: 0 auto;">
+      <h2 style="color: #059669;">SOIL Wochenbericht (Letzte 7 Tage)</h2>
+      <ul>
+        <li><strong>Abgeschlossene Spiele (7 Tage):</strong> ${research.researchGamesLast7d} (Gesamt im Forschungsdatensatz: ${research.totalResearchGames})</li>
+        <li><strong>Quelle (7 Tage):</strong> ${research.sourceBreakdown.local} Lokal / ${research.sourceBreakdown.cloud} Cloud</li>
+        <li><strong>Schwierigkeitsgrad (7 Tage):</strong> Einfach ${research.difficultyBreakdown.easy}, Normal ${research.difficultyBreakdown.normal}, Schwer ${research.difficultyBreakdown.hard}</li>
+        <li><strong>Cloud-Spiele (7 Tage aktiv):</strong> ${cloud.gamesLast7d} (Aktuell laufend: ${cloud.activeCloudGames}, Beendet: ${cloud.finishedCloudGames})</li>
+        <li><strong>Offene Lehrkräfte-Freischaltungen:</strong> ${pendingEducators}</li>
+        <li><strong>Feedback (7 Tage):</strong> ${feedbackLast7d} (Offen: ${feedback.unresolvedFeedback}, Gesamt: ${feedback.totalFeedback})</li>
+      </ul>
+      <h3 style="color: #047857;">Neues Feedback der letzten 7 Tage</h3>
+      <ul>${feedbackHtmlItems}</ul>
+    </div>
+  `;
+
+  return { subject, text, html };
+}
+
+export async function sendWeeklyActivityDigest(): Promise<{
+  gamesLast7d: number;
+  researchGamesLast7d: number;
+  feedbackLast7d: number;
+}> {
+  const cutoffMillis = Timestamp.now().toMillis() - 7 * 24 * 60 * 60 * 1000;
+
+  const [researchSnap, gamesSnap, feedbackSnap, pendingUsersSnap, superAdminsSnap] = await Promise.all([
+    db.collection('research_games').get(),
+    db.collection('games').get(),
+    db.collection('feedback').get(),
+    db.collection('users').where('status', '==', 'pending').get(),
+    db.collection('users').where('role', '==', 'superadmin').get(),
+  ]);
+
+  const researchStats = summarizeWeeklyResearchGames(researchSnap.docs, cutoffMillis);
+  const cloudStats = summarizeWeeklyCloudGames(gamesSnap.docs, cutoffMillis);
+  const feedbackStats = summarizeWeeklyFeedback(feedbackSnap.docs, cutoffMillis);
+  const pendingEducators = pendingUsersSnap.docs.length;
+
+  const superAdminEmails = superAdminsSnap.docs.map((doc) => doc.data()?.email).filter((e): e is string => !!e);
+  if (!superAdminEmails.includes('florian.feldhaus@gmail.com')) {
+    superAdminEmails.push('florian.feldhaus@gmail.com');
+  }
+
+  const { subject, text, html } = buildWeeklyDigestEmail(researchStats, cloudStats, feedbackStats, pendingEducators);
+  for (const adminEmail of superAdminEmails) {
+    try {
+      await mailService.sendEmail({ to: adminEmail, subject, text, html });
+    } catch (err) {
+      console.error(`Failed to send weekly activity digest to ${adminEmail}:`, err);
+    }
+  }
+
+  return {
+    gamesLast7d: cloudStats.gamesLast7d,
+    researchGamesLast7d: researchStats.researchGamesLast7d,
+    feedbackLast7d: feedbackStats.recentFeedback.length,
+  };
+}
+
+// europe-west4 does not support Cloud Scheduler, so scheduled triggers run in europe-west3 (Frankfurt)
+export const weeklyActivityDigest = onSchedule(
+  {
+    schedule: 'every monday 08:00',
+    timeZone: 'Europe/Berlin',
+    region: 'europe-west3',
+    secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'],
+  },
+  async (_event) => {
+    await sendWeeklyActivityDigest();
+  },
+);

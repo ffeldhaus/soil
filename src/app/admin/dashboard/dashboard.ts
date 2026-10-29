@@ -182,6 +182,7 @@ export class Dashboard implements OnInit, OnDestroy {
     category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
     rating: number;
     comment: string;
+    email?: string;
   }) {
     try {
       await this.gameService.submitFeedback(feedback);

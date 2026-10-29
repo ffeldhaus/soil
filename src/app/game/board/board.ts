@@ -176,11 +176,14 @@ export class Board implements OnInit, OnDestroy {
     category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
     rating: number;
     comment: string;
+    email?: string;
   } = {
     category: 'other',
     rating: 5,
     comment: '',
+    email: '',
   };
+  includeFeedbackEmail = true;
   isSubmittingFeedback = false;
   feedbackSubmitted = false;
   showFeedbackModal = false;
@@ -189,6 +192,7 @@ export class Board implements OnInit, OnDestroy {
     category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
     rating: number;
     comment: string;
+    email?: string;
   }) {
     this.isSubmittingFeedback = true;
     this.gameService
@@ -293,8 +297,20 @@ export class Board implements OnInit, OnDestroy {
 
   onFeedbackSubmit() {
     this.isSubmittingFeedback = true;
+    const user = this.authService.currentUser;
+    const loggedInEmail = user && !user.isAnonymous && user.email ? user.email : null;
+    const contactEmail = loggedInEmail
+      ? this.includeFeedbackEmail
+        ? loggedInEmail
+        : undefined
+      : this.feedback.email?.trim() || undefined;
     this.gameService
-      .submitFeedback(this.feedback)
+      .submitFeedback({
+        category: this.feedback.category,
+        rating: this.feedback.rating,
+        comment: this.feedback.comment,
+        ...(contactEmail ? { email: contactEmail } : {}),
+      })
       .then(() => {
         this.isSubmittingFeedback = false;
         this.feedbackSubmitted = true;
