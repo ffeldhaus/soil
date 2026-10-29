@@ -1,6 +1,6 @@
 {
   "name": "soil",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "scripts": {
     "ng": "ng",
     "start": "NODE_OPTIONS='--no-deprecation' ng serve",
