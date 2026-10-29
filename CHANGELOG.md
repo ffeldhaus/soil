@@ -11,33 +11,21 @@ All notable changes to this project will be documented in this file.
 - Promoted weather and pest conditions to a top-of-modal status strip (`data-testid="round-conditions-strip"`) in `src/app/game/round-result-modal/round-result-modal.html`, and updated the harvest overlay (`src/app/game/parcel/parcel.html`, `src/app/game/parcel/parcel.ts`) to display `Weidehaltung` and `Grünbrache` with neutral green tinting instead of `0 dt (0%)`.
 - Fixed HUD header button overlap at narrow desktop widths (`src/app/game/board/components/board-hud.html`) and immediate change detection when switching `?gameId=...` on a mounted `Board` (`src/app/game/board/board.ts`).
 
-## [3.2.3] - 2026-10-29
-### Added
-- Added deterministic weather and pest seed support (`GameEngine.seededRandom`, `GameEngine.rollWeather`, `GameEngine.rollRoundEvents` in `src/app/game/engine/game-engine.ts` and `functions/src/game-engine.ts`, and `LocalGameService` in `src/app/game/engine/local-game.service.ts`) so local games and friend challenges replay identical weather and pest trajectories.
-- Added a shareable end-of-game scorecard and friend challenge link (`data-testid="share-scorecard-btn"` and `data-testid="challenge-result-banner"` in `src/app/game/board/board.html` and `src/app/game/board/board.ts`) plus challenge banner & launch support on the landing page (`data-testid="challenge-banner"` in `src/app/landing/landing.ts`).
-
-## [3.2.2] - 2026-10-29
-### Added
-- Added opt-in / optional contact email capture to `FeedbackModal` (`src/app/admin/components/feedback-modal/feedback-modal.ts`), the game-end feedback form (`src/app/game/board/board.html`, `src/app/game/board/board.ts`), and `submitFeedback` (`functions/src/index.ts`) so logged-in educators can include their email address via toggle and guests can optionally provide an email address for follow-up replies.
-- Added the scheduled Cloud Function `weeklyActivityDigest` (`every monday 08:00` `Europe/Berlin`) and `sendWeeklyActivityDigest()` helper in `functions/src/index.ts` to email a 7-day summary of completed research games, active cloud games, pending educator accounts, and recent feedback to super-administrators.
-### Changed
-- Updated feedback buttons in `src/app/game/board/components/board-hud.html` and `src/app/admin/dashboard/dashboard.html` to use the Material Design feedback icon, and updated `/privacy` (`src/app/privacy/privacy.ts`) and `AGENTS.md` to document optional contact email submission for feedback replies.
-
-## [3.2.1] - 2026-10-29
-### Changed
-- Added a segmented `SOIL` home logo link (`routerLink="/"`) alongside the history-aware `Zurück` button in `BackButtonComponent` (`src/app/shared/back-button/back-button.ts`).
-
-## [3.2.0] - 2026-10-29
+## [3.2.0] to [3.2.3] - 2026-10-29
 ### Added
 - Implemented declarative route-driven SEO (`RouteSeoData` in `src/app/app.routes.ts` and `App` in `src/app/app.ts`) with per-route `<title>`, `<meta name="description">`, `<meta name="robots">`, Open Graph / Twitter Card tags, canonical `<link rel="canonical">`, and Schema.org JSON-LD (`SoftwareApplication`, `LearningResource`, `TechArticle`, `AboutPage`, and `Dataset`).
 - Added a 1-click **Sofort spielen** button (`data-testid="landing-quick-play"`) on the landing page (`src/app/landing/landing.ts`) that immediately creates and launches a default 10-round local single-player game against 3 AI farms.
-- Added a reusable history-aware `BackButtonComponent` (`src/app/shared/back-button/back-button.ts`), header **Drucken** actions on `/manual` and `/info`, and an in-game feedback button (`data-testid="hud-feedback-button"`) in `BoardHudComponent`.
+- Added deterministic weather and pest seed support (`GameEngine.seededRandom`, `GameEngine.rollWeather`, `GameEngine.rollRoundEvents` in `src/app/game/engine/game-engine.ts` and `functions/src/game-engine.ts`, and `LocalGameService` in `src/app/game/engine/local-game.service.ts`) so local games and friend challenges replay identical weather and pest trajectories.
+- Added a shareable end-of-game scorecard and friend challenge link (`data-testid="share-scorecard-btn"` and `data-testid="challenge-result-banner"` in `src/app/game/board/board.html` and `src/app/game/board/board.ts`) plus challenge banner & launch support on the landing page (`data-testid="challenge-banner"` in `src/app/landing/landing.ts`).
+- Added a reusable history-aware `BackButtonComponent` (`src/app/shared/back-button/back-button.ts`) with a segmented `SOIL` home logo link (`routerLink="/"`), header **Drucken** actions on `/manual` and `/info`, and an in-game feedback button (`data-testid="hud-feedback-button"`) in `BoardHudComponent`.
+- Added opt-in / optional contact email capture to `FeedbackModal` (`src/app/admin/components/feedback-modal/feedback-modal.ts`), the game-end feedback form (`src/app/game/board/board.html`, `src/app/game/board/board.ts`), and `submitFeedback` (`functions/src/index.ts`) so logged-in educators can include their email address via toggle and guests can optionally provide an email address for follow-up replies.
+- Added the scheduled Cloud Function `weeklyActivityDigest` (`every monday 08:00` `Europe/Berlin`) and `sendWeeklyActivityDigest()` helper in `functions/src/index.ts` to email a 7-day summary of completed research games, active cloud games, pending educator accounts, and recent feedback to super-administrators.
 - Added 301 redirects in `src/server.ts` from legacy localized URLs (`/de/*`, `/en/*`, `/en-US/*`) to canonical root paths.
 ### Changed
 - Enabled build-time static prerendering (`"prerender": true` in `angular.json` and `RenderMode.Prerender` in `src/app/app.routes.server.ts`) for `/`, `/manual`, `/info`, `/research`, `/admin`, `/impressum`, and `/privacy`, and removed `@defer (hydrate on viewport)` around `#info-section` on the landing page so full semantic HTML and internal links are immediately crawlable.
 - Removed the fixed top `<nav>` bar from all non-HUD views (`/`, `/manual`, `/info`, `/research`, `/impressum`, `/privacy`, `/admin/login`, `/admin/register`, `/game-login`, `/delete-account`) in favor of `BackButtonComponent` inside page headers, and cleaned up legacy `*ngIf`, empty `@defer`, and redundant `<ng-container>` blocks.
-- Made feedback text comments optional in `FeedbackModal`, the game-end feedback form (`src/app/game/board/board.html`), and the `submitFeedback` Cloud Function (`functions/src/index.ts`) so players can submit 1-click star ratings at any point during or after a game.
-- Refined the landing page `Über das Spiel` and `Nachhaltigkeit` cards (`src/app/landing/landing.ts`) with BNE/subject keywords (`Biologie`, `Geographie`, `Wirtschaft`, `Sekundarstufe I & II`, `Wissens-Handlungs-Lücke`), clear instant single-player vs. verified teacher account explanations, a direct link to `/research`, and fixed the `"dieses concept"` typo.
+- Made feedback text comments optional in `FeedbackModal`, the game-end feedback form (`src/app/game/board/board.html`), and the `submitFeedback` Cloud Function (`functions/src/index.ts`) so players can submit 1-click star ratings at any point during or after a game, and updated feedback buttons to use the Material Design feedback icon.
+- Refined the landing page `Über das Spiel` and `Nachhaltigkeit` cards (`src/app/landing/landing.ts`) with BNE/subject keywords (`Biologie`, `Geographie`, `Wirtschaft`, `Sekundarstufe I & II`, `Wissens-Handlungs-Lücke`), clear instant single-player vs. verified teacher account explanations, a direct link to `/research`, and updated `/privacy` (`src/app/privacy/privacy.ts`) to document optional contact email submission for feedback replies.
 - Aligned `public/sitemap.xml`, `public/robots.txt`, and `src/server.ts` so `sitemap.xml` lists only indexable public pages (`/`, `/manual`, `/info`, `/research`, `/admin`) while allowing `/impressum` in `robots.txt` so crawlers can process its `<meta name="robots" content="noindex, nofollow">` directive.
 ### Fixed
 - Fixed a sticky `<meta name="robots" content="noindex">` bug when navigating from `/impressum` or `/privacy` back to indexable pages by managing `robots` declaratively on every route navigation.

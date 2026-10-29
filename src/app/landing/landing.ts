@@ -101,7 +101,7 @@ import { GameService } from '../game/game.service';
               >
                 <path d="M8 5v14l11-7z" />
               </svg>
-              <span>Trailer ansehen (1 Min.)</span>
+              <span>Trailer ansehen</span>
             </button>
           </div>
         </div>
@@ -226,11 +226,11 @@ import { GameService } from '../game/game.service';
             class="max-w-5xl w-full bg-gray-900 border border-gray-700 rounded-xl overflow-hidden shadow-2xl"
             role="dialog"
             aria-modal="true"
-            aria-label="SOIL – Spielvorstellung (1 Min.)"
+            aria-label="SOIL – Spielvorstellung"
             (click)="$event.stopPropagation()"
           >
             <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-gray-950">
-              <h2 class="text-sm sm:text-base font-bold text-white tracking-tight">SOIL – Spielvorstellung (1 Min.)</h2>
+              <h2 class="text-sm sm:text-base font-bold text-white tracking-tight">SOIL – Spielvorstellung</h2>
               <button
                 type="button"
                 (click)="showTrailerModal = false"
