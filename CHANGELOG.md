@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.1.1] - 2026-10-29
 ### Added
 - Exposed the public read-only Research REST/CSV API (`https://soil.app/api/research`, `https://soil.app/api/research?format=csv`) and JSON-RPC 2.0 MCP Server (`https://soil.app/api/mcp` and `https://soil.app/mcp`) directly on `soil.app` via SSR Express reverse-proxy routes (`src/server.ts`) and Firebase Hosting rewrites (`firebase.json`).
 ### Changed
