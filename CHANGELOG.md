@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Updated the `/sitemap.xml` Express handler in `src/server.ts` (and `scripts/deploy.js`) to serve `public/sitemap.xml` from `browserDistFolder` with `<lastmod>` and `<video:video>` metadata instead of the legacy inline XML stub.
+
 ## [3.3.4] - 2026-10-30
 ### Added
 - Added `<lastmod>` timestamps across all public URLs and Google `<video:video>` sitemap metadata in `public/sitemap.xml`, `embedUrl` (`https://www.youtube.com/embed/xCmZUGcyVLM`) and `duration: 'PT1M5S'` on the landing page `VideoObject` JSON-LD in `src/app/app.routes.ts`, and automatic `<lastmod>` date stamping in `scripts/deploy.js`.

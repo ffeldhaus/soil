@@ -73,13 +73,14 @@ const performDeployment = async (newVersion) => {
       }
     }
 
-    // Update public/sitemap.xml <lastmod>
-    const sitemapPath = 'public/sitemap.xml';
-    if (fs.existsSync(sitemapPath)) {
-      let sitemap = fs.readFileSync(sitemapPath, 'utf8');
-      sitemap = sitemap.replace(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g, `<lastmod>${today}</lastmod>`);
-      fs.writeFileSync(sitemapPath, sitemap);
-      execSync(`git add ${sitemapPath}`, { stdio: 'inherit' });
+    // Update public/sitemap.xml and src/server.ts <lastmod>
+    for (const sitemapTarget of ['public/sitemap.xml', 'src/server.ts']) {
+      if (fs.existsSync(sitemapTarget)) {
+        let content = fs.readFileSync(sitemapTarget, 'utf8');
+        content = content.replace(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g, `<lastmod>${today}</lastmod>`);
+        fs.writeFileSync(sitemapTarget, content);
+        execSync(`git add ${sitemapTarget}`, { stdio: 'inherit' });
+      }
     }
 
     execSync(`git commit -m "v${newVersion}"`, { stdio: 'inherit' });
