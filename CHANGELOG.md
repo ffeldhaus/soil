@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.3] - 2026-10-30
 ### Fixed
 - Updated Scene 2's voiceover and subtitle tracks in the landing page trailer (`public/assets/video/soil-trailer.mp4`, `public/assets/video/soil-marketing-trailer.srt`, `public/assets/video/soil-marketing-trailer.vtt`) to reference actual selectable crops (`Ackerbohnen, Weizen und Raps`) and exact HUD labels (`Ernte, Bodenqualität und Nährstoffe`).
 
