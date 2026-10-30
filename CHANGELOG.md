@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.7] - 2026-10-30
 ### Fixed
 - Fixed the Express 5 `/.well-known` catch-all in `src/server.ts` to match `req.originalUrl` (and dedicated `app.use('/.well-known', ...)` middleware) instead of `req.path` inside `app.use('*path')`, ensuring unknown `/.well-known/*` probes return `404 Not Found` rather than falling through to the Angular SPA router.
 
