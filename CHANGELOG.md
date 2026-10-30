@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Updated Scene 2's voiceover and subtitle tracks in the landing page trailer (`public/assets/video/soil-trailer.mp4`, `public/assets/video/soil-marketing-trailer.srt`, `public/assets/video/soil-marketing-trailer.vtt`) to reference actual selectable crops (`Ackerbohnen, Weizen und Raps`) and exact HUD labels (`Ernte, Bodenqualität und Nährstoffe`).
+
 ## [3.3.2] - 2026-10-29
 ### Changed
 - Unified the nutrition terminology from `Mineralstoffe` to `Nährstoffe` across the HUD, board modals, advisor service, manual crop cards, and game constants (`src/app/game-constants.ts`, `src/app/game/advisor/advisor.service.ts`, `src/app/game/board/board.html`, `src/app/game/board/board.ts`, `src/app/game/board/components/board-hud.html`, `src/app/game/board/components/board-hud.ts`, `src/app/manual/components/manual-crop-card.ts`).
