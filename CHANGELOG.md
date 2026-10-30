@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Updated `public/robots.txt` and `src/server.ts` to allow crawlers to fetch `/admin/login`, `/admin/register`, `/delete-account`, `/impressum`, and `/privacy` so search engines can read their `<meta name="robots" content="noindex, nofollow">` tags and de-index them, added `/delete-account` to `src/app/app.routes.server.ts` (`RenderMode.Prerender`), and updated `src/server.ts` to serve prerendered `<route>/index.html` documents directly from `browserDistFolder`.
+
 ## [3.3.7] - 2026-10-30
 ### Fixed
 - Fixed the Express 5 `/.well-known` catch-all in `src/server.ts` to match `req.originalUrl` (and dedicated `app.use('/.well-known', ...)` middleware) instead of `req.path` inside `app.use('*path')`, ensuring unknown `/.well-known/*` probes return `404 Not Found` rather than falling through to the Angular SPA router.

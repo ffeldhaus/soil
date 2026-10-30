@@ -1,15 +1,11 @@
 User-agent: *
-# Disallow administrative, private, and legal utility routes
+# Disallow active gameplay and internal auth action routes
 Disallow: /game
 Disallow: /game-login
-Disallow: /admin/login
-Disallow: /admin/register
 Disallow: /admin/super
-Disallow: /delete-account
 Disallow: /auth/action
-Disallow: /privacy
 
-# Allow public content
+# Allow public content and noindex utility routes (so crawlers can read their <meta name="robots" content="noindex"> tags)
 Allow: /
 Allow: /manual
 Allow: /info

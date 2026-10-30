@@ -101,18 +101,19 @@ app.use(compression());
  */
 app.get('/robots.txt', (_req, res) => {
   res.type('text/plain');
+  const robotsFile = join(browserDistFolder, 'robots.txt');
+  if (existsSync(robotsFile)) {
+    res.send(readFileSync(robotsFile, 'utf-8'));
+    return;
+  }
   res.send(`User-agent: *
-# Disallow administrative, private, and legal utility routes
+# Disallow active gameplay and internal auth action routes
 Disallow: /game
 Disallow: /game-login
-Disallow: /admin/login
-Disallow: /admin/register
 Disallow: /admin/super
-Disallow: /delete-account
 Disallow: /auth/action
-Disallow: /privacy
 
-# Allow public content
+# Allow public content and noindex utility routes (so crawlers can read their <meta name="robots" content="noindex"> tags)
 Allow: /
 Allow: /manual
 Allow: /info
@@ -333,6 +334,19 @@ app.use('*path', async (req, res, next) => {
     return;
   }
 
+  // Serve prerendered static route HTML (<route>/index.html) when available in browserDistFolder
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    const pathname = new URL(req.originalUrl, 'http://localhost').pathname;
+    const cleanPath = pathname.replace(/^\/+|\/+$/g, '');
+    const prerenderedHtml = cleanPath
+      ? resolve(browserDistFolder, cleanPath, 'index.html')
+      : resolve(browserDistFolder, 'index.html');
+    if (prerenderedHtml.startsWith(browserDistFolder) && existsSync(prerenderedHtml)) {
+      res.type('text/html; charset=utf-8').send(readFileSync(prerenderedHtml, 'utf-8'));
+      return;
+    }
+  }
+
   if (!angularApp) {
     try {
       const { ɵsetAngularAppEngineManifest: setAngularAppEngineManifest, AngularAppEngine } = (await import(
@@ -363,7 +377,9 @@ app.use('*path', async (req, res, next) => {
     } catch (err) {
       console.error('Failed to initialize Angular app engine:', err);
     }
-    angularApp = new AngularNodeAppEngine();
+    angularApp = new AngularNodeAppEngine({
+      allowedHosts: ['soil.app', '*.soil.app', '*.hosted.app', '*.a.run.app', 'localhost', '127.0.0.1'],
+    });
   }
 
   // biome-ignore lint/suspicious/noConsole: used for production logging

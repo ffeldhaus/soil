@@ -34,6 +34,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
   },
   {
+    path: 'delete-account',
+    renderMode: RenderMode.Prerender,
+  },
+  {
     path: 'impressum',
     renderMode: RenderMode.Prerender,
   },
