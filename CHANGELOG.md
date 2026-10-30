@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.5] - 2026-10-30
 ### Fixed
 - Updated the `/sitemap.xml` Express handler in `src/server.ts` (and `scripts/deploy.js`) to serve `public/sitemap.xml` from `browserDistFolder` with `<lastmod>` and `<video:video>` metadata instead of the legacy inline XML stub.
 
