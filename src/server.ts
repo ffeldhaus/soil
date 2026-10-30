@@ -119,8 +119,86 @@ Allow: /info
 Allow: /research
 Allow: /admin
 
-Sitemap: https://soil.app/sitemap.xml`);
+Sitemap: https://soil.app/sitemap.xml
+Agentmap: https://soil.app/.well-known/ard.json`);
 });
+
+app.get(['/llms.txt', '/llms.txt/'], (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.type('text/markdown; charset=utf-8');
+  const llmsFile = join(browserDistFolder, 'llms.txt');
+  if (existsSync(llmsFile)) {
+    res.send(readFileSync(llmsFile, 'utf-8'));
+    return;
+  }
+  res.send(`# SOIL – Interaktive Landwirtschaftssimulation & Lernspiel (BNE, Biologie, Geographie & Wirtschaft)
+
+> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Open-Source-Planspiel (Open Educational Resource, OER) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende ab Klasse 8 (Sekundarstufe I/II), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital – allein gegen KI-Höfe oder im Klassenzimmer-Multiplayer.
+
+## Hauptseiten & Dokumentation
+
+- [Startseite & Sofort-Spielstart](https://soil.app/): Direkt im Browser ohne Registrierung ein lokales Einzelspieler-Spiel starten oder den 1-minütigen Trailer ansehen.
+- [Spielhandbuch & Kulturdatenbank](https://soil.app/manual): Vollständige Anleitung zu Fruchtfolge, Bodenqualität (Humus), Nährstoffhaushalt, Witterungsrisiken, Schädlingen, EU-Bio-Siegel, Regionalverträgen und allen 12 Kulturen.
+- [Didaktischer & wissenschaftlicher Hintergrund](https://soil.app/info): Einsatz im Unterricht (BNE, Biologie, Geographie, Wirtschaft), Lehrplanbezug, wissenschaftliche Quellen (sources.json) und Spielmechanik.
+- [Offene Forschungsdaten, REST/CSV-API & MCP-Server](https://soil.app/research): Anonymisierte Spielverläufe abgeschlossener 10-Runden-Partien für Wissenschaft, Lehre und KI-Agenten (inklusive öffentlicher REST/CSV-Schnittstelle unter https://soil.app/api/research und Model Context Protocol Server unter https://soil.app/mcp).
+- [Spiele erstellen & verwalten (Lehrkräfte-Dashboard)](https://soil.app/admin): Lokale Spiele verwalten oder als Lehrkraft mehrteilige Klassenzimmer-Spiele mit PIN-Zugang und QR-Codes erstellen.
+`);
+});
+
+app.get(
+  [
+    '/.well-known/ard.json',
+    '/.well-known/ard.json/',
+    '/.well-known/ai-catalog.json',
+    '/.well-known/ai-catalog.json/',
+    '/ard.json',
+    '/ai-catalog.json',
+  ],
+  (_req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.type('application/json; charset=utf-8');
+    const ardFile = join(browserDistFolder, '.well-known', 'ard.json');
+    if (existsSync(ardFile)) {
+      res.send(readFileSync(ardFile, 'utf-8'));
+      return;
+    }
+    res.send(
+      JSON.stringify(
+        {
+          specVersion: '1.0',
+          entries: [
+            {
+              identifier: 'urn:air:soil.app:mcp:research-server',
+              displayName: 'SOIL Research MCP Server',
+              description:
+                'Public read-only Model Context Protocol (MCP) server and open research dataset providing anonymized 10-round agricultural simulation games from SOIL (crop rotations, soil quality, nutrition, weather events, and economic outcomes).',
+              type: 'application/mcp-server-card+json',
+              data: {
+                name: 'soil-research-mcp',
+                version: '1.0.0',
+                protocol: 'mcp',
+                transport: 'streamable-http',
+                endpoint: 'https://soil.app/mcp',
+                documentationUrl: 'https://soil.app/research',
+                restApiUrl: 'https://soil.app/api/research',
+                tools: ['list_research_games', 'get_research_game', 'get_research_summary'],
+              },
+              representativeQueries: [
+                'Anonymisierte Forschungsdaten aus dem Landwirtschafts-Planspiel SOIL abfragen',
+                'Compare organic vs. conventional crop rotation yields and soil quality in SOIL simulation games',
+                'Query anonymized agricultural simulation research games via MCP',
+              ],
+              capabilities: ['list_research_games', 'get_research_game', 'get_research_summary'],
+              tags: ['agriculture', 'sustainability', 'soil-quality', 'crop-rotation', 'education', 'oer', 'open-data'],
+            },
+          ],
+        },
+        null,
+        2,
+      ),
+    );
+  },
+);
 
 app.get('/sitemap.xml', (_req, res) => {
   res.type('application/xml');
@@ -239,6 +317,12 @@ app.use('*path', async (req, res, next) => {
   // Skip Firebase reserved paths
   if (req.originalUrl.startsWith('/__/')) {
     next();
+    return;
+  }
+
+  // Return 404 for unknown .well-known probes instead of redirecting to the Angular SPA root
+  if (req.path.startsWith('/.well-known/')) {
+    res.status(404).type('text/plain').send('Not Found');
     return;
   }
 

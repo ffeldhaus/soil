@@ -21,11 +21,15 @@ exclude = [
   'site.webmanifest',                                     # Relative link in index.html
   '/impressum',                                           # Internal route
   '/privacy',                                             # Internal route
-  '/research'                                             # Internal route
+  '/research',                                            # Internal route
+  '/\.well-known/.*',                                     # Well-known ARD route
+  'https://soil.app/mcp',                                 # POST-only Streamable HTTP MCP endpoint
+  'https://soil.app/api/research'                         # GET-only JSON/CSV API endpoint (rejects HEAD)
 ]
 
 # Exclude paths from getting checked.
 exclude_path = [
+  'lychee.toml',
   'node_modules',
   '.git',
   '.angular',

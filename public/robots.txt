@@ -17,3 +17,4 @@ Allow: /research
 Allow: /admin
 
 Sitemap: https://soil.app/sitemap.xml
+Agentmap: https://soil.app/.well-known/ard.json

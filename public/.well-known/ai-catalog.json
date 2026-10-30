@@ -1,0 +1,45 @@
+{
+  "specVersion": "1.0",
+  "entries": [
+    {
+      "identifier": "urn:air:soil.app:mcp:research-server",
+      "displayName": "SOIL Research MCP Server",
+      "description": "Public read-only Model Context Protocol (MCP) server and open research dataset providing anonymized 10-round agricultural simulation games from SOIL (crop rotations, soil quality, nutrition, weather events, and economic outcomes).",
+      "type": "application/mcp-server-card+json",
+      "data": {
+        "name": "soil-research-mcp",
+        "version": "1.0.0",
+        "protocol": "mcp",
+        "transport": "streamable-http",
+        "endpoint": "https://soil.app/mcp",
+        "documentationUrl": "https://soil.app/research",
+        "restApiUrl": "https://soil.app/api/research",
+        "tools": [
+          "list_research_games",
+          "get_research_game",
+          "get_research_summary"
+        ]
+      },
+      "representativeQueries": [
+        "Anonymisierte Forschungsdaten aus dem Landwirtschafts-Planspiel SOIL abfragen",
+        "Compare organic vs. conventional crop rotation yields and soil quality in SOIL simulation games",
+        "Query anonymized agricultural simulation research games via MCP"
+      ],
+      "capabilities": [
+        "list_research_games",
+        "get_research_game",
+        "get_research_summary"
+      ],
+      "tags": [
+        "agriculture",
+        "sustainability",
+        "soil-quality",
+        "crop-rotation",
+        "education",
+        "oer",
+        "open-data"
+      ]
+    }
+  ]
+}
+

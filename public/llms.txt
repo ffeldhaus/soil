@@ -1,0 +1,12 @@
+# SOIL – Interaktive Landwirtschaftssimulation & Lernspiel (BNE, Biologie, Geographie & Wirtschaft)
+
+> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Open-Source-Planspiel (Open Educational Resource, OER) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende ab Klasse 8 (Sekundarstufe I/II), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital – allein gegen KI-Höfe oder im Klassenzimmer-Multiplayer.
+
+## Hauptseiten & Dokumentation
+
+- [Startseite & Sofort-Spielstart](https://soil.app/): Direkt im Browser ohne Registrierung ein lokales Einzelspieler-Spiel starten oder den 1-minütigen Trailer ansehen.
+- [Spielhandbuch & Kulturdatenbank](https://soil.app/manual): Vollständige Anleitung zu Fruchtfolge, Bodenqualität (Humus), Nährstoffhaushalt, Witterungsrisiken, Schädlingen, EU-Bio-Siegel, Regionalverträgen und allen 12 Kulturen.
+- [Didaktischer & wissenschaftlicher Hintergrund](https://soil.app/info): Einsatz im Unterricht (BNE, Biologie, Geographie, Wirtschaft), Lehrplanbezug, wissenschaftliche Quellen (`sources.json`) und Spielmechanik.
+- [Offene Forschungsdaten, REST/CSV-API & MCP-Server](https://soil.app/research): Anonymisierte Spielverläufe abgeschlossener 10-Runden-Partien für Wissenschaft, Lehre und KI-Agenten (inklusive öffentlicher REST/CSV-Schnittstelle unter `https://soil.app/api/research` und Model Context Protocol Server unter `https://soil.app/mcp`).
+- [Spiele erstellen & verwalten (Lehrkräfte-Dashboard)](https://soil.app/admin): Lokale Spiele verwalten oder als Lehrkraft mehrteilige Klassenzimmer-Spiele mit PIN-Zugang und QR-Codes erstellen.
+
