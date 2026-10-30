@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added `<lastmod>` timestamps across all public URLs and Google `<video:video>` sitemap metadata in `public/sitemap.xml`, `embedUrl` (`https://www.youtube.com/embed/xCmZUGcyVLM`) and `duration: 'PT1M5S'` on the landing page `VideoObject` JSON-LD in `src/app/app.routes.ts`, and automatic `<lastmod>` date stamping in `scripts/deploy.js`.
+
 ## [3.3.3] - 2026-10-30
 ### Fixed
 - Updated Scene 2's voiceover and subtitle tracks in the landing page trailer (`public/assets/video/soil-trailer.mp4`, `public/assets/video/soil-marketing-trailer.srt`, `public/assets/video/soil-marketing-trailer.vtt`) to reference actual selectable crops (`Ackerbohnen, Weizen und Raps`) and exact HUD labels (`Ernte, Bodenqualität und Nährstoffe`).

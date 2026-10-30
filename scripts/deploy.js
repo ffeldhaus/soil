@@ -58,9 +58,9 @@ const performDeployment = async (newVersion) => {
 
     // Update CHANGELOG.md
     const changelogPath = 'CHANGELOG.md';
+    const today = new Date().toISOString().split('T')[0];
     if (fs.existsSync(changelogPath)) {
       let changelog = fs.readFileSync(changelogPath, 'utf8');
-      const today = new Date().toISOString().split('T')[0];
       const unpublishedRegex = /##\s*\[Unpublished\]/i;
 
       if (unpublishedRegex.test(changelog)) {
@@ -71,6 +71,15 @@ const performDeployment = async (newVersion) => {
       } else {
         console.warn('WARNING: No [Unpublished] entry found in CHANGELOG.md. Skipping changelog update.');
       }
+    }
+
+    // Update public/sitemap.xml <lastmod>
+    const sitemapPath = 'public/sitemap.xml';
+    if (fs.existsSync(sitemapPath)) {
+      let sitemap = fs.readFileSync(sitemapPath, 'utf8');
+      sitemap = sitemap.replace(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g, `<lastmod>${today}</lastmod>`);
+      fs.writeFileSync(sitemapPath, sitemap);
+      execSync(`git add ${sitemapPath}`, { stdio: 'inherit' });
     }
 
     execSync(`git commit -m "v${newVersion}"`, { stdio: 'inherit' });

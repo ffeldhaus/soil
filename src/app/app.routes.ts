@@ -54,9 +54,10 @@ const baseRoutes: Routes = [
               description:
                 'Einminütiger Überblick über die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
               thumbnailUrl: 'https://soil.app/SOIL-screenshot.jpg',
-              uploadDate: '2026-10-29',
-              duration: 'PT1M4S',
+              uploadDate: '2026-10-30',
+              duration: 'PT1M5S',
               contentUrl: 'https://soil.app/assets/video/soil-trailer.mp4',
+              embedUrl: 'https://www.youtube.com/embed/xCmZUGcyVLM',
               inLanguage: 'de-DE',
             },
           ],
