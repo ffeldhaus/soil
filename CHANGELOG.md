@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Fixed the Express 5 `/.well-known` catch-all in `src/server.ts` to match `req.originalUrl` (and dedicated `app.use('/.well-known', ...)` middleware) instead of `req.path` inside `app.use('*path')`, ensuring unknown `/.well-known/*` probes return `404 Not Found` rather than falling through to the Angular SPA router.
+
 ## [3.3.6] - 2026-10-30
 ### Added
 - Added Lighthouse Agentic Browsing discovery support with `/llms.txt` (`public/llms.txt`), Agent Resource Discovery manifests (`public/.well-known/ard.json` and `public/.well-known/ai-catalog.json`), `Agentmap: https://soil.app/.well-known/ard.json` in `public/robots.txt`, `<link rel="ard" href="/.well-known/ard.json" />` in `src/index.html`, and explicit Express handlers plus a `404` catch-all for unknown `/.well-known/*` probes in `src/server.ts`.

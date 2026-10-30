@@ -309,6 +309,13 @@ app.use(
 );
 
 /**
+ * Return 404 for unknown .well-known probes instead of falling through to the Angular SPA root redirect.
+ */
+app.use('/.well-known', (_req, res) => {
+  res.status(404).type('text/plain').send('Not Found');
+});
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 let angularApp: AngularNodeAppEngine | undefined;
@@ -321,7 +328,7 @@ app.use('*path', async (req, res, next) => {
   }
 
   // Return 404 for unknown .well-known probes instead of redirecting to the Angular SPA root
-  if (req.path.startsWith('/.well-known/')) {
+  if (req.originalUrl.startsWith('/.well-known/')) {
     res.status(404).type('text/plain').send('Not Found');
     return;
   }
