@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.6] - 2026-10-30
 ### Added
 - Added Lighthouse Agentic Browsing discovery support with `/llms.txt` (`public/llms.txt`), Agent Resource Discovery manifests (`public/.well-known/ard.json` and `public/.well-known/ai-catalog.json`), `Agentmap: https://soil.app/.well-known/ard.json` in `public/robots.txt`, `<link rel="ard" href="/.well-known/ard.json" />` in `src/index.html`, and explicit Express handlers plus a `404` catch-all for unknown `/.well-known/*` probes in `src/server.ts`.
 
