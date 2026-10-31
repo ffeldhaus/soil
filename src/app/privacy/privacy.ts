@@ -7,106 +7,147 @@ import { BackButtonComponent } from '../shared/back-button/back-button';
   standalone: true,
   imports: [RouterLink, BackButtonComponent],
   template: `
-    <div class="h-full overflow-y-auto custom-scrollbar relative font-sans text-gray-100">
-      <!-- Background Image -->
-      <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
-        <picture>
-          <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
-          <img
-            src="assets/images/bauernhof-landscape-dunkel.webp"
-            alt=""
-            fetchpriority="high"
-            class="w-full h-full object-cover portrait:object-center landscape:object-center"
-          />
-        </picture>
-      </div>
+    <div class="flex flex-col h-full text-white font-sans overflow-hidden">
+      <div class="flex-1 overflow-y-auto custom-scrollbar relative">
+        <!-- Background Image -->
+        <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
+          <picture>
+            <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
+            <img
+              src="assets/images/bauernhof-landscape-dunkel.webp"
+              alt=""
+              fetchpriority="high"
+              class="w-full h-full object-cover portrait:object-center landscape:object-center"
+            />
+          </picture>
+        </div>
 
-      <div class="relative z-10 max-w-5xl mx-auto pt-4 sm:pt-8 pb-12 px-4 sm:px-6 portrait:px-0 portrait:max-w-none space-y-8 animate-fade-in">
-        <!-- Header -->
-        <header class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 portrait:rounded-none portrait:border-x-0">
-          <div>
-            <h1 class="text-4xl sm:text-6xl font-bold text-emerald-500 mb-4 tracking-tight">Datenschutzerklärung</h1>
-            <p class="text-xl text-white max-w-2xl">Informationen über die Verarbeitung deiner personenbezogenen Daten</p>
-          </div>
-          <app-back-button></app-back-button>
-        </header>
+        <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6 pb-8 space-y-6">
+          <!-- Header -->
+          <header
+            class="p-4 sm:p-5 bg-gray-900 rounded-xl border border-gray-800 shadow-lg flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
+          >
+            <div>
+              <h1 class="text-2xl sm:text-4xl font-bold text-emerald-500 mb-1.5 tracking-tight">
+                Datenschutzerklärung
+              </h1>
+              <p class="text-sm sm:text-base text-gray-200 max-w-2xl">
+                Informationen über die Verarbeitung deiner personenbezogenen Daten
+              </p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <app-back-button></app-back-button>
+            </div>
+          </header>
 
-        <!-- Allgemein -->
-        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-2xl font-bold text-white">1. Verantwortliche Personen</h2>
-          <p class="text-gray-300">
-            Verantwortlich für die Datenverarbeitung auf dieser Webseite/App sind die im
-            <a routerLink="/impressum" class="text-emerald-400 hover:underline">Impressum</a> genannten Personen.
-          </p>
-        </section>
+          <!-- Allgemein -->
+          <section class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-3">
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 tracking-tight">1. Verantwortliche Personen</h2>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Verantwortlich für die Datenverarbeitung auf dieser Webseite sind die im
+              <a routerLink="/impressum" class="text-emerald-400 hover:underline">Impressum</a> genannten Personen.
+            </p>
+          </section>
 
-        <!-- Datenerfassung -->
-        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-2xl font-bold text-white">2. Datenerfassung und Anonymisierung</h2>
-          
-          <h3 class="text-xl font-bold text-gray-200 mt-4">Lokale Spiele (On-Device)</h3>
-          <p class="text-gray-300">
-            Wenn du "Lokale Spiele" spielst, werden deine Spieldaten ausschließlich lokal in deinem Browser (localStorage) gespeichert. 
-            Es erfolgt keine Übertragung personenbezogener Daten an unsere Server, sofern du die optionale Übermittlung von anonymisierten 
-            Spielergebnissen zu Forschungszwecken nicht explizit aktivierst.
-          </p>
+          <!-- Datenerfassung -->
+          <section class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-4">
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 tracking-tight">
+              2. Datenerfassung und Anonymisierung
+            </h2>
 
-          <h3 class="text-xl font-bold text-gray-200 mt-4">Server-basierte Spiele (Cloud)</h3>
-          <p class="text-gray-300">
-            Für Multiplayer-Szenarien oder Cloud-Spiele ist eine Authentifizierung (Login) erforderlich. 
-            Diese dient ausschließlich der technischen Bereitstellung der Spielfunktionen und der **Prävention von Missbrauch** 
-            (z. B. Schutz vor automatisierten Angriffen oder unbefugter Erstellung von Inhalten).
-          </p>
-          <ul class="list-disc list-inside text-gray-300 space-y-2 ml-4">
-            <li><strong>Registrierungsdaten:</strong> E-Mail-Adressen und Passwörter werden sicher über Firebase Authentication verarbeitet. Diese Daten werden ausschließlich zur Identifizierung deines Spielkontos und im Falle von Systemmissbrauch verwendet. Ein Abgleich mit anderen Datenquellen findet nicht statt.</li>
-            <li><strong>Spieldaten:</strong> Deine Spielentscheidungen werden in unserer Datenbank gespeichert. Diese Daten sind für Spielzwecke mit deinem Konto verknüpft, um den Spielstand über mehrere Sitzungen hinweg zu erhalten.</li>
-          </ul>
+            <div class="bg-gray-950 rounded-lg p-4 border border-gray-800 space-y-2 text-xs sm:text-sm text-gray-300 leading-relaxed">
+              <h3 class="text-sm sm:text-base font-bold text-emerald-300">Lokale Spiele im Browser</h3>
+              <p>
+                Wenn du lokale Einzelspieler-Partien spielst, werden deine Spieldaten ausschließlich lokal in deinem
+                Browser über den <code>localStorage</code> gespeichert. Es erfolgt keine Übertragung personenbezogener
+                Daten an unsere Server, sofern du die optionale Übermittlung anonymisierter Spielergebnisse zu
+                Forschungszwecken nicht ausdrücklich aktivierst.
+              </p>
+            </div>
 
-          <h3 class="text-xl font-bold text-gray-200 mt-4">Anonymisierung für Forschung & Statistik</h3>
-          <p class="text-gray-300">
-            Abgeschlossene Spiele werden standardmäßig in einer **vollständig anonymisierten Form** für statistische Auswertungen und Spielbalance-Analysen verwendet. 
-            Dabei werden alle Bezüge zu deinem Benutzerkonto, Namen oder E-Mail-Adressen dauerhaft entfernt und Teams ausschließlich mit generischen Bezeichnungen (z. B. <code>Team 1</code>) gespeichert.
-          </p>
-          <p class="text-gray-300 mt-2">
-            Dieser streng anonymisierte Datensatz ist für Bildung, Didaktik und wissenschaftliche Auswertungen öffentlich unter
-            <a routerLink="/research" class="text-emerald-400 hover:underline">/research</a> sowie über eine schreibgeschützte Forschungs-API und MCP-Schnittstelle einsehbar.
-            Du kannst die Übermittlung dieser anonymisierten Daten bei der Erstellung eines neuen Spiels jederzeit **deaktivieren**.
-          </p>
-        </section>
+            <div class="bg-gray-950 rounded-lg p-4 border border-gray-800 space-y-2 text-xs sm:text-sm text-gray-300 leading-relaxed">
+              <h3 class="text-sm sm:text-base font-bold text-emerald-300">Server-basierte Mehrspieler-Runden</h3>
+              <p>
+                Für das Erstellen und Verwalten von Mehrspieler-Klassenrunden ist für Lehrkräfte und Spielleitungen eine
+                Anmeldung erforderlich. Diese dient ausschließlich der technischen Bereitstellung der Spielfunktionen
+                und der <strong class="text-white">Prävention von Missbrauch</strong>, etwa zum Schutz vor
+                automatisierten Angriffen.
+              </p>
+              <ul class="list-disc list-outside ml-5 space-y-1.5 pt-1">
+                <li>
+                  <strong class="text-white">Registrierungsdaten:</strong> E-Mail-Adressen und Passwörter werden sicher
+                  über Firebase Authentication verarbeitet und ausschließlich zur Identifizierung deines Kontos
+                  verwendet. Ein Abgleich mit anderen Datenquellen findet nicht statt.
+                </li>
+                <li>
+                  <strong class="text-white">Spieldaten:</strong> Spielentscheidungen werden in unserer Datenbank
+                  gespeichert, um den Spielstand einer Runde über mehrere Sitzungen hinweg zu erhalten. Lernende treten
+                  Mehrspieler-Runden ohne eigenes Konto über vierstellige Team-PINs bei.
+                </li>
+              </ul>
+            </div>
 
-        <!-- Feedback -->
-        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-2xl font-bold text-white">3. Feedback-Funktion</h2>
-          <p class="text-gray-300">
-            Du kannst uns Feedback über die integrierte Funktion jederzeit **vollständig anonym** senden.
-            Wenn du auf dein Feedback eine Rückmeldung erhalten möchtest, kannst du optional eine E-Mail-Adresse angeben
-            (oder als angemeldete Lehrkraft per Auswahlfeld einwilligen, dass deine hinterlegte E-Mail-Adresse mitgesendet wird).
-            Eine freiwillig übermittelte E-Mail-Adresse wird ausschließlich zur Beantwortung deines Feedbacks verwendet und nicht an Dritte weitergegeben.
-          </p>
-        </section>
+            <div class="bg-gray-950 rounded-lg p-4 border border-gray-800 space-y-2 text-xs sm:text-sm text-gray-300 leading-relaxed">
+              <h3 class="text-sm sm:text-base font-bold text-emerald-300">
+                Anonymisierung für Forschung &amp; Statistik
+              </h3>
+              <p>
+                Abgeschlossene Spiele werden standardmäßig in einer
+                <strong class="text-white">vollständig anonymisierten Form</strong> für statistische Auswertungen und
+                Analysen der Spielbalance verwendet. Dabei werden alle Bezüge zu Benutzerkonten, Namen oder
+                E-Mail-Adressen dauerhaft entfernt und Teams ausschließlich mit generischen Bezeichnungen wie
+                <code>Team 1</code> gespeichert.
+              </p>
+              <p>
+                Dieser streng anonymisierte Datensatz ist für Bildung, Didaktik und wissenschaftliche Auswertungen
+                öffentlich unter <a routerLink="/research" class="text-emerald-400 hover:underline">/research</a> sowie
+                über eine schreibgeschützte Forschungs-API einsehbar. Du kannst die Übermittlung dieser anonymisierten
+                Daten beim Erstellen eines neuen Spiels jederzeit <strong class="text-white">deaktivieren</strong>.
+              </p>
+            </div>
+          </section>
 
-        <!-- Dienstleister -->
-        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-2xl font-bold text-white">4. Hosting und Infrastruktur (Firebase)</h2>
-          <p class="text-gray-300">
-            Diese App nutzt Google Firebase zur Bereitstellung von Datenbanken, Hosting und Authentifizierung. 
-            Die Server befinden sich innerhalb der Europäischen Union (Region: europe-west4, Niederlande). 
-            Google Firebase ist Teil der Google Cloud Platform und erfüllt hohe Sicherheitsstandards.
-          </p>
-        </section>
+          <!-- Feedback -->
+          <section class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-3">
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 tracking-tight">3. Feedback-Funktion</h2>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Du kannst uns Feedback über die integrierte Funktion jederzeit
+              <strong class="text-white">vollständig anonym</strong> senden. Wenn du auf dein Feedback eine Rückmeldung
+              erhalten möchtest, kannst du freiwillig eine E-Mail-Adresse angeben oder als angemeldete Lehrkraft per
+              Auswahlfeld einwilligen, dass deine hinterlegte E-Mail-Adresse mitgesendet wird. Eine freiwillig
+              übermittelte E-Mail-Adresse wird ausschließlich zur Beantwortung deines Feedbacks verwendet und nicht an
+              Dritte weitergegeben.
+            </p>
+          </section>
 
-        <!-- Rechte -->
-        <section class="bg-gray-900 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0">
-          <h2 class="text-2xl font-bold text-white">5. Deine Betroffenenrechte</h2>
-          <p class="text-gray-300">
-            Du hast im Rahmen der geltenden gesetzlichen Bestimmungen (DSGVO) jederzeit das Recht auf unentgeltliche Auskunft über deine gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten.
-          </p>
-          <p class="text-gray-300">
-            Du kannst dein Konto und alle damit verbundenen Daten jederzeit selbstständig über unsere 
-            <a routerLink="/delete-account" class="text-emerald-400 hover:underline">Seite zur Kontolöschung</a> 
-            löschen. Alternativ wende dich hierzu bitte an die im Impressum genannten Kontaktpersonen.
-          </p>
-        </section>
+          <!-- Dienstleister -->
+          <section class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-3">
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 tracking-tight">
+              4. Hosting und Infrastruktur
+            </h2>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Diese Anwendung nutzt Google Firebase zur Bereitstellung von Datenbanken, Hosting und Authentifizierung.
+              Alle Server befinden sich innerhalb der Europäischen Union am Standort <code>europe-west4</code> in den
+              Niederlanden.
+            </p>
+          </section>
+
+          <!-- Rechte -->
+          <section class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-3">
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 tracking-tight">5. Deine Betroffenenrechte</h2>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Du hast nach der Datenschutz-Grundverordnung jederzeit das Recht auf unentgeltliche Auskunft über deine
+              gespeicherten personenbezogenen Daten, deren Herkunft, Empfänger und den Zweck der Datenverarbeitung sowie
+              ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten.
+            </p>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Du kannst dein Konto und alle damit verbundenen Daten jederzeit selbstständig über unsere
+              <a routerLink="/delete-account" class="text-emerald-400 hover:underline">Seite zur Kontolöschung</a>
+              löschen oder dich an die im <a routerLink="/impressum" class="text-emerald-400 hover:underline">Impressum</a>
+              genannten Kontaktpersonen wenden.
+            </p>
+          </section>
+        </main>
       </div>
     </div>
   `,
