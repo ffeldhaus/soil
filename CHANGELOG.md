@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.10] - 2026-10-31
 ### Added
 - Added a comprehensive German school curriculum mapping section (`#curriculum`, covering spiral progression across grades 5–13, matching difficulty presets, and mandatory curriculum anchors across all 16 Bundesländer) and an 8-item educator FAQ section (`#faq`) to `/info` (`src/app/info/info.html`, `src/app/info/info.ts`), along with `FAQPage` + `AboutPage` Schema.org JSON-LD and updated SEO metadata in `src/app/app.routes.ts`.
 
