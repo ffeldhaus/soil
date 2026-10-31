@@ -54,7 +54,7 @@ const baseRoutes: Routes = [
               description:
                 'Einminütiger Überblick über die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
               thumbnailUrl: 'https://soil.app/SOIL-screenshot.jpg',
-              uploadDate: '2026-10-30',
+              uploadDate: '2026-10-30T14:00:00+01:00',
               duration: 'PT1M5S',
               contentUrl: 'https://soil.app/assets/video/soil-trailer.mp4',
               embedUrl: 'https://www.youtube.com/embed/xCmZUGcyVLM',
@@ -260,6 +260,11 @@ const baseRoutes: Routes = [
           inLanguage: 'de',
           isAccessibleForFree: true,
           license: 'https://creativecommons.org/licenses/by/4.0/',
+          creator: {
+            '@type': 'Organization',
+            name: 'SOIL Projekt (Dr. Nina Wolf & Florian Straub)',
+            url: 'https://soil.app/info',
+          },
           distribution: [
             {
               '@type': 'DataDownload',

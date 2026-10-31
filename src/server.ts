@@ -120,8 +120,7 @@ Allow: /info
 Allow: /research
 Allow: /admin
 
-Sitemap: https://soil.app/sitemap.xml
-Agentmap: https://soil.app/.well-known/ard.json`);
+Sitemap: https://soil.app/sitemap.xml`);
 });
 
 app.get(['/llms.txt', '/llms.txt/'], (_req, res) => {
@@ -222,7 +221,7 @@ app.get('/sitemap.xml', (_req, res) => {
       <video:content_loc>https://soil.app/assets/video/soil-trailer.mp4</video:content_loc>
       <video:player_loc>https://www.youtube.com/embed/xCmZUGcyVLM</video:player_loc>
       <video:duration>65</video:duration>
-      <video:publication_date>2026-10-30</video:publication_date>
+      <video:publication_date>2026-10-30T14:00:00+01:00</video:publication_date>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
   </url>
