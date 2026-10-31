@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Refined `/info` (`src/app/info/info.html`, `src/app/info/info.ts`, `src/app/app.routes.ts`) and `/manual` (`src/app/manual/manual.ts`, `src/app/manual/components/manual-concept-card.ts`, `src/app/manual/components/manual-crop-card.ts`) with a Bundesland dropdown selector for all 16 individually selectable German states (keeping all 16 state curriculum cards in the prerendered SSR DOM), focused state curriculum anchors on BNE, Biologie, Geographie / Erdkunde, and Wirtschaft, condensed the educator FAQ into 5 collapsible `<details>` accordions, and standardized German typography (removing parenthetical clutter, ensuring spaces after colons before links, and formatting percentages without a preceding space).
+
 ## [3.3.10] - 2026-10-31
 ### Added
 - Added a comprehensive German school curriculum mapping section (`#curriculum`, covering spiral progression across grades 5–13, matching difficulty presets, and mandatory curriculum anchors across all 16 Bundesländer) and an 8-item educator FAQ section (`#faq`) to `/info` (`src/app/info/info.html`, `src/app/info/info.ts`), along with `FAQPage` + `AboutPage` Schema.org JSON-LD and updated SEO metadata in `src/app/app.routes.ts`.

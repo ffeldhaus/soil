@@ -229,7 +229,7 @@ const baseRoutes: Routes = [
     data: {
       seo: {
         description:
-          'Einsatz von SOIL im Unterricht (Klasse 5–13 in allen 16 Bundesländern für Geographie/Erdkunde, Biologie, Wirtschaft/Politik & BNE), FAQ für Lehrkräfte, Dissertation Dr. Nina Wolf (TU Dortmund) und KTBL-/BMEL-Datenquellen.',
+          'Einsatz von SOIL im Unterricht der Klassen 5 bis 13 in allen 16 Bundesländern für BNE, Biologie, Geographie / Erdkunde und Wirtschaft, FAQ für Lehrkräfte, Dissertation von Dr. Nina Wolf an der TU Dortmund sowie KTBL- und BMEL-Datenquellen.',
         canonicalPath: '/info',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -247,66 +247,42 @@ const baseRoutes: Routes = [
               mainEntity: [
                 {
                   '@type': 'Question',
-                  name: 'Für welche Fächer und Jahrgangsstufen eignet sich das Planspiel SOIL laut den Lehrplänen der Bundesländer?',
+                  name: 'Für welche Fächer und Klassenstufen eignet sich das Planspiel SOIL?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'SOIL ist für die Jahrgangsstufen 5 bis 13 (Unterstufe, Mittelstufe und gymnasiale Oberstufe) sowie für berufliche Schulen (Agrarwirtschaft) in allen 16 Bundesländern konzipiert. Es passt unmittelbar in den Unterricht der Fächer Geographie/Erdkunde, Biologie und Naturwissenschaften (NaWi, BNT, MNT), Wirtschaft/Politik/Sozialwissenschaften (WBS, WAT, PGW, PoWi, GRW, AWT) sowie in fächerübergreifende Projekttage zur Bildung für nachhaltige Entwicklung (BNE).',
+                    text: 'SOIL ist für die Klassenstufen 5 bis 13 in allen 16 Bundesländern konzipiert. Das Planspiel eignet sich besonders für den Fachunterricht in Geographie und Erdkunde, Biologie und Naturwissenschaften sowie Wirtschaft und Politik. Darüber hinaus lässt es sich flexibel an Projekttagen zur Bildung für nachhaltige Entwicklung einsetzen.',
                   },
                 },
                 {
                   '@type': 'Question',
-                  name: 'Wie passen die drei Schwierigkeitsgrade zu Unterstufe (Kl. 5–6), Mittelstufe (Kl. 7–10) und Oberstufe (Kl. 11–13)?',
+                  name: 'Wie unterscheiden sich die drei Schwierigkeitsgrade für Unter-, Mittel- und Oberstufe?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Beim Erstellen eines Spiels wählst du zwischen drei didaktisch abgestuften Profilen: „Einsteiger / Unterstufe“ (Kl. 5–6) startet mit einheitlicher Bodenqualität (100) und Nährstoffen (100), verlässlicher Wettervorhersage und 0 % Überziehungszins. „Standard / Mittelstufe“ (Kl. 7–10) führt 5 realistische Boden-Zonen (88–112), saisonale Wettertrends, 6 % Dispozins und rotierende Regionalverträge ein. „Profi / Oberstufe“ (Kl. 11–13) bildet stark heterogene Böden (76–124), zunehmenden Klimastress, 10 % Überziehungszins und ein striktes Insolvenz-Limit ab -50.000 € ab.',
+                    text: 'Die Stufe Einsteiger für die Klassen 5 und 6 startet mit einheitlichen Bodenwerten von 100, verlässlicher Wettervorhersage und 0% Überziehungszins. Die Stufe Standard für die Klassen 7 bis 10 ergänzt fünf unterschiedliche Boden-Zonen, saisonale Wettertrends, 6% Überziehungszins und regionale Förderverträge. Die Stufe Profi für die Oberstufe fordert Lernende mit stark heterogenen Böden, zunehmendem Klimastress, 10% Überziehungszins und einer Insolvenzgrenze ab -50.000 €.',
                   },
                 },
                 {
                   '@type': 'Question',
-                  name: 'Wie läuft eine Unterrichtsstunde (45 Min.) oder Doppelstunde (90 Min.) mit SOIL praktisch ab?',
+                  name: 'Wie läuft eine Einzelstunde oder Doppelstunde im Unterricht praktisch ab?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Eine Durchführung gliedert sich in drei Phasen: (1) Einstieg (ca. 10 Min.): Kurze Einführung über die interaktive Tour; Start entweder sofort ohne Anmeldung im Einzelspieler-Modus oder als Klassen-Multiplayer per 4-stelliger PIN bzw. QR-Code. (2) Simulationsphase (30–50 Min.): Die Lernenden bewirtschaften ihren Hof über 10 Runden (allein oder in Zweier-/Dreierteams) mit einer kurzen Zwischenreflexion nach Runde 5. (3) Debriefing & Auswertung (15–25 Min.): Gemeinsamer Vergleich der Rangliste („Zukunftsfähiger Hof“), der Boden- und Kapitalverläufe im Finanzbericht sowie Diskussion des Dust-Bowl-Syndroms.',
+                    text: 'Nach einer zehnminütigen Einführung über die integrierte Spieltour starten die Lernenden ohne Registrierung im Einzelspieler-Modus oder treten per vierstelliger PIN einer gemeinsamen Klassenrunde bei. Anschließend bewirtschaften sie ihren Hof allein oder in Kleingruppen über zehn Spielrunden von insgesamt 30 bis 50 Minuten mit einer kurzen Zwischenbilanz nach Runde 5. Zum Abschluss werden die Rangliste für den zukunftsfähigen Hof sowie die Boden- und Kapitalverläufe gemeinsam ausgewertet.',
                   },
                 },
                 {
                   '@type': 'Question',
-                  name: 'Ist SOIL kostenlos, werbefrei und DSGVO-konform ohne Schüler-Accounts im Browser spielbar?',
+                  name: 'Welche Themen aus BNE, Biologie, Geographie und Wirtschaft werden konkret simuliert?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Ja. SOIL ist eine zu 100 % kostenlose und werbefreie Open Educational Resource (OER) und läuft direkt im Browser auf Tablets, Laptops, Smartphones und interaktiven Whiteboards. Lernende benötigen keinerlei eigenes Benutzerkonto und geben weder Namen noch E-Mail-Adressen ein: Einzelspieler-Partien laufen lokal im Browser, und Klassen-Mehrspielerrunden nutzen anonyme 4-stellige Team-PINs auf EU-Servern (europe-west4).',
+                    text: 'Biologisch und ökologisch modelliert SOIL den Humusaufbau, den Nährstoffhaushalt, die Stickstofffixierung durch Leguminosen sowie die natürliche Regulierung von Schaderregern durch vielfältige Fruchtfolgen. Geographisch und wirtschaftlich stehen Standortfaktoren, Ertragsrisiken durch Extremwetter, reale Deckungsbeiträge nach KTBL sowie EU-Agrarförderungen und Öko-Regelungen im Mittelpunkt. So erleben die Lernenden unmittelbar, wie kurzfristige Gewinnmaximierung zur Bodendegradation führt und warum ökologische Pflege die Basis für dauerhaften wirtschaftlichen Erfolg bildet.',
                   },
                 },
                 {
                   '@type': 'Question',
-                  name: 'Welche biologischen Lehrplaninhalte (Ökosystem Boden, Stickstoffkreislauf, Fruchtfolge, Pflanzenschutz) werden abgebildet?',
+                  name: 'Ist SOIL kostenlos, werbefrei und DSGVO-konform ohne Schüler-Accounts nutzbar?',
                   acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Biologisch modelliert SOIL den Humusaufbau und -abbau (Bodenqualität), den mineralischen Nährstoffhaushalt nach dem Liebigschen Minimumgesetz sowie die biologische Stickstofffixierung durch Körnerleguminosen (Ackerbohne und Erbse in Symbiose mit Knöllchenbakterien). Zudem erleben die Lernenden Selbstunverträglichkeit und bodenbürtige Wurzelkrankheiten bei fehlenden Anbaupausen, die Dämpfung von Schaderregern durch vielfältige Fruchtfolgen (≤ 20 % Flächenanteil) im Vergleich zu Monokulturen sowie die Regeln des kontrolliert ökologischen Landbaus.',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: 'Welche Themen aus Geographie, Wirtschaft und Politik (Marktpreise, GAP-Subventionen, Strukturwandel, Dust-Bowl-Syndrom) lernen Schülerinnen und Schüler?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'Aus geographischer und ökonomischer Sicht verknüpft SOIL reale Deckungsbeitragsrechnungen (Saatgut-, Dünger-, Pflanzenschutz-, Maschinen- und Arbeitskosten nach KTBL) mit der Gemeinsamen Agrarpolitik der EU (GAP-Basisprämie, Öko-Prämie, Öko-Regelungen ÖR 1a/2/6) und regionalen Lieferverträgen. Lernende erfahren das Dust-Bowl-Syndrom am eigenen Betrieb und vollziehen den Perspektivwechsel von kurzfristiger Gewinnmaximierung hin zu „Ökologie für Ökonomie“.',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: 'Auf welchen realen Datenquellen basiert die Simulation?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'Alle agronomischen und ökonomischen Parameter in SOIL sind wissenschaftlich referenziert (sources.json): Erntemengen und Klimaschwankungen stammen vom Statistischen Bundesamt (Destatis) und dem BMEL-Erntebericht, Arbeitszeit- und Maschinenkosten vom KTBL, Markt- und Betriebsmittelpreise von AMI, Agrarheute, Ökolandbau.de und dem LfULG Sachsen, und Schaderreger- sowie Agrarumweltdaten vom Julius Kühn-Institut (JKI), ISIP, FLI und begutachteten Fachstudien.',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: 'Wie können Oberstufenkurse (W-Seminar, Seminarfach, Informatik, Geographie, Biologie) mit den offenen Forschungsdaten arbeiten?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'Unter /research stellt SOIL einen streng anonymisierten Open-Data-Forschungsdatensatz abgeschlossener Simulationsspiele bereit. Oberstufenkurse können reale Spielverläufe im Browser inspizieren, als CSV- oder JSON-Datensatz über die REST-API (/api/research) für eigene statistische Auswertungen (z. B. in Python, R oder Tabellenkalkulationen) herunterladen oder über den offenen Model Context Protocol Server (/api/mcp) auswerten.',
+                    text: 'Ja, SOIL ist als freie Bildungsressource dauerhaft kostenlos, werbefrei und direkt im Browser auf Tablets, Laptops und interaktiven Tafeln spielbar. Schülerinnen und Schüler benötigen kein Benutzerkonto und geben weder Namen noch E-Mail-Adressen ein. Einzelspieler-Runden laufen lokal auf dem Endgerät, während Mehrspieler-Klassenrunden über anonyme vierstellige Team-PINs auf europäischen Servern abgewickelt werden.',
                   },
                 },
               ],

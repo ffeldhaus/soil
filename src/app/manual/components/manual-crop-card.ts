@@ -116,12 +116,12 @@ export class ManualCropCardComponent implements OnChanges {
       'special.barley': 'Robuste Getreideart für verschiedene Standorte.',
       'special.oat': 'Gute Vorfrucht, geringe Ansprüche.',
       'special.rye': 'Sehr widerstandsfähig gegen Kälte.',
-      'special.fieldbean': 'Baut Stickstoff im Boden auf (Leguminose).',
+      'special.fieldbean': 'Baut als Leguminose Stickstoff im Boden auf.',
       'special.rapeseed': 'Wichtige Ölsaat, wertvoll für Bienen und Bodenstruktur.',
-      'special.pea': 'Fixiert Stickstoff und lockert den Boden auf (Leguminose).',
+      'special.pea': 'Fixiert als Leguminose Stickstoff und lockert den Boden auf.',
       'special.animals': 'Dauerkultur zur Viehhaltung.',
       'special.fallow':
-        'Regeneration für den Boden. Für bis zu 5 Brachland-Felder erhältst du eine hohe EU-Förderung (Grünstreifen-Prämie).',
+        'Regeneration für den Boden. Für bis zu 5 Brachland-Felder erhältst du eine hohe EU-Grünstreifen-Prämie.',
     };
     return translations[key] || key;
   }
