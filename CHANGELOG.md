@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.14] - 2026-10-31
 ### Changed
 - Aligned the layout width (`max-w-6xl`), header, and section card styling of `/impressum` (`src/app/impressum/impressum.ts`) and `/privacy` (`src/app/privacy/privacy.ts`) with `/manual`, `/info`, and `/research`, and replaced raw `**...**` markdown markers and unnecessary parentheticals in `privacy.ts` with semantic `<strong class="text-white">` tags.
 
