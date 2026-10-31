@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.13] - 2026-10-31
 ### Fixed
 - Fixed author name in `creator.name` on the `/research` `Dataset` JSON-LD block in `src/app/app.routes.ts` (`'SOIL Projekt – Dr. Nina Wolf & Florian Feldhaus'`).
 
