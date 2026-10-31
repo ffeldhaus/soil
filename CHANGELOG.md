@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added a comprehensive German school curriculum mapping section (`#curriculum`, covering spiral progression across grades 5–13, matching difficulty presets, and mandatory curriculum anchors across all 16 Bundesländer) and an 8-item educator FAQ section (`#faq`) to `/info` (`src/app/info/info.html`, `src/app/info/info.ts`), along with `FAQPage` + `AboutPage` Schema.org JSON-LD and updated SEO metadata in `src/app/app.routes.ts`.
+
 ## [3.3.9] - 2026-10-31
 ### Fixed
 - Removed the non-standard `Agentmap:` line from `public/robots.txt` and `src/server.ts` so Lighthouse's `robots-txt` SEO audit passes while retaining `<link rel="ard" href="/.well-known/ard.json" />` for Agentic Browsing discovery, updated `VideoObject.uploadDate` (`src/app/app.routes.ts`) and `<video:publication_date>` (`public/sitemap.xml`) to include an ISO 8601 time and timezone offset (`2026-10-30T14:00:00+01:00`), and added `creator` metadata to the `Dataset` JSON-LD on `/research` to resolve Google Search Console Rich Result warnings.
