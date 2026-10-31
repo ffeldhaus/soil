@@ -299,7 +299,7 @@ const baseRoutes: Routes = [
     data: {
       seo: {
         description:
-          'Öffentlicher Forschungsdatensatz anonymisierter SOIL-Simulationsspiele mit REST/CSV-API und Model Context Protocol (MCP) Server für Bildungsforschung und Agrarökonomie.',
+          'Öffentlicher Forschungsdatensatz anonymisierter SOIL-Simulationsspiele mit REST/CSV-API und Model Context Protocol Server für Bildungsforschung und Agrarökonomie.',
         canonicalPath: '/research',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -313,7 +313,7 @@ const baseRoutes: Routes = [
           license: 'https://creativecommons.org/licenses/by/4.0/',
           creator: {
             '@type': 'Organization',
-            name: 'SOIL Projekt (Dr. Nina Wolf & Florian Straub)',
+            name: 'SOIL Projekt – Dr. Nina Wolf & Florian Straub',
             url: 'https://soil.app/info',
           },
           distribution: [
