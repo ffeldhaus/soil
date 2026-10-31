@@ -313,7 +313,7 @@ const baseRoutes: Routes = [
           license: 'https://creativecommons.org/licenses/by/4.0/',
           creator: {
             '@type': 'Organization',
-            name: 'SOIL Projekt – Dr. Nina Wolf & Florian Straub',
+            name: 'SOIL Projekt – Dr. Nina Wolf & Florian Feldhaus',
             url: 'https://soil.app/info',
           },
           distribution: [
