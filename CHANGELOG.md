@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.12] - 2026-10-31
 ### Changed
 - Updated `creator.name` on the `/research` `Dataset` JSON-LD block in `src/app/app.routes.ts` to `'SOIL Projekt – Dr. Nina Wolf & Florian Straub'`.
 
