@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.3.9] - 2026-10-31
 ### Fixed
 - Removed the non-standard `Agentmap:` line from `public/robots.txt` and `src/server.ts` so Lighthouse's `robots-txt` SEO audit passes while retaining `<link rel="ard" href="/.well-known/ard.json" />` for Agentic Browsing discovery, updated `VideoObject.uploadDate` (`src/app/app.routes.ts`) and `<video:publication_date>` (`public/sitemap.xml`) to include an ISO 8601 time and timezone offset (`2026-10-30T14:00:00+01:00`), and added `creator` metadata to the `Dataset` JSON-LD on `/research` to resolve Google Search Console Rich Result warnings.
 
