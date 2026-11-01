@@ -566,4 +566,29 @@ describe('Board', () => {
     expect(navSpy).not.toHaveBeenCalledWith(['/']);
     expect(navSpy).not.toHaveBeenCalledWith(['/admin']);
   });
+
+  it('should not preventDefault or reopen planting modal when touching inside an open overlay modal on mobile', async () => {
+    component.isReadOnly = false;
+    component.showPlantingModal = true;
+    component.selectedIndices = new Set([0]);
+
+    const preventDefaultSpy = vi.fn();
+    const touchEvent = {
+      cancelable: true,
+      preventDefault: preventDefaultSpy,
+      touches: [{ clientX: 50, clientY: 50 }],
+      target: document.createElement('button'),
+    } as unknown as TouchEvent;
+
+    component.onTouchStart(touchEvent);
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    expect(component.isDragging).toBe(false);
+
+    // Simulate closing the modal and touchend firing afterwards
+    component.onPlantingCancel();
+    component.onTouchEnd(touchEvent);
+    await fixture.whenStable();
+
+    expect(component.showPlantingModal).toBe(false);
+  });
 });

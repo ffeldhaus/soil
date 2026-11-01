@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Fixed mobile touch interactions inside the `Anbau-Auswahl` planting modal and board overlays (`src/app/game/board/board.html`, `src/app/game/board/board.ts`, `src/app/game/planting-modal/planting-modal.html`) by moving overlay modals outside `.board-container` and guarding `onTouchStart`/`onTouchMove`/`onTouchEnd`/`onMouseUp` with `isAnyOverlayModalOpen()` and `isInteractiveOrDialogTarget()` so `event.preventDefault()` on field drag-selection no longer suppresses tap/click events or re-opens the planting modal on iOS/Android.
+
 ## [3.4.1] - 2026-11-01
 ### Changed
 - Added horizon-adaptive weather grace period (`getGraceRoundsForLimit`: `1` round for `5–7`-round sprints, `2` rounds for `>= 8` rounds), earlier regional contract activation (`Round 2` for `5–7`-round sprints, `Round 3` for `>= 8` rounds), and progressive multi-year root-crop soil exhaustion (`consecutiveYears >= 2` adds `-1.5 * (consecutiveYears - 1)` extra soil loss per consecutive year for potato and sugar beet) across `src/app/game/engine/game-engine.ts`, `functions/src/game-engine.ts`, `src/app/game/board/board.ts`, `src/app/info/info.html`, `src/app/manual/manual.ts`, and the multi-horizon Monte Carlo suite (`functions/src/balance.test.ts`).

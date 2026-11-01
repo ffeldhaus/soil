@@ -670,11 +670,42 @@ export class Board implements OnInit, OnDestroy {
     this.showSideCards = this.cols >= 8 && remainingWidth >= 290;
   }
 
+  private isInteractiveOrDialogTarget(target: EventTarget | null): boolean {
+    const el = target as HTMLElement | null;
+    if (!el || typeof el.closest !== 'function') return false;
+    return Boolean(
+      el.closest(
+        'button, a, input, select, textarea, [role="dialog"], app-planting-modal, app-round-settings-modal, app-round-result-modal, app-feedback-modal',
+      ),
+    );
+  }
+
+  private isAnyOverlayModalOpen(): boolean {
+    return Boolean(
+      this.showPlantingModal ||
+        this.showRoundSettingsModal ||
+        this.showRoundResultModal ||
+        this.showStickerAlbumModal ||
+        this.showGameEndModal ||
+        this.showWelcomeModal ||
+        this.showFeedbackModal ||
+        this.showMobileMenu ||
+        this.errorMessage,
+    );
+  }
+
   // --- Touch Events ---
 
   // Prevent default scroll when touching the grid
   onTouchStart(event: TouchEvent) {
-    if (this.isReadOnly || this.showFinance) return;
+    if (
+      this.isReadOnly ||
+      this.showFinance ||
+      this.isAnyOverlayModalOpen() ||
+      this.isInteractiveOrDialogTarget(event.target)
+    ) {
+      return;
+    }
     if (event.cancelable) event.preventDefault();
 
     this.isDragging = true;
@@ -691,7 +722,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
   onTouchMove(event: TouchEvent) {
-    if (!this.isDragging) return;
+    if (!this.isDragging || this.isAnyOverlayModalOpen()) return;
     if (event.cancelable) event.preventDefault();
 
     const index = this.getParcelIndexFromTouch(event.touches[0]);
@@ -704,9 +735,10 @@ export class Board implements OnInit, OnDestroy {
   }
 
   onTouchEnd(_event: TouchEvent) {
+    const wasDragging = this.isDragging;
     this.isDragging = false;
     this.dragStartIndex = null;
-    if (this.selectedIndices.size > 0 && !this.isReadOnly) {
+    if (wasDragging && !this.isAnyOverlayModalOpen() && this.selectedIndices.size > 0 && !this.isReadOnly) {
       Promise.resolve().then(() => (this.showPlantingModal = true));
     }
   }
@@ -721,9 +753,13 @@ export class Board implements OnInit, OnDestroy {
   }
 
   onBoardAreaMouseDown(event: MouseEvent) {
-    if (this.isReadOnly || this.showFinance || event.button !== 0) return;
-    const target = event.target as HTMLElement | null;
-    if (target?.closest('button, a, input, select, textarea, [role="dialog"]')) {
+    if (
+      this.isReadOnly ||
+      this.showFinance ||
+      event.button !== 0 ||
+      this.isAnyOverlayModalOpen() ||
+      this.isInteractiveOrDialogTarget(event.target)
+    ) {
       return;
     }
     if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
@@ -734,7 +770,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
   onMouseDown(index: number, event: MouseEvent) {
-    if (this.isReadOnly) return;
+    if (this.isReadOnly || this.isAnyOverlayModalOpen()) return;
     if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
       this.selectedIndices.clear();
     }
@@ -762,11 +798,12 @@ export class Board implements OnInit, OnDestroy {
 
   @HostListener('window:mouseup')
   onMouseUp() {
+    const wasDragging = this.isDragging;
     this.isDragging = false;
     this.dragStartIndex = null;
 
-    // Auto-open modal if we have a selection and are not read-only
-    if (this.selectedIndices.size > 0 && !this.isReadOnly) {
+    // Auto-open modal if we have a selection from an active drag and are not read-only
+    if (wasDragging && !this.isAnyOverlayModalOpen() && this.selectedIndices.size > 0 && !this.isReadOnly) {
       Promise.resolve().then(() => (this.showPlantingModal = true));
     }
   }
