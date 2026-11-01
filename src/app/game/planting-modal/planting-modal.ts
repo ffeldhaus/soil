@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, inject, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../../game-constants';
@@ -46,15 +46,106 @@ export class PlantingModal {
   @Input() difficulty: 'easy' | 'normal' | 'hard' = 'normal';
   @Output() cropSelected = new EventEmitter<CropType>();
   @Output() plantingCancelled = new EventEmitter<void>();
+  private cdr = inject(ChangeDetectorRef);
   readonly nonDraggableImages = true;
   selectedManualCrop: CropConfig | null = null;
+  private touchStartPoint: { x: number; y: number } | null = null;
+  private lastTouchActionAt = 0;
+
+  onTouchStartRecord(event: TouchEvent) {
+    event.stopPropagation();
+    const touch = event.touches?.[0];
+    if (touch) {
+      this.touchStartPoint = { x: touch.clientX, y: touch.clientY };
+    }
+  }
+
+  private isTapGesture(event: TouchEvent): boolean {
+    const touch = event.changedTouches?.[0];
+    if (!touch || !this.touchStartPoint) return true;
+    const dx = touch.clientX - this.touchStartPoint.x;
+    const dy = touch.clientY - this.touchStartPoint.y;
+    return Math.hypot(dx, dy) <= 16;
+  }
+
+  private shouldIgnoreSyntheticClick(): boolean {
+    return Date.now() - this.lastTouchActionAt < 400;
+  }
+
+  onBackdropTouchEnd(event: TouchEvent) {
+    event.stopPropagation();
+    if (event.target !== event.currentTarget || !this.isTapGesture(event)) return;
+    if (event.cancelable) event.preventDefault();
+    this.lastTouchActionAt = Date.now();
+    this.plantingCancelled.emit();
+    this.cdr.detectChanges();
+  }
+
+  onBackdropClick(event: MouseEvent) {
+    if (this.shouldIgnoreSyntheticClick()) return;
+    if (event.target === event.currentTarget) {
+      this.plantingCancelled.emit();
+      this.cdr.detectChanges();
+    }
+  }
+
+  onCancelTouchEnd(event: TouchEvent) {
+    event.stopPropagation();
+    if (!this.isTapGesture(event)) return;
+    if (event.cancelable) event.preventDefault();
+    this.lastTouchActionAt = Date.now();
+    this.plantingCancelled.emit();
+    this.cdr.detectChanges();
+  }
+
+  onCancelClick(event?: Event) {
+    event?.stopPropagation();
+    if (this.shouldIgnoreSyntheticClick()) return;
+    this.plantingCancelled.emit();
+    this.cdr.detectChanges();
+  }
+
+  onCropTileTouchEnd(event: TouchEvent, crop: CropType) {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest?.('[data-testid^="crop-manual-trigger-"]')) {
+      return;
+    }
+    event.stopPropagation();
+    if (!this.isTapGesture(event)) return;
+    if (event.cancelable) event.preventDefault();
+    this.lastTouchActionAt = Date.now();
+    this.select(crop);
+  }
+
+  onCropTileClick(event: Event, crop: CropType) {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest?.('[data-testid^="crop-manual-trigger-"]')) {
+      return;
+    }
+    if (this.shouldIgnoreSyntheticClick()) return;
+    this.select(crop);
+  }
+
+  onManualTriggerTouchEnd(event: TouchEvent, crop: CropType) {
+    event.stopPropagation();
+    if (!this.isTapGesture(event)) return;
+    if (event.cancelable) event.preventDefault();
+    this.lastTouchActionAt = Date.now();
+    this.activateCropDetails(crop);
+  }
 
   openCropDetails(event: Event, crop: CropType) {
     event.stopPropagation();
     event.preventDefault();
+    if (this.shouldIgnoreSyntheticClick()) return;
+    this.activateCropDetails(crop);
+  }
+
+  private activateCropDetails(crop: CropType) {
     const found = GAME_CONSTANTS.CROPS[crop];
     if (found) {
       this.selectedManualCrop = found;
+      this.cdr.detectChanges();
       return;
     }
     if (crop === 'Fallow') {
@@ -74,11 +165,43 @@ export class PlantingModal {
         special:
           'Regeneration für den Boden. Für bis zu 5 Brachland-Felder erhältst du eine hohe EU-Grünstreifen-Prämie.',
       };
+      this.cdr.detectChanges();
+    }
+  }
+
+  onManualCloseTouchEnd(event: TouchEvent) {
+    event.stopPropagation();
+    if (!this.isTapGesture(event)) return;
+    if (event.cancelable) event.preventDefault();
+    this.lastTouchActionAt = Date.now();
+    this.closeCropDetails();
+  }
+
+  onManualCloseClick(event?: Event) {
+    event?.stopPropagation();
+    if (this.shouldIgnoreSyntheticClick()) return;
+    this.closeCropDetails();
+  }
+
+  onManualBackdropTouchEnd(event: TouchEvent) {
+    event.stopPropagation();
+    if (event.target !== event.currentTarget || !this.isTapGesture(event)) return;
+    if (event.cancelable) event.preventDefault();
+    this.lastTouchActionAt = Date.now();
+    this.closeCropDetails();
+  }
+
+  onManualBackdropClick(event: MouseEvent) {
+    event.stopPropagation();
+    if (this.shouldIgnoreSyntheticClick()) return;
+    if (event.target === event.currentTarget) {
+      this.closeCropDetails();
     }
   }
 
   closeCropDetails() {
     this.selectedManualCrop = null;
+    this.cdr.detectChanges();
   }
 
   t(key: string): string {
@@ -313,6 +436,7 @@ export class PlantingModal {
   select(crop: CropType) {
     if (crop) {
       this.cropSelected.emit(crop);
+      this.cdr.detectChanges();
     }
   }
 }

@@ -168,4 +168,62 @@ describe('PlantingModal', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[data-testid="parcel-causal-strip"]')).toBeNull();
   });
+
+  it('should handle mobile touchstart/touchend taps for crop info, closing, backdrop, and crop selection', () => {
+    const { vi } = import.meta.vitest;
+    const selectSpy = vi.spyOn(component.cropSelected, 'emit');
+    const cancelSpy = vi.spyOn(component.plantingCancelled, 'emit');
+    fixture.componentRef.setInput('crops', ['Wheat', 'Fallow']);
+    fixture.detectChanges();
+
+    const makeTouch = (x: number, y: number) => ({ clientX: x, clientY: y }) as Touch;
+    const startEvt = {
+      stopPropagation: vi.fn(),
+      touches: [makeTouch(100, 100)],
+    } as unknown as TouchEvent;
+    component.onTouchStartRecord(startEvt);
+
+    // 1. Tap manual trigger via touchend
+    const triggerEl = fixture.nativeElement.querySelector('[data-testid="crop-manual-trigger-wheat"]') as HTMLElement;
+    const manualTouchEnd = {
+      target: triggerEl,
+      currentTarget: triggerEl,
+      cancelable: true,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+      changedTouches: [makeTouch(102, 101)],
+    } as unknown as TouchEvent;
+    component.onManualTriggerTouchEnd(manualTouchEnd, 'Wheat');
+    expect(selectSpy).not.toHaveBeenCalled();
+    expect(component.selectedManualCrop?.id).toBe('Wheat');
+
+    // 2. Close manual overlay via touchend
+    component.onManualCloseTouchEnd(manualTouchEnd);
+    expect(component.selectedManualCrop).toBeNull();
+
+    // 3. Close planting modal via X button touchend
+    component.onCancelTouchEnd(manualTouchEnd);
+    expect(cancelSpy).toHaveBeenCalledTimes(1);
+
+    // 4. Close planting modal via backdrop touchend
+    const backdropEl = fixture.nativeElement.querySelector('[data-testid="planting-modal-backdrop"]') as HTMLElement;
+    component.onBackdropTouchEnd({
+      ...manualTouchEnd,
+      target: backdropEl,
+      currentTarget: backdropEl,
+    } as unknown as TouchEvent);
+    expect(cancelSpy).toHaveBeenCalledTimes(2);
+
+    // 5. Select crop via tile touchend and ignore immediate synthetic click
+    const tileEl = fixture.nativeElement.querySelector('[data-testid="crop-wheat"]') as HTMLElement;
+    const tileTouchEnd = {
+      ...manualTouchEnd,
+      target: tileEl,
+      currentTarget: tileEl,
+    } as unknown as TouchEvent;
+    component.onCropTileTouchEnd(tileTouchEnd, 'Wheat');
+    component.onCropTileClick({ target: tileEl } as unknown as Event, 'Wheat');
+    expect(selectSpy).toHaveBeenCalledTimes(1);
+    expect(selectSpy).toHaveBeenCalledWith('Wheat');
+  });
 });

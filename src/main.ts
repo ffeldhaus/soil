@@ -17,16 +17,17 @@ if ('serviceWorker' in navigator && !isDevMode()) {
   const wb = new Workbox('/sw.js');
 
   wb.addEventListener('waiting', () => {
-    // A new service worker is waiting to take over.
-    // In a real app, we should show a nice toast/banner here.
-    // For now, we automatically skip waiting to apply the update on next reload.
     wb.addEventListener('controlling', () => {
       window.location.reload();
     });
     wb.messageSkipWaiting();
   });
 
-  wb.register();
+  wb.register({ immediate: true })
+    .then((registration) => {
+      registration?.update().catch(() => {});
+    })
+    .catch(() => {});
 } else if ('serviceWorker' in navigator && isDevMode()) {
   // In dev mode, unregister any existing service workers to ensure we see latest changes
   navigator.serviceWorker.getRegistrations().then((registrations) => {

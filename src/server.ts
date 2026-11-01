@@ -298,6 +298,7 @@ app.use((req, res, next) => {
 
 /**
  * Serve static files from the browser distribution folder.
+ * Never cache sw.js, HTML documents, or site.webmanifest so deployments take effect immediately on mobile PWA/browsers.
  */
 app.use(
   express.static(browserDistFolder, {
@@ -305,6 +306,16 @@ app.use(
     index: false,
     redirect: false,
     dotfiles: 'allow',
+    setHeaders: (res, filePath) => {
+      if (
+        filePath.endsWith('/sw.js') ||
+        filePath.endsWith('\\sw.js') ||
+        filePath.endsWith('.html') ||
+        filePath.endsWith('.webmanifest')
+      ) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      }
+    },
   }),
 );
 
@@ -378,6 +389,7 @@ app.use('*path', async (req, res, next) => {
       ? resolve(browserDistFolder, cleanPath, 'index.html')
       : resolve(browserDistFolder, 'index.html');
     if (prerenderedHtml.startsWith(browserDistFolder) && existsSync(prerenderedHtml)) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.type('text/html; charset=utf-8').send(readFileSync(prerenderedHtml, 'utf-8'));
       return;
     }
@@ -392,6 +404,7 @@ app.use('*path', async (req, res, next) => {
     .handle(req)
     .then((response) => {
       if (response) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         writeResponseToNodeResponse(response, res);
       } else {
         next();

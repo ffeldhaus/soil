@@ -719,6 +719,7 @@ export class Board implements OnInit, OnDestroy {
     } else {
       this.dragStartIndex = null;
     }
+    this.cdr.detectChanges();
   }
 
   onTouchMove(event: TouchEvent) {
@@ -731,6 +732,7 @@ export class Board implements OnInit, OnDestroy {
         this.dragStartIndex = index;
       }
       this.updateSelection(index);
+      this.cdr.detectChanges();
     }
   }
 
@@ -739,7 +741,10 @@ export class Board implements OnInit, OnDestroy {
     this.isDragging = false;
     this.dragStartIndex = null;
     if (wasDragging && !this.isAnyOverlayModalOpen() && this.selectedIndices.size > 0 && !this.isReadOnly) {
-      Promise.resolve().then(() => (this.showPlantingModal = true));
+      Promise.resolve().then(() => {
+        this.showPlantingModal = true;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -785,6 +790,7 @@ export class Board implements OnInit, OnDestroy {
     if (this.isReadOnly) return;
     this.selectedIndices = new Set([index]);
     this.showPlantingModal = true;
+    this.cdr.detectChanges();
   }
 
   onMouseEnter(index: number) {
@@ -804,7 +810,10 @@ export class Board implements OnInit, OnDestroy {
 
     // Auto-open modal if we have a selection from an active drag and are not read-only
     if (wasDragging && !this.isAnyOverlayModalOpen() && this.selectedIndices.size > 0 && !this.isReadOnly) {
-      Promise.resolve().then(() => (this.showPlantingModal = true));
+      Promise.resolve().then(() => {
+        this.showPlantingModal = true;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -844,6 +853,7 @@ export class Board implements OnInit, OnDestroy {
   openPlantingModal() {
     if (this.selectedIndices.size === 0) return;
     this.showPlantingModal = true;
+    this.cdr.detectChanges();
   }
 
   onCropSelected(crop: CropType) {
@@ -853,11 +863,13 @@ export class Board implements OnInit, OnDestroy {
     });
     this.showPlantingModal = false;
     this.selectedIndices = new Set();
+    this.cdr.detectChanges();
   }
 
   onPlantingCancel() {
     this.showPlantingModal = false;
     this.selectedIndices = new Set();
+    this.cdr.detectChanges();
   }
 
   errorMessage = '';

@@ -571,7 +571,6 @@
           <div class="game-grid grid gap-1 touch-none sm:mt-0" [style.--cols]="cols" [style.--rows]="rows"
             data-tour="game-grid"
             role="grid" aria-label="Game board"
-            (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
             (click)="$event.stopPropagation()">
             @for (parcel of parcels; track parcel.index; let i = $index) {
             <app-parcel [parcel]="parcel" [previousCrop]="getPreviousCropForParcel(parcel.index)" [attr.data-index]="i" data-testid="parcel" 

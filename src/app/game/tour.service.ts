@@ -174,9 +174,8 @@ export class TourService {
       },
       beforeShowPromise: () => {
         return new Promise<void>((resolve) => {
-          // We can't easily force open the modal here without potentially breaking state,
-          // but we can at least try to find it. If it's not there, the tour will just point to the middle of the screen or skip.
-          resolve();
+          this.stepShow$.next('planting-modal');
+          setTimeout(() => resolve(), 50);
         });
       },
       buttons: [
@@ -207,6 +206,12 @@ export class TourService {
       attachTo: {
         element: '[data-tour="planting-modal-first-crop"]',
         on: 'bottom',
+      },
+      beforeShowPromise: () => {
+        return new Promise<void>((resolve) => {
+          this.stepShow$.next('planting-modal-crop');
+          setTimeout(() => resolve(), 50);
+        });
       },
       buttons: [
         {
