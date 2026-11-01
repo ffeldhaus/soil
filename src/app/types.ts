@@ -40,6 +40,32 @@ export interface CollectibleSticker {
 // Grass corresponds to 'Tiere' (Animals) usage in original game or similar fallow with animals.
 // Original map: 'Ackerbohne' -> Fieldbean, 'Gerste' -> Barley, 'Hafer' -> Oat, 'Kartoffel' -> Potato, 'Mais' -> Corn, 'Roggen' -> Rye, 'Weizen' -> Wheat, 'Zuckerruebe' -> Beet. 'Brachland' -> Fallow. 'Tiere' -> Animals (Grass).
 
+export interface ParcelRoundFactors {
+  baseYield: number;
+  soilFactor: number; // e.g. 0.95 (multiplier)
+  nutritionFactor: number; // e.g. 1.02 (multiplier)
+  weatherFactor: number; // e.g. 0.75 (multiplier)
+  pestFactor: number; // e.g. 0.70 (multiplier)
+  machineBonus: number; // e.g. 0.12 (+12%)
+  organicFactor: number; // e.g. 0.40 or 1.0
+  soilDelta: {
+    cropRotation: number;
+    humusRecovery: number;
+    machineCompaction: number;
+    fertilizerImpact: number;
+    pesticideImpact: number;
+    organismsImpact: number;
+    weatherErosion: number;
+    total: number;
+  };
+  nutritionDelta: {
+    cropUptake: number;
+    fertilizerAdd: number;
+    leaching: number;
+    total: number;
+  };
+}
+
 export interface Parcel {
   index: number; // 0-39
   crop: CropType;
@@ -47,6 +73,7 @@ export interface Parcel {
   nutrition: number; // 0-100? approx 80 start
   yield?: number; // Result of the harvest
   harvestRating?: 'very_high' | 'high' | 'moderate' | 'low' | 'very_low' | 'none';
+  factors?: ParcelRoundFactors;
 }
 
 export interface RoundDecision {

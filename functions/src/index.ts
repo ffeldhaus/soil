@@ -7,6 +7,15 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { AiAgent } from './ai-agent';
 import { GAME_CONSTANTS, GEMINI_MODEL } from './constants';
+import {
+  buildFeedbackNotificationEmail,
+  buildWeeklyDigestEmail,
+  sanitizeOptionalFeedbackEmail,
+  sendFeedbackReplyEmailIfPresent,
+  summarizeWeeklyCloudGames,
+  summarizeWeeklyFeedback,
+  summarizeWeeklyResearchGames,
+} from './digest-feedback.helpers';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
 import {
@@ -16,8 +25,8 @@ import {
   handleResearchMcpHttpRequest,
   sanitizeResearchGameForPublic,
 } from './research.service';
-import type { Round, WeatherType } from './types';
-import { escapeHtml, generateRandomPassword } from './utils';
+import type { CropType, Round, RoundDecision, WeatherType } from './types';
+import { generateRandomPassword } from './utils';
 
 const DEFAULT_ORIGIN = 'https://soil.app';
 const ALLOWED_ORIGINS = new Set([DEFAULT_ORIGIN, 'https://soil--soil-602ea.europe-west4.hosted.app']);
@@ -76,15 +85,35 @@ export function isTestOrDegenerateGame(game: any, allRounds?: Record<string, any
   return isFallowClickThroughGame(game, allRounds);
 }
 
-async function deleteGamePlayerAuthAccounts(gameId: string, maxPlayers = 10) {
+export async function deleteGamePlayerAuthAccounts(gameId: string, maxPlayersOrGameData: number | any = 10) {
+  const maxPlayers =
+    typeof maxPlayersOrGameData === 'number'
+      ? maxPlayersOrGameData
+      : Number(maxPlayersOrGameData?.config?.numPlayers || 10);
   const uids: string[] = [];
-  for (let i = 1; i <= maxPlayers; i++) {
+  for (let i = 1; i <= Math.min(20, Math.max(1, maxPlayers)); i++) {
     uids.push(`player-${gameId}-${i}`);
   }
   try {
     await admin.auth().deleteUsers(uids);
   } catch (e) {
     console.warn(`Failed to clean up player auth accounts for game ${gameId}:`, e);
+  }
+}
+
+export function enforceCallableRateLimit(
+  request: { rawRequest?: any; auth?: any } | undefined,
+  action: string,
+  limit: number,
+): void {
+  const ip =
+    request?.rawRequest?.ip ||
+    request?.rawRequest?.headers?.['x-forwarded-for']?.split(',')?.[0]?.trim() ||
+    request?.auth?.uid ||
+    'callable';
+  const rate = checkPublicRateLimit(`${action}:${ip}`, limit, 60_000);
+  if (!rate.allowed) {
+    throw new HttpsError('resource-exhausted', 'Rate limit exceeded. Please try again in a minute.');
   }
 }
 
@@ -97,12 +126,18 @@ admin.initializeApp();
 export const db = admin.firestore();
 db.settings({ ignoreUndefinedProperties: true });
 
-// Initialize Vertex AI with the new @google/genai SDK
-const ai = new GoogleGenAI({
-  vertexai: true,
-  project: 'soil-602ea',
-  location: 'europe-west4',
-});
+let genAiClient: GoogleGenAI | null = null;
+
+function getGenAiClient(): GoogleGenAI {
+  if (!genAiClient) {
+    genAiClient = new GoogleGenAI({
+      vertexai: true,
+      project: 'soil-602ea',
+      location: 'europe-west4',
+    });
+  }
+  return genAiClient;
+}
 
 // --- HTTP Callable Functions for Game Logic ---
 
@@ -561,7 +596,7 @@ export const analyzeSystemBalance = onCall(async (request) => {
   `;
 
   try {
-    const result = await ai.models.generateContent({
+    const result = await getGenAiClient().models.generateContent({
       model: GEMINI_MODEL,
       contents: prompt,
       config: {
@@ -674,8 +709,9 @@ export const getSystemInsights = onCall(async (request) => {
   return snap.docs.map((d) => d.data());
 });
 
-export async function internalUploadFinishedGame(data: any) {
-  const { gameData } = data;
+export async function internalUploadFinishedGame(data: any, request?: { rawRequest?: any; auth?: any }) {
+  enforceCallableRateLimit(request, 'uploadFinishedGame', 10);
+  const { gameData } = data || {};
   if (!gameData || !gameData.game || !gameData.allRounds) {
     throw new HttpsError('invalid-argument', 'Missing gameData');
   }
@@ -717,7 +753,7 @@ export async function internalUploadFinishedGame(data: any) {
 }
 
 export const uploadFinishedGame = onCall(async (request) => {
-  return await internalUploadFinishedGame(request.data);
+  return await internalUploadFinishedGame(request.data, request);
 });
 
 async function resolveGameDocument(gameId: string): Promise<{
@@ -771,6 +807,58 @@ async function isCallerSuperAdmin(auth?: { uid?: string; token?: { email?: strin
   return callerSnap.exists && callerSnap.data()?.role === 'superadmin';
 }
 
+function isCallerHostOfGame(game: any, callerUid?: string): boolean {
+  if (!game || !callerUid) return false;
+  return game.hostUid === callerUid || game.adminUid === callerUid || game.createdBy === callerUid;
+}
+
+function sanitizePlayersForCaller(
+  players: Record<string, any>,
+  authorizedUid: string,
+  canSeeAllDrafts: boolean,
+): Record<string, any> {
+  if (canSeeAllDrafts) return players;
+  const sanitized: Record<string, any> = {};
+  for (const [pUid, pData] of Object.entries(players)) {
+    if (!pData || pUid === authorizedUid) {
+      sanitized[pUid] = pData;
+      continue;
+    }
+    const { pendingDecisions: _omitted, ...rest } = pData;
+    sanitized[pUid] = rest;
+  }
+  return sanitized;
+}
+
+function verifyGamePlayerReadAuthorization(
+  game: any,
+  callerUid: string,
+  isHost: boolean,
+  isSuper: boolean,
+  targetUid?: string,
+): string {
+  if (targetUid && targetUid !== callerUid) {
+    if (!isHost && !isSuper) {
+      throw new HttpsError('permission-denied', 'Access denied');
+    }
+    if (!game.players?.[targetUid]) {
+      throw new HttpsError('not-found', 'Player not found in this game');
+    }
+    return targetUid;
+  }
+
+  if (!game.players?.[callerUid] && !isHost && !isSuper) {
+    throw new HttpsError('permission-denied', 'Access denied');
+  }
+
+  if (game.players?.[callerUid]) {
+    return callerUid;
+  }
+
+  const hostPlayerKey = Object.keys(game.players || {}).find((k) => game.players[k]?.hostUid === callerUid);
+  return hostPlayerKey || Object.keys(game.players || {})[0] || callerUid;
+}
+
 async function getAuthenticatedGameState(
   gameRef: admin.firestore.DocumentReference,
   gameSnap: admin.firestore.DocumentSnapshot,
@@ -783,13 +871,12 @@ async function getAuthenticatedGameState(
   const callerUid = request.auth.uid;
   const isSuper = await isCallerSuperAdmin(request.auth);
   const game = gameSnap.data()!;
-  const uid = targetUid || callerUid;
-  const playerState = game.players?.[uid];
-  if (!playerState && !isSuper) throw new HttpsError('not-found', 'Player not found in this game');
+  const isHost = isCallerHostOfGame(game, callerUid);
 
-  const finalUid = playerState ? uid : Object.keys(game.players || {})[0];
+  const finalUid = verifyGamePlayerReadAuthorization(game, callerUid, isHost, isSuper, targetUid);
   const finalPlayerState = game.players?.[finalUid];
   const lastRound = await fetchPlayerRoundSnapshot(gameRef, game.currentRoundNumber || 0, finalUid);
+  const sanitizedPlayers = sanitizePlayersForCaller(game.players || {}, finalUid, isHost || isSuper);
 
   return {
     game: {
@@ -798,7 +885,7 @@ async function getAuthenticatedGameState(
       status: game.status,
       currentRoundNumber: game.currentRoundNumber,
       settings: game.settings,
-      players: game.players,
+      players: sanitizedPlayers,
       config: game.config,
       createdAt: game.createdAt?.toDate?.()?.toISOString() || game.createdAt,
     },
@@ -872,12 +959,10 @@ async function resolveAuthorizedRoundPlayerUid(
 
   const callerUid = request.auth.uid;
   const isSuper = await isCallerSuperAdmin(request.auth);
-  const uid = targetUid || callerUid;
   const game = gameSnap.data()!;
-  if (!game.players?.[uid] && !isSuper) {
-    throw new HttpsError('permission-denied', 'Access denied');
-  }
-  return uid;
+  const isHost = isCallerHostOfGame(game, callerUid);
+
+  return verifyGamePlayerReadAuthorization(game, callerUid, isHost, isSuper, targetUid);
 }
 
 export async function internalGetRoundData(request: { data?: any; auth?: any }) {
@@ -941,84 +1026,253 @@ export const researchMcp = onRequest({ cors: true }, async (req, res) => {
   await handleResearchMcpHttpRequest(db, req, res);
 });
 
+export function buildDefaultContinuationDecision(player: any, prevRoundData?: Round): RoundDecision {
+  const draft = player?.pendingDecisions;
+  const lastHistoryRound =
+    Array.isArray(player?.history) && player.history.length > 0 ? player.history[player.history.length - 1] : undefined;
+  const baseParcels: Record<number, CropType> = {};
+  for (let i = 0; i < 40; i++) {
+    const prevCrop = prevRoundData?.parcelsSnapshot?.[i]?.crop || lastHistoryRound?.decision?.parcels?.[i] || 'Fallow';
+    baseParcels[i] = prevCrop as CropType;
+  }
+
+  if (draft && typeof draft === 'object' && draft.parcels && Object.keys(draft.parcels).length > 0) {
+    return {
+      machines: Number(draft.machines || 0),
+      organic: Boolean(draft.organic),
+      fertilizer: Boolean(draft.fertilizer),
+      pesticide: Boolean(draft.pesticide),
+      organisms: Boolean(draft.organisms),
+      parcels: { ...baseParcels, ...draft.parcels },
+      ...(draft.priceFixing ? { priceFixing: draft.priceFixing } : {}),
+    };
+  }
+
+  return {
+    machines: 0,
+    organic: Boolean(prevRoundData?.decision?.organic ?? lastHistoryRound?.decision?.organic ?? false),
+    fertilizer: false,
+    pesticide: false,
+    organisms: false,
+    parcels: baseParcels,
+  };
+}
+
+function populateMissingDecisionsForForceAdvance(
+  players: Record<string, any>,
+  currentRound: number,
+  prevRoundGlobalData: any,
+): void {
+  for (const uid of Object.keys(players)) {
+    const p = players[uid];
+    if (p.submittedRound !== undefined && p.submittedRound >= currentRound && p.pendingDecisions) {
+      continue;
+    }
+    const prevRoundData = resolvePlayerPrevRoundData(prevRoundGlobalData, uid, currentRound);
+    const lastHistoryRound =
+      Array.isArray(p.history) && p.history.length > 0 ? p.history[p.history.length - 1] : undefined;
+    if (p.isAi) {
+      p.pendingDecisions = AiAgent.makeDecision((p.aiLevel || 'middle') as any, prevRoundData || lastHistoryRound, uid);
+    } else {
+      p.pendingDecisions = buildDefaultContinuationDecision(p, prevRoundData);
+    }
+    p.submittedRound = currentRound;
+  }
+}
+
+export async function internalForceAdvanceRound(request: { data?: any; auth?: any }) {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+  const { gameId } = request.data || {};
+  if (!gameId) throw new HttpsError('invalid-argument', 'Missing gameId');
+
+  const callerUid = request.auth.uid;
+  const isSuper = await isCallerSuperAdmin(request.auth);
+  const gameRef = db.collection('games').doc(gameId);
+  let gameWasFinished = false;
+
+  const result = await db.runTransaction(async (transaction) => {
+    const gameDoc = await transaction.get(gameRef);
+    if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
+    const game = gameDoc.data()!;
+
+    if (!isCallerHostOfGame(game, callerUid) && !isSuper) {
+      throw new HttpsError('permission-denied', 'Only the game host or superadmin can force-advance the round');
+    }
+
+    const currentRound = game.currentRoundNumber || 0;
+    const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+    if (currentRound >= roundLimit) {
+      throw new HttpsError('failed-precondition', 'Game has reached the round limit.');
+    }
+
+    const prevRoundRef = gameRef.collection('rounds').doc(`round_${currentRound}`);
+    const prevRoundSnap = await transaction.get(prevRoundRef);
+    const prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : undefined;
+
+    const players = game.players || {};
+    populateMissingDecisionsForForceAdvance(players, currentRound, prevRoundGlobalData);
+
+    const calcResult = await performCalculation(gameId, {}, transaction, { ...game, players }, prevRoundGlobalData);
+    gameWasFinished = !!calcResult?.isFinished;
+    return {
+      status: 'calculated',
+      number: calcResult?.number,
+      isFinished: gameWasFinished,
+      playerRounds: calcResult?.playerRounds,
+    };
+  });
+
+  if (gameWasFinished) {
+    const gameSnap = await gameRef.get();
+    const gameData = gameSnap.data();
+    if (gameData && gameData.config?.analyticsEnabled !== false) {
+      internalAnonymizeAndUploadForResearch(gameData).catch((err) =>
+        console.error('Failed to auto-upload cloud game for research (forceAdvanceRound):', err),
+      );
+    }
+  }
+
+  return result;
+}
+
+export const forceAdvanceRound = onCall(
+  { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
+  async (request) => {
+    return await internalForceAdvanceRound(request);
+  },
+);
+
+async function runForceCalculationInSubmit(
+  transaction: admin.firestore.Transaction,
+  gameRef: admin.firestore.DocumentReference,
+  gameId: string,
+  game: any,
+  players: Record<string, any>,
+  currentRound: number,
+  uid: string,
+  decision: any,
+): Promise<{ status: string; nextRound?: Round; isFinished?: boolean } | null> {
+  const prevRoundSnap = await transaction.get(gameRef.collection('rounds').doc(`round_${currentRound}`));
+  const prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : undefined;
+  populateMissingDecisionsForForceAdvance(players, currentRound, prevRoundGlobalData);
+  const calcResult = await performCalculation(gameId, decision, transaction, { ...game, players }, prevRoundGlobalData);
+  if (!calcResult) return null;
+  return {
+    status: 'calculated',
+    nextRound: calcResult.playerRounds[uid] || Object.values(calcResult.playerRounds)[0],
+    isFinished: !!calcResult.isFinished,
+  };
+}
+
+async function executeDecisionSubmissionTransaction(
+  transaction: admin.firestore.Transaction,
+  gameRef: admin.firestore.DocumentReference,
+  gameId: string,
+  uid: string,
+  decision: any,
+  forceAdvance: boolean,
+  isSuper: boolean,
+): Promise<{ status: string; nextRound?: Round; isFinished?: boolean }> {
+  const gameDoc = await transaction.get(gameRef);
+  if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
+  const game = gameDoc.data()!;
+
+  const players = game.players || {};
+  const canForce = Boolean(forceAdvance && (isCallerHostOfGame(game, uid) || isSuper));
+  if (!players[uid] && !canForce) {
+    throw new HttpsError('permission-denied', `Not a player in this game: ${uid}`);
+  }
+
+  const currentRound = game.currentRoundNumber || 0;
+  const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
+  if (currentRound >= roundLimit) {
+    throw new HttpsError('failed-precondition', 'Game has reached the round limit.');
+  }
+
+  if (players[uid]) {
+    players[uid].submittedRound = currentRound;
+    players[uid].pendingDecisions = decision;
+  }
+
+  if (canForce) {
+    const forced = await runForceCalculationInSubmit(
+      transaction,
+      gameRef,
+      gameId,
+      game,
+      players,
+      currentRound,
+      uid,
+      decision,
+    );
+    if (forced) return forced;
+  }
+
+  const updatedPlayers = (await internalProcessAiTurns(gameId, transaction, { ...game, players })) || players;
+  const calculationResults = await checkAndPerformCalculation(
+    gameId,
+    transaction,
+    { ...game, players: updatedPlayers },
+    uid,
+    decision,
+  );
+  if (calculationResults) {
+    return {
+      status: 'calculated',
+      nextRound: calculationResults.playerRounds[uid],
+      isFinished: !!calculationResults.isFinished,
+    };
+  }
+
+  transaction.update(gameRef, { players: updatedPlayers, updatedAt: Timestamp.now() });
+  return { status: 'submitted', isFinished: false };
+}
+
+async function uploadFinishedCloudGameIfEligible(gameRef: admin.firestore.DocumentReference): Promise<void> {
+  const gameSnap = await gameRef.get();
+  const gameData = gameSnap.data();
+  if (gameData && gameData.config?.analyticsEnabled !== false) {
+    internalAnonymizeAndUploadForResearch(gameData).catch((err) =>
+      console.error('Failed to auto-upload cloud game for research:', err),
+    );
+  }
+}
+
 export const submitDecision = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
   async (request) => {
     if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
-    const { gameId, decision } = request.data;
-    const uid = request.auth.uid;
-
+    const { gameId, decision, forceAdvance } = request.data || {};
+    if (forceAdvance && !decision) {
+      return await internalForceAdvanceRound(request);
+    }
     if (!gameId || !decision) {
       throw new HttpsError('invalid-argument', 'Missing gameId or decision');
     }
 
     const gameRef = db.collection('games').doc(gameId);
-    let gameWasFinished = false;
+    const isSuper = forceAdvance ? await isCallerSuperAdmin(request.auth) : false;
 
     try {
-      const result = await db.runTransaction(async (transaction) => {
-        // 1. ALL READS FIRST
-        const gameDoc = await transaction.get(gameRef);
-        if (!gameDoc.exists) throw new HttpsError('not-found', 'Game not found');
-        const game = gameDoc.data()!;
-
-        // 2. LOGIC
-        const players = game.players || {};
-        if (!players[uid]) {
-          console.error(
-            `submitDecision: User ${uid} not found in players map for game ${gameId}. Players: ${Object.keys(players).join(', ')}`,
-          );
-          throw new HttpsError('permission-denied', `Not a player in this game: ${uid}`);
-        }
-
-        const currentRound = game.currentRoundNumber || 0;
-        const roundLimit = game.settings?.length || GAME_CONSTANTS.DEFAULT_ROUNDS;
-
-        if (currentRound >= roundLimit) {
-          throw new HttpsError('failed-precondition', 'Game has reached the round limit.');
-        }
-
-        players[uid].submittedRound = currentRound;
-        players[uid].pendingDecisions = decision;
-
-        // Process AI turns immediately (passes preloaded data to avoid internal reads)
-        const updatedPlayers = (await internalProcessAiTurns(gameId, transaction, { ...game, players })) || players;
-
-        const calculationResults = await checkAndPerformCalculation(
-          gameId,
+      const txResult = await db.runTransaction((transaction) =>
+        executeDecisionSubmissionTransaction(
           transaction,
-          { ...game, players: updatedPlayers },
-          uid,
+          gameRef,
+          gameId,
+          request.auth!.uid,
           decision,
-        );
-        if (calculationResults) {
-          const myNewRound = calculationResults.playerRounds[uid];
-          gameWasFinished = !!calculationResults.isFinished;
-          return { status: 'calculated', nextRound: myNewRound };
-        }
-
-        // 3. WRITES (only if not calculating, since calculation does its own update)
-        transaction.update(gameRef, {
-          players: updatedPlayers,
-          updatedAt: Timestamp.now(),
-        });
-
-        return { status: 'submitted' };
-      });
-
-      if (gameWasFinished) {
-        // Automatically anonymize and upload finished cloud games for research
-        const gameSnap = await gameRef.get();
-        const gameData = gameSnap.data();
-        if (gameData && gameData.config?.analyticsEnabled !== false) {
-          internalAnonymizeAndUploadForResearch(gameData).catch((err) =>
-            console.error('Failed to auto-upload cloud game for research:', err),
-          );
-        }
+          !!forceAdvance,
+          isSuper,
+        ),
+      );
+      if (txResult.isFinished) {
+        await uploadFinishedCloudGameIfEligible(gameRef);
       }
-
-      return result;
+      return txResult.status === 'calculated'
+        ? { status: 'calculated', nextRound: txResult.nextRound }
+        : { status: 'submitted' };
     } catch (error: any) {
+      if (error instanceof HttpsError) throw error;
       console.error('Error in submitDecision:', error);
       throw new HttpsError('internal', error.message || 'Internal Error');
     }
@@ -1132,11 +1386,47 @@ function updatePlayerWithCalculatedRound(player: any, nextRound: Round, nextRoun
   (player as any).pendingDecisions = undefined;
 }
 
+function computeAllPlayerRounds(
+  players: Record<string, any>,
+  prevRoundGlobalData: any,
+  currentRound: number,
+  nextRoundNumber: number,
+  fallbackDecision: any,
+  events: { weather: WeatherType; vermin: string[] },
+  roundLimit: number,
+  difficulty: 'easy' | 'normal' | 'hard',
+  upcomingWeather: WeatherType,
+  marketPrices?: Record<string, { organic: number; conventional: number }>,
+): Record<string, Round> {
+  const allPlayerRounds: Record<string, Round> = {};
+  for (const uid of Object.keys(players)) {
+    const player = players[uid];
+    const playerDecision = player.pendingDecisions || fallbackDecision;
+    const prevRoundData = resolvePlayerPrevRoundData(prevRoundGlobalData, uid, currentRound);
+    const currentCapital = prevRoundData?.result?.capital ?? player.capital ?? 100000;
+
+    const nextRound = GameEngine.calculateRound(
+      nextRoundNumber,
+      prevRoundData,
+      playerDecision,
+      events,
+      currentCapital,
+      roundLimit,
+      { marketPrices, difficulty, nextWeather: upcomingWeather },
+    );
+
+    allPlayerRounds[uid] = nextRound;
+    updatePlayerWithCalculatedRound(player, nextRound, nextRoundNumber);
+  }
+  return allPlayerRounds;
+}
+
 async function performCalculation(
   gameId: string,
   decision: any,
   transaction: admin.firestore.Transaction,
   preloadedGame?: any,
+  preloadedPrevRoundGlobalData?: any,
 ) {
   const gameRef = db.collection('games').doc(gameId);
   const game = preloadedGame || (await transaction.get(gameRef)).data();
@@ -1154,9 +1444,12 @@ async function performCalculation(
   const nextRoundNumber = currentRound + 1;
   const difficulty = (game.settings?.difficulty || 'normal') as 'easy' | 'normal' | 'hard';
 
-  const prevRoundRef = gameRef.collection('rounds').doc(`round_${currentRound}`);
-  const prevRoundSnap = await transaction.get(prevRoundRef);
-  const prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : undefined;
+  let prevRoundGlobalData = preloadedPrevRoundGlobalData;
+  if (prevRoundGlobalData === undefined) {
+    const prevRoundRef = gameRef.collection('rounds').doc(`round_${currentRound}`);
+    const prevRoundSnap = await transaction.get(prevRoundRef);
+    prevRoundGlobalData = prevRoundSnap.exists ? prevRoundSnap.data() : undefined;
+  }
 
   const firstPlayerUid = Object.keys(players)[0];
   const prevRoundForWeather = resolvePlayerPrevRoundData(prevRoundGlobalData, firstPlayerUid, currentRound);
@@ -1180,26 +1473,18 @@ async function performCalculation(
     ? calculateDynamicMarketPrices(totalYields, Object.keys(players).length)
     : undefined;
 
-  const allPlayerRounds: Record<string, Round> = {};
-  for (const uid of Object.keys(players)) {
-    const player = players[uid];
-    const playerDecision = player.pendingDecisions || decision;
-    const prevRoundData = resolvePlayerPrevRoundData(prevRoundGlobalData, uid, currentRound);
-    const currentCapital = prevRoundData?.result?.capital ?? player.capital ?? 100000;
-
-    const nextRound = GameEngine.calculateRound(
-      nextRoundNumber,
-      prevRoundData,
-      playerDecision,
-      events,
-      currentCapital,
-      roundLimit,
-      { marketPrices, difficulty, nextWeather: upcomingWeather },
-    );
-
-    allPlayerRounds[uid] = nextRound;
-    updatePlayerWithCalculatedRound(player, nextRound, nextRoundNumber);
-  }
+  const allPlayerRounds = computeAllPlayerRounds(
+    players,
+    prevRoundGlobalData,
+    currentRound,
+    nextRoundNumber,
+    decision,
+    events,
+    roundLimit,
+    difficulty,
+    upcomingWeather,
+    marketPrices,
+  );
 
   transaction.set(gameRef.collection('rounds').doc(`round_${nextRoundNumber}`), {
     number: nextRoundNumber,
@@ -1209,9 +1494,10 @@ async function performCalculation(
   });
 
   const isFinished = nextRoundNumber >= roundLimit;
+  const nextStatus = isFinished ? 'finished' : game.status === 'waiting' ? 'in_progress' : game.status;
   transaction.update(gameRef, {
     currentRoundNumber: nextRoundNumber,
-    status: isFinished ? 'finished' : game.status,
+    status: nextStatus,
     players,
     updatedAt: Timestamp.now(),
   });
@@ -1408,7 +1694,7 @@ export const createGame = onCall(async (request) => {
     retentionDays = 90,
   } = request.data;
 
-  const numRounds = Math.min(50, Math.max(10, config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS));
+  const numRounds = Math.min(50, Math.max(5, config.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS));
   config.numRounds = numRounds;
   settings.length = numRounds;
 
@@ -1605,7 +1891,9 @@ export const submitOnboarding = onCall(
 async function cascadeDeleteAdminUser(targetRef: admin.firestore.DocumentReference, targetUid: string): Promise<void> {
   const gamesSnapshot = await db.collection('games').where('hostUid', '==', targetUid).get();
   for (const gameDoc of gamesSnapshot.docs) {
+    const gameData = gameDoc.data();
     await db.recursiveDelete(gameDoc.ref);
+    await deleteGamePlayerAuthAccounts(gameDoc.id, gameData);
   }
   await db.recursiveDelete(targetRef);
   try {
@@ -1909,7 +2197,7 @@ export const deleteGames = onCall(async (request) => {
   }
 
   const isSuper = await isCallerSuperAdmin(request.auth);
-  const batch = db.batch();
+  let batch = db.batch();
   let batchCount = 0;
   const maxBatch = 500;
 
@@ -1934,6 +2222,7 @@ export const deleteGames = onCall(async (request) => {
     batchCount++;
     if (batchCount >= maxBatch) {
       await batch.commit();
+      batch = db.batch();
       batchCount = 0;
     }
   }
@@ -1955,15 +2244,20 @@ export const undeleteGames = onCall(async (request) => {
     throw new HttpsError('invalid-argument', 'No game IDs provided');
   }
 
-  const batch = db.batch();
+  let batch = db.batch();
   let batchCount = 0;
 
   for (const gameId of gameIds) {
     const gameRef = db.collection('games').doc(gameId);
     const doc = await gameRef.get();
     if (doc.exists && doc.data()?.hostUid === request.auth.uid) {
-      batch.update(gameRef, { deletedAt: null, status: 'waiting' }); // Or restore previous status? 'waiting'/ 'active' is safe.
+      batch.update(gameRef, { deletedAt: null, status: 'waiting' });
       batchCount++;
+      if (batchCount >= 500) {
+        await batch.commit();
+        batch = db.batch();
+        batchCount = 0;
+      }
     }
   }
 
@@ -1985,7 +2279,7 @@ async function archiveGameForResearchIfEligible(data: any, docId: string, contex
 
 async function softDeleteExpiredActiveGames(now: Timestamp, nowMillis: number, oneDayMs: number): Promise<void> {
   const activeGamesSnap = await db.collection('games').where('deletedAt', '==', null).get();
-  const softDeleteBatch = db.batch();
+  let softDeleteBatch = db.batch();
   let softDelCount = 0;
 
   for (const doc of activeGamesSnap.docs) {
@@ -1998,6 +2292,11 @@ async function softDeleteExpiredActiveGames(now: Timestamp, nowMillis: number, o
       await archiveGameForResearchIfEligible(data, doc.id, 'expired');
       softDeleteBatch.update(doc.ref, { deletedAt: now, status: 'expired' });
       softDelCount++;
+      if (softDelCount >= 500) {
+        await softDeleteBatch.commit();
+        softDeleteBatch = db.batch();
+        softDelCount = 0;
+      }
     }
   }
 
@@ -2050,8 +2349,9 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   await purgeUnverifiedAdminUsers(nowMillis, oneDayMs);
 });
 
-export const playerLogin = onCall(async (request) => {
-  const { gameId, password } = request.data;
+export async function internalPlayerLogin(request: { data?: any; rawRequest?: any; auth?: any }) {
+  enforceCallableRateLimit(request, 'playerLogin', 15);
+  const { gameId, password } = request.data || {};
   if (!gameId || !password) {
     throw new HttpsError('invalid-argument', 'Missing gameId, or password');
   }
@@ -2085,6 +2385,10 @@ export const playerLogin = onCall(async (request) => {
     console.error('Token creation error:', error);
     throw new HttpsError('internal', `Failed to create token: ${error.message}`);
   }
+}
+
+export const playerLogin = onCall(async (request) => {
+  return await internalPlayerLogin(request);
 });
 
 export const triggerAiTurn = onCall(async (request) => {
@@ -2127,7 +2431,7 @@ async function runFeedbackGeminiAnalysis(
         - sentiment: One of 'positive', 'neutral', 'negative'.
       `;
 
-    const result = await ai.models.generateContent({
+    const result = await getGenAiClient().models.generateContent({
       model: GEMINI_MODEL,
       contents: prompt,
       config: { responseMimeType: 'application/json' },
@@ -2142,53 +2446,6 @@ async function runFeedbackGeminiAnalysis(
     console.error('Gemini analysis failed:', error);
   }
   return undefined;
-}
-
-function buildFeedbackNotificationEmail(
-  cleanCategory: string,
-  cleanRating: number,
-  cleanComment: string,
-  aiAnalysis?: any,
-  cleanEmail?: string,
-): { subject: string; text: string; html: string } {
-  const safeCategory = escapeHtml(cleanCategory);
-  const safeComment = escapeHtml(cleanComment);
-  const safeContact = escapeHtml(cleanEmail || 'Anonymous');
-  const safeSentiment = escapeHtml(aiAnalysis?.sentiment || 'N/A');
-  const safeSummary = escapeHtml(aiAnalysis?.summary || 'N/A');
-  const actionsList = (aiAnalysis?.suggestedActions || []) as string[];
-
-  const subject = `New Feedback Received: ${cleanCategory} (${cleanRating}/5)`;
-  const text = `New feedback received:\n\nCategory: ${cleanCategory}\nRating: ${cleanRating}/5\nContact Email: ${cleanEmail || 'Anonymous'}\nComment: ${cleanComment}\n\nAI Analysis:\nSummary: ${aiAnalysis?.summary || 'N/A'}\nSentiment: ${aiAnalysis?.sentiment || 'N/A'}\nSuggested Actions: ${actionsList.join(', ')}`;
-
-  const analysisHtml = aiAnalysis
-    ? `
-          <h3 style="color: #10b981;">Gemini Analysis</h3>
-          <p><strong>Sentiment:</strong> ${safeSentiment}</p>
-          <p><strong>Summary:</strong> ${safeSummary}</p>
-          <p><strong>Suggested Actions:</strong></p>
-          <ul>
-            ${actionsList.map((a: string) => `<li>${escapeHtml(a)}</li>`).join('')}
-          </ul>
-        `
-    : '';
-
-  const html = `
-      <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #059669;">New Feedback Received</h2>
-        <p><strong>Category:</strong> ${safeCategory}</p>
-        <p><strong>Rating:</strong> ${cleanRating}/5</p>
-        <p><strong>Contact Email:</strong> ${safeContact}</p>
-        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-          <p style="margin: 0;">${safeComment}</p>
-        </div>
-        ${analysisHtml}
-        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px; color: #999;">View this feedback in the Super Admin Dashboard.</p>
-      </div>
-    `;
-
-  return { subject, text, html };
 }
 
 async function notifySuperAdminsOfFeedback(
@@ -2220,16 +2477,12 @@ async function notifySuperAdminsOfFeedback(
   }
 }
 
-function sanitizeOptionalFeedbackEmail(rawEmail: unknown): string | undefined {
-  if (typeof rawEmail !== 'string') return undefined;
-  const trimmed = rawEmail.trim().slice(0, 200);
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) ? trimmed : undefined;
-}
-
 export async function internalSubmitFeedback(
   data: any,
   auth?: { uid?: string; token?: Record<string, any> },
+  rawRequest?: any,
 ): Promise<{ success: boolean; status?: string }> {
+  enforceCallableRateLimit({ rawRequest, auth }, 'submitFeedback', 5);
   const { category, rating, comment, email, isTest } = data || {};
   if (!category || rating === undefined) {
     throw new HttpsError('invalid-argument', 'Missing feedback fields');
@@ -2285,7 +2538,7 @@ export async function internalSubmitFeedback(
 
 export const submitFeedback = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
-  async (request) => internalSubmitFeedback(request.data, request.auth),
+  async (request) => internalSubmitFeedback(request.data, request.auth, request.rawRequest),
 );
 
 export const getAllFeedback = onCall(async (request) => {
@@ -2478,53 +2731,26 @@ export const sendVerificationEmail = onCall(
   },
 );
 
+export async function internalSendPasswordResetEmail(request: { data?: any; rawRequest?: any; auth?: any }) {
+  enforceCallableRateLimit(request, 'sendPasswordResetEmail', 5);
+  const { email, origin } = request.data || {};
+  if (!email) throw new HttpsError('invalid-argument', 'Email is required');
+
+  const safeOrigin = sanitizeOrigin(origin);
+  const link = await admin.auth().generatePasswordResetLink(email, {
+    url: `${safeOrigin}/admin/login?email=${encodeURIComponent(email)}`,
+  });
+
+  await mailService.sendPasswordResetEmail(email, link);
+  return { success: true };
+}
+
 export const sendPasswordResetEmail = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
   async (request) => {
-    const { email, origin } = request.data;
-    if (!email) throw new HttpsError('invalid-argument', 'Email is required');
-
-    const safeOrigin = sanitizeOrigin(origin);
-    const link = await admin.auth().generatePasswordResetLink(email, {
-      url: `${safeOrigin}/admin/login?email=${encodeURIComponent(email)}`,
-    });
-
-    await mailService.sendPasswordResetEmail(email, link);
-    return { success: true };
+    return await internalSendPasswordResetEmail(request);
   },
 );
-
-async function sendFeedbackReplyEmailIfPresent(feedback: any, response: string): Promise<void> {
-  if (!feedback.userEmail) return;
-  const userName = feedback.userName || 'User';
-  const safeUserName = escapeHtml(userName);
-  const safeComment = escapeHtml(feedback.comment || '');
-  const safeResponse = escapeHtml(response);
-  const subject = `Re: Your feedback on SOIL (${feedback.category})`;
-  const text = `Hello ${userName},\n\nThank you for your feedback. A system administrator has replied to your comment:\n\n"${feedback.comment}"\n\nReply:\n${response}\n\nBest regards,\nThe SOIL Team`;
-  const html = `
-          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-            <h2>Reply to your Feedback</h2>
-            <p>Hello ${safeUserName},</p>
-            <p>Thank you for your feedback. A system administrator has replied to your comment:</p>
-            <div style="border-left: 4px solid #e5e7eb; padding-left: 15px; font-style: italic; color: #4b5563; margin: 20px 0;">
-              "${safeComment}"
-            </div>
-            <p><strong>Reply:</strong></p>
-            <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px;">
-              ${safeResponse}
-            </div>
-            <p>Best regards,<br>The SOIL Team</p>
-          </div>
-        `;
-
-  try {
-    await mailService.sendEmail({ to: feedback.userEmail, subject, text, html });
-  } catch (e) {
-    console.error('Failed to send feedback reply email', e);
-    throw new HttpsError('internal', 'Failed to send email');
-  }
-}
 
 export const manageFeedback = onCall(
   { secrets: ['GMAIL_SERVICE_ACCOUNT_EMAIL', 'GMAIL_IMPERSONATED_USER'] },
@@ -2660,7 +2886,7 @@ export const evaluateGame = onCall(async (request) => {
   `;
 
   try {
-    const result = await ai.models.generateContent({
+    const result = await getGenAiClient().models.generateContent({
       model: GEMINI_MODEL,
       contents: prompt,
       config: {
@@ -2721,8 +2947,10 @@ export const deleteAccount = onCall(async (request) => {
     // 1. Delete all games hosted by this user
     const gamesSnapshot = await db.collection('games').where('hostUid', '==', uid).get();
     for (const gameDoc of gamesSnapshot.docs) {
+      const gameData = gameDoc.data();
       // Use recursiveDelete to ensure all subcollections (like rounds) are also deleted
       await db.recursiveDelete(gameDoc.ref);
+      await deleteGamePlayerAuthAccounts(gameDoc.id, gameData);
     }
 
     // 2. Delete the user document
@@ -2740,171 +2968,6 @@ export const deleteAccount = onCall(async (request) => {
 });
 
 // --- Weekly Activity & Feedback Digest ---
-
-function toTimestampMillis(value: any): number {
-  if (!value) return 0;
-  if (typeof value.toMillis === 'function') return value.toMillis();
-  if (typeof value.seconds === 'number') return value.seconds * 1000;
-  const parsed = new Date(value).getTime();
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-interface WeeklyResearchDigestStats {
-  totalResearchGames: number;
-  researchGamesLast7d: number;
-  sourceBreakdown: { local: number; cloud: number };
-  difficultyBreakdown: { easy: number; normal: number; hard: number };
-}
-
-function summarizeWeeklyResearchGames(docs: any[], cutoffMillis: number): WeeklyResearchDigestStats {
-  const stats: WeeklyResearchDigestStats = {
-    totalResearchGames: docs.length,
-    researchGamesLast7d: 0,
-    sourceBreakdown: { local: 0, cloud: 0 },
-    difficultyBreakdown: { easy: 0, normal: 0, hard: 0 },
-  };
-
-  for (const doc of docs) {
-    const data = doc.data() || {};
-    const ts = Math.max(
-      toTimestampMillis(data.completedAt),
-      toTimestampMillis(data.uploadedAt),
-      toTimestampMillis(data.createdAt),
-    );
-    if (ts >= cutoffMillis) {
-      stats.researchGamesLast7d++;
-      const src = data.sourceType === 'cloud' ? 'cloud' : 'local';
-      stats.sourceBreakdown[src]++;
-      const diff = data.settings?.difficulty as string | undefined;
-      if (diff === 'easy' || diff === 'normal' || diff === 'hard') {
-        stats.difficultyBreakdown[diff]++;
-      }
-    }
-  }
-  return stats;
-}
-
-interface WeeklyCloudGamesDigestStats {
-  activeCloudGames: number;
-  finishedCloudGames: number;
-  gamesLast7d: number;
-}
-
-function summarizeWeeklyCloudGames(docs: any[], cutoffMillis: number): WeeklyCloudGamesDigestStats {
-  const stats: WeeklyCloudGamesDigestStats = {
-    activeCloudGames: 0,
-    finishedCloudGames: 0,
-    gamesLast7d: 0,
-  };
-
-  for (const doc of docs) {
-    const data = doc.data() || {};
-    if (data.deletedAt) continue;
-    if (data.status === 'in_progress') stats.activeCloudGames++;
-    if (data.status === 'finished') stats.finishedCloudGames++;
-    const ts = Math.max(toTimestampMillis(data.createdAt), toTimestampMillis(data.updatedAt));
-    if (ts >= cutoffMillis) {
-      stats.gamesLast7d++;
-    }
-  }
-  return stats;
-}
-
-interface WeeklyFeedbackItem {
-  rating: number;
-  category: string;
-  comment: string;
-  contact: string;
-}
-
-interface WeeklyFeedbackDigestStats {
-  totalFeedback: number;
-  unresolvedFeedback: number;
-  recentFeedback: WeeklyFeedbackItem[];
-}
-
-function summarizeWeeklyFeedback(docs: any[], cutoffMillis: number): WeeklyFeedbackDigestStats {
-  const recentFeedback: WeeklyFeedbackItem[] = [];
-  let unresolvedFeedback = 0;
-
-  for (const doc of docs) {
-    const data = doc.data() || {};
-    if (data.status === 'new') unresolvedFeedback++;
-    if (toTimestampMillis(data.createdAt) >= cutoffMillis) {
-      recentFeedback.push({
-        rating: Number(data.rating) || 0,
-        category: String(data.category || 'other'),
-        comment: String(data.comment || ''),
-        contact: String(data.userEmail || 'Anonym'),
-      });
-    }
-  }
-
-  return {
-    totalFeedback: docs.length,
-    unresolvedFeedback,
-    recentFeedback,
-  };
-}
-
-function buildWeeklyDigestEmail(
-  research: WeeklyResearchDigestStats,
-  cloud: WeeklyCloudGamesDigestStats,
-  feedback: WeeklyFeedbackDigestStats,
-  pendingEducators: number,
-): { subject: string; text: string; html: string } {
-  const feedbackLast7d = feedback.recentFeedback.length;
-  const subject = `[SOIL] Wochenbericht: ${research.researchGamesLast7d} abgeschlossene Spiele, ${feedbackLast7d} neues Feedback`;
-
-  const feedbackTextLines =
-    feedbackLast7d > 0
-      ? feedback.recentFeedback
-          .map((f) => `- [${f.rating}/5 | ${f.category} | ${f.contact}] ${f.comment || '(Kein Kommentar)'}`)
-          .join('\n')
-      : '- Kein neues Feedback in den letzten 7 Tagen.';
-
-  const text = [
-    'SOIL Wochenbericht (Letzte 7 Tage)',
-    '===================================',
-    `Abgeschlossene Spiele (Forschungsdatensatz, 7 Tage): ${research.researchGamesLast7d} (Gesamt: ${research.totalResearchGames})`,
-    `  - Lokal vs. Cloud (7 Tage): ${research.sourceBreakdown.local} lokal / ${research.sourceBreakdown.cloud} Cloud`,
-    `  - Schwierigkeitsgrad (7 Tage): Einfach ${research.difficultyBreakdown.easy}, Normal ${research.difficultyBreakdown.normal}, Schwer ${research.difficultyBreakdown.hard}`,
-    `Cloud-Spiele (aktiv in letzten 7 Tagen): ${cloud.gamesLast7d} (Laufend: ${cloud.activeCloudGames}, Beendet: ${cloud.finishedCloudGames})`,
-    `Offene Lehrkräfte-Freischaltungen: ${pendingEducators}`,
-    `Feedback (7 Tage): ${feedbackLast7d} (Offen/Ungelesen: ${feedback.unresolvedFeedback}, Gesamt: ${feedback.totalFeedback})`,
-    '',
-    'Neues Feedback:',
-    feedbackTextLines,
-  ].join('\n');
-
-  const feedbackHtmlItems =
-    feedbackLast7d > 0
-      ? feedback.recentFeedback
-          .map(
-            (f) =>
-              `<li><strong>${f.rating}/5</strong> (${escapeHtml(f.category)} – <code>${escapeHtml(f.contact)}</code>): ${escapeHtml(f.comment || '(Kein Kommentar)')}</li>`,
-          )
-          .join('')
-      : '<li>Kein neues Feedback in den letzten 7 Tagen.</li>';
-
-  const html = `
-    <div style="font-family: Arial, sans-serif; color: #1f2937; max-width: 640px; margin: 0 auto;">
-      <h2 style="color: #059669;">SOIL Wochenbericht (Letzte 7 Tage)</h2>
-      <ul>
-        <li><strong>Abgeschlossene Spiele (7 Tage):</strong> ${research.researchGamesLast7d} (Gesamt im Forschungsdatensatz: ${research.totalResearchGames})</li>
-        <li><strong>Quelle (7 Tage):</strong> ${research.sourceBreakdown.local} Lokal / ${research.sourceBreakdown.cloud} Cloud</li>
-        <li><strong>Schwierigkeitsgrad (7 Tage):</strong> Einfach ${research.difficultyBreakdown.easy}, Normal ${research.difficultyBreakdown.normal}, Schwer ${research.difficultyBreakdown.hard}</li>
-        <li><strong>Cloud-Spiele (7 Tage aktiv):</strong> ${cloud.gamesLast7d} (Aktuell laufend: ${cloud.activeCloudGames}, Beendet: ${cloud.finishedCloudGames})</li>
-        <li><strong>Offene Lehrkräfte-Freischaltungen:</strong> ${pendingEducators}</li>
-        <li><strong>Feedback (7 Tage):</strong> ${feedbackLast7d} (Offen: ${feedback.unresolvedFeedback}, Gesamt: ${feedback.totalFeedback})</li>
-      </ul>
-      <h3 style="color: #047857;">Neues Feedback der letzten 7 Tage</h3>
-      <ul>${feedbackHtmlItems}</ul>
-    </div>
-  `;
-
-  return { subject, text, html };
-}
 
 export async function sendWeeklyActivityDigest(): Promise<{
   gamesLast7d: number;

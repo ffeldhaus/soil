@@ -2,70 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.14] - 2026-10-31
-### Changed
-- Aligned the layout width (`max-w-6xl`), header, and section card styling of `/impressum` (`src/app/impressum/impressum.ts`) and `/privacy` (`src/app/privacy/privacy.ts`) with `/manual`, `/info`, and `/research`, and replaced raw `**...**` markdown markers and unnecessary parentheticals in `privacy.ts` with semantic `<strong class="text-white">` tags.
+## [Unpublished]
+### Security
+- Enforced strict caller authorization on `getGameState(targetUid)` and stripped other players' unsubmitted `pendingDecisions` from non-host responses (`functions/src/index.ts`) to prevent cross-team inspection during active rounds.
+- Added sliding-window IP/UID rate limiting (`checkRateLimit` in `functions/src/research.service.ts`) to `playerLogin`, `submitFeedback`, `uploadFinishedGame`, `sendVerificationEmail`, and `sendPasswordResetEmail`, lazy-initialized the Vertex AI `GoogleGenAI` client on cold starts, fixed Firestore batch re-instantiation past 500 operations in `deleteGames`/`undeleteGames`, and ensured `cascadeDeleteAdminUser` and `deleteAccount` clean up orphaned `player-*` Firebase Auth accounts.
 
-## [3.3.13] - 2026-10-31
-### Fixed
-- Fixed author name in `creator.name` on the `/research` `Dataset` JSON-LD block in `src/app/app.routes.ts` (`'SOIL Projekt – Dr. Nina Wolf & Florian Feldhaus'`).
-
-## [3.3.12] - 2026-10-31
-### Changed
-- Updated `creator.name` on the `/research` `Dataset` JSON-LD block in `src/app/app.routes.ts` to `'SOIL Projekt – Dr. Nina Wolf & Florian Feldhaus'`.
-
-## [3.3.11] - 2026-10-31
-### Changed
-- Refined `/info` (`src/app/info/info.html`, `src/app/info/info.ts`, `src/app/app.routes.ts`) and `/manual` (`src/app/manual/manual.ts`, `src/app/manual/components/manual-concept-card.ts`, `src/app/manual/components/manual-crop-card.ts`) with a Bundesland dropdown selector for all 16 individually selectable German states (keeping all 16 state curriculum cards in the prerendered SSR DOM), focused state curriculum anchors on BNE, Biologie, Geographie / Erdkunde, and Wirtschaft, condensed the educator FAQ into 5 collapsible `<details>` accordions, and standardized German typography (removing parenthetical clutter, ensuring spaces after colons before links, and formatting percentages without a preceding space).
-
-## [3.3.10] - 2026-10-31
 ### Added
-- Added a comprehensive German school curriculum mapping section (`#curriculum`, covering spiral progression across grades 5–13, matching difficulty presets, and mandatory curriculum anchors across all 16 Bundesländer) and an 8-item educator FAQ section (`#faq`) to `/info` (`src/app/info/info.html`, `src/app/info/info.ts`), along with `FAQPage` + `AboutPage` Schema.org JSON-LD and updated SEO metadata in `src/app/app.routes.ts`.
+- Added per-parcel causal attribution (`ParcelRoundFactors` in `src/app/types.ts`, `src/app/game/engine/game-engine.ts`, and `functions/src/game-engine.ts`) recording yield multipliers (`baseYield`, `soilFactor`, `nutritionFactor`, `weatherFactor`, `pestFactor`, `machineBonus`, `organicFactor`) and additive soil/nutrition deltas (`soilDelta`, `nutritionDelta`) on every parcel snapshot, and preserved `factors` in anonymized `research_games` exports (`functions/src/research.service.ts`).
+- Added causal harvest & soil balance transparency cards to the round result modal (`src/app/game/round-result-modal/`) and parcel inspection strip (`src/app/game/planting-modal/`), an in-place crop manual detail overlay (`selectedInfoCropId`) and quantitative agronomy & cost badges across crop tiles and round settings (`src/app/game/round-settings-modal/`), and dynamic root-cause diagnosis in `AdvisorService` (`src/app/game/advisor/advisor.service.ts`).
+- Expanded the finance view (`src/app/game/finance/`) into a 4-metric **Analysen & Finanzbericht** trajectory chart supporting single-select metric tabs for `Finanzen` (`Kapital (€)`), `Nachhaltigkeit` (`Zukunftsfähiger Hof`), `Bodenqualität Ø (%)`, and `Nährstoffe Ø (%)` across all teams.
+- Added a host-only `forceAdvanceRound` callable Cloud Function (`functions/src/index.ts`, `src/app/game/game.service.ts`) and teacher dashboard controls (`src/app/admin/dashboard/components/dashboard-game-detail.ts`) with default continuation decisions for unsubmitted teams, masked team PIN toggles (`PINs anzeigen` / `PINs ausblenden`) for classroom projection safety, and 1-click lesson duration presets (`5 Runden · 45 Min.`, `8 Runden · 60 Min.`, `10 Runden · 90 Min.`) in the game creation form (`src/app/admin/dashboard/components/dashboard-create-game.html`).
+- Added custom vector SVG action icons and a responsive portrait mobile dropdown menu (`Menü`) in `BoardHudComponent` (`src/app/game/board/components/board-hud.html`, `src/app/game/board/components/board-hud.ts`) so HUD controls never overlap the round progress bar on narrow screens.
 
-## [3.3.9] - 2026-10-31
-### Fixed
-- Removed the non-standard `Agentmap:` line from `public/robots.txt` and `src/server.ts` so Lighthouse's `robots-txt` SEO audit passes while retaining `<link rel="ard" href="/.well-known/ard.json" />` for Agentic Browsing discovery, updated `VideoObject.uploadDate` (`src/app/app.routes.ts`) and `<video:publication_date>` (`public/sitemap.xml`) to include an ISO 8601 time and timezone offset (`2026-10-30T14:00:00+01:00`), and added `creator` metadata to the `Dataset` JSON-LD on `/research` to resolve Google Search Console Rich Result warnings.
-
-## [3.3.8] - 2026-10-30
-### Fixed
-- Updated `public/robots.txt` and `src/server.ts` to allow crawlers to fetch `/admin/login`, `/admin/register`, `/delete-account`, `/impressum`, and `/privacy` so search engines can read their `<meta name="robots" content="noindex, nofollow">` tags and de-index them, added `/delete-account` to `src/app/app.routes.server.ts` (`RenderMode.Prerender`), and updated `src/server.ts` to serve prerendered `<route>/index.html` documents directly from `browserDistFolder`.
-
-## [3.3.7] - 2026-10-30
-### Fixed
-- Fixed the Express 5 `/.well-known` catch-all in `src/server.ts` to match `req.originalUrl` (and dedicated `app.use('/.well-known', ...)` middleware) instead of `req.path` inside `app.use('*path')`, ensuring unknown `/.well-known/*` probes return `404 Not Found` rather than falling through to the Angular SPA router.
-
-## [3.3.6] - 2026-10-30
-### Added
-- Added Lighthouse Agentic Browsing discovery support with `/llms.txt` (`public/llms.txt`), Agent Resource Discovery manifests (`public/.well-known/ard.json` and `public/.well-known/ai-catalog.json`), `Agentmap: https://soil.app/.well-known/ard.json` in `public/robots.txt`, `<link rel="ard" href="/.well-known/ard.json" />` in `src/index.html`, and explicit Express handlers plus a `404` catch-all for unknown `/.well-known/*` probes in `src/server.ts`.
-
-## [3.3.5] - 2026-10-30
-### Fixed
-- Updated the `/sitemap.xml` Express handler in `src/server.ts` (and `scripts/deploy.js`) to serve `public/sitemap.xml` from `browserDistFolder` with `<lastmod>` and `<video:video>` metadata instead of the legacy inline XML stub.
-
-## [3.3.4] - 2026-10-30
-### Added
-- Added `<lastmod>` timestamps across all public URLs and Google `<video:video>` sitemap metadata in `public/sitemap.xml`, `embedUrl` (`https://www.youtube.com/embed/xCmZUGcyVLM`) and `duration: 'PT1M5S'` on the landing page `VideoObject` JSON-LD in `src/app/app.routes.ts`, and automatic `<lastmod>` date stamping in `scripts/deploy.js`.
-
-## [3.3.3] - 2026-10-30
-### Fixed
-- Updated Scene 2's voiceover and subtitle tracks in the landing page trailer (`public/assets/video/soil-trailer.mp4`, `public/assets/video/soil-marketing-trailer.srt`, `public/assets/video/soil-marketing-trailer.vtt`) to reference actual selectable crops (`Ackerbohnen, Weizen und Raps`) and exact HUD labels (`Ernte, Bodenqualität und Nährstoffe`).
-
-## [3.3.2] - 2026-10-29
 ### Changed
-- Unified the nutrition terminology from `Mineralstoffe` to `Nährstoffe` across the HUD, board modals, advisor service, manual crop cards, and game constants (`src/app/game-constants.ts`, `src/app/game/advisor/advisor.service.ts`, `src/app/game/board/board.html`, `src/app/game/board/board.ts`, `src/app/game/board/components/board-hud.html`, `src/app/game/board/components/board-hud.ts`, `src/app/manual/components/manual-crop-card.ts`).
-- Updated the landing page trailer video (`public/assets/video/soil-trailer.mp4`) with the unified `Nährstoffe` HUD label, open `Anbau-Auswahl` live impact preview, sequential field overlays, Round 3 lead vs. Round 6 monoculture soil collapse comparison, and elevated `"Jetzt unter soil.app spielen!"` end-card CTA.
+- Rebalanced short- and medium-horizon classroom sessions (`src/app/game-constants.ts`, `src/app/game/engine/game-engine.ts`, `functions/src/game-engine.ts`, `src/app/manual/manual.ts`): introduced horizon-scaled starting soil quality (`getStartingSoilForRoundLimit`: `-8 %` for 5–7 rounds, `-5 %` for 8–9 rounds), increased potato (`-5.5 %`) and sugar beet (`-4.5 %`) soil degradation to reflect intensive root-crop tillage, and raised the organic market price multiplier (`BIO_MARKET_MULTIPLIER: 1.45`) so regenerative crop rotations and organic conversion amortize within 8–10 rounds.
+- Lowered the minimum configurable game length from 10 to 5 rounds (`5–50` rounds) across `createGame` (`functions/src/index.ts`) and the teacher game creation form (`src/app/admin/dashboard/components/dashboard-create-game.html`) to support 45-minute single-lesson school sessions.
+- Replaced all 16 native browser `alert()` / `prompt()` dialogs across `board`, `dashboard`, `super-admin`, `admin-login`, `admin-register`, and `delete-account` with custom inline status banners and modal confirmation flows.
+- Externalized 7 inline Angular component templates >50 lines (`landing.html`, `admin-login.html`, `privacy.html`, `auth-action.html`, `feedback-modal.html`, `player-login.html`, `delete-account.html`), extracted weekly digest and feedback helpers (`functions/src/digest-feedback.helpers.ts`), added `takeUntilDestroyed()` subscription cleanup across `dashboard.ts`, `super-admin.ts`, `research.ts`, and `manual.ts`, added full keyboard accessibility (`tabindex="0"`, `role="button"`, `Enter`/`Space` activation) to farm parcels (`src/app/game/parcel/`), and removed decorative UI emojis, gradient text, neon glows, and `hover:scale-105` transforms in favor of crisp SVG icons and neutral surfaces.
 
-## [3.3.1] - 2026-10-29
-### Fixed
-- Replaced the Git LFS pointer for the landing page trailer with a direct faststart MP4 binary (`public/assets/video/soil-trailer.mp4`), excluded `/assets/video/**` from `src/ngsw-config.json` so HTTP `206 Range` streaming works reliably on Firebase App Hosting, moved the scroll-down arrow into the normal flex flow below `Trailer ansehen`, and updated `openTrailer()` (`src/app/landing/landing.ts`) to launch directly into fullscreen autoplay.
-
-## [3.3.0] - 2026-10-29
+## [3.3.0] to [3.3.14] - 2026-10-29 to 2026-10-31
 ### Added
-- Added a landing page trailer modal (`data-testid="landing-watch-trailer"`, `data-testid="trailer-modal"` in `src/app/landing/landing.ts`), `VideoObject` structured data in `src/app/app.routes.ts`, and Git LFS tracking (`.gitattributes`) for `public/assets/video/*.mp4`.
+- Added a landing page trailer modal (`data-testid="landing-watch-trailer"`, `data-testid="trailer-modal"` in `src/app/landing/landing.ts`) with a direct faststart MP4 binary (`public/assets/video/soil-trailer.mp4`), German subtitle tracks (`.srt`/`.vtt`), fullscreen autoplay, `VideoObject` structured data in `src/app/app.routes.ts`, and `<video:video>` + `<lastmod>` sitemap metadata in `public/sitemap.xml` and `scripts/deploy.js`.
+- Added a comprehensive German school curriculum mapping section (`#curriculum`, covering spiral progression across grades 5–13, difficulty presets, a Bundesland selector, and mandatory curriculum anchors for BNE, Biologie, Geographie / Erdkunde, and Wirtschaft across all 16 Bundesländer) and a collapsible educator FAQ section (`#faq`) with `FAQPage` + `AboutPage` Schema.org JSON-LD to `/info` (`src/app/info/info.html`, `src/app/info/info.ts`, `src/app/app.routes.ts`).
+- Added Lighthouse Agentic Browsing discovery support with `/llms.txt` (`public/llms.txt`), Agent Resource Discovery manifests (`public/.well-known/ard.json` and `public/.well-known/ai-catalog.json`), `<link rel="ard" href="/.well-known/ard.json" />` in `src/index.html`, and explicit Express handlers plus a `404` catch-all for unknown `/.well-known/*` probes in `src/server.ts`.
+
 ### Changed
 - Redesigned `Finanzbericht` (`src/app/game/finance/finance.ts`, `src/app/game/finance/finance.html`) with `100.000 €` initial capital in the chart history, dynamic Y-axis scaling (`getMinCapital()` / `getMaxCapital()`), distinct team colors, a header round switcher (`R1`…`RN`), always-visible strategy badges (`Entscheidungen`), active-crop filtering (`getActiveSeedCrops()` / `getActiveHarvestCrops()`), and full breakdown rows for mineral fertilizer, overdraft interest, and regional contract bonuses.
-- Compacted `Hof-Auszeichnungen` in the sticker album modal (`src/app/game/board/board.html`) and round result modal (`src/app/game/round-result-modal/round-result-modal.html`) into horizontal thumbnail badges, and filtered `collectedStickerIds` in `src/app/game/board/board.ts` against defined sticker IDs.
-- Promoted weather and pest conditions to a top-of-modal status strip (`data-testid="round-conditions-strip"`) in `src/app/game/round-result-modal/round-result-modal.html`, and updated the harvest overlay (`src/app/game/parcel/parcel.html`, `src/app/game/parcel/parcel.ts`) to display `Weidehaltung` and `Grünbrache` with neutral green tinting instead of `0 dt (0%)`.
+- Unified the nutrition terminology from `Mineralstoffe` to `Nährstoffe` across the HUD, board modals, advisor service, manual crop cards, game constants, and landing page trailer video.
+- Compacted `Hof-Auszeichnungen` in the sticker album modal (`src/app/game/board/board.html`) and round result modal (`src/app/game/round-result-modal/round-result-modal.html`) into horizontal thumbnail badges, promoted weather and pest conditions to a top-of-modal status strip (`data-testid="round-conditions-strip"`), and updated the harvest overlay (`src/app/game/parcel/`) to display `Weidehaltung` and `Grünbrache` with neutral green tinting instead of `0 dt (0%)`.
+- Aligned the layout width (`max-w-6xl`), header, and section card styling of `/impressum` (`src/app/impressum/impressum.ts`) and `/privacy` (`src/app/privacy/privacy.ts`) with `/manual`, `/info`, and `/research`, and standardized German typography across `/info`, `/manual`, and `/privacy`.
+
+### Fixed
+- Excluded `/assets/video/**` from `src/ngsw-config.json` so HTTP `206 Range` video streaming works reliably on Firebase App Hosting, updated `/sitemap.xml` and prerendered `<route>/index.html` serving in `src/server.ts`, allowed crawlers in `public/robots.txt` to read `noindex, nofollow` meta tags on auth and legal routes, and resolved Google Search Console Rich Result metadata warnings on `/` and `/research`.
 - Fixed HUD header button overlap at narrow desktop widths (`src/app/game/board/components/board-hud.html`) and immediate change detection when switching `?gameId=...` on a mounted `Board` (`src/app/game/board/board.ts`).
 
 ## [3.2.0] to [3.2.3] - 2026-10-29

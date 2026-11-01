@@ -190,7 +190,16 @@ function sanitizeResearchHistoryEntry(h: any): any {
         }
       : undefined,
     result: sanitizeResearchHistoryResult(h?.result),
-    parcelsSnapshot: Array.isArray(h?.parcelsSnapshot) ? h.parcelsSnapshot : [],
+    parcelsSnapshot: Array.isArray(h?.parcelsSnapshot)
+      ? h.parcelsSnapshot.slice(0, 100).map((p: any) => ({
+          index: Number(p.index),
+          crop: String(p.crop),
+          soil: Number(p.soil || 0),
+          nutrition: Number(p.nutrition || 0),
+          yield: Number(p.yield || 0),
+          ...(p.harvestRating ? { harvestRating: p.harvestRating } : {}),
+        }))
+      : [],
   };
 }
 

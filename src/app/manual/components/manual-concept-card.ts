@@ -10,10 +10,8 @@ export class ManualConceptCardComponent {
   @Input() concept = '';
   @Input() index = 0;
 
-  private icons = ['📏', '🐛', '🔄', '🧪', '🌦️', '📈', '💰', '🚜', '🌿'];
-
   get icon(): string {
-    return this.icons[this.index] || '💡';
+    return String(this.index + 1).padStart(2, '0');
   }
 
   t(key: string): string {
@@ -40,13 +38,13 @@ export class ManualConceptCardComponent {
         'Marktpreise schwanken zwischen Konventionell und Bio. Bio-Preise sind deutlich höher, um die geringeren Erträge auszugleichen. Im fortgeschrittenen Markt bestimmt das Gesamtangebot aller Spieler den Preis.',
       'manual.concepts.subsidies.title': 'Subventionen',
       'manual.concepts.subsidies.text':
-        'Staatliche Zahlungen (GAP) unterstützen deinen Betrieb. Bio-Betriebe erhalten eine zusätzliche Öko-Prämie als Ausgleich für den Mehraufwand.',
+        'Staatliche Zahlungen der Gemeinsamen Agrarpolitik unterstützen deinen Betrieb. Bio-Betriebe erhalten eine zusätzliche Öko-Prämie als Ausgleich für den Mehraufwand.',
       'manual.concepts.machines.title': 'Maschinen & Arbeit',
       'manual.concepts.machines.text':
         'Maschinen erhöhen durch modernste Technik deine Erträge, belasten aber durch ihr Gewicht die Bodenstruktur und erfordern regelmäßige hohe Investitionen sowie laufende Wartungskosten.',
       'manual.concepts.bio.title': 'Bio-Siegel',
       'manual.concepts.bio.text':
-        'Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie. Tiere (Gras) sind für den organischen Dünger im Bio-Anbau essenziell.',
+        'Das EU-Bio-Siegel wird nur vergeben, wenn konsequent auf synthetische Dünger und Pflanzenschutz verzichtet wird. Nur dann erhältst du die höheren Bio-Marktpreise und die Öko-Prämie. Die Tierhaltung auf Grünland ist für den organischen Dünger im Bio-Anbau essenziell.',
     };
     return translations[key] || key;
   }

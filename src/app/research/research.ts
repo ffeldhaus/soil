@@ -3,12 +3,14 @@ import {
   type AfterViewInit,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   type ElementRef,
   inject,
   type OnInit,
   PLATFORM_ID,
   viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GameEngine } from '../game/engine/game-engine';
@@ -36,6 +38,7 @@ export class ResearchComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
   private gameService = inject(GameService);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
 
@@ -117,7 +120,7 @@ export class ResearchComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.route.fragment.subscribe((fragment) => {
+      this.route.fragment.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((fragment) => {
         if (fragment) {
           this.scrollToFragment(fragment);
         } else {

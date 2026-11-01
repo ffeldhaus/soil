@@ -1,7 +1,17 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../../game-constants';
-import type { CropType, Parcel } from '../../types';
+import { type CropConfig, ManualCropCardComponent } from '../../manual/components/manual-crop-card';
+import type { CropType, Parcel, ParcelRoundFactors } from '../../types';
+
+export interface CropEconomics {
+  seedPrice: number;
+  baseYield: number;
+  marketPrice: number;
+  laborHours: number;
+  isSubsidy: boolean;
+}
 
 export type ImpactLevel = 'strong-positive' | 'slight-positive' | 'neutral' | 'slight-negative' | 'strong-negative';
 
@@ -26,16 +36,50 @@ export interface CropPreview {
 @Component({
   selector: 'app-planting-modal',
   standalone: true,
-  imports: [],
+  imports: [ManualCropCardComponent, RouterLink],
   templateUrl: './planting-modal.html',
   styleUrl: './planting-modal.scss',
 })
 export class PlantingModal {
   @Input() crops: CropType[] = [];
   @Input() selectedParcels: Parcel[] = [];
+  @Input() difficulty: 'easy' | 'normal' | 'hard' = 'normal';
   @Output() cropSelected = new EventEmitter<CropType>();
   @Output() plantingCancelled = new EventEmitter<void>();
   readonly nonDraggableImages = true;
+  selectedManualCrop: CropConfig | null = null;
+
+  openCropDetails(event: Event, crop: CropType) {
+    event.stopPropagation();
+    event.preventDefault();
+    const found = GAME_CONSTANTS.CROPS[crop];
+    if (found) {
+      this.selectedManualCrop = found;
+      return;
+    }
+    if (crop === 'Fallow') {
+      this.selectedManualCrop = {
+        id: 'Fallow',
+        name: 'Brachland',
+        image: 'acker.webp',
+        pest: 'Keine',
+        yields: { veryHigh: '0', high: '0', moderate: '0', low: '0', veryLow: '0' },
+        baseYield: 0,
+        soilSensitivity: 0,
+        nutritionSensitivity: 0,
+        weatherSensitivity: { drought: 'Keine', cold: 'Keine', flood: 'Keine' },
+        seedPrice: { conventional: 0, organic: 0 },
+        marketValue: { conventional: 0, organic: 0 },
+        laborHours: 2,
+        special:
+          'Regeneration für den Boden. Für bis zu 5 Brachland-Felder erhältst du eine hohe EU-Grünstreifen-Prämie.',
+      };
+    }
+  }
+
+  closeCropDetails() {
+    this.selectedManualCrop = null;
+  }
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -90,6 +134,66 @@ export class PlantingModal {
       return `Auswahl: ${count} ${parcelWord} (Vorfrucht: ${prevCropName})`;
     }
     return `Auswahl: ${count} ${parcelWord} (Gemischte Vorfrucht)`;
+  }
+
+  readonly Math = Math;
+
+  getCropEconomics(crop: CropType): CropEconomics {
+    const cfg = GAME_CONSTANTS.CROPS[crop];
+    if (!cfg) {
+      return { seedPrice: 0, baseYield: 0, marketPrice: 0, laborHours: 0, isSubsidy: false };
+    }
+    if (crop === 'Fallow') {
+      return {
+        seedPrice: 0,
+        baseYield: 0,
+        marketPrice: GAME_CONSTANTS.SUBSIDIES.GREEN_STRIP,
+        laborHours: cfg.laborHours,
+        isSubsidy: true,
+      };
+    }
+    const baseMarket = Array.isArray(cfg.marketValue?.conventional)
+      ? cfg.marketValue.conventional[0]
+      : (cfg.marketValue?.conventional ?? 0);
+    return {
+      seedPrice: cfg.seedPrice?.conventional ?? 0,
+      baseYield: cfg.baseYield ?? 0,
+      marketPrice: baseMarket,
+      laborHours: cfg.laborHours ?? 0,
+      isSubsidy: false,
+    };
+  }
+
+  getSelectedCausalFactors(): ParcelRoundFactors | null {
+    const withFactors = (this.selectedParcels || []).filter((p) => p.factors !== undefined);
+    if (withFactors.length === 0) return null;
+    const n = withFactors.length;
+    const avg = (fn: (f: ParcelRoundFactors) => number) => withFactors.reduce((sum, p) => sum + fn(p.factors!), 0) / n;
+    return {
+      baseYield: Math.round(avg((f) => f.baseYield)),
+      soilFactor: avg((f) => f.soilFactor),
+      nutritionFactor: avg((f) => f.nutritionFactor),
+      weatherFactor: avg((f) => f.weatherFactor),
+      pestFactor: avg((f) => f.pestFactor),
+      machineBonus: avg((f) => f.machineBonus),
+      organicFactor: avg((f) => f.organicFactor),
+      soilDelta: {
+        cropRotation: Number(avg((f) => f.soilDelta.cropRotation).toFixed(1)),
+        humusRecovery: Number(avg((f) => f.soilDelta.humusRecovery).toFixed(1)),
+        machineCompaction: Number(avg((f) => f.soilDelta.machineCompaction).toFixed(1)),
+        fertilizerImpact: Number(avg((f) => f.soilDelta.fertilizerImpact).toFixed(1)),
+        pesticideImpact: Number(avg((f) => f.soilDelta.pesticideImpact).toFixed(1)),
+        organismsImpact: Number(avg((f) => f.soilDelta.organismsImpact).toFixed(1)),
+        weatherErosion: Number(avg((f) => f.soilDelta.weatherErosion).toFixed(1)),
+        total: Number(avg((f) => f.soilDelta.total).toFixed(1)),
+      },
+      nutritionDelta: {
+        cropUptake: Number(avg((f) => f.nutritionDelta.cropUptake).toFixed(1)),
+        fertilizerAdd: Number(avg((f) => f.nutritionDelta.fertilizerAdd).toFixed(1)),
+        leaching: Number(avg((f) => f.nutritionDelta.leaching).toFixed(1)),
+        total: Number(avg((f) => f.nutritionDelta.total).toFixed(1)),
+      },
+    };
   }
 
   getImpactBadgeClasses(level: ImpactLevel): string {

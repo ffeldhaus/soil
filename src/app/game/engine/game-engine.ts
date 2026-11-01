@@ -2,6 +2,7 @@ import { CONTRACT_DEFINITIONS, GAME_CONSTANTS } from '../../game-constants';
 import type {
   CropType,
   Parcel,
+  ParcelRoundFactors,
   RegionalContract,
   Round,
   RoundDecision,
@@ -94,18 +95,20 @@ export class GameEngine {
 
       // B. NUTRITION CALCULATION
       const nutritionGain = GameEngine.calculateNutritionGain(cropKey, decision, animalParcels, numParcels) * timeScale;
-      newNutrition = GameEngine.calculateNutritionUpdate(
+      const nutritionAfterUpdate = GameEngine.calculateNutritionUpdate(
         prevParcel.nutrition,
         nutritionGain,
         cropKey,
         newSoil,
         timeScale,
       );
+      newNutrition = nutritionAfterUpdate;
 
       // C. HARVEST CALCULATION
       let yieldAmount = 0;
+      let cropDepletion = 0;
+      const cropShare = (cropParcelCounts[cropKey] || 1) / numParcels;
       if (cropKey !== 'Fallow' && cropKey !== 'Grass' && cropConfig) {
-        const cropShare = (cropParcelCounts[cropKey] || 1) / numParcels;
         yieldAmount = GameEngine.calculateYield(
           cropConfig,
           prevParcel.soil,
@@ -119,11 +122,29 @@ export class GameEngine {
         );
 
         const harvestIntensity = yieldAmount / cropConfig.baseYield;
-        newNutrition -=
+        cropDepletion =
           harvestIntensity * GAME_CONSTANTS.NUTRITION.BASE_DECLINE * GAME_CONSTANTS.NUTRITION.START * timeScale;
+        newNutrition -= cropDepletion;
 
         harvestSummary[cropKey] += Math.round(yieldAmount);
       }
+
+      const factors = GameEngine.buildParcelRoundFactors(
+        prevParcel,
+        cropKey,
+        cropConfig,
+        decision,
+        events,
+        weather,
+        machineYieldBonus,
+        machineSoilImpact,
+        climateEscalation,
+        cropShare,
+        timeScale,
+        nutritionAfterUpdate,
+        cropDepletion,
+        newNutrition,
+      );
 
       parcelupdates.push({
         index: index,
@@ -131,6 +152,7 @@ export class GameEngine {
         soil: Math.round(Math.max(0, Math.min(300, newSoil))),
         nutrition: Math.round(Math.max(0, Math.min(GAME_CONSTANTS.NUTRITION.MAX, newNutrition))),
         yield: Math.round(yieldAmount),
+        factors,
       });
     });
 
@@ -691,6 +713,130 @@ export class GameEngine {
       cropConfig.baseYield * soilEffect * nutritionEffect * weatherYieldEffect * pestImpact * (1 + machineYieldBonus);
     if (decision.organic) yieldAmount *= 0.4;
     return yieldAmount;
+  }
+
+  private static round3(val: number): number {
+    return Math.round(val * 1000) / 1000;
+  }
+
+  private static round2(val: number): number {
+    return Math.round(val * 100) / 100;
+  }
+
+  private static calculateSoilDeltaBreakdown(
+    prevParcel: Parcel,
+    cropKey: CropType,
+    decision: RoundDecision,
+    weather: { soil: number },
+    machineSoilImpact: number,
+    timeScale: number,
+  ): ParcelRoundFactors['soilDelta'] {
+    const humusRecovery = GameEngine.calculateCropSoilDelta(prevParcel, cropKey, timeScale);
+    const cropRotation = GameEngine.calculateRotationSoilDelta(prevParcel, cropKey, timeScale);
+    const machineCompaction = machineSoilImpact * timeScale;
+    const weatherErosion = weather.soil * timeScale;
+    const pesticideImpact = decision.pesticide ? GAME_CONSTANTS.SOIL.PESTICIDE_IMPACT * timeScale : 0;
+    const organismsImpact = decision.organisms ? GAME_CONSTANTS.SOIL.ORGANISMS_SOIL_BONUS * timeScale : 0;
+
+    let fertilizerImpact = decision.fertilizer ? GAME_CONSTANTS.SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale : 0;
+    if (prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
+      fertilizerImpact +=
+        (prevParcel.nutrition - GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) *
+        GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_FACTOR *
+        timeScale;
+    }
+    if (decision.fertilizer && prevParcel.nutrition > GAME_CONSTANTS.SOIL.SYNTHETIC_BURN_THRESHOLD) {
+      fertilizerImpact += GAME_CONSTANTS.SOIL.SYNTHETIC_BURN_PENALTY * timeScale;
+    }
+
+    const total =
+      cropRotation +
+      humusRecovery +
+      machineCompaction +
+      fertilizerImpact +
+      pesticideImpact +
+      organismsImpact +
+      weatherErosion;
+
+    return {
+      cropRotation: GameEngine.round2(cropRotation),
+      humusRecovery: GameEngine.round2(humusRecovery),
+      machineCompaction: GameEngine.round2(machineCompaction),
+      fertilizerImpact: GameEngine.round2(fertilizerImpact),
+      pesticideImpact: GameEngine.round2(pesticideImpact),
+      organismsImpact: GameEngine.round2(organismsImpact),
+      weatherErosion: GameEngine.round2(weatherErosion),
+      total: GameEngine.round2(total),
+    };
+  }
+
+  private static buildParcelRoundFactors(
+    prevParcel: Parcel,
+    cropKey: CropType,
+    cropConfig: any,
+    decision: RoundDecision,
+    events: { vermin: string[]; weather: string },
+    weather: { yield: number; soil: number },
+    machineYieldBonus: number,
+    machineSoilImpact: number,
+    climateEscalation: number,
+    cropShare: number,
+    timeScale: number,
+    nutritionAfterUpdate: number,
+    cropDepletion: number,
+    unclampedNewNutrition: number,
+  ): ParcelRoundFactors {
+    const soilDelta = GameEngine.calculateSoilDeltaBreakdown(
+      prevParcel,
+      cropKey,
+      decision,
+      weather,
+      machineSoilImpact,
+      timeScale,
+    );
+
+    const updateDiff = nutritionAfterUpdate - prevParcel.nutrition;
+    const isGreenOrFallow = cropKey === 'Fallow' || cropKey === 'Grass';
+    const fertilizerAdd = isGreenOrFallow ? Math.max(0, updateDiff) : updateDiff;
+    const fallowLeaching = isGreenOrFallow ? Math.min(0, updateDiff) : 0;
+    const capLeaching =
+      unclampedNewNutrition > GAME_CONSTANTS.NUTRITION.MAX ? GAME_CONSTANTS.NUTRITION.MAX - unclampedNewNutrition : 0;
+    const leaching = fallowLeaching + capLeaching;
+    const cropUptake = -cropDepletion;
+    const nutritionTotal = fertilizerAdd + cropUptake + leaching;
+
+    const isHarvestCrop = !isGreenOrFallow && Boolean(cropConfig);
+    const soilEffect = isHarvestCrop
+      ? Math.min(1.2, (Math.max(0, prevParcel.soil) / GAME_CONSTANTS.SOIL.START) ** (cropConfig.soilSensitivity || 1))
+      : 1;
+    const nutritionEffect = isHarvestCrop
+      ? Math.min(
+          1.2,
+          (Math.max(0, prevParcel.nutrition) / GAME_CONSTANTS.NUTRITION.START) **
+            (cropConfig.nutritionSensitivity || 1),
+        )
+      : 1;
+    const weatherEffect = isHarvestCrop
+      ? GameEngine.calculateWeatherYieldEffect(cropConfig, events, weather, climateEscalation)
+      : 1;
+    const pestEffect = isHarvestCrop ? GameEngine.calculatePestImpact(cropConfig, events, decision, cropShare) : 1;
+
+    return {
+      baseYield: isHarvestCrop ? cropConfig.baseYield : 0,
+      soilFactor: GameEngine.round3(soilEffect),
+      nutritionFactor: GameEngine.round3(nutritionEffect),
+      weatherFactor: GameEngine.round3(weatherEffect),
+      pestFactor: GameEngine.round3(pestEffect),
+      machineBonus: GameEngine.round3(machineYieldBonus),
+      organicFactor: decision.organic ? 0.4 : 1.0,
+      soilDelta,
+      nutritionDelta: {
+        cropUptake: GameEngine.round2(cropUptake),
+        fertilizerAdd: GameEngine.round2(fertilizerAdd),
+        leaching: GameEngine.round2(leaching),
+        total: GameEngine.round2(nutritionTotal),
+      },
+    };
   }
 
   private static tallySeedsAndCropCounts(

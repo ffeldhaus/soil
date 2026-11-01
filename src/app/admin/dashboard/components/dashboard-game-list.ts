@@ -55,6 +55,7 @@ export class DashboardGameListComponent {
   }>();
   @Output() printAllQrCodes = new EventEmitter<Game>();
   @Output() updateDeadline = new EventEmitter<{ gameId: string; round: number; dateStr: string }>();
+  @Output() forceAdvanceRound = new EventEmitter<Game>();
 
   t(key: string): string {
     const translations: Record<string, string> = {

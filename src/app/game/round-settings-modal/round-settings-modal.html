@@ -14,9 +14,9 @@
     <div class="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
       <!-- Machines Slider -->
       <div class="space-y-2">
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
           <label class="text-white font-medium">{{ t('settings.machines') }}</label>
-          <span class="text-emerald-400 font-bold">{{ settings.machines }}</span>
+          <span class="text-emerald-400 font-bold font-mono tabular-nums">Stufe {{ settings.machines }}</span>
         </div>
         <input
           type="range"
@@ -27,68 +27,124 @@
           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
         />
         <p class="text-xs text-white">{{ t('settings.machines_desc') }}</p>
+        @if (difficulty !== 'hard') {
+          <div
+            data-testid="machines-economics-strip"
+            class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono tabular-nums bg-gray-950 border border-gray-800 rounded-lg px-2.5 py-1.5 text-slate-300"
+          >
+            <span>Investition: {{ machineInvestmentCost }} €</span>
+            <span>Wartung: {{ machineMaintenanceCost }} €/Runde</span>
+            <span class="text-emerald-400">Effizienz: +{{ machineYieldBonusPct }}%</span>
+            <span [class.text-rose-400]="machineSoilCompaction < 0" [class.text-slate-400]="machineSoilCompaction === 0">
+              Bodenqualität: {{ machineSoilCompaction }} / Parzelle
+            </span>
+          </div>
+        }
       </div>
 
       <!-- Toggles Grid -->
       <div class="grid grid-cols-1 gap-4">
         <!-- Organic -->
-        <label class="flex items-center space-x-3 cursor-pointer group">
+        <label class="flex items-start space-x-3 cursor-pointer group">
           <input
             type="checkbox"
             [(ngModel)]="settings.organic"
-            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+            class="form-checkbox mt-0.5 w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
-          <div>
-            <span class="text-white font-medium group-hover:text-white transition-colors">{{
-              t('settings.organic')
-            }}</span>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-white font-medium group-hover:text-white transition-colors">{{
+                t('settings.organic')
+              }}</span>
+              @if (difficulty !== 'hard') {
+                <span class="text-[11px] font-mono tabular-nums text-emerald-400">
+                  Prämie +{{ constants.SUBSIDIES.BIO }} € / Parzelle · Kontrolle {{ constants.EXPENSES.RUNNING.ORGANIC_CONTROL }} €
+                </span>
+              }
+            </div>
             <p class="text-xs text-gray-300">{{ t('settings.organic_desc') }}</p>
+            @if (difficulty !== 'hard') {
+              <div
+                data-testid="organic-animals-indicator"
+                class="mt-1.5 inline-flex flex-wrap items-center gap-2 text-[11px] font-mono tabular-nums px-2 py-1 rounded border"
+                [class.bg-emerald-950]="grassParcelCount >= requiredGrassParcels"
+                [class.border-emerald-600]="grassParcelCount >= requiredGrassParcels"
+                [class.text-emerald-300]="grassParcelCount >= requiredGrassParcels"
+                [class.bg-gray-950]="grassParcelCount < requiredGrassParcels"
+                [class.border-gray-800]="grassParcelCount < requiredGrassParcels"
+                [class.text-amber-300]="grassParcelCount < requiredGrassParcels"
+              >
+                <span>Organischer Dünger (Kompost & Mist): {{ grassParcelCount }} / {{ requiredGrassParcels }} Wiesen-Parzellen für 100 % Düngewirkung</span>
+                <span>· Boden +2,0</span>
+              </div>
+            }
           </div>
         </label>
 
         <!-- Fertilizer -->
-        <label class="flex items-center space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
+        <label class="flex items-start space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
           <input
             type="checkbox"
             [(ngModel)]="settings.fertilizer"
             [disabled]="settings.organic"
-            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+            class="form-checkbox mt-0.5 w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
-          <div>
-            <span class="text-white font-medium group-hover:text-white transition-colors">{{
-              t('settings.fertilizer')
-            }}</span>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-white font-medium group-hover:text-white transition-colors">{{
+                t('settings.fertilizer')
+              }}</span>
+              @if (difficulty !== 'hard') {
+                <span class="text-[11px] font-mono tabular-nums text-slate-300">
+                  {{ constants.EXPENSES.RUNNING.FERTILIZE }} € / Parzelle · Nährstoffe +{{ constants.NUTRITION.FERTILIZER_SYNTHETIC }} · Boden {{ constants.SOIL.FERTILIZER_SYNTHETIC_IMPACT }} (Überdüngung {{ constants.SOIL.SYNTHETIC_BURN_PENALTY }})
+                </span>
+              }
+            </div>
             <p class="text-xs text-gray-300">{{ t('settings.fertilizer_desc') }}</p>
           </div>
         </label>
 
         <!-- Pesticide -->
-        <label class="flex items-center space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
+        <label class="flex items-start space-x-3 cursor-pointer group" [class.opacity-50]="settings.organic">
           <input
             type="checkbox"
             [(ngModel)]="settings.pesticide"
             [disabled]="settings.organic"
-            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+            class="form-checkbox mt-0.5 w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
-          <div>
-            <span class="text-white font-medium group-hover:text-white transition-colors">{{
-              t('settings.pesticide')
-            }}</span>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-white font-medium group-hover:text-white transition-colors">{{
+                t('settings.pesticide')
+              }}</span>
+              @if (difficulty !== 'hard') {
+                <span class="text-[11px] font-mono tabular-nums text-slate-300">
+                  {{ constants.EXPENSES.RUNNING.PESTICIDE }} € / Parzelle · Boden {{ constants.SOIL.PESTICIDE_IMPACT }} (-2,0 bei Daueranwendung)
+                </span>
+              }
+            </div>
             <p class="text-xs text-gray-300">{{ t('settings.pesticide_desc') }}</p>
           </div>
         </label>
 
         <!-- Organisms (Beneficial) -->
-        <label class="flex items-center space-x-3 cursor-pointer group">
+        <label class="flex items-start space-x-3 cursor-pointer group">
           <input
             type="checkbox"
             [(ngModel)]="settings.organisms"
-            class="form-checkbox w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
+            class="form-checkbox mt-0.5 w-5 h-5 text-emerald-500 rounded border-gray-600 bg-gray-800 focus:ring-emerald-500 focus:ring-offset-gray-900"
           />
-          <div>
-            <span class="text-white font-medium group-hover:text-white transition-colors">{{
-              t('settings.organisms')
-            }}</span>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-white font-medium group-hover:text-white transition-colors">{{
+                t('settings.organisms')
+              }}</span>
+              @if (difficulty !== 'hard') {
+                <span class="text-[11px] font-mono tabular-nums text-emerald-400">
+                  {{ constants.EXPENSES.RUNNING.ORGANISMS }} € / Parzelle · Boden +{{ constants.SOIL.ORGANISMS_SOIL_BONUS }}
+                </span>
+              }
+            </div>
             <p class="text-xs text-gray-300">{{ t('settings.organisms_desc') }}</p>
           </div>
         </label>

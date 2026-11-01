@@ -34,79 +34,127 @@
       <div class="absolute inset-0 bg-black/75" (click)="toggleMobileMenu()"></div>
       <!-- Menu Content -->
       <div
-        class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900 shadow-2xl flex flex-col border-r border-gray-700 animate-slide-in-left">
-        <div class="p-6 border-b border-gray-800 flex justify-between items-center">
-          <h2 class="text-xl font-bold text-emerald-500">MENU</h2>
-          <button (click)="toggleMobileMenu()" class="text-gray-400" aria-label="Close menu">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+        class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900 shadow-2xl flex flex-col border-r border-gray-800 animate-slide-in-left">
+        <!-- Menu Header matching top HUD bar -->
+        <div class="h-10 px-4 border-b border-gray-800 flex justify-between items-center shrink-0">
+          <a [routerLink]="isResearchReplay ? '/research' : (currentUser?.isAnonymous ? '/' : '/admin')"
+            class="text-lg font-bold font-sans text-emerald-400 tracking-wider hover:text-emerald-300 transition-colors cursor-pointer">
+            SOIL
+          </a>
+          <button (click)="toggleMobileMenu()" class="p-1 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition" aria-label="Close menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-4 space-y-6">
-          <!-- Navigation -->
-          <nav class="p-4 space-y-1">
-            <div class="px-2 py-3 flex justify-center">
-              @defer (hydrate on interaction) {
+        <div class="flex-1 overflow-y-auto p-3 space-y-4">
+          <!-- Team & Achievements Button -->
+          @if (currentUser || (gameState$ | async)?.playerState) {
+            <div>
+              @if (!isEditingName) {
+                <button
+                  type="button"
+                  data-testid="mobile-team-modal-btn"
+                  class="w-full px-3 py-2 font-bold text-xs rounded-lg border transition cursor-pointer flex items-center justify-between gap-2 bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500"
+                  [title]="'Team & Auszeichnungen (' + collectedStickerIds.length + ' von ' + allStickers.length + ' erreicht)'"
+                  (click)="openTeamAndAchievementsModal(); toggleMobileMenu(); $event.stopPropagation()">
+                  <span class="font-sans truncate">{{ getDisplayName(currentUser) | uppercase }}</span>
+                  <span class="shrink-0 inline-flex items-center gap-1.5 font-mono tabular-nums text-amber-200">
+                    <span class="w-px h-3.5 bg-emerald-300/40 shrink-0" aria-hidden="true"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-amber-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <circle cx="12" cy="9" r="5" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 13.5L8 21l4-2 4 2-1.5-7.5" />
+                    </svg>
+                    <span>{{ collectedStickerIds.length }}/{{ allStickers.length }}</span>
+                  </span>
+                </button>
+              } @else {
+                <input [(ngModel)]="tempName" (keyup.enter)="saveName()" (blur)="saveName()"
+                  class="w-full bg-gray-800 text-xs text-white border border-emerald-500 rounded-lg focus:outline-none px-3 py-2" />
               }
             </div>
-            <div class="h-px bg-gray-800 mx-2 my-2"></div>
-            
-            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Einstellungen</label>
-            <div class="px-2 py-3 flex items-center justify-between">
-              <span class="text-sm text-gray-300">Geführte Tour</span>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" [checked]="!tourService.isTourDisabled()" (change)="tourService.setTourDisabled(!$any($event.target).checked)" class="sr-only peer">
-                <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-              </label>
-            </div>
-            <button (click)="tourService.resetTour(); tourService.startTour(); toggleMobileMenu()" class="w-full text-left px-4 py-2 text-xs text-emerald-500 hover:text-emerald-400 transition">
-              Tour jetzt starten
-            </button>
-            
-            <div class="h-px bg-gray-800 mx-2 my-2"></div>
-            <label
-              class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Einblendungen</label>
-            <div class="grid grid-cols-1 gap-2">
+          }
+
+          <!-- Overlays & Analysis -->
+          <div class="space-y-1.5">
+            <label class="px-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Ansichten</label>
+            <div class="flex flex-col gap-1.5">
               <button (click)="toggleLabels(); toggleMobileMenu()" [disabled]="showFinance"
-                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                class="w-full px-3 py-2 text-xs rounded-lg border transition font-bold flex items-center gap-2.5 disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
                 [class.bg-gray-300]="showLabels" [class.hover:bg-gray-200]="showLabels"
                 [class.text-gray-900]="showLabels" [class.border-gray-400]="showLabels"
                 [class.bg-gray-800]="!showLabels" [class.hover:bg-gray-700]="!showLabels"
                 [class.text-white]="!showLabels" [class.border-gray-700]="!showLabels">
-                <ng-container>Feldnamen</ng-container>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                <span>Feldnamen</span>
               </button>
+
               <button (click)="toggleSoil(); toggleMobileMenu()" [disabled]="showFinance"
-                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold text-white disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                class="w-full px-3 py-2 text-xs rounded-lg border transition font-bold text-white flex items-center gap-2.5 disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
                 [class.bg-amber-900]="showSoilOverlay" [class.hover:bg-amber-800]="showSoilOverlay"
                 [class.border-amber-700]="showSoilOverlay" [class.bg-gray-800]="!showSoilOverlay"
                 [class.hover:bg-gray-700]="!showSoilOverlay" [class.border-gray-700]="!showSoilOverlay">
-                <ng-container>Bodenqualität</ng-container>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.5C10 5 10 7.5 12 9.5c2-2 2-4.5 0-7z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 12C8.5 12 6 10 6 7c3 0 5.5 2 6 5z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 12c3.5 0 6-2 6-5-3 0-5.5 2-6 5z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.5V15" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.25c2.5-1.25 5.5-1.25 9 0s6.5 1.25 9 0" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 20c2.5-1.25 5.5-1.25 9 0s6.5 1.25 9 0" />
+                </svg>
+                <span>Bodenqualität</span>
               </button>
+
               <button (click)="toggleNutrition(); toggleMobileMenu()" [disabled]="showFinance"
-                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold text-white disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                class="w-full px-3 py-2 text-xs rounded-lg border transition font-bold text-white flex items-center gap-2.5 disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
                 [class.bg-blue-600]="showNutritionOverlay" [class.hover:bg-blue-500]="showNutritionOverlay"
                 [class.border-blue-400]="showNutritionOverlay" [class.bg-gray-800]="!showNutritionOverlay"
                 [class.hover:bg-gray-700]="!showNutritionOverlay" [class.border-gray-700]="!showNutritionOverlay">
-                <ng-container>Nährstoffe</ng-container>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4C9.8 6.8 9.8 9.5 12 11.8c2.2-2.3 2.2-5 0-7.8z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15C8.2 15 5.5 12.8 5.5 9.5c3.3 0 5.8 2.2 6.5 5.5z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15c3.8 0 6.5-2.2 6.5-5.5-3.3 0-5.8 2.2-6.5 5.5z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 11.8V20" />
+                  <circle cx="4.5" cy="5.5" r="1.35" fill="currentColor" stroke="none" />
+                  <circle cx="19.5" cy="5.5" r="1.35" fill="currentColor" stroke="none" />
+                  <circle cx="4" cy="18" r="1.35" fill="currentColor" stroke="none" />
+                  <circle cx="20" cy="18" r="1.35" fill="currentColor" stroke="none" />
+                </svg>
+                <span>Nährstoffe</span>
               </button>
+
               <button (click)="toggleHarvest(); toggleMobileMenu()" [disabled]="showFinance"
-                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+                class="w-full px-3 py-2 text-xs rounded-lg border transition font-bold flex items-center gap-2.5 disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
                 [class.bg-yellow-500]="showHarvestOverlay" [class.hover:bg-yellow-400]="showHarvestOverlay"
                 [class.text-gray-950]="showHarvestOverlay" [class.border-yellow-300]="showHarvestOverlay"
                 [class.bg-gray-800]="!showHarvestOverlay" [class.hover:bg-gray-700]="!showHarvestOverlay"
                 [class.text-white]="!showHarvestOverlay" [class.border-gray-700]="!showHarvestOverlay">
-                <ng-container>Ernte</ng-container>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 8.2C8 4.8 9.8 3.2 12 3.2s4 1.6 5.5 5" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 6.2l1.2-.8m3.8.8l-1.2-.8M11.3 4.8h1.4" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 8.8c0-.9.8-1.4 1.7-1.1 2.2.8 8.4.8 10.6 0 .9-.3 1.7.2 1.7 1.1 0 1.4-1.3 2.3-3.2 2.6-2.4.4-5.2.4-7.6 0C6.3 11.1 5 10.2 5 8.8z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.2 11c-.4 2.6-.1 5.4-.9 7.3L3.8 19.8c-.3.3 0 .7.5.7h15.4c.5 0 .8-.4.5-.7l-1.5-1.5c-.8-1.9-.5-4.7-.9-7.3" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 14.5l2.2 1.2M18 14.5l-2.2 1.2" />
+                </svg>
+                <span>Ernte</span>
               </button>
-              <button (click)="toggleFinance(); toggleMobileMenu()" [disabled]="maxRoundNumber === 0"
-                class="w-full text-left px-4 py-3 rounded-xl border transition font-bold flex items-center justify-between gap-2 disabled:cursor-default"
+
+              <button (click)="toggleFinance(); toggleMobileMenu()"
+                class="w-full px-3 py-2 text-xs rounded-lg border transition font-bold flex items-center justify-between gap-2"
                 [class.bg-gray-200]="showFinance" [class.hover:bg-white]="showFinance"
                 [class.text-gray-950]="showFinance" [class.border-gray-300]="showFinance"
-                [class.bg-gray-800]="!showFinance" [class.hover:bg-gray-700]="!showFinance && maxRoundNumber > 0"
+                [class.bg-gray-800]="!showFinance" [class.hover:bg-gray-700]="!showFinance"
                 [class.text-white]="!showFinance" [class.border-gray-700]="!showFinance">
-                <span>Finanzen</span>
+                <span class="inline-flex items-center gap-2.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  <span>Analysen</span>
+                </span>
                 @if (gameState$ | async; as gs) {
                   @if (gs.playerState; as ps) {
                     <span
@@ -120,70 +168,56 @@
                 }
               </button>
             </div>
-          </nav>
+          </div>
 
-          <!-- Game Actions Section -->
-          <div class="space-y-3">
-            <label
-              class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Aktionen</label>
-            @if ((gameState$ | async)?.game?.status !== 'finished') {
-            <button (click)="nextRound(); toggleMobileMenu()"
-              [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
-              class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl border border-emerald-500 transition shadow-lg flex items-center justify-center">
-              @if (isSubmitted) {
-              <ng-container>Warten auf
-                andere...</ng-container>
-              } @else {
-              <ng-container>Nächste
-                Runde</ng-container>
+          <!-- Game Actions & Help Section -->
+          <div class="space-y-1.5 pt-2 border-t border-gray-800">
+            <label class="px-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Aktionen</label>
+            <div class="flex flex-col gap-1.5">
+              @if ((gameState$ | async)?.game?.status !== 'finished') {
+                <button (click)="nextRound(); toggleMobileMenu()"
+                  [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber"
+                  class="w-full px-3 py-2 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg border border-emerald-500 transition flex items-center justify-center gap-2 disabled:bg-gray-800 disabled:border-gray-700 disabled:text-gray-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                  </svg>
+                  @if (isSubmitted) {
+                    <span>Warten auf andere...</span>
+                  } @else {
+                    <span>Nächste Runde</span>
+                  }
+                </button>
               }
-            </button>
-            }
-            @if ((gameState$ | async)?.game?.status === 'finished') {
-            <button (click)="showGameEndModal = true; toggleMobileMenu()"
-              class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl border border-emerald-500 transition shadow-lg flex items-center justify-center">
-              <ng-container>Spiel
-                beendet</ng-container>
-            </button>
-            }
+              @if ((gameState$ | async)?.game?.status === 'finished') {
+                <button (click)="showGameEndModal = true; toggleMobileMenu()"
+                  class="w-full px-3 py-2 text-xs bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-lg border border-amber-500 transition flex items-center justify-center">
+                  <span>Spiel beendet</span>
+                </button>
+              }
+
+              <button (click)="tourService.resetTour(); tourService.startTour(); toggleMobileMenu()"
+                class="w-full px-3 py-2 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white font-bold rounded-lg border border-gray-700 transition flex items-center gap-2.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Geführte Tour starten</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="p-4 bg-gray-950 border-t border-gray-800 space-y-4">
-          @if (user$ | async; as user) {
-          <div class="flex items-center gap-3">
-            @if (!isPlayer) {
-            <img [src]="t('user.photoURL')" alt="Profile picture" class="w-8 h-8 rounded-full border border-gray-700" />
-            }
-            <div class="flex flex-col">
-              @if (!isEditingName) {
-              <button
-                type="button"
-                data-testid="mobile-team-modal-btn"
-                class="px-3 py-1 font-bold text-xs rounded-lg border transition cursor-pointer inline-flex items-center gap-1.5 font-mono tabular-nums bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500"
-                (click)="openTeamAndAchievementsModal(); toggleMobileMenu(); $event.stopPropagation()">
-                <span>{{ getDisplayName(user) | uppercase }}</span>
-                <span>🏅 {{ collectedStickerIds.length }}/{{ allStickers.length }}</span>
-              </button>
-              } @else {
-              <input [(ngModel)]="tempName" (keyup.enter)="saveName()" (blur)="saveName()"
-                class="bg-gray-900 text-xs text-white border-b border-emerald-500 focus:outline-none w-24 px-1" />
-              }
-              <span
-                class="text-[10px] text-white">Aktiver Spieler</span>
+        <div class="p-3 bg-gray-950 border-t border-gray-800">
+          <div class="flex items-center justify-between text-[11px] text-gray-400">
+            <div class="flex items-center gap-2.5">
+              <a routerLink="/manual" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Handbuch</a>
+              <a routerLink="/info" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Hintergrund</a>
+              <a routerLink="/impressum" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Impressum</a>
             </div>
-          </div>
-          }
-
-          <div class="pt-2 flex flex-col gap-2 text-[10px] font-mono text-white border-t border-gray-800/50">
-            <a routerLink="/manual" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Handbuch</a>
-            <a routerLink="/info" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Hintergrund</a>
-            <a routerLink="/impressum" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Impressum</a>
             <a
               href="https://github.com/ffeldhaus/soil/blob/main/CHANGELOG.md"
               target="_blank"
               rel="noopener noreferrer"
-              class="mt-1 opacity-100 hover:underline transition"
+              class="font-mono hover:text-white hover:underline transition"
               >v{{ version }}</a
             >
           </div>
@@ -252,8 +286,9 @@
 
       @if (showRoundSettingsModal) {
       <app-round-settings-modal [settings]="currentRoundSettings" [config]="(gameState$ | async)?.game?.config"
-        [plantedCrops]="getPlantedCrops()" [currentRound]="history[history.length - 1]" [previousRound]="getPreviousRound(history.length - 1)" 
+        [plantedCrops]="getPlantedCrops()" [parcels]="parcels" [currentRound]="history[history.length - 1]" [previousRound]="getPreviousRound(history.length - 1)" 
         [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false"
+        [difficulty]="gameDifficulty"
         (save)="onRoundSettingsSaved($event)"
         (settingsCancelled)="cancelRoundSettings()">
       </app-round-settings-modal>
@@ -261,6 +296,7 @@
 
       @if (showPlantingModal) {
       <app-planting-modal [crops]="availableCrops" [selectedParcels]="getSelectedBaselineParcels()"
+        [difficulty]="gameDifficulty"
         (cropSelected)="onCropSelected($event)" (plantingCancelled)="onPlantingCancel()">
       </app-planting-modal>
       }
@@ -545,7 +581,8 @@
               [class.parcel-selected]="selectedIndices.has(i)"
               [selected]="isSelected(parcel.index)" [showLabels]="showLabels" [showNutrition]="showNutritionOverlay"
               [showHarvest]="showHarvestOverlay" [showSoil]="showSoilOverlay" [isReadOnly]="isReadOnly"
-              (mousedown)="onMouseDown(parcel.index, $event)" (mouseenter)="onMouseEnter(parcel.index)">
+              (mousedown)="onMouseDown(parcel.index, $event)" (mouseenter)="onMouseEnter(parcel.index)"
+              (keyboardActivate)="onParcelKeyActivate(parcel.index)">
             </app-parcel>
             }
           </div>
@@ -583,7 +620,7 @@
       } @else {
         <div class="flex-1 w-full min-h-0 pt-1 pb-8 flex items-start justify-center overflow-y-auto custom-scrollbar">
           @if (gameState$ | async; as state) {
-            <app-finance [game]="state.game" [viewingRound]="viewingRound" [playerUid]="state.playerState.uid || currentUser?.uid || ''">
+            <app-finance [game]="state.game" [viewingRound]="viewingRound" [playerUid]="state.playerState.uid || currentUser?.uid || ''" (closeFinance)="toggleFinance()">
             </app-finance>
           }
         </div>
@@ -621,7 +658,7 @@
             class="p-4 mb-4 rounded-lg bg-emerald-950 border border-emerald-500/60 text-center"
           >
             <div class="text-[11px] font-mono font-bold text-emerald-300 uppercase tracking-widest mb-1">
-              Gesamtsieger — Zukunftsfähiger Hof
+              Gesamtsieger: Zukunftsfähiger Hof
             </div>
             <div class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
               {{ overallWinner.name }}
@@ -842,7 +879,7 @@
             </form>
           } @else {
             <div class="bg-emerald-950 border border-emerald-700 rounded-lg p-3.5 text-center animate-fade-in">
-              <span class="text-emerald-400 font-bold">✨ Vielen Dank für dein Feedback!</span>
+              <span class="text-emerald-400 font-bold">Vielen Dank für dein Feedback!</span>
             </div>
           }
         </div>
@@ -887,14 +924,9 @@
           aria-labelledby="sticker-album-title"
         >
           <div class="flex items-center justify-between border-b border-gray-800 pb-3 mb-4 shrink-0">
-            <div>
-              <h2 id="sticker-album-title" class="text-xl font-bold text-white tracking-tight">
-                Team & Hof-Auszeichnungen
-              </h2>
-              <p class="text-xs text-slate-300 font-mono tabular-nums mt-0.5">
-                Freigeschaltet: {{ collectedStickerIds.length }} von {{ allStickers.length }}
-              </p>
-            </div>
+            <h2 id="sticker-album-title" class="text-xl font-bold text-white tracking-tight">
+              Team & Hof-Auszeichnungen
+            </h2>
             <button
               type="button"
               data-testid="close-team-modal-btn"
@@ -938,7 +970,7 @@
             @if (modalLeaderboard.length > 0) {
               <div data-testid="team-modal-leaderboard" class="bg-gray-950 border border-gray-800 rounded-lg p-3.5 text-left">
                 <div class="flex items-center justify-between mb-3">
-                  <h3 class="text-sm font-bold text-white tracking-tight">Hof-Rangliste — Zukunftsfähigkeit</h3>
+                  <h3 class="text-sm font-bold text-white tracking-tight">Hof-Rangliste: Zukunftsfähigkeit</h3>
                   <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Kapital + Boden</span>
                 </div>
                 <div class="space-y-1.5">
@@ -1009,7 +1041,9 @@
 
             <!-- Hof-Auszeichnungen (Stickers) -->
             <div>
-              <h3 class="text-sm font-bold text-white tracking-tight mb-2.5 text-left">Hof-Auszeichnungen</h3>
+              <h3 class="text-sm font-bold text-white tracking-tight mb-2.5 text-left">
+                Hof-Auszeichnungen <span class="font-mono tabular-nums font-normal text-slate-400">({{ collectedStickerIds.length }} von {{ allStickers.length }})</span>
+              </h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 @for (sticker of allStickers; track sticker.id) {
                   @let collected = isStickerCollected(sticker.id);
@@ -1039,7 +1073,9 @@
                           class="absolute inset-0 flex items-center justify-center text-xs bg-slate-950/60 text-slate-300"
                           aria-hidden="true"
                         >
-                          🔒
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
                         </span>
                       }
                     </div>
@@ -1114,7 +1150,7 @@
                   Steuerung & Anbau-Auswahl
                 </div>
                 <p class="leading-relaxed">
-                  <strong class="text-white">Felder bepflanzen:</strong> Klicke auf ein einzelnes Feld oder halte die Maustaste (bzw. den Finger) gedrückt und ziehe über mehrere Parzellen – du kannst das Ziehen auch direkt neben dem Acker starten.
+                  <strong class="text-white">Felder bepflanzen:</strong> Klicke auf ein einzelnes Feld oder halte die Maustaste gedrückt und ziehe über mehrere Parzellen. Du kannst das Ziehen auch direkt neben dem Acker starten.
                 </p>
                 <p class="leading-relaxed">
                   <strong class="text-white">Runde abschließen:</strong> Über <span class="font-mono text-emerald-400">Nächste Runde</span> legst du Maschinen, Düngung und Pflanzenschutz fest.

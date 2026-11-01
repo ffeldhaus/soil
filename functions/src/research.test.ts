@@ -364,6 +364,83 @@ describe('Public Research Service, API & MCP Server', () => {
       }
     });
 
+    it('prevents non-host players from reading another player targetUid or seeing other players pendingDecisions', async () => {
+      const { collectionStub } = stubResearchFirestore([]);
+      collectionStub.withArgs('users').returns({
+        doc: sandbox.stub().returns({
+          get: sandbox.stub().resolves({ exists: false }),
+        }),
+      } as any);
+      collectionStub.withArgs('games').returns({
+        doc: sandbox.stub().returns({
+          get: sandbox.stub().resolves({
+            exists: true,
+            data: () => ({
+              id: 'normal-game-1',
+              hostUid: 'teacher-uid',
+              currentRoundNumber: 0,
+              players: {
+                'player-normal-game-1-1': {
+                  uid: 'player-normal-game-1-1',
+                  displayName: 'Team 1',
+                  submittedRound: 0,
+                  pendingDecisions: { parcels: { 0: 'Potato' } },
+                },
+                'player-normal-game-1-2': {
+                  uid: 'player-normal-game-1-2',
+                  displayName: 'Team 2',
+                  submittedRound: 0,
+                  pendingDecisions: { parcels: { 0: 'Wheat' } },
+                },
+              },
+            }),
+          }),
+          collection: sandbox.stub().returns({
+            doc: sandbox.stub().returns({
+              get: sandbox.stub().resolves({ exists: false }),
+            }),
+          }),
+        }),
+      } as any);
+
+      // Player 1 trying to pass targetUid of Player 2 must be denied
+      try {
+        await internalGetGameState({
+          data: { gameId: 'normal-game-1', targetUid: 'player-normal-game-1-2' },
+          auth: { uid: 'player-normal-game-1-1', token: {} },
+        });
+        expect.fail('Should have thrown permission-denied');
+      } catch (err: any) {
+        expect(err.code).to.equal('permission-denied');
+      }
+
+      try {
+        await internalGetRoundData({
+          data: { gameId: 'normal-game-1', roundNumber: 0, targetUid: 'player-normal-game-1-2' },
+          auth: { uid: 'player-normal-game-1-1', token: {} },
+        });
+        expect.fail('Should have thrown permission-denied');
+      } catch (err: any) {
+        expect(err.code).to.equal('permission-denied');
+      }
+
+      // Player 1 fetching their own state should see their own pendingDecisions but NOT Player 2's pendingDecisions
+      const p1State = await internalGetGameState({
+        data: { gameId: 'normal-game-1' },
+        auth: { uid: 'player-normal-game-1-1', token: {} },
+      });
+      expect(p1State.game.players['player-normal-game-1-1'].pendingDecisions).to.exist;
+      expect(p1State.game.players['player-normal-game-1-2'].pendingDecisions).to.be.undefined;
+      expect(p1State.game.players['player-normal-game-1-2'].submittedRound).to.equal(0);
+
+      // Host teacher can inspect Player 2 via targetUid
+      const hostView = await internalGetGameState({
+        data: { gameId: 'normal-game-1', targetUid: 'player-normal-game-1-2' },
+        auth: { uid: 'teacher-uid', token: {} },
+      });
+      expect(hostView.playerState?.displayName).to.equal('Team 2');
+    });
+
     it('allows unauthenticated getResearchGames callable with rate limiting', async () => {
       stubResearchFirestore();
       const res = await internalGetResearchGames({ data: { page: 1, pageSize: 10 } });

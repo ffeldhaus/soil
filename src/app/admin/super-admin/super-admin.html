@@ -17,6 +17,23 @@
 
     <!-- Main Content -->
     <main class="pt-16 px-4 max-w-7xl mx-auto space-y-16 pb-12 relative portrait:px-0 portrait:max-w-none">
+      @if (errorMessage) {
+        <div
+          data-testid="superadmin-error-banner"
+          role="alert"
+          class="bg-rose-950 border border-rose-600 rounded-xl px-4 py-3 flex items-center justify-between text-sm text-rose-200"
+        >
+          <span>{{ errorMessage }}</span>
+          <button
+            type="button"
+            (click)="errorMessage = null"
+            class="text-rose-400 hover:text-white font-bold px-2"
+            aria-label="Fehlermeldung schließen"
+          >
+            &times;
+          </button>
+        </div>
+      }
       <!-- Loading Overlay -->
       @if (isLoadingData) {
         <div
@@ -1204,6 +1221,64 @@
               } @else {
                 <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
               }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Admin Ban / Delete Confirmation Modal -->
+    @if (adminActionState) {
+      <div
+        data-testid="superadmin-confirm-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75"
+        (click)="cancelAdminAction()"
+      >
+        <div
+          class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-md w-full space-y-4"
+          (click)="$event.stopPropagation()"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="superadmin-confirm-title"
+        >
+          <h3 id="superadmin-confirm-title" class="text-xl font-bold text-white">
+            @if (adminActionState.action === 'ban') {
+              Konto dauerhaft sperren
+            } @else {
+              Konto endgültig löschen
+            }
+          </h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            @if (adminActionState.action === 'ban') {
+              Gib <span class="font-mono font-bold text-orange-300">BAN</span> ein, um {{ adminActionState.user.email }} dauerhaft zu sperren.
+            } @else {
+              Gib <span class="font-mono font-bold text-red-400">DELETE</span> ein, um {{ adminActionState.user.email }} unwiderruflich zu löschen.
+            }
+          </p>
+          <input
+            type="text"
+            data-testid="superadmin-confirm-input"
+            [(ngModel)]="adminActionConfirmInput"
+            (keyup.enter)="confirmAdminAction()"
+            [placeholder]="adminActionState.action === 'ban' ? 'BAN' : 'DELETE'"
+            class="w-full px-4 py-2 bg-gray-950 border border-gray-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+          />
+          <div class="flex gap-3 pt-2">
+            <button
+              type="button"
+              (click)="cancelAdminAction()"
+              class="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition border border-gray-700"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="button"
+              data-testid="superadmin-confirm-submit-btn"
+              (click)="confirmAdminAction()"
+              [disabled]="adminActionConfirmInput !== (adminActionState.action === 'ban' ? 'BAN' : 'DELETE')"
+              class="flex-1 py-2 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold rounded-lg transition"
+            >
+              Bestätigen
             </button>
           </div>
         </div>

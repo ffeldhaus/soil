@@ -50,26 +50,94 @@ export class AdvisorService {
       return;
     }
 
-    // Check for low yields relative to base yield
+    // Check for low yields relative to base yield or dominant causal limiters from parcel.factors
     for (const [crop, amount] of crops) {
-      const config = GAME_CONSTANTS.CROPS[crop as CropType];
-      if (!config) continue;
+      this.appendCropHarvestInsight(insights, round, crop as CropType, amount);
+    }
+  }
 
-      const numParcels = round.parcelsSnapshot.filter((p) => p.crop === crop).length;
-      if (numParcels === 0) continue;
+  private appendCropHarvestInsight(insights: AdvisorInsight[], round: Round, crop: CropType, amount: number) {
+    const config = GAME_CONSTANTS.CROPS[crop];
+    if (!config) return;
 
-      const avgYieldPerParcel = amount / numParcels;
-      const relativeYield = avgYieldPerParcel / config.baseYield;
+    const cropParcels = round.parcelsSnapshot.filter((p) => p.crop === crop);
+    if (cropParcels.length === 0) return;
 
-      if (relativeYield < 0.4 && !round.result?.bioSiegel) {
-        insights.push({
-          type: 'harvest',
-          level: 'warning',
-          title: `Geringer Ertrag: ${this.getCropName(crop as CropType)}`,
-          message: `Der Ertrag bei ${this.getCropName(crop as CropType)} war in dieser Runde sehr enttäuschend.`,
-          hint: 'Schlechte Bodenqualität, Nährstoffmangel oder Schädlinge könnten die Ursache für dieses Ergebnis sein.',
-        });
-      }
+    const relativeYield = amount / cropParcels.length / config.baseYield;
+    const causalDiagnosis = this.diagnoseCropYieldLimiter(crop, cropParcels);
+    if (causalDiagnosis) {
+      insights.push({
+        type: 'harvest',
+        level: relativeYield < 0.5 ? 'danger' : 'warning',
+        title: `Ertragsverlust bei ${this.getCropName(crop)}`,
+        message: causalDiagnosis.message,
+        hint: causalDiagnosis.hint,
+      });
+    } else if (relativeYield < 0.4 && !round.result?.bioSiegel) {
+      insights.push({
+        type: 'harvest',
+        level: 'warning',
+        title: `Geringer Ertrag: ${this.getCropName(crop)}`,
+        message: `Der Ertrag bei ${this.getCropName(crop)} lag nur bei ${Math.round(relativeYield * 100)} Prozent des Basisertrags.`,
+        hint: 'Prüfe die Bodenqualität, die Nährstoffversorgung und mögliche Schädlinge auf diesen Parzellen.',
+      });
+    }
+  }
+
+  private diagnoseCropYieldLimiter(crop: CropType, cropParcels: Parcel[]): { message: string; hint: string } | null {
+    const withFactors = cropParcels.filter((p) => p.factors !== undefined);
+    if (withFactors.length === 0) return null;
+
+    const avgFactor = (selector: (p: Parcel) => number) =>
+      withFactors.reduce((sum, p) => sum + selector(p), 0) / withFactors.length;
+
+    const avgPest = avgFactor((p) => p.factors!.pestFactor);
+    const avgWeather = avgFactor((p) => p.factors!.weatherFactor);
+    const avgNutrition = avgFactor((p) => p.factors!.nutritionFactor);
+    const avgSoil = avgFactor((p) => p.factors!.soilFactor);
+    const avgOrganic = avgFactor((p) => p.factors!.organicFactor);
+
+    const limiters: Array<{ key: 'pest' | 'weather' | 'nutrition' | 'soil' | 'organic'; value: number }> = [
+      { key: 'pest', value: avgPest },
+      { key: 'weather', value: avgWeather },
+      { key: 'nutrition', value: avgNutrition },
+      { key: 'soil', value: avgSoil },
+      { key: 'organic', value: avgOrganic },
+    ];
+
+    limiters.sort((a, b) => a.value - b.value);
+    const worst = limiters[0];
+    if (!worst || worst.value >= 0.85) return null;
+
+    const lossPct = Math.round((1 - worst.value) * 100);
+    const cropName = this.getCropName(crop);
+
+    switch (worst.key) {
+      case 'pest':
+        return {
+          message: `Schädlingsbefall war der Hauptgrund für den Ertragsverlust bei ${cropName} und hat den Ertrag um ${lossPct} Prozent reduziert.`,
+          hint: 'Nützlinge, angepasster Pflanzenschutz oder eine vielfältige Fruchtfolge schützen gefährdete Kulturen.',
+        };
+      case 'weather':
+        return {
+          message: `Ungünstige Witterung war der Hauptfaktor bei ${cropName} und hat den Ertrag um ${lossPct} Prozent gemindert.`,
+          hint: 'Ein hoher Humusgehalt puffert Wetterextreme ab und stabilisiert die Erträge.',
+        };
+      case 'nutrition':
+        return {
+          message: `Unzureichende oder unausgewogene Nährstoffversorgung hat den Ertrag bei ${cropName} um ${lossPct} Prozent gedrückt.`,
+          hint: 'Passe die Düngung und den Anbau von Leguminosen gezielt an den Nährstoffbedarf der Kultur an.',
+        };
+      case 'soil':
+        return {
+          message: `Geschwächte Bodenfruchtbarkeit hat den Ertrag bei ${cropName} um ${lossPct} Prozent verringert.`,
+          hint: 'Reduziere schwere Maschinen und baue bodenaufbauende Kulturen wie Ackerbohnen, Erbsen oder Weidegras an.',
+        };
+      case 'organic':
+        return {
+          message: `Die laufende Umstellung auf ökologischen Landbau mindert den vermarktbaren Ertrag bei ${cropName} um ${lossPct} Prozent.`,
+          hint: 'Nach Abschluss der Umstellungsphase erhältst du das Bio-Siegel und höhere Verkaufspreise.',
+        };
     }
   }
 

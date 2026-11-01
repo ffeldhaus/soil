@@ -157,4 +157,16 @@ describe('Finance Component Logic', () => {
     expect(component.getActiveSeedCrops()).toEqual(['Potato']);
     expect(component.getActiveHarvestCrops()).toEqual(['Potato']);
   });
+
+  it('should compute yield percentage trajectory for cultivated crops', () => {
+    (component as any).processPlayerData();
+    const player = component.players.find((p) => p.uid === 'player1');
+    expect(player?.yieldHistory[0]).toBe(100);
+    expect(player?.yieldHistory.length).toBe(3);
+
+    component.setChartMetric('yield');
+    expect(component.getPlayerMetricHistory(player!)).toEqual(player?.yieldHistory);
+    expect(component.getMinCapital()).toBe(0);
+    expect(component.getMaxCapital()).toBeGreaterThanOrEqual(120);
+  });
 });

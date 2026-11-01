@@ -17,6 +17,23 @@
 
     <!-- Main Content -->
     <main class="pt-16 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none pb-12">
+      @if (statusMessage) {
+        <div
+          data-testid="dashboard-status-banner"
+          role="status"
+          class="bg-emerald-950 border border-emerald-600 rounded-xl px-4 py-3 flex items-center justify-between text-sm text-emerald-200"
+        >
+          <span>{{ statusMessage }}</span>
+          <button
+            type="button"
+            (click)="statusMessage = null"
+            class="text-emerald-400 hover:text-white font-bold px-2"
+            aria-label="Hinweis schließen"
+          >
+            &times;
+          </button>
+        </div>
+      }
       @if (user$ | async; as user) {
         <div class="space-y-6">
           <!-- Loading State -->
@@ -57,7 +74,6 @@
                   [disabled]="isCreatingGame"
                   class="flex-1 min-w-[250px] px-6 py-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
                 >
-                  <span class="text-2xl">🎮</span>
                   <span>{{ t('dashboard.quickStart.newDefault') }}</span>
                 </button>
 
@@ -66,7 +82,6 @@
                     (click)="joinLastGame()"
                     class="flex-1 min-w-[250px] px-6 py-4 bg-blue-800 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-colors flex items-center justify-center gap-3"
                   >
-                    <span class="text-2xl">🔄</span>
                     <span>{{ t('dashboard.quickStart.joinLast') }}</span>
                   </button>
                 }
@@ -160,6 +175,7 @@
                 (sharePlayer)="sharePlayer($event.game, $event.slot)"
                 (printAllQrCodes)="printAllQrCodes($event)"
                 (updateDeadline)="onUpdateDeadline($event)"
+                (forceAdvanceRound)="onForceAdvanceRound($event)"
               ></app-dashboard-game-list>
             </div>
 
@@ -218,6 +234,60 @@
         (closeModal)="onFeedbackClose()"
         (feedbackSubmit)="onFeedbackSubmit($event)"
       ></app-feedback-modal>
+    }
+
+    <!-- Invite Email Modal -->
+    @if (inviteModalState) {
+      <div
+        data-testid="dashboard-invite-modal"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75"
+        (click)="cancelInviteModal()"
+      >
+        <div
+          class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-5 max-w-md w-full"
+          (click)="$event.stopPropagation()"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="invite-modal-title"
+        >
+          <h3 id="invite-modal-title" class="text-lg font-bold text-white mb-2">
+            @if (inviteModalState.type === 'game') {
+              Spieldetails per E-Mail senden
+            } @else {
+              Zugangsdaten für Spieler {{ inviteModalState.playerNumber }} senden
+            }
+          </h3>
+          <p class="text-xs text-slate-300 mb-3">
+            Gib die E-Mail-Adresse ein, an die die Einladung für „{{ inviteModalState.game.name }}“ gesendet werden soll.
+          </p>
+          <input
+            type="email"
+            data-testid="invite-email-input"
+            [(ngModel)]="inviteEmailInput"
+            (keyup.enter)="confirmInviteEmail()"
+            placeholder="name@schule.de"
+            class="w-full px-3.5 py-2 bg-gray-950 border border-gray-700 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500 mb-4"
+          />
+          <div class="flex justify-end gap-2.5">
+            <button
+              type="button"
+              (click)="cancelInviteModal()"
+              class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-slate-200 text-xs font-bold rounded-lg border border-gray-700 transition"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="button"
+              data-testid="confirm-invite-email-btn"
+              [disabled]="!inviteEmailInput.trim()"
+              (click)="confirmInviteEmail()"
+              class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:text-gray-500 text-white text-xs font-bold rounded-lg border border-emerald-500 transition"
+            >
+              Senden
+            </button>
+          </div>
+        </div>
+      </div>
     }
   </div>
 </div>

@@ -501,14 +501,14 @@ export const CONTRACT_DEFINITIONS: RegionalContract[] = [
     id: 'humus-steward',
     name: 'Humus-Programm der Wasserwerke',
     description:
-      'Durchschnittliche Bodenqualität bei mindestens 100 halten und mindestens 5 Parzellen mit Tieren (Wiese) oder Brachland bewirtschaften.',
+      'Durchschnittliche Bodenqualität bei mindestens 100 halten und mindestens 5 Parzellen als Grünland mit Tieren oder als Brachland bewirtschaften.',
     reward: 4000,
   },
   {
     id: 'regional-grain',
     name: 'Mühlenvertrag Regionalgetreide',
     description:
-      'Mindestens 12 Parzellen aus mindestens 2 Getreidearten (Weizen, Roggen, Hafer, Gerste) bei einer Bodenqualität ab 95 anbauen.',
+      'Mindestens 12 Parzellen aus mindestens zwei verschiedenen Getreidearten wie Weizen, Roggen, Hafer oder Gerste bei einer Bodenqualität ab 95 anbauen.',
     reward: 3500,
   },
   {

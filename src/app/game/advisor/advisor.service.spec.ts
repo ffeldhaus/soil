@@ -129,4 +129,51 @@ describe('AdvisorService', () => {
     const nextRoundSoil = nextRoundInsights.find((i) => i.type === 'soil');
     expect(nextRoundSoil?.message).toContain('starten mit einer sehr schlechten');
   });
+
+  it('should diagnose exact causal yield limiter from parcel.factors', () => {
+    const parcels = Array(10)
+      .fill(null)
+      .map((_, i) =>
+        createMockParcel({
+          index: i,
+          crop: 'Potato',
+          yield: 120,
+          factors: {
+            baseYield: 250,
+            soilFactor: 0.98,
+            nutritionFactor: 1.0,
+            weatherFactor: 0.95,
+            pestFactor: 0.5,
+            machineBonus: 0.04,
+            organicFactor: 1.0,
+            soilDelta: {
+              cropRotation: -2,
+              humusRecovery: 0,
+              machineCompaction: -0.2,
+              fertilizerImpact: 0,
+              pesticideImpact: 0,
+              organismsImpact: 0,
+              weatherErosion: 0,
+              total: -2.2,
+            },
+            nutritionDelta: {
+              cropUptake: -20,
+              fertilizerAdd: 0,
+              leaching: 0,
+              total: -20,
+            },
+          },
+        }),
+      );
+    const round = createMockRound(1, parcels);
+    if (round.result) {
+      round.result.harvestSummary = { Potato: 1200 } as any;
+    }
+
+    const insights = service.getInsights(round);
+    const harvestInsight = insights.find((i) => i.type === 'harvest');
+    expect(harvestInsight).toBeTruthy();
+    expect(harvestInsight?.message).toContain('Schädlingsbefall war der Hauptgrund');
+    expect(harvestInsight?.message).toContain('50 Prozent');
+  });
 });

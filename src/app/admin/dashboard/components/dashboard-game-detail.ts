@@ -30,9 +30,35 @@ export class DashboardGameDetailComponent implements OnInit {
   }>();
   @Output() printAllQrCodes = new EventEmitter<Game>();
   @Output() updateDeadline = new EventEmitter<{ gameId: string; round: number; dateStr: string }>();
+  @Output() forceAdvanceRound = new EventEmitter<Game>();
 
   showDeadlineManager = false;
   selectedDeadlineRound = 1;
+  showPins = false;
+  showForceAdvanceModal = false;
+
+  togglePins() {
+    this.showPins = !this.showPins;
+  }
+
+  canForceAdvanceRound(game: Game): boolean {
+    if (!game || game.id?.startsWith('local-') || game.status === 'finished') return false;
+    const slots = this.getSlots(game);
+    return slots.some((s) => !s.isAi && s.player?.submittedRound !== game.currentRoundNumber);
+  }
+
+  openForceAdvanceModal() {
+    this.showForceAdvanceModal = true;
+  }
+
+  closeForceAdvanceModal() {
+    this.showForceAdvanceModal = false;
+  }
+
+  confirmForceAdvance() {
+    this.showForceAdvanceModal = false;
+    this.forceAdvanceRound.emit(this.game);
+  }
 
   ngOnInit() {
     this.selectedDeadlineRound = this.game.currentRoundNumber || 1;

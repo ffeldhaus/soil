@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, type OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, type OnChanges, Output } from '@angular/core';
 
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { Game, Round, RoundResult } from '../../types';
@@ -50,6 +50,9 @@ interface PlayerFinanceData {
   detailedExpenses?: DetailedExpenses;
   detailedIncome?: DetailedIncome;
   capitalHistory: number[]; // History up to currentViewingRound
+  soilHistory: number[];
+  nutritionHistory: number[];
+  yieldHistory: number[];
   profitMargin: number;
   isCurrentPlayer: boolean;
 }
@@ -98,10 +101,12 @@ export class Finance implements OnChanges {
   @Input() game!: Game;
   @Input() viewingRound = 0;
   @Input() playerUid = '';
+  @Output() closeFinance = new EventEmitter<void>();
 
   players: PlayerFinanceData[] = [];
   currentViewingRound = 0;
   availableRounds: number[] = [];
+  selectedChartMetric: 'capital' | 'soil' | 'nutrition' | 'yield' = 'capital';
   expandedSections: Record<string, boolean> = {
     decisions: false,
     seeds: false,
@@ -109,6 +114,45 @@ export class Finance implements OnChanges {
     running: false,
     harvest: false,
   };
+
+  setChartMetric(metric: 'capital' | 'soil' | 'nutrition' | 'yield') {
+    this.selectedChartMetric = metric;
+  }
+
+  private extractRoundAverage(r: Round, field: 'soil' | 'nutrition', fallback: number): number {
+    const directVal = field === 'soil' ? r.avgSoil : r.avgNutrition;
+    if (typeof directVal === 'number') return Math.round(directVal * 10) / 10;
+    if (r.parcelsSnapshot?.length) {
+      const avg = r.parcelsSnapshot.reduce((s, p) => s + (p[field] ?? 100), 0) / r.parcelsSnapshot.length;
+      return Math.round(avg * 10) / 10;
+    }
+    return Math.round(fallback * 10) / 10;
+  }
+
+  private isArableCropWithBaseYield(crop: string): boolean {
+    return crop !== 'Fallow' && crop !== 'Grass' && (GAME_CONSTANTS.CROPS[crop]?.baseYield ?? 0) > 0;
+  }
+
+  private extractRoundYieldPercentage(r: Round): number {
+    const cultivated = (r.parcelsSnapshot || []).filter((p) => this.isArableCropWithBaseYield(p.crop));
+    if (cultivated.length > 0) {
+      const sumPct = cultivated.reduce(
+        (sum, p) => sum + ((p.yield ?? 0) / GAME_CONSTANTS.CROPS[p.crop].baseYield) * 100,
+        0,
+      );
+      return Math.round(sumPct / cultivated.length);
+    }
+    const decisionCrops = Object.values(r.decision?.parcels || {}).filter((c) => this.isArableCropWithBaseYield(c));
+    if (decisionCrops.length > 0 && r.result?.harvestSummary) {
+      const uniqueCrops = Array.from(new Set(decisionCrops));
+      const weightedPctSum = uniqueCrops.reduce((sum, crop) => {
+        const totalYield = r.result!.harvestSummary[crop as keyof typeof r.result.harvestSummary] || 0;
+        return sum + (totalYield / GAME_CONSTANTS.CROPS[crop].baseYield) * 100;
+      }, 0);
+      return Math.round(weightedPctSum / decisionCrops.length);
+    }
+    return 100;
+  }
 
   ngOnChanges() {
     if (!this.game) return;
@@ -168,9 +212,15 @@ export class Finance implements OnChanges {
         // ...
         // history[N] = result of round N (start of round N+1)
         const historyData = [this.INITIAL_CAPITAL];
+        const soilData = [GAME_CONSTANTS.SOIL.START];
+        const nutritionData = [GAME_CONSTANTS.NUTRITION.START];
+        const yieldData = [100];
         player.history.forEach((r) => {
           if (r.result) {
             historyData.push(r.result.capital);
+            soilData.push(this.extractRoundAverage(r, 'soil', player.avgSoil ?? 100));
+            nutritionData.push(this.extractRoundAverage(r, 'nutrition', player.avgNutrition ?? 100));
+            yieldData.push(this.extractRoundYieldPercentage(r));
           }
         });
 
@@ -180,6 +230,9 @@ export class Finance implements OnChanges {
           uid: player.uid,
           name: player.displayName || `Player ${player.uid.substring(0, 4)}`,
           capitalHistory: historyData,
+          soilHistory: soilData,
+          nutritionHistory: nutritionData,
+          yieldHistory: yieldData,
           profitMargin: 0,
           isCurrentPlayer: player.uid === this.playerUid,
           prevResult: prevRound?.result,
@@ -333,7 +386,17 @@ export class Finance implements OnChanges {
   readonly VIEWBOX_HEIGHT = 240;
   readonly GRAPH_MARGIN = { top: 20, right: 32, bottom: 38, left: 105 };
 
+  getPlayerMetricHistory(player: PlayerFinanceData): number[] {
+    if (this.selectedChartMetric === 'soil') return player.soilHistory;
+    if (this.selectedChartMetric === 'nutrition') return player.nutritionHistory;
+    if (this.selectedChartMetric === 'yield') return player.yieldHistory;
+    return player.capitalHistory;
+  }
+
   getMinCapital(): number {
+    if (this.selectedChartMetric !== 'capital') {
+      return 0;
+    }
     let min = this.INITIAL_CAPITAL;
     this.players.forEach((p) => {
       p.capitalHistory.forEach((c) => {
@@ -346,6 +409,33 @@ export class Finance implements OnChanges {
   }
 
   getMaxCapital(): number {
+    if (this.selectedChartMetric === 'soil') {
+      let max = 100;
+      this.players.forEach((p) => {
+        p.soilHistory.forEach((v) => {
+          if (v > max) max = v;
+        });
+      });
+      return Math.ceil(max / 10) * 10;
+    }
+    if (this.selectedChartMetric === 'nutrition') {
+      let max = 120;
+      this.players.forEach((p) => {
+        p.nutritionHistory.forEach((v) => {
+          if (v > max) max = v;
+        });
+      });
+      return Math.ceil(max / 20) * 20;
+    }
+    if (this.selectedChartMetric === 'yield') {
+      let max = 120;
+      this.players.forEach((p) => {
+        p.yieldHistory.forEach((v) => {
+          if (v > max) max = v;
+        });
+      });
+      return Math.ceil(max / 20) * 20;
+    }
     let max = this.INITIAL_CAPITAL;
     this.players.forEach((p) => {
       p.capitalHistory.forEach((c) => {

@@ -1,5 +1,14 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { type AfterViewInit, Component, type ElementRef, inject, PLATFORM_ID, viewChild } from '@angular/core';
+import {
+  type AfterViewInit,
+  Component,
+  DestroyRef,
+  type ElementRef,
+  inject,
+  PLATFORM_ID,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { GAME_CONSTANTS } from '../game-constants';
@@ -25,13 +34,14 @@ import { ManualPrintModalComponent } from './components/manual-print-modal';
 export class ManualComponent implements AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       // Listen to fragment changes
-      this.route.fragment.subscribe((fragment) => {
+      this.route.fragment.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((fragment) => {
         if (fragment) {
           this.scrollToFragment(fragment);
         } else {
@@ -94,12 +104,15 @@ export class ManualComponent implements AfterViewInit {
       'manual.difficulty.hard.text':
         'Stark variierende Boden-Zonen mit Bodenwerten von 76 bis 124 und Nährstoffen von 80 bis 120, zunehmender Klimastress im Spielverlauf mit verstärkten Wetterfolgen, 10% Dispozins bei Kontoüberziehung sowie ein striktes Insolvenz-Limit ab -50.000 €.',
       'manual.weatherContracts.title': 'Wetter, Schonfrist & Regionalverträge',
-      'manual.weatherContracts.grace.title': 'Schonfrist & Wetterereignisse',
+      'manual.weatherContracts.weather.title': 'Wetter & Schädlinge',
+      'manual.weatherContracts.weather.text':
+        'Dürre, Hitzewelle, Kälte und Starkregen beeinflussen die Erträge und den Boden. Vor jeder Runde unterstützt dich eine saisonale Wettervorhersage bei der Anbauplanung, während vielfältige Fruchtfolgen den Schädlingsdruck natürlich dämpfen.',
+      'manual.weatherContracts.grace.title': 'Schonfrist',
       'manual.weatherContracts.grace.text':
-        'In den ersten 2 Runden herrscht eine Schonfrist mit garantiert normalem Wetter, damit du deine Fruchtfolge aufbauen kannst. Danach beeinflussen Dürre, Hitzewelle, Kälte und Starkregen die Erträge und den Boden. Vor jeder Runde hilft dir eine saisonale Wettervorhersage bei der Anbauplanung.',
-      'manual.weatherContracts.contracts.title': 'Regionalverträge & Förderprogramme',
+        'In den ersten 2 Runden herrscht eine Schonfrist mit garantiert normalem Wetter, damit du deine Fruchtfolge aufbauen kannst. Danach setzen witterungsbedingte Schwankungen und Extremwetterereignisse ein.',
+      'manual.weatherContracts.contracts.title': 'Regionale Verträge',
       'manual.weatherContracts.contracts.text':
-        'Ab Runde 2 werden rotierende Regionalverträge angeboten, die realen Förderprogrammen nachempfunden sind: der BMEL-Eiweißpflanzenstrategie und GAP-Öko-Regelung 2 für Leguminosen, dem kooperativen Trinkwasserschutz der Wasserwerke für Humus und Grünland, dem regionalen Mühlen-Vertragsanbau für vielfältiges Getreide sowie der GAP-Öko-Regelung 6 für den kompletten Verzicht auf chemisch-synthetische Pestizide.',
+        'Ab Runde 2 werden wechselnde Regionalverträge angeboten, die realen Förderprogrammen nachempfunden sind. Dazu gehören die Eiweißpflanzenstrategie für Leguminosen, der kooperative Trinkwasserschutz für Humus und Grünland sowie der regionale Mühlen-Vertragsanbau für vielfältiges Getreide. Ergänzt wird das Angebot durch die Öko-Regelung für den vollständigen Verzicht auf chemisch-synthetische Pestizide.',
       'manual.scoring.title': 'Zukunftsfähiger Hof & Hof-Sticker',
       'manual.scoring.viability.title': 'Zukunftsfähiger Hof & Rangliste',
       'manual.scoring.viability.text':

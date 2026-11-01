@@ -42,4 +42,16 @@ describe('RoundSettingsModal', () => {
   it('should render translations', () => {
     expect(component.t('settings.title')).toBe('Rundeneinstellungen');
   });
+
+  it('should hide helper hints when difficulty is hard', () => {
+    fixture.componentRef.setInput('difficulty', 'normal');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="machines-economics-strip"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('[data-testid="organic-animals-indicator"]')).toBeTruthy();
+
+    fixture.componentRef.setInput('difficulty', 'hard');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="machines-economics-strip"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[data-testid="organic-animals-indicator"]')).toBeNull();
+  });
 });

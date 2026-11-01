@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType, Parcel as ParcelType } from '../../types';
@@ -20,7 +20,16 @@ export class Parcel {
   @Input() showHarvest = false;
   @Input() showSoil = false;
   @Input() isReadOnly = false;
+  @Output() keyboardActivate = new EventEmitter<void>();
   readonly nonDraggableImages = true;
+
+  onKeyboardActivate(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.isReadOnly) {
+      this.keyboardActivate.emit();
+    }
+  }
 
   t(key: string): string {
     const translations: Record<string, string> = {

@@ -122,7 +122,7 @@ export class BoardHudComponent {
       'board.nav.nutrition': 'Nährstoffe',
       'board.nav.harvest': 'Ernte',
       'board.nav.soil': 'Bodenqualität',
-      'board.nav.finance': 'Finanzen',
+      'board.nav.finance': 'Analysen',
       'board.nav.options': 'Optionen',
       'board.nav.waiting': 'Warten...',
       'board.nav.nextRound': 'Nächste Runde',

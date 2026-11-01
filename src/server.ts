@@ -133,7 +133,7 @@ app.get(['/llms.txt', '/llms.txt/'], (_req, res) => {
   }
   res.send(`# SOIL – Interaktive Landwirtschaftssimulation & Lernspiel (BNE, Biologie, Geographie & Wirtschaft)
 
-> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Open-Source-Planspiel (Open Educational Resource, OER) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende ab Klasse 8 (Sekundarstufe I/II), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital – allein gegen KI-Höfe oder im Klassenzimmer-Multiplayer.
+> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Open-Source-Planspiel (Open Educational Resource, OER) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende ab Klasse 8 (Sekundarstufe I/II), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital. Gespielt wird entweder allein gegen KI-Höfe oder gemeinsam im Klassenzimmer-Multiplayer.
 
 ## Hauptseiten & Dokumentation
 
@@ -320,6 +320,43 @@ app.use('/.well-known', (_req, res) => {
  */
 let angularApp: AngularNodeAppEngine | undefined;
 
+async function ensureAngularAppInitialized(): Promise<AngularNodeAppEngine> {
+  if (angularApp) return angularApp;
+  try {
+    const { ɵsetAngularAppEngineManifest: setAngularAppEngineManifest, AngularAppEngine } = (await import(
+      '@angular/ssr'
+    )) as any;
+
+    if (AngularAppEngine) {
+      AngularAppEngine.ɵallowStaticRouteRender = true;
+    }
+
+    const manifestPath = pathToFileURL(join(serverDistFolder, 'angular-app-engine-manifest.mjs'));
+    const localeManifestPath = pathToFileURL(join(serverDistFolder, 'angular-app-manifest.mjs'));
+
+    let manifest: any;
+    try {
+      manifest = (await import(manifestPath.href)).default;
+    } catch (_e) {
+      try {
+        manifest = (await import(localeManifestPath.href)).default;
+      } catch (_e2) {
+        // Ignore if no manifest is found
+      }
+    }
+
+    if (manifest) {
+      setAngularAppEngineManifest(manifest);
+    }
+  } catch (err) {
+    console.error('Failed to initialize Angular app engine:', err);
+  }
+  angularApp = new AngularNodeAppEngine({
+    allowedHosts: ['soil.app', '*.soil.app', '*.hosted.app', '*.a.run.app', 'localhost', '127.0.0.1'],
+  });
+  return angularApp;
+}
+
 app.use('*path', async (req, res, next) => {
   // Skip Firebase reserved paths
   if (req.originalUrl.startsWith('/__/')) {
@@ -346,45 +383,12 @@ app.use('*path', async (req, res, next) => {
     }
   }
 
-  if (!angularApp) {
-    try {
-      const { ɵsetAngularAppEngineManifest: setAngularAppEngineManifest, AngularAppEngine } = (await import(
-        '@angular/ssr'
-      )) as any;
-
-      if (AngularAppEngine) {
-        AngularAppEngine.ɵallowStaticRouteRender = true;
-      }
-
-      const manifestPath = pathToFileURL(join(serverDistFolder, 'angular-app-engine-manifest.mjs'));
-      const localeManifestPath = pathToFileURL(join(serverDistFolder, 'angular-app-manifest.mjs'));
-
-      let manifest: any;
-      try {
-        manifest = (await import(manifestPath.href)).default;
-      } catch (_e) {
-        try {
-          manifest = (await import(localeManifestPath.href)).default;
-        } catch (_e2) {
-          // Ignore if no manifest is found
-        }
-      }
-
-      if (manifest) {
-        setAngularAppEngineManifest(manifest);
-      }
-    } catch (err) {
-      console.error('Failed to initialize Angular app engine:', err);
-    }
-    angularApp = new AngularNodeAppEngine({
-      allowedHosts: ['soil.app', '*.soil.app', '*.hosted.app', '*.a.run.app', 'localhost', '127.0.0.1'],
-    });
-  }
+  const engine = await ensureAngularAppInitialized();
 
   // biome-ignore lint/suspicious/noConsole: used for production logging
   console.log(`Handling request: ${req.method} ${req.originalUrl}`);
 
-  angularApp
+  engine
     .handle(req)
     .then((response) => {
       if (response) {

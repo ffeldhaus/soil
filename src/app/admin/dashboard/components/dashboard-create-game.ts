@@ -48,10 +48,9 @@ export class DashboardCreateGameComponent {
       'dashboard.createGame.rounds': 'Runden',
       'dashboard.createGame.bots': 'Davon KI-Bots',
       'dashboard.createGame.aiLevel': 'KI-Niveau',
-      'dashboard.createGame.advancedPricing': 'Fortgeschrittener Markt (Preisbildung durch Angebot & Nachfrage)',
-      'dashboard.createGame.analytics':
-        'Anonymisierte Daten für Forschung & Analyse teilen (hilft uns SOIL zu verbessern)',
-      'dashboard.createGame.advisor': 'Landwirtschaftlicher Berater (gibt Tipps nach jeder Runde)',
+      'dashboard.createGame.advancedPricing': 'Fortgeschrittener Markt durch Angebot und Nachfrage',
+      'dashboard.createGame.analytics': 'Anonymisierte Daten für Forschung und Analyse teilen',
+      'dashboard.createGame.advisor': 'Landwirtschaftlicher Berater mit Tipps nach jeder Runde',
       'dashboard.createGame.submit': '+ Neues Spiel erstellen',
       'dashboard.createGame.creating': 'Wird erstellt...',
       'dashboard.createGame.required': 'Erforderlich',
@@ -102,5 +101,9 @@ export class DashboardCreateGameComponent {
 
   get numHumanPlayers(): number {
     return this.newGameConfig.numPlayers - this.newGameConfig.numAi;
+  }
+
+  setRoundsPreset(rounds: number) {
+    this.newGameConfig.numRounds = rounds;
   }
 }

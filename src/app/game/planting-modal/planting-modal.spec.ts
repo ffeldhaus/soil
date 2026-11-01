@@ -1,4 +1,5 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { PlantingModal } from './planting-modal';
 
@@ -9,7 +10,7 @@ describe('PlantingModal', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PlantingModal],
-      providers: [],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlantingModal);
@@ -109,5 +110,62 @@ describe('PlantingModal', () => {
     expect(component.getSelectionSummary()).toBe('Auswahl: 2 Parzellen (Gemischte Vorfrucht)');
     expect(component.hasUniformPreviousCrop()).toBe(false);
     expect(fixture.nativeElement.querySelectorAll('[data-testid="crop-rotation-badge"]').length).toBe(0);
+  });
+
+  it('should open in-place manual crop overlay when clicking crop name without selecting crop', () => {
+    const { vi } = import.meta.vitest;
+    const selectSpy = vi.spyOn(component.cropSelected, 'emit');
+    fixture.componentRef.setInput('crops', ['Wheat', 'Fallow']);
+    fixture.detectChanges();
+
+    const trigger = fixture.nativeElement.querySelector('[data-testid="crop-manual-trigger-wheat"]') as HTMLElement;
+    expect(trigger).toBeTruthy();
+    trigger.click();
+    fixture.detectChanges();
+
+    expect(selectSpy).not.toHaveBeenCalled();
+    expect(component.selectedManualCrop?.id).toBe('Wheat');
+    expect(fixture.nativeElement.querySelector('[data-testid="planting-manual-crop-overlay"]')).toBeTruthy();
+
+    const closeBtn = fixture.nativeElement.querySelector(
+      '[data-testid="close-manual-crop-overlay-btn"]',
+    ) as HTMLElement;
+    expect(closeBtn).toBeTruthy();
+    closeBtn.click();
+    fixture.detectChanges();
+    expect(component.selectedManualCrop).toBeNull();
+  });
+
+  it('should hide parcel causal strip when difficulty is hard', () => {
+    const mockFactors = {
+      baseYield: 85,
+      soilFactor: 1,
+      nutritionFactor: 1,
+      weatherFactor: 1,
+      pestFactor: 1,
+      machineBonus: 0,
+      organicFactor: 1,
+      soilDelta: {
+        cropRotation: 0,
+        humusRecovery: 0,
+        machineCompaction: 0,
+        fertilizerImpact: 0,
+        pesticideImpact: 0,
+        organismsImpact: 0,
+        weatherErosion: 0,
+        total: 0,
+      },
+      nutritionDelta: { cropUptake: 0, fertilizerAdd: 0, leaching: 0, total: 0 },
+    };
+    fixture.componentRef.setInput('selectedParcels', [
+      { index: 0, crop: 'Wheat', soil: 100, nutrition: 100, factors: mockFactors },
+    ]);
+    fixture.componentRef.setInput('difficulty', 'normal');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="parcel-causal-strip"]')).toBeTruthy();
+
+    fixture.componentRef.setInput('difficulty', 'hard');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="parcel-causal-strip"]')).toBeNull();
   });
 });

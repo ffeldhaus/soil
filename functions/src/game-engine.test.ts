@@ -463,4 +463,51 @@ describe('GameEngine', () => {
     expect(seq1[1]).to.deep.equal({ weather: 'Normal', vermin: [] });
     expect(seq1).to.not.deep.equal(seqDifferent);
   });
+
+  it('should populate ParcelRoundFactors (factors) with causal yield, soilDelta, and nutritionDelta breakdowns', () => {
+    const prevParcels = GameEngine.createInitialParcels('easy');
+    prevParcels[0].crop = 'Fieldbean';
+    const prevRound: Round = {
+      number: 1,
+      parcelsSnapshot: prevParcels,
+      avgSoil: 100,
+      avgNutrition: 100,
+      decision: { parcels: {} } as any,
+    };
+
+    const parcels: Record<number, any> = {};
+    for (let i = 0; i < 40; i++) parcels[i] = i === 0 ? 'Wheat' : 'Fallow';
+
+    const round = GameEngine.calculateRound(
+      2,
+      prevRound,
+      {
+        machines: 2,
+        organic: false,
+        fertilizer: true,
+        pesticide: true,
+        organisms: true,
+        parcels,
+      },
+      { weather: 'Drought', vermin: ['aphid-cereal'] },
+      100000,
+    );
+
+    const p0 = round.parcelsSnapshot[0];
+    expect(p0.factors).to.exist;
+    expect(p0.factors!.baseYield).to.equal(85);
+    expect(p0.factors!.soilFactor).to.equal(1);
+    expect(p0.factors!.nutritionFactor).to.equal(1);
+    expect(p0.factors!.weatherFactor).to.be.lessThan(1);
+    expect(p0.factors!.pestFactor).to.equal(0.95);
+    expect(p0.factors!.organicFactor).to.equal(1);
+    expect(p0.factors!.soilDelta.cropRotation).to.be.greaterThan(0);
+    expect(p0.factors!.soilDelta.humusRecovery).to.be.lessThan(0);
+    expect(p0.factors!.soilDelta.fertilizerImpact).to.be.lessThan(0);
+    expect(p0.factors!.soilDelta.pesticideImpact).to.be.lessThan(0);
+    expect(p0.factors!.soilDelta.organismsImpact).to.be.greaterThan(0);
+    expect(p0.factors!.soilDelta.weatherErosion).to.be.lessThan(0);
+    expect(p0.factors!.nutritionDelta.fertilizerAdd).to.be.greaterThan(0);
+    expect(p0.factors!.nutritionDelta.cropUptake).to.be.lessThan(0);
+  });
 });

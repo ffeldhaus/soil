@@ -57,7 +57,7 @@ export class Board implements OnInit, OnDestroy {
       'board.nav.nutrition': 'Nährstoffe',
       'board.nav.harvest': 'Ernte',
       'board.nav.soil': 'Bodenqualität',
-      'board.nav.finance': 'Finanzen',
+      'board.nav.finance': 'Analysen',
       'board.nav.waiting': 'Warten...',
       'board.nav.nextRound': 'Nächste Runde',
       'board.logout': 'Abmelden',
@@ -318,7 +318,7 @@ export class Board implements OnInit, OnDestroy {
       .catch((error) => {
         this.isSubmittingFeedback = false;
         console.error('Failed to submit feedback:', error);
-        alert('Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.');
+        this.errorMessage = 'Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.';
       });
   }
 
@@ -743,6 +743,12 @@ export class Board implements OnInit, OnDestroy {
     this.updateSelection(index);
     event.preventDefault(); // Prevent native drag to ensure custom selection works
     event.stopPropagation();
+  }
+
+  onParcelKeyActivate(index: number) {
+    if (this.isReadOnly) return;
+    this.selectedIndices = new Set([index]);
+    this.showPlantingModal = true;
   }
 
   onMouseEnter(index: number) {

@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { GAME_CONSTANTS } from '../../game-constants';
 import type { CropType } from '../../types';
 
-interface CropConfig {
+export interface CropConfig {
   id: CropType;
   name?: string;
   image: string;
@@ -175,19 +175,21 @@ export class ManualCropCardComponent implements OnChanges {
 
     if (direction === 'previous') {
       Object.keys(matrix).forEach((prev) => {
-        const quality = matrix[prev as CropType][currentCrop];
-        if (prev !== 'Grass' && prev !== 'Fallow') {
+        const quality = matrix[prev as CropType]?.[currentCrop];
+        if (quality && prev !== 'Grass' && prev !== 'Fallow') {
           results.push({ id: prev, quality });
         }
       });
     } else {
       const nextOptions = matrix[currentCrop];
-      Object.keys(nextOptions).forEach((next) => {
-        const quality = nextOptions[next as CropType];
-        if (next !== 'Grass' && next !== 'Fallow') {
-          results.push({ id: next, quality });
-        }
-      });
+      if (nextOptions) {
+        Object.keys(nextOptions).forEach((next) => {
+          const quality = nextOptions[next as CropType];
+          if (quality && next !== 'Grass' && next !== 'Fallow') {
+            results.push({ id: next, quality });
+          }
+        });
+      }
     }
     return results.sort((a, b) => {
       const score = { good: 3, ok: 2, bad: 1 };

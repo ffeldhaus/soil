@@ -4,48 +4,105 @@
     <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <div class="flex items-center gap-2.5">
-          <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">Finanzbericht</h2>
+          <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">Analysen</h2>
           <span class="px-2 py-0.5 rounded bg-gray-950 border border-gray-800 text-xs font-mono tabular-nums text-emerald-400 font-bold">
             Runde {{ currentViewingRound }}
           </span>
         </div>
         <p class="text-gray-300 mt-1 text-xs md:text-sm leading-relaxed">
-          Einnahmen, Ausgaben und Kapitalentwicklung deines Hofs im Vergleich der Runden.
+          Finanzen, Bodenqualität, Nährstoffe und Ernteerträge deines Hofs im Vergleich der Runden.
         </p>
       </div>
 
-      @if (availableRounds.length > 0) {
-        <div class="flex items-center flex-wrap gap-1.5" data-testid="finance-round-switcher">
-          <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400 mr-1">Runde:</span>
-          @for (r of availableRounds; track r) {
-            <button
-              type="button"
-              (click)="setRound(r)"
-              [attr.data-testid]="'finance-round-pill-' + r"
-              class="px-2.5 py-1 rounded-md text-xs font-mono tabular-nums font-bold border transition cursor-pointer"
-              [class.bg-emerald-600]="currentViewingRound === r"
-              [class.text-white]="currentViewingRound === r"
-              [class.border-emerald-500]="currentViewingRound === r"
-              [class.bg-gray-950]="currentViewingRound !== r"
-              [class.text-gray-300]="currentViewingRound !== r"
-              [class.border-gray-800]="currentViewingRound !== r"
-              [class.hover:border-gray-600]="currentViewingRound !== r"
-            >
-              R{{ r }}
-            </button>
-          }
-        </div>
-      }
+      <div class="flex items-center flex-wrap gap-2">
+        @if (availableRounds.length > 0) {
+          <div class="flex items-center flex-wrap gap-1.5" data-testid="finance-round-switcher">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400 mr-1">Runde:</span>
+            @for (r of availableRounds; track r) {
+              <button
+                type="button"
+                (click)="setRound(r)"
+                [attr.data-testid]="'finance-round-pill-' + r"
+                class="px-2.5 py-1 rounded-md text-xs font-mono tabular-nums font-bold border transition cursor-pointer"
+                [class.bg-emerald-600]="currentViewingRound === r"
+                [class.text-white]="currentViewingRound === r"
+                [class.border-emerald-500]="currentViewingRound === r"
+                [class.bg-gray-950]="currentViewingRound !== r"
+                [class.text-gray-300]="currentViewingRound !== r"
+                [class.border-gray-800]="currentViewingRound !== r"
+                [class.hover:border-gray-600]="currentViewingRound !== r"
+              >
+                R{{ r }}
+              </button>
+            }
+          </div>
+        }
+        <button
+          type="button"
+          (click)="closeFinance.emit()"
+          class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white text-xs font-bold border border-gray-700 transition cursor-pointer"
+        >
+          Zurück zum Acker
+        </button>
+      </div>
     </div>
 
-    <!-- Capital History Chart -->
+    <!-- Capital & Ecology History Chart -->
+    @if (availableRounds.length === 0) {
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 shadow-lg text-xs sm:text-sm text-gray-300">
+        Noch keine Runde abgeschlossen. Sobald du die erste Runde über den grünen Doppelpfeil oben rechts auswertest, erscheinen hier die Verlaufsgraphen für Kapital, Bodenqualität, Nährstoffe und Ernteertrag sowie die detaillierte Gewinn- und Verlustrechnung.
+      </div>
+    }
     @if (availableRounds.length > 0) {
       <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 shadow-lg flex flex-col">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-3">
-          <div class="flex items-center gap-2">
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider">
-              Kapitalverlauf (Startkapital: 100.000 €)
-            </h3>
+          <div class="flex flex-wrap items-center gap-2">
+            <div data-testid="finance-chart-metric-tabs" class="inline-flex rounded-lg bg-gray-950 border border-gray-800 p-1 gap-1">
+              <button
+                type="button"
+                data-testid="chart-metric-capital"
+                (click)="setChartMetric('capital')"
+                class="px-2.5 py-1 rounded text-xs font-bold transition-colors cursor-pointer"
+                [class.bg-emerald-600]="selectedChartMetric === 'capital'"
+                [class.text-white]="selectedChartMetric === 'capital'"
+                [class.text-gray-300]="selectedChartMetric !== 'capital'"
+              >
+                Kapital (€)
+              </button>
+              <button
+                type="button"
+                data-testid="chart-metric-soil"
+                (click)="setChartMetric('soil')"
+                class="px-2.5 py-1 rounded text-xs font-bold transition-colors cursor-pointer"
+                [class.bg-emerald-600]="selectedChartMetric === 'soil'"
+                [class.text-white]="selectedChartMetric === 'soil'"
+                [class.text-gray-300]="selectedChartMetric !== 'soil'"
+              >
+                Ø Bodenqualität (%)
+              </button>
+              <button
+                type="button"
+                data-testid="chart-metric-nutrition"
+                (click)="setChartMetric('nutrition')"
+                class="px-2.5 py-1 rounded text-xs font-bold transition-colors cursor-pointer"
+                [class.bg-emerald-600]="selectedChartMetric === 'nutrition'"
+                [class.text-white]="selectedChartMetric === 'nutrition'"
+                [class.text-gray-300]="selectedChartMetric !== 'nutrition'"
+              >
+                Ø Nährstoffe (%)
+              </button>
+              <button
+                type="button"
+                data-testid="chart-metric-yield"
+                (click)="setChartMetric('yield')"
+                class="px-2.5 py-1 rounded text-xs font-bold transition-colors cursor-pointer"
+                [class.bg-emerald-600]="selectedChartMetric === 'yield'"
+                [class.text-white]="selectedChartMetric === 'yield'"
+                [class.text-gray-300]="selectedChartMetric !== 'yield'"
+              >
+                Ø Ernteertrag (%)
+              </button>
+            </div>
           </div>
           <!-- Legend -->
           <div class="flex flex-wrap gap-3 text-xs font-bold">
@@ -103,7 +160,11 @@
                 class="fill-gray-300 text-[11px] font-bold font-mono tabular-nums"
                 text-anchor="end"
               >
-                {{ getGridCapital(line) | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                @if (selectedChartMetric === 'capital') {
+                  {{ getGridCapital(line) | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                } @else {
+                  {{ getGridCapital(line) | number: '1.0-0' }}%
+                }
               </text>
             }
 
@@ -156,15 +217,16 @@
             <!-- Data Lines & Points -->
             @for (p of players; track p.uid; let idx = $index) {
               @let color = getPlayerColor(p, idx);
+              @let metricHistory = getPlayerMetricHistory(p);
               @if (p.isCurrentPlayer) {
                 <path
-                  [attr.d]="getGraphAreaPath(p.capitalHistory)"
+                  [attr.d]="getGraphAreaPath(metricHistory)"
                   fill="url(#currentPlayerArea)"
                 />
               }
 
               <path
-                [attr.d]="getGraphPath(p.capitalHistory)"
+                [attr.d]="getGraphPath(metricHistory)"
                 fill="none"
                 [attr.stroke]="color"
                 [attr.stroke-width]="p.isCurrentPlayer ? 3.5 : 2.25"
@@ -174,7 +236,7 @@
                 stroke-linejoin="round"
               />
 
-              @for (point of getGraphPoints(p.capitalHistory); track $index) {
+              @for (point of getGraphPoints(metricHistory); track $index) {
                 <g class="cursor-pointer" (click)="setRound(point.round)">
                   <circle
                     [attr.cx]="point.x"
@@ -184,7 +246,11 @@
                     stroke="#030712"
                     stroke-width="1.5"
                   >
-                    <title>{{ p.name }}: {{ point.val | currency: 'EUR' : 'symbol' : '1.0-0' }}</title>
+                    @if (selectedChartMetric === 'capital') {
+                      <title>{{ p.name }}: {{ point.val | currency: 'EUR' : 'symbol' : '1.0-0' }}</title>
+                    } @else {
+                      <title>{{ p.name }}: {{ point.val | number: '1.0-1' }}%</title>
+                    }
                   </circle>
                 </g>
               }

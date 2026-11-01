@@ -1,5 +1,15 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, type OnDestroy, type OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  NgZone,
+  type OnDestroy,
+  type OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import type { Subscription } from 'rxjs';
@@ -166,6 +176,7 @@ export class Dashboard implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+  private destroyRef = inject(DestroyRef);
 
   user$ = this.authService.user$;
   userStatus: UserStatus | null = null; // Contains role and status
@@ -173,6 +184,9 @@ export class Dashboard implements OnInit, OnDestroy {
 
   isLoading = true; // Initial loading state for auth check
   showFeedbackModal = false;
+  statusMessage: string | null = null;
+  inviteModalState: { type: 'game' | 'player'; game: Game; playerNumber?: number } | null = null;
+  inviteEmailInput = '';
 
   onFeedbackClose() {
     this.showFeedbackModal = false;
@@ -187,7 +201,7 @@ export class Dashboard implements OnInit, OnDestroy {
     try {
       await this.gameService.submitFeedback(feedback);
       this.showFeedbackModal = false;
-      alert('Vielen Dank für dein Feedback!');
+      this.statusMessage = 'Vielen Dank für dein Feedback!';
     } catch (e: unknown) {
       const error = e as Error;
       this.errorMessage = `Failed to submit feedback: ${error.message}`;
@@ -292,7 +306,7 @@ export class Dashboard implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    this.authService.user$.subscribe(async (user) => {
+    this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(async (user) => {
       if (user) {
         // Reset state for new user
         this.userStatus = null;
@@ -342,7 +356,7 @@ export class Dashboard implements OnInit, OnDestroy {
     });
 
     // Handle query params for notifications (e.g., from email links)
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const gameId = params.gameId;
       if (gameId) {
         this.expandedGameId = gameId;
@@ -664,19 +678,12 @@ export class Dashboard implements OnInit, OnDestroy {
         });
         return;
       } catch (err) {
-        console.error('Web Share failed, falling back to prompt:', err);
+        console.error('Web Share failed, falling back to modal:', err);
       }
     }
 
-    const email = prompt(`Enter email address to send game details:`);
-    if (!email) return;
-
-    try {
-      await this.gameService.sendGameInvite(game.id, email);
-      alert('Invite sent successfully!');
-    } catch (e: unknown) {
-      this.errorMessage = `Failed to send invite: ${(e as Error).message}`;
-    }
+    this.inviteEmailInput = '';
+    this.inviteModalState = { type: 'game', game };
   }
 
   async sharePlayer(
@@ -702,18 +709,46 @@ export class Dashboard implements OnInit, OnDestroy {
         });
         return;
       } catch (err) {
-        console.error('Web Share failed, falling back to prompt:', err);
+        console.error('Web Share failed, falling back to modal:', err);
       }
     }
 
-    const email = prompt(`Enter email address for Player ${slot.number}:`);
-    if (!email) return;
+    this.inviteEmailInput = '';
+    this.inviteModalState = { type: 'player', game, playerNumber: slot.number };
+  }
+
+  cancelInviteModal() {
+    this.inviteModalState = null;
+    this.inviteEmailInput = '';
+  }
+
+  async confirmInviteEmail() {
+    const state = this.inviteModalState;
+    const email = this.inviteEmailInput.trim();
+    if (!state || !email) return;
+
+    this.inviteModalState = null;
+    this.inviteEmailInput = '';
 
     try {
-      await this.gameService.sendPlayerInvite(game.id, slot.number, email, window.location.origin);
-      alert('Invite sent successfully!');
+      if (state.type === 'game') {
+        await this.gameService.sendGameInvite(state.game.id, email);
+      } else if (state.playerNumber !== undefined) {
+        await this.gameService.sendPlayerInvite(state.game.id, state.playerNumber, email, window.location.origin);
+      }
+      this.statusMessage = 'Einladung erfolgreich gesendet!';
     } catch (e: unknown) {
       this.errorMessage = `Failed to send invite: ${(e as Error).message}`;
+    }
+  }
+
+  async onForceAdvanceRound(game: Game) {
+    try {
+      await this.gameService.forceAdvanceRound(game.id);
+      this.statusMessage = 'Runde wurde für alle ausgewertet.';
+      await this.loadGames();
+    } catch (e: unknown) {
+      this.errorMessage = `Runde konnte nicht ausgewertet werden: ${(e as Error).message}`;
     }
   }
 

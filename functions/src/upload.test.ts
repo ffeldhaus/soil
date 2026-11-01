@@ -1,17 +1,28 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { db, internalSubmitFeedback, internalUploadFinishedGame, sendWeeklyActivityDigest } from './index';
+import {
+  buildDefaultContinuationDecision,
+  db,
+  enforceCallableRateLimit,
+  internalForceAdvanceRound,
+  internalSubmitFeedback,
+  internalUploadFinishedGame,
+  sendWeeklyActivityDigest,
+} from './index';
 import { mailService } from './mail.service';
+import { resetRateLimitStore } from './research.service';
 
 describe('Upload Logic Security', () => {
   let sandbox: sinon.SinonSandbox;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
+    resetRateLimitStore();
   });
 
   afterEach(() => {
     sandbox.restore();
+    resetRateLimitStore();
   });
 
   it('should reject games without local- prefix', async () => {
@@ -269,5 +280,120 @@ describe('Upload Logic Security', () => {
       '[SOIL] Wochenbericht: 1 abgeschlossene Spiele, 1 neues Feedback',
     );
     expect(sendEmailStub.firstCall.args[0].text).to.contain('lehrer@gymnasium.de');
+  });
+
+  it('should enforce per-IP rate limits on sensitive callables', () => {
+    const req = { rawRequest: { ip: '198.51.100.42' } };
+    for (let i = 0; i < 5; i++) {
+      enforceCallableRateLimit(req, 'submitFeedback', 5);
+    }
+    try {
+      enforceCallableRateLimit(req, 'submitFeedback', 5);
+      expect.fail('Should have thrown resource-exhausted');
+    } catch (err: any) {
+      expect(err.code).to.equal('resource-exhausted');
+    }
+  });
+
+  it('should build continuation decisions and force-advance round for host admin', async () => {
+    const draftPlayer = {
+      pendingDecisions: {
+        machines: 2,
+        organic: true,
+        fertilizer: false,
+        pesticide: false,
+        organisms: true,
+        parcels: { 0: 'Fieldbean', 1: 'Pea' },
+      },
+      history: [],
+    };
+    const contWithDraft = buildDefaultContinuationDecision(draftPlayer, {
+      number: 0,
+      parcelsSnapshot: Array.from({ length: 40 }, (_, i) => ({
+        index: i,
+        crop: i === 2 ? 'Wheat' : 'Fallow',
+        soil: 100,
+        nutrition: 100,
+      })),
+    } as any);
+    expect(contWithDraft.machines).to.equal(2);
+    expect(contWithDraft.organic).to.be.true;
+    expect(contWithDraft.parcels[0]).to.equal('Fieldbean');
+    expect(contWithDraft.parcels[2]).to.equal('Wheat');
+
+    const idlePlayer = { history: [] };
+    const contIdle = buildDefaultContinuationDecision(idlePlayer, {
+      number: 0,
+      parcelsSnapshot: Array.from({ length: 40 }, (_, i) => ({
+        index: i,
+        crop: i < 10 ? 'Barley' : 'Fallow',
+        soil: 100,
+        nutrition: 100,
+      })),
+    } as any);
+    expect(contIdle.machines).to.equal(0);
+    expect(contIdle.fertilizer).to.be.false;
+    expect(contIdle.parcels[0]).to.equal('Barley');
+    expect(contIdle.parcels[15]).to.equal('Fallow');
+
+    // Non-host should be rejected by internalForceAdvanceRound
+    const collectionStub = sandbox.stub(db, 'collection');
+    collectionStub.withArgs('users').returns({
+      doc: sandbox.stub().returns({
+        get: sandbox.stub().resolves({ exists: false }),
+      }),
+    } as any);
+
+    const mockGameRef = {
+      id: 'game-force-1',
+      collection: sandbox.stub().returns({
+        doc: sandbox.stub().returns({}),
+      }),
+    };
+    collectionStub.withArgs('games').returns({
+      doc: sandbox.stub().returns(mockGameRef),
+    } as any);
+
+    sandbox.stub(db, 'runTransaction').callsFake(async (cb) => {
+      const tx = {
+        get: sandbox.stub().callsFake(async (ref: any) => {
+          if (ref === mockGameRef) {
+            return {
+              exists: true,
+              data: () => ({
+                id: 'game-force-1',
+                hostUid: 'teacher-1',
+                currentRoundNumber: 0,
+                settings: { length: 5, difficulty: 'normal' },
+                players: {
+                  'player-game-force-1-1': { uid: 'player-game-force-1-1', isAi: false, capital: 100000, history: [] },
+                },
+              }),
+            };
+          }
+          return { exists: false };
+        }),
+        set: sandbox.stub(),
+        update: sandbox.stub(),
+      };
+      return await cb(tx as any);
+    });
+
+    try {
+      await internalForceAdvanceRound({
+        data: { gameId: 'game-force-1' },
+        auth: { uid: 'player-game-force-1-1', token: {} },
+      });
+      expect.fail('Non-host should not be able to force-advance round');
+    } catch (err: any) {
+      expect(err.code).to.equal('permission-denied');
+    }
+
+    const hostRes = await internalForceAdvanceRound({
+      data: { gameId: 'game-force-1' },
+      auth: { uid: 'teacher-1', token: {} },
+    });
+    expect(hostRes.status).to.equal('calculated');
+    expect(hostRes.number).to.equal(1);
   });
 });

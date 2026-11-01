@@ -153,6 +153,13 @@ export class GameService {
       'updateRoundDeadline',
     );
   }
+  private get forceAdvanceRoundFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<{ gameId: string }, { status: string; nextRound?: Round }>(
+      this.functions,
+      'forceAdvanceRound',
+    );
+  }
   private get submitFeedbackFn() {
     if (!this.functions || typeof window === 'undefined') return null;
     return httpsCallable<{ category: string; rating: number; comment: string; email?: string }, void>(
@@ -785,6 +792,21 @@ export class GameService {
       await fn({ gameId, playerNumber, type, aiLevel });
     } catch (error: unknown) {
       if (window.console) console.error('Failed to update player type', error);
+      throw error;
+    }
+  }
+
+  async forceAdvanceRound(gameId: string): Promise<{ status: string; nextRound?: Round }> {
+    if (this.isTestMode()) {
+      return { status: 'advanced' };
+    }
+    try {
+      const fn = this.forceAdvanceRoundFn;
+      if (!fn) throw new Error('Functions not available');
+      const result = await fn({ gameId });
+      return result.data;
+    } catch (error: unknown) {
+      if (window.console) console.error('Failed to force advance round:', error);
       throw error;
     }
   }

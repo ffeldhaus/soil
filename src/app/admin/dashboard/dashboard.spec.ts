@@ -191,14 +191,12 @@ describe('Dashboard Component', () => {
 
   it('should handle feedback submission', async () => {
     const feedback = { category: 'other' as any, rating: 5, comment: 'Test' };
-    // Mock alert
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
     await component.onFeedbackSubmit(feedback);
 
     expect(gameServiceMock.submitFeedback).toHaveBeenCalledWith(feedback);
     expect(component.showFeedbackModal).toBe(false);
-    expect(alertSpy).toHaveBeenCalled();
+    expect(component.statusMessage).toBe('Vielen Dank für dein Feedback!');
   });
 
   it('should print all QR codes', async () => {

@@ -50,8 +50,8 @@ export class TourService {
     },
     {
       id: 'stats',
-      title: 'Dein Kapital',
-      text: 'Hier siehst du dein Kapital. Wirtschafte klug und achte auf die Gesundheit deines Bodens, um langfristig erfolgreich zu sein.',
+      title: 'Analysen & Kapital',
+      text: 'Hier siehst du dein Kapital und öffnest die Hof-Analysen. Wirtschafte klug und achte auf die Gesundheit deines Bodens, um langfristig erfolgreich zu sein.',
       attachTo: {
         element: '[data-tour="hud-stats"]',
         on: 'bottom',
@@ -232,7 +232,7 @@ export class TourService {
     {
       id: 'overlays',
       title: 'Informationen',
-      text: 'Nutze diese Ansichten, um die Bodengesundheit und Nährstoffe im Blick zu behalten – die Grundlage deines Erfolgs.',
+      text: 'Nutze diese Ansichten, um Bodengesundheit und Nährstoffe jederzeit im Blick zu behalten. Sie bilden die Grundlage für deinen Erfolg.',
       attachTo: {
         element: () => {
           const desktop = document.querySelector('[data-tour="desktop-overlays"]');

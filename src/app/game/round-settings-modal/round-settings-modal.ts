@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import type { CropType, GameConfig, Round } from '../../types';
+import { GAME_CONSTANTS } from '../../game-constants';
+import type { CropType, GameConfig, Parcel, Round } from '../../types';
 import { GameAdvisorComponent } from '../advisor/advisor';
 
 export interface RoundSettings {
@@ -22,9 +23,11 @@ export interface RoundSettings {
 export class RoundSettingsModal {
   @Input() config?: GameConfig;
   @Input() plantedCrops: CropType[] = [];
+  @Input() parcels: Parcel[] = [];
   @Input() currentRound?: Round;
   @Input() previousRound?: Round;
   @Input() advisorEnabled = true;
+  @Input() difficulty: 'easy' | 'normal' | 'hard' = 'normal';
   @Input() settings: RoundSettings = {
     machines: 0,
     organic: false,
@@ -36,6 +39,42 @@ export class RoundSettingsModal {
 
   @Output() save = new EventEmitter<RoundSettings>();
   @Output() settingsCancelled = new EventEmitter<void>();
+
+  readonly constants = GAME_CONSTANTS;
+  readonly Math = Math;
+
+  get grassParcelCount(): number {
+    return (this.parcels || []).filter((p) => p.crop === 'Grass').length;
+  }
+
+  get requiredGrassParcels(): number {
+    const total = this.parcels?.length || 40;
+    return Math.round(total * GAME_CONSTANTS.NUTRITION.ANIMALS_REQUIRED_RATIO);
+  }
+
+  get activeParcelCount(): number {
+    return (this.parcels || []).filter((p) => p.crop !== 'Fallow' && p.crop !== 'Grass').length;
+  }
+
+  get machineInvestmentCost(): number {
+    const level = Math.max(0, Math.min(4, this.settings.machines || 0));
+    return GAME_CONSTANTS.MACHINE_FACTORS.INVESTMENT_COST[level] ?? 0;
+  }
+
+  get machineMaintenanceCost(): number {
+    const level = Math.max(0, Math.min(4, this.settings.machines || 0));
+    return GAME_CONSTANTS.MACHINE_FACTORS.MAINTENANCE_COST[level] ?? 0;
+  }
+
+  get machineYieldBonusPct(): number {
+    const level = Math.max(0, Math.min(4, this.settings.machines || 0));
+    return Math.round((GAME_CONSTANTS.MACHINE_FACTORS.YIELD_BONUS[level] ?? 0) * 100);
+  }
+
+  get machineSoilCompaction(): number {
+    const level = Math.max(0, Math.min(4, this.settings.machines || 0));
+    return GAME_CONSTANTS.SOIL.MACHINE_IMPACT[level] ?? 0;
+  }
 
   t(key: string): string {
     const translations: Record<string, string> = {

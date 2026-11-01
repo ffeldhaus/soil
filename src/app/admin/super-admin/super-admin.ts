@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, type OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, NgZone, type OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -21,6 +22,7 @@ export class SuperAdminComponent implements OnInit {
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+  private destroyRef = inject(DestroyRef);
 
   t(key: string): string {
     const translations: Record<string, string> = {
@@ -126,7 +128,7 @@ export class SuperAdminComponent implements OnInit {
   expandedGames = new Set<string>(); // gameIds
 
   async ngOnInit() {
-    this.authService.user$.subscribe((user) => {
+    this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
       if (user) {
         if (localStorage.getItem('soil_test_mode') === 'true') {
           this.loadData();
@@ -224,7 +226,7 @@ export class SuperAdminComponent implements OnInit {
       });
     } catch (err: any) {
       this.evaluatingPlayers.delete(key);
-      alert(`Evaluation failed: ${err.message}`);
+      this.errorMessage = `Evaluation failed: ${err.message}`;
       this.cdr.detectChanges();
     }
   }
@@ -300,7 +302,7 @@ export class SuperAdminComponent implements OnInit {
 
       const error = e as Error;
 
-      alert(`Failed to manage feedback: ${error.message}`);
+      this.errorMessage = `Failed to manage feedback: ${error.message}`;
     }
   }
 
@@ -345,24 +347,45 @@ export class SuperAdminComponent implements OnInit {
 
         const error = e as Error;
 
-        alert(`Failed to save quota: ${error.message}`);
+        this.errorMessage = `Failed to save quota: ${error.message}`;
       }
     }
   }
 
-  async banAdmin(user: UserStatus) {
-    const confirmBan = prompt(`Type "BAN" to permanently ban ${user.email} and block their email.`);
-    if (confirmBan === 'BAN') {
-      await this.gameService.manageAdmin(user.uid, 'ban');
-      this.loadData();
-    }
+  errorMessage: string | null = null;
+  adminActionState: { action: 'ban' | 'delete'; user: UserStatus } | null = null;
+  adminActionConfirmInput = '';
+
+  banAdmin(user: UserStatus) {
+    this.adminActionState = { action: 'ban', user };
+    this.adminActionConfirmInput = '';
   }
 
-  async deleteAdmin(user: UserStatus) {
-    const confirmDelete = prompt(`Type "DELETE" to PERMANENTLY DELETE ${user.email}. This cannot be undone.`);
-    if (confirmDelete === 'DELETE') {
-      await this.gameService.manageAdmin(user.uid, 'delete');
+  deleteAdmin(user: UserStatus) {
+    this.adminActionState = { action: 'delete', user };
+    this.adminActionConfirmInput = '';
+  }
+
+  cancelAdminAction() {
+    this.adminActionState = null;
+    this.adminActionConfirmInput = '';
+  }
+
+  async confirmAdminAction() {
+    if (!this.adminActionState) return;
+    const { action, user } = this.adminActionState;
+    const expected = action === 'ban' ? 'BAN' : 'DELETE';
+    if (this.adminActionConfirmInput !== expected) {
+      this.errorMessage = `Bitte gib ${expected} zur Bestätigung ein.`;
+      return;
+    }
+    this.adminActionState = null;
+    this.adminActionConfirmInput = '';
+    try {
+      await this.gameService.manageAdmin(user.uid, action);
       this.loadData();
+    } catch (e: unknown) {
+      this.errorMessage = `Aktion fehlgeschlagen: ${(e as Error).message}`;
     }
   }
 
@@ -388,7 +411,7 @@ export class SuperAdminComponent implements OnInit {
       this.ngZone.run(() => {
         if (window.console) console.error(e);
         this.isLoadingGames = false;
-        alert('Failed to load games');
+        this.errorMessage = 'Failed to load games';
         this.cdr.detectChanges();
       });
     }
@@ -411,7 +434,7 @@ export class SuperAdminComponent implements OnInit {
       await this.gameService.analyzeSystemBalance();
       await this.loadData();
     } catch (err: any) {
-      alert(`Analysis failed: ${err.message}`);
+      this.errorMessage = `Analysis failed: ${err.message}`;
     } finally {
       this.isAnalyzing = false;
       this.cdr.detectChanges();
@@ -456,7 +479,7 @@ export class SuperAdminComponent implements OnInit {
     } catch (e: unknown) {
       const error = e as Error;
       if (window.console) console.error(error);
-      alert(`Failed to delete: ${error.message}`);
+      this.errorMessage = `Failed to delete: ${error.message}`;
     } finally {
       this.isDeleting = false;
       this.gameToDelete = null;

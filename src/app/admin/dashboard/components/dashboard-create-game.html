@@ -130,16 +130,60 @@
     <div>
       <div class="flex justify-between items-center mb-1">
         <label class="block text-xs text-white">{{ t('dashboard.createGame.rounds') }}</label>
-        <span class="text-xs font-bold text-emerald-400 font-mono">{{ newGameConfig.numRounds }}</span>
+        <span class="text-xs font-bold text-emerald-400 font-mono tabular-nums">{{ newGameConfig.numRounds }}</span>
       </div>
       <input
         [(ngModel)]="newGameConfig.numRounds"
         type="range"
-        min="10"
+        min="5"
         max="50"
         data-testid="num-rounds-input"
         class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
       />
+      <div class="flex flex-wrap gap-1.5 mt-2">
+        <button
+          type="button"
+          data-testid="preset-rounds-6"
+          (click)="setRoundsPreset(6)"
+          class="px-2 py-1 rounded text-[11px] font-mono tabular-nums border transition-colors cursor-pointer"
+          [class.bg-emerald-950]="newGameConfig.numRounds === 6"
+          [class.border-emerald-500]="newGameConfig.numRounds === 6"
+          [class.text-emerald-300]="newGameConfig.numRounds === 6"
+          [class.bg-gray-950]="newGameConfig.numRounds !== 6"
+          [class.border-gray-700]="newGameConfig.numRounds !== 6"
+          [class.text-gray-300]="newGameConfig.numRounds !== 6"
+        >
+          45 Min. (6 Runden)
+        </button>
+        <button
+          type="button"
+          data-testid="preset-rounds-12"
+          (click)="setRoundsPreset(12)"
+          class="px-2 py-1 rounded text-[11px] font-mono tabular-nums border transition-colors cursor-pointer"
+          [class.bg-emerald-950]="newGameConfig.numRounds === 12"
+          [class.border-emerald-500]="newGameConfig.numRounds === 12"
+          [class.text-emerald-300]="newGameConfig.numRounds === 12"
+          [class.bg-gray-950]="newGameConfig.numRounds !== 12"
+          [class.border-gray-700]="newGameConfig.numRounds !== 12"
+          [class.text-gray-300]="newGameConfig.numRounds !== 12"
+        >
+          90 Min. (12 Runden)
+        </button>
+        <button
+          type="button"
+          data-testid="preset-rounds-20"
+          (click)="setRoundsPreset(20)"
+          class="px-2 py-1 rounded text-[11px] font-mono tabular-nums border transition-colors cursor-pointer"
+          [class.bg-emerald-950]="newGameConfig.numRounds === 20"
+          [class.border-emerald-500]="newGameConfig.numRounds === 20"
+          [class.text-emerald-300]="newGameConfig.numRounds === 20"
+          [class.bg-gray-950]="newGameConfig.numRounds !== 20"
+          [class.border-gray-700]="newGameConfig.numRounds !== 20"
+          [class.text-gray-300]="newGameConfig.numRounds !== 20"
+        >
+          Projekt (20 Runden)
+        </button>
+      </div>
     </div>
     <div>
       <label class="block text-xs text-white mb-1">{{ t('dashboard.createGame.aiLevel') }}</label>
@@ -247,7 +291,7 @@
   @if (newGameConfig.analyticsEnabled) {
     <div class="mt-4 p-3 bg-gray-950 rounded-lg border border-gray-700/50">
       <p class="text-[9px] text-white leading-relaxed italic">
-        <strong>Hinweis:</strong> Spieldaten werden für Forschungszwecke und die Spielbalance **anonymisiert** ausgewertet. 
+        <strong>Hinweis:</strong> Spieldaten werden für Forschungszwecke und die Spielbalance <strong>anonymisiert</strong> ausgewertet. 
         Details zur Datenverarbeitung stehen in der 
         <a routerLink="/privacy" class="text-emerald-500 hover:underline">Datenschutzerklärung</a>.
       </p>
