@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.2] - 2026-11-01
 ### Fixed
 - Fixed mobile touch interactions inside the `Anbau-Auswahl` planting modal and board overlays (`src/app/game/board/board.html`, `src/app/game/board/board.ts`, `src/app/game/planting-modal/planting-modal.html`) by moving overlay modals outside `.board-container` and guarding `onTouchStart`/`onTouchMove`/`onTouchEnd`/`onMouseUp` with `isAnyOverlayModalOpen()` and `isInteractiveOrDialogTarget()` so `event.preventDefault()` on field drag-selection no longer suppresses tap/click events or re-opens the planting modal on iOS/Android.
 
