@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.0] - 2026-11-01
 ### Security
 - Enforced strict caller authorization on `getGameState(targetUid)` and stripped other players' unsubmitted `pendingDecisions` from non-host responses (`functions/src/index.ts`) to prevent cross-team inspection during active rounds.
 - Added sliding-window IP/UID rate limiting (`checkRateLimit` in `functions/src/research.service.ts`) to `playerLogin`, `submitFeedback`, `uploadFinishedGame`, `sendVerificationEmail`, and `sendPasswordResetEmail`, lazy-initialized the Vertex AI `GoogleGenAI` client on cold starts, fixed Firestore batch re-instantiation past 500 operations in `deleteGames`/`undeleteGames`, and ensured `cascadeDeleteAdminUser` and `deleteAccount` clean up orphaned `player-*` Firebase Auth accounts.
