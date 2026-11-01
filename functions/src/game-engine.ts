@@ -181,7 +181,7 @@ export class GameEngine {
       options,
     );
 
-    result.sustainabilityScore = GameEngine.calculateSustainabilityScore(result.capital, avgSoil);
+    result.sustainabilityScore = GameEngine.calculateSustainabilityScore(result.capital, avgSoil, totalRounds);
     result.unlockedStickers = GameEngine.evaluateRoundStickers(
       previousParcels,
       decision,
@@ -405,7 +405,8 @@ export class GameEngine {
       }
       case 'humus-steward': {
         const greenCount = parcels.filter((p) => p.crop === 'Grass' || p.crop === 'Fallow').length;
-        return avgSoil >= 100 && greenCount >= 5;
+        const cultivatedCount = parcels.filter((p) => p.crop !== 'Fallow').length;
+        return avgSoil >= 100 && greenCount >= 5 && cultivatedCount >= 20;
       }
       case 'regional-grain': {
         const grainParcels = parcels.filter(
@@ -423,18 +424,23 @@ export class GameEngine {
     }
   }
 
-  static calculateSustainabilityScore(capital: number, avgSoil: number): number {
-    const financialPoints = GameEngine.getFinancialScorePoints(capital);
+  static calculateSustainabilityScore(
+    capital: number,
+    avgSoil: number,
+    totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS,
+  ): number {
+    const financialPoints = GameEngine.getFinancialScorePoints(capital, totalRounds);
     const soilPoints = avgSoil <= 100 ? Math.max(0, (avgSoil - 50) * 10) : 500 + (avgSoil - 100) * 18;
     const soilViability = GameEngine.getSoilViabilityMultiplier(avgSoil);
     const capitalViability = GameEngine.getCapitalViabilityMultiplier(capital);
     return Math.round((financialPoints + soilPoints) * soilViability * capitalViability);
   }
 
-  private static getFinancialScorePoints(capital: number): number {
+  private static getFinancialScorePoints(capital: number, totalRounds = GAME_CONSTANTS.DEFAULT_ROUNDS): number {
     if (capital < 0) return Math.max(0, 350 + capital / 150);
     if (capital < 100000) return 350 + (capital / 100000) * 150;
-    return 500 + Math.sqrt((capital - 100000) / 1000) * 15;
+    const horizonScale = Math.max(0.25, totalRounds / GAME_CONSTANTS.DEFAULT_ROUNDS);
+    return 500 + Math.sqrt((capital - 100000) / (1000 * horizonScale)) * 15;
   }
 
   private static getSoilViabilityMultiplier(avgSoil: number): number {
@@ -502,6 +508,12 @@ export class GameEngine {
     return { machineLevel, currentMachineLevel };
   }
 
+  private static hasExcessNutrientPressure(decision: RoundDecision): boolean {
+    if (decision.fertilizer) return true;
+    const animalParcels = Object.values(decision.parcels).filter((c) => c === 'Grass').length;
+    return animalParcels > 40 * GAME_CONSTANTS.NUTRITION.ANIMALS_REQUIRED_RATIO;
+  }
+
   private static calculateSoilFactor(
     prevParcel: Parcel,
     cropKey: CropType,
@@ -519,7 +531,10 @@ export class GameEngine {
 
     soilFactor += (machineSoilImpact + weather.soil) * timeScale;
 
-    if (prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
+    if (
+      prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START &&
+      GameEngine.hasExcessNutrientPressure(decision)
+    ) {
       soilFactor +=
         (prevParcel.nutrition - GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) *
         GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_FACTOR *
@@ -532,6 +547,13 @@ export class GameEngine {
 
     if (decision.organisms) {
       soilFactor += GAME_CONSTANTS.SOIL.ORGANISMS_SOIL_BONUS * timeScale;
+    }
+
+    if (cropKey === 'Fallow' && !decision.organisms) {
+      const target = prevParcel.soil + soilFactor;
+      if (prevParcel.soil <= GAME_CONSTANTS.SOIL.START && target > GAME_CONSTANTS.SOIL.START) {
+        return GAME_CONSTANTS.SOIL.START - prevParcel.soil;
+      }
     }
 
     return soilFactor;
@@ -548,8 +570,9 @@ export class GameEngine {
       delta += GAME_CONSTANTS.SOIL.PLANTATION_LOSSES[cropKey] * timeScale;
     }
     if (cropKey === 'Fallow') {
-      const diff = Math.max(GAME_CONSTANTS.SOIL.START - prevParcel.soil, 0);
-      delta += (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * 10 * timeScale;
+      const diff = GAME_CONSTANTS.SOIL.START - prevParcel.soil;
+      const rawRecovery = (diff / GAME_CONSTANTS.SOIL.START) * GAME_CONSTANTS.SOIL.FALLOW_RECOVERY * 10 * timeScale;
+      delta += diff >= 0 ? Math.min(diff, rawRecovery) : Math.max(diff, rawRecovery);
     }
     return delta;
   }
@@ -739,7 +762,10 @@ export class GameEngine {
     const organismsImpact = decision.organisms ? GAME_CONSTANTS.SOIL.ORGANISMS_SOIL_BONUS * timeScale : 0;
 
     let fertilizerImpact = decision.fertilizer ? GAME_CONSTANTS.SOIL.FERTILIZER_SYNTHETIC_IMPACT * timeScale : 0;
-    if (prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) {
+    if (
+      prevParcel.nutrition > GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START &&
+      GameEngine.hasExcessNutrientPressure(decision)
+    ) {
       fertilizerImpact +=
         (prevParcel.nutrition - GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START) *
         GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_FACTOR *
@@ -933,23 +959,24 @@ export class GameEngine {
     const laborCost =
       GAME_CONSTANTS.MACHINE_FACTORS.PERSONNEL_COST +
       totalLaborHours * GAME_CONSTANTS.MACHINE_FACTORS.LABOR_COST_PER_HOUR;
+    const effectiveCostScale = Math.min(1, costScale);
     const machineInvestment =
-      GAME_CONSTANTS.MACHINE_FACTORS.INVESTMENT_COST[Math.round(decision.machines || 0)] * costScale;
+      GAME_CONSTANTS.MACHINE_FACTORS.INVESTMENT_COST[Math.round(decision.machines || 0)] * effectiveCostScale;
     const machineMaintenance = GAME_CONSTANTS.MACHINE_FACTORS.MAINTENANCE_COST[machineLevel];
     const runningCost =
       (decision.organic ? GAME_CONSTANTS.EXPENSES.RUNNING.ORGANIC_CONTROL : 0) + machineMaintenance + laborCost;
-    let animalMaintenance = animalParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS * timeScale;
+    let animalMaintenance = animalParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ANIMALS;
     if (events.vermin.includes('swine-fever')) {
       animalMaintenance *= 2.0; // Significant increase due to hygiene and restriction zones
     }
     const suppliesCost =
-      (decision.fertilizer ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE * timeScale : 0) +
-      (decision.pesticide ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE * timeScale : 0) +
-      (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS * timeScale : 0);
+      (decision.fertilizer ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.FERTILIZE : 0) +
+      (decision.pesticide ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.PESTICIDE : 0) +
+      (decision.organisms ? numParcels * GAME_CONSTANTS.EXPENSES.RUNNING.ORGANISMS : 0);
 
     const overdraftRate = difficulty === 'hard' ? 0.1 : difficulty === 'normal' ? 0.06 : 0;
     const overdraftInterest =
-      currentCapital < 0 && overdraftRate > 0 ? Math.round(Math.abs(currentCapital) * overdraftRate * timeScale) : 0;
+      currentCapital < 0 && overdraftRate > 0 ? Math.round(Math.abs(currentCapital) * overdraftRate) : 0;
 
     const totalExpenses =
       seedCost + machineInvestment + runningCost + animalMaintenance + suppliesCost + overdraftInterest;

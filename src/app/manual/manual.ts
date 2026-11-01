@@ -116,7 +116,7 @@ export class ManualComponent implements AfterViewInit {
       'manual.scoring.title': 'Zukunftsfähiger Hof & Hof-Sticker',
       'manual.scoring.viability.title': 'Zukunftsfähiger Hof & Rangliste',
       'manual.scoring.viability.text':
-        'Die Hauptwertung kombiniert dein verfügbares Kapital und die durchschnittliche Bodenqualität zu einem gemeinsamen Index für einen zukunftsfähigen Hof. Nach jeder Runde zeigt die animierte Rangliste, wer Ökonomie und Ökologie am besten vereint.',
+        'Die Hauptwertung kombiniert dein verfügbares Kapital und die durchschnittliche Bodenqualität zu einem gemeinsamen Index für einen zukunftsfähigen Hof. Der erwartete Kapitalzuwachs sowie die Maschinen-Abschreibung skalieren dabei automatisch mit der gewählten Rundenzahl, während ungedüngte Brache den Boden bis zum natürlichen Gleichgewicht von 100 Punkten regeneriert. Nach jeder Runde zeigt die Rangliste, wer Ökonomie und Ökologie am besten vereint.',
       'manual.scoring.stickers.title': 'Sammelbare Hof-Sticker',
       'manual.scoring.stickers.text':
         'Für besondere Meilensteine in Bodenpflege, Artenvielfalt, Bio-Bewirtschaftung und Krisenfestigkeit schaltest du insgesamt 8 sammelbare Hof-Sticker in deinem Hof-Album frei.',

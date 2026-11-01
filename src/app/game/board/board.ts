@@ -1054,7 +1054,7 @@ export class Board implements OnInit, OnDestroy {
     playerList.forEach((p) => {
       const cap = p.capital ?? 0;
       const soil = Math.round(this.calculateAvgSoil(p));
-      const score = p.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(cap, soil);
+      const score = p.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(cap, soil, this.totalRounds);
       if (score > bestScore || (score === bestScore && cap > (bestOverall.capital ?? 0))) {
         bestScore = score;
         bestOverall = p;
@@ -1124,7 +1124,7 @@ export class Board implements OnInit, OnDestroy {
     if (ps) {
       const cap = ps.capital ?? 0;
       const soil = Math.round(this.calculateAvgSoil(ps));
-      return ps.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(cap, soil);
+      return ps.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(cap, soil, this.totalRounds);
     }
     return this.overallWinner?.score ?? 0;
   }
@@ -1320,12 +1320,13 @@ export class Board implements OnInit, OnDestroy {
       const score =
         currRound?.result?.sustainabilityScore ??
         p.sustainabilityScore ??
-        GameEngine.calculateSustainabilityScore(capital, avgSoil);
+        GameEngine.calculateSustainabilityScore(capital, avgSoil, this.totalRounds);
 
       const prevCapital = prevRound?.result?.capital ?? 100000;
       const prevAvgSoil = Math.round(prevRound?.avgSoil ?? 100);
       const prevScore =
-        prevRound?.result?.sustainabilityScore ?? GameEngine.calculateSustainabilityScore(prevCapital, prevAvgSoil);
+        prevRound?.result?.sustainabilityScore ??
+        GameEngine.calculateSustainabilityScore(prevCapital, prevAvgSoil, this.totalRounds);
 
       return {
         uid: p.uid,

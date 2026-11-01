@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Added horizon-adaptive weather grace period (`getGraceRoundsForLimit`: `1` round for `5–7`-round sprints, `2` rounds for `>= 8` rounds), earlier regional contract activation (`Round 2` for `5–7`-round sprints, `Round 3` for `>= 8` rounds), and progressive multi-year root-crop soil exhaustion (`consecutiveYears >= 2` adds `-1.5 * (consecutiveYears - 1)` extra soil loss per consecutive year for potato and sugar beet) across `src/app/game/engine/game-engine.ts`, `functions/src/game-engine.ts`, `src/app/game/board/board.ts`, `src/app/info/info.html`, `src/app/manual/manual.ts`, and the multi-horizon Monte Carlo suite (`functions/src/balance.test.ts`).
+
 ## [3.4.0] - 2026-11-01
 ### Security
 - Enforced strict caller authorization on `getGameState(targetUid)` and stripped other players' unsubmitted `pendingDecisions` from non-host responses (`functions/src/index.ts`) to prevent cross-team inspection during active rounds.

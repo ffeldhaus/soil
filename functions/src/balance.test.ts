@@ -92,7 +92,7 @@ describe('Game Balance Simulation', () => {
     },
   ];
 
-  const roundCounts = [10, 20, 30, 40, 50];
+  const roundCounts = [5, 6, 10, 20, 30, 40, 50];
 
   roundCounts.forEach((count) => {
     it(`should simulate strategies for ${count} rounds`, () => {
@@ -244,69 +244,74 @@ describe('Game Balance Simulation', () => {
     ];
 
     (['easy', 'normal', 'hard'] as const).forEach((difficulty) => {
-      it(`should rank Regenerative & Conventional Rotators above exploit archetypes on ${difficulty} difficulty`, () => {
-        const deterministicWeathers: Record<number, string> = {
-          1: 'Normal',
-          2: 'Normal',
-          5: 'Drought',
-          9: 'HeatWave',
-          13: 'Flood',
-          17: 'LateFrost',
-        };
-
-        const getRoundVermin = (r: number): string[] => {
-          if (r === 7) return ['potato-beetle'];
-          if (r === 14) return ['aphid-cereal'];
-          return [];
-        };
-
-        const results = archetypes.map((arch, playerIdx) => {
-          let capital = 100000;
-          let lastRound: Round | undefined = {
-            number: 0,
-            decision: {
-              machines: 0,
-              organic: false,
-              fertilizer: false,
-              pesticide: false,
-              organisms: false,
-              parcels: {},
-            },
-            parcelsSnapshot: GameEngine.createInitialParcels(difficulty, playerIdx),
-            avgSoil: 100,
-            avgNutrition: 100,
+      ([5, 6, 10, 20, 35] as const).forEach((totalRounds) => {
+        it(`should rank Regenerative & Conventional Rotators above exploit archetypes on ${difficulty} difficulty (${totalRounds} rounds)`, () => {
+          const deterministicWeathers: Record<number, string> = {
+            1: 'Normal',
+            2: 'Normal',
+            5: 'Drought',
+            9: 'HeatWave',
+            13: 'Flood',
+            17: 'LateFrost',
+            25: 'Drought',
+            31: 'HeatWave',
           };
 
-          for (let r = 1; r <= 20; r++) {
-            const decision = arch.decide(r, lastRound);
-            const weather = deterministicWeathers[r] || 'Normal';
-            const vermin = getRoundVermin(r);
-            lastRound = GameEngine.calculateRound(r, lastRound, decision, { weather, vermin }, capital, 20, {
-              difficulty,
-            });
-            capital = lastRound.result!.capital;
-          }
-
-          const avgSoil = lastRound!.parcelsSnapshot.reduce((s, p) => s + p.soil, 0) / 40;
-          const score = lastRound!.result!.sustainabilityScore!;
-          return {
-            archetype: arch.name,
-            capital: Math.round(capital),
-            avgSoil: Number(avgSoil.toFixed(1)),
-            sustainabilityScore: score,
+          const getRoundVermin = (r: number): string[] => {
+            if (r === 7 || r === 23) return ['potato-beetle'];
+            if (r === 14 || r === 29) return ['aphid-cereal'];
+            return [];
           };
+
+          const results = archetypes.map((arch, playerIdx) => {
+            let capital = 100000;
+            let lastRound: Round | undefined = {
+              number: 0,
+              decision: {
+                machines: 0,
+                organic: false,
+                fertilizer: false,
+                pesticide: false,
+                organisms: false,
+                parcels: {},
+              },
+              parcelsSnapshot: GameEngine.createInitialParcels(difficulty, playerIdx),
+              avgSoil: 100,
+              avgNutrition: 100,
+            };
+
+            for (let r = 1; r <= totalRounds; r++) {
+              const decision = arch.decide(r, lastRound);
+              const weather = deterministicWeathers[r] || 'Normal';
+              const vermin = getRoundVermin(r);
+              lastRound = GameEngine.calculateRound(r, lastRound, decision, { weather, vermin }, capital, totalRounds, {
+                difficulty,
+              });
+              capital = lastRound.result!.capital;
+            }
+
+            const avgSoil = lastRound!.parcelsSnapshot.reduce((s, p) => s + p.soil, 0) / 40;
+            const score = lastRound!.result!.sustainabilityScore!;
+            return {
+              archetype: arch.name,
+              capital: Math.round(capital),
+              avgSoil: Number(avgSoil.toFixed(1)),
+              sustainabilityScore: score,
+            };
+          });
+
+          const regen = results.find((r) => r.archetype === 'Regenerative Rotator')!;
+          const conv = results.find((r) => r.archetype === 'Conventional Rotator')!;
+          const mono = results.find((r) => r.archetype === 'Monoculture Exploit')!;
+          const fallow = results.find((r) => r.archetype === '100% Fallow Subsidy Exploit')!;
+          const overgraze = results.find((r) => r.archetype === 'Bio Overgrazing Exploit')!;
+
+          expect(regen.sustainabilityScore).to.be.greaterThan(mono.sustainabilityScore);
+          expect(regen.sustainabilityScore).to.be.greaterThan(fallow.sustainabilityScore);
+          expect(regen.sustainabilityScore).to.be.greaterThan(overgraze.sustainabilityScore);
+          expect(conv.sustainabilityScore).to.be.greaterThan(mono.sustainabilityScore);
+          expect(conv.sustainabilityScore).to.be.greaterThan(fallow.sustainabilityScore);
         });
-
-        const regen = results.find((r) => r.archetype === 'Regenerative Rotator')!;
-        const conv = results.find((r) => r.archetype === 'Conventional Rotator')!;
-        const mono = results.find((r) => r.archetype === 'Monoculture Exploit')!;
-        const fallow = results.find((r) => r.archetype === '100% Fallow Subsidy Exploit')!;
-        const overgraze = results.find((r) => r.archetype === 'Bio Overgrazing Exploit')!;
-
-        expect(regen.sustainabilityScore).to.be.greaterThan(mono.sustainabilityScore);
-        expect(regen.sustainabilityScore).to.be.greaterThan(fallow.sustainabilityScore);
-        expect(regen.sustainabilityScore).to.be.greaterThan(overgraze.sustainabilityScore);
-        expect(conv.sustainabilityScore).to.be.greaterThan(mono.sustainabilityScore);
       });
     });
   });
