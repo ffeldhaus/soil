@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.3] - 2026-11-01
 ### Fixed
 - Fixed mobile touch responsiveness across `Anbau-Auswahl` (`src/app/game/planting-modal/planting-modal.html`, `src/app/game/planting-modal/planting-modal.ts`), board touch selection (`src/app/game/board/board.html`, `src/app/game/board/board.ts`), and guided tour modal steps (`src/app/game/tour.service.ts`) by adding direct `touchend` tap handlers with synthetic-click deduplication and explicit `ChangeDetectorRef.detectChanges()`, replacing invalid nested `<button>` elements with accessible sibling controls, and removing duplicate `.game-grid` touch listeners.
 - Fixed mobile PWA / Service Worker cache invalidation (`src/server.ts`, `src/sw.js`, `src/main.ts`, `src/index.html`) so `/sw.js`, `.html`, and `.webmanifest` responses always carry `Cache-Control: no-cache, no-store, must-revalidate`, SPA navigations use network-first (`cache: 'no-store'`) with Workbox `matchPrecache('/index.csr.html')` offline fallback, and new deployments activate immediately via `skipWaiting()`, `clientsClaim()`, and `cleanupOutdatedCaches()`.
