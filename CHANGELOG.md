@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Added
-- Replaced `public/SOIL-screenshot.jpg` with a lossless `public/SOIL-screenshot.png` (`1920x1377` px, `v3.4.3`, enlarged UI and parcel label typography) across `public/site.webmanifest`, OpenGraph/Twitter meta tags (`src/index.html`), trailer poster (`src/app/landing/landing.html`), and video sitemap metadata (`src/app/app.routes.ts`, `src/server.ts`, `public/sitemap.xml`), and added print-ready DIN A4 biology classroom flyers (dark and light print-friendly variants at `2480x3508` px, 300 DPI) along with automated capture/rendering templates and scripts in `marketing/` (`marketing/flyer-dark.html`, `marketing/flyer-light.html`, `marketing/generate-flyer.mjs`, `marketing/capture-screenshot.mjs`).
+- Replaced `public/SOIL-screenshot.jpg` with a lossless `public/SOIL-screenshot.png` (`1920x1377` px, `v3.4.3`, enlarged UI and parcel label typography) across `public/site.webmanifest`, OpenGraph/Twitter meta tags (`src/index.html`), trailer poster (`src/app/landing/landing.html`), and video sitemap metadata (`src/app/app.routes.ts`, `src/server.ts`, `public/sitemap.xml`), hid the HUD logout button for unauthenticated local guest sessions (`src/app/game/board/components/board-hud.html`), and added print-ready DIN A4 biology classroom flyers (dark and light print-friendly variants at `2480x3508` px, 300 DPI) along with automated capture/rendering templates and scripts in `marketing/` (`marketing/flyer-dark.html`, `marketing/flyer-light.html`, `marketing/generate-flyer.mjs`, `marketing/capture-screenshot.mjs`).
 
 ## [3.4.3] - 2026-11-01
 ### Fixed
