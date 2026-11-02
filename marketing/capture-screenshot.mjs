@@ -6,7 +6,7 @@ import path from 'node:path';
 
 const REPO_ROOT = path.resolve(import.meta.dirname, '..');
 const BROWSER_DIR = path.join(REPO_ROOT, 'dist/soil/browser');
-const OUTPUT_PATH = path.join(REPO_ROOT, 'public/SOIL-screenshot.jpg');
+const OUTPUT_PNG_PATH = path.join(REPO_ROOT, 'public/SOIL-screenshot.png');
 const PORT = 4399;
 const DEBUG_PORT = 9344;
 
@@ -274,8 +274,8 @@ async function main() {
       '--headless=new',
       `--remote-debugging-port=${DEBUG_PORT}`,
       `--user-data-dir=${userDataDir}`,
-      '--window-size=1920,1377',
-      '--force-device-scale-factor=1',
+      '--window-size=1280,918',
+      '--force-device-scale-factor=1.5',
       '--hide-scrollbars',
       '--no-first-run',
       '--no-default-browser-check',
@@ -292,9 +292,9 @@ async function main() {
     await cdp.send('Page.enable');
     await cdp.send('Runtime.enable');
     await cdp.send('Emulation.setDeviceMetricsOverride', {
-      width: 1920,
-      height: 1377,
-      deviceScaleFactor: 1,
+      width: 1280,
+      height: 918,
+      deviceScaleFactor: 1.5,
       mobile: false,
     });
 
@@ -333,17 +333,42 @@ async function main() {
 
     await new Promise((r) => setTimeout(r, 1000));
 
-    const shot = await cdp.send('Page.captureScreenshot', {
-      format: 'jpeg',
-      quality: 84,
+    await cdp.send('Runtime.evaluate', {
+      expression: `(() => {
+        const style = document.createElement('style');
+        style.textContent = \`
+          html { font-size: 17.5px !important; }
+          app-parcel .z-20 > div {
+            font-size: 15.5px !important;
+            padding: 2px 7px !important;
+            border-radius: 5px !important;
+          }
+          [data-testid="hud-weather-forecast"],
+          [data-testid="hud-pests-pill"],
+          [data-testid="hud-active-contract"] {
+            font-size: 13px !important;
+            padding: 4px 10px !important;
+          }
+          [data-testid="round-indicator"] span {
+            font-size: 14px !important;
+          }
+        \`;
+        document.head.appendChild(style);
+        window.dispatchEvent(new Event('resize'));
+      })()`,
+    });
+
+    await new Promise((r) => setTimeout(r, 400));
+
+    const pngShot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
       fromSurface: true,
       captureBeyondViewport: false,
     });
-
-    const buf = Buffer.from(shot.data, 'base64');
-    fs.writeFileSync(OUTPUT_PATH, buf);
+    const pngBuf = Buffer.from(pngShot.data, 'base64');
+    fs.writeFileSync(OUTPUT_PNG_PATH, pngBuf);
     // biome-ignore lint/suspicious/noConsole: CLI script output
-    console.log(`Saved ${OUTPUT_PATH} (${buf.length} bytes)`);
+    console.log(`Saved lossless PNG: ${OUTPUT_PNG_PATH} (${pngBuf.length} bytes)`);
     cdp.close();
   } finally {
     chrome.kill('SIGKILL');
@@ -356,4 +381,3 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-

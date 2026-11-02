@@ -24,7 +24,8 @@ exclude = [
   '/research',                                            # Internal route
   '/\.well-known/.*',                                     # Well-known ARD route
   'https://soil.app/mcp',                                 # POST-only Streamable HTTP MCP endpoint
-  'https://soil.app/api/research'                         # GET-only JSON/CSV API endpoint (rejects HEAD)
+  'https://soil.app/api/research',                        # GET-only JSON/CSV API endpoint (rejects HEAD)
+  'https://soil.app/SOIL-screenshot.png'                  # Static asset verified locally via root_dir = "public"
 ]
 
 # Exclude paths from getting checked.

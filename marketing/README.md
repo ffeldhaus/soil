@@ -9,7 +9,7 @@ Dieser Ordner enthält die Vorlagen, Generator-Skripte und druckfertigen **DIN-A
 - `flyer-light.html` — HTML/CSS-Vorlage der hellen Druckvariante
 - `flyer-dark.html` — HTML/CSS-Vorlage der dunklen Variante
 - `generate-flyer.mjs` — Rendert beide Flyer-Varianten via Headless Chrome (`2480 × 3508 px`)
-- `capture-screenshot.mjs` — Nimmt `public/SOIL-screenshot.jpg` (`1920 × 1377 px`) automatisiert aus dem aktuellen Produktions-Build (`dist/soil/browser`) neu auf
+- `capture-screenshot.mjs` — Nimmt `public/SOIL-screenshot.png` (`1920 × 1377 px`, verlustfrei) automatisiert aus dem aktuellen Produktions-Build (`dist/soil/browser`) neu auf
 
 ## Screenshot & Flyer aktualisieren
 
@@ -25,6 +25,6 @@ Dieser Ordner enthält die Vorlagen, Generator-Skripte und druckfertigen **DIN-A
    ```
    Optional kann ein eigener Screenshot übergeben werden:
    ```bash
-   node marketing/generate-flyer.mjs --screenshot=/pfad/zum/screenshot.jpg
+   node marketing/generate-flyer.mjs --screenshot=/pfad/zum/screenshot.png
    ```
 

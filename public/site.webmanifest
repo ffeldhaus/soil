@@ -46,9 +46,9 @@
   ],
   "screenshots": [
     {
-      "src": "/SOIL-screenshot.jpg",
+      "src": "/SOIL-screenshot.png",
       "sizes": "1920x1377",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide",
       "label": "SOIL Simulationsspiel Dashboard"
     },

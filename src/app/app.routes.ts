@@ -53,7 +53,7 @@ const baseRoutes: Routes = [
               name: 'SOIL – Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit',
               description:
                 'Einminütiger Überblick über die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
-              thumbnailUrl: 'https://soil.app/SOIL-screenshot.jpg',
+              thumbnailUrl: 'https://soil.app/SOIL-screenshot.png',
               uploadDate: '2026-10-30T14:00:00+01:00',
               duration: 'PT1M5S',
               contentUrl: 'https://soil.app/assets/video/soil-trailer.mp4',

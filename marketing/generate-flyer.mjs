@@ -30,7 +30,7 @@ function resolveAssetPath(urlPath) {
   if (urlPath === '/flyer-light.html') {
     return path.join(MARKETING_DIR, 'flyer-light.html');
   }
-  if (urlPath === '/SOIL-screenshot.jpg' && customScreenshotPath) {
+  if (urlPath === '/SOIL-screenshot.png' && customScreenshotPath) {
     return customScreenshotPath;
   }
   return path.join(PUBLIC_DIR, urlPath);
