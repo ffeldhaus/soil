@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Refreshed `public/SOIL-screenshot.jpg` (`1920x1377` px, `v3.4.3`) and added print-ready DIN A4 biology classroom flyers (dark and light print-friendly variants at `2480x3508` px, 300 DPI) along with automated capture/rendering templates and scripts in `marketing/` (`marketing/flyer-dark.html`, `marketing/flyer-light.html`, `marketing/generate-flyer.mjs`, `marketing/capture-screenshot.mjs`).
+
 ## [3.4.3] - 2026-11-01
 ### Fixed
 - Fixed mobile touch responsiveness across `Anbau-Auswahl` (`src/app/game/planting-modal/planting-modal.html`, `src/app/game/planting-modal/planting-modal.ts`), board touch selection (`src/app/game/board/board.html`, `src/app/game/board/board.ts`), and guided tour modal steps (`src/app/game/tour.service.ts`) by adding direct `touchend` tap handlers with synthetic-click deduplication and explicit `ChangeDetectorRef.detectChanges()`, replacing invalid nested `<button>` elements with accessible sibling controls, and removing duplicate `.game-grid` touch listeners.

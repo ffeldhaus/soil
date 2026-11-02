@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>SOIL – Flyer Biologieunterricht (DIN A4, Dunkel)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 1240px;
+      height: 1754px;
+      overflow: hidden;
+      background: #080d14;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .page {
+      position: relative;
+      width: 1240px;
+      height: 1754px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 42px 58px 42px;
+      overflow: hidden;
+    }
+
+    /* Subtle farm background + dark editorial overlay */
+    .bg-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.22;
+      filter: saturate(0.85) contrast(1.05);
+      z-index: 0;
+    }
+
+    .bg-vignette {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(8, 13, 20, 0.90) 0%,
+        rgba(9, 15, 24, 0.80) 42%,
+        rgba(9, 15, 24, 0.88) 76%,
+        rgba(6, 10, 16, 0.96) 100%
+      );
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    /* 1. Editorial Masthead */
+    .masthead {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.24);
+    }
+
+    .brand-logo {
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      color: #34d399;
+      line-height: 1;
+    }
+
+    .masthead-context {
+      font-size: 18px;
+      font-weight: 550;
+      color: #cbd5e1;
+      letter-spacing: 0.01em;
+    }
+
+    /* 2. Hero Section */
+    .hero {
+      padding: 2px 0;
+    }
+
+    .hero-title {
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1.13;
+      letter-spacing: -0.025em;
+      color: #f8fafc;
+    }
+
+    .hero-title span.accent {
+      color: #34d399;
+    }
+
+    .hero-lead {
+      margin-top: 12px;
+      font-size: 21px;
+      line-height: 1.44;
+      color: #e2e8f0;
+    }
+
+    .hero-lead strong {
+      color: #ffffff;
+      font-weight: 650;
+    }
+
+    /* 3. Clean Screenshot Frame */
+    .screenshot-frame {
+      width: 100%;
+      max-width: 990px;
+      margin: 0 auto;
+      aspect-ratio: 1920 / 1377;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: #090d16;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6);
+    }
+
+    .screenshot-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* 4. Open Editorial 2x2 Grid */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 34px;
+      row-gap: 20px;
+      padding: 2px 0;
+    }
+
+    .pillar {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    .pillar-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.38);
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .pillar-body h3 {
+      font-size: 20.5px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 5px;
+      letter-spacing: -0.015em;
+    }
+
+    .pillar-body p {
+      font-size: 16.5px;
+      line-height: 1.42;
+      color: #cbd5e1;
+    }
+
+    /* 5. Unified Footer: Feedback Request + QR Code */
+    .footer-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(52, 211, 153, 0.42);
+      border-radius: 14px;
+      padding: 22px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .feedback-col {
+      flex: 1;
+    }
+
+    .feedback-title {
+      font-size: 22.5px;
+      font-weight: 750;
+      color: #f8fafc;
+      letter-spacing: -0.015em;
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feedback-title svg {
+      color: #34d399;
+      flex-shrink: 0;
+    }
+
+    .feedback-text {
+      font-size: 17.5px;
+      line-height: 1.44;
+      color: #cbd5e1;
+    }
+
+    .feedback-text strong {
+      color: #ffffff;
+      font-weight: 650;
+    }
+
+    .qr-col {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding-left: 28px;
+      border-left: 1px solid rgba(148, 163, 184, 0.24);
+      flex-shrink: 0;
+    }
+
+    .qr-code-frame {
+      width: 118px;
+      height: 118px;
+      flex-shrink: 0;
+      background: #ffffff;
+      padding: 6px;
+      border-radius: 8px;
+    }
+
+    .qr-meta {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .qr-domain {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 30px;
+      font-weight: 800;
+      color: #34d399;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .qr-caption {
+      margin-top: 6px;
+      font-size: 16px;
+      line-height: 1.35;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <img class="bg-image" src="/assets/images/bauernhof-portrait-dunkel.webp" alt="" />
+    <div class="bg-vignette"></div>
+
+    <div class="content">
+      <!-- 1. Editorial Masthead -->
+      <header class="masthead">
+        <div class="brand-logo">SOIL</div>
+        <div class="masthead-context">
+          Simulation für den Biologieunterricht · Sekundarstufe I &amp; II
+        </div>
+      </header>
+
+      <!-- 2. Hero -->
+      <section class="hero">
+        <h1 class="hero-title">
+          Bodenökologie &amp; Nachhaltigkeit <span class="accent">im Biologieunterricht</span> erleben
+        </h1>
+        <p class="hero-lead">
+          In der Web-Simulation <strong>SOIL</strong> bewirtschaften Schülerinnen und Schüler über zehn Runden einen Hof mit 40 Parzellen. Sie untersuchen selbstständig, wie Fruchtfolge, Bodenleben und Ertrag zusammenhängen.
+        </p>
+      </section>
+
+      <!-- 3. Clean Screenshot Presentation -->
+      <section class="screenshot-frame">
+        <img src="/SOIL-screenshot.jpg" alt="SOIL Spielbrett in Runde 6" />
+      </section>
+
+      <!-- 4. Calm 2x2 Editorial Grid -->
+      <section class="pillars-grid">
+        <div class="pillar">
+          <div class="pillar-icon">
+            <!-- Seedling & Root/Soil Horizons Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.85">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15V5" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10c-3.5 0-6-2.2-6-5.5 3.2 0 5.5 2 6 5.5z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8.5c3.2 0 5.5-2 5.5-5-3 0-5 1.8-5.5 5z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.5 15.5c2.8-1 5.6-1 8.5 0s5.7 1 8.5 0" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15c0 2.2-1.8 4-3.8 5m3.8-5c0 2.2 1.8 4 3.8 5" />
+            </svg>
+          </div>
+          <div class="pillar-body">
+            <h3>Bodenökologie &amp; Stickstoffkreislauf</h3>
+            <p>
+              Stickstofffixierung durch Leguminosen (Ackerbohne, Erbse), Humusaufbau, Mineraldüngung und Bodenverdichtung in ihren ökologischen Folgen vergleichen.
+            </p>
+          </div>
+        </div>
+
+        <div class="pillar">
+          <div class="pillar-icon">
+            <!-- Detailed Ladybug (Marienkäfer) Icon for Biodiversity & Beneficial Insects -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.85">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 5.2L7.5 3.2M14.5 5.2l2-2" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 8.2c0-2 1.5-3.4 3.5-3.4s3.5 1.4 3.5 3.4" />
+              <ellipse cx="12" cy="14" rx="6" ry="6.8" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.4 11h11.2M12 11v9.8" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 11.5L3.8 10M6 14.5l-3 .3M6.8 17.8l-2.6 1.6M17.5 11.5L20.2 10M18 14.5l3 .3M17.2 17.8l2.6 1.6" />
+              <circle cx="9.3" cy="13.5" r="0.9" fill="currentColor" stroke="none" />
+              <circle cx="14.7" cy="13.5" r="0.9" fill="currentColor" stroke="none" />
+              <circle cx="9.8" cy="17.2" r="0.85" fill="currentColor" stroke="none" />
+              <circle cx="14.2" cy="17.2" r="0.85" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+          <div class="pillar-body">
+            <h3>Biodiversität &amp; Schädlings-Nützlings-Dynamik</h3>
+            <p>
+              Monokulturen begünstigen Schädlinge wie Kartoffelkäfer oder Blattläuse. Lernende erproben biologische Schädlingsabwehr durch Nützlinge und vielfältige Fruchtfolgen.
+            </p>
+          </div>
+        </div>
+
+        <div class="pillar">
+          <div class="pillar-icon">
+            <!-- Weather & Soil Water Balance Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.85">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 15a4 4 0 01-.4-7.98A5.5 5.5 0 0116.8 6a4.5 4.5 0 01.7 8.95H6.5z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 18.2l-1 2.3M12.5 18.2l-1 2.3M16.5 18.2l-1 2.3" />
+            </svg>
+          </div>
+          <div class="pillar-body">
+            <h3>Klimafolgen &amp; vernetztes Denken (BNE)</h3>
+            <p>
+              Dürre, Spätfrost und Starkregen machen sichtbar, wie intakte, humusreiche Böden als Wasserspeicher wirken und Ernteausfälle abfedern.
+            </p>
+          </div>
+        </div>
+
+        <div class="pillar">
+          <div class="pillar-icon">
+            <!-- Classroom / Group Play Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.85">
+              <circle cx="9" cy="7.5" r="3" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.5 18.5v-1a4.5 4.5 0 014.5-4.5h2a4.5 4.5 0 014.5 4.5v1" />
+              <circle cx="16.5" cy="8.5" r="2.5" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 13.5h1a3.5 3.5 0 013.5 3.5v1.5" />
+            </svg>
+          </div>
+          <div class="pillar-body">
+            <h3>Sofort im Unterricht einsetzbar</h3>
+            <p>
+              Einzelspiele direkt ohne Anmeldung starten oder als Lehrkraft Klassenspiele für bis zu 30 Teams moderieren – dauerhaft kostenlos, werbefrei und datenschutzkonform (Server in der EU).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Unified Footer: Feedback Request + QR Code -->
+      <footer class="footer-card">
+        <div class="feedback-col">
+          <div class="feedback-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zm-9-4h2v2h-2zm0-6h2v4h-2z"/>
+            </svg>
+            <span>Dein Feedback aus dem Biologieunterricht hilft uns weiter</span>
+          </div>
+          <p class="feedback-text">
+            Wir entwickeln SOIL gemeinsam mit Lehrkräften weiter. Probiere die Simulation aus und teile deine Eindrücke, Anregungen oder Wünsche für den Unterricht direkt über den <strong>Feedback-Button oben rechts im Spiel</strong>.
+          </p>
+        </div>
+
+        <div class="qr-col">
+          <div class="qr-code-frame">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" width="100%" height="100%" shape-rendering="crispEdges">
+              <rect width="29" height="29" fill="#ffffff" rx="1.5"/>
+              <path d="M2,2h1v1h-1zM3,2h1v1h-1zM4,2h1v1h-1zM5,2h1v1h-1zM6,2h1v1h-1zM7,2h1v1h-1zM8,2h1v1h-1zM10,2h1v1h-1zM12,2h1v1h-1zM13,2h1v1h-1zM17,2h1v1h-1zM18,2h1v1h-1zM20,2h1v1h-1zM21,2h1v1h-1zM22,2h1v1h-1zM23,2h1v1h-1zM24,2h1v1h-1zM25,2h1v1h-1zM26,2h1v1h-1zM2,3h1v1h-1zM8,3h1v1h-1zM10,3h1v1h-1zM11,3h1v1h-1zM16,3h1v1h-1zM17,3h1v1h-1zM20,3h1v1h-1zM26,3h1v1h-1zM2,4h1v1h-1zM4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM8,4h1v1h-1zM11,4h1v1h-1zM15,4h1v1h-1zM16,4h1v1h-1zM17,4h1v1h-1zM20,4h1v1h-1zM22,4h1v1h-1zM23,4h1v1h-1zM24,4h1v1h-1zM26,4h1v1h-1zM2,5h1v1h-1zM4,5h1v1h-1zM5,5h1v1h-1zM6,5h1v1h-1zM8,5h1v1h-1zM10,5h1v1h-1zM11,5h1v1h-1zM12,5h1v1h-1zM20,5h1v1h-1zM22,5h1v1h-1zM23,5h1v1h-1zM24,5h1v1h-1zM26,5h1v1h-1zM2,6h1v1h-1zM4,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM8,6h1v1h-1zM14,6h1v1h-1zM15,6h1v1h-1zM20,6h1v1h-1zM22,6h1v1h-1zM23,6h1v1h-1zM24,6h1v1h-1zM26,6h1v1h-1zM2,7h1v1h-1zM8,7h1v1h-1zM11,7h1v1h-1zM16,7h1v1h-1zM18,7h1v1h-1zM20,7h1v1h-1zM26,7h1v1h-1zM2,8h1v1h-1zM3,8h1v1h-1zM4,8h1v1h-1zM5,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM18,8h1v1h-1zM20,8h1v1h-1zM21,8h1v1h-1zM22,8h1v1h-1zM23,8h1v1h-1zM24,8h1v1h-1zM25,8h1v1h-1zM26,8h1v1h-1zM10,9h1v1h-1zM11,9h1v1h-1zM12,9h1v1h-1zM15,9h1v1h-1zM16,9h1v1h-1zM2,10h1v1h-1zM4,10h1v1h-1zM5,10h1v1h-1zM7,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM15,10h1v1h-1zM16,10h1v1h-1zM20,10h1v1h-1zM23,10h1v1h-1zM25,10h1v1h-1zM26,10h1v1h-1zM2,11h1v1h-1zM4,11h1v1h-1zM6,11h1v1h-1zM7,11h1v1h-1zM9,11h1v1h-1zM13,11h1v1h-1zM14,11h1v1h-1zM18,11h1v1h-1zM21,11h1v1h-1zM25,11h1v1h-1zM2,12h1v1h-1zM5,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM8,12h1v1h-1zM9,12h1v1h-1zM12,12h1v1h-1zM13,12h1v1h-1zM14,12h1v1h-1zM16,12h1v1h-1zM20,12h1v1h-1zM21,12h1v1h-1zM2,13h1v1h-1zM3,13h1v1h-1zM5,13h1v1h-1zM7,13h1v1h-1zM9,13h1v1h-1zM12,13h1v1h-1zM13,13h1v1h-1zM15,13h1v1h-1zM16,13h1v1h-1zM18,13h1v1h-1zM19,13h1v1h-1zM20,13h1v1h-1zM21,13h1v1h-1zM23,13h1v1h-1zM24,13h1v1h-1zM2,14h1v1h-1zM4,14h1v1h-1zM7,14h1v1h-1zM8,14h1v1h-1zM9,14h1v1h-1zM10,14h1v1h-1zM12,14h1v1h-1zM17,14h1v1h-1zM18,14h1v1h-1zM19,14h1v1h-1zM20,14h1v1h-1zM21,14h1v1h-1zM22,14h1v1h-1zM24,14h1v1h-1zM25,14h1v1h-1zM26,14h1v1h-1zM3,15h1v1h-1zM6,15h1v1h-1zM9,15h1v1h-1zM10,15h1v1h-1zM13,15h1v1h-1zM15,15h1v1h-1zM17,15h1v1h-1zM18,15h1v1h-1zM19,15h1v1h-1zM20,15h1v1h-1zM21,15h1v1h-1zM22,15h1v1h-1zM26,15h1v1h-1zM3,16h1v1h-1zM6,16h1v1h-1zM8,16h1v1h-1zM12,16h1v1h-1zM14,16h1v1h-1zM16,16h1v1h-1zM20,16h1v1h-1zM22,16h1v1h-1zM24,16h1v1h-1zM25,16h1v1h-1zM2,17h1v1h-1zM11,17h1v1h-1zM12,17h1v1h-1zM14,17h1v1h-1zM15,17h1v1h-1zM17,17h1v1h-1zM19,17h1v1h-1zM20,17h1v1h-1zM21,17h1v1h-1zM22,17h1v1h-1zM26,17h1v1h-1zM6,18h1v1h-1zM8,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM12,18h1v1h-1zM13,18h1v1h-1zM18,18h1v1h-1zM19,18h1v1h-1zM20,18h1v1h-1zM21,18h1v1h-1zM22,18h1v1h-1zM23,18h1v1h-1zM24,18h1v1h-1zM25,18h1v1h-1zM26,18h1v1h-1zM10,19h1v1h-1zM14,19h1v1h-1zM15,19h1v1h-1zM18,19h1v1h-1zM22,19h1v1h-1zM24,19h1v1h-1zM26,19h1v1h-1zM2,20h1v1h-1zM3,20h1v1h-1zM4,20h1v1h-1zM5,20h1v1h-1zM6,20h1v1h-1zM7,20h1v1h-1zM8,20h1v1h-1zM10,20h1v1h-1zM11,20h1v1h-1zM13,20h1v1h-1zM14,20h1v1h-1zM18,20h1v1h-1zM20,20h1v1h-1zM22,20h1v1h-1zM24,20h1v1h-1zM25,20h1v1h-1zM26,20h1v1h-1zM2,21h1v1h-1zM8,21h1v1h-1zM10,21h1v1h-1zM12,21h1v1h-1zM14,21h1v1h-1zM17,21h1v1h-1zM18,21h1v1h-1zM22,21h1v1h-1zM25,21h1v1h-1zM2,22h1v1h-1zM4,22h1v1h-1zM5,22h1v1h-1zM6,22h1v1h-1zM8,22h1v1h-1zM13,22h1v1h-1zM14,22h1v1h-1zM15,22h1v1h-1zM18,22h1v1h-1zM19,22h1v1h-1zM20,22h1v1h-1zM21,22h1v1h-1zM22,22h1v1h-1zM23,22h1v1h-1zM2,23h1v1h-1zM4,23h1v1h-1zM5,23h1v1h-1zM6,23h1v1h-1zM8,23h1v1h-1zM10,23h1v1h-1zM11,23h1v1h-1zM14,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM17,23h1v1h-1zM18,23h1v1h-1zM19,23h1v1h-1zM20,23h1v1h-1zM22,23h1v1h-1zM23,23h1v1h-1zM24,23h1v1h-1zM25,23h1v1h-1zM26,23h1v1h-1zM2,24h1v1h-1zM4,24h1v1h-1zM5,24h1v1h-1zM6,24h1v1h-1zM8,24h1v1h-1zM10,24h1v1h-1zM12,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM15,24h1v1h-1zM17,24h1v1h-1zM18,24h1v1h-1zM19,24h1v1h-1zM20,24h1v1h-1zM22,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM2,25h1v1h-1zM8,25h1v1h-1zM11,25h1v1h-1zM12,25h1v1h-1zM19,25h1v1h-1zM20,25h1v1h-1zM22,25h1v1h-1zM24,25h1v1h-1zM2,26h1v1h-1zM3,26h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM14,26h1v1h-1zM16,26h1v1h-1zM17,26h1v1h-1zM20,26h1v1h-1zM21,26h1v1h-1zM22,26h1v1h-1zM23,26h1v1h-1zM24,26h1v1h-1zM25,26h1v1h-1zM26,26h1v1h-1z" fill="#090d16"/>
+            </svg>
+          </div>
+          <div class="qr-meta">
+            <div class="qr-domain">soil.app</div>
+            <div class="qr-caption">
+              Im Browser öffnen –<br />ohne Installation
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
