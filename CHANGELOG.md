@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.8] - 2026-11-04
 ### Changed
 - Added semantic HTML5 landmarks (`<header>`, `<main>`, `<nav>`, `<aside>`, `<footer>`) with descriptive `aria-label` attributes across all public, authentication, admin, super-admin, and game views (`src/app/app.html`, `src/app/landing/landing.html`, `src/app/manual/manual.html`, `src/app/info/info.html`, `src/app/research/research.html`, `src/app/impressum/impressum.html`, `src/app/privacy/privacy.html`, `src/app/auth/*`, `src/app/admin/*`, `src/app/game/board/*`, `src/app/not-found/not-found.ts`).
 - Enabled global footer visibility in portrait orientation across all non-`/game` routes (`[class.portrait:hidden]="isGameRoute()"` in `src/app/app.html`, `src/app/app.ts`), ensured scrollable viewport containers (`h-full overflow-y-auto custom-scrollbar`) with bottom footer clearance on compact screens (`375x667` portrait and `844x390` landscape), and added the `Datenschutz` link with a compact single-row legal link bar to the `/game` mobile side menu (`src/app/game/board/board.html`).
