@@ -93,9 +93,44 @@ const performDeployment = async (newVersion) => {
     });
 
     await monitorCloudBuild(newVersion);
+    await notifyIndexNow();
   } catch (error) {
     console.error('Deployment or Git operation failed:', error.message);
     process.exit(1);
+  }
+};
+
+const INDEXNOW_KEY = '7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c';
+const INDEXNOW_URLS = [
+  'https://soil.app/',
+  'https://soil.app/manual',
+  'https://soil.app/info',
+  'https://soil.app/research',
+  'https://soil.app/admin',
+];
+
+const notifyIndexNow = async () => {
+  try {
+    const response = await fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify({
+        host: 'soil.app',
+        key: INDEXNOW_KEY,
+        keyLocation: `https://soil.app/${INDEXNOW_KEY}.txt`,
+        urlList: INDEXNOW_URLS,
+      }),
+    });
+
+    if (response.ok || response.status === 202) {
+      console.log(`IndexNow notified (${response.status}) for ${INDEXNOW_URLS.length} URLs.`);
+    } else {
+      console.warn(`IndexNow returned HTTP ${response.status}: ${await response.text()}`);
+    }
+  } catch (error) {
+    console.warn('IndexNow notification skipped:', error.message);
   }
 };
 

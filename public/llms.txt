@@ -1,6 +1,6 @@
-# SOIL – Interaktive Landwirtschaftssimulation & Lernspiel (BNE, Biologie, Geographie & Wirtschaft)
+# SOIL – Online-Planspiel & Interaktive Landwirtschaftssimulation für BNE, Biologie, Geographie & Wirtschaft
 
-> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Open-Source-Planspiel (Open Educational Resource, OER) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende ab Klasse 8 (Sekundarstufe I/II), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital – allein gegen KI-Höfe oder im Klassenzimmer-Multiplayer.
+> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Online-Planspiel und Simulationsspiel (Open Educational Resource, OER) für Bildung für nachhaltige Entwicklung (BNE) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende der Klassen 5 bis 13 (Sekundarstufe I/II in allen 16 Bundesländern), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) direkt online im Browser einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital – allein gegen KI-Höfe oder im Klassenzimmer-Multiplayer.
 
 ## Hauptseiten & Dokumentation
 

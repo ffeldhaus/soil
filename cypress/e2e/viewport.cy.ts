@@ -116,7 +116,8 @@ describe('Viewport & Orientation', () => {
       expect(res.headers['cache-control']).to.include('no-store');
     });
     cy.request('/').then((res) => {
-      expect(res.headers['cache-control']).to.include('no-store');
+      expect(res.headers['cache-control']).to.include('max-age=0');
+      expect(res.headers['cache-control']).to.include('must-revalidate');
     });
 
     cy.visit('/');

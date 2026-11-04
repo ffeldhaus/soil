@@ -92,14 +92,23 @@ async function proxyToCloudFunction(
   }
 }
 
+const INDEXNOW_KEY = '7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c';
+const CACHE_CONTROL_NO_STORE = 'no-cache, no-store, must-revalidate';
+const CACHE_CONTROL_HTML = 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600, must-revalidate';
+const CACHE_CONTROL_METADATA = 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400';
+const CACHE_CONTROL_IMMUTABLE = 'public, max-age=31536000, immutable';
+const CACHE_CONTROL_STATIC_ASSET = 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400';
+const HASHED_ASSET_REGEX = /-[0-9a-zA-Z]{8}\.(?:js|mjs|css|woff2?)$/;
+
 const app = express();
 app.use(compression());
 
 /**
- * Explicitly serve robots.txt, sitemap.xml and assetlinks.json to avoid Angular router redirects.
+ * Explicitly serve robots.txt, sitemap.xml, IndexNow key and assetlinks.json to avoid Angular router redirects.
  * Served as strings for maximum reliability in App Hosting environment.
  */
 app.get('/robots.txt', (_req, res) => {
+  res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
   res.type('text/plain');
   const robotsFile = join(browserDistFolder, 'robots.txt');
   if (existsSync(robotsFile)) {
@@ -123,17 +132,24 @@ Allow: /admin
 Sitemap: https://soil.app/sitemap.xml`);
 });
 
+app.get(`/${INDEXNOW_KEY}.txt`, (_req, res) => {
+  res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
+  res.type('text/plain; charset=utf-8');
+  res.send(INDEXNOW_KEY);
+});
+
 app.get(['/llms.txt', '/llms.txt/'], (_req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
   res.type('text/markdown; charset=utf-8');
   const llmsFile = join(browserDistFolder, 'llms.txt');
   if (existsSync(llmsFile)) {
     res.send(readFileSync(llmsFile, 'utf-8'));
     return;
   }
-  res.send(`# SOIL – Interaktive Landwirtschaftssimulation & Lernspiel (BNE, Biologie, Geographie & Wirtschaft)
+  res.send(`# SOIL – Online-Planspiel & Interaktive Landwirtschaftssimulation für BNE, Biologie, Geographie & Wirtschaft
 
-> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Open-Source-Planspiel (Open Educational Resource, OER) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende ab Klasse 8 (Sekundarstufe I/II), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital. Gespielt wird entweder allein gegen KI-Höfe oder gemeinsam im Klassenzimmer-Multiplayer.
+> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Online-Planspiel und Simulationsspiel (Open Educational Resource, OER) für Bildung für nachhaltige Entwicklung (BNE) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende der Klassen 5 bis 13 (Sekundarstufe I/II in allen 16 Bundesländern), Studierende und Selbstlernende bewirtschaften über 10 Runden (10 Jahre) direkt online im Browser einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital. Gespielt wird entweder allein gegen KI-Höfe oder gemeinsam im Klassenzimmer-Multiplayer.
 
 ## Hauptseiten & Dokumentation
 
@@ -156,6 +172,7 @@ app.get(
   ],
   (_req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
     res.type('application/json; charset=utf-8');
     const ardFile = join(browserDistFolder, '.well-known', 'ard.json');
     if (existsSync(ardFile)) {
@@ -201,6 +218,7 @@ app.get(
 );
 
 app.get('/sitemap.xml', (_req, res) => {
+  res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
   res.type('application/xml');
   const sitemapFile = join(browserDistFolder, 'sitemap.xml');
   if (existsSync(sitemapFile)) {
@@ -249,6 +267,7 @@ app.get('/sitemap.xml', (_req, res) => {
 });
 
 app.get(['/.well-known/assetlinks.json', '/.well-known/assetlinks.json/'], (_req, res) => {
+  res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
   res.type('application/json');
   res.send(`[
   {
@@ -297,8 +316,11 @@ app.use((req, res, next) => {
 });
 
 /**
- * Serve static files from the browser distribution folder.
- * Never cache sw.js, HTML documents, or site.webmanifest so deployments take effect immediately on mobile PWA/browsers.
+ * Serve static files from the browser distribution folder with tiered Cache-Control headers:
+ * - Service worker & webmanifest: no-store so PWA updates take effect immediately
+ * - HTML documents: browser always revalidates (max-age=0, must-revalidate), CDN caches briefly (s-maxage=300)
+ * - Fingerprinted JS/CSS/font bundles: 1 year immutable
+ * - Non-fingerprinted assets (images, video, icons): 1 day browser, 7 days CDN with stale-while-revalidate
  */
 app.use(
   express.static(browserDistFolder, {
@@ -307,13 +329,14 @@ app.use(
     redirect: false,
     dotfiles: 'allow',
     setHeaders: (res, filePath) => {
-      if (
-        filePath.endsWith('/sw.js') ||
-        filePath.endsWith('\\sw.js') ||
-        filePath.endsWith('.html') ||
-        filePath.endsWith('.webmanifest')
-      ) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      if (filePath.endsWith('/sw.js') || filePath.endsWith('\\sw.js') || filePath.endsWith('.webmanifest')) {
+        res.setHeader('Cache-Control', CACHE_CONTROL_NO_STORE);
+      } else if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
+      } else if (HASHED_ASSET_REGEX.test(filePath)) {
+        res.setHeader('Cache-Control', CACHE_CONTROL_IMMUTABLE);
+      } else {
+        res.setHeader('Cache-Control', CACHE_CONTROL_STATIC_ASSET);
       }
     },
   }),
@@ -389,7 +412,7 @@ app.use('*path', async (req, res, next) => {
       ? resolve(browserDistFolder, cleanPath, 'index.html')
       : resolve(browserDistFolder, 'index.html');
     if (prerenderedHtml.startsWith(browserDistFolder) && existsSync(prerenderedHtml)) {
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
       res.type('text/html; charset=utf-8').send(readFileSync(prerenderedHtml, 'utf-8'));
       return;
     }
@@ -404,7 +427,7 @@ app.use('*path', async (req, res, next) => {
     .handle(req)
     .then((response) => {
       if (response) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
         writeResponseToNodeResponse(response, res);
       } else {
         next();

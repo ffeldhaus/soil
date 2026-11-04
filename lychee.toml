@@ -25,7 +25,9 @@ exclude = [
   '/\.well-known/.*',                                     # Well-known ARD route
   'https://soil.app/mcp',                                 # POST-only Streamable HTTP MCP endpoint
   'https://soil.app/api/research',                        # GET-only JSON/CSV API endpoint (rejects HEAD)
-  'https://soil.app/SOIL-screenshot.png'                  # Static asset verified locally via root_dir = "public"
+  'https://soil.app/SOIL-screenshot.png',                 # Static asset verified locally via root_dir = "public"
+  'https://api.indexnow.org/indexnow',                    # POST-only IndexNow batch submission endpoint
+  'https://soil.app/\$%7BINDEXNOW_KEY%7D\.txt'            # JS template literal in scripts/deploy.js
 ]
 
 # Exclude paths from getting checked.

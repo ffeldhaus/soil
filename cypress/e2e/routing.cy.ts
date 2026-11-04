@@ -41,6 +41,7 @@ describe('Important Routes', () => {
     cy.request('/robots.txt').then((response) => {
       expect(response.status).to.eq(200);
       expect(response.headers['content-type']).to.include('text/plain');
+      expect(response.headers['cache-control']).to.include('s-maxage=3600');
       expect(response.body).to.include('User-agent: *');
       expect(response.body).to.include('Sitemap: https://soil.app/sitemap.xml');
     });
@@ -50,8 +51,18 @@ describe('Important Routes', () => {
     cy.request('/sitemap.xml').then((response) => {
       expect(response.status).to.eq(200);
       expect(response.headers['content-type']).to.match(/(application|text)\/xml/);
+      expect(response.headers['cache-control']).to.include('s-maxage=3600');
       expect(response.body).to.include('<urlset');
       expect(response.body).to.include('https://soil.app/admin');
+    });
+  });
+
+  it('should serve IndexNow verification key correctly', () => {
+    cy.request('/7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c.txt').then((response) => {
+      expect(response.status).to.eq(200);
+      expect(response.headers['content-type']).to.include('text/plain');
+      expect(response.headers['cache-control']).to.include('s-maxage=3600');
+      expect(String(response.body).trim()).to.eq('7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c');
     });
   });
 

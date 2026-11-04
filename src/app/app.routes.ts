@@ -11,11 +11,11 @@ export interface RouteSeoData {
 const baseRoutes: Routes = [
   {
     path: '',
-    title: 'SOIL – Interaktive Landwirtschaftssimulation & Lernspiel für BNE, Biologie & Geographie',
+    title: 'SOIL – Online-Planspiel & Simulation für BNE, Landwirtschaft & Nachhaltigkeit im Unterricht',
     data: {
       seo: {
         description:
-          'SOIL ist ein kostenloses Serious Game und Simulationsspiel für Bildung für nachhaltige Entwicklung (BNE), Biologie, Geographie und Wirtschaft. Lernende steuern über zehn Runden Fruchtfolge, Düngung, Pflanzenschutz und Finanzen eines Bauernhofs.',
+          'SOIL ist ein kostenloses Online-Planspiel und eine interaktive Simulation für Bildung für nachhaltige Entwicklung (BNE), Biologie, Geographie und Wirtschaft. Lernende ab Klasse 5–13 steuern über zehn Runden online im Browser Fruchtfolge, Bodenqualität und Finanzen eines Bauernhofs.',
         canonicalPath: '/',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -23,11 +23,19 @@ const baseRoutes: Routes = [
             {
               '@type': 'SoftwareApplication',
               name: 'SOIL',
+              alternateName: [
+                'SOIL Planspiel BNE',
+                'SOIL Online-Planspiel Landwirtschaft',
+                'SOIL Landwirtschaftssimulation',
+                'SOIL Simulation BNE',
+              ],
               url: 'https://soil.app/',
               inLanguage: 'de',
               isAccessibleForFree: true,
-              applicationCategory: 'EducationalApplication',
+              applicationCategory: ['EducationalApplication', 'GameApplication', 'Simulation'],
               operatingSystem: 'Web',
+              keywords:
+                'Planspiel BNE, Planspiel BNE online, Online-Planspiel, Simulation, Landwirtschaftssimulation, Bildung für nachhaltige Entwicklung, BNE, Biologie, Geographie, Wirtschaft, Unterricht, Fruchtfolge, Bodenqualität',
               offers: {
                 '@type': 'Offer',
                 price: '0',
@@ -36,23 +44,31 @@ const baseRoutes: Routes = [
             },
             {
               '@type': 'LearningResource',
-              name: 'SOIL – Interaktive Landwirtschaftssimulation',
+              name: 'SOIL – Online-Planspiel & Interaktive Landwirtschaftssimulation für BNE',
+              alternateName: [
+                'Planspiel BNE online',
+                'SOIL Planspiel Landwirtschaft',
+                'SOIL Simulation für den Unterricht',
+              ],
               url: 'https://soil.app/',
               inLanguage: 'de',
               isAccessibleForFree: true,
-              educationalUse: ['Simulation', 'Planspiel', 'Unterricht'],
+              learningResourceType: ['Planspiel', 'Simulation', 'Educational Game'],
+              educationalUse: ['Planspiel', 'Simulation', 'Unterricht', 'Projekttag BNE'],
+              keywords:
+                'Planspiel BNE, Planspiel BNE online, Online-Planspiel, Simulation, Landwirtschaftssimulation, Bildung für nachhaltige Entwicklung, Biologie, Geographie, Erdkunde, Wirtschaft',
               teaches: [
+                'Bildung für nachhaltige Entwicklung (BNE)',
                 'Nachhaltige Landwirtschaft',
                 'Bodenqualität und Fruchtfolge',
-                'Bildung für nachhaltige Entwicklung (BNE)',
                 'Agrarökonomie',
               ],
             },
             {
               '@type': 'VideoObject',
-              name: 'SOIL – Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit',
+              name: 'SOIL – Online-Planspiel & Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit (BNE)',
               description:
-                'Einminütiger Überblick über die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
+                'Einminütiger Überblick über das kostenlose Online-Planspiel und die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
               thumbnailUrl: 'https://soil.app/SOIL-screenshot.png',
               uploadDate: '2026-10-30T14:00:00+01:00',
               duration: 'PT1M5S',
@@ -201,16 +217,16 @@ const baseRoutes: Routes = [
   },
   {
     path: 'manual',
-    title: 'Handbuch & Spielanleitung – SOIL Landwirtschaftssimulation',
+    title: 'Handbuch & Spielanleitung – SOIL Online-Planspiel & Landwirtschaftssimulation',
     data: {
       seo: {
         description:
-          'Vollständiges Handbuch zu SOIL: Spielmechanik, Kulturen, Fruchtfolge, Humus- und Nährstoffdynamik, Bio-Zertifizierung, regionale Lieferverträge und Schwierigkeitsgrade für Unter-, Mittel- und Oberstufe.',
+          'Vollständiges Handbuch zum Online-Planspiel und zur Landwirtschaftssimulation SOIL: Spielmechanik, Kulturen, Fruchtfolge, Humus- und Nährstoffdynamik, Bio-Zertifizierung, regionale Lieferverträge und Schwierigkeitsgrade für den BNE-Unterricht.',
         canonicalPath: '/manual',
         jsonLd: {
           '@context': 'https://schema.org',
           '@type': 'TechArticle',
-          name: 'SOIL Handbuch & Spielanleitung',
+          name: 'SOIL Handbuch & Spielanleitung (Online-Planspiel & Simulation für BNE)',
           url: 'https://soil.app/manual',
           inLanguage: 'de',
           isPartOf: {
@@ -225,18 +241,18 @@ const baseRoutes: Routes = [
   },
   {
     path: 'info',
-    title: 'Lehrplanbezug, BNE-Didaktik & Wissenschaftlicher Hintergrund – SOIL Landwirtschaftssimulation',
+    title: 'Planspiel BNE im Unterricht: Lehrplanbezug, Didaktik & Wissenschaft – SOIL Simulation',
     data: {
       seo: {
         description:
-          'Einsatz von SOIL im Unterricht der Klassen 5 bis 13 in allen 16 Bundesländern für BNE, Biologie, Geographie / Erdkunde und Wirtschaft, FAQ für Lehrkräfte, Dissertation von Dr. Nina Wolf an der TU Dortmund sowie KTBL- und BMEL-Datenquellen.',
+          'Kostenloses Online-Planspiel und Simulation für BNE im Unterricht der Klassen 5 bis 13 in allen 16 Bundesländern (Biologie, Geographie / Erdkunde, Wirtschaft), FAQ für Lehrkräfte, Dissertation von Dr. Nina Wolf an der TU Dortmund sowie KTBL- und BMEL-Datenquellen.',
         canonicalPath: '/info',
         jsonLd: {
           '@context': 'https://schema.org',
           '@graph': [
             {
               '@type': 'AboutPage',
-              name: 'Lehrplanbezug, BNE-Didaktik & Wissenschaftlicher Hintergrund – SOIL',
+              name: 'Planspiel BNE im Unterricht: Lehrplanbezug, Didaktik & Wissenschaftlicher Hintergrund – SOIL',
               url: 'https://soil.app/info',
               inLanguage: 'de',
             },
