@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.6] - 2026-11-04
 ### Added
 - Added an OER license and TULLU attribution section (`CC BY 4.0` for educational content, media, and open research data; `Apache License 2.0` for source code; EU organic logo exception notice) to `/impressum` (`src/app/impressum/impressum.html`, `src/app/impressum/impressum.ts`, `src/app/impressum/impressum.spec.ts`), added `license` (`https://creativecommons.org/licenses/by/4.0/`) and `creator` (`Dr. Nina Wolf`, `Florian Feldhaus`) metadata to the Schema.org JSON-LD blocks across `src/app/app.routes.ts`, and updated `README.md` for the public GitHub repository.
 
