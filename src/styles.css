@@ -1,9 +1,10 @@
 @import "tailwindcss";
+@import "@fontsource-variable/noto-sans";
 @import "shepherd.js/dist/css/shepherd.css";
 
 html,
 body {
-  font-family: "Noto Sans", sans-serif;
+  font-family: "Noto Sans Variable", "Noto Sans", sans-serif;
   height: 100%;
   width: 100%;
   margin: 0;

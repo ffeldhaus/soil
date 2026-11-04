@@ -30,8 +30,8 @@ Schülerinnen und Schüler übernehmen allein oder in Teams die Bewirtschaftung 
   - **Standard (Klasse 7–10):** 5 Boden-Zonen, saisonale Wettertrends, 6 % Überziehungszins, regionale Förderverträge.
   - **Profi (Oberstufe / Sek II):** Stark heterogene Böden, zunehmender Klimastress, 10 % Überziehungszins und Insolvenzgrenze ab −50.000 €.
 - **Wissenschaftlich fundiertes Agrarmodell ([`sources.json`](sources.json)):**
-  - 9 Kulturen (Weizen, Roggen, Gerste, Raps, Kartoffel, Mais, Zuckerrübe, Ackerbohne, Brache/Gründüngung) plus Blühstreifen.
-  - Reale Deckungsbeiträge, Saatgut- und Betriebsmittelpreise nach KTBL-Richtwerten, EU-Agrarförderungen (GAP-Basisprämie, Öko-Regelungen, Junglandwirte-Förderung) und Bio-Zertifizierung.
+  - 12 Bewirtschaftungsoptionen: 10 Ackerkulturen (Weizen, Gerste, Hafer, Roggen, Mais, Raps, Kartoffel, Zuckerrübe, Ackerbohne, Erbse) sowie Tiere (Weide/Grünland) und Brachland (Grünbrache/Blühstreifen).
+  - Reale Deckungsbeiträge, Saatgut- und Betriebsmittelpreise nach KTBL-Richtwerten, EU-Agrarförderungen (GAP-Basisprämie, Grünstreifen-Prämie auf bis zu 5 Feldern Brachland oder Tiere, Öko-Prämie) und Bio-Zertifizierung.
   - Jeder Simulationsparameter in [`src/app/game-constants.ts`](src/app/game-constants.ts) wird automatisiert gegen begutachtete Primärliteratur in [`sources.json`](sources.json) validiert (`npm run verify-constants`).
 - **Offene Bildungsforschung (Open Science):**
   - Vollständig anonymisierte Spielverläufe abgeschlossener Runden stehen unter [https://soil.app/research](https://soil.app/research), über die öffentliche JSON/CSV-API (`https://soil.app/api/research`) sowie über einen Model Context Protocol (MCP) Server (`https://soil.app/mcp`) unter `CC BY 4.0` bereit.

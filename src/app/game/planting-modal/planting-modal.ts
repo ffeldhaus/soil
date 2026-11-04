@@ -163,7 +163,7 @@ export class PlantingModal {
         marketValue: { conventional: 0, organic: 0 },
         laborHours: 2,
         special:
-          'Regeneration für den Boden. Für bis zu 5 Brachland-Felder erhältst du eine hohe EU-Grünstreifen-Prämie.',
+          'Regeneration für den Boden (Grünbrache / Blühstreifen). Für bis zu 5 Felder mit Brachland oder Tieren erhältst du die hohe EU-Grünstreifen-Prämie (1.200 €/ha).',
       };
       this.cdr.detectChanges();
     }

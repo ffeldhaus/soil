@@ -3,7 +3,7 @@ import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { cleanupOutdatedCaches, matchPrecache, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { CacheFirst, NetworkOnly, StaleWhileRevalidate } from 'workbox-strategies';
+import { CacheFirst, NetworkOnly } from 'workbox-strategies';
 
 self.skipWaiting();
 clientsClaim();
@@ -40,14 +40,6 @@ registerRoute(
     plugins: [bgSyncPlugin],
   }),
   'POST',
-);
-
-// Cache Google Fonts
-registerRoute(
-  ({ url }) => url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com',
-  new StaleWhileRevalidate({
-    cacheName: 'google-fonts',
-  }),
 );
 
 // Cache images

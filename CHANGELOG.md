@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Self-hosted the `Noto Sans` variable font locally via `@fontsource-variable/noto-sans` (`src/styles.css`, `package.json`), removed all external Google Fonts and third-party `<link rel="preconnect">` tags from `src/index.html` and `src/sw.js`, documented local asset delivery in `/privacy` (`src/app/privacy/privacy.html`) and `AGENTS.md`, and unified `Brachland (Grünbrache / Blühstreifen)` / `Grünstreifen-Prämie` terminology across `public/llms.txt`, `src/server.ts`, `README.md`, `src/app/game/planting-modal/planting-modal.ts`, `src/app/manual/components/manual-crop-card.ts`, `src/app/game/finance/finance.html`, `src/app/info/info.html`, and `src/app/info/info.ts`.
+
 ## [3.4.6] - 2026-11-04
 ### Added
 - Added an OER license and TULLU attribution section (`CC BY 4.0` for educational content, media, and open research data; `Apache License 2.0` for source code; EU organic logo exception notice) to `/impressum` (`src/app/impressum/impressum.html`, `src/app/impressum/impressum.ts`, `src/app/impressum/impressum.spec.ts`), added `license` (`https://creativecommons.org/licenses/by/4.0/`) and `creator` (`Dr. Nina Wolf`, `Florian Feldhaus`) metadata to the Schema.org JSON-LD blocks across `src/app/app.routes.ts`, and updated `README.md` for the public GitHub repository.

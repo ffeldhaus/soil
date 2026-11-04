@@ -39,8 +39,9 @@ Core invariants for `soil` (Angular 21 + Tailwind CSS v4 + Firebase Cloud Functi
 - **Zero Direct Client Firestore/Storage Access**:
   - `firestore.rules` and `storage.rules` deny all direct client reads/writes (`allow read, write: if false`). All state mutations, player PIN logins (`crypto.randomInt`), and admin actions must go through authenticated, role-verified (`admin` / `superadmin` / `player`) Callable Cloud Functions in `functions/src/index.ts`.
   - Sanitize origins via `sanitizeOrigin()` (`ALLOWED_ORIGINS`) and escape untrusted HTML via `escapeHtml()` in email/feedback handlers.
-- **EU Data Residency & Strict Anonymization**:
+- **EU Data Residency, Strict Self-Hosting & Anonymization**:
   - All Firebase and Vertex AI (`@google/genai`) services must be pinned to **`europe-west4` (EU)**.
+  - **Strict Self-Hosting (Zero Third-Party CDNs)**: All fonts (`@fontsource-variable/noto-sans`), icons, images, videos, scripts, and stylesheets must be self-hosted and bundled locally. Never load fonts (e.g., `fonts.googleapis.com` / `fonts.gstatic.com`), icons, media, or scripts from external CDNs, and never add eager `<link rel="preconnect">` tags to third-party origins in `src/index.html`.
   - **Feedback**: Can be submitted completely anonymously without user IDs, names, or email addresses, or optionally with a contact email address (voluntarily entered or via opt-in toggle for logged-in users) solely for replying to feedback.
   - **Research Data (`research_games`)**: Completed games uploaded via `uploadFinishedGame` / `internalAnonymizeAndUploadForResearch` must strip all PII and arbitrary fields, replace player names with generic labels (`Team 1`, `player-<targetId>-<num>`), enforce semantic round/player caps, and reject test/degenerate games via `isTestOrDegenerateGame()` (`isTestEmail()`, 100%-Fallow click-throughs, E2E test names).
 - **Legal & SEO Compliance**:

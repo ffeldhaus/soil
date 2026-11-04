@@ -121,7 +121,7 @@ export class ManualCropCardComponent implements OnChanges {
       'special.pea': 'Fixiert als Leguminose Stickstoff und lockert den Boden auf.',
       'special.animals': 'Dauerkultur zur Viehhaltung.',
       'special.fallow':
-        'Regeneration für den Boden. Für bis zu 5 Brachland-Felder erhältst du eine hohe EU-Grünstreifen-Prämie.',
+        'Regeneration für den Boden (Grünbrache / Blühstreifen). Für bis zu 5 Felder mit Brachland oder Tieren erhältst du die hohe EU-Grünstreifen-Prämie (1.200 €/ha).',
     };
     return translations[key] || key;
   }

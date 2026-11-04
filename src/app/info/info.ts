@@ -167,7 +167,7 @@ export class InfoComponent implements AfterViewInit {
       state: 'Niedersachsen',
       curriculum: 'Kerncurricula Sekundarstufe I & Gymnasiale Oberstufe',
       bneAndBio:
-        'Biologie und BNE: Ökosysteme, Stickstoffkreislauf, Symbiose bei Leguminosen, Auswirkungen intensiver Düngung und Förderung der Biodiversität durch Blüh- und Grünstreifen.',
+        'Biologie und BNE: Ökosysteme, Stickstoffkreislauf, Symbiose bei Leguminosen, Auswirkungen intensiver Düngung und Förderung der Biodiversität durch Brachland (Grünbrache / Blühstreifen) und Grünland.',
       geo: 'Erdkunde Klasse 5/6 Leben und Wirtschaften in ländlichen Räumen sowie in Klasse 7–10 und der Oberstufe agrarische Gunst- und Ungunsträume, Agrobusiness, nachhaltige Landwirtschaft und Konsumfolgen.',
       econ: 'Politik-Wirtschaft: unternehmerisches Handeln zwischen Kosten, Marktpreisen und Zinsen sowie die Steuerungswirkung des europäischen Agrarmarktes und der Umweltpolitik.',
     },
