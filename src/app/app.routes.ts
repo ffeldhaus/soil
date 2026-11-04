@@ -32,6 +32,17 @@ const baseRoutes: Routes = [
               url: 'https://soil.app/',
               inLanguage: 'de',
               isAccessibleForFree: true,
+              license: 'https://creativecommons.org/licenses/by/4.0/',
+              creator: [
+                {
+                  '@type': 'Person',
+                  name: 'Dr. Nina Wolf',
+                },
+                {
+                  '@type': 'Person',
+                  name: 'Florian Feldhaus',
+                },
+              ],
               applicationCategory: ['EducationalApplication', 'GameApplication', 'Simulation'],
               operatingSystem: 'Web',
               keywords:
@@ -53,6 +64,17 @@ const baseRoutes: Routes = [
               url: 'https://soil.app/',
               inLanguage: 'de',
               isAccessibleForFree: true,
+              license: 'https://creativecommons.org/licenses/by/4.0/',
+              creator: [
+                {
+                  '@type': 'Person',
+                  name: 'Dr. Nina Wolf',
+                },
+                {
+                  '@type': 'Person',
+                  name: 'Florian Feldhaus',
+                },
+              ],
               learningResourceType: ['Planspiel', 'Simulation', 'Educational Game'],
               educationalUse: ['Planspiel', 'Simulation', 'Unterricht', 'Projekttag BNE'],
               keywords:
@@ -75,6 +97,7 @@ const baseRoutes: Routes = [
               contentUrl: 'https://soil.app/assets/video/soil-trailer.mp4',
               embedUrl: 'https://www.youtube.com/embed/xCmZUGcyVLM',
               inLanguage: 'de-DE',
+              license: 'https://creativecommons.org/licenses/by/4.0/',
             },
           ],
         },
@@ -238,6 +261,18 @@ const baseRoutes: Routes = [
           name: 'SOIL Handbuch & Spielanleitung (Online-Planspiel & Simulation für BNE)',
           url: 'https://soil.app/manual',
           inLanguage: 'de',
+          isAccessibleForFree: true,
+          license: 'https://creativecommons.org/licenses/by/4.0/',
+          creator: [
+            {
+              '@type': 'Person',
+              name: 'Dr. Nina Wolf',
+            },
+            {
+              '@type': 'Person',
+              name: 'Florian Feldhaus',
+            },
+          ],
           isPartOf: {
             '@type': 'WebSite',
             name: 'SOIL',
@@ -264,6 +299,18 @@ const baseRoutes: Routes = [
               name: 'Planspiel BNE im Unterricht: Lehrplanbezug, Didaktik & Wissenschaftlicher Hintergrund – SOIL',
               url: 'https://soil.app/info',
               inLanguage: 'de',
+              isAccessibleForFree: true,
+              license: 'https://creativecommons.org/licenses/by/4.0/',
+              creator: [
+                {
+                  '@type': 'Person',
+                  name: 'Dr. Nina Wolf',
+                },
+                {
+                  '@type': 'Person',
+                  name: 'Florian Feldhaus',
+                },
+              ],
             },
             {
               '@type': 'FAQPage',

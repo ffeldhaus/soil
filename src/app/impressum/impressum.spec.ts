@@ -27,4 +27,12 @@ describe('ImpressumComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Florian Feldhaus');
   });
+
+  it('should display OER license and TULLU attribution', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('OER-Lizenz & Urheberrecht (TULLU)');
+    expect(compiled.textContent).toContain('Creative Commons Namensnennung 4.0 International (CC BY 4.0)');
+    expect(compiled.textContent).toContain('Apache License 2.0');
+    expect(compiled.textContent).toContain('Dr. Nina Wolf & Florian Feldhaus');
+  });
 });

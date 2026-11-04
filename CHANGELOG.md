@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added an OER license and TULLU attribution section (`CC BY 4.0` for educational content, media, and open research data; `Apache License 2.0` for source code; EU organic logo exception notice) to `/impressum` (`src/app/impressum/impressum.html`, `src/app/impressum/impressum.ts`, `src/app/impressum/impressum.spec.ts`), added `license` (`https://creativecommons.org/licenses/by/4.0/`) and `creator` (`Dr. Nina Wolf`, `Florian Feldhaus`) metadata to the Schema.org JSON-LD blocks across `src/app/app.routes.ts`, and updated `README.md` for the public GitHub repository.
+
 ## [3.4.5] - 2026-11-04
 ### Fixed
 - Resolved Bing Webmaster Tools SEO/GEO analyzer warnings across all routes (`src/index.html`, `src/app/app.routes.ts`) by tightening `<title>` lengths to `<= 57` characters and `<meta name="description">` lengths to `140–153` characters, adding `<link rel="icon" href="/favicon.ico" sizes="48x48" />` first in `src/index.html`, and replacing all 21 empty `alt=""` image attributes across 16 component templates with descriptive German `alt` text.
