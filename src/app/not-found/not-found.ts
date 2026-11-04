@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
           <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
           <img
             src="assets/images/bauernhof-landscape-dunkel.webp"
-            alt=""
+            alt="SOIL Bauernhof und Ackerflächen"
             class="w-full h-full object-cover"
           />
         </picture>

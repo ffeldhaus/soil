@@ -1,7 +1,7 @@
 <div class="h-dvh w-screen text-white select-none relative font-sans overflow-hidden flex flex-col bg-gray-950 no-overscroll no-scrollbar">
   <!-- Fullscreen Background Image -->
   <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-    <img [src]="backgroundImage" alt=""
+    <img [src]="backgroundImage" alt="SOIL Bauernhof und Ackerflächen"
       class="w-full h-full object-cover select-none">
   </div>
 
@@ -361,7 +361,7 @@
               >
                 <img
                   [src]="selectedRoundWeatherData.image"
-                  alt=""
+                  [alt]="selectedRoundWeatherData.name"
                   class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-gray-700 shrink-0"
                 />
                 @if (selectedRoundWeatherData.name !== 'Normal') {
@@ -422,7 +422,7 @@
               >
                 <img
                   [src]="primaryPestBannerImage"
-                  alt=""
+                  [alt]="selectedRoundPestsData[0].name"
                   class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-gray-700 shrink-0"
                 />
                 <span class="font-bold truncate">
@@ -464,7 +464,7 @@
                 (click)="toggleHudPopover('contract', $event)"
                 class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-amber-500/50 rounded-lg pl-1.5 pr-2 py-0.5 sm:pl-1.5 sm:pr-2.5 sm:py-1 text-[10px] sm:text-[11px] text-slate-200 min-w-0 max-w-full transition-colors cursor-pointer"
               >
-                <img [src]="getContractImage(contract.id)" alt="" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-amber-500/40 shrink-0" />
+                <img [src]="getContractImage(contract.id)" [alt]="contract.name" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-amber-500/40 shrink-0" />
                 <span class="font-semibold text-amber-300 truncate">{{ contract.name }}</span>
                 <span class="font-mono tabular-nums font-bold text-emerald-400 shrink-0">
                   +{{ contract.reward | currency: 'EUR' : 'symbol' : '1.0-0' }}
@@ -1127,14 +1127,14 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-xs text-slate-200">
                   <div class="flex items-center gap-2">
-                    <img src="assets/images/weather/normal.jpg" alt="" class="w-8 h-8 rounded object-cover border border-gray-700 shrink-0" />
+                    <img src="assets/images/weather/normal.jpg" alt="Ruhige Wetterlage" class="w-8 h-8 rounded object-cover border border-gray-700 shrink-0" />
                     <div>
                       <div class="font-bold text-white">Ruhige Wetterlage</div>
                       <div class="text-[11px] text-slate-400">Normales Wetter zum Start</div>
                     </div>
                   </div>
                   <div class="flex items-center gap-2">
-                    <img src="assets/images/pests/none.jpg" alt="" class="w-8 h-8 rounded object-cover border border-gray-700 shrink-0" />
+                    <img src="assets/images/pests/none.jpg" alt="Keine Schädlinge" class="w-8 h-8 rounded object-cover border border-gray-700 shrink-0" />
                     <div>
                       <div class="font-bold text-white">Keine Schädlinge</div>
                       <div class="text-[11px] text-slate-400">Befallsfreier Start</div>

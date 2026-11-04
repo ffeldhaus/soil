@@ -16,7 +16,7 @@ import { Router, RouterLink } from '@angular/router';
         title="Zur Startseite"
         class="inline-flex items-center gap-2 px-3 py-2 text-emerald-400 hover:text-emerald-300 hover:bg-gray-700/80 font-bold tracking-wider transition-colors cursor-pointer"
       >
-        <img src="favicon.svg" alt="" class="w-4 h-4 rounded-xs shrink-0" />
+        <img src="favicon.svg" alt="SOIL Logo" class="w-4 h-4 rounded-xs shrink-0" />
         <span>SOIL</span>
       </a>
       <div class="w-px bg-gray-700" aria-hidden="true"></div>

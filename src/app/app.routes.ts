@@ -11,11 +11,11 @@ export interface RouteSeoData {
 const baseRoutes: Routes = [
   {
     path: '',
-    title: 'SOIL – Online-Planspiel & Simulation für BNE, Landwirtschaft & Nachhaltigkeit im Unterricht',
+    title: 'SOIL: Online-Planspiel & Simulation für BNE im Unterricht',
     data: {
       seo: {
         description:
-          'SOIL ist ein kostenloses Online-Planspiel und eine interaktive Simulation für Bildung für nachhaltige Entwicklung (BNE), Biologie, Geographie und Wirtschaft. Lernende ab Klasse 5–13 steuern über zehn Runden online im Browser Fruchtfolge, Bodenqualität und Finanzen eines Bauernhofs.',
+          'Kostenloses Online-Planspiel und interaktive Simulation für BNE, Biologie, Geographie und Wirtschaft (Klasse 5–13): Bewirtschafte online einen Bauernhof.',
         canonicalPath: '/',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -84,10 +84,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'game',
-    title: 'Spielbrett – SOIL',
+    title: 'Spielbrett – SOIL Online-Planspiel & Simulation',
     data: {
       seo: {
-        description: 'Interaktives Spielbrett der SOIL Landwirtschaftssimulation.',
+        description:
+          'Interaktives Spielbrett des Online-Planspiels und der Landwirtschaftssimulation SOIL für Fruchtfolge, Bodenqualität, Nährstoffe und Betriebswirtschaft.',
         canonicalPath: '/game',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -96,10 +97,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'admin/login',
-    title: 'Lehrkräfte-Anmeldung – SOIL',
+    title: 'Lehrkräfte-Anmeldung – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Anmeldung für Lehrkräfte und Spielleitungen bei SOIL.',
+        description:
+          'Anmeldung für Lehrkräfte und Spielleitungen bei SOIL zur Erstellung und Verwaltung von Multiplayer-Klassenrunden für den BNE- und Fachunterricht.',
         canonicalPath: '/admin/login',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -108,10 +110,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'admin/register',
-    title: 'Lehrkräfte-Registrierung – SOIL',
+    title: 'Lehrkräfte-Registrierung – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Kostenlose Registrierung für Lehrkräfte und Bildungseinrichtungen bei SOIL.',
+        description:
+          'Kostenlose Registrierung für Lehrkräfte und Bildungseinrichtungen bei SOIL, um eigene Multiplayer-Klassenrunden mit Team-PINs im Unterricht zu leiten.',
         canonicalPath: '/admin/register',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -120,10 +123,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'admin/super',
-    title: 'Super-Admin – SOIL',
+    title: 'Systemverwaltung & Super-Admin – SOIL',
     data: {
       seo: {
-        description: 'Systemverwaltung für SOIL.',
+        description:
+          'Systemverwaltung und Super-Admin-Bereich für SOIL zur Freischaltung verifizierter Lehrkräfte-Konten sowie zur Auswertung von Spielen und Feedback.',
         canonicalPath: '/admin/super',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -132,7 +136,7 @@ const baseRoutes: Routes = [
   },
   {
     path: 'admin',
-    title: 'Spiele erstellen & verwalten – SOIL Landwirtschaftssimulation',
+    title: 'Spiele erstellen & verwalten – SOIL Online-Planspiel',
     data: {
       seo: {
         description:
@@ -144,10 +148,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'auth/action',
-    title: 'Konto-Aktion – SOIL',
+    title: 'Konto-Aktion bestätigen – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Bestätigung von Konto-Aktionen bei SOIL.',
+        description:
+          'Bestätigung von E-Mail-Verifizierungen, Passwort-Zurücksetzungen und Konto-Aktionen für Lehrkräfte im Online-Planspiel SOIL (https://soil.app).',
         canonicalPath: '/auth/action',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -156,10 +161,11 @@ const baseRoutes: Routes = [
   },
   {
     path: '_/auth/action',
-    title: 'Konto-Aktion – SOIL',
+    title: 'Konto-Aktion bestätigen – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Bestätigung von Konto-Aktionen bei SOIL.',
+        description:
+          'Bestätigung von E-Mail-Verifizierungen, Passwort-Zurücksetzungen und Konto-Aktionen für Lehrkräfte im Online-Planspiel SOIL (https://soil.app).',
         canonicalPath: '/auth/action',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -168,10 +174,11 @@ const baseRoutes: Routes = [
   },
   {
     path: '__/auth/action',
-    title: 'Konto-Aktion – SOIL',
+    title: 'Konto-Aktion bestätigen – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Bestätigung von Konto-Aktionen bei SOIL.',
+        description:
+          'Bestätigung von E-Mail-Verifizierungen, Passwort-Zurücksetzungen und Konto-Aktionen für Lehrkräfte im Online-Planspiel SOIL (https://soil.app).',
         canonicalPath: '/auth/action',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -180,10 +187,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'game-login',
-    title: 'Spiel-Login mit PIN – SOIL',
+    title: 'Spiel-Login mit Team-PIN – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Tritt einer laufenden SOIL-Spielrunde per Spiel-ID und PIN bei.',
+        description:
+          'Tritt einer laufenden SOIL-Klassenrunde im Unterricht direkt per Spiel-ID und vierstelliger Team-PIN bei – komplett ohne eigenes Schüler-Konto.',
         canonicalPath: '/game-login',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -192,10 +200,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'impressum',
-    title: 'Impressum – SOIL',
+    title: 'Impressum & Kontakt – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Impressum und rechtliche Angaben zu SOIL (soil.app).',
+        description:
+          'Impressum, Anbieterkennzeichnung und rechtliche Angaben zum kostenlosen Online-Planspiel und der Landwirtschaftssimulation SOIL (https://soil.app).',
         canonicalPath: '/impressum',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -204,11 +213,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'privacy',
-    title: 'Datenschutzerklärung – SOIL',
+    title: 'Datenschutzerklärung – SOIL Online-Planspiel',
     data: {
       seo: {
         description:
-          'Datenschutzerklärung und Informationen zur DSGVO-konformen Datenverarbeitung bei SOIL (soil.app).',
+          'Datenschutzerklärung und Informationen zur DSGVO-konformen, anonymen Datenverarbeitung ohne Schüler-Accounts im Online-Planspiel SOIL (soil.app).',
         canonicalPath: '/privacy',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -217,11 +226,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'manual',
-    title: 'Handbuch & Spielanleitung – SOIL Online-Planspiel & Landwirtschaftssimulation',
+    title: 'Handbuch & Spielanleitung – SOIL Online-Planspiel',
     data: {
       seo: {
         description:
-          'Vollständiges Handbuch zum Online-Planspiel und zur Landwirtschaftssimulation SOIL: Spielmechanik, Kulturen, Fruchtfolge, Humus- und Nährstoffdynamik, Bio-Zertifizierung, regionale Lieferverträge und Schwierigkeitsgrade für den BNE-Unterricht.',
+          'Spielanleitung zum Online-Planspiel SOIL: Kulturen, Fruchtfolge, Bodenqualität, Nährstoffe, Bio-Siegel, Regionalverträge und 3 Schwierigkeitsgrade.',
         canonicalPath: '/manual',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -241,11 +250,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'info',
-    title: 'Planspiel BNE im Unterricht: Lehrplanbezug, Didaktik & Wissenschaft – SOIL Simulation',
+    title: 'SOIL: Planspiel BNE im Unterricht, Lehrplan & Didaktik',
     data: {
       seo: {
         description:
-          'Kostenloses Online-Planspiel und Simulation für BNE im Unterricht der Klassen 5 bis 13 in allen 16 Bundesländern (Biologie, Geographie / Erdkunde, Wirtschaft), FAQ für Lehrkräfte, Dissertation von Dr. Nina Wolf an der TU Dortmund sowie KTBL- und BMEL-Datenquellen.',
+          'Einsatz des Online-Planspiels SOIL im Unterricht (Klasse 5–13, alle 16 Bundesländer) für BNE, Biologie, Geographie und Wirtschaft sowie Didaktik & FAQ.',
         canonicalPath: '/info',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -311,11 +320,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'research',
-    title: 'Offene Forschungsdaten & Empirische Spielverläufe – SOIL Simulation',
+    title: 'Offene Forschungsdaten & Spielverläufe – SOIL Simulation',
     data: {
       seo: {
         description:
-          'Öffentlicher Forschungsdatensatz anonymisierter SOIL-Simulationsspiele mit REST/CSV-API und Model Context Protocol Server für Bildungsforschung und Agrarökonomie.',
+          'Öffentlicher Forschungsdatensatz anonymisierter SOIL-Simulationsspiele mit REST/CSV-API und MCP-Server für Bildungsforschung, BNE und Agrarökonomie.',
         canonicalPath: '/research',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -351,10 +360,11 @@ const baseRoutes: Routes = [
   },
   {
     path: 'delete-account',
-    title: 'Konto & Daten löschen – SOIL',
+    title: 'Konto & Spieldaten löschen – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Konto und lokale Spieldaten bei SOIL löschen.',
+        description:
+          'Lehrkräfte-Konto und lokal gespeicherte Spieldaten im Online-Planspiel und der Landwirtschaftssimulation SOIL (https://soil.app) dauerhaft löschen.',
         canonicalPath: '/delete-account',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
@@ -363,10 +373,11 @@ const baseRoutes: Routes = [
   },
   {
     path: '**',
-    title: 'Seite nicht gefunden – SOIL',
+    title: 'Seite nicht gefunden (404) – SOIL Online-Planspiel',
     data: {
       seo: {
-        description: 'Die angeforderte Seite wurde nicht gefunden.',
+        description:
+          'Die angeforderte Seite wurde im Online-Planspiel SOIL nicht gefunden. Kehre zur Startseite zurück, um ein lokales oder Mehrspieler-Spiel zu starten.',
         canonicalPath: '/',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
