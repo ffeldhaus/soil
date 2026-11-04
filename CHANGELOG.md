@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.5] - 2026-11-04
 ### Fixed
 - Resolved Bing Webmaster Tools SEO/GEO analyzer warnings across all routes (`src/index.html`, `src/app/app.routes.ts`) by tightening `<title>` lengths to `<= 57` characters and `<meta name="description">` lengths to `140–153` characters, adding `<link rel="icon" href="/favicon.ico" sizes="48x48" />` first in `src/index.html`, and replacing all 21 empty `alt=""` image attributes across 16 component templates with descriptive German `alt` text.
 
