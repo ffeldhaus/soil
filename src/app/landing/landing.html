@@ -12,109 +12,111 @@
     </picture>
   </div>
 
-  <!-- Main Hero Content -->
-  <main class="relative z-10 flex flex-col items-center justify-center min-h-[85vh] px-4 text-center">
-    <div class="max-w-4xl space-y-8 animate-fade-in-up">
-      <h1 class="text-6xl md:text-8xl font-sans font-bold text-emerald-400 drop-shadow-2xl tracking-tight mb-4">
-        SOIL<span class="sr-only">
-          – Online-Planspiel und interaktive Simulation für BNE, Landwirtschaft und Nachhaltigkeit im Unterricht</span
-        >
-      </h1>
-
-      <p class="text-xl md:text-3xl text-white max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-        <span data-testid="landing-intro">Eine interaktive Simulation über</span>&nbsp;<span
-          class="text-emerald-300 font-normal"
-          data-testid="landing-agriculture"
-          >Landwirtschaft</span
-        >,
-        <span class="text-blue-300 font-normal" data-testid="landing-economics">Ökonomie</span>,
-        <span>und</span>&nbsp;<span class="text-yellow-200 font-normal" data-testid="landing-sustainability"
-          >Nachhaltigkeit</span
-        >.
-      </p>
-
-      @if (challengeSeed) {
-        <div
-          data-testid="challenge-banner"
-          class="max-w-xl mx-auto mt-6 px-5 py-3.5 rounded-xl bg-gray-900 border border-emerald-500/60 shadow-lg text-sm sm:text-base text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2"
-        >
-          <span class="font-mono font-bold text-emerald-400">Herausforderung: Seed #{{ challengeSeed }}</span>
-          @if (challengeTargetScore !== undefined) {
-            <span class="text-gray-200">
-              Schlage <strong>{{ challengeTargetName || 'den Herausforderer' }}</strong> (<span
-                class="font-mono tabular-nums font-bold text-emerald-300"
-                >{{ challengeTargetScore }} Pkt</span
-              >)
-            </span>
-          } @else {
-            <span class="text-gray-300">Gleiche Wetter- & Schädlingsfolge ({{ challengeRounds }} Runden)</span>
-          }
-        </div>
-      }
-
-      <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mt-12 w-full max-w-2xl mx-auto">
-        <button
-          type="button"
-          (click)="startQuickGame()"
-          [disabled]="isStartingGame"
-          data-testid="landing-quick-play"
-          class="px-8 py-5 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white text-lg font-bold rounded-xl shadow-lg border border-emerald-500 transition-colors flex-1 cursor-pointer flex items-center justify-center gap-2"
-        >
-          @if (isStartingGame) {
-            <span>Wird gestartet...</span>
-          } @else if (challengeSeed) {
-            <span>Herausforderung starten</span>
-          } @else {
-            <span>Sofort spielen</span>
-          }
-        </button>
-        <a
-          routerLink="/admin"
-          data-testid="landing-manage-games"
-          class="px-8 py-5 bg-gray-900/90 hover:bg-gray-800 text-emerald-300 hover:text-white text-lg font-bold rounded-xl shadow-lg border border-emerald-500/40 transition-colors flex-1 flex items-center justify-center gap-2"
-        >
-          <span>Spiele erstellen & verwalten</span>
-        </a>
-      </div>
-
-      <div class="flex justify-center mt-4">
-        <button
-          type="button"
-          (click)="openTrailer()"
-          data-testid="landing-watch-trailer"
-          class="bg-gray-900/90 hover:bg-gray-800 text-slate-200 hover:text-white border border-gray-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition cursor-pointer"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 text-emerald-400 shrink-0"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
+  <!-- Main Content -->
+  <main class="relative z-10">
+    <!-- Hero Header -->
+    <header class="flex flex-col items-center justify-center min-h-[85vh] px-4 text-center">
+      <div class="max-w-4xl space-y-8 animate-fade-in-up">
+        <h1 class="text-6xl md:text-8xl font-sans font-bold text-emerald-400 drop-shadow-2xl tracking-tight mb-4">
+          SOIL<span class="sr-only">
+            – Online-Planspiel und interaktive Simulation für BNE, Landwirtschaft und Nachhaltigkeit im Unterricht</span
           >
-            <path d="M8 5v14l11-7z" />
-          </svg>
-          <span>Trailer ansehen</span>
-        </button>
-      </div>
+        </h1>
 
-      <!-- Scroll Indicator (in normal flex flow so it never overlaps CTA buttons) -->
-      <div class="pt-4 sm:pt-6">
-        <button
-          type="button"
-          (click)="scrollToInfo()"
-          class="mx-auto flex items-center justify-center animate-bounce text-gray-400 hover:text-emerald-400 transition-colors cursor-pointer"
-          aria-label="Scroll to info"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </main>
+        <p class="text-xl md:text-3xl text-white max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+          <span data-testid="landing-intro">Eine interaktive Simulation über</span>&nbsp;<span
+            class="text-emerald-300 font-normal"
+            data-testid="landing-agriculture"
+            >Landwirtschaft</span
+          >,
+          <span class="text-blue-300 font-normal" data-testid="landing-economics">Ökonomie</span>,
+          <span>und</span>&nbsp;<span class="text-yellow-200 font-normal" data-testid="landing-sustainability"
+            >Nachhaltigkeit</span
+          >.
+        </p>
 
-  <!-- Info Sections -->
-  <div id="info-section" class="relative z-10 py-24 px-6 portrait:px-0">
+        @if (challengeSeed) {
+          <div
+            data-testid="challenge-banner"
+            class="max-w-xl mx-auto mt-6 px-5 py-3.5 rounded-xl bg-gray-900 border border-emerald-500/60 shadow-lg text-sm sm:text-base text-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2"
+          >
+            <span class="font-mono font-bold text-emerald-400">Herausforderung: Seed #{{ challengeSeed }}</span>
+            @if (challengeTargetScore !== undefined) {
+              <span class="text-gray-200">
+                Schlage <strong>{{ challengeTargetName || 'den Herausforderer' }}</strong> (<span
+                  class="font-mono tabular-nums font-bold text-emerald-300"
+                  >{{ challengeTargetScore }} Pkt</span
+                >)
+              </span>
+            } @else {
+              <span class="text-gray-300">Gleiche Wetter- & Schädlingsfolge ({{ challengeRounds }} Runden)</span>
+            }
+          </div>
+        }
+
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mt-12 w-full max-w-2xl mx-auto">
+          <button
+            type="button"
+            (click)="startQuickGame()"
+            [disabled]="isStartingGame"
+            data-testid="landing-quick-play"
+            class="px-8 py-5 bg-emerald-700 hover:bg-emerald-600 disabled:opacity-50 text-white text-lg font-bold rounded-xl shadow-lg border border-emerald-500 transition-colors flex-1 cursor-pointer flex items-center justify-center gap-2"
+          >
+            @if (isStartingGame) {
+              <span>Wird gestartet...</span>
+            } @else if (challengeSeed) {
+              <span>Herausforderung starten</span>
+            } @else {
+              <span>Sofort spielen</span>
+            }
+          </button>
+          <a
+            routerLink="/admin"
+            data-testid="landing-manage-games"
+            class="px-8 py-5 bg-gray-900/90 hover:bg-gray-800 text-emerald-300 hover:text-white text-lg font-bold rounded-xl shadow-lg border border-emerald-500/40 transition-colors flex-1 flex items-center justify-center gap-2"
+          >
+            <span>Spiele erstellen & verwalten</span>
+          </a>
+        </div>
+
+        <div class="flex justify-center mt-4">
+          <button
+            type="button"
+            (click)="openTrailer()"
+            data-testid="landing-watch-trailer"
+            class="bg-gray-900/90 hover:bg-gray-800 text-slate-200 hover:text-white border border-gray-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-emerald-400 shrink-0"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <span>Trailer ansehen</span>
+          </button>
+        </div>
+
+        <!-- Scroll Indicator (in normal flex flow so it never overlaps CTA buttons) -->
+        <div class="pt-4 sm:pt-6">
+          <button
+            type="button"
+            (click)="scrollToInfo()"
+            class="mx-auto flex items-center justify-center animate-bounce text-gray-400 hover:text-emerald-400 transition-colors cursor-pointer"
+            aria-label="Scroll to info"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Info Sections -->
+    <div id="info-section" class="py-24 px-6 portrait:px-0">
     <div class="max-w-6xl mx-auto grid min-[860px]:grid-cols-2 gap-8 portrait:max-w-none">
       <section
         class="bg-gray-900 p-5 md:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-8 portrait:rounded-none portrait:border-x-0"
@@ -222,7 +224,8 @@
         <p class="mt-2 text-xs text-gray-500">Enabling test mode will mock all backend calls and use local data.</p>
       </div>
     }
-  </div>
+    </div>
+  </main>
 
   @if (showTrailerModal) {
     <div

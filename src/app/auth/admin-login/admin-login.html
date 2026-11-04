@@ -1,5 +1,5 @@
-<div class="min-h-screen relative text-gray-100 font-sans overflow-hidden flex flex-col">
-  <div class="flex-1 relative flex items-center justify-center p-6 portrait:p-0">
+<div class="h-full relative text-gray-100 font-sans overflow-y-auto custom-scrollbar flex flex-col">
+  <main class="flex-1 relative flex items-center justify-center p-6 pb-12 portrait:p-0 portrait:pb-12">
     <!-- Background Image -->
     <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none">
       <picture>
@@ -134,7 +134,7 @@
         </p>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- Error Modal -->
   @if (showErrorModal) {

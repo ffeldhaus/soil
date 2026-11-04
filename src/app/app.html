@@ -26,34 +26,28 @@
 }
 
 <router-outlet></router-outlet>
-<div
-  class="fixed bottom-0 right-0 pl-2.5 pr-4 py-1 bg-gray-950/85 border-t border-l border-gray-800 text-gray-300 z-20 flex items-center gap-3 rounded-tl-lg text-xs font-mono portrait:hidden"
+<footer
+  aria-label="Rechtliches und Dokumentation"
+  [class.portrait:hidden]="isGameRoute()"
+  class="fixed bottom-0 right-0 portrait:left-0 pl-2.5 pr-4 portrait:px-1.5 sm:portrait:px-4 py-1 bg-gray-950/90 border-t border-l portrait:border-l-0 border-gray-800 text-gray-300 z-20 flex items-center justify-end portrait:justify-center rounded-tl-lg portrait:rounded-none text-xs portrait:text-[10px] sm:portrait:text-xs font-sans tracking-tight sm:font-mono sm:tracking-normal print:hidden"
 >
-  <a routerLink="/manual" class="text-gray-300 hover:text-white hover:underline transition"
-    >Handbuch</a
-  >
-  <span class="text-gray-600">|</span>
-  <a routerLink="/info" class="text-gray-300 hover:text-white hover:underline transition"
-    >Hintergrund</a
-  >
-  <span class="text-gray-600">|</span>
-  <a routerLink="/research" class="text-gray-300 hover:text-white hover:underline transition"
-    >Forschungsdaten</a
-  >
-  <span class="text-gray-600">|</span>
-  <a routerLink="/impressum" class="text-gray-300 hover:text-white hover:underline transition"
-    >Impressum</a
-  >
-  <span class="text-gray-600">|</span>
-  <a routerLink="/privacy" class="text-gray-300 hover:text-white hover:underline transition"
-    >Datenschutz</a
-  >
-  <span class="text-gray-600">|</span>
-  <a
-    href="https://github.com/ffeldhaus/soil/blob/main/CHANGELOG.md"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="text-gray-300 hover:text-white hover:underline transition"
-    >v{{ version }}</a
-  >
-</div>
+  <nav aria-label="Fußzeilen-Navigation" class="w-full portrait:max-w-md sm:portrait:max-w-none flex flex-nowrap items-center justify-between sm:justify-center gap-x-0.5 sm:gap-x-3 whitespace-nowrap">
+    <a routerLink="/manual" class="text-gray-300 hover:text-white hover:underline transition">Handbuch</a>
+    <span class="text-gray-600" aria-hidden="true">|</span>
+    <a routerLink="/info" class="text-gray-300 hover:text-white hover:underline transition">Hintergrund</a>
+    <span class="text-gray-600" aria-hidden="true">|</span>
+    <a routerLink="/research" class="text-gray-300 hover:text-white hover:underline transition">Forschungsdaten</a>
+    <span class="text-gray-600" aria-hidden="true">|</span>
+    <a routerLink="/impressum" class="text-gray-300 hover:text-white hover:underline transition">Impressum</a>
+    <span class="text-gray-600" aria-hidden="true">|</span>
+    <a routerLink="/privacy" class="text-gray-300 hover:text-white hover:underline transition">Datenschutz</a>
+    <span class="text-gray-600" aria-hidden="true">|</span>
+    <a
+      href="https://github.com/ffeldhaus/soil/blob/main/CHANGELOG.md"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-mono text-gray-300 hover:text-white hover:underline transition"
+      >v{{ version }}</a
+    >
+  </nav>
+</footer>

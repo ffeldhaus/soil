@@ -33,7 +33,8 @@
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/75" (click)="toggleMobileMenu()"></div>
       <!-- Menu Content -->
-      <div
+      <nav
+        aria-label="Mobiles Spielmenü"
         class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900 shadow-2xl flex flex-col border-r border-gray-800 animate-slide-in-left">
         <!-- Menu Header matching top HUD bar -->
         <div class="h-10 px-4 border-b border-gray-800 flex justify-between items-center shrink-0">
@@ -206,13 +207,18 @@
           </div>
         </div>
 
-        <div class="p-3 bg-gray-950 border-t border-gray-800">
-          <div class="flex items-center justify-between text-[11px] text-gray-400">
-            <div class="flex items-center gap-2.5">
-              <a routerLink="/manual" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Handbuch</a>
-              <a routerLink="/info" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Hintergrund</a>
-              <a routerLink="/impressum" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Impressum</a>
-            </div>
+        <div class="px-2 py-2 bg-gray-950 border-t border-gray-800 space-y-1 text-[10px] tracking-tight text-gray-400">
+          <div class="flex items-center justify-between whitespace-nowrap">
+            <a routerLink="/manual" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Handbuch</a>
+            <span class="text-gray-700" aria-hidden="true">·</span>
+            <a routerLink="/info" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Hintergrund</a>
+            <span class="text-gray-700" aria-hidden="true">·</span>
+            <a routerLink="/impressum" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Impressum</a>
+            <span class="text-gray-700" aria-hidden="true">·</span>
+            <a routerLink="/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Datenschutz</a>
+          </div>
+          <div class="flex items-center justify-between text-gray-500">
+            <span>SOIL Planspiel</span>
             <a
               href="https://github.com/ffeldhaus/soil/blob/main/CHANGELOG.md"
               target="_blank"
@@ -222,7 +228,7 @@
             >
           </div>
         </div>
-      </div>
+      </nav>
     </div>
     }
 
@@ -276,7 +282,7 @@
     }
 
     <!-- Main Board Area -->
-    <div
+    <main
       class="relative flex-1 w-full min-h-0 flex flex-col items-center justify-start overflow-hidden board-container no-overscroll"
       [class.show-side-cards]="showSideCards"
       (mousedown)="onBoardAreaMouseDown($event)"
@@ -623,7 +629,7 @@
           }
         </div>
       }
-    </div>
+    </main>
 
     <!-- Game End Celebration Modal -->
     @if (showGameEndModal) {

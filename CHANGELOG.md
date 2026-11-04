@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Added semantic HTML5 landmarks (`<header>`, `<main>`, `<nav>`, `<aside>`, `<footer>`) with descriptive `aria-label` attributes across all public, authentication, admin, super-admin, and game views (`src/app/app.html`, `src/app/landing/landing.html`, `src/app/manual/manual.html`, `src/app/info/info.html`, `src/app/research/research.html`, `src/app/impressum/impressum.html`, `src/app/privacy/privacy.html`, `src/app/auth/*`, `src/app/admin/*`, `src/app/game/board/*`, `src/app/not-found/not-found.ts`).
+- Enabled global footer visibility in portrait orientation across all non-`/game` routes (`[class.portrait:hidden]="isGameRoute()"` in `src/app/app.html`, `src/app/app.ts`), ensured scrollable viewport containers (`h-full overflow-y-auto custom-scrollbar`) with bottom footer clearance on compact screens (`375x667` portrait and `844x390` landscape), and added the `Datenschutz` link with a compact single-row legal link bar to the `/game` mobile side menu (`src/app/game/board/board.html`).
+
 ## [3.4.7] - 2026-11-04
 ### Changed
 - Self-hosted the `Noto Sans` variable font locally via `@fontsource-variable/noto-sans` (`src/styles.css`, `package.json`), removed all external Google Fonts and third-party `<link rel="preconnect">` tags from `src/index.html` and `src/sw.js`, documented local asset delivery in `/privacy` (`src/app/privacy/privacy.html`) and `AGENTS.md`, and unified `Brachland (Grünbrache / Blühstreifen)` / `Grünstreifen-Prämie` terminology across `public/llms.txt`, `src/server.ts`, `README.md`, `src/app/game/planting-modal/planting-modal.ts`, `src/app/manual/components/manual-crop-card.ts`, `src/app/game/finance/finance.html`, `src/app/info/info.html`, and `src/app/info/info.ts`.

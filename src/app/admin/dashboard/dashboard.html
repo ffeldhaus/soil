@@ -16,7 +16,7 @@
     <app-dashboard-hud [user]="user$ | async" [userStatus]="userStatus" (logout)="logout()"></app-dashboard-hud>
 
     <!-- Main Content -->
-    <main class="pt-16 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none pb-12">
+    <main class="pt-16 px-4 max-w-4xl mx-auto flex flex-col gap-6 portrait:px-0 portrait:max-w-none pb-16">
       @if (statusMessage) {
         <div
           data-testid="dashboard-status-banner"

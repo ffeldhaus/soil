@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="min-h-screen flex items-center justify-center px-4 relative overflow-hidden font-sans">
+    <div class="h-full overflow-y-auto custom-scrollbar flex items-center justify-center px-4 relative font-sans">
       <!-- Background Asset (consistent with app theme) -->
       <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none opacity-30">
         <picture>
@@ -19,7 +19,7 @@ import { RouterLink } from '@angular/router';
         </picture>
       </div>
 
-      <div class="relative z-10 text-center space-y-4 max-w-lg animate-fade-in">
+      <main class="relative z-10 text-center space-y-4 max-w-lg animate-fade-in pb-8">
         <div class="space-y-2">
           <h1 class="text-9xl font-black text-emerald-500/20 select-none tracking-tighter">
             404
@@ -43,7 +43,7 @@ import { RouterLink } from '@angular/router';
             Zurück zum Hof
           </a>
         </div>
-      </div>
+      </main>
     </div>
   `,
   styles: [
