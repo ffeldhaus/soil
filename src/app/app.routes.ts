@@ -91,6 +91,7 @@ const baseRoutes: Routes = [
               name: 'SOIL – Online-Planspiel & Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit (BNE)',
               description:
                 'Einminütiger Überblick über das kostenlose Online-Planspiel und die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
+              url: 'https://soil.app/trailer',
               thumbnailUrl: 'https://soil.app/SOIL-screenshot.png',
               uploadDate: '2026-10-30T14:00:00+01:00',
               duration: 'PT1M5S',
@@ -104,6 +105,34 @@ const baseRoutes: Routes = [
       } satisfies RouteSeoData,
     },
     loadComponent: () => import('./landing/landing').then((m) => m.Landing),
+  },
+  {
+    path: 'trailer',
+    title: 'Trailer – SOIL Online-Planspiel & Simulation für BNE',
+    data: {
+      seo: {
+        description:
+          'Einminütiger Video-Trailer zum kostenlosen Online-Planspiel und der interaktiven Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
+        canonicalPath: '/trailer',
+        ogType: 'video.other',
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@type': 'VideoObject',
+          name: 'SOIL – Online-Planspiel & Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit (BNE)',
+          description:
+            'Einminütiger Überblick über das kostenlose Online-Planspiel und die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
+          url: 'https://soil.app/trailer',
+          thumbnailUrl: 'https://soil.app/SOIL-screenshot.png',
+          uploadDate: '2026-10-30T14:00:00+01:00',
+          duration: 'PT1M5S',
+          contentUrl: 'https://soil.app/assets/video/soil-trailer.mp4',
+          embedUrl: 'https://www.youtube.com/embed/xCmZUGcyVLM',
+          inLanguage: 'de-DE',
+          license: 'https://creativecommons.org/licenses/by/4.0/',
+        },
+      } satisfies RouteSeoData,
+    },
+    loadComponent: () => import('./trailer/trailer').then((m) => m.Trailer),
   },
   {
     path: 'game',

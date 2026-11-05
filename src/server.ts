@@ -134,6 +134,7 @@ Disallow: /auth/action
 
 # Allow public content and noindex utility routes (so crawlers can read their <meta name="robots" content="noindex"> tags)
 Allow: /
+Allow: /trailer
 Allow: /manual
 Allow: /info
 Allow: /research
@@ -242,6 +243,11 @@ app.get('/sitemap.xml', (_req, res) => {
     <loc>https://soil.app/</loc>
     <lastmod>2026-11-05</lastmod>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://soil.app/trailer</loc>
+    <lastmod>2026-11-05</lastmod>
+    <priority>0.9</priority>
     <video:video>
       <video:thumbnail_loc>https://soil.app/SOIL-screenshot.png</video:thumbnail_loc>
       <video:title>SOIL – Das interaktive Planspiel zu Landwirtschaft, Bodenfruchtbarkeit &amp; Nachhaltigkeit</video:title>

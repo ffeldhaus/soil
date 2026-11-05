@@ -80,9 +80,8 @@
         </div>
 
         <div class="flex justify-center mt-4">
-          <button
-            type="button"
-            (click)="openTrailer()"
+          <a
+            routerLink="/trailer"
             data-testid="landing-watch-trailer"
             class="bg-gray-900/90 hover:bg-gray-800 text-slate-200 hover:text-white border border-gray-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition cursor-pointer"
           >
@@ -96,7 +95,7 @@
               <path d="M8 5v14l11-7z" />
             </svg>
             <span>Trailer ansehen</span>
-          </button>
+          </a>
         </div>
 
         <!-- Scroll Indicator (in normal flex flow so it never overlaps CTA buttons) -->
@@ -226,39 +225,4 @@
     }
     </div>
   </main>
-
-  @if (showTrailerModal) {
-    <div
-      data-testid="trailer-modal"
-      class="fixed inset-0 z-50 w-screen h-dvh bg-black flex items-center justify-center"
-      role="dialog"
-      aria-modal="true"
-      aria-label="SOIL Spielvorstellung"
-    >
-      <button
-        type="button"
-        (click)="closeTrailer()"
-        data-testid="close-trailer-modal"
-        class="fixed top-4 right-4 z-[60] p-2.5 rounded-full bg-gray-900/85 hover:bg-gray-800 text-white border border-gray-700 transition cursor-pointer"
-        aria-label="Trailer schließen"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <video
-        data-testid="trailer-video"
-        src="/assets/video/soil-trailer.mp4"
-        controls
-        autoplay
-        playsinline
-        preload="auto"
-        poster="/SOIL-screenshot.png"
-        (ended)="closeTrailer()"
-        class="w-full h-full object-contain bg-black"
-      >
-        <track kind="captions" src="/assets/video/soil-marketing-trailer.vtt" srclang="de" label="Deutsch" />
-      </video>
-    </div>
-  }
 </div>

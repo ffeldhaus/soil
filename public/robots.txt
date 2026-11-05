@@ -7,6 +7,7 @@ Disallow: /auth/action
 
 # Allow public content and noindex utility routes (so crawlers can read their <meta name="robots" content="noindex"> tags)
 Allow: /
+Allow: /trailer
 Allow: /manual
 Allow: /info
 Allow: /research

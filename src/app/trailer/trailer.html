@@ -1,0 +1,42 @@
+<main data-testid="trailer-modal" class="fixed inset-0 z-50 w-screen h-dvh bg-black flex items-center justify-center">
+  <h1 class="sr-only">
+    SOIL Trailer – Online-Planspiel &amp; Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit (BNE)
+  </h1>
+  <p class="sr-only">
+    Einminütiger Überblick über das kostenlose Online-Planspiel und die interaktive Landwirtschaftssimulation SOIL für
+    BNE, Biologie, Geographie und Wirtschaft in der Sekundarstufe I &amp; II sowie an Hochschulen.
+  </p>
+  <a
+    routerLink="/"
+    (click)="closeTrailer($event)"
+    data-testid="close-trailer-modal"
+    class="fixed top-4 right-4 z-[60] p-2.5 rounded-full bg-gray-900/85 hover:bg-gray-800 text-white border border-gray-700 transition cursor-pointer"
+    aria-label="Trailer schließen"
+    title="Zurück zur Startseite"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </a>
+  <video
+    #videoPlayer
+    data-testid="trailer-video"
+    src="/assets/video/soil-trailer.mp4"
+    controls
+    autoplay
+    playsinline
+    preload="metadata"
+    poster="/SOIL-screenshot.png"
+    (ended)="closeTrailer()"
+    class="w-full h-full object-contain bg-black"
+  >
+    <track kind="captions" src="/assets/video/soil-marketing-trailer.vtt" srclang="de" label="Deutsch" />
+  </video>
+</main>

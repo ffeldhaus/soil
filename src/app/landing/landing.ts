@@ -1,5 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectorRef, Component, DestroyRef, HostListener, inject, isDevMode, PLATFORM_ID } from '@angular/core';
+import { Component, DestroyRef, inject, isDevMode } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -18,13 +17,10 @@ export class Landing {
   private telemetry = inject(TelemetryService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef);
-  private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
   year = new Date().getFullYear();
   showTestMode = isDevMode();
   isStartingGame = false;
-  showTrailerModal = false;
 
   challengeSeed: string | null = null;
   challengeDifficulty: 'easy' | 'normal' | 'hard' = 'normal';
@@ -54,50 +50,6 @@ export class Landing {
     const element = document.getElementById('info-section');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
-
-  openTrailer() {
-    this.telemetry.trackEvent('trailer_opened');
-    this.showTrailerModal = true;
-    this.cdr.detectChanges();
-    if (!isPlatformBrowser(this.platformId)) return;
-    const video = document.querySelector('[data-testid="trailer-video"]') as HTMLVideoElement | null;
-    if (video) {
-      video.currentTime = 0;
-      video.play().catch(() => {});
-      if (video.requestFullscreen) {
-        video.requestFullscreen().catch(() => {});
-      } else if ('webkitEnterFullscreen' in video && typeof (video as any).webkitEnterFullscreen === 'function') {
-        (video as any).webkitEnterFullscreen();
-      }
-    }
-  }
-
-  closeTrailer() {
-    if (isPlatformBrowser(this.platformId)) {
-      const video = document.querySelector('[data-testid="trailer-video"]') as HTMLVideoElement | null;
-      if (video && !video.paused) {
-        video.pause();
-      }
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-    this.showTrailerModal = false;
-  }
-
-  @HostListener('document:fullscreenchange')
-  onFullscreenChange() {
-    if (this.showTrailerModal && isPlatformBrowser(this.platformId) && !document.fullscreenElement) {
-      this.closeTrailer();
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscapeKey() {
-    if (this.showTrailerModal) {
-      this.closeTrailer();
     }
   }
 

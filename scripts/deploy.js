@@ -122,6 +122,7 @@ const performDeployment = async (newVersion) => {
 const INDEXNOW_KEY = '7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c';
 const INDEXNOW_URLS = [
   'https://soil.app/',
+  'https://soil.app/trailer',
   'https://soil.app/manual',
   'https://soil.app/info',
   'https://soil.app/research',

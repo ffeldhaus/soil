@@ -43,6 +43,11 @@ describe('Landing', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    const trailerLink = fixture.nativeElement.querySelector(
+      '[data-testid="landing-watch-trailer"]',
+    ) as HTMLAnchorElement | null;
+    expect(trailerLink).toBeTruthy();
+    expect(trailerLink?.getAttribute('href')).toBe('/trailer');
   });
 
   it('should start a quick local game and navigate to /game', async () => {

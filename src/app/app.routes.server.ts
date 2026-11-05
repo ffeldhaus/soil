@@ -6,6 +6,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
   },
   {
+    path: 'trailer',
+    renderMode: RenderMode.Prerender,
+  },
+  {
     path: 'manual',
     renderMode: RenderMode.Prerender,
   },
