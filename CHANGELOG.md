@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Wissenschaftliche Zitations- und Software-Metadaten (`CITATION.cff` und `codemeta.json`) im Repository-Hauptverzeichnis ergänzt sowie automatische Versionsaktualisierung in `scripts/deploy.js` hinterlegt.
+
 ## [3.4.16] - 2026-11-05
 ### Changed
 - Telemetrie-Routen (`ALLOWED_ROUTES` in `src/app/shared/telemetry.service.ts` bzw. `ALLOWED_TELEMETRY_ROUTES` in `functions/src/telemetry.service.ts`) auf die 9 öffentlichen Hauptbereiche beschränkt (ohne `/admin/login` und `/admin/register`), sodass die Gesamtzahl der Seitenzugriffe exakt der Summe der Einzelbereiche im Super-Admin-Dashboard entspricht.

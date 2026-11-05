@@ -83,6 +83,25 @@ const performDeployment = async (newVersion) => {
       }
     }
 
+    // Update CITATION.cff and codemeta.json version & release date
+    const citationPath = 'CITATION.cff';
+    if (fs.existsSync(citationPath)) {
+      let citation = fs.readFileSync(citationPath, 'utf8');
+      citation = citation
+        .replace(/^version: ".*"$/m, `version: "${newVersion}"`)
+        .replace(/^date-released: ".*"$/m, `date-released: "${today}"`);
+      fs.writeFileSync(citationPath, citation);
+      execSync(`git add ${citationPath}`, { stdio: 'inherit' });
+    }
+    const codemetaPath = 'codemeta.json';
+    if (fs.existsSync(codemetaPath)) {
+      const codemeta = JSON.parse(fs.readFileSync(codemetaPath, 'utf8'));
+      codemeta.version = newVersion;
+      codemeta.dateModified = today;
+      fs.writeFileSync(codemetaPath, `${JSON.stringify(codemeta, null, 2)}\n`);
+      execSync(`git add ${codemetaPath}`, { stdio: 'inherit' });
+    }
+
     execSync(`git commit -m "v${newVersion}"`, { stdio: 'inherit' });
     execSync(`git tag -a v${newVersion} -m "v${newVersion}"`, { stdio: 'inherit' });
     execSync('git push origin main --tags', { stdio: 'inherit' });

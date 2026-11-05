@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+title: "SOIL – Online-Planspiel & interaktive Landwirtschaftssimulation für BNE, Biologie, Geographie und Wirtschaft"
+message: "Wenn du SOIL oder den offenen Forschungsdatensatz in Lehre, Unterricht oder Wissenschaft nutzt, zitiere die Anwendung bitte wie folgt."
+type: software
+authors:
+  - given-names: Nina
+    family-names: Wolf
+    name-particle: ""
+    affiliation: "Technische Universität Dortmund"
+  - given-names: Florian
+    family-names: Feldhaus
+repository-code: "https://github.com/ffeldhaus/soil"
+url: "https://soil.app"
+abstract: >-
+  Kostenloses, wissenschaftlich fundiertes und werbefreies Online-Planspiel sowie interaktive
+  Landwirtschaftssimulation (Open Educational Resource unter CC BY 4.0; Quellcode unter Apache 2.0)
+  für Bildung für nachhaltige Entwicklung (BNE), Biologie, Geographie/Erdkunde und Wirtschaft in der
+  Sekundarstufe I & II (Klassen 5–13) sowie an Hochschulen. Lernende bewirtschaften über 5 bis 20 Runden
+  einen landwirtschaftlichen Betrieb mit 40 Ackerparzellen im Spannungsfeld zwischen Fruchtfolge,
+  Bodenqualität (Humusaufbau), Nährstoffdynamik, Witterungsrisiken und Agrarökonomie.
+keywords:
+  - Bildung für nachhaltige Entwicklung
+  - BNE
+  - Education for Sustainable Development
+  - ESD
+  - Planspiel
+  - Simulation
+  - Serious Game
+  - Educational Game
+  - Open Educational Resources
+  - OER
+  - Sustainable Agriculture
+  - Soil Quality
+  - Crop Rotation
+  - Open Science
+license: Apache-2.0
+version: "3.4.16"
+date-released: "2026-11-05"
+references:
+  - type: thesis
+    title: "Konzeption und Evaluation eines computergestützten Planspiels zur Förderung von Bewertungskompetenz im Kontext einer Bildung für nachhaltige Entwicklung (BNE) am Beispiel Landwirtschaft"
+    authors:
+      - given-names: Nina
+        family-names: Wolf
+    institution:
+      name: "Technische Universität Dortmund"
+    year: 2014
+    url: "https://doi.org/10.17877/DE290R-14311"
