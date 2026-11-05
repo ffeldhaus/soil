@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.14] - 2026-11-05
 ### Fixed
 - Serialisierung des Registrierungsdatums in `getAllAdmins` (`functions/src/index.ts`, `src/app/admin/super-admin/super-admin.ts`, `src/app/admin/super-admin/super-admin.html`, `src/app/admin/super-admin/super-admin.spec.ts`) korrigiert (`_seconds`-Unterstützung, `DocumentSnapshot.createTime`-Fallback, ISO-8601-Ausgabe) sowie nicht-leeren `–`-Fallback in der Super-Admin-Tabelle ergänzt.
 - Abstände (`class="block"`, `space-y-8`) sowie Tabellen- und Header-Styling in `super-admin-stats.html` (`Seiten, Aktionen & Herkunft`) vereinheitlicht, Übersetzung für `SUPERADMIN.TABLE.PLAYERS` ergänzt und die Erkennung von Local- vs. Cloud-Spielen für `research_local-*` korrigiert.
