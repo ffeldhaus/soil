@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.17] - 2026-11-05
 ### Added
 - Dedizierte, vorgerenderte Video-Wiedergabeseite `/trailer` (`src/app/trailer/*`, `src/app/app.routes.ts`, `src/app/app.routes.server.ts`, `public/sitemap.xml`, `public/robots.txt`, `src/server.ts`, `scripts/deploy.js`) mit direktem `<video>`-Element im initialen SSR-HTML und `VideoObject`-Metadaten für die Google-Video-Indexierung ergänzt.
 - Wissenschaftliche Zitations- und Software-Metadaten (`CITATION.cff` und `codemeta.json`) im Repository-Hauptverzeichnis ergänzt sowie automatische Versionsaktualisierung in `scripts/deploy.js` hinterlegt.
