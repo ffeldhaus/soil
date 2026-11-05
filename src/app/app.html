@@ -1,9 +1,11 @@
 @if (!offlineService.isOnline() && syncService && gameService.isCloudGame()) {
   <div
+    role="status"
+    aria-live="polite"
     class="fixed top-0 left-0 right-0 bg-amber-500 text-white text-center py-2 text-sm font-medium z-[100] shadow-md animate-in slide-in-from-top duration-300"
   >
     <div class="flex items-center justify-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3" />
       </svg>
       <span>Offline - Deine Änderungen werden gespeichert und synchronisiert, sobald du wieder online bist.</span>
@@ -13,10 +15,12 @@
 
 @if (offlineService.isOnline() && offlineService.isSyncing() && gameService.isCloudGame()) {
   <div
+    role="status"
+    aria-live="polite"
     class="fixed top-0 left-0 right-0 bg-emerald-600 text-white text-center py-2 text-sm font-medium z-[100] shadow-md animate-in slide-in-from-top duration-300"
   >
     <div class="flex items-center justify-center gap-2">
-      <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
@@ -29,24 +33,90 @@
 <footer
   aria-label="Rechtliches und Dokumentation"
   [class.portrait:hidden]="isGameRoute()"
-  class="fixed bottom-0 right-0 portrait:left-0 pl-2.5 pr-4 portrait:px-1.5 sm:portrait:px-4 py-1 bg-gray-950/90 border-t border-l portrait:border-l-0 border-gray-800 text-gray-300 z-20 flex items-center justify-end portrait:justify-center rounded-tl-lg portrait:rounded-none text-xs portrait:text-[10px] sm:portrait:text-xs font-sans tracking-tight sm:font-mono sm:tracking-normal print:hidden"
+  class="fixed bottom-0 right-0 portrait:left-0 pl-2.5 pr-4 portrait:px-3 py-1 bg-gray-950/90 border-t border-l portrait:border-l-0 border-gray-800 text-gray-300 z-20 flex items-center justify-end portrait:justify-center rounded-tl-lg portrait:rounded-none text-xs font-mono print:hidden"
 >
-  <nav aria-label="Fußzeilen-Navigation" class="w-full portrait:max-w-md sm:portrait:max-w-none flex flex-nowrap items-center justify-between sm:justify-center gap-x-0.5 sm:gap-x-3 whitespace-nowrap">
-    <a routerLink="/manual" class="text-gray-300 hover:text-white hover:underline transition">Handbuch</a>
+  <nav aria-label="Fußzeilen-Navigation" class="flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-3 whitespace-nowrap">
+    <a
+      routerLink="/manual"
+      title="Handbuch"
+      aria-label="Handbuch"
+      class="inline-flex items-center text-gray-300 hover:text-white hover:underline transition"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-3.5 w-3.5 sm:hidden shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+        />
+      </svg>
+      <span class="hidden sm:inline">Handbuch</span>
+    </a>
     <span class="text-gray-600" aria-hidden="true">|</span>
-    <a routerLink="/info" class="text-gray-300 hover:text-white hover:underline transition">Hintergrund</a>
+    <a
+      routerLink="/info"
+      title="Hintergrund & Wissenschaft"
+      aria-label="Hintergrund"
+      class="inline-flex items-center text-gray-300 hover:text-white hover:underline transition"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-3.5 w-3.5 sm:hidden shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <span class="hidden sm:inline">Hintergrund</span>
+    </a>
     <span class="text-gray-600" aria-hidden="true">|</span>
-    <a routerLink="/research" class="text-gray-300 hover:text-white hover:underline transition">Forschungsdaten</a>
+    <a
+      routerLink="/research"
+      title="Offener Forschungsdatensatz"
+      aria-label="Forschungsdaten"
+      class="inline-flex items-center text-gray-300 hover:text-white hover:underline transition"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-3.5 w-3.5 sm:hidden shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+        />
+      </svg>
+      <span class="hidden sm:inline">Forschungsdaten</span>
+    </a>
     <span class="text-gray-600" aria-hidden="true">|</span>
     <a routerLink="/impressum" class="text-gray-300 hover:text-white hover:underline transition">Impressum</a>
     <span class="text-gray-600" aria-hidden="true">|</span>
     <a routerLink="/privacy" class="text-gray-300 hover:text-white hover:underline transition">Datenschutz</a>
-    <span class="text-gray-600" aria-hidden="true">|</span>
+    <span class="text-gray-600 portrait:hidden max-sm:hidden" aria-hidden="true">|</span>
     <a
       href="https://github.com/ffeldhaus/soil/blob/main/CHANGELOG.md"
       target="_blank"
       rel="noopener noreferrer"
-      class="font-mono text-gray-300 hover:text-white hover:underline transition"
+      class="font-mono text-gray-300 hover:text-white hover:underline transition portrait:hidden max-sm:hidden"
       >v{{ version }}</a
     >
   </nav>

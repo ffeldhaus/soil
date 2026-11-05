@@ -8,12 +8,12 @@ import { RouterLink } from '@angular/router';
   template: `
     <div class="h-full overflow-y-auto custom-scrollbar flex items-center justify-center px-4 relative font-sans">
       <!-- Background Asset (consistent with app theme) -->
-      <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none opacity-30">
+      <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none opacity-30" aria-hidden="true">
         <picture>
           <source srcset="assets/images/bauernhof-portrait-dunkel.webp" media="(orientation: portrait)" />
           <img
             src="assets/images/bauernhof-landscape-dunkel.webp"
-            alt="SOIL Bauernhof und Ackerflächen"
+            alt=""
             class="w-full h-full object-cover"
           />
         </picture>
