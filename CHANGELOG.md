@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.15] - 2026-11-05
 ### Fixed
 - Semantische `<h1>`-Hauptüberschriften für `/admin` (`src/app/admin/dashboard/dashboard.html`), `/game-login` (`src/app/auth/player-login/player-login.html`) und `/admin/super` (`src/app/admin/super-admin/super-admin.html`) ergänzt sowie unauthentifiziertes Prerendering in `src/app/admin/dashboard/components/dashboard-hud.html` bereinigt (kein leerer `/delete-account`-Link ohne eingeloggten Nutzer).
 
