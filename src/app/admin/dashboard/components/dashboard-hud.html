@@ -12,14 +12,14 @@
         <span class="text-sm font-medium text-blue-400 hidden md:block">Gast-Modus</span>
         <a routerLink="/admin/register" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg transition">Registrieren</a>
         <a routerLink="/admin/login" class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-lg transition">Anmelden</a>
-      } @else {
+      } @else if (user) {
         <span class="text-sm font-medium text-white hidden md:block">
-          {{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user?.email) }}
+          {{ userStatus?.displayName || (userStatus?.firstName ? userStatus!.firstName + ' ' + userStatus!.lastName : user.email) }}
         </span>
       }
     </div>
 
-    @if (!user?.isAnonymous) {
+    @if (user && !user.isAnonymous) {
       <a
         routerLink="/delete-account"
         class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-red-400 transition w-10 h-10 flex items-center justify-center"
