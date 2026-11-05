@@ -16,6 +16,7 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const UPSTREAM_ENDPOINTS = {
   researchApi: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchApi',
   researchMcp: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchMcp',
+  recordTelemetry: 'https://europe-west4-soil-602ea.cloudfunctions.net/recordTelemetry',
 } as const;
 
 const PROXY_RESPONSE_HEADERS = [
@@ -36,6 +37,9 @@ function buildProxyRequestHeaders(req: express.Request): Record<string, string> 
   }
   if (typeof req.headers['content-type'] === 'string') {
     headers['content-type'] = req.headers['content-type'];
+  }
+  if (typeof req.headers['user-agent'] === 'string') {
+    headers['user-agent'] = req.headers['user-agent'];
   }
   const forwardedFor = req.headers['x-forwarded-for'];
   const clientIp = typeof forwardedFor === 'string' ? forwardedFor : req.ip || '';
@@ -290,6 +294,10 @@ app.all(['/api/research', '/api/research/'], async (req, res) => {
 
 app.all(['/api/mcp', '/api/mcp/', '/mcp', '/mcp/'], express.raw({ type: '*/*', limit: '256kb' }), async (req, res) => {
   await proxyToCloudFunction(req, res, 'researchMcp');
+});
+
+app.all(['/api/telemetry', '/api/telemetry/'], express.raw({ type: '*/*', limit: '16kb' }), async (req, res) => {
+  await proxyToCloudFunction(req, res, 'recordTelemetry');
 });
 
 /**

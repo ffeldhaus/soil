@@ -7,6 +7,7 @@ import type { RouteSeoData } from './app.routes';
 import { GameService } from './game/game.service';
 import { SyncService } from './game/sync.service';
 import { OfflineService } from './shared/offline.service';
+import { TelemetryService } from './shared/telemetry.service';
 
 const SITE_ORIGIN = 'https://soil.app';
 const JSON_LD_SCRIPT_ID = 'soil-jsonld';
@@ -21,6 +22,7 @@ export class App {
   protected syncService = inject(SyncService);
   protected offlineService = inject(OfflineService);
   protected gameService = inject(GameService);
+  private telemetryService = inject(TelemetryService);
   private router = inject(Router);
   private meta = inject(Meta);
   private titleService = inject(Title);
@@ -33,6 +35,7 @@ export class App {
     console.warn(`SOIL Version ${this.version}`);
     this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(() => {
       this.syncRouteSeo();
+      this.telemetryService.trackPageView(this.router.url);
     });
     this.syncRouteSeo();
   }

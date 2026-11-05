@@ -286,6 +286,18 @@ export interface Feedback {
   updatedAt: { seconds: number; nanoseconds: number };
 }
 
+export interface TelemetryStats {
+  viewsToday: number;
+  viewsLast7d: number;
+  viewsLast30d: number;
+  viewsTotal: number;
+  pwaViewsTotal: number;
+  webViewsTotal: number;
+  routes: Record<string, number>;
+  events: Record<string, number>;
+  referrers: Record<string, number>;
+}
+
 export interface SystemStats {
   games: {
     total: number;
@@ -295,6 +307,8 @@ export interface SystemStats {
   users: {
     total: number;
     admins: number;
+    rejected?: number;
     banned: number;
   };
+  telemetry?: TelemetryStats;
 }

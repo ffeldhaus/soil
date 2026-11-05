@@ -25,6 +25,7 @@ import {
   handleResearchMcpHttpRequest,
   sanitizeResearchGameForPublic,
 } from './research.service';
+import { aggregateTelemetryStats, handleTelemetryHttpRequest } from './telemetry.service';
 import type { CropType, Round, RoundDecision, WeatherType } from './types';
 import { generateRandomPassword } from './utils';
 
@@ -1026,6 +1027,10 @@ export const researchMcp = onRequest({ cors: true }, async (req, res) => {
   await handleResearchMcpHttpRequest(db, req, res);
 });
 
+export const recordTelemetry = onRequest({ cors: false, invoker: 'public' }, async (req, res) => {
+  await handleTelemetryHttpRequest(req, res, db);
+});
+
 export function buildDefaultContinuationDecision(player: any, prevRoundData?: Round): RoundDecision {
   const draft = player?.pendingDecisions;
   const lastHistoryRound =
@@ -1996,6 +2001,7 @@ export const getSystemStats = onCall(async (request) => {
   const adminUsersSnap = await usersColl.where('role', 'in', ['admin', 'superadmin']).count().get();
   const rejectedUsersSnap = await usersColl.where('role', '==', 'rejected').count().get();
   const bannedUsersSnap = await usersColl.where('role', '==', 'banned').count().get();
+  const telemetry = await aggregateTelemetryStats(db);
 
   return {
     games: {
@@ -2009,6 +2015,7 @@ export const getSystemStats = onCall(async (request) => {
       rejected: rejectedUsersSnap.data().count,
       banned: bannedUsersSnap.data().count,
     },
+    telemetry,
   };
 });
 

@@ -17,6 +17,7 @@ import { GameEngine } from '../game/engine/game-engine';
 import { GameService } from '../game/game.service';
 import { GAME_CONSTANTS } from '../game-constants';
 import { BackButtonComponent } from '../shared/back-button/back-button';
+import { TelemetryService } from '../shared/telemetry.service';
 import type { Game, PlayerState, PublicResearchInsight, PublicResearchSummary } from '../types';
 
 export interface CropShareRow {
@@ -37,6 +38,7 @@ export class ResearchComponent implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private gameService = inject(GameService);
+  private telemetry = inject(TelemetryService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -257,11 +259,13 @@ export class ResearchComponent implements OnInit, AfterViewInit {
   }
 
   exportCsv() {
+    this.telemetry.trackEvent('research_export');
     const csv = this.buildCsvString(this.researchGames);
     this.triggerDownload(csv, 'soil-research-data.csv', 'text/csv;charset=utf-8');
   }
 
   exportJson() {
+    this.telemetry.trackEvent('research_export');
     const payload = {
       exportedAt: new Date().toISOString(),
       filters: {

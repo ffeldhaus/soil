@@ -48,6 +48,13 @@
         }
       },
       {
+        "source": "/api/telemetry",
+        "function": {
+          "functionId": "recordTelemetry",
+          "region": "europe-west4"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Added a GDPR/TDDDG-compliant, zero-cookie, zero-PII aggregated telemetry system (`functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/server.ts`, `firebase.json`, `src/app/shared/telemetry.service.ts`, `src/app/app.ts`, `src/app/landing/landing.ts`, `src/app/research/research.ts`, `src/app/admin/super-admin/components/super-admin-stats.*`, `src/app/privacy/privacy.html`) that counts daily and total route pageviews, key actions (`quick_game_started`, `trailer_opened`, `research_export`), web vs. standalone PWA usage, and sanitized external referrer domains in `europe-west4` with volatile in-memory offline buffering and bot filtering.
+
 ## [3.4.10] - 2026-11-05
 ### Fixed
 - Fixed per-game achievement (`Hof-Auszeichnungen`) state in `src/app/game/board/board.ts` (`syncCollectedStickers()`) so unlocked stickers are strictly scoped to the active game and player history (clearing legacy `soil_collected_stickers` `localStorage` entries) instead of carrying over across new games.

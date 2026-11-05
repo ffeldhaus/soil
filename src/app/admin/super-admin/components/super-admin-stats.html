@@ -26,11 +26,11 @@
       {{ t('superadmin.stats.totalGames') }}
     </h3>
     <div class="flex items-end gap-2">
-      <span class="text-4xl font-bold text-white">{{ stats?.games?.total || 0 }}</span>
+      <span class="text-4xl font-bold text-white font-mono tabular-nums">{{ stats?.games?.total || 0 }}</span>
       <span class="text-sm text-gray-300 mb-1">{{ t('superadmin.stats.created') }}</span>
     </div>
-    <div class="mt-4 flex gap-4 text-xs font-mono">
-      <span class="text-emerald-400">{{ t('superadmin.stats.active') }}</span>
+    <div class="mt-4 flex gap-4 text-xs font-mono tabular-nums">
+      <span class="text-emerald-400">{{ stats?.games?.active || 0 }} {{ t('superadmin.stats.active') }}</span>
       <span class="text-red-400">{{ stats?.games?.deleted || 0 }} {{ t('superadmin.stats.trash') }}</span>
     </div>
   </div>
@@ -59,14 +59,85 @@
       {{ t('superadmin.stats.totalUsers') }}
     </h3>
     <div class="flex items-end gap-2">
-      <span class="text-4xl font-bold text-white">{{ stats?.users?.total || 0 }}</span>
+      <span class="text-4xl font-bold text-white font-mono tabular-nums">{{ stats?.users?.total || 0 }}</span>
       <span class="text-sm text-gray-300 mb-1">{{ t('superadmin.stats.registered') }}</span>
     </div>
-    <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono">
+    <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono tabular-nums">
       <span class="text-purple-400">{{ stats?.users?.admins || 0 }} {{ t('superadmin.stats.teachers') }}</span>
       @if (stats?.users?.banned) {
         <span class="text-red-500">{{ stats?.users?.banned || 0 }} {{ t('superadmin.stats.banned') }}</span>
       }
     </div>
+  </div>
+
+  <!-- Anonymous Page Views (Zero-Cookie Telemetry) -->
+  <div
+    data-testid="superadmin-telemetry-views"
+    class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden portrait:rounded-none portrait:border-x-0"
+  >
+    <h3 class="text-gray-300 text-sm font-bold uppercase tracking-wider mb-2">
+      {{ t('superadmin.stats.telemetryViews') }}
+    </h3>
+    <div class="flex items-end gap-2">
+      <span class="text-4xl font-bold text-white font-mono tabular-nums">
+        {{ stats?.telemetry?.viewsTotal || 0 }}
+      </span>
+      <span class="text-sm text-gray-300 mb-1">{{ t('superadmin.stats.telemetryTotal') }}</span>
+    </div>
+    <div class="mt-4 grid grid-cols-3 gap-2 pt-3 border-t border-gray-700 text-xs font-mono tabular-nums">
+      <div>
+        <div class="text-gray-400">Heute</div>
+        <div class="text-emerald-400 font-bold">{{ stats?.telemetry?.viewsToday || 0 }}</div>
+      </div>
+      <div>
+        <div class="text-gray-400">7 Tage</div>
+        <div class="text-white font-bold">{{ stats?.telemetry?.viewsLast7d || 0 }}</div>
+      </div>
+      <div>
+        <div class="text-gray-400">30 Tage</div>
+        <div class="text-white font-bold">{{ stats?.telemetry?.viewsLast30d || 0 }}</div>
+      </div>
+    </div>
+    <div class="mt-3 flex justify-between text-xs font-mono tabular-nums text-gray-300">
+      <span>Web: {{ stats?.telemetry?.webViewsTotal || 0 }}</span>
+      <span>PWA: {{ stats?.telemetry?.pwaViewsTotal || 0 }}</span>
+    </div>
+  </div>
+
+  <!-- Routes, Actions & Referrers Breakdown -->
+  <div
+    data-testid="superadmin-telemetry-breakdown"
+    class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden portrait:rounded-none portrait:border-x-0 space-y-3"
+  >
+    <h3 class="text-gray-300 text-sm font-bold uppercase tracking-wider">
+      {{ t('superadmin.stats.telemetryBreakdown') }}
+    </h3>
+    <div class="space-y-1 text-xs font-mono tabular-nums">
+      @for (row of routeRows; track row.key) {
+        <div class="flex justify-between text-gray-300">
+          <span class="truncate pr-2">{{ row.label }}</span>
+          <span class="text-white font-bold">{{ row.count }}</span>
+        </div>
+      }
+    </div>
+    <div class="pt-2 border-t border-gray-700 space-y-1 text-xs font-mono tabular-nums">
+      @for (ev of eventRows; track ev.key) {
+        <div class="flex justify-between text-gray-300">
+          <span class="truncate pr-2">{{ ev.label }}</span>
+          <span class="text-emerald-400 font-bold">{{ ev.count }}</span>
+        </div>
+      }
+    </div>
+    @if (referrerRows.length > 0) {
+      <div class="pt-2 border-t border-gray-700 space-y-1 text-xs font-mono tabular-nums">
+        <div class="text-gray-400 uppercase tracking-wider text-[10px]">Top-Herkunft</div>
+        @for (ref of referrerRows; track ref.key) {
+          <div class="flex justify-between text-gray-300">
+            <span class="truncate pr-2">{{ ref.label }}</span>
+            <span class="text-white font-bold">{{ ref.count }}</span>
+          </div>
+        }
+      </div>
+    }
   </div>
 </div>
