@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.12] - 2026-11-05
 ### Changed
 - Added automatic `Do Not Track (DNT)` and `Global Privacy Control (GPC)` signal enforcement across client telemetry (`src/app/shared/telemetry.service.ts`), SSR proxy headers (`src/server.ts`), and `recordTelemetry` (`functions/src/telemetry.service.ts`), and documented it in `/privacy` (`src/app/privacy/privacy.html`).
 
