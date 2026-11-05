@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.9] - 2026-11-05
 ### Changed
 - Refined the global footer (`src/app/app.html`) and mobile game menu footer (`src/app/game/board/board.html`) on compact and portrait viewports by restoring readable `text-xs font-mono` typography, hiding the version string in portrait/narrow mode, and displaying compact SVG icons (`title` + `aria-label`) for `Handbuch`, `Hintergrund`, and `Forschungsdaten` while keeping `Impressum` and `Datenschutz` written out in full text.
 - Marked all full-screen decorative background image wrappers (`aria-hidden="true"` and `alt=""`) across all 15 views (`src/app/landing/landing.html`, `src/app/manual/manual.html`, `src/app/info/info.html`, `src/app/research/research.html`, `src/app/impressum/impressum.html`, `src/app/privacy/privacy.html`, `src/app/admin/*`, `src/app/auth/*`, `src/app/game/board/board.html`, `src/app/not-found/not-found.ts`) and added `role="status" aria-live="polite"` to the global offline/sync banners (`src/app/app.html`) to satisfy the `region` accessibility landmark rule.
