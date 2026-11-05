@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Automatischen Betriebssystem-Vollbildaufruf (`requestFullscreen()`) beim Öffnen der `/trailer`-Seite (`src/app/trailer/trailer.ts`) entfernt, sodass das Video ruhig im vollen Browserfenster (`100vw × 100dvh`) startet, ohne dass der Browser kurz in den OS-Vollbildmodus und wieder zurück springt.
+
 ## [3.4.17] - 2026-11-05
 ### Added
 - Dedizierte, vorgerenderte Video-Wiedergabeseite `/trailer` (`src/app/trailer/*`, `src/app/app.routes.ts`, `src/app/app.routes.server.ts`, `public/sitemap.xml`, `public/robots.txt`, `src/server.ts`, `scripts/deploy.js`) mit direktem `<video>`-Element im initialen SSR-HTML und `VideoObject`-Metadaten für die Google-Video-Indexierung ergänzt.

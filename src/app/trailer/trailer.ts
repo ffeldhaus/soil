@@ -24,25 +24,13 @@ export class Trailer implements AfterViewInit {
 
   @ViewChild('videoPlayer') videoPlayer?: ElementRef<HTMLVideoElement>;
 
-  private enteredFullscreen = false;
-
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     this.telemetry.trackEvent('trailer_opened');
 
     const video = this.videoPlayer?.nativeElement;
-    if (!video) return;
-
-    if (typeof video.play === 'function') {
+    if (video && typeof video.play === 'function') {
       video.play()?.catch(() => {});
-    }
-    if (typeof video.requestFullscreen === 'function') {
-      video
-        .requestFullscreen()
-        ?.then(() => {
-          this.enteredFullscreen = true;
-        })
-        .catch(() => {});
     }
   }
 
@@ -62,17 +50,6 @@ export class Trailer implements AfterViewInit {
       }
     }
     this.router.navigate(['/']);
-  }
-
-  @HostListener('document:fullscreenchange')
-  onFullscreenChange(): void {
-    if (!isPlatformBrowser(this.platformId) || typeof document === 'undefined') return;
-    if (document.fullscreenElement) {
-      this.enteredFullscreen = true;
-    } else if (this.enteredFullscreen) {
-      this.enteredFullscreen = false;
-      this.closeTrailer();
-    }
   }
 
   @HostListener('document:keydown.escape')
