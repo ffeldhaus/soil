@@ -100,8 +100,26 @@ export class TelemetryService {
     return hostname;
   }
 
+  isDoNotTrackEnabled(): boolean {
+    if (!isPlatformBrowser(this.platformId) || typeof window === 'undefined') {
+      return false;
+    }
+    const nav = typeof navigator !== 'undefined' ? (navigator as any) : undefined;
+    const win = window as any;
+    const dnt = String(nav?.doNotTrack ?? win?.doNotTrack ?? nav?.msDoNotTrack ?? '')
+      .trim()
+      .toLowerCase();
+    if (dnt === '1' || dnt === 'yes') {
+      return true;
+    }
+    return nav?.globalPrivacyControl === true || nav?.globalPrivacyControl === '1';
+  }
+
   private shouldSuppressTelemetry(): boolean {
     if (!isPlatformBrowser(this.platformId) || typeof window === 'undefined') {
+      return true;
+    }
+    if (this.isDoNotTrackEnabled()) {
       return true;
     }
     if (this.enableInTests) {

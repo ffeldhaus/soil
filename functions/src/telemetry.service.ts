@@ -32,6 +32,17 @@ export function isBotUserAgent(ua?: unknown): boolean {
   return BOT_UA_REGEX.test(ua);
 }
 
+export function isPrivacySignalOptOut(headers?: Record<string, unknown>): boolean {
+  if (!headers || typeof headers !== 'object') return false;
+  const dnt = String(headers.dnt ?? headers.DNT ?? '')
+    .trim()
+    .toLowerCase();
+  const gpc = String(headers['sec-gpc'] ?? headers['Sec-GPC'] ?? '')
+    .trim()
+    .toLowerCase();
+  return dnt === '1' || dnt === 'yes' || gpc === '1' || gpc === 'true';
+}
+
 export function normalizeTelemetryRoute(raw: unknown): string | null {
   if (typeof raw !== 'string') return null;
   const trimmed = raw.trim();
@@ -204,7 +215,7 @@ export async function handleTelemetryHttpRequest(req: any, res: any, db: admin.f
     return;
   }
 
-  if (isBotUserAgent(req.headers?.['user-agent'])) {
+  if (isBotUserAgent(req.headers?.['user-agent']) || isPrivacySignalOptOut(req.headers)) {
     res.status(204).send('');
     return;
   }

@@ -103,6 +103,20 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
     expect(botRes.statusCode).to.equal(204);
     expect(dailySetStub.called).to.equal(false);
 
+    // 1b. Do Not Track / Sec-GPC request is ignored with 204
+    const dntRes = createRes();
+    await handleTelemetryHttpRequest(
+      {
+        method: 'POST',
+        headers: { 'user-agent': 'Mozilla/5.0 Firefox/128.0', dnt: '1' },
+        body: { views: { '/': 1 } },
+      },
+      dntRes,
+      mockDb,
+    );
+    expect(dntRes.statusCode).to.equal(204);
+    expect(dailySetStub.called).to.equal(false);
+
     // 2. Valid browser request increments daily and totals docs
     const validRes = createRes();
     await handleTelemetryHttpRequest(

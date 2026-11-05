@@ -99,4 +99,20 @@ describe('TelemetryService', () => {
     const body = JSON.parse(fetchSpy.mock.calls[1][1].body);
     expect(body.events).toEqual({ trailer_opened: 1 });
   });
+
+  it('respects browser Do Not Track (DNT) and Global Privacy Control (GPC) signals', async () => {
+    Object.defineProperty(navigator, 'doNotTrack', { value: '1', configurable: true });
+    service.trackPageView('/');
+    service.trackEvent('quick_game_started');
+    await Promise.resolve();
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    Object.defineProperty(navigator, 'doNotTrack', { value: null, configurable: true });
+    Object.defineProperty(navigator, 'globalPrivacyControl', { value: true, configurable: true });
+    service.trackPageView('/manual');
+    await Promise.resolve();
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    Object.defineProperty(navigator, 'globalPrivacyControl', { value: false, configurable: true });
+  });
 });

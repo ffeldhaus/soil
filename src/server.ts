@@ -41,6 +41,12 @@ function buildProxyRequestHeaders(req: express.Request): Record<string, string> 
   if (typeof req.headers['user-agent'] === 'string') {
     headers['user-agent'] = req.headers['user-agent'];
   }
+  if (typeof req.headers.dnt === 'string') {
+    headers.dnt = req.headers.dnt;
+  }
+  if (typeof req.headers['sec-gpc'] === 'string') {
+    headers['sec-gpc'] = req.headers['sec-gpc'];
+  }
   const forwardedFor = req.headers['x-forwarded-for'];
   const clientIp = typeof forwardedFor === 'string' ? forwardedFor : req.ip || '';
   if (clientIp) {

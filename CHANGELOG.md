@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Added automatic `Do Not Track (DNT)` and `Global Privacy Control (GPC)` signal enforcement across client telemetry (`src/app/shared/telemetry.service.ts`), SSR proxy headers (`src/server.ts`), and `recordTelemetry` (`functions/src/telemetry.service.ts`), and documented it in `/privacy` (`src/app/privacy/privacy.html`).
+
 ## [3.4.11] - 2026-11-05
 ### Added
 - Added a GDPR/TDDDG-compliant, zero-cookie, zero-PII aggregated telemetry system (`functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/server.ts`, `firebase.json`, `src/app/shared/telemetry.service.ts`, `src/app/app.ts`, `src/app/landing/landing.ts`, `src/app/research/research.ts`, `src/app/admin/super-admin/components/super-admin-stats.*`, `src/app/privacy/privacy.html`) that counts daily and total route pageviews, key actions (`quick_game_started`, `trailer_opened`, `research_export`), web vs. standalone PWA usage, and sanitized external referrer domains in `europe-west4` with volatile in-memory offline buffering and bot filtering.
