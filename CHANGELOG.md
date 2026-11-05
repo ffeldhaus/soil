@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Fixed per-game achievement (`Hof-Auszeichnungen`) state in `src/app/game/board/board.ts` (`syncCollectedStickers()`) so unlocked stickers are strictly scoped to the active game and player history (clearing legacy `soil_collected_stickers` `localStorage` entries) instead of carrying over across new games.
+- Fixed hard-reload `Host` header rejection on client-rendered routes (`/game`, `/admin/super`, `/auth/action`) in `src/server.ts` by serving `index.csr.html` directly for non-prerendered SPA GET/HEAD requests and adding `*.run.app` and `*.europe-west4.run.app` to `AngularNodeAppEngine` `allowedHosts`.
+
 ## [3.4.9] - 2026-11-05
 ### Changed
 - Refined the global footer (`src/app/app.html`) and mobile game menu footer (`src/app/game/board/board.html`) on compact and portrait viewports by restoring readable `text-xs font-mono` typography, hiding the version string in portrait/narrow mode, and displaying compact SVG icons (`title` + `aria-label`) for `Handbuch`, `Hintergrund`, and `Forschungsdaten` while keeping `Impressum` and `Datenschutz` written out in full text.

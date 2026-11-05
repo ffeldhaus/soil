@@ -409,7 +409,8 @@ describe('Board', () => {
     expect(component.soilWinner?.name).toBe('Hof Balance');
   });
 
-  it('should return baseline parcels for selected indices and persist unlocked stickers', () => {
+  it('should return baseline parcels for selected indices and scope unlocked stickers strictly to the current game', () => {
+    window.localStorage.setItem('soil_collected_stickers', JSON.stringify(['krisenfest', 'bio-leuchtturm']));
     component.history = [
       {
         number: 1,
@@ -425,6 +426,12 @@ describe('Board', () => {
     component.syncCollectedStickers(['humus-pionier']);
     expect(component.isStickerCollected('humus-pionier')).toBe(true);
     expect(component.isStickerCollected('krisenfest')).toBe(false);
+    expect(window.localStorage.getItem('soil_collected_stickers')).toBeNull();
+
+    // Starting a new game with empty history and no extra stickers resets collected stickers to 0
+    component.history = [];
+    component.syncCollectedStickers();
+    expect(component.collectedStickerIds).toEqual([]);
   });
 
   it('should format weather forecast text to show "Ruhige Wetterlage erwartet." for calm/normal weather', () => {

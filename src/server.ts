@@ -386,7 +386,16 @@ async function ensureAngularAppInitialized(): Promise<AngularNodeAppEngine> {
     console.error('Failed to initialize Angular app engine:', err);
   }
   angularApp = new AngularNodeAppEngine({
-    allowedHosts: ['soil.app', '*.soil.app', '*.hosted.app', '*.a.run.app', 'localhost', '127.0.0.1'],
+    allowedHosts: [
+      'soil.app',
+      '*.soil.app',
+      '*.hosted.app',
+      '*.run.app',
+      '*.europe-west4.run.app',
+      '*.a.run.app',
+      'localhost',
+      '127.0.0.1',
+    ],
   });
   return angularApp;
 }
@@ -404,7 +413,7 @@ app.use('*path', async (req, res, next) => {
     return;
   }
 
-  // Serve prerendered static route HTML (<route>/index.html) when available in browserDistFolder
+  // Serve prerendered static route HTML (<route>/index.html) or client-side shell (index.csr.html) when available
   if (req.method === 'GET' || req.method === 'HEAD') {
     const pathname = new URL(req.originalUrl, 'http://localhost').pathname;
     const cleanPath = pathname.replace(/^\/+|\/+$/g, '');
@@ -414,6 +423,13 @@ app.use('*path', async (req, res, next) => {
     if (prerenderedHtml.startsWith(browserDistFolder) && existsSync(prerenderedHtml)) {
       res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
       res.type('text/html; charset=utf-8').send(readFileSync(prerenderedHtml, 'utf-8'));
+      return;
+    }
+
+    const csrHtml = resolve(browserDistFolder, 'index.csr.html');
+    if (!cleanPath.includes('.') && existsSync(csrHtml)) {
+      res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
+      res.type('text/html; charset=utf-8').send(readFileSync(csrHtml, 'utf-8'));
       return;
     }
   }

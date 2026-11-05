@@ -1414,27 +1414,21 @@ export class Board implements OnInit, OnDestroy {
   syncCollectedStickers(extraStickerIds?: string[]) {
     const validIds = new Set(this.allStickers.map((s) => s.id));
     try {
-      const storedRaw = typeof window !== 'undefined' ? window.localStorage?.getItem('soil_collected_stickers') : null;
-      const stored: string[] = storedRaw ? JSON.parse(storedRaw) : [];
-      const fromHistory = (this.history || []).flatMap((r) => r.result?.unlockedStickers || []);
-      const fromPlayer = this.gameService.state?.playerState?.unlockedStickers || [];
-      const merged = Array.from(
-        new Set(
-          [...stored, ...fromHistory, ...fromPlayer, ...(extraStickerIds || [])].filter(
-            (id): id is string => Boolean(id) && validIds.has(id),
-          ),
-        ),
-      );
-      this.collectedStickerIds = merged;
       if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.setItem('soil_collected_stickers', JSON.stringify(merged));
+        window.localStorage.removeItem('soil_collected_stickers');
       }
     } catch {
-      // Fallback if localStorage is unavailable or invalid
-      this.collectedStickerIds = Array.from(
-        new Set((extraStickerIds || []).filter((id): id is string => Boolean(id) && validIds.has(id))),
-      );
+      // Ignore if localStorage is unavailable
     }
+    const fromHistory = (this.history || []).flatMap((r) => r.result?.unlockedStickers || []);
+    const fromPlayer = this.gameService.state?.playerState?.unlockedStickers || [];
+    this.collectedStickerIds = Array.from(
+      new Set(
+        [...fromHistory, ...fromPlayer, ...(extraStickerIds || [])].filter(
+          (id): id is string => Boolean(id) && validIds.has(id),
+        ),
+      ),
+    );
   }
 
   isStickerCollected(stickerId: string): boolean {
