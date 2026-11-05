@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.10] - 2026-11-05
 ### Fixed
 - Fixed per-game achievement (`Hof-Auszeichnungen`) state in `src/app/game/board/board.ts` (`syncCollectedStickers()`) so unlocked stickers are strictly scoped to the active game and player history (clearing legacy `soil_collected_stickers` `localStorage` entries) instead of carrying over across new games.
 - Fixed hard-reload `Host` header rejection on client-rendered routes (`/game`, `/admin/super`, `/auth/action`) in `src/server.ts` by serving `index.csr.html` directly for non-prerendered SPA GET/HEAD requests and adding `*.run.app` and `*.europe-west4.run.app` to `AngularNodeAppEngine` `allowedHosts`.
