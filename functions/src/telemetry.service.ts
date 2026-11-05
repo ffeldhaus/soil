@@ -11,8 +11,6 @@ export const ALLOWED_TELEMETRY_ROUTES = new Set<string>([
   '/game',
   '/game-login',
   '/admin',
-  '/admin/login',
-  '/admin/register',
   '/impressum',
   '/privacy',
 ]);

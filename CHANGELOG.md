@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Telemetrie-Routen (`ALLOWED_ROUTES` in `src/app/shared/telemetry.service.ts` bzw. `ALLOWED_TELEMETRY_ROUTES` in `functions/src/telemetry.service.ts`) auf die 9 öffentlichen Hauptbereiche beschränkt (ohne `/admin/login` und `/admin/register`), sodass die Gesamtzahl der Seitenzugriffe exakt der Summe der Einzelbereiche im Super-Admin-Dashboard entspricht.
+
 ## [3.4.15] - 2026-11-05
 ### Fixed
 - Semantische `<h1>`-Hauptüberschriften für `/admin` (`src/app/admin/dashboard/dashboard.html`), `/game-login` (`src/app/auth/player-login/player-login.html`) und `/admin/super` (`src/app/admin/super-admin/super-admin.html`) ergänzt sowie unauthentifiziertes Prerendering in `src/app/admin/dashboard/components/dashboard-hud.html` bereinigt (kein leerer `/delete-account`-Link ohne eingeloggten Nutzer).
