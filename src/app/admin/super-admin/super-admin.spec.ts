@@ -15,6 +15,8 @@ describe('SuperAdminComponent', () => {
     getAllAdmins: any;
     getSystemStats: any;
     getAllFeedback: any;
+    getResearchGames?: any;
+    getSystemInsights?: any;
     manageAdmin?: any;
     deleteGames?: any;
     getAdminGames?: any;
@@ -34,6 +36,8 @@ describe('SuperAdminComponent', () => {
       getAllAdmins: vi.fn().mockResolvedValue([]),
       getSystemStats: vi.fn().mockResolvedValue({ games: { total: 0, deleted: 0 }, users: { total: 0, admins: 0 } }),
       getAllFeedback: vi.fn().mockResolvedValue([]),
+      getResearchGames: vi.fn().mockResolvedValue({ games: [], total: 0 }),
+      getSystemInsights: vi.fn().mockResolvedValue([]),
     };
 
     await TestBed.configureTestingModule({
@@ -90,5 +94,50 @@ describe('SuperAdminComponent', () => {
     await component.saveQuota();
 
     expect(gameServiceMock.manageAdmin).toHaveBeenCalledWith('a1', 'setQuota', 50);
+  });
+
+  it('should sort admins newest-first by createdAt and render registration dates', async () => {
+    gameServiceMock.getAllAdmins.mockResolvedValue([
+      {
+        uid: 'older-admin',
+        email: 'older@example.com',
+        role: 'admin',
+        status: 'active',
+        gameCount: 1,
+        quota: 10,
+        createdAt: { seconds: 1700000000, nanoseconds: 0 },
+      },
+      {
+        uid: 'newest-admin',
+        email: 'newest@example.com',
+        displayName: 'Neuer Admin',
+        role: 'admin',
+        status: 'active',
+        gameCount: 2,
+        quota: 10,
+        createdAt: '2026-04-01T10:30:00.000Z',
+      },
+      {
+        uid: 'missing-date-admin',
+        email: 'nodate@example.com',
+        role: 'admin',
+        status: 'active',
+        gameCount: 0,
+        quota: 10,
+      },
+    ]);
+
+    await component.loadData();
+    fixture.detectChanges();
+
+    expect(component.admins.map((a) => a.uid)).toEqual(['newest-admin', 'older-admin', 'missing-date-admin']);
+
+    const dateCells = Array.from(
+      fixture.nativeElement.querySelectorAll('[data-testid="admin-registered-date"]'),
+    ) as HTMLElement[];
+    expect(dateCells.length).toBe(3);
+    expect(dateCells[0].textContent?.trim()).toContain('01.04.2026');
+    expect(dateCells[1].textContent?.trim()).toContain('14.11.2023');
+    expect(dateCells[2].textContent?.trim()).toBe('–');
   });
 });

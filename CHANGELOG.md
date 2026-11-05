@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Changed
+- Redesigned the Super-Admin console (`src/app/admin/super-admin/super-admin.html`, `src/app/admin/super-admin/super-admin.ts`, `src/app/admin/super-admin/components/super-admin-stats.*`, `src/app/types.ts`, `functions/src/index.ts`) by enclosing all section headers inside solid `bg-gray-900` containers, extracting `Seiten, Aktionen & Herkunft` into a dedicated full-width 3-column telemetry breakdown container, and adding a `Registriert` column (`createdAt`, with Firebase Auth creation-time backfill) sorted newest-first in the `Administratoren` table.
+
 ## [3.4.12] - 2026-11-05
 ### Changed
 - Added automatic `Do Not Track (DNT)` and `Global Privacy Control (GPC)` signal enforcement across client telemetry (`src/app/shared/telemetry.service.ts`), SSR proxy headers (`src/server.ts`), and `recordTelemetry` (`functions/src/telemetry.service.ts`), and documented it in `/privacy` (`src/app/privacy/privacy.html`).

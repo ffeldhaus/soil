@@ -45,6 +45,7 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.stats.banned': 'Gesperrt',
       'superadmin.admins.title': 'Administratoren',
       'superadmin.table.user': 'Benutzer / E-Mail',
+      'superadmin.table.registered': 'Registriert',
       'superadmin.table.role': 'Rolle',
       'superadmin.table.status': 'Status',
       'superadmin.table.quota': 'Limit',
@@ -186,7 +187,9 @@ export class SuperAdminComponent implements OnInit {
       ]);
 
       this.ngZone.run(() => {
-        this.admins = admins;
+        this.admins = [...admins].sort(
+          (a, b) => this.getTimestampMillis(b.createdAt) - this.getTimestampMillis(a.createdAt),
+        );
         this.stats = stats;
         this.feedback = feedback;
         this.researchGames = researchRes.games;
@@ -498,5 +501,9 @@ export class SuperAdminComponent implements OnInit {
     if (typeof d === 'string') return new Date(d);
     if ('seconds' in d) return new Date(d.seconds * 1000);
     return null;
+  }
+
+  getTimestampMillis(d: any): number {
+    return this.formatDate(d)?.getTime() ?? 0;
   }
 }

@@ -24,6 +24,9 @@ export class SuperAdminStatsComponent {
     { key: '/info', label: 'Hintergrund (/info)' },
     { key: '/research', label: 'Forschung (/research)' },
     { key: '/admin', label: 'Lehrkräfte (/admin)' },
+    { key: '/game-login', label: 'Spiel-Login (/game-login)' },
+    { key: '/impressum', label: 'Impressum (/impressum)' },
+    { key: '/privacy', label: 'Datenschutz (/privacy)' },
   ];
 
   private readonly eventDefinitions: ReadonlyArray<{ key: string; label: string }> = [
@@ -60,7 +63,7 @@ export class SuperAdminStatsComponent {
       }))
       .filter((row) => row.count > 0)
       .sort((a, b) => b.count - a.count)
-      .slice(0, 6);
+      .slice(0, 8);
   }
 
   t(key: string): string {

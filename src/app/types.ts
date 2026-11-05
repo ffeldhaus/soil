@@ -259,6 +259,7 @@ export interface UserStatus {
   displayName?: string;
   firstName?: string;
   lastName?: string;
+  createdAt?: { seconds: number; nanoseconds: number } | Date | string;
   onboarding?: {
     explanation: string;
     institution: string;

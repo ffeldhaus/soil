@@ -2019,6 +2019,42 @@ export const getSystemStats = onCall(async (request) => {
   };
 });
 
+function toTimestampMillis(val: any): number {
+  if (!val) return 0;
+  if (typeof val === 'number') return val;
+  if (val instanceof Date) return val.getTime();
+  if (typeof val === 'string') {
+    const parsed = Date.parse(val);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+  if (typeof val.toMillis === 'function') return val.toMillis();
+  return typeof val.seconds === 'number' ? val.seconds * 1000 : 0;
+}
+
+async function backfillMissingUserCreationTimes(users: Record<string, any>[]): Promise<void> {
+  const missingUids = users.filter((u) => !u.createdAt && u.uid).map((u) => ({ uid: String(u.uid) }));
+  if (missingUids.length === 0) return;
+
+  try {
+    const authService = admin.auth() as any;
+    if (typeof authService.getUsers !== 'function') return;
+    const res = await authService.getUsers(missingUids.slice(0, 100));
+    const creationMap = new Map<string, string>();
+    for (const record of res?.users || []) {
+      if (record?.uid && record?.metadata?.creationTime) {
+        creationMap.set(record.uid, record.metadata.creationTime);
+      }
+    }
+    for (const u of users) {
+      if (!u.createdAt && creationMap.has(u.uid)) {
+        u.createdAt = creationMap.get(u.uid);
+      }
+    }
+  } catch {
+    // Ignore Auth lookup errors so unit tests and fallback environments never fail
+  }
+}
+
 export const getAllAdmins = onCall(async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
 
@@ -2032,7 +2068,10 @@ export const getAllAdmins = onCall(async (request) => {
   if (!isSuper) throw new HttpsError('permission-denied', 'System-Administratoren only');
 
   const snap = await db.collection('users').get();
-  return snap.docs.map((d) => d.data());
+  const users: Record<string, any>[] = snap.docs.map((d) => ({ uid: d.id, ...d.data() }));
+  await backfillMissingUserCreationTimes(users);
+
+  return users.sort((a, b) => toTimestampMillis(b.createdAt) - toTimestampMillis(a.createdAt));
 });
 
 export const getAdminGames = onCall(async (request) => {
