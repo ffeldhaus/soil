@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Serialisierung des Registrierungsdatums in `getAllAdmins` (`functions/src/index.ts`, `src/app/admin/super-admin/super-admin.ts`, `src/app/admin/super-admin/super-admin.html`, `src/app/admin/super-admin/super-admin.spec.ts`) korrigiert (`_seconds`-Unterstützung, `DocumentSnapshot.createTime`-Fallback, ISO-8601-Ausgabe) sowie nicht-leeren `–`-Fallback in der Super-Admin-Tabelle ergänzt.
+- Abstände (`class="block"`, `space-y-8`) sowie Tabellen- und Header-Styling in `super-admin-stats.html` (`Seiten, Aktionen & Herkunft`) vereinheitlicht, Übersetzung für `SUPERADMIN.TABLE.PLAYERS` ergänzt und die Erkennung von Local- vs. Cloud-Spielen für `research_local-*` korrigiert.
+
 ## [3.4.13] - 2026-11-05
 ### Changed
 - Redesigned the Super-Admin console (`src/app/admin/super-admin/super-admin.html`, `src/app/admin/super-admin/super-admin.ts`, `src/app/admin/super-admin/components/super-admin-stats.*`, `src/app/types.ts`, `functions/src/index.ts`) by enclosing all section headers inside solid `bg-gray-900` containers, extracting `Seiten, Aktionen & Herkunft` into a dedicated full-width 3-column telemetry breakdown container, and adding a `Registriert` column (`createdAt`, with Firebase Auth creation-time backfill) sorted newest-first in the `Administratoren` table.

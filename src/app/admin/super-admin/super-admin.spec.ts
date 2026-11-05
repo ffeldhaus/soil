@@ -105,7 +105,7 @@ describe('SuperAdminComponent', () => {
         status: 'active',
         gameCount: 1,
         quota: 10,
-        createdAt: { seconds: 1700000000, nanoseconds: 0 },
+        createdAt: { _seconds: 1700000000, _nanoseconds: 0 },
       },
       {
         uid: 'newest-admin',
@@ -124,6 +124,7 @@ describe('SuperAdminComponent', () => {
         status: 'active',
         gameCount: 0,
         quota: 10,
+        createdAt: {},
       },
     ]);
 
@@ -139,5 +140,11 @@ describe('SuperAdminComponent', () => {
     expect(dateCells[0].textContent?.trim()).toContain('01.04.2026');
     expect(dateCells[1].textContent?.trim()).toContain('14.11.2023');
     expect(dateCells[2].textContent?.trim()).toBe('–');
+  });
+
+  it('should distinguish local vs cloud research games even when id is prefixed with research_local-', () => {
+    expect(component.isCloudResearchGame({ id: 'research_local-n23w0wzpw' } as any)).toBe(false);
+    expect(component.isCloudResearchGame({ id: 'local-abc' } as any)).toBe(false);
+    expect(component.isCloudResearchGame({ id: 'research_EAn8r0Hme5qpawaYT2GQ' } as any)).toBe(true);
   });
 });

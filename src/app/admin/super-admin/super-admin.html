@@ -85,7 +85,7 @@
 
       <!-- Stats Section -->
       @if (stats) {
-        <app-super-admin-stats [stats]="stats"></app-super-admin-stats>
+        <app-super-admin-stats class="block" [stats]="stats"></app-super-admin-stats>
       }
 
       <!-- Research Data Section -->
@@ -134,10 +134,10 @@
                   <td class="p-4">
                     <div class="font-bold text-white flex items-center gap-2">
                       {{ game.name }}
-                      @if (game.config.numPlayers && game.config.numPlayers > 1) {
+                      @if (isCloudResearchGame(game)) {
                         <span class="px-1.5 py-0.5 bg-blue-900/40 text-blue-300 text-[10px] rounded border border-blue-800/50 uppercase">Cloud</span>
                       } @else {
-                        <span class="px-1.5 py-0.5 bg-emerald-900/40 text-emerald-300 text-[10px] rounded border border-emerald-800/50 uppercase">Local</span>
+                        <span class="px-1.5 py-0.5 bg-emerald-900/40 text-emerald-300 text-[10px] rounded border border-emerald-800/50 uppercase">Lokal</span>
                       }
                     </div>
                     <div class="text-xs text-gray-500 font-mono">{{ game.id }}</div>
@@ -260,7 +260,7 @@
                     <div class="text-xs text-gray-500 font-mono">{{ admin.uid }}</div>
                   </td>
                   <td class="p-4 font-mono tabular-nums text-xs text-gray-300 whitespace-nowrap" data-testid="admin-registered-date">
-                    {{ admin.createdAt ? (formatDate(admin.createdAt) | date: 'dd.MM.yyyy HH:mm') : '–' }}
+                    {{ (formatDate(admin.createdAt) | date: 'dd.MM.yyyy HH:mm') || '–' }}
                   </td>
                   <td class="p-4">
                     <span

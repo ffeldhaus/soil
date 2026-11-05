@@ -1,4 +1,4 @@
-<div class="space-y-6 animate-fade-in">
+<div class="space-y-8 animate-fade-in">
   <!-- Primary Summary KPI Row -->
   <div
     class="grid grid-cols-1 md:grid-cols-3 gap-4 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
@@ -108,16 +108,16 @@
   </div>
 
   <!-- Full-Width Dedicated Container for Routes, Actions & Referrers Breakdown -->
-  <div
+  <section
     data-testid="superadmin-telemetry-breakdown"
     class="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl overflow-hidden portrait:rounded-none portrait:border-x-0"
   >
-    <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-emerald-900/30 rounded-full text-emerald-400">
+    <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-800 flex flex-wrap items-center justify-between gap-4">
+      <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-2">
+        <div class="p-2 bg-emerald-900/30 rounded-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
+            class="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -130,63 +130,67 @@
             />
           </svg>
         </div>
-        <div>
-          <h3 class="text-lg font-bold text-white tracking-tight">
-            {{ t('superadmin.stats.telemetryBreakdown') }}
-          </h3>
-          <p class="text-xs text-gray-400">Anonyme Nutzungsstatistik ohne Cookies</p>
-        </div>
-      </div>
-      <span class="text-xs font-mono tabular-nums text-gray-300 bg-gray-950 px-3 py-1.5 rounded-lg border border-gray-800">
+        {{ t('superadmin.stats.telemetryBreakdown') }}
+      </h2>
+      <span class="text-xs font-mono tabular-nums text-gray-400">
         Web: {{ stats?.telemetry?.webViewsTotal || 0 }} · PWA: {{ stats?.telemetry?.pwaViewsTotal || 0 }}
       </span>
     </div>
 
-    <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-gray-800">
       <!-- Column 1: Seitenaufrufe nach Bereich -->
-      <div class="space-y-3">
-        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Seitenaufrufe nach Bereich</h4>
-        <div class="bg-gray-950 rounded-lg border border-gray-800 divide-y divide-gray-800/80">
+      <div class="flex flex-col">
+        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider p-4 font-medium flex justify-between items-center border-b border-gray-800">
+          <span>Seitenaufrufe nach Bereich</span>
+          <span>Aufrufe</span>
+        </div>
+        <div class="divide-y divide-gray-800 text-sm">
           @for (row of routeRows; track row.key) {
-            <div class="px-3.5 py-2.5 flex items-center justify-between gap-3">
-              <span class="text-sm text-gray-200 truncate">{{ row.label }}</span>
-              <span class="font-mono tabular-nums font-bold text-sm text-white">{{ row.count }}</span>
+            <div class="p-4 flex items-center justify-between gap-3 hover:bg-gray-950 transition">
+              <span class="text-gray-200 truncate">{{ row.label }}</span>
+              <span class="font-mono tabular-nums font-bold text-white">{{ row.count }}</span>
             </div>
           }
         </div>
       </div>
 
       <!-- Column 2: Ausgelöste Aktionen -->
-      <div class="space-y-3">
-        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ausgelöste Aktionen</h4>
-        <div class="bg-gray-950 rounded-lg border border-gray-800 divide-y divide-gray-800/80">
+      <div class="flex flex-col">
+        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider p-4 font-medium flex justify-between items-center border-b border-gray-800">
+          <span>Ausgelöste Aktionen</span>
+          <span>Anzahl</span>
+        </div>
+        <div class="divide-y divide-gray-800 text-sm">
           @for (ev of eventRows; track ev.key) {
-            <div class="px-3.5 py-2.5 flex items-center justify-between gap-3">
-              <span class="text-sm text-gray-200 truncate">{{ ev.label }}</span>
-              <span class="font-mono tabular-nums font-bold text-sm text-emerald-400">{{ ev.count }}</span>
+            <div class="p-4 flex items-center justify-between gap-3 hover:bg-gray-950 transition">
+              <span class="text-gray-200 truncate">{{ ev.label }}</span>
+              <span class="font-mono tabular-nums font-bold text-emerald-400">{{ ev.count }}</span>
             </div>
           }
         </div>
       </div>
 
       <!-- Column 3: Herkunft / Referrer -->
-      <div class="space-y-3">
-        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Herkunft / Referrer</h4>
+      <div class="flex flex-col">
+        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider p-4 font-medium flex justify-between items-center border-b border-gray-800">
+          <span>Herkunft / Referrer</span>
+          <span>Aufrufe</span>
+        </div>
         @if (referrerRows.length > 0) {
-          <div class="bg-gray-950 rounded-lg border border-gray-800 divide-y divide-gray-800/80">
+          <div class="divide-y divide-gray-800 text-sm">
             @for (ref of referrerRows; track ref.key) {
-              <div class="px-3.5 py-2.5 flex items-center justify-between gap-3">
-                <span class="text-sm text-gray-200 truncate">{{ ref.label }}</span>
-                <span class="font-mono tabular-nums font-bold text-sm text-white">{{ ref.count }}</span>
+              <div class="p-4 flex items-center justify-between gap-3 hover:bg-gray-950 transition">
+                <span class="text-gray-200 truncate">{{ ref.label }}</span>
+                <span class="font-mono tabular-nums font-bold text-white">{{ ref.count }}</span>
               </div>
             }
           </div>
         } @else {
-          <div class="bg-gray-950 rounded-lg border border-gray-800 px-4 py-8 text-center text-sm text-gray-400">
+          <div class="p-8 text-center text-sm text-gray-500">
             Noch keine Herkunftsdaten erfasst.
           </div>
         }
       </div>
     </div>
-  </div>
+  </section>
 </div>

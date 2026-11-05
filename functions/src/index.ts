@@ -2028,11 +2028,15 @@ function toTimestampMillis(val: any): number {
     return Number.isNaN(parsed) ? 0 : parsed;
   }
   if (typeof val.toMillis === 'function') return val.toMillis();
-  return typeof val.seconds === 'number' ? val.seconds * 1000 : 0;
+  if (typeof val.seconds === 'number') return val.seconds * 1000;
+  if (typeof val._seconds === 'number') return val._seconds * 1000;
+  return 0;
 }
 
 async function backfillMissingUserCreationTimes(users: Record<string, any>[]): Promise<void> {
-  const missingUids = users.filter((u) => !u.createdAt && u.uid).map((u) => ({ uid: String(u.uid) }));
+  const missingUids = users
+    .filter((u) => !toTimestampMillis(u.createdAt) && u.uid)
+    .map((u) => ({ uid: String(u.uid) }));
   if (missingUids.length === 0) return;
 
   try {
@@ -2046,7 +2050,7 @@ async function backfillMissingUserCreationTimes(users: Record<string, any>[]): P
       }
     }
     for (const u of users) {
-      if (!u.createdAt && creationMap.has(u.uid)) {
+      if (!toTimestampMillis(u.createdAt) && creationMap.has(u.uid)) {
         u.createdAt = creationMap.get(u.uid);
       }
     }
@@ -2068,10 +2072,29 @@ export const getAllAdmins = onCall(async (request) => {
   if (!isSuper) throw new HttpsError('permission-denied', 'System-Administratoren only');
 
   const snap = await db.collection('users').get();
-  const users: Record<string, any>[] = snap.docs.map((d) => ({ uid: d.id, ...d.data() }));
+  const users: Record<string, any>[] = snap.docs.map((d) => {
+    const data = d.data() || {};
+    const createTimeMillis =
+      toTimestampMillis(data.createdAt) ||
+      toTimestampMillis(data.updatedAt) ||
+      toTimestampMillis((d as any).createTime);
+    return {
+      uid: d.id,
+      ...data,
+      createdAt: createTimeMillis > 0 ? new Date(createTimeMillis).toISOString() : undefined,
+    };
+  });
   await backfillMissingUserCreationTimes(users);
 
-  return users.sort((a, b) => toTimestampMillis(b.createdAt) - toTimestampMillis(a.createdAt));
+  return users
+    .map((u) => {
+      const ms = toTimestampMillis(u.createdAt);
+      return {
+        ...u,
+        createdAt: ms > 0 ? new Date(ms).toISOString() : undefined,
+      };
+    })
+    .sort((a, b) => toTimestampMillis(b.createdAt) - toTimestampMillis(a.createdAt));
 });
 
 export const getAdminGames = onCall(async (request) => {

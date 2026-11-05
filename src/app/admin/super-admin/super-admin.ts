@@ -81,9 +81,10 @@ export class SuperAdminComponent implements OnInit {
       'superadmin.evaluation.analysis': 'Analyse',
       'superadmin.evaluation.improvements': 'Verbesserungsvorschläge (Mechanik)',
       'superadmin.evaluation.date': 'Analysiert am',
-      'superadmin.research.title': 'Forschungsdaten (Lokale Spiele)',
+      'superadmin.research.title': 'Forschungsdaten (Cloud & Lokale Spiele)',
       'superadmin.table.game': 'Spiel',
       'superadmin.table.rounds': 'Runden',
+      'superadmin.table.players': 'Teams',
       'superadmin.table.capital': 'Kapital',
       'superadmin.table.soil': 'Boden',
       'superadmin.actions.view': 'Ansehen',
@@ -495,12 +496,27 @@ export class SuperAdminComponent implements OnInit {
     return game?.status === 'deleted' || !!game?.deletedAt;
   }
 
-  formatDate(d: { seconds: number; nanoseconds: number } | Date | string | null | undefined): Date | null {
+  formatDate(
+    d: { seconds?: number; nanoseconds?: number } | Record<string, unknown> | Date | string | number | null | undefined,
+  ): Date | null {
     if (!d) return null;
-    if (d instanceof Date) return d;
-    if (typeof d === 'string') return new Date(d);
-    if ('seconds' in d) return new Date(d.seconds * 1000);
+    if (d instanceof Date) return Number.isNaN(d.getTime()) ? null : d;
+    if (typeof d === 'number') return new Date(d);
+    if (typeof d === 'string') {
+      const parsed = new Date(d);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+    if (typeof (d as any).toDate === 'function') return (d as any).toDate();
+    if (typeof (d as any).seconds === 'number') return new Date((d as any).seconds * 1000);
+    if (typeof (d as any)._seconds === 'number') return new Date((d as any)._seconds * 1000);
     return null;
+  }
+
+  isCloudResearchGame(game: Game): boolean {
+    if (game?.sourceType === 'cloud') return true;
+    if (game?.sourceType === 'local') return false;
+    const rawId = `${game?.id || ''} ${(game as any)?.migratedFrom || ''}`;
+    return !rawId.includes('local-');
   }
 
   getTimestampMillis(d: any): number {
