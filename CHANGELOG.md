@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.18] - 2026-11-05
 ### Changed
 - Automatischen Betriebssystem-Vollbildaufruf (`requestFullscreen()`) beim Öffnen der `/trailer`-Seite (`src/app/trailer/trailer.ts`) entfernt, sodass das Video ruhig im vollen Browserfenster (`100vw × 100dvh`) startet, ohne dass der Browser kurz in den OS-Vollbildmodus und wieder zurück springt.
 
