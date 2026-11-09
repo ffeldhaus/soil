@@ -649,11 +649,11 @@ export class Board implements OnInit, OnDestroy {
 
   checkOrientation() {
     const aspectRatio = window.innerWidth / window.innerHeight;
-    if (aspectRatio < 0.5) {
+    if (aspectRatio < 0.42) {
       this.cols = 4;
     } else if (aspectRatio < 1.0) {
       this.cols = 5;
-    } else if (aspectRatio < 2.4) {
+    } else if (aspectRatio < 2.4 && !(window.innerHeight < 500 && aspectRatio >= 1.8)) {
       this.cols = 8;
     } else {
       this.cols = 10;

@@ -10,7 +10,7 @@
     routerLink="/"
     (click)="closeTrailer($event)"
     data-testid="close-trailer-modal"
-    class="fixed top-4 right-4 z-[60] p-2.5 rounded-full bg-gray-900/85 hover:bg-gray-800 text-white border border-gray-700 transition cursor-pointer"
+    class="fixed top-[calc(1rem+env(safe-area-inset-top,0px))] right-[calc(1rem+env(safe-area-inset-right,0px))] z-[60] p-2.5 rounded-full bg-gray-900/85 hover:bg-gray-800 text-white border border-gray-700 transition cursor-pointer"
     aria-label="Trailer schließen"
     title="Zurück zur Startseite"
   >

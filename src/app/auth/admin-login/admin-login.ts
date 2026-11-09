@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { BackButtonComponent } from '../../shared/back-button/back-button';
+import { getCapacitorPlatform, isNativeCapacitorApp } from '../../shared/capacitor-env';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -39,6 +40,8 @@ export class AdminLoginComponent implements OnInit {
   showPassword = false;
   errorMessage = '';
   successMessage = '';
+  showGoogleLogin = !isNativeCapacitorApp();
+  showAppleLogin = !isNativeCapacitorApp() || getCapacitorPlatform() === 'ios';
 
   ngOnInit() {
     this.auth.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {

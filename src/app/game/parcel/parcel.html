@@ -1,5 +1,5 @@
 <div
-  class="h-full w-full border bg-gray-800/80 relative cursor-pointer select-none group border-gray-700/50 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+  class="h-full w-full border bg-gray-800/80 relative cursor-pointer select-none group border-gray-700/50 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 [container-type:inline-size]"
   [class.selected-border]="selected"
   role="button"
   tabindex="0"
@@ -26,10 +26,10 @@
   }
 
   <!-- Overlays Container -->
-  <div class="absolute inset-0 flex flex-col justify-evenly items-center pointer-events-none z-20 py-0.5 px-0.5 overflow-hidden">
+  <div class="absolute inset-0 flex flex-col justify-evenly items-center pointer-events-none z-20 py-px px-px overflow-hidden">
     <!-- Text Overlay (Name) -->
     @if (showLabels) {
-      <div class="bg-gray-300/90 text-gray-900 text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-gray-400/50 whitespace-nowrap max-w-full truncate">
+      <div class="bg-gray-300/95 text-gray-900 text-[clamp(5.5px,11.5cqw,12px)] tracking-tight leading-[1.15] font-bold px-0.5 py-0 rounded shadow-sm border border-gray-400/50 whitespace-nowrap max-w-full truncate">
         {{ t(getConfig(parcel.crop).label) }}
       </div>
     }
@@ -37,26 +37,30 @@
     @if (hasBadRotation) {
       <div
         data-testid="parcel-bad-rotation-badge"
-        class="bg-rose-950/95 text-rose-200 text-[clamp(6px,9.5cqw,11px)] leading-tight font-bold px-1.5 py-px rounded shadow-sm border border-rose-500/80 whitespace-nowrap max-w-full truncate"
+        class="bg-rose-950/95 text-rose-200 text-[clamp(5px,9.2cqw,10.5px)] tracking-tighter leading-[1.15] font-bold px-px py-0 rounded shadow-sm border border-rose-500/80 whitespace-nowrap max-w-full truncate"
       >
         Fruchtfolge ▼
       </div>
     }
 
-    @if (showSoil) {
-      <div data-testid="parcel-soil-badge" class="bg-amber-900/90 text-white text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-amber-700/60 whitespace-nowrap">
-        {{ parcel.soil }}%
-      </div>
-    }
+    @if (showSoil || showNutrition) {
+      <div class="flex items-center justify-center gap-0.5 max-w-full">
+        @if (showSoil) {
+          <div data-testid="parcel-soil-badge" class="bg-amber-900/95 text-white text-[clamp(5.5px,11.5cqw,12px)] leading-[1.15] font-bold px-0.5 py-0 rounded shadow-sm border border-amber-700/60 whitespace-nowrap">
+            {{ parcel.soil }}%
+          </div>
+        }
 
-    @if (showNutrition) {
-      <div class="bg-blue-600/90 text-white text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-blue-400/50 whitespace-nowrap">
-        {{ parcel.nutrition }}%
+        @if (showNutrition) {
+          <div class="bg-blue-600/95 text-white text-[clamp(5.5px,11.5cqw,12px)] leading-[1.15] font-bold px-0.5 py-0 rounded shadow-sm border border-blue-400/50 whitespace-nowrap">
+            {{ parcel.nutrition }}%
+          </div>
+        }
       </div>
     }
 
     @if (showHarvest) {
-      <div data-testid="parcel-harvest-badge" class="bg-yellow-500/90 text-black text-[clamp(6px,11.5cqw,13px)] leading-tight font-bold px-1 py-px rounded shadow-sm border border-yellow-300 whitespace-nowrap">
+      <div data-testid="parcel-harvest-badge" class="bg-yellow-500/95 text-black text-[clamp(5px,9.2cqw,11px)] tracking-tighter leading-[1.15] font-bold px-px py-0 rounded shadow-sm border border-yellow-300 whitespace-nowrap max-w-full truncate">
         @if (parcel.crop === 'Grass') {
           Weidehaltung
         } @else if (parcel.crop === 'Fallow') {

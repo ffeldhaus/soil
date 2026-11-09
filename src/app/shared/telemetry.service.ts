@@ -1,5 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { CANONICAL_WEB_ORIGIN, isLocalBrowserDevServer, isNativeCapacitorApp } from './capacitor-env';
 
 export type TelemetryEventName = 'quick_game_started' | 'trailer_opened' | 'research_export';
 
@@ -56,6 +57,9 @@ export class TelemetryService {
   detectDisplayMode(): 'pwa' | 'web' {
     if (!isPlatformBrowser(this.platformId) || typeof window === 'undefined') {
       return 'web';
+    }
+    if (isNativeCapacitorApp()) {
+      return 'pwa';
     }
     const standaloneMedia = window.matchMedia?.('(display-mode: standalone)')?.matches === true;
     const iosStandalone = (navigator as unknown as { standalone?: boolean })?.standalone === true;
@@ -123,8 +127,7 @@ export class TelemetryService {
     if (this.enableInTests) {
       return false;
     }
-    const hostname = window.location?.hostname || '';
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    if (isLocalBrowserDevServer()) {
       return true;
     }
     const nav = typeof navigator !== 'undefined' ? navigator : undefined;
@@ -196,8 +199,9 @@ export class TelemetryService {
     if (hasEvents) payload.events = eventsSnapshot;
     if (hasReferrers) payload.referrers = referrersSnapshot;
 
+    const telemetryEndpoint = isNativeCapacitorApp() ? `${CANONICAL_WEB_ORIGIN}/api/telemetry` : '/api/telemetry';
     try {
-      const response = await fetch('/api/telemetry', {
+      const response = await fetch(telemetryEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

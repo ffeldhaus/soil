@@ -1,10 +1,12 @@
-import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, type OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import type { User } from 'firebase/auth';
 
 import { GameService } from '../../game/game.service';
 import { BackButtonComponent } from '../../shared/back-button/back-button';
+import { getCapacitorPlatform, isNativeCapacitorApp } from '../../shared/capacitor-env';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -19,6 +21,7 @@ export class AdminRegisterComponent implements OnInit {
   private gameService = inject(GameService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   registerForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -33,12 +36,16 @@ export class AdminRegisterComponent implements OnInit {
   showErrorModal = false;
   showPassword = false;
   isGoogleUser = false;
+  isAppleProvider = false;
+  showGoogleLogin = !isNativeCapacitorApp();
+  showAppleLogin = !isNativeCapacitorApp() || getCapacitorPlatform() === 'ios';
   currentUser: User | null = null;
 
   t(key: string): string {
     const translations: Record<string, string> = {
       'adminRegister.signedInAs': 'Angemeldet als',
       'adminRegister.viaGoogle': 'über Google',
+      'adminRegister.viaApple': 'über Apple',
       'adminRegister.completeApp': 'Bitte vervollständige deinen Antrag',
       'adminRegister.firstName': 'Vorname',
       'adminRegister.placeholder.firstName': 'Max',
@@ -61,22 +68,31 @@ export class AdminRegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.user$.subscribe((user) => {
-      if (user) {
-        this.currentUser = user;
-        this.isGoogleUser = user.providerData.some((p) => p.providerId === 'google.com');
+    this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
+      if (!user) return;
+      this.currentUser = user;
+      this.isGoogleUser = user.providerData.some((p) => p.providerId === 'google.com' || p.providerId === 'apple.com');
+      this.isAppleProvider = user.providerData.some((p) => p.providerId === 'apple.com');
 
-        if (this.isGoogleUser) {
-          const names = (user.displayName || '').split(' ');
-          this.registerForm.get('firstName')?.setValue(names[0] || '');
-          this.registerForm.get('lastName')?.setValue(names.slice(1).join(' ') || '');
-          this.registerForm.get('email')?.setValue(user.email || '');
-          this.registerForm.get('password')?.setValue('GOOGLE_AUTH_PLACEHOLDER');
-          this.registerForm.get('email')?.disable();
-          this.registerForm.get('password')?.disable();
-        }
+      if (this.isGoogleUser) {
+        this.populateOAuthUser(user);
       }
     });
+  }
+
+  private populateOAuthUser(user: User) {
+    const hasStorage = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    const names = (user.displayName || '').trim().split(/\s+/).filter(Boolean);
+    const firstName = names[0] || (hasStorage ? window.localStorage.getItem('soil_oauth_first_name') || '' : '');
+    const lastName =
+      names.slice(1).join(' ') || (hasStorage ? window.localStorage.getItem('soil_oauth_last_name') || '' : '');
+    this.registerForm.get('firstName')?.setValue(firstName);
+    this.registerForm.get('lastName')?.setValue(lastName);
+    this.registerForm.get('email')?.setValue(user.email || '');
+    this.registerForm.get('password')?.setValue('OAUTH_AUTH_PLACEHOLDER');
+    this.registerForm.get('email')?.disable();
+    this.registerForm.get('password')?.disable();
+    this.cdr.detectChanges();
   }
 
   togglePassword() {
@@ -123,14 +139,19 @@ export class AdminRegisterComponent implements OnInit {
         return;
       }
 
-      // Google users are already verified, show success and maybe redirect to home after a delay
+      if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+        window.localStorage.removeItem('soil_oauth_first_name');
+        window.localStorage.removeItem('soil_oauth_last_name');
+      }
+
+      // OAuth users are already verified, show success and redirect to admin console after a brief delay
       this.successMessage = this.t('adminRegister.success.verificationSent').replace(
         ' Bitte prüfe deine E-Mails, um deine E-Mail-Adresse zu bestätigen.',
         '',
       );
       this.isLoading = false;
       this.cdr.detectChanges();
-      setTimeout(() => this.router.navigate(['/']), 5000);
+      setTimeout(() => this.router.navigate(['/admin']), 1500);
     } catch (error: unknown) {
       console.error('Registration error:', error);
       this.errorMessage = (error as Error).message || 'Ein Fehler ist aufgetreten. Bitte versuche es später erneut.';

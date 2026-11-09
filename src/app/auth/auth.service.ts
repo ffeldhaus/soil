@@ -1,9 +1,11 @@
 import { Injectable, inject, isDevMode, NgZone } from '@angular/core';
+import { registerPlugin } from '@capacitor/core';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   OAuthProvider,
   onAuthStateChanged,
+  signInWithCredential,
   signInWithCustomToken,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -14,6 +16,17 @@ import {
 import { httpsCallable } from 'firebase/functions';
 import { BehaviorSubject } from 'rxjs';
 import { FIREBASE_AUTH, FIREBASE_FUNCTIONS } from '../firebase.config';
+import { getCapacitorPlatform, getShareableWebOrigin, isLocalBrowserDevServer } from '../shared/capacitor-env';
+
+interface SignInWithApplePlugin {
+  authorize(): Promise<{
+    identityToken: string;
+    rawNonce: string;
+    givenName?: string;
+    familyName?: string;
+    email?: string;
+  }>;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -56,11 +69,7 @@ export class AuthService {
 
   private isTestMode(): boolean {
     if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return false;
-    const isAllowedEnv =
-      isDevMode() ||
-      window.location?.hostname === 'localhost' ||
-      window.location?.hostname === '127.0.0.1' ||
-      !!(window as any).Cypress;
+    const isAllowedEnv = isDevMode() || isLocalBrowserDevServer() || !!(window as any).Cypress;
     return isAllowedEnv && window.localStorage.getItem('soil_test_mode') === 'true';
   }
 
@@ -231,7 +240,34 @@ export class AuthService {
       this.userSubject.next(user);
       return { user };
     }
+    if (getCapacitorPlatform() === 'ios') {
+      const SignInWithApple = registerPlugin<SignInWithApplePlugin>('SignInWithApple');
+      const appleRes = await SignInWithApple.authorize();
+      const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+      if (isBrowser) {
+        if (appleRes.givenName) {
+          window.localStorage.setItem('soil_oauth_first_name', appleRes.givenName);
+        }
+        if (appleRes.familyName) {
+          window.localStorage.setItem('soil_oauth_last_name', appleRes.familyName);
+        }
+      }
+      const provider = new OAuthProvider('apple.com');
+      const credential = provider.credential({
+        idToken: appleRes.identityToken,
+        rawNonce: appleRes.rawNonce,
+      });
+      const userCred = await signInWithCredential(this.auth!, credential);
+      if ((appleRes.givenName || appleRes.familyName) && !userCred.user.displayName) {
+        await updateProfile(userCred.user, {
+          displayName: [appleRes.givenName, appleRes.familyName].filter(Boolean).join(' '),
+        });
+      }
+      return userCred;
+    }
     const provider = new OAuthProvider('apple.com');
+    provider.addScope('email');
+    provider.addScope('name');
     return await signInWithPopup(this.auth!, provider);
   }
 
@@ -256,7 +292,7 @@ export class AuthService {
         throw new Error('Functions not available');
       }
       await fn({
-        origin: window.location.origin,
+        origin: getShareableWebOrigin(),
       });
     }
   }
@@ -273,7 +309,7 @@ export class AuthService {
     }
     await fn({
       email,
-      origin: window.location.origin,
+      origin: getShareableWebOrigin(),
     });
   }
 

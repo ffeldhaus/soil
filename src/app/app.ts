@@ -28,7 +28,6 @@ export class App {
   private titleService = inject(Title);
   private doc = inject(DOCUMENT);
   protected readonly title = signal('soil');
-  protected readonly isGameRoute = signal(false);
   version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
 
   constructor() {
@@ -41,8 +40,6 @@ export class App {
   }
 
   private syncRouteSeo(): void {
-    const currentUrl = this.router.url || '';
-    this.isGameRoute.set(currentUrl.startsWith('/game') && !currentUrl.startsWith('/game-login'));
     const snapshot = this.getDeepestSnapshot(this.router.routerState?.snapshot?.root);
     const seo = snapshot?.data?.seo as RouteSeoData | undefined;
     if (!seo) {

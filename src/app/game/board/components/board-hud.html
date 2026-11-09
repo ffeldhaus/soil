@@ -1,6 +1,6 @@
 <header
   aria-label="Spiel-Kopfleiste"
-  class="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-md px-2 sm:px-6 py-1 flex items-center justify-between gap-2 h-10"
+  class="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-md pt-[env(safe-area-inset-top,0px)] px-[max(0.5rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] sm:px-[max(1.5rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] py-1 flex items-center justify-between gap-2 h-[calc(2.5rem+env(safe-area-inset-top,0px))]"
 >
   <!-- Left Section: Logo & Stats -->
   <div class="shrink-0 flex items-center gap-2 sm:gap-3">
@@ -387,11 +387,11 @@
     <button
       (click)="openFeedback.emit()"
       data-testid="hud-feedback-button"
-      class="p-1.5 sm:p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0 cursor-pointer"
+      class="p-1 sm:p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
       title="Feedback geben"
       aria-label="Feedback geben"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="currentColor" viewBox="0 0 24 24">
         <path
           d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zm-9-4h2v2h-2zm0-6h2v4h-2z"
         />
@@ -400,11 +400,11 @@
     <button
       (click)="startTour()"
       data-testid="tour-button"
-      class="p-1.5 sm:p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0 cursor-pointer"
+      class="p-1 sm:p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
       title="Geführte Tour starten"
       aria-label="Geführte Tour starten"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     </button>
@@ -412,11 +412,11 @@
       <button
         (click)="logout.emit()"
         data-testid="logout-button"
-        class="p-1.5 sm:p-2 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0 cursor-pointer"
+        class="p-1 sm:p-1.5 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
         [title]="t('board.logout.title')"
         [attr.aria-label]="t('board.logout.title')"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"

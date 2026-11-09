@@ -15,7 +15,7 @@
       </picture>
     </div>
 
-    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6 pb-14">
+    <main class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] sm:pt-[calc(2rem+env(safe-area-inset-top,0px))] pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
       <header
         class="mb-5 p-4 sm:p-5 bg-gray-900 rounded-xl border border-gray-800 shadow-lg flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
       >
@@ -50,7 +50,7 @@
       <div class="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-6 items-start">
         <!-- Table of Contents -->
         <aside
-          class="mb-5 lg:mb-0 lg:sticky lg:top-6 bg-gray-900 border border-gray-800 rounded-xl p-3 print:hidden"
+          class="mb-5 lg:mb-0 lg:sticky lg:top-[calc(1.5rem+env(safe-area-inset-top,0px))] bg-gray-900 border border-gray-800 rounded-xl p-3 print:hidden"
         >
           <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 px-2">
             {{ t('manual.toc.title') }}

@@ -32,8 +32,7 @@
 <router-outlet></router-outlet>
 <footer
   aria-label="Rechtliches und Dokumentation"
-  [class.portrait:hidden]="isGameRoute()"
-  class="fixed bottom-0 right-0 portrait:left-0 pl-2.5 pr-4 portrait:px-3 py-1 bg-gray-950/90 border-t border-l portrait:border-l-0 border-gray-800 text-gray-300 z-20 flex items-center justify-end portrait:justify-center rounded-tl-lg portrait:rounded-none text-xs font-mono print:hidden"
+  class="fixed bottom-0 right-0 portrait:left-0 pl-2.5 pr-4 portrait:px-3 py-1 portrait:pb-[max(0.25rem,calc(env(safe-area-inset-bottom,0px)*0.55))] bg-gray-950/90 border-t border-l portrait:border-l-0 border-gray-800 text-gray-300 z-20 flex items-center justify-end portrait:justify-center rounded-tl-lg portrait:rounded-none text-xs font-mono print:hidden"
 >
   <nav aria-label="Fußzeilen-Navigation" class="flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-3 whitespace-nowrap">
     <a

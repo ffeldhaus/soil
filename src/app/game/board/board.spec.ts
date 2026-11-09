@@ -322,17 +322,28 @@ describe('Board', () => {
     const originalHeight = window.innerHeight;
 
     try {
-      // Very tall (AR < 0.5)
+      // Very tall (AR < 0.42)
       setViewport(300, 1000);
       component.checkOrientation();
       expect(component.cols).toBe(4);
       expect(component.rows).toBe(10);
 
-      // Portrait (0.5 <= AR < 1.0)
+      // Portrait phone & tablet (0.42 <= AR < 1.0)
+      setViewport(393, 852);
+      component.checkOrientation();
+      expect(component.cols).toBe(5);
+      expect(component.rows).toBe(8);
+
       setViewport(600, 1000);
       component.checkOrientation();
       expect(component.cols).toBe(5);
       expect(component.rows).toBe(8);
+
+      // Short landscape phone (innerHeight < 500 && AR >= 1.8) -> 10x4
+      setViewport(852, 393);
+      component.checkOrientation();
+      expect(component.cols).toBe(10);
+      expect(component.rows).toBe(4);
 
       // Landscape (1.0 <= AR < 2.4) without enough side space
       setViewport(1200, 1000);

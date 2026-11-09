@@ -5,6 +5,7 @@ import { BehaviorSubject, debounceTime, type Observable, Subject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { FIREBASE_FUNCTIONS } from '../firebase.config';
 import { GAME_CONSTANTS } from '../game-constants';
+import { isLocalBrowserDevServer } from '../shared/capacitor-env';
 import { OfflineService } from '../shared/offline.service';
 import type {
   CropType,
@@ -203,8 +204,7 @@ export class GameService {
 
   private isTestMode(): boolean {
     if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return false;
-    const isAllowedEnv =
-      isDevMode() || window.location?.hostname === 'localhost' || window.location?.hostname === '127.0.0.1';
+    const isAllowedEnv = isDevMode() || isLocalBrowserDevServer();
     return isAllowedEnv && window.localStorage.getItem('soil_test_mode') === 'true' && !(window as any).Cypress;
   }
 

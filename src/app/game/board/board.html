@@ -7,7 +7,7 @@
 
   @let currentUser = user$ | async;
   @if (currentUser || isResearchReplay || isReadOnly) {
-  <div class="relative h-full flex flex-col pt-10">
+  <div class="relative h-full flex flex-col pt-[calc(2.5rem+env(safe-area-inset-top,0px))] pb-[env(safe-area-inset-bottom,0px)] px-[max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))]">
     <app-board-hud [user]="currentUser" [gameState]="gameState$ | async" [isPlayer]="isPlayer" [playerLabel]="playerLabel"
       [playerNumber]="playerNumber" [showLabels]="showLabels" [showNutritionOverlay]="showNutritionOverlay"
       [showHarvestOverlay]="showHarvestOverlay" [showSoilOverlay]="showSoilOverlay" [showFinance]="showFinance"
@@ -35,7 +35,7 @@
       <!-- Menu Content -->
       <nav
         aria-label="Mobiles Spielmenü"
-        class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900 shadow-2xl flex flex-col border-r border-gray-800 animate-slide-in-left">
+        class="absolute top-0 left-0 bottom-0 w-64 bg-gray-900 shadow-2xl flex flex-col border-r border-gray-800 animate-slide-in-left pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)]">
         <!-- Menu Header matching top HUD bar -->
         <div class="h-10 px-4 border-b border-gray-800 flex justify-between items-center shrink-0">
           <a [routerLink]="isResearchReplay ? '/research' : (currentUser?.isAnonymous ? '/' : '/admin')"
@@ -211,8 +211,7 @@
           <div class="flex items-center justify-between whitespace-nowrap">
             <a
               routerLink="/manual"
-              target="_blank"
-              rel="noopener noreferrer"
+              (click)="toggleMobileMenu()"
               title="Handbuch"
               aria-label="Handbuch"
               class="inline-flex items-center hover:text-white transition"
@@ -236,8 +235,7 @@
             <span class="text-gray-700" aria-hidden="true">|</span>
             <a
               routerLink="/info"
-              target="_blank"
-              rel="noopener noreferrer"
+              (click)="toggleMobileMenu()"
               title="Hintergrund & Wissenschaft"
               aria-label="Hintergrund"
               class="inline-flex items-center hover:text-white transition"
@@ -261,8 +259,7 @@
             <span class="text-gray-700" aria-hidden="true">|</span>
             <a
               routerLink="/research"
-              target="_blank"
-              rel="noopener noreferrer"
+              (click)="toggleMobileMenu()"
               title="Offener Forschungsdatensatz"
               aria-label="Forschungsdaten"
               class="inline-flex items-center hover:text-white transition"
@@ -284,9 +281,9 @@
               </svg>
             </a>
             <span class="text-gray-700" aria-hidden="true">|</span>
-            <a routerLink="/impressum" target="_blank" rel="noopener noreferrer" class="hover:text-white hover:underline transition">Impressum</a>
+            <a routerLink="/impressum" (click)="toggleMobileMenu()" class="hover:text-white hover:underline transition">Impressum</a>
             <span class="text-gray-700" aria-hidden="true">|</span>
-            <a routerLink="/privacy" target="_blank" rel="noopener noreferrer" class="hover:text-white hover:underline transition">Datenschutz</a>
+            <a routerLink="/privacy" (click)="toggleMobileMenu()" class="hover:text-white hover:underline transition">Datenschutz</a>
           </div>
           <div class="flex items-center justify-between text-gray-500 text-[11px] font-sans">
             <span>SOIL Planspiel</span>
@@ -394,11 +391,11 @@
       >
         <!-- Round Selector + Compact HUD (for portrait and narrower/quadratic landscape) -->
         @if (viewingRound >= 0) {
-        <div class="flex flex-wrap lg:flex-nowrap items-center justify-center w-full max-w-6xl px-2 sm:px-4 gap-1 sm:gap-2 min-h-[32px] sm:min-h-[36px]">
-          <!-- Round Indicator: Row 1 on <lg, Center on lg+ -->
-          <div class="w-full lg:w-auto flex justify-center order-1 lg:order-2 shrink-0">
+        <div class="flex flex-wrap lg:flex-nowrap items-center justify-center w-full max-w-6xl px-2 sm:px-4 gap-1.5 sm:gap-2 min-h-[32px] sm:min-h-[36px]">
+          <!-- Round Indicator: Left on <lg (side-by-side with Weather), Center on lg+ -->
+          <div class="w-auto flex justify-center order-1 lg:order-2 shrink-0">
             <div data-testid="round-indicator" data-tour="round-selector"
-              class="shrink-0 flex items-center gap-1 bg-gray-900 px-3 py-1 rounded-lg border border-gray-700 shadow-md">
+              class="shrink-0 flex items-center gap-0.5 sm:gap-1 bg-gray-900 px-2 sm:px-3 py-1 rounded-lg border border-gray-700 shadow-md">
               <button (click)="goToRound(viewingRound - 1)" [disabled]="viewingRound === 0"
                 class="text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -407,7 +404,7 @@
                     clip-rule="evenodd" />
                 </svg>
               </button>
-              <span class="text-xs font-mono tabular-nums px-1.5 sm:px-2 min-w-[90px] sm:min-w-[100px] text-center transition-colors"
+              <span class="text-xs sm:text-sm font-mono font-semibold tabular-nums px-1 sm:px-2 min-w-[84px] sm:min-w-[104px] text-center transition-colors"
                 [class.text-emerald-400]="viewingRound === maxRoundNumber"
                 [class.text-white]="viewingRound < maxRoundNumber">
                 <ng-container>Runde</ng-container> {{ viewingRound }} von {{ totalRounds }}
@@ -423,7 +420,7 @@
             </div>
           </div>
 
-          <!-- Weather & Weather Forecast (Left on lg+, Row 2 on <lg) -->
+          <!-- Weather & Weather Forecast (Left on lg+, Right of Round Selector on <lg) -->
           <div class="board-compact-hud order-2 lg:order-1 lg:flex-1 flex-wrap items-center justify-center lg:justify-end gap-1 min-w-0 max-w-full">
             <div
               class="relative min-w-0 max-w-full"
@@ -434,12 +431,12 @@
                 type="button"
                 data-testid="hud-weather-forecast"
                 (click)="toggleHudPopover('weather', $event)"
-                class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg pl-1.5 pr-2 py-0.5 sm:pl-1.5 sm:pr-2.5 sm:py-1 text-[10px] sm:text-[11px] text-slate-200 min-w-0 max-w-full transition-colors cursor-pointer"
+                class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg pl-1.5 pr-2.5 py-1 text-xs text-slate-200 min-w-0 max-w-full transition-colors cursor-pointer shadow-md"
               >
                 <img
                   [src]="selectedRoundWeatherData.image"
                   [alt]="selectedRoundWeatherData.name"
-                  class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-gray-700 shrink-0"
+                  class="w-5 h-5 rounded object-cover border border-gray-700 shrink-0"
                 />
                 @if (selectedRoundWeatherData.name !== 'Normal') {
                   <span class="font-bold text-sky-300 whitespace-nowrap shrink-0">{{ selectedRoundWeatherData.name }} ·</span>
@@ -454,7 +451,7 @@
               @if (activeHudPopover === 'weather') {
                 <div
                   (click)="$event.stopPropagation()"
-                  class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-24 max-sm:w-auto sm:absolute sm:left-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
+                  class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-[calc(5.5rem+env(safe-area-inset-top,0px))] max-sm:w-auto sm:absolute sm:left-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
                 >
                   <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-950">
                     <img
@@ -495,12 +492,12 @@
                 type="button"
                 data-testid="hud-pests-pill"
                 (click)="toggleHudPopover('pests', $event)"
-                class="flex items-center gap-1.5 bg-rose-950 hover:bg-rose-900 border border-rose-500/70 rounded-lg pl-1.5 pr-2 py-0.5 sm:pl-1.5 sm:pr-2.5 sm:py-1 text-[10px] sm:text-[11px] text-rose-200 min-w-0 max-w-full transition-colors cursor-pointer"
+                class="flex items-center gap-1.5 bg-rose-950 hover:bg-rose-900 border border-rose-500/70 rounded-lg pl-1.5 pr-2.5 py-1 text-xs text-rose-200 min-w-0 max-w-full transition-colors cursor-pointer shadow-md"
               >
                 <img
                   [src]="primaryPestBannerImage"
                   [alt]="selectedRoundPestsData[0].name"
-                  class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-gray-700 shrink-0"
+                  class="w-5 h-5 rounded object-cover border border-gray-700 shrink-0"
                 />
                 <span class="font-bold truncate">
                   {{ selectedRoundPestsData[0].name }}{{ selectedRoundPestsData.length > 1 ? ' +' + (selectedRoundPestsData.length - 1) : '' }}
@@ -510,7 +507,7 @@
               @if (activeHudPopover === 'pests') {
                 <div
                   (click)="$event.stopPropagation()"
-                  class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-24 max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
+                  class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-[calc(5.5rem+env(safe-area-inset-top,0px))] max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
                 >
                   @for (pest of selectedRoundPestsData; track $index; let first = $first) {
                     <div
@@ -539,9 +536,9 @@
                 type="button"
                 data-testid="hud-active-contract"
                 (click)="toggleHudPopover('contract', $event)"
-                class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-amber-500/50 rounded-lg pl-1.5 pr-2 py-0.5 sm:pl-1.5 sm:pr-2.5 sm:py-1 text-[10px] sm:text-[11px] text-slate-200 min-w-0 max-w-full transition-colors cursor-pointer"
+                class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-amber-500/50 rounded-lg pl-1.5 pr-2.5 py-1 text-xs text-slate-200 min-w-0 max-w-full transition-colors cursor-pointer shadow-md"
               >
-                <img [src]="getContractImage(contract.id)" [alt]="contract.name" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-cover border border-amber-500/40 shrink-0" />
+                <img [src]="getContractImage(contract.id)" [alt]="contract.name" class="w-5 h-5 rounded object-cover border border-amber-500/40 shrink-0" />
                 <span class="font-semibold text-amber-300 truncate">{{ contract.name }}</span>
                 <span class="font-mono tabular-nums font-bold text-emerald-400 shrink-0">
                   +{{ contract.reward | currency: 'EUR' : 'symbol' : '1.0-0' }}
@@ -550,7 +547,7 @@
               @if (activeHudPopover === 'contract' || showContractPopover) {
               <div
                 (click)="$event.stopPropagation()"
-                class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-24 max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-80 bg-gray-900 border border-amber-500/50 rounded-xl shadow-2xl overflow-hidden text-left"
+                class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-[calc(5.5rem+env(safe-area-inset-top,0px))] max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-80 bg-gray-900 border border-amber-500/50 rounded-xl shadow-2xl overflow-hidden text-left"
               >
                 <div class="relative aspect-square w-full overflow-hidden bg-slate-950 border-b border-amber-500/40">
                   <img [src]="getContractImage(contract.id)" [alt]="contract.name" class="w-full h-full object-cover" />
@@ -590,7 +587,7 @@
 
       <!-- Grid or Finance (Flex Grow) -->
       @if (!showFinance) {
-        <div class="flex-1 w-full min-h-0 pt-1 pb-9 portrait:pb-3 px-3 flex items-center justify-center board-grid-wrapper">
+        <div class="flex-1 w-full min-h-0 pt-1 pb-6 px-3 flex items-center justify-center board-grid-wrapper">
           <!-- Left Side Cards (Wide Landscape Only) -->
           <aside class="board-side-column" aria-label="Wetter und Schädlinge">
             <div

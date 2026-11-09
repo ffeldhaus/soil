@@ -166,8 +166,8 @@ app.get(['/llms.txt', '/llms.txt/'], (_req, res) => {
 
 - [Startseite & Sofort-Spielstart](https://soil.app/): Direkt im Browser ohne Registrierung ein lokales Einzelspieler-Spiel starten oder den 1-minütigen Trailer ansehen.
 - [Spielhandbuch & Kulturdatenbank](https://soil.app/manual): Vollständige Anleitung zu Fruchtfolge, Bodenqualität (Humus), Nährstoffhaushalt, Witterungsrisiken, Schädlingen, EU-Bio-Siegel, Regionalverträgen sowie allen 12 Bewirtschaftungsoptionen (10 Ackerkulturen: Weizen, Gerste, Hafer, Roggen, Mais, Raps, Kartoffel, Zuckerrübe, Ackerbohne, Erbse; dazu Tiere/Weidehaltung und Brachland als Grünbrache/Blühstreifen).
-- [Didaktischer & wissenschaftlicher Hintergrund](https://soil.app/info): Einsatz im Unterricht (BNE, Biologie, Geographie, Wirtschaft), Lehrplanbezug für alle 16 Bundesländer, wissenschaftliche Quellen (sources.json) und Spielmechanik.
-- [Offene Forschungsdaten, REST/CSV-API & MCP-Server](https://soil.app/research): Anonymisierte Spielverläufe abgeschlossener Partien unter CC BY 4.0 für Wissenschaft, Lehre und KI-Agenten (inklusive öffentlicher REST/CSV-Schnittstelle unter https://soil.app/api/research und Model Context Protocol Server unter https://soil.app/mcp).
+- [Didaktischer & wissenschaftlicher Hintergrund](https://soil.app/info): Einsatz im Unterricht (BNE, Biologie, Geographie, Wirtschaft), Lehrplanbezug für alle 16 Bundesländer, wissenschaftliche Quellen (\`sources.json\`) und Spielmechanik.
+- [Offene Forschungsdaten, REST/CSV-API & MCP-Server](https://soil.app/research): Anonymisierte Spielverläufe abgeschlossener Partien unter CC BY 4.0 für Wissenschaft, Lehre und KI-Agenten (inklusive öffentlicher REST/CSV-Schnittstelle unter \`https://soil.app/api/research\` und Model Context Protocol Server unter \`https://soil.app/mcp\`).
 - [Spiele erstellen & verwalten (Lehrkräfte-Dashboard)](https://soil.app/admin): Lokale Spiele verwalten oder als Lehrkraft mehrteilige Klassenzimmer-Spiele mit PIN-Zugang und QR-Codes erstellen.
 `);
 });
@@ -284,18 +284,69 @@ app.get('/sitemap.xml', (_req, res) => {
 
 app.get(['/.well-known/assetlinks.json', '/.well-known/assetlinks.json/'], (_req, res) => {
   res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
-  res.type('application/json');
+  res.type('application/json; charset=utf-8');
+  const assetLinksFile = join(browserDistFolder, '.well-known', 'assetlinks.json');
+  if (existsSync(assetLinksFile)) {
+    res.send(readFileSync(assetLinksFile, 'utf-8'));
+    return;
+  }
   res.send(`[
   {
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
       "package_name": "app.soil.twa",
-      "sha256_cert_fingerprints": ["CA:EF:E7:D1:58:CF:4C:E1:7A:A1:D0:2E:E7:80:29:E3:E5:21:56:A0:13:41:C8:21:F6:68:AE:69:82:63:B5:42"]
+      "sha256_cert_fingerprints": [
+        "CA:EF:E7:D1:58:CF:4C:E1:7A:A1:D0:2E:E7:80:29:E3:E5:21:56:A0:13:41:C8:21:F6:68:AE:69:82:63:B5:42",
+        "A7:D5:AB:FE:C2:09:B5:BA:53:F1:71:8E:DC:C0:25:D2:53:66:7C:10:8A:0C:F2:AA:99:5C:BC:54:D4:BD:69:5E"
+      ]
     }
   }
 ]`);
 });
+
+app.get(
+  [
+    '/.well-known/apple-app-site-association',
+    '/.well-known/apple-app-site-association/',
+    '/apple-app-site-association',
+  ],
+  (_req, res) => {
+    res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
+    res.type('application/json; charset=utf-8');
+    const aasaFile = join(browserDistFolder, '.well-known', 'apple-app-site-association');
+    if (existsSync(aasaFile)) {
+      res.send(readFileSync(aasaFile, 'utf-8'));
+      return;
+    }
+    res.send(`{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["XUG7UA3678.app.soil"],
+        "components": [
+          {
+            "/": "/game-login*",
+            "comment": "Open classroom PIN login links directly in the SOIL app"
+          },
+          {
+            "/": "/game*",
+            "comment": "Open active game links directly in the SOIL app"
+          },
+          {
+            "/": "/admin*",
+            "comment": "Open teacher dashboard and auth action links in the SOIL app"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["XUG7UA3678.app.soil"]
+  }
+}`);
+  },
+);
 
 /**
  * Reverse-proxy public read-only Research REST/CSV API and MCP Server under soil.app.

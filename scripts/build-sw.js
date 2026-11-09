@@ -34,7 +34,21 @@ injectManifest({
   swSrc: tempSwSrc,
   swDest: swDest,
   globDirectory: browserDir,
-  globPatterns: ['**/*.{js,css,html,png,svg,jpg,webp,ico,webmanifest}'],
+  globPatterns: [
+    '*.{js,css,html,ico,png,svg,webmanifest}',
+    'media/*latin*.woff2',
+    'assets/images/**/*.{png,svg,jpg,webp}',
+  ],
+  globIgnores: [
+    'sw.js',
+    'SOIL-screenshot.png',
+    'web-app-manifest-1024x1024.png',
+    'robots.txt',
+    'sitemap.xml',
+    'llms.txt',
+    '7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c.txt',
+    '.well-known/**',
+  ],
 })
   .then(({ count, size }) => {
     // biome-ignore lint/suspicious/noConsole: used for build logging

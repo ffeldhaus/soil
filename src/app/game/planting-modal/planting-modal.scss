@@ -20,7 +20,7 @@
   --avail-h: calc(100dvh - var(--modal-overhead));
 
   grid-template-columns: repeat(var(--cols), 1fr);
-  grid-template-rows: repeat(var(--rows), max-content);
+  grid-template-rows: repeat(var(--rows), auto);
 
   width: min(
     100%,

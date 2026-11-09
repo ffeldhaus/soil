@@ -16,6 +16,7 @@ import type { Subscription } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
+import { getShareableWebOrigin } from '../../shared/capacitor-env';
 import type { Game, PlayerState, UserStatus } from '../../types';
 import { FeedbackModal } from '../components/feedback-modal/feedback-modal';
 import { DashboardCreateGameComponent } from './components/dashboard-create-game';
@@ -400,7 +401,7 @@ export class Dashboard implements OnInit, OnDestroy {
   errorMessage: string | null = null;
 
   loginAsPlayer(gameId: string, password: string) {
-    const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
+    const url = `${getShareableWebOrigin()}/game-login?gameId=${gameId}&pin=${password}`;
     window.open(url, '_blank');
   }
 
@@ -666,7 +667,7 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
   async shareGame(game: Game) {
-    const url = `${window.location.origin}/game-login?gameId=${game.id}`;
+    const url = `${getShareableWebOrigin()}/game-login?gameId=${game.id}`;
     const text = `Join my SOIL game: ${game.name}`;
 
     if (navigator.share) {
@@ -697,7 +698,7 @@ export class Dashboard implements OnInit, OnDestroy {
       password?: string;
     },
   ) {
-    const url = `${window.location.origin}/game-login?gameId=${game.id}&pin=${slot.password}`;
+    const url = `${getShareableWebOrigin()}/game-login?gameId=${game.id}&pin=${slot.password}`;
     const text = `Log in to SOIL game "${game.name}" as Player ${slot.number}`;
 
     if (navigator.share) {
@@ -734,7 +735,7 @@ export class Dashboard implements OnInit, OnDestroy {
       if (state.type === 'game') {
         await this.gameService.sendGameInvite(state.game.id, email);
       } else if (state.playerNumber !== undefined) {
-        await this.gameService.sendPlayerInvite(state.game.id, state.playerNumber, email, window.location.origin);
+        await this.gameService.sendPlayerInvite(state.game.id, state.playerNumber, email, getShareableWebOrigin());
       }
       this.statusMessage = 'Einladung erfolgreich gesendet!';
     } catch (e: unknown) {
@@ -812,7 +813,7 @@ export class Dashboard implements OnInit, OnDestroy {
       const module = await import('qrcode-generator');
       this.QRCode = module.default || module;
     }
-    const url = `${window.location.origin}/game-login?gameId=${gameId}&pin=${password}`;
+    const url = `${getShareableWebOrigin()}/game-login?gameId=${gameId}&pin=${password}`;
 
     try {
       const typeNumber = 0; // auto detect
@@ -837,7 +838,7 @@ export class Dashboard implements OnInit, OnDestroy {
     this.allQrCodes = [];
 
     for (const slot of slots) {
-      const url = `${window.location.origin}/game-login?gameId=${game.id}&pin=${slot.password}`;
+      const url = `${getShareableWebOrigin()}/game-login?gameId=${game.id}&pin=${slot.password}`;
       const typeNumber = 0;
       const errorCorrectionLevel = 'L';
       const qr = this.QRCode(typeNumber, errorCorrectionLevel);

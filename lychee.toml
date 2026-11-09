@@ -42,7 +42,9 @@ exclude_path = [
   '.firebase',
   '.cypress-cache',
   'functions/node_modules',
-  'functions/lib'
+  'functions/lib',
+  'ios',
+  'android'
 ]
 
 # Do not show progress bar.
@@ -62,3 +64,7 @@ insecure = true
 
 # Skip missing input files
 skip_missing = true
+
+[hosts."agriculture.ec.europa.eu"]
+concurrency = 1
+request_interval = "1s"

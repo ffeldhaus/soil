@@ -1,0 +1,26 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["XUG7UA3678.app.soil"],
+        "components": [
+          {
+            "/": "/game-login*",
+            "comment": "Open classroom PIN login links directly in the SOIL app"
+          },
+          {
+            "/": "/game*",
+            "comment": "Open active game links directly in the SOIL app"
+          },
+          {
+            "/": "/admin*",
+            "comment": "Open teacher dashboard and auth action links in the SOIL app"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["XUG7UA3678.app.soil"]
+  }
+}

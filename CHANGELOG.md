@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Native Capacitor-8-App-Architektur für iOS/iPadOS (`app.soil`) und Android (`app.soil.twa`) ergänzt (`capacitor.config.ts`, `src/app/shared/capacitor-env.ts`), inklusive nativer iOS-Anmeldung via „Sign in with Apple“ (`SignInWithApplePlugin` über `AuthenticationServices` und `CryptoKit`) sowie Universal Links und Android App Links (`public/.well-known/apple-app-site-association`, `public/.well-known/assetlinks.json`, `src/server.ts`).
+- Maskierbare (`192×192`, `512×512`) und hochauflösende (`1024×1024`) PWA-Icons (`public/web-app-manifest-*.png`, `public/site.webmanifest`), automatisierte Multi-Device-QA-Suite für visuelle, geometrische und Performance-Prüfungen (`scripts/audit-multi-device.mjs`, `npm run test:devices`), automatische Android-Keystore-Wiederherstellung aus dem macOS-Schlüsselbund (`scripts/ensure-android-keystore.mjs`), Store-Asset-Generierung (`marketing/generate-store-assets.mjs`) sowie `src/app/seo-consistency.spec.ts` ergänzt.
+
+### Changed
+- Service Worker auf Workbox migriert (`src/sw.js`, `scripts/build-sw.js`, `src/main.ts`, Entfernung von `src/ngsw-config.json`) sowie ungenutztes `firebase/app-check` und `measurementId` in `src/app/app.config.ts` entfernt.
+- Responsive Safe-Area-Abstände (`env(safe-area-inset-*)`), zentrierte Darstellung auf Foldables, `cqw`-basierte Parzellen-Badges (`src/app/game/parcel/parcel.html`) und Footer-Sichtbarkeit über alle Routen und Modals hinweg verfeinert.
+
+### Fixed
+- Apple-OAuth-Admin-Onboarding (`apple.com`) in `src/app/auth/admin-register/*` und `src/app/auth/auth.service.ts` korrigiert (inklusive Unterstützung für `privaterelay.appleid.com`-Konten und direkter `/admin`-Weiterleitung nach dem Onboarding).
+- HTTP-Referrer-Einschränkungen der Firebase Authentication in nativen Capacitor-Apps in `src/app/app.config.ts` behoben.
+
 ## [3.4.18] - 2026-11-05
 ### Changed
 - Automatischen Betriebssystem-Vollbildaufruf (`requestFullscreen()`) beim Öffnen der `/trailer`-Seite (`src/app/trailer/trailer.ts`) entfernt, sodass das Video ruhig im vollen Browserfenster (`100vw × 100dvh`) startet, ohne dass der Browser kurz in den OS-Vollbildmodus und wieder zurück springt.

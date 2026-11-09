@@ -5,7 +5,6 @@ import { cleanupOutdatedCaches, matchPrecache, precacheAndRoute } from 'workbox-
 import { registerRoute } from 'workbox-routing';
 import { CacheFirst, NetworkOnly } from 'workbox-strategies';
 
-self.skipWaiting();
 clientsClaim();
 cleanupOutdatedCaches();
 
@@ -56,14 +55,31 @@ registerRoute(
   }),
 );
 
+// Cache fonts
+registerRoute(
+  ({ request }) => request.destination === 'font',
+  new CacheFirst({
+    cacheName: 'fonts',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 15,
+        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 Year
+      }),
+    ],
+  }),
+);
+
 // Network-first navigation handler for SPA routes, with precached CSR shell fallback when offline.
-// Exclude .well-known, robots.txt, and sitemap.xml to let the server handle them.
+// Exclude .well-known, API/MCP endpoints, robots.txt, sitemap.xml, and llms.txt to let the server handle them.
 registerRoute(
   ({ request, url }) =>
     request.mode === 'navigate' &&
     !url.pathname.startsWith('/.well-known/') &&
+    !url.pathname.startsWith('/api/') &&
+    !url.pathname.startsWith('/mcp') &&
     url.pathname !== '/robots.txt' &&
-    url.pathname !== '/sitemap.xml',
+    url.pathname !== '/sitemap.xml' &&
+    url.pathname !== '/llms.txt',
   async ({ request }) => {
     try {
       const networkResponse = await fetch(request, { cache: 'no-store' });

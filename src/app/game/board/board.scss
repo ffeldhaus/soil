@@ -50,7 +50,7 @@
 
   --grid-pad: clamp(6px, 0.8vw, 10px);
   --grid-gap: 0.25rem;
-  --grid-overhead: 128px;
+  --grid-overhead: calc(124px + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   --grid-avail-h: calc(100dvh - var(--grid-overhead));
 
   width: min(

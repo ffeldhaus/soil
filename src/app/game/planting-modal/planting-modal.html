@@ -76,7 +76,7 @@
           [attr.data-testid]="'crop-' + crop.toLowerCase()"
           [attr.data-tour]="first ? 'planting-modal-first-crop' : null"
           [attr.aria-label]="t(getConfig(crop).label) + ': ' + (hasUniformPreviousCrop() ? preview.rotationLabel + ', ' : '') + preview.soilLabel + ', ' + preview.nutritionLabel"
-          class="crop-tile group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700 bg-gray-800 hover:z-10 hover:border-emerald-400/80 focus-visible:outline-2 focus-visible:outline-emerald-400 [container-type:size] text-left cursor-pointer"
+          class="crop-tile group relative aspect-square w-full rounded-lg overflow-hidden border border-gray-700 bg-gray-800 hover:z-10 hover:border-emerald-400/80 focus-visible:outline-2 focus-visible:outline-emerald-400 [container-type:inline-size] text-left cursor-pointer"
         >
           <img
             [src]="'assets/images/' + getConfig(crop).image"
@@ -86,7 +86,7 @@
           />
 
           <!-- Top: Clickable Crop Name -> In-Place Manual Crop Card Overlay -->
-          <div class="absolute top-1.5 inset-x-1.5 flex justify-center z-20">
+          <div class="absolute top-1.5 inset-x-1 flex justify-center z-20">
             <button
               type="button"
               [attr.data-testid]="'crop-manual-trigger-' + crop.toLowerCase()"
@@ -95,7 +95,7 @@
               (click)="openCropDetails($event, crop)"
               (keydown.enter)="openCropDetails($event, crop)"
               (keydown.space)="openCropDetails($event, crop)"
-              class="pointer-events-auto cursor-pointer inline-flex items-center gap-1 bg-gray-900 hover:bg-gray-800 text-white hover:text-emerald-300 text-[clamp(9px,12cqw,14px)] font-bold px-2 py-0.5 rounded border border-slate-600/80 hover:border-emerald-400 transition-colors whitespace-nowrap max-w-full"
+              class="pointer-events-auto cursor-pointer inline-flex items-center gap-0.5 bg-gray-900 hover:bg-gray-800 text-white hover:text-emerald-300 text-[clamp(10px,10.8cqw,14px)] font-bold px-1.5 py-0.5 rounded border border-slate-600/80 hover:border-emerald-400 transition-colors whitespace-nowrap max-w-full"
             >
               <span class="truncate underline decoration-slate-400/80 hover:decoration-emerald-400 underline-offset-2">{{
                 t(getConfig(crop).label)
@@ -123,7 +123,7 @@
             @if (hasUniformPreviousCrop()) {
               <span
                 data-testid="crop-rotation-badge"
-                [class]="'inline-flex items-center gap-1 text-[clamp(8px,8.5cqw,10px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.rotationClass)"
+                [class]="'inline-flex items-center gap-1 text-[clamp(9px,9.2cqw,11px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.rotationClass)"
               >
                 <span>Fruchtfolge</span>
                 <span>{{ preview.rotationIcon }}</span>
@@ -132,7 +132,7 @@
 
             <span
               data-testid="crop-soil-pill"
-              [class]="'inline-flex items-center gap-1 text-[clamp(8px,8.5cqw,10px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.soilClass)"
+              [class]="'inline-flex items-center gap-1 text-[clamp(9px,9.2cqw,11px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.soilClass)"
             >
               <span>Boden</span>
               <span>{{ preview.soilIcon }}</span>
@@ -140,7 +140,7 @@
 
             <span
               data-testid="crop-nutrition-pill"
-              [class]="'inline-flex items-center gap-1 text-[clamp(8px,8.5cqw,10px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.nutritionClass)"
+              [class]="'inline-flex items-center gap-1 text-[clamp(9px,9.2cqw,11px)] font-sans font-bold px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ' + getImpactBadgeClasses(preview.nutritionClass)"
             >
               <span>Nährstoffe</span>
               <span>{{ preview.nutritionIcon }}</span>

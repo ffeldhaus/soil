@@ -16,7 +16,7 @@
     <app-super-admin-hud [user]="authService.user$ | async" (logout)="logout()"></app-super-admin-hud>
 
     <!-- Main Content -->
-    <main class="pt-16 px-4 max-w-7xl mx-auto space-y-8 pb-16 relative portrait:px-0 portrait:max-w-none">
+    <main class="pt-[calc(4rem+env(safe-area-inset-top,0px))] px-4 max-w-7xl mx-auto space-y-8 pb-[calc(4rem+env(safe-area-inset-bottom,0px))] relative portrait:px-0 portrait:max-w-none">
       @if (errorMessage) {
         <div
           data-testid="superadmin-error-banner"
