@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.19] - 2026-11-09
 ### Added
 - Native Capacitor-8-App-Architektur für iOS/iPadOS (`app.soil`) und Android (`app.soil.twa`) ergänzt (`capacitor.config.ts`, `src/app/shared/capacitor-env.ts`), inklusive nativer iOS-Anmeldung via „Sign in with Apple“ (`SignInWithApplePlugin` über `AuthenticationServices` und `CryptoKit`) sowie Universal Links und Android App Links (`public/.well-known/apple-app-site-association`, `public/.well-known/assetlinks.json`, `src/server.ts`).
 - Maskierbare (`192×192`, `512×512`) und hochauflösende (`1024×1024`) PWA-Icons (`public/web-app-manifest-*.png`, `public/site.webmanifest`), automatisierte Multi-Device-QA-Suite für visuelle, geometrische und Performance-Prüfungen (`scripts/audit-multi-device.mjs`, `npm run test:devices`), automatische Android-Keystore-Wiederherstellung aus dem macOS-Schlüsselbund (`scripts/ensure-android-keystore.mjs`), Store-Asset-Generierung (`marketing/generate-store-assets.mjs`) sowie `src/app/seo-consistency.spec.ts` ergänzt.
