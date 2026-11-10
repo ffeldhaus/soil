@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Capacitor-iOS-Xcode-Projekt (`ios/App/App.xcodeproj`) in die Versionskontrolle aufgenommen sowie Xcode-Cloud-Build-Skript (`ios/App/ci_scripts/ci_post_clone.sh`) und automatische iOS-Versionssynchronisierung (`MARKETING_VERSION` und `CURRENT_PROJECT_VERSION`) in `scripts/deploy.js` ergänzt.
+
 ## [3.4.19] - 2026-11-09
 ### Added
 - Native Capacitor-8-App-Architektur für iOS/iPadOS (`app.soil`) und Android (`app.soil.twa`) ergänzt (`capacitor.config.ts`, `src/app/shared/capacitor-env.ts`), inklusive nativer iOS-Anmeldung via „Sign in with Apple“ (`SignInWithApplePlugin` über `AuthenticationServices` und `CryptoKit`) sowie Universal Links und Android App Links (`public/.well-known/apple-app-site-association`, `public/.well-known/assetlinks.json`, `src/server.ts`).

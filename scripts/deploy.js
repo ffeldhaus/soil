@@ -56,6 +56,19 @@ const performDeployment = async (newVersion) => {
       execSync(`git add ${indexHtmlPath}`, { stdio: 'inherit' });
     }
 
+    // Update iOS Xcode project version & build number
+    const iosPbxprojPath = 'ios/App/App.xcodeproj/project.pbxproj';
+    if (fs.existsSync(iosPbxprojPath)) {
+      const vParts = newVersion.split('.').map(Number);
+      const iosBuildVersion = vParts[0] * 100000 + vParts[1] * 1000 + vParts[2] * 10;
+      let pbxproj = fs.readFileSync(iosPbxprojPath, 'utf8');
+      pbxproj = pbxproj
+        .replace(/MARKETING_VERSION = [^;]+;/g, `MARKETING_VERSION = ${newVersion};`)
+        .replace(/CURRENT_PROJECT_VERSION = [^;]+;/g, `CURRENT_PROJECT_VERSION = ${iosBuildVersion};`);
+      fs.writeFileSync(iosPbxprojPath, pbxproj);
+      execSync(`git add ${iosPbxprojPath}`, { stdio: 'inherit' });
+    }
+
     // Update CHANGELOG.md
     const changelogPath = 'CHANGELOG.md';
     const today = new Date().toISOString().split('T')[0];

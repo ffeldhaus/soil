@@ -78,7 +78,12 @@ functions/vite.config.ts.timestamp*
 .lycheecache
 
 # Capacitor native project directories (generated via `npx cap add ios` / `npx cap add android`)
-/ios
+/ios/App/App/public/*
+!/ios/App/App/public/.gitkeep
+/ios/App/build
+/ios/App/DerivedData
+/ios/App/Pods
+*.xcuserdata
 /android
 /marketing/store-assets
 *.jks
