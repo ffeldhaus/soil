@@ -1,7 +1,7 @@
 # AGENTS.md – Project Rules & Architectural Invariants
 
-Core invariants for `soil` (Angular 21 + Tailwind CSS v4 + Firebase Cloud Functions v2 / Node.js 24). Task-specific runbooks are stored as on-demand workspace skills in `.agents/skills/`:
-- **Release, Changelog & Firebase Deployment**: [`.agents/skills/soil-release-deploy/SKILL.md`](.agents/skills/soil-release-deploy/SKILL.md)
+Core invariants for `soil` (Angular 21 + Tailwind CSS v4 + Capacitor 8 iOS/Android + Firebase Cloud Functions v2 / Node.js 24). Task-specific runbooks are stored as on-demand workspace skills in `.agents/skills/`:
+- **Web, Google Play (`app.soil.twa`) & Apple App Store / Xcode Cloud (`app.soil`) Releases**: [`.agents/skills/soil-release-deploy/SKILL.md`](.agents/skills/soil-release-deploy/SKILL.md)
 - **Local Emulator, Unit/E2E QA & Balancing Suite**: [`.agents/skills/soil-local-dev-qa/SKILL.md`](.agents/skills/soil-local-dev-qa/SKILL.md)
 
 ## 1. Code Structure, Angular 21 & Tailwind CSS v4
@@ -14,9 +14,12 @@ Core invariants for `soil` (Angular 21 + Tailwind CSS v4 + Firebase Cloud Functi
 - **Opaque High-Contrast Surface Hierarchy (No Glassmorphism)**:
   - Use crisp, high-contrast opaque surfaces (`bg-gray-900` / `bg-gray-950`, `border-gray-700` / `border-gray-800`) and a blur-free semi-transparent global footer (`bg-gray-950/85`).
   - Never reintroduce `backdrop-blur`, `backdrop-filter`, or the legacy `PerformanceService` (`perf-tier-*`) classes.
-- **Modals, German Typography & Copy ("du")**:
-  - Always use custom HTML/CSS modals instead of native browser dialogs (`alert` / `confirm` / `prompt`).
-  - All user-facing German copy across the game, manual, legal views, and authentication flows must use informal **"du"** (or neutral phrasing), never formal "Sie". Global prose hyphenation (`hyphens: auto`, `text-wrap: pretty`) is enforced in `src/styles.css`.
+- **Modals, Safe Areas, German Typography & Copy ("du")**:
+  - Always use custom HTML/CSS modals instead of native browser dialogs (`alert` / `confirm` / `prompt`), and preserve `env(safe-area-inset-*)` padding across headers, sticky footers, and modals for Capacitor iOS/Android builds.
+  - All user-facing German copy across the game, manual, legal views, store listings, and authentication flows must use informal **"du"** (never formal "Sie"), avoid prescribing fixed school grade levels (no *"ab Klasse 7"*), and avoid hardcoding fixed round counts like *"10 Runden"* since game length is configurable (*"über mehrere Runden / Wirtschaftsjahre"*). Global prose hyphenation (`hyphens: auto`, `text-wrap: pretty`) is enforced in `src/styles.css`.
+- **Capacitor 8 Native Apps (`app.soil` / `app.soil.twa`) & Auth Parity**:
+  - `src/app/app.config.ts` must route native Capacitor shells (`isNativeCapacitorApp()`) to the non-HTTP-referrer-restricted Firebase API key while keeping the referrer-restricted key for web builds.
+  - Any teacher/admin authentication view offering Google Sign-In must also offer Sign in with Apple (`SignInWithApplePlugin` on native iOS in `ios/App/App/SceneDelegate.swift`, `OAuthProvider('apple.com')` on web) per App Store Guideline 4.8.
 - **Formatting & Linting (`biome.json`)**:
   - Enforced via Biome (`npm run lint`, 2-space indent, `120` line width, single quotes, trailing commas). Comments should be sparse and explain *why*, not *what*.
 

@@ -2,15 +2,18 @@
 name: soil-release-deploy
 description: >-
   Manage SOIL semantic versioning, CHANGELOG.md maintenance (including minor-version
-  patch consolidation), and automated Firebase / Cloud Build deployment
-  (scripts/deploy.js, scripts/check-changelog.js). Activate this skill whenever
-  the user asks to prepare a release, consolidate the changelog, bump versions,
-  or deploy SOIL to production.
+  patch consolidation), automated Firebase / Cloud Build web deployment
+  (scripts/deploy.js, scripts/check-changelog.js), and native Capacitor 8 releases
+  for Google Play (app.soil.twa) and Apple App Store / Xcode Cloud (app.soil).
+  Activate this skill whenever the user asks to prepare a release, consolidate the
+  changelog, bump versions, deploy SOIL to production, or submit Android / iOS store updates.
 ---
 
-# SOIL Release, Changelog & Deployment Workflow
+# SOIL Release, Changelog & Multi-Platform Deployment Workflow
 
-SOIL uses semantic versioning tracked in `package.json`, `angular.json`, and `src/index.html` (`<meta name="app-version">`), with automated release tagging and Firebase deployment via `scripts/deploy.js`.
+SOIL uses semantic versioning tracked in `package.json`, `angular.json`, `src/index.html` (`<meta name="app-version">`), `ios/App/App.xcodeproj/project.pbxproj`, and `android/app/build.gradle`, with automated release tagging and Firebase deployment via `scripts/deploy.js`.
+
+For **Android (Google Play `app.soil.twa`)** and **iOS (Apple App Store / Xcode Cloud `app.soil`)** store submissions, signing credentials, review demo accounts, screenshot dimensions, and policy pitfalls, read [`references/app-stores.md`](references/app-stores.md).
 
 ## 1. Changelog Maintenance (`CHANGELOG.md`)
 
@@ -24,7 +27,7 @@ SOIL uses semantic versioning tracked in `package.json`, `angular.json`, and `sr
 4. **High-Level Focus**:
    - Keep entries focused on user-facing milestones, gameplay/balancing changes, security hardening, and architectural improvements rather than raw commit log mirrors.
 
-## 2. Automated Release & Deployment (`npm run deploy`)
+## 2. Automated Web Release & iOS CI Trigger (`npm run deploy`)
 
 Ensure the working tree is clean (except for `CHANGELOG.md` if staging release notes) and `main` is up to date, then run:
 
@@ -34,13 +37,18 @@ npm run deploy [patch | minor | major | <explicit-version>]
 
 ### What `scripts/deploy.js` Executes:
 1. Verifies no uncommitted changes exist outside `CHANGELOG.md`.
-2. Updates the version in `package.json`, `angular.json` (`import.meta.env.APP_VERSION`), and `src/index.html` (`<meta name="app-version">`).
-3. Replaces `## [Unpublished]` in `CHANGELOG.md` with `## [<newVersion>] - <YYYY-MM-DD>`.
-4. Commits with message `v<newVersion>`, creates annotated tag `v<newVersion>`, and pushes `main --tags` to GitHub (triggering `.husky/pre-push` outdated-package and changelog checks).
+2. Updates the version in `package.json`, `angular.json` (`import.meta.env.APP_VERSION`), `src/index.html` (`<meta name="app-version">`), and `ios/App/App.xcodeproj/project.pbxproj` (`MARKETING_VERSION` and integer `CURRENT_PROJECT_VERSION` = `Major*100000 + Minor*1000 + Patch*10`).
+3. Replaces `## [Unpublished]` in `CHANGELOG.md` with `## [<newVersion>] - <YYYY-MM-DD>` and updates `<lastmod>` in `public/sitemap.xml` and `src/server.ts`.
+4. Commits with message `v<newVersion>`, creates annotated tag `v<newVersion>`, and pushes `main --tags` to GitHub (triggering `.husky/pre-push` checks **and** automatically starting Xcode Cloud's `Default` -> `Archive - iOS` workflow for TestFlight / App Store Connect).
 5. Deploys backend rules and functions via `./node_modules/.bin/firebase deploy --only functions,firestore,storage` (region `europe-west4`).
-6. Streams the triggered **Firebase App Hosting / Cloud Build** log in `europe-west4` via `gcloud builds list` / `gcloud beta builds log`.
+6. Streams the triggered **Firebase App Hosting / Cloud Build** log in `europe-west4` via `gcloud builds list` / `gcloud beta builds log` and notifies IndexNow.
 
-## 3. Manual / Targeted Verification Commands
+## 3. Native Store Releases (Summary — Full Details in `references/app-stores.md`)
+
+- **Android (`app.soil.twa`)**: After `npm run deploy`, run `npm run cap:bundle:android` (auto-restores `android/signing.keystore` from macOS Keychain if absent, runs `cap sync`, and builds the R8-minified `android/app/build/outputs/bundle/release/app-release.aab` with embedded `proguard.map`) and upload to Google Play Console -> Produktion.
+- **iOS (`app.soil`)**: Wait for the Xcode Cloud `Archive - iOS` build triggered by `npm run deploy` to finish TestFlight processing (`ios/App/ci_scripts/ci_post_clone.sh` runs `npm ci && npm run build && npx cap sync ios` in the cloud), attach the build to the new version in App Store Connect, and submit for review.
+
+## 4. Manual / Targeted Verification Commands
 
 - **Validate `CHANGELOG.md` header for current version**:
   ```bash
@@ -51,4 +59,3 @@ npm run deploy [patch | minor | major | <explicit-version>]
   npm outdated
   npm outdated --prefix functions
   ```
-
