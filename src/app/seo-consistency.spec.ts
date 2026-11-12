@@ -80,9 +80,13 @@ describe('Cross-File SEO, Manifest & Metadata Text Consistency', () => {
     const { '@context': _ctx, ...trailerVideoObject } = trailerSeo.jsonLd as Record<string, string>;
     expect(trailerVideoObject['@type']).toBe('VideoObject');
 
+    expect(trailerVideoObject.contentUrl).toBe('https://soil.app/assets/video/soil-trailer.mp4');
+    expect(trailerVideoObject.embedUrl).toBeUndefined();
+
     expect(sitemapXml).toContain(`<video:thumbnail_loc>${trailerVideoObject.thumbnailUrl}</video:thumbnail_loc>`);
     expect(sitemapXml).toContain(`<video:content_loc>${trailerVideoObject.contentUrl}</video:content_loc>`);
-    expect(sitemapXml).toContain(`<video:player_loc>${trailerVideoObject.embedUrl}</video:player_loc>`);
+    expect(sitemapXml).not.toContain('<video:player_loc>');
+    expect(sitemapXml).not.toContain('youtube.com');
     expect(sitemapXml).toContain(`<video:publication_date>${trailerVideoObject.uploadDate}</video:publication_date>`);
 
     expect(wildcardSeo?.robots).toBe('noindex, nofollow');

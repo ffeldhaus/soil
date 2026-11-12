@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Fixed
+- Video-SEO-Metadaten auf das lokal selbstgehostete Trailer-Video umgestellt (`src/app/app.routes.ts`, `public/sitemap.xml`, `src/server.ts`, `src/app/seo-consistency.spec.ts`): Externe YouTube-`embedUrl` bzw. `<video:player_loc>` entfernt, sodass Suchmaschinen ausschließlich die lokal ausgelieferte Datei `https://soil.app/assets/video/soil-trailer.mp4` (`contentUrl` / `<video:content_loc>`) zuordnen.
+
 ## [3.4.20] - 2026-11-12
 ### Added
 - Capacitor-iOS-Xcode-Projekt (`ios/App/App.xcodeproj`) in die Versionskontrolle aufgenommen sowie Xcode-Cloud-Build-Skript (`ios/App/ci_scripts/ci_post_clone.sh`) und automatische iOS-Versionssynchronisierung (`MARKETING_VERSION` und `CURRENT_PROJECT_VERSION`) in `scripts/deploy.js` ergänzt.
