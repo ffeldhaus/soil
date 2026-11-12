@@ -6,14 +6,31 @@
   "url": "https://soil.app",
   "codeRepository": "https://github.com/ffeldhaus/soil",
   "issueTracker": "https://github.com/ffeldhaus/soil/issues",
-  "license": ["https://spdx.org/licenses/Apache-2.0", "https://creativecommons.org/licenses/by/4.0/"],
-  "version": "3.4.20",
+  "license": [
+    "https://spdx.org/licenses/Apache-2.0",
+    "https://creativecommons.org/licenses/by/4.0/"
+  ],
+  "version": "3.4.21",
   "dateCreated": "2024-01-01",
   "datePublished": "2025-01-01",
   "dateModified": "2026-11-12",
-  "programmingLanguage": ["TypeScript", "HTML", "SCSS"],
-  "runtimePlatform": ["Node.js 24", "Web Browser"],
-  "operatingSystem": ["Web", "Android", "iOS", "macOS", "Windows", "Linux"],
+  "programmingLanguage": [
+    "TypeScript",
+    "HTML",
+    "SCSS"
+  ],
+  "runtimePlatform": [
+    "Node.js 24",
+    "Web Browser"
+  ],
+  "operatingSystem": [
+    "Web",
+    "Android",
+    "iOS",
+    "macOS",
+    "Windows",
+    "Linux"
+  ],
   "applicationCategory": "EducationalApplication",
   "developmentStatus": "active",
   "author": [

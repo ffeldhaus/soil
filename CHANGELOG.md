@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.21] - 2026-11-12
 ### Fixed
 - Video-SEO-Metadaten auf das lokal selbstgehostete Trailer-Video umgestellt (`src/app/app.routes.ts`, `public/sitemap.xml`, `src/server.ts`, `src/app/seo-consistency.spec.ts`): Externe YouTube-`embedUrl` bzw. `<video:player_loc>` entfernt, sodass Suchmaschinen ausschließlich die lokal ausgelieferte Datei `https://soil.app/assets/video/soil-trailer.mp4` (`contentUrl` / `<video:content_loc>`) zuordnen.
 
