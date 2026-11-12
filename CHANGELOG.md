@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.4.20] - 2026-11-12
 ### Added
 - Capacitor-iOS-Xcode-Projekt (`ios/App/App.xcodeproj`) in die Versionskontrolle aufgenommen sowie Xcode-Cloud-Build-Skript (`ios/App/ci_scripts/ci_post_clone.sh`) und automatische iOS-Versionssynchronisierung (`MARKETING_VERSION` und `CURRENT_PROJECT_VERSION`) in `scripts/deploy.js` ergänzt.
 - Release-Runbook für Google Play (`app.soil.twa`) und Apple App Store / Xcode Cloud (`app.soil`) in `.agents/skills/soil-release-deploy/` sowie native Capacitor-Invarianten in `AGENTS.md` dokumentiert.
