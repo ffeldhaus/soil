@@ -12,7 +12,40 @@ import compression from 'compression';
 import express from 'express';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-const browserDistFolder = resolve(serverDistFolder, '../browser');
+const defaultBrowserDistFolder = resolve(serverDistFolder, '../browser');
+const vitestBrowserDistFolder = resolve(serverDistFolder, '../dist/soil/browser');
+const browserDistFolder =
+  process.env.VITEST && !existsSync(defaultBrowserDistFolder) && existsSync(vitestBrowserDistFolder)
+    ? vitestBrowserDistFolder
+    : defaultBrowserDistFolder;
+
+const PRERENDERED_ROUTES = new Set([
+  '',
+  'trailer',
+  'manual',
+  'info',
+  'research',
+  'admin',
+  'admin/login',
+  'admin/register',
+  'game-login',
+  'delete-account',
+  'impressum',
+  'privacy',
+]);
+
+const NOINDEX_PRERENDERED_ROUTES = new Set([
+  'admin/login',
+  'admin/register',
+  'game-login',
+  'delete-account',
+  'impressum',
+  'privacy',
+]);
+
+const CSR_NOINDEX_ROUTES = new Set(['game', 'admin/super', 'auth/action', '_/auth/action', '__/auth/action']);
+
+const KNOWN_APP_ROUTES = new Set([...PRERENDERED_ROUTES, ...CSR_NOINDEX_ROUTES]);
 const UPSTREAM_ENDPOINTS = {
   researchApi: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchApi',
   researchMcp: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchMcp',
@@ -363,26 +396,247 @@ app.all(['/api/telemetry', '/api/telemetry/'], express.raw({ type: '*/*', limit:
   await proxyToCloudFunction(req, res, 'recordTelemetry');
 });
 
-/**
- * 301-redirect legacy localized URLs (/de, /en, /en-US) to canonical root paths.
- */
-app.use((req, res, next) => {
-  const match = /^\/(?:de|en|en-US)(?:\/(.*))?$/.exec(req.path);
-  if (match) {
-    const rest = match[1] || '';
-    const queryIndex = req.originalUrl.indexOf('?');
-    const search = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
-    res.redirect(301, `/${rest}${search}`);
+const NOT_FOUND_HTML = `<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Seite nicht gefunden (404) – SOIL Online-Planspiel</title>
+  <meta name="description" content="Die angeforderte Seite wurde im Online-Planspiel SOIL nicht gefunden. Kehre zur Startseite zurück, um ein lokales oder Mehrspieler-Spiel zu starten." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" content="#065f46" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100dvh;
+      background-color: #111827;
+      color: #f9fafb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1rem 4rem;
+      max-width: 34rem;
+      margin: 0 auto;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(4.5rem, 16vw, 7.5rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: rgba(16, 185, 129, 0.24);
+      user-select: none;
+    }
+    h2 {
+      margin: 0.5rem 0 0.75rem;
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+    p {
+      margin: 0;
+      color: #9ca3af;
+      font-size: 1.0625rem;
+      line-height: 1.6;
+    }
+    .cta {
+      margin-top: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: #059669;
+      color: #ffffff;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 0.9rem 1.75rem;
+      border-radius: 0.875rem;
+      border: 1px solid #10b981;
+      transition: background-color 150ms ease-out;
+    }
+    .cta:hover { background-color: #10b981; }
+    footer {
+      background-color: rgba(3, 7, 18, 0.92);
+      border-top: 1px solid #1f2937;
+      padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.75rem;
+    }
+    footer nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem 0.75rem;
+    }
+    footer a {
+      color: #d1d5db;
+      text-decoration: none;
+    }
+    footer a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    .sep { color: #4b5563; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>404</h1>
+    <h2>Seite nicht gefunden</h2>
+    <p>Es sieht so aus, als hätten wir den Pfad zu diesem Acker verloren. Kehre zur Startseite zurück, um deinen Hof zu bewirtschaften.</p>
+    <a class="cta" href="/">Zurück zum Hof</a>
+  </main>
+  <footer aria-label="Rechtliches und Dokumentation">
+    <nav aria-label="Fußzeilen-Navigation">
+      <a href="/manual">Handbuch</a>
+      <span class="sep" aria-hidden="true">|</span>
+      <a href="/info">Hintergrund</a>
+      <span class="sep" aria-hidden="true">|</span>
+      <a href="/research">Forschungsdaten</a>
+      <span class="sep" aria-hidden="true">|</span>
+      <a href="/impressum">Impressum</a>
+      <span class="sep" aria-hidden="true">|</span>
+      <a href="/privacy">Datenschutz</a>
+    </nav>
+  </footer>
+</body>
+</html>`;
+
+function getRequestPathname(req: express.Request): string {
+  try {
+    return new URL(req.originalUrl, 'http://localhost').pathname;
+  } catch {
+    return req.path;
+  }
+}
+
+function extractQuerySearch(originalUrl: string): string {
+  const queryIndex = originalUrl.indexOf('?');
+  return queryIndex >= 0 ? originalUrl.slice(queryIndex) : '';
+}
+
+function getCanonicalRedirectOrigin(req: express.Request): string {
+  const forwardedHost = req.get('x-forwarded-host')?.split(',')[0]?.trim();
+  const host = forwardedHost || req.get('host') || '';
+  return host === 'soil.app' ? 'https://soil.app' : '';
+}
+
+function sendNotFoundResponse(req: express.Request, res: express.Response): void {
+  res.setHeader('Cache-Control', CACHE_CONTROL_NO_STORE);
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  const pathname = getRequestPathname(req);
+  const lastSegment = pathname.split('/').pop() || '';
+  if (lastSegment.includes('.') && !lastSegment.endsWith('.html')) {
+    res.status(404).type('text/plain; charset=utf-8').send('Not Found');
     return;
   }
-  next();
-});
+  res.status(404).type('text/html; charset=utf-8').send(NOT_FOUND_HTML);
+}
+
+function transformCsrNoindexHtml(rawHtml: string): string {
+  return rawHtml
+    .replace(
+      /<meta\s+name=["']robots["']\s+content=["'][^"']*["']\s*\/?>/gi,
+      '<meta name="robots" content="noindex, nofollow">',
+    )
+    .replace(/<link\s+rel=["']canonical["']\s+href=["'][^"']*["']\s*\/?>\s*/gi, '')
+    .replace(/<meta\s+property=["']og:url["']\s+content=["'][^"']*["']\s*\/?>\s*/gi, '');
+}
 
 /**
  * Security headers for Firebase Auth popups.
  */
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  next();
+});
+
+/**
+ * Handle legacy localized URLs:
+ * - /en, /en/*, /en-US, /en-US/* immediately return HTTP 404 in 0 hops (no English version exists).
+ * - /de and /de/<known-route> single-hop 301-redirect to canonical root paths; unknown /de/* return HTTP 404 directly.
+ */
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/__/')) {
+    next();
+    return;
+  }
+
+  const pathname = getRequestPathname(req);
+
+  if (/^\/(?:en|en-US)(?:\/|$)/.test(pathname)) {
+    sendNotFoundResponse(req, res);
+    return;
+  }
+
+  const deMatch = /^\/de(?:\/(.*))?$/.exec(pathname);
+  if (deMatch) {
+    const rawRest = (deMatch[1] || '').replace(/^\/+|\/+$/g, '');
+    const targetClean = rawRest.replace(/(?:^|\/)index\.html$/, '').replace(/^\/+|\/+$/g, '');
+    if (KNOWN_APP_ROUTES.has(targetClean)) {
+      const origin = getCanonicalRedirectOrigin(req);
+      const targetPath = targetClean ? `/${targetClean}` : '/';
+      const search = extractQuerySearch(req.originalUrl);
+      res.redirect(301, `${origin}${targetPath}${search}`);
+      return;
+    }
+    sendNotFoundResponse(req, res);
+    return;
+  }
+
+  next();
+});
+
+/**
+ * Canonical URL normalization for /index.html, /<known-route>/index.html, and /<known-route>/ trailing slashes.
+ * Placed before express.static so /index.html and /<known-route>/index.html redirect cleanly instead of serving duplicate URLs.
+ */
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/__/') || (req.method !== 'GET' && req.method !== 'HEAD')) {
+    next();
+    return;
+  }
+
+  const pathname = getRequestPathname(req);
+  const origin = getCanonicalRedirectOrigin(req);
+  const search = extractQuerySearch(req.originalUrl);
+
+  if (pathname === '/index.html') {
+    res.redirect(301, `${origin}/${search}`);
+    return;
+  }
+
+  const nestedIndexMatch = /^\/(.+)\/index\.html$/.exec(pathname);
+  if (nestedIndexMatch && KNOWN_APP_ROUTES.has(nestedIndexMatch[1])) {
+    res.redirect(301, `${origin}/${nestedIndexMatch[1]}${search}`);
+    return;
+  }
+
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    const cleanPath = pathname.replace(/^\/+|\/+$/g, '');
+    if (KNOWN_APP_ROUTES.has(cleanPath)) {
+      const targetPath = cleanPath ? `/${cleanPath}` : '/';
+      res.redirect(301, `${origin}${targetPath}${search}`);
+      return;
+    }
+  }
+
   next();
 });
 
@@ -471,6 +725,48 @@ async function ensureAngularAppInitialized(): Promise<AngularNodeAppEngine> {
   return angularApp;
 }
 
+function servePrerenderedRouteIfAvailable(cleanPath: string, res: express.Response): boolean {
+  if (NOINDEX_PRERENDERED_ROUTES.has(cleanPath)) {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  }
+  const prerenderedHtml = cleanPath
+    ? resolve(browserDistFolder, cleanPath, 'index.html')
+    : resolve(browserDistFolder, 'index.html');
+  if (prerenderedHtml.startsWith(browserDistFolder) && existsSync(prerenderedHtml)) {
+    res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
+    res.type('text/html; charset=utf-8').send(readFileSync(prerenderedHtml, 'utf-8'));
+    return true;
+  }
+  return false;
+}
+
+function serveCsrNoindexRouteIfAvailable(res: express.Response): boolean {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  const csrHtml = resolve(browserDistFolder, 'index.csr.html');
+  if (existsSync(csrHtml)) {
+    res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
+    const transformedHtml = transformCsrNoindexHtml(readFileSync(csrHtml, 'utf-8'));
+    res.type('text/html; charset=utf-8').send(transformedHtml);
+    return true;
+  }
+  return false;
+}
+
+function tryServeStaticAppRoute(req: express.Request, res: express.Response): boolean {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    return false;
+  }
+  const cleanPath = getRequestPathname(req).replace(/^\/+|\/+$/g, '');
+  if (PRERENDERED_ROUTES.has(cleanPath)) {
+    return servePrerenderedRouteIfAvailable(cleanPath, res);
+  }
+  if (CSR_NOINDEX_ROUTES.has(cleanPath)) {
+    return serveCsrNoindexRouteIfAvailable(res);
+  }
+  sendNotFoundResponse(req, res);
+  return true;
+}
+
 app.use('*path', async (req, res, next) => {
   // Skip Firebase reserved paths
   if (req.originalUrl.startsWith('/__/')) {
@@ -484,25 +780,8 @@ app.use('*path', async (req, res, next) => {
     return;
   }
 
-  // Serve prerendered static route HTML (<route>/index.html) or client-side shell (index.csr.html) when available
-  if (req.method === 'GET' || req.method === 'HEAD') {
-    const pathname = new URL(req.originalUrl, 'http://localhost').pathname;
-    const cleanPath = pathname.replace(/^\/+|\/+$/g, '');
-    const prerenderedHtml = cleanPath
-      ? resolve(browserDistFolder, cleanPath, 'index.html')
-      : resolve(browserDistFolder, 'index.html');
-    if (prerenderedHtml.startsWith(browserDistFolder) && existsSync(prerenderedHtml)) {
-      res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
-      res.type('text/html; charset=utf-8').send(readFileSync(prerenderedHtml, 'utf-8'));
-      return;
-    }
-
-    const csrHtml = resolve(browserDistFolder, 'index.csr.html');
-    if (!cleanPath.includes('.') && existsSync(csrHtml)) {
-      res.setHeader('Cache-Control', CACHE_CONTROL_HTML);
-      res.type('text/html; charset=utf-8').send(readFileSync(csrHtml, 'utf-8'));
-      return;
-    }
+  if (tryServeStaticAppRoute(req, res)) {
+    return;
   }
 
   const engine = await ensureAngularAppInitialized();
@@ -544,4 +823,5 @@ if (isMainModule(import.meta.url)) {
 /**
  * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
  */
+export { app };
 export const reqHandler = createNodeRequestHandler(app);

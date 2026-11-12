@@ -191,6 +191,51 @@
             <app-dashboard-teacher-guide></app-dashboard-teacher-guide>
           }
         </div>
+      } @else {
+        <div class="space-y-6">
+          <section
+            aria-labelledby="dashboard-guest-intro-heading"
+            class="bg-gray-900 p-5 sm:p-6 rounded-xl border border-gray-700 shadow-2xl space-y-4 portrait:rounded-none portrait:border-x-0"
+          >
+            <h2 id="dashboard-guest-intro-heading" class="text-2xl font-bold text-emerald-400 tracking-tight">
+              Spiele erstellen &amp; Klassenzimmer-Runden verwalten
+            </h2>
+            <p class="text-gray-200 leading-relaxed">
+              Im SOIL-Dashboard kannst du direkt im Browser ein lokales Einzelspieler-Spiel gegen KI-Betriebe über
+              mehrere Runden und Wirtschaftsjahre starten, einer laufenden Klassenrunde per vierstelliger Team-PIN
+              beitreten oder dich als Lehrkraft anmelden, um eigene Multiplayer-Spiele für Lerngruppen und Seminare
+              anzulegen.
+            </p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <a
+                routerLink="/"
+                class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-bold rounded-xl border border-emerald-600 transition-colors"
+              >
+                Einzelspieler starten
+              </a>
+              <a
+                routerLink="/game-login"
+                class="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white text-sm font-bold rounded-xl border border-gray-600 transition-colors"
+              >
+                Mit Team-PIN beitreten
+              </a>
+              <a
+                routerLink="/admin/login"
+                class="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white text-sm font-bold rounded-xl border border-gray-700 transition-colors"
+              >
+                Als Lehrkraft anmelden
+              </a>
+              <a
+                routerLink="/admin/register"
+                class="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white text-sm font-bold rounded-xl border border-gray-700 transition-colors"
+              >
+                Lehrkräfte-Konto registrieren
+              </a>
+            </div>
+          </section>
+
+          <app-dashboard-teacher-guide></app-dashboard-teacher-guide>
+        </div>
       }
     </main>
 

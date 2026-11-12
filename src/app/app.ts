@@ -49,7 +49,9 @@ export class App {
       typeof snapshot?.title === 'string' && snapshot.title.length > 0
         ? snapshot.title
         : this.titleService.getTitle() || 'SOIL – Interaktive Landwirtschaftssimulation';
-    const canonicalUrl = `${SITE_ORIGIN}${seo.canonicalPath === '/' ? '/' : seo.canonicalPath}`;
+    const canonicalUrl = seo.canonicalPath
+      ? `${SITE_ORIGIN}${seo.canonicalPath === '/' ? '/' : seo.canonicalPath}`
+      : undefined;
 
     this.applyMetaTags(pageTitle, seo, canonicalUrl);
     this.updateCanonicalLink(canonicalUrl);
@@ -64,23 +66,31 @@ export class App {
     return current;
   }
 
-  private applyMetaTags(pageTitle: string, seo: RouteSeoData, canonicalUrl: string): void {
+  private applyMetaTags(pageTitle: string, seo: RouteSeoData, canonicalUrl?: string): void {
     this.meta.updateTag({ name: 'description', content: seo.description });
     this.meta.updateTag({ name: 'robots', content: seo.robots || 'index, follow' });
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: seo.description });
-    this.meta.updateTag({ property: 'og:url', content: canonicalUrl });
+    if (canonicalUrl) {
+      this.meta.updateTag({ property: 'og:url', content: canonicalUrl });
+    } else {
+      this.meta.removeTag("property='og:url'");
+    }
     this.meta.updateTag({ property: 'og:type', content: seo.ogType || 'website' });
     this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
     this.meta.updateTag({ name: 'twitter:description', content: seo.description });
   }
 
-  private updateCanonicalLink(canonicalUrl: string): void {
+  private updateCanonicalLink(canonicalUrl?: string): void {
     const head = this.doc?.head;
     if (!head) {
       return;
     }
     let link = head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonicalUrl) {
+      link?.remove();
+      return;
+    }
     if (!link) {
       link = this.doc.createElement('link');
       link.setAttribute('rel', 'canonical');

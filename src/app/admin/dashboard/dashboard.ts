@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type { Subscription } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
@@ -36,6 +36,7 @@ import { QrOverlayComponent } from './components/qr-overlay';
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     DashboardHudComponent,
     DashboardErrorModalComponent,
     QrOverlayComponent,

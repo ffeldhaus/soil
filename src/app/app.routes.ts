@@ -2,7 +2,7 @@ import type { Routes } from '@angular/router';
 
 export interface RouteSeoData {
   description: string;
-  canonicalPath: string;
+  canonicalPath?: string;
   robots?: string;
   ogType?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
@@ -85,20 +85,6 @@ const baseRoutes: Routes = [
                 'Bodenqualität und Fruchtfolge',
                 'Agrarökonomie',
               ],
-            },
-            {
-              '@type': 'VideoObject',
-              name: 'SOIL – Online-Planspiel & Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit (BNE)',
-              description:
-                'Einminütiger Überblick über das kostenlose Online-Planspiel und die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
-              url: 'https://soil.app/trailer',
-              thumbnailUrl: 'https://soil.app/SOIL-screenshot.png',
-              uploadDate: '2026-10-30T14:00:00+01:00',
-              duration: 'PT1M5S',
-              contentUrl: 'https://soil.app/assets/video/soil-trailer.mp4',
-              embedUrl: 'https://www.youtube.com/embed/xCmZUGcyVLM',
-              inLanguage: 'de-DE',
-              license: 'https://creativecommons.org/licenses/by/4.0/',
             },
           ],
         },
@@ -454,7 +440,6 @@ const baseRoutes: Routes = [
       seo: {
         description:
           'Die angeforderte Seite wurde im Online-Planspiel SOIL nicht gefunden. Kehre zur Startseite zurück, um ein lokales oder Mehrspieler-Spiel zu starten.',
-        canonicalPath: '/',
         robots: 'noindex, nofollow',
       } satisfies RouteSeoData,
     },

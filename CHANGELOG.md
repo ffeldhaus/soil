@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Capacitor-iOS-Xcode-Projekt (`ios/App/App.xcodeproj`) in die Versionskontrolle aufgenommen sowie Xcode-Cloud-Build-Skript (`ios/App/ci_scripts/ci_post_clone.sh`) und automatische iOS-Versionssynchronisierung (`MARKETING_VERSION` und `CURRENT_PROJECT_VERSION`) in `scripts/deploy.js` ergänzt.
 - Release-Runbook für Google Play (`app.soil.twa`) und Apple App Store / Xcode Cloud (`app.soil`) in `.agents/skills/soil-release-deploy/` sowie native Capacitor-Invarianten in `AGENTS.md` dokumentiert.
 
+### Fixed
+- Google-Search-Console-Indexierung, HTTP-Statuscodes und Weiterleitungen bereinigt (`src/server.ts`, `src/server.spec.ts`, `src/app/app.routes.ts`, `src/app/app.ts`, `src/app/admin/dashboard/dashboard.html`): Direkte `HTTP-404`-Antworten ohne Weiterleitungs-Hops für `/en/`, `/en` und unbekannte Pfade (Behebung von Soft-404- und Redirect-Fehlern), einstufige kanonische `301`-Weiterleitungen für gültige `/de/*`-, Trailing-Slash- und `/index.html`-URLs, `X-Robots-Tag: noindex, nofollow` ohne Homepage-Canonical auf Utility-/CSR-/404-Routen, vorgerenderter SSR-Einführungsbereich inklusive Handreichung auf `/admin` sowie exklusive `VideoObject`-Auszeichnung auf der Video-Wiedergabeseite `/trailer`.
+
 ## [3.4.19] - 2026-11-09
 ### Added
 - Native Capacitor-8-App-Architektur für iOS/iPadOS (`app.soil`) und Android (`app.soil.twa`) ergänzt (`capacitor.config.ts`, `src/app/shared/capacitor-env.ts`), inklusive nativer iOS-Anmeldung via „Sign in with Apple“ (`SignInWithApplePlugin` über `AuthenticationServices` und `CryptoKit`) sowie Universal Links und Android App Links (`public/.well-known/apple-app-site-association`, `public/.well-known/assetlinks.json`, `src/server.ts`).

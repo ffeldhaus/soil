@@ -42,6 +42,17 @@ describe('App', () => {
             },
             component: DummyComponent,
           },
+          {
+            path: '**',
+            title: 'Seite nicht gefunden (404) – SOIL Online-Planspiel',
+            data: {
+              seo: {
+                description: '404 description',
+                robots: 'noindex, nofollow',
+              } satisfies RouteSeoData,
+            },
+            component: DummyComponent,
+          },
         ]),
       ],
     }).compileComponents();
@@ -74,8 +85,18 @@ describe('App', () => {
     expect(meta.getTag('name="robots"')?.content).toBe('index, follow');
     expect(meta.getTag('name="description"')?.content).toBe('Landing description');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe('https://soil.app/');
+    expect(meta.getTag('property="og:url"')?.content).toBe('https://soil.app/');
     const jsonLdEl = document.head.querySelector('script#soil-jsonld');
     expect(jsonLdEl).not.toBeNull();
     expect(jsonLdEl?.textContent).toContain('SoftwareApplication');
+
+    await router.navigateByUrl('/unknown-404-path');
+    fixture.detectChanges();
+
+    expect(meta.getTag('name="robots"')?.content).toBe('noindex, nofollow');
+    expect(meta.getTag('name="description"')?.content).toBe('404 description');
+    expect(document.head.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(meta.getTag('property="og:url"')).toBeNull();
+    expect(document.head.querySelector('script#soil-jsonld')).toBeNull();
   });
 });

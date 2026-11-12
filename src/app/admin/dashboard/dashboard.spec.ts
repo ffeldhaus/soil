@@ -210,4 +210,13 @@ describe('Dashboard Component', () => {
     expect(printSpy).toHaveBeenCalled();
     vi.useRealTimers();
   });
+
+  it('should render SSR fallback intro and teacher guide when user$ is null', () => {
+    component.user$ = of(null);
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Spiele erstellen & Klassenzimmer-Runden verwalten');
+    expect(text).toContain('Handreichung für Administratoren');
+  });
 });
