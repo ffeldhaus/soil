@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Routen-, SSR- und SEO-Basis bereinigt (`src/app/app.routes.ts`, `src/app/app.routes.server.ts`, `src/app/app.config.server.ts`, `src/app/app.config.ts`): Gemeinsame `INFO_FAQ_ITEMS` ohne starre Rundenzahlen oder Jahrgangsschranken, vereinheitlichtes Schema.org-Markup (`WebSite`, `operatingSystem: 'Web, iOS, Android'`, `educationalLevel`), explizite Client-Routen für `auth/action`-Pfade sowie `null`-Stubs für Firebase-Client-Tokens im SSR-Kontext.
 - Service-Worker-Bootstrap in `src/main.ts` optimiert: `workbox-window` wird erst nach dem App-Bootstrap dynamisch nachgeladen, und automatische Update-Reloads werden zusätzlich bei `/auth/action`, offenen Dialogen und fokussierten Formularfeldern sicher zurückgehalten.
 - `@fileoverview`-Header-Konvention für zentrale Einstiegs-, Service- und Engine-Dateien in `AGENTS.md` dokumentiert.
+- Frontend-Abhängigkeiten innerhalb der Semver-Grenzen aktualisiert (`package-lock.json`).
 
 ### Fixed
 - Express-Edge-Gateway in `src/server.ts` (inklusive Regressionstests in `src/server.spec.ts`) gehärtet: Basis-Security-Header (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, Deaktivierung von `x-powered-by`), `/__/auth/action`-Auslieferung, `405`-Abweisung für fremde Nicht-`GET`/`HEAD`-Requests ohne Starten der SSR-Engine, Proxy-Timeout (`15s`), UTF-8-Charset für `robots.txt`/`sitemap.xml`, verlängertes Cloud-CDN-SWR-Fenster sowie horizontale Safe-Areas und `:focus-visible` auf der 404-Seite.
