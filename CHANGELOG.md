@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.5.0] - 2026-11-16
 ### Security
 - Cloud Logging in `soil-602ea` auf EU-Datenhaltung und strikte Datenminimierung gehärtet: `_Default`-Sink auf einen dedizierten `europe-west4`-Bucket (`eu-operational-logs`) mit `7` Tagen Aufbewahrungsfrist umgestellt, reguläre `2xx`/`3xx`-HTTP-Zugriffsprotokolle (`run.googleapis.com/requests`) per Exclusion-Filter vollständig von der Speicherung ausgeschlossen und die Vorhaltezeit des Alt-Buckets `global/_Default` auf das Minimum von `1` Tag reduziert.
 - Query-Strings (`req.originalUrl` -> `req.path`) sowie die Anfrageprotokollierung pro Seitenaufruf aus `src/server.ts` und personenbezogene Lehrkräfte-/Admin-E-Mail-Adressen aus Warn- und Fehlerprotokollen in `functions/src/index.ts` entfernt; Abschnitt `4. Hosting und Infrastruktur` in `/privacy` (`src/app/privacy/privacy.html`) entsprechend präzisiert.

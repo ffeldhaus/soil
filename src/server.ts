@@ -325,12 +325,12 @@ app.get('/sitemap.xml', (_req, res) => {
   </url>
   <url>
     <loc>https://soil.app/research</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://soil.app/admin</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <priority>0.8</priority>
   </url>
 </urlset>`);
