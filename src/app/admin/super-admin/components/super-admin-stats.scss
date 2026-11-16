@@ -1,0 +1,41 @@
+@reference "tailwindcss";
+
+.super-admin-stats {
+  color-scheme: dark;
+  accent-color: #10b981;
+}
+
+.super-admin-stats input[type='date'] {
+  color-scheme: dark;
+  accent-color: #10b981;
+}
+
+.super-admin-stats .gsc-metric-tile {
+  position: relative;
+  transition:
+    background-color 140ms ease-out,
+    border-color 140ms ease-out;
+}
+
+.super-admin-stats .gsc-metric-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background-color: transparent;
+}
+
+.super-admin-stats .gsc-metric-tile[aria-pressed='true']::before {
+  background-color: var(--metric-accent, #10b981);
+}
+
+@media (forced-colors: active) {
+  .super-admin-stats .gsc-metric-tile[aria-pressed='true']::before {
+    border-block-start: 3px solid Highlight;
+  }
+}
+
+.super-admin-stats .chart-hit-rect:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: -2px;
+}

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { type RouteSeoData, routes } from './app.routes';
+import { INFO_FAQ_ITEMS, type RouteSeoData, routes } from './app.routes';
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 
@@ -143,6 +143,99 @@ describe('Cross-File SEO, Manifest & Metadata Text Consistency', () => {
       const fullUrl = `https://soil.app${canonicalPath === '/' ? '/' : canonicalPath}`;
       expect(sitemapXml).toContain(`<loc>${fullUrl}</loc>`);
       expect(robotsTxt).toContain(`Allow: ${canonicalPath}`);
+    }
+  });
+
+  it('targets Unterrichtsmaterial across Biologie, Erdkunde/Geografie, Wirtschaft & BNE in root, /info, and /manual metadata & JSON-LD', () => {
+    const infoRoute = routes.find((r) => r.path === 'info');
+    const manualRoute = routes.find((r) => r.path === 'manual');
+
+    const rootTitle = (rootRoute?.title as string) ?? '';
+    const rootSeo = rootRoute?.data?.seo as RouteSeoData;
+    const infoTitle = (infoRoute?.title as string) ?? '';
+    const infoSeo = infoRoute?.data?.seo as RouteSeoData;
+    const manualSeo = manualRoute?.data?.seo as RouteSeoData;
+
+    for (const term of ['Unterrichtsmaterial', 'Biologie', 'Erdkunde', 'Geografie', 'Wirtschaft', 'BNE']) {
+      expect(rootTitle).toContain(term);
+      expect(rootSeo.description).toContain(term);
+      expect(infoTitle).toContain(term);
+      expect(infoSeo.description).toContain(term);
+    }
+
+    expect(manualSeo.description).toContain('Unterrichtsmaterial');
+
+    const rootGraph = (rootSeo.jsonLd as { '@graph': Record<string, unknown>[] })['@graph'];
+    const learningResource = rootGraph.find((item) => item['@type'] === 'LearningResource') as Record<string, unknown>;
+    expect(learningResource).toBeTruthy();
+    expect(learningResource.learningResourceType).toContain('Unterrichtsmaterial');
+    expect(learningResource.keywords).toEqual(
+      expect.arrayContaining([
+        'Unterrichtsmaterial Biologie',
+        'Unterrichtsmaterial Erdkunde',
+        'Unterrichtsmaterial Geografie',
+        'Unterrichtsmaterial Geographie',
+        'Unterrichtsmaterial Wirtschaft',
+        'Planspiel BNE',
+        'OER Unterrichtsmaterial',
+      ]),
+    );
+  });
+
+  it('keeps INFO_FAQ_ITEMS as single source of truth between info.ts and FAQPage JSON-LD', () => {
+    const infoTs = readRepoFile('src/app/info/info.ts');
+    expect(infoTs).toContain("import { INFO_FAQ_ITEMS } from '../app.routes';");
+    expect(infoTs).toContain('readonly faqItems = INFO_FAQ_ITEMS;');
+
+    const infoRoute = routes.find((r) => r.path === 'info');
+    const infoSeo = infoRoute?.data?.seo as RouteSeoData;
+    const infoGraph = (infoSeo.jsonLd as { '@graph': Record<string, unknown>[] })['@graph'];
+    const faqPage = infoGraph.find((item) => item['@type'] === 'FAQPage') as {
+      mainEntity: Array<{ name: string; acceptedAnswer: { text: string } }>;
+    };
+
+    expect(faqPage.mainEntity).toHaveLength(INFO_FAQ_ITEMS.length);
+    for (let i = 0; i < INFO_FAQ_ITEMS.length; i++) {
+      expect(faqPage.mainEntity[i].name).toBe(INFO_FAQ_ITEMS[i].question);
+      expect(faqPage.mainEntity[i].acceptedAnswer.text).toBe(INFO_FAQ_ITEMS[i].answer);
+    }
+
+    const subjectFaq = INFO_FAQ_ITEMS.find((item) =>
+      item.question.includes('Für welche Schulfächer eignet sich SOIL als Unterrichtsmaterial?'),
+    );
+    expect(subjectFaq).toBeTruthy();
+    for (const term of ['Biologie', 'Erdkunde', 'Geografie', 'Geographie', 'Wirtschaft', 'BNE']) {
+      expect(subjectFaq?.answer).toContain(term);
+    }
+  });
+
+  it('prevents fixed school grade levels and hardcoded round-count drift across SEO & landing/info files', () => {
+    const filesToCheck = [
+      'src/app/app.routes.ts',
+      'src/index.html',
+      'public/site.webmanifest',
+      'public/sitemap.xml',
+      'public/llms.txt',
+      'src/app/landing/landing.html',
+      'src/app/info/info.ts',
+      'src/app/info/info.html',
+    ];
+    const forbiddenPatterns = [
+      /Klasse\s*5/i,
+      /Klassen\s*5/i,
+      /Klassenstufen\s*5/i,
+      /ab\s+Klasse/i,
+      /zehn\s+Runden/i,
+      /zehn\s+Spielrunden/i,
+      /zehn\s+Jahre\s+Zeit/i,
+      /10\s+Runden/i,
+    ];
+
+    for (const relPath of filesToCheck) {
+      const content = readRepoFile(relPath);
+      for (const pattern of forbiddenPatterns) {
+        expect(content, `${relPath} must not match ${pattern}`).not.toMatch(pattern);
+      }
     }
   });
 });

@@ -23,9 +23,10 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
     ).to.equal(false);
   });
 
-  it('normalizes canonical routes and rejects unknown or sensitive routes', () => {
+  it('normalizes canonical routes including /trailer and rejects unknown or sensitive routes', () => {
     expect(normalizeTelemetryRoute('/')).to.equal('/');
     expect(normalizeTelemetryRoute('/manual/?foo=bar')).to.equal('/manual');
+    expect(normalizeTelemetryRoute('/trailer?ref=share')).to.equal('/trailer');
     expect(normalizeTelemetryRoute('/game-login#pin')).to.equal('/game-login');
     expect(normalizeTelemetryRoute('/admin/super')).to.equal(null);
     expect(normalizeTelemetryRoute('/auth/action')).to.equal(null);
@@ -43,17 +44,17 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
   it('sanitizes and clamps telemetry batch payloads', () => {
     const sanitized = sanitizeTelemetryPayload({
       mode: 'pwa',
-      views: { '/': 2, '/manual': 99, '/invalid': 5 },
+      views: { '/': 2, '/manual': 99, '/trailer': 4, '/invalid': 5 },
       events: { quick_game_started: 3, unknown_event: 2 },
       referrers: { 'https://www.bildungsserver.de/': 1, 'https://soil.app/': 4 },
     });
 
     expect(sanitized).to.deep.equal({
       mode: 'pwa',
-      views: { '/': 2, '/manual': 20 },
+      views: { '/': 2, '/manual': 20, '/trailer': 4 },
       events: { quick_game_started: 3 },
       referrers: { 'bildungsserver.de': 1 },
-      totalViews: 22,
+      totalViews: 26,
     });
   });
 
@@ -125,7 +126,7 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
         headers: { 'user-agent': 'Mozilla/5.0 Firefox/128.0' },
         body: {
           mode: 'web',
-          views: { '/': 1, '/research': 2 },
+          views: { '/': 1, '/research': 2, '/trailer': 1 },
           events: { research_export: 1 },
           referrers: { 'bpb.de': 1 },
         },
@@ -138,8 +139,9 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
     expect(totalsSetStub.calledOnce).to.equal(true);
   });
 
-  it('aggregates daily windows and total counters for getSystemStats', async () => {
+  it('aggregates 400-day dailySeries sorted ascending, firstRecordedDate, and window counters', async () => {
     const now = new Date('2026-11-05T12:00:00.000Z');
+    let queriedCutoff = '';
     const mockDb: any = {
       collection: (name: string) => {
         if (name === 'telemetry_totals') {
@@ -151,7 +153,7 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
                   totalViews: 500,
                   pwaViews: 80,
                   webViews: 420,
-                  routes: { '/': 250, '/game': 150, '/manual': 100 },
+                  routes: { '/': 250, '/game': 150, '/manual': 80, '/trailer': 20 },
                   events: { quick_game_started: 90, trailer_opened: 45 },
                   referrers: { direct: 300, 'bpb.de': 120, pwa_launch: 80 },
                 }),
@@ -160,28 +162,74 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
           };
         }
         return {
-          where: () => ({
-            get: async () => ({
-              docs: [
-                { id: '2026-11-05', data: () => ({ date: '2026-11-05', totalViews: 25 }) },
-                { id: '2026-11-02', data: () => ({ date: '2026-11-02', totalViews: 75 }) },
-                { id: '2026-10-15', data: () => ({ date: '2026-10-15', totalViews: 150 }) },
-              ],
-            }),
-          }),
+          where: (_field: string, _op: string, val: string) => {
+            queriedCutoff = val;
+            return {
+              get: async () => ({
+                docs: [
+                  {
+                    id: '2026-11-05',
+                    data: () => ({
+                      date: '2026-11-05',
+                      totalViews: 25,
+                      webViews: 20,
+                      pwaViews: 5,
+                      routes: { '/': 15, '/trailer': 10 },
+                      events: { trailer_opened: 6 },
+                      referrers: { 'facebook.com': 4, direct: 16 },
+                    }),
+                  },
+                  {
+                    id: '2026-03-10',
+                    data: () => ({
+                      date: '2026-03-10',
+                      totalViews: 60,
+                      pwaViews: 10,
+                    }),
+                  },
+                  {
+                    id: '2026-11-02',
+                    data: () => ({
+                      date: '2026-11-02',
+                      totalViews: 75,
+                      webViews: 70,
+                      pwaViews: 5,
+                    }),
+                  },
+                  {
+                    id: '2026-10-15',
+                    data: () => ({
+                      date: '2026-10-15',
+                      totalViews: 150,
+                      webViews: 140,
+                      pwaViews: 10,
+                    }),
+                  },
+                ],
+              }),
+            };
+          },
         };
       },
     };
 
     const stats = await aggregateTelemetryStats(mockDb, now);
+    expect(queriedCutoff).to.equal('2025-10-02');
     expect(stats.viewsToday).to.equal(25);
     expect(stats.viewsLast7d).to.equal(100);
     expect(stats.viewsLast30d).to.equal(250);
     expect(stats.viewsTotal).to.equal(500);
     expect(stats.pwaViewsTotal).to.equal(80);
     expect(stats.webViewsTotal).to.equal(420);
-    expect(stats.routes['/']).to.equal(250);
-    expect(stats.events.quick_game_started).to.equal(90);
-    expect(stats.referrers['bpb.de']).to.equal(120);
+    expect(stats.routes['/trailer']).to.equal(20);
+    expect(stats.firstRecordedDate).to.equal('2026-03-10');
+    expect(stats.dailySeries?.map((d) => d.date)).to.deep.equal([
+      '2026-03-10',
+      '2026-10-15',
+      '2026-11-02',
+      '2026-11-05',
+    ]);
+    expect(stats.dailySeries?.[0].webViews).to.equal(50);
+    expect(stats.dailySeries?.[3].routes['/trailer']).to.equal(10);
   });
 });

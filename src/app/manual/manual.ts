@@ -85,7 +85,7 @@ export class ManualComponent implements AfterViewInit {
       'manual.print': 'Drucken',
       'board.logout': 'Abmelden',
       'manual.title': 'Handbuch',
-      'manual.subtitle': 'Alles, was du über nachhaltige Landwirtschaft in SOIL wissen musst',
+      'manual.subtitle': 'Begleitendes Handbuch und Unterrichtsmaterial für nachhaltige Landwirtschaft in SOIL',
       'manual.intro.title': 'Einleitung',
       'manual.intro.goal.title': 'Das Ziel',
       'manual.intro.goal.text':

@@ -1,4 +1,4 @@
-<div class="text-white font-sans h-full overflow-y-auto custom-scrollbar relative overflow-x-hidden">
+<div class="super-admin-shell text-white font-sans h-full overflow-y-auto custom-scrollbar relative overflow-x-hidden bg-gray-950/90">
   <!-- Background Image -->
   <div class="fixed inset-0 h-screen w-screen -z-10 pointer-events-none" aria-hidden="true">
     <picture>
@@ -7,7 +7,7 @@
         src="assets/images/bauernhof-landscape-dunkel.webp"
         alt=""
         fetchpriority="high"
-        class="w-full h-full object-cover portrait:object-center landscape:object-center"
+        class="w-full h-full object-cover opacity-35 portrait:object-center landscape:object-center"
       />
     </picture>
   </div>
@@ -16,826 +16,28 @@
     <app-super-admin-hud [user]="authService.user$ | async" (logout)="logout()"></app-super-admin-hud>
 
     <!-- Main Content -->
-    <main class="pt-[calc(4rem+env(safe-area-inset-top,0px))] px-4 max-w-7xl mx-auto space-y-8 pb-[calc(4rem+env(safe-area-inset-bottom,0px))] relative portrait:px-0 portrait:max-w-none">
-      @if (errorMessage) {
-        <div
-          data-testid="superadmin-error-banner"
-          role="alert"
-          class="bg-rose-950 border border-rose-600 rounded-xl px-4 py-3 flex items-center justify-between text-sm text-rose-200"
-        >
-          <span>{{ errorMessage }}</span>
+    <main class="pt-[calc(3.5rem+env(safe-area-inset-top,0px))] px-4 sm:px-6 max-w-7xl mx-auto space-y-3.5 pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))] portrait:px-0 portrait:max-w-none">
+      <!-- Pinned Header + Live Status Strip (0px jump between initial load and hydrated state) -->
+      <header
+        data-testid="superadmin-header"
+        class="bg-gray-900 px-4 py-3.5 sm:px-5 sm:py-4 rounded-xl border border-gray-800 portrait:rounded-none portrait:border-x-0"
+      >
+        <div class="flex flex-wrap justify-between items-center gap-3">
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight">{{ t('superadmin.dashboard.title') }}</h1>
+            <p class="text-gray-400 text-xs">{{ t('superadmin.dashboard.subtitle') }}</p>
+          </div>
           <button
             type="button"
-            (click)="errorMessage = null"
-            class="text-rose-400 hover:text-white font-bold px-2"
-            aria-label="Fehlermeldung schließen"
-          >
-            &times;
-          </button>
-        </div>
-      }
-      <!-- Loading Overlay -->
-      @if (isLoadingData) {
-        <div
-          class="absolute inset-0 z-40 bg-gray-950 flex items-start justify-center pt-12 animate-fade-in rounded-xl portrait:rounded-none"
-        >
-          <div
-            class="flex flex-col items-center gap-3 bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700 portrait:rounded-none portrait:border-x-0"
-          >
-            <svg
-              class="animate-spin h-10 w-10 text-emerald-500"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <span class="text-emerald-400 font-bold animate-pulse">{{ t('superadmin.loading') }}</span>
-          </div>
-        </div>
-      }
-
-      <header
-        class="bg-gray-900 p-5 sm:p-6 rounded-xl border border-gray-700 shadow-2xl flex justify-between items-center portrait:rounded-none portrait:border-x-0"
-      >
-        <div class="space-y-1">
-          <h1 class="text-3xl font-bold text-white">{{ t('superadmin.dashboard.title') }}</h1>
-          <p class="text-white text-sm">{{ t('superadmin.dashboard.subtitle') }}</p>
-        </div>
-        <button
-          (click)="loadData()"
-          class="px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg text-sm font-bold transition flex items-center gap-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-          {{ t('superadmin.dashboard.refresh') }}
-        </button>
-      </header>
-
-      <!-- Stats Section -->
-      @if (stats) {
-        <app-super-admin-stats class="block" [stats]="stats"></app-super-admin-stats>
-      }
-
-      <!-- Research Data Section -->
-      <section class="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl overflow-hidden portrait:rounded-none portrait:border-x-0">
-        <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-800 flex flex-wrap items-center justify-between gap-4">
-          <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-2">
-            <div class="p-2 bg-emerald-900/30 rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            {{ t('superadmin.research.title') || 'Forschungsdaten (Cloud & Lokale Spiele)' }}
-          </h2>
-          <span class="text-xs font-mono tabular-nums text-gray-400">
-            {{ researchGames.length }} Spiele
-          </span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
-              <tr>
-                <th class="p-4 font-medium w-10"></th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.game') || 'Spiel' }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.rounds') || 'Runden' }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.players') || 'Spieler' }}</th>
-                <th class="p-4 font-medium text-right">{{ t('superadmin.table.actions') }}</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-800 text-sm">
-              @for (game of researchGames; track game.id) {
-                <!-- Game Row (Collapsed/Main) -->
-                <tr 
-                  (click)="toggleGameExpansion(game.id)"
-                  class="hover:bg-gray-950 transition cursor-pointer group"
-                >
-                  <td class="p-4 text-center">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      class="h-4 w-4 text-gray-500 transition-transform duration-200"
-                      [class.rotate-90]="expandedGames.has(game.id)"
-                      fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </td>
-                  <td class="p-4">
-                    <div class="font-bold text-white flex items-center gap-2">
-                      {{ game.name }}
-                      @if (isCloudResearchGame(game)) {
-                        <span class="px-1.5 py-0.5 bg-blue-900/40 text-blue-300 text-[10px] rounded border border-blue-800/50 uppercase">Cloud</span>
-                      } @else {
-                        <span class="px-1.5 py-0.5 bg-emerald-900/40 text-emerald-300 text-[10px] rounded border border-emerald-800/50 uppercase">Lokal</span>
-                      }
-                    </div>
-                    <div class="text-xs text-gray-500 font-mono">{{ game.id }}</div>
-                    <div class="text-[10px] text-gray-600 italic">Uploaded: {{ formatDate(game.updatedAt) | date:'short' }}</div>
-                  </td>
-                  <td class="p-4 text-gray-300">
-                    {{ game.currentRoundNumber }} / {{ game.settings.length }}
-                  </td>
-                  <td class="p-4 text-gray-400">
-                    {{ getPlayers(game).length }} human players
-                  </td>
-                  <td class="p-4 text-right">
-                    <span class="text-xs text-emerald-500 font-bold group-hover:underline">
-                      {{ expandedGames.has(game.id) ? 'Collapse' : 'Details' }}
-                    </span>
-                  </td>
-                </tr>
-
-                <!-- Expanded Player Rows -->
-                @if (expandedGames.has(game.id)) {
-                  @for (player of getPlayers(game); track player.uid) {
-                    <tr class="bg-gray-950 border-l-2 border-emerald-500/50 animate-fade-in">
-                      <td></td>
-                      <td class="p-4 pl-8">
-                        <div class="flex items-center gap-2">
-                          <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                          <span class="font-medium text-gray-200">{{ player.displayName }}</span>
-                        </div>
-                        <div class="text-[10px] text-gray-600 font-mono">{{ player.uid }}</div>
-                      </td>
-                      <td class="p-4">
-                        <div class="text-xs text-gray-500 uppercase font-bold mb-1">Status</div>
-                        <span class="text-[10px] bg-emerald-900/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-900/30">
-                          Round {{ player.submittedRound }} / {{ game.currentRoundNumber }}
-                        </span>
-                      </td>
-                      <td class="p-4">
-                        <div class="grid grid-cols-2 gap-4">
-                          <div>
-                            <div class="text-[10px] text-gray-500 uppercase font-bold mb-1">Capital</div>
-                            <div class="text-emerald-400 font-mono text-xs">{{ player.capital | number:'1.0-0' }} €</div>
-                          </div>
-                          <div>
-                            <div class="text-[10px] text-gray-500 uppercase font-bold mb-1">SOIL</div>
-                            <div class="flex items-center gap-2">
-                              <div class="w-12 bg-gray-800 rounded-full h-1">
-                                <div class="bg-emerald-500 h-1 rounded-full" [style.width.%]="player.avgSoil"></div>
-                              </div>
-                              <span class="text-[10px] text-gray-400">{{ player.avgSoil }}%</span>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="p-4 text-right">
-                        <button 
-                          (click)="viewAsPlayer(game.id, player.uid)" 
-                          data-testid="view-research-game"
-                          class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs transition font-bold shadow-lg shadow-emerald-900/20"
-                        >
-                          {{ t('superadmin.actions.view') || 'Ansehen' }}
-                        </button>
-                      </td>
-                    </tr>
-                  }
-                }
-              }
-              @if (researchGames.length === 0) {
-                <tr>
-                  <td colspan="5" class="p-8 text-center text-gray-500">
-                    Keine Forschungsdaten gefunden.
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- All Admins Section -->
-      <section class="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl overflow-hidden portrait:rounded-none portrait:border-x-0">
-        <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-800 flex flex-wrap items-center justify-between gap-4">
-          <h2 class="text-2xl font-bold text-blue-400 flex items-center gap-2">
-            <div class="p-2 bg-blue-900/30 rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                />
-              </svg>
-            </div>
-            {{ t('superadmin.admins.title') }}
-          </h2>
-          <span class="text-xs font-mono tabular-nums text-gray-400">
-            {{ admins.length }} Konten · Neueste zuerst
-          </span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
-              <tr>
-                <th class="p-4 font-medium">{{ t('superadmin.table.user') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.registered') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.role') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.status') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.quota') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.table.games') }}</th>
-                <th class="p-4 font-medium text-right">{{ t('superadmin.table.actions') }}</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-800 text-sm">
-              @for (admin of admins; track admin.uid) {
-                <tr class="hover:bg-gray-950 transition group">
-                  <td class="p-4">
-                    <div class="font-bold text-white">{{ admin.email }}</div>
-                    @if (admin.displayName) {
-                      <div class="text-xs text-gray-300">{{ admin.displayName }}</div>
-                    }
-                    <div class="text-xs text-gray-500 font-mono">{{ admin.uid }}</div>
-                  </td>
-                  <td class="p-4 font-mono tabular-nums text-xs text-gray-300 whitespace-nowrap" data-testid="admin-registered-date">
-                    {{ (formatDate(admin.createdAt) | date: 'dd.MM.yyyy HH:mm') || '–' }}
-                  </td>
-                  <td class="p-4">
-                    <span
-                      class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border"
-                      [ngClass]="{
-                        'bg-purple-900/20 text-purple-300 border-purple-800': admin.role === 'superadmin',
-                        'bg-blue-900/20 text-blue-300 border-blue-800': admin.role === 'admin',
-                        'bg-red-900/20 text-red-300 border-red-800': admin.role === 'banned'
-                      }"
-                    >
-                      {{ admin.role | titlecase }}
-                    </span>
-                  </td>
-                  <td class="p-4">
-                    <div class="flex items-center gap-2">
-                      <span
-                        class="h-2 w-2 rounded-full"
-                        [ngClass]="{
-                          'bg-emerald-500': admin.status === 'active',
-                          'bg-gray-500': admin.status === 'banned'
-                        }"
-                      ></span>
-                      <span class="text-gray-300">{{ admin.status | titlecase }}</span>
-                    </div>
-                  </td>
-                  <td class="p-4">
-                    <div class="flex items-center gap-2">
-                      <div class="w-full bg-gray-800 rounded-full h-1.5 w-16">
-                        <div
-                          class="bg-blue-500 h-1.5 rounded-full"
-                          [style.width.%]="(admin.gameCount / admin.quota) * 100"
-                        ></div>
-                      </div>
-                      <span class="text-xs text-gray-400">{{ admin.gameCount }}/{{ admin.quota }}</span>
-                    </div>
-                  </td>
-                  <td class="p-4 text-gray-300">
-                    {{ admin.gameCount }}
-                  </td>
-                  <td
-                    class="p-4 text-right flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition"
-                  >
-                    @if (admin.role !== 'superadmin') {
-                      <button
-                        (click)="viewGames(admin)"
-                        class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs transition border border-gray-600"
-                      >
-                        {{ t('superadmin.actions.games') }}
-                      </button>
-                      <button
-                        (click)="setQuota(admin)"
-                        class="px-2 py-1 bg-gray-800 hover:emerald-800 text-gray-300 rounded text-xs transition border border-gray-600"
-                        [title]="t('superadmin.actions.quota')"
-                      >
-                        {{ t('superadmin.actions.quota') }}
-                      </button>
-                      <button
-                        (click)="banAdmin(admin)"
-                        class="px-2 py-1 bg-gray-800 hover:bg-orange-900 text-orange-200 rounded text-xs transition border border-gray-600"
-                        [title]="t('superadmin.actions.ban')"
-                      >
-                        {{ t('superadmin.actions.ban') }}
-                      </button>
-                      <button
-                        (click)="deleteAdmin(admin)"
-                        class="px-2 py-1 bg-gray-800 hover:bg-red-900 text-red-200 rounded text-xs transition border border-gray-600"
-                        [title]="t('superadmin.actions.delete')"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    }
-                    @if (admin.role === 'superadmin') {
-                      <span class="text-gray-600 italic text-xs px-2">Protected</span>
-                    }
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- System Insights & Strategy Clustering (AI) -->
-      <section class="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl overflow-hidden portrait:rounded-none portrait:border-x-0">
-        <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-800 flex flex-wrap items-center justify-between gap-4">
-          <h2 class="text-2xl font-bold text-purple-400 flex items-center gap-2">
-            <div class="p-2 bg-purple-900/30 rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            System-Insights & Balancing (KI)
-          </h2>
-          <button 
-            (click)="analyzeSystem()" 
-            [disabled]="isAnalyzing"
-            class="px-4 py-2 bg-purple-600 hover:bg-purple-500 disabled:bg-gray-700 text-white rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-lg shadow-purple-900/20"
-          >
-            @if (isAnalyzing) {
-              <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Analysiere...
-            } @else {
-              Jetzt analysieren
-            }
-          </button>
-        </div>
-
-        <div class="p-5 sm:p-6">
-          @if (systemInsights.length > 0) {
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <!-- Strategy Clusters -->
-              <div class="bg-gray-950 rounded-xl p-5 border border-gray-800 space-y-5">
-                <h3 class="text-lg font-bold text-white border-b border-gray-800 pb-3 flex justify-between items-center">
-                  Strategie-Cluster
-                  <span class="text-xs font-mono text-gray-400">Basis: {{ systemInsights[0].gameCount }} Spiele</span>
-                </h3>
-                <div class="space-y-4">
-                  @for (strat of systemInsights[0].strategies; track strat.name) {
-                    <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 group hover:border-purple-500/30 transition">
-                      <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-bold text-purple-400">{{ strat.name }}</h4>
-                        @if (strat.typicalMetrics) {
-                          <div class="flex gap-2">
-                            <span class="text-[10px] bg-emerald-900/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-900/30">{{ strat.typicalMetrics.soil }}% Boden</span>
-                            <span class="text-[10px] bg-blue-900/20 text-blue-400 px-2 py-0.5 rounded border border-blue-900/30">{{ strat.typicalMetrics.capital | number:'1.0-0' }}€</span>
-                          </div>
-                        }
-                      </div>
-                      <p class="text-sm text-gray-400 italic">"{{ strat.description }}"</p>
-                      @if (strat.keyDecisions) {
-                        <div class="mt-2 text-[10px] text-gray-500">
-                          <span class="font-bold text-gray-400 uppercase">Kern-Entscheidungen:</span> {{ strat.keyDecisions }}
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <!-- Balancing Report -->
-              <div class="bg-gray-950 rounded-xl p-5 border border-gray-800 space-y-5">
-                <h3 class="text-lg font-bold text-white border-b border-gray-800 pb-3">
-                  Balancing & Gameplay Analyse
-                </h3>
-
-                <div class="bg-purple-900/10 p-4 rounded-xl border border-purple-900/30 text-sm text-purple-200 leading-relaxed italic">
-                  {{ systemInsights[0].balancingReport.summary }}
-                </div>
-
-                <!-- Issues -->
-                <div class="space-y-3">
-                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Identifizierte Probleme</h4>
-                  @for (issue of systemInsights[0].balancingReport.issues; track issue.description) {
-                    <div class="flex gap-4 p-3 rounded-xl bg-gray-900 border border-gray-800">
-                      <div
-                        [ngClass]="{
-                          'text-red-500': issue.severity === 'high',
-                          'text-orange-500': issue.severity === 'medium',
-                          'text-blue-500': issue.severity === 'low'
-                        }"
-                        class="shrink-0 mt-1"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div class="text-sm font-bold text-gray-200">{{ issue.description }}</div>
-                        <div class="text-xs text-gray-400 mt-1"><span class="text-purple-400 font-bold">Vorschlag:</span> {{ issue.suggestion }}</div>
-                      </div>
-                    </div>
-                  }
-                </div>
-
-                <!-- Crop Analysis -->
-                <div class="space-y-3">
-                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Fruchtfolge-Check</h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    @for (crop of systemInsights[0].balancingReport.cropAnalysis; track crop.crop) {
-                      <div class="p-2.5 rounded-lg bg-gray-900 border border-gray-800 flex flex-col">
-                        <div class="flex justify-between items-center mb-1">
-                          <span class="text-xs font-bold text-white">{{ crop.crop }}</span>
-                          <span class="text-[9px] text-gray-400 uppercase">{{ crop.usageFrequency }}</span>
-                        </div>
-                        <span class="text-[10px] text-gray-400 italic leading-tight">{{ crop.performanceAssessment }}</span>
-                      </div>
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
-          } @else {
-            <div class="bg-gray-950 rounded-xl p-10 text-center border border-gray-800">
-              <p class="text-gray-400">Noch keine System-Analysen verfügbar. Klicke auf "Jetzt analysieren", um die KI zu starten.</p>
-            </div>
-          }
-        </div>
-      </section>
-
-      <!-- Feedback Section -->
-      <section class="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl overflow-hidden portrait:rounded-none portrait:border-x-0">
-        <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-800 flex flex-wrap items-center justify-between gap-4">
-          <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-2">
-            <div class="p-2 bg-emerald-900/30 rounded-full">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                />
-              </svg>
-            </div>
-            {{ t('superadmin.feedback.title') }}
-          </h2>
-          <span class="text-xs font-mono tabular-nums text-gray-400">
-            {{ feedback.length }} Einträge
-          </span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
-              <tr>
-                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.user') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.category') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.rating') }}</th>
-                <th class="p-4 font-medium">{{ t('superadmin.feedback.table.status') }}</th>
-                <th class="p-4 font-medium text-right">{{ t('superadmin.table.actions') }}</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-800 text-sm">
-              @for (item of feedback; track item) {
-                <tr class="hover:bg-gray-950 transition group">
-                  <td class="p-4">
-                    <div class="font-bold text-white">{{ item.userName }}</div>
-                    <div class="text-xs text-gray-500">{{ item.userEmail }}</div>
-                    <div class="mt-2 text-gray-300 italic">"{{ item.comment }}"</div>
-                    @if (item.aiAnalysis) {
-                      <div class="mt-2 p-2 bg-gray-950 rounded text-xs border border-white/5">
-                        <div class="text-emerald-400 font-bold">AI Summary:</div>
-                        <div class="text-gray-400">{{ item.aiAnalysis.summary }}</div>
-                        <div class="text-emerald-400 font-bold mt-1">Suggested Actions:</div>
-                        <ul class="list-disc list-inside text-gray-400">
-                          @for (action of item.aiAnalysis.suggestedActions; track action) {
-                            <li>{{ action }}</li>
-                          }
-                        </ul>
-                      </div>
-                    }
-                  </td>
-                  <td class="p-4 text-gray-300">
-                    {{ item.category | titlecase }}
-                  </td>
-                  <td class="p-4">
-                    <div class="flex gap-0.5">
-                      @for (star of [1, 2, 3, 4, 5]; track star) {
-                        <svg
-                          class="w-4 h-4"
-                          [class.text-yellow-500]="item.rating >= star"
-                          [class.text-gray-600]="item.rating < star"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                          />
-                        </svg>
-                      }
-                    </div>
-                  </td>
-                  <td class="p-4">
-                    <span
-                      class="px-2 py-0.5 rounded-full text-xs font-medium border"
-                      [ngClass]="{
-                        'bg-blue-900/20 text-blue-300 border-blue-800': item.status === 'new',
-                        'bg-purple-900/20 text-purple-300 border-purple-800': item.status === 'replied',
-                        'bg-emerald-900/20 text-emerald-300 border-emerald-800': item.status === 'resolved',
-                        'bg-red-900/20 text-red-300 border-red-800': item.status === 'rejected',
-                      }"
-                    >
-                      {{ item.status | titlecase }}
-                    </span>
-                  </td>
-                  <td class="p-4 text-right">
-                    <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition">
-                      <button
-                        (click)="initiateFeedbackAction(item, 'reply')"
-                        class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs transition border border-gray-600"
-                      >
-                        {{ t('superadmin.feedback.actions.reply') }}
-                      </button>
-                      <button
-                        (click)="initiateFeedbackAction(item, 'resolve')"
-                        class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs transition border border-gray-600"
-                      >
-                        {{ t('superadmin.feedback.actions.resolve') }}
-                      </button>
-                      <button
-                        (click)="initiateFeedbackAction(item, 'reject')"
-                        class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-xs transition border border-gray-600"
-                      >
-                        {{ t('superadmin.feedback.actions.reject') }}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              }
-              @if (feedback.length === 0) {
-                <tr>
-                  <td colspan="5" class="p-8 text-center text-gray-500">
-                    {{ t('superadmin.feedback.none') }}
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- Selected Admin Games -->
-      @if (selectedAdmin) {
-        <section
-          class="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl overflow-hidden animate-fade-in portrait:rounded-none portrait:border-x-0"
-          id="games-section"
-        >
-          <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-800 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-emerald-900/30 rounded-full text-emerald-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h2 class="text-2xl font-bold text-white">
-                {{ t('superadmin.games.title') }} <span class="text-emerald-400">{{ selectedAdmin.email }}</span>
-              </h2>
-            </div>
-            <button
-              (click)="selectedAdmin = null"
-              class="text-gray-300 hover:text-white flex items-center gap-1 text-sm bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 transition hover:bg-gray-700"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              {{ t('superadmin.games.close') }}
-            </button>
-          </div>
-
-          <div class="p-5 sm:p-6">
-            @if (isLoadingGames) {
-              <div class="py-12 flex flex-col items-center justify-center text-gray-500">
-                <svg
-                  class="animate-spin h-8 w-8 text-emerald-500 mb-2"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                {{ t('superadmin.games.loading') }}
-              </div>
-            }
-
-            @if (!isLoadingGames && adminGames.length === 0) {
-              <div
-                class="p-10 bg-gray-950 rounded-xl text-center text-gray-400 border border-gray-800"
-              >
-                <p class="text-base">{{ t('superadmin.games.none') }}</p>
-              </div>
-            }
-
-            @if (!isLoadingGames && adminGames.length > 0) {
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
-              >
-                @for (game of adminGames; track game) {
-                  <div
-                    class="bg-gray-950 rounded-xl p-6 border border-gray-800 hover:border-emerald-500/50 transition group relative portrait:rounded-none portrait:border-x-0"
-                  >
-                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition">
-                      <button
-                        (click)="deleteGame(game)"
-                        class="text-red-500 hover:text-red-300 p-2 rounded hover:bg-red-900/30"
-                        title="Delete Game"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="flex justify-between items-start mb-3 pr-8">
-                      <h3 class="font-bold text-lg text-white truncate w-full" title="{{ game.name }}">
-                        {{ game.name }}
-                      </h3>
-                    </div>
-                    <div class="text-sm text-gray-400 space-y-2 mb-4">
-                      <div class="flex justify-between border-b border-gray-800 pb-2 mb-2">
-                        <span class="text-xs uppercase tracking-wide text-gray-500">{{
-                          t('superadmin.games.status')
-                        }}</span>
-                        <span
-                          class="text-emerald-400 font-bold bg-emerald-900/20 px-2 py-0.5 rounded text-xs border border-emerald-900/50"
-                          >{{ game.status | uppercase }}</span
-                        >
-                      </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-500">{{ t('superadmin.games.round') }}</span>
-                        <span class="text-white font-mono">{{ game.currentRoundNumber }}</span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-500">{{ t('superadmin.games.created') }}</span>
-                        <span class="text-gray-300">{{ formatDate(game.createdAt) | date: 'shortDate' }}</span>
-                      </div>
-                      <div class="text-[10px] text-gray-600 font-mono mt-2 truncate bg-gray-900 p-1 rounded">
-                        {{ game.id }}
-                      </div>
-                    </div>
-
-                    <!-- Players & Evaluation -->
-                    <div class="mt-4 pt-4 border-t border-gray-800 space-y-4">
-                      @for (player of getPlayers(game); track player.uid) {
-                        <div class="bg-gray-900 p-3 rounded-xl border border-gray-800">
-                          <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-bold text-gray-200">{{ player.displayName }}</span>
-                            <button
-                              (click)="evaluatePlayer(game, player)"
-                              [disabled]="evaluatingPlayers.has(game.id + '-' + player.uid)"
-                              class="text-[10px] px-2 py-1 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 rounded-lg border border-blue-600/30 transition flex items-center gap-2"
-                            >
-                              @if (evaluatingPlayers.has(game.id + '-' + player.uid)) {
-                                <svg
-                                  class="animate-spin h-3 w-3"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                  <path
-                                    class="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                  ></path>
-                                </svg>
-                                {{ t('superadmin.evaluation.evaluating') }}
-                              } @else {
-                                {{ t('superadmin.evaluation.btn') }}
-                              }
-                            </button>
-                          </div>
-
-                          @if (game.evaluations?.[player.uid]) {
-                            <div class="space-y-3 animate-fade-in">
-                              <div>
-                                <div class="text-[10px] uppercase text-gray-500 font-bold mb-1">
-                                  {{ t('superadmin.evaluation.playStyle') }}
-                                </div>
-                                <span class="text-xs bg-emerald-900/30 text-emerald-400 px-2 py-0.5 rounded border border-emerald-900/50">
-                                  {{ game.evaluations![player.uid].playStyle }}
-                                </span>
-                              </div>
-                              <div>
-                                <div class="text-[10px] uppercase text-gray-500 font-bold mb-1">
-                                  {{ t('superadmin.evaluation.analysis') }}
-                                </div>
-                                <p class="text-[11px] text-gray-400 leading-relaxed italic">
-                                  "{{ game.evaluations![player.uid].analysis }}"
-                                </p>
-                              </div>
-                              <div>
-                                <div class="text-[10px] uppercase text-gray-500 font-bold mb-1">
-                                  {{ t('superadmin.evaluation.improvements') }}
-                                </div>
-                                <ul class="list-disc list-inside text-[10px] text-gray-500 space-y-1">
-                                  @for (imp of game.evaluations![player.uid].improvements; track imp) {
-                                    <li>{{ imp }}</li>
-                                  }
-                                </ul>
-                              </div>
-                            </div>
-                          }
-                          
-                          <div class="mt-3 pt-3 border-t border-white/5 flex justify-end">
-                            <button (click)="viewAsPlayer(game.id, player.uid)" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs transition font-bold flex items-center gap-1">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                              {{ t('superadmin.actions.view') || 'Ansehen' }}
-                            </button>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        </section>
-      }
-    </main>
-
-    <!-- Modals below... -->
-    <!-- Delete Confirmation Modal -->
-    @if (gameToDelete) {
-      <div
-        class="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 portrait:p-0"
-        (click)="cancelDelete()"
-      >
-        <div
-          class="bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
-          (click)="$event.stopPropagation()"
-        >
-          <h3
-            class="text-xl font-bold flex items-center gap-2"
-            [class.text-red-400]="!isTrash(gameToDelete)"
-            [class.text-red-600]="isTrash(gameToDelete)"
+            data-testid="superadmin-refresh-btn"
+            (click)="loadData()"
+            [disabled]="isLoadingData || isRefreshing"
+            class="px-3 py-1.5 bg-gray-950 hover:bg-gray-800 disabled:opacity-70 border border-gray-700 rounded-lg text-xs font-semibold text-gray-100 transition-colors flex items-center gap-2 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
+              class="h-3.5 w-3.5 text-emerald-400"
+              [class.animate-spin]="isRefreshing || isLoadingData"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -844,99 +46,283 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
+            <span>{{ t('superadmin.dashboard.refresh') }}</span>
+          </button>
+        </div>
+
+        <!-- Compact Live Status Strip -->
+        <div class="mt-3 pt-3 border-t border-gray-800 grid grid-cols-2 sm:grid-cols-5 gap-2">
+          <div class="bg-gray-950 rounded-lg px-3 py-1.5 border border-gray-800 min-w-0">
+            <div class="text-[10px] sm:text-[11px] uppercase tracking-normal sm:tracking-wider text-gray-400 font-medium truncate">
+              Aktive Spiele
+            </div>
+            <div class="text-base font-bold font-mono tabular-nums text-emerald-400">
+              {{ stats ? stats.games.active : '–' }}
+            </div>
+          </div>
+          <div class="bg-gray-950 rounded-lg px-3 py-1.5 border border-gray-800 min-w-0">
+            <div class="text-[10px] sm:text-[11px] uppercase tracking-normal sm:tracking-wider text-gray-400 font-medium truncate">
+              Lehrkräfte
+            </div>
+            <div class="text-base font-bold font-mono tabular-nums text-white">
+              {{ stats ? stats.users.admins : '–' }}
+            </div>
+          </div>
+          <div class="bg-gray-950 rounded-lg px-3 py-1.5 border border-gray-800 min-w-0">
+            <div class="text-[10px] sm:text-[11px] uppercase tracking-normal sm:tracking-wider text-gray-400 font-medium truncate">
+              Forschungsdatensätze
+            </div>
+            <div class="text-base font-bold font-mono tabular-nums text-white">
+              {{ stats ? researchGames.length : '–' }}
+            </div>
+          </div>
+          <div class="bg-gray-950 rounded-lg px-3 py-1.5 border border-gray-800 min-w-0">
+            <div class="text-[10px] sm:text-[11px] uppercase tracking-normal sm:tracking-wider text-gray-400 font-medium truncate">
+              Feedback
+            </div>
+            <div class="text-base font-bold font-mono tabular-nums text-white">
+              {{ stats ? feedback.length : '–' }}
+            </div>
+          </div>
+          <div class="bg-gray-950 rounded-lg px-3 py-1.5 border border-gray-800 col-span-2 sm:col-span-1 min-w-0">
+            <div class="text-[10px] sm:text-[11px] uppercase tracking-normal sm:tracking-wider text-gray-400 font-medium truncate">
+              Aufrufe gesamt
+            </div>
+            <div class="text-base font-bold font-mono tabular-nums text-white">
+              {{ stats ? (stats.telemetry?.viewsTotal || 0) : '–' }}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      @if (errorMessage) {
+        <div
+          data-testid="superadmin-error-banner"
+          role="alert"
+          class="bg-rose-950 border border-rose-700 rounded-xl px-4 py-3 flex items-center justify-between text-sm text-rose-200 portrait:rounded-none portrait:border-x-0"
+        >
+          <span>{{ errorMessage }}</span>
+          <button
+            type="button"
+            (click)="errorMessage = null"
+            class="text-rose-300 hover:text-white font-bold px-2 cursor-pointer"
+            aria-label="Fehlermeldung schließen"
+          >
+            &times;
+          </button>
+        </div>
+      }
+
+      <!-- Accessible Single-Row Horizontal Tablist -->
+      <div class="bg-gray-900 rounded-xl border border-gray-800 px-2 sm:px-4 portrait:rounded-none portrait:border-x-0">
+        <div role="tablist" aria-label="Bereiche der System-Konsole" class="super-admin-tablist">
+          @for (tab of tabs; track tab.id; let idx = $index) {
+            <button
+              type="button"
+              role="tab"
+              [id]="'superadmin-tab-' + tab.id"
+              [attr.data-testid]="'superadmin-tab-' + tab.id"
+              [attr.aria-selected]="activeTab === tab.id"
+              [tabIndex]="activeTab === tab.id ? 0 : -1"
+              (click)="selectTab(tab.id, $event)"
+              (keydown)="onTabKeydown($event, idx)"
+              class="px-3.5 py-2.5 text-sm font-semibold whitespace-nowrap inline-flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500"
+            >
+              <span>{{ tab.label }}</span>
+              @if (tabCount(tab.id) !== null) {
+                <span class="text-xs font-mono tabular-nums px-1.5 py-0.5 rounded bg-gray-950 border border-gray-800 text-gray-300">
+                  {{ tabCount(tab.id) }}
+                </span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Initial Cold-Load Skeleton (Dimension-Matched, Zero Black Overlay Slab) -->
+      @if (isLoadingData && !stats) {
+        <div data-testid="superadmin-loading-skeleton" class="space-y-4" aria-busy="true">
+          <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0">
+            <div class="px-5 py-3.5 border-b border-gray-800 bg-gray-950 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <progress aria-label="Systemdaten werden geladen" class="soil-spinner"></progress>
+                <div>
+                  <div class="text-sm font-semibold text-gray-200">{{ t('superadmin.loading') }}</div>
+                  <div class="text-xs text-gray-400">Zeitreihen, Konten und Forschungsdaten werden abgerufen</div>
+                </div>
+              </div>
+              <div class="hidden sm:flex gap-1.5" aria-hidden="true">
+                <div class="h-7 w-16 rounded bg-gray-900 border border-gray-800 animate-pulse"></div>
+                <div class="h-7 w-16 rounded bg-gray-900 border border-gray-800 animate-pulse"></div>
+                <div class="h-7 w-20 rounded bg-gray-900 border border-gray-800 animate-pulse"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-gray-800 border-b border-gray-800" aria-hidden="true">
+              @for (s of [1, 2, 3, 4]; track s) {
+                <div class="px-4 py-3 space-y-2">
+                  <div class="h-3 w-28 rounded bg-gray-800 animate-pulse"></div>
+                  <div class="h-7 w-20 rounded bg-gray-800 animate-pulse"></div>
+                  <div class="h-2.5 w-24 rounded bg-gray-800/70 animate-pulse"></div>
+                </div>
+              }
+            </div>
+
+            <div class="p-4 sm:px-5 sm:py-4" aria-hidden="true">
+              <div class="h-[204px] w-full rounded-lg bg-gray-950 border border-gray-800 animate-pulse"></div>
+            </div>
+          </div>
+
+          <div class="bg-gray-900 rounded-xl border border-gray-800 p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-3 gap-4 portrait:rounded-none portrait:border-x-0" aria-hidden="true">
+            @for (c of [1, 2, 3]; track c) {
+              <div class="h-36 rounded-lg bg-gray-950 border border-gray-800 animate-pulse"></div>
+            }
+          </div>
+        </div>
+      } @else {
+        <!-- Unstyled role="tabpanel" elements with hidden="until-found" (no padding/borders/gap on panel root!) -->
+        <div>
+          <div
+            role="tabpanel"
+            id="superadmin-panel-analytics"
+            aria-labelledby="superadmin-tab-analytics"
+            [attr.hidden]="activeTab === 'analytics' ? null : 'until-found'"
+            (beforematch)="selectTab('analytics')"
+          >
+            <div>
+              <app-super-admin-stats class="block" [stats]="stats"></app-super-admin-stats>
+            </div>
+          </div>
+
+          <div
+            role="tabpanel"
+            id="superadmin-panel-users"
+            aria-labelledby="superadmin-tab-users"
+            [attr.hidden]="activeTab === 'users' ? null : 'until-found'"
+            (beforematch)="selectTab('users')"
+          >
+            <div>
+              <app-super-admin-users
+                class="block"
+                [stats]="stats"
+                [admins]="admins"
+                [selectedAdmin]="selectedAdmin"
+                [adminGames]="adminGames"
+                [isLoadingGames]="isLoadingGames"
+                [evaluatingPlayers]="evaluatingPlayers"
+                [systemInsights]="systemInsights"
+                [isAnalyzing]="isAnalyzing"
+                (viewGames)="viewGames($event)"
+                (closeAdminGames)="selectedAdmin = null"
+                (setQuota)="setQuota($event)"
+                (banAdmin)="banAdmin($event)"
+                (deleteAdmin)="deleteAdmin($event)"
+                (deleteGame)="deleteGame($event)"
+                (evaluatePlayer)="evaluatePlayer($event.game, $event.player)"
+                (viewAsPlayer)="viewAsPlayer($event.gameId, $event.playerUid)"
+                (analyzeSystem)="analyzeSystem()"
+              ></app-super-admin-users>
+            </div>
+          </div>
+
+          <div
+            role="tabpanel"
+            id="superadmin-panel-research"
+            aria-labelledby="superadmin-tab-research"
+            [attr.hidden]="activeTab === 'research' ? null : 'until-found'"
+            (beforematch)="selectTab('research')"
+          >
+            <div>
+              <app-super-admin-research
+                class="block"
+                [researchGames]="researchGames"
+                [expandedGames]="expandedGames"
+                (toggleGameExpansion)="toggleGameExpansion($event)"
+                (viewAsPlayer)="viewAsPlayer($event.gameId, $event.playerUid)"
+              ></app-super-admin-research>
+            </div>
+          </div>
+
+          <div
+            role="tabpanel"
+            id="superadmin-panel-feedback"
+            aria-labelledby="superadmin-tab-feedback"
+            [attr.hidden]="activeTab === 'feedback' ? null : 'until-found'"
+            (beforematch)="selectTab('feedback')"
+          >
+            <div>
+              <app-super-admin-feedback
+                class="block"
+                [feedback]="feedback"
+                (manageFeedback)="initiateFeedbackAction($event.item, $event.action)"
+              ></app-super-admin-feedback>
+            </div>
+          </div>
+        </div>
+      }
+    </main>
+
+    <!-- Delete Game Confirmation Modal -->
+    @if (gameToDelete) {
+      <div
+        class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 portrait:p-0"
+        (click)="cancelDelete()"
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-game-modal-title"
+          class="bg-gray-900 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
+          (click)="$event.stopPropagation()"
+        >
+          <h3 id="delete-game-modal-title" class="text-lg font-bold text-rose-400">
             {{ isTrash(gameToDelete) ? t('superadmin.delete.game.permanent') : t('superadmin.delete.game.title') }}
           </h3>
 
-          <p class="text-gray-300">
-            {{ isTrash(gameToDelete) ? t('superadmin.delete.game.confirm') : t('superadmin.delete.game.confirm') }}
-            <span class="font-bold text-white">{{ gameToDelete.name }}</span
-            >?
+          <p class="text-sm text-gray-300">
+            {{ t('superadmin.delete.game.confirm') }}
+            <span class="font-bold text-white">{{ gameToDelete.name }}</span>
           </p>
 
-          <!-- Soft Delete Info -->
           @if (!isTrash(gameToDelete)) {
-            <div class="bg-red-900/20 border border-red-900/50 p-3 rounded-lg flex gap-3 items-start">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div class="text-sm text-red-200/80">{{ t('superadmin.delete.game.soft') }}</div>
+            <div class="bg-gray-950 border border-gray-800 p-3 rounded-lg text-xs text-gray-300">
+              {{ t('superadmin.delete.game.soft') }}
             </div>
-          }
-
-          <!-- Permanent Delete Warning -->
-          @if (isTrash(gameToDelete)) {
-            <div
-              class="bg-red-600/20 border border-red-500/50 p-3 rounded-lg flex gap-3 items-start animate-pulse-slow"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-              <div class="text-sm text-red-200">
-                {{ t('superadmin.delete.game.warning') }}
-              </div>
+          } @else {
+            <div class="bg-rose-950 border border-rose-800 p-3 rounded-lg text-xs text-rose-200">
+              {{ t('superadmin.delete.game.warning') }}
             </div>
-          }
-
-          <!-- Type Confirmation -->
-          @if (isTrash(gameToDelete)) {
             <div>
-              <label
-                class="text-xs text-gray-400 block mb-1"
-                [innerHTML]="t('superadmin.delete.game.typeConfirm')"
-              ></label>
+              <label for="delete-game-confirm-input" class="text-xs text-gray-300 block mb-1.5">
+                {{ t('superadmin.delete.game.typeConfirm') }}
+              </label>
               <input
+                id="delete-game-confirm-input"
                 [(ngModel)]="deleteConfirmInput"
                 placeholder="DELETE"
-                class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:border-red-500 focus:outline-none placeholder-gray-600"
+                class="w-full px-3.5 py-2 bg-gray-950 border border-gray-700 rounded-lg text-white font-mono text-sm focus:border-rose-500 focus:outline-none"
               />
             </div>
           }
 
-          <div class="flex gap-3 mt-4">
+          <div class="flex gap-3 pt-2">
             <button
+              type="button"
               (click)="cancelDelete()"
-              class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition"
+              class="flex-1 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors border border-gray-700 cursor-pointer"
             >
               {{ t('superadmin.modal.cancel') }}
             </button>
             <button
+              type="button"
               (click)="confirmDelete()"
               [disabled]="isDeleting || (isTrash(gameToDelete) && deleteConfirmInput !== 'DELETE')"
-              class="flex-1 py-3 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg font-bold transition shadow-lg flex items-center justify-center gap-2"
+              class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-500 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg text-sm font-bold transition-colors cursor-pointer"
             >
-              @if (!isDeleting) {
-                <span>{{
-                  isTrash(gameToDelete) ? t('superadmin.delete.game.permanent') : t('superadmin.delete.game.title')
-                }}</span>
-              }
-              @if (isDeleting) {
-                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-              }
+              {{ isDeleting ? 'Lösche …' : (isTrash(gameToDelete) ? t('superadmin.delete.game.permanent') : t('superadmin.delete.game.title')) }}
             </button>
           </div>
         </div>
@@ -945,164 +331,98 @@
 
     <!-- Quota Modal -->
     @if (showQuotaModal) {
-      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
-        <!-- Modal Backdrop -->
-        <div class="absolute inset-0 bg-black/75" (click)="closeQuotaModal()"></div>
-
-        <!-- Modal Content -->
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 portrait:p-0" (click)="closeQuotaModal()">
         <div
-          class="relative bg-gray-900 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden transform transition-all scale-100 portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="quota-modal-title"
+          class="bg-gray-900 rounded-xl border border-gray-700 w-full max-w-md overflow-hidden shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:flex portrait:flex-col portrait:justify-center"
+          (click)="$event.stopPropagation()"
         >
-          <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-950">
-            <h3 class="text-xl font-bold text-white flex items-center gap-2">
-              <div class="p-1.5 bg-blue-500/20 rounded-lg text-blue-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                  />
-                </svg>
-              </div>
-              {{ t('superadmin.quota.modal.title') }}
-            </h3>
-            <button (click)="closeQuotaModal()" class="text-gray-400 hover:text-white transition">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+          <div class="p-5 border-b border-gray-800 flex justify-between items-center bg-gray-950">
+            <h3 id="quota-modal-title" class="text-lg font-bold text-white">{{ t('superadmin.quota.modal.title') }}</h3>
+            <button
+              type="button"
+              (click)="closeQuotaModal()"
+              class="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              aria-label="Dialog schließen"
+            >
+              &times;
             </button>
           </div>
 
-          <div class="p-6 space-y-4">
-            <p class="text-gray-400 text-sm">
+          <div class="p-5 space-y-4">
+            <p class="text-gray-300 text-sm">
               {{ t('superadmin.quota.modal.desc') }}
-              <span class="text-white font-bold">{{ selectedUserForQuota?.email }}</span
-              >.
+              <span class="text-white font-mono font-semibold">{{ selectedUserForQuota?.email }}</span>.
             </p>
 
-            <div class="space-y-2">
-              <label class="block text-xs uppercase tracking-wide text-gray-500 font-bold">{{
-                t('superadmin.quota.modal.label')
-              }}</label>
+            <div class="space-y-1.5">
+              <label for="quota-number-input" class="block text-xs uppercase tracking-wider text-gray-400 font-semibold">
+                {{ t('superadmin.quota.modal.label') }}
+              </label>
               <input
+                id="quota-number-input"
                 type="number"
                 [(ngModel)]="newQuotaValue"
                 min="0"
-                class="w-full bg-gray-800 border-2 border-gray-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition mb-2 text-lg font-mono"
+                class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2.5 text-white focus:border-emerald-500 focus:outline-none text-base font-mono tabular-nums"
               />
             </div>
           </div>
 
-          <div class="p-6 bg-gray-950 border-t border-gray-800 flex justify-end gap-3">
+          <div class="p-5 bg-gray-950 border-t border-gray-800 flex justify-end gap-3">
             <button
+              type="button"
               (click)="closeQuotaModal()"
               [disabled]="isSavingQuota"
-              class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition disabled:opacity-50"
+              class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors border border-gray-700 disabled:opacity-50 cursor-pointer"
             >
               {{ t('superadmin.modal.cancel') }}
             </button>
             <button
+              type="button"
               (click)="saveQuota()"
               [disabled]="isSavingQuota"
-              class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/20 transition flex items-center justify-center gap-2 min-w-[100px]"
+              class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-lg transition-colors cursor-pointer"
             >
-              @if (!isSavingQuota) {
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>{{ t('superadmin.quota.modal.save') }}</span>
-              } @else {
-                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-              }
+              {{ isSavingQuota ? 'Speichere …' : t('superadmin.quota.modal.save') }}
             </button>
           </div>
         </div>
       </div>
     }
 
-    <!-- Feedback Action Modals -->
+    <!-- Feedback Action Modal -->
     @if (feedbackToManage) {
-      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 animate-fade-in portrait:p-0">
-        <div class="absolute inset-0 bg-black/75" (click)="cancelFeedbackAction()"></div>
+      <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 portrait:p-0" (click)="cancelFeedbackAction()">
         <div
-          class="relative bg-gray-800 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="feedback-modal-title"
+          class="bg-gray-900 border border-gray-700 p-6 rounded-xl flex flex-col gap-4 max-w-md w-full shadow-2xl portrait:rounded-none portrait:max-w-none portrait:h-full portrait:justify-center"
           (click)="$event.stopPropagation()"
         >
-          <div class="flex items-center gap-3 mb-2">
-            <div
-              class="p-2 rounded-full"
-              [ngClass]="{
-                'bg-blue-900/30 text-blue-400': feedbackAction === 'reply',
-                'bg-emerald-900/30 text-emerald-400': feedbackAction === 'resolve',
-                'bg-red-900/30 text-red-400': feedbackAction === 'reject',
-              }"
-            >
-              @if (feedbackAction === 'reply') {
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
-                  />
-                </svg>
-              }
-              @if (feedbackAction === 'resolve') {
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-              }
-              @if (feedbackAction === 'reject') {
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              }
-            </div>
-            <h3 class="text-xl font-bold text-white">
-              {{
-                feedbackAction === 'reply'
-                  ? t('superadmin.feedback.modal.reply.title')
-                  : feedbackAction === 'resolve'
-                    ? t('superadmin.feedback.modal.resolve.title')
-                    : t('superadmin.reject.modal.title')
-              }}
-            </h3>
-          </div>
+          <h3 id="feedback-modal-title" class="text-lg font-bold text-white">
+            {{
+              feedbackAction === 'reply'
+                ? t('superadmin.feedback.modal.reply.title')
+                : feedbackAction === 'resolve'
+                  ? t('superadmin.feedback.modal.resolve.title')
+                  : t('superadmin.reject.modal.title')
+            }}
+          </h3>
 
-          <div class="bg-gray-950 p-4 rounded-lg border border-gray-700 mb-2">
-            <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">
-              Feedback from {{ feedbackToManage.userName }}
+          <div class="bg-gray-950 p-3.5 rounded-lg border border-gray-800">
+            <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">
+              Feedback von {{ feedbackToManage.userName || 'Anonym' }}
             </div>
-            <div class="text-sm text-gray-300">"{{ feedbackToManage.comment }}"</div>
+            <div class="text-sm text-gray-200">{{ feedbackToManage.comment }}</div>
           </div>
 
           @if (feedbackAction !== 'reject') {
-            <div class="space-y-2">
-              <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">
+            <div class="space-y-1.5">
+              <label for="feedback-action-input" class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">
                 {{
                   feedbackAction === 'reply'
                     ? t('superadmin.feedback.modal.reply.label')
@@ -1111,17 +431,19 @@
               </label>
               @if (feedbackAction === 'reply') {
                 <textarea
+                  id="feedback-action-input"
                   [(ngModel)]="feedbackValue"
                   rows="4"
-                  class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 resize-none text-sm"
-                  placeholder="Write your response..."
+                  class="w-full px-3.5 py-2 bg-gray-950 border border-gray-700 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-500 resize-y text-sm"
+                  placeholder="Deine Antwort eingeben …"
                 ></textarea>
               }
               @if (feedbackAction === 'resolve') {
                 <input
+                  id="feedback-action-input"
                   [(ngModel)]="feedbackValue"
-                  class="w-full px-4 py-2 bg-gray-950 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-600 text-sm"
-                  placeholder="GitHub issue link, etc."
+                  class="w-full px-3.5 py-2 bg-gray-950 border border-gray-700 rounded-lg text-white focus:border-emerald-500 focus:outline-none placeholder-gray-500 text-sm"
+                  placeholder="z. B. GitHub-Issue-Link oder Notiz"
                 />
               }
             </div>
@@ -1129,37 +451,35 @@
             <p class="text-gray-300 text-sm">{{ t('superadmin.reject.modal.desc') }}</p>
           }
 
-          <div class="flex gap-3 mt-4">
+          <div class="flex gap-3 pt-2">
             <button
+              type="button"
               (click)="cancelFeedbackAction()"
               [disabled]="isManagingFeedback"
-              class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition disabled:opacity-50"
+              class="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors border border-gray-700 disabled:opacity-50 cursor-pointer"
             >
               {{ t('superadmin.modal.cancel') }}
             </button>
             <button
+              type="button"
               (click)="confirmFeedbackAction()"
               [disabled]="(feedbackAction === 'reply' && !feedbackValue) || isManagingFeedback"
-              class="flex-1 py-2 font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2"
-              [ngClass]="{
-                'bg-blue-600 hover:bg-blue-500 text-white': feedbackAction === 'reply',
-                'bg-emerald-600 hover:bg-emerald-500 text-white': feedbackAction === 'resolve',
-                'bg-red-600 hover:bg-red-500 text-white': feedbackAction === 'reject',
-                'opacity-50 cursor-not-allowed': (feedbackAction === 'reply' && !feedbackValue) || isManagingFeedback,
-              }"
+              class="flex-1 py-2 text-sm font-bold rounded-lg transition-colors text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              [class.bg-emerald-600]="feedbackAction !== 'reject'"
+              [class.hover:bg-emerald-500]="feedbackAction !== 'reject'"
+              [class.bg-rose-600]="feedbackAction === 'reject'"
+              [class.hover:bg-rose-500]="feedbackAction === 'reject'"
             >
               @if (!isManagingFeedback) {
-                <span>
-                  {{
-                    feedbackAction === 'reply'
-                      ? t('superadmin.feedback.modal.reply.send')
-                      : feedbackAction === 'resolve'
-                        ? t('superadmin.feedback.modal.resolve.confirm')
-                        : t('superadmin.actions.reject')
-                  }}
-                </span>
+                {{
+                  feedbackAction === 'reply'
+                    ? t('superadmin.feedback.modal.reply.send')
+                    : feedbackAction === 'resolve'
+                      ? t('superadmin.feedback.modal.resolve.confirm')
+                      : t('superadmin.actions.reject')
+                }}
               } @else {
-                <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                Verarbeite …
               }
             </button>
           </div>
@@ -1171,7 +491,7 @@
     @if (adminActionState) {
       <div
         data-testid="superadmin-confirm-modal"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
         (click)="cancelAdminAction()"
       >
         <div
@@ -1181,7 +501,7 @@
           aria-modal="true"
           aria-labelledby="superadmin-confirm-title"
         >
-          <h3 id="superadmin-confirm-title" class="text-xl font-bold text-white">
+          <h3 id="superadmin-confirm-title" class="text-lg font-bold text-white">
             @if (adminActionState.action === 'ban') {
               Konto dauerhaft sperren
             } @else {
@@ -1190,9 +510,9 @@
           </h3>
           <p class="text-sm text-gray-300 leading-relaxed">
             @if (adminActionState.action === 'ban') {
-              Gib <span class="font-mono font-bold text-orange-300">BAN</span> ein, um {{ adminActionState.user.email }} dauerhaft zu sperren.
+              Gib <span class="font-mono font-bold text-amber-300">BAN</span> ein, um {{ adminActionState.user.email }} dauerhaft zu sperren.
             } @else {
-              Gib <span class="font-mono font-bold text-red-400">DELETE</span> ein, um {{ adminActionState.user.email }} unwiderruflich zu löschen.
+              Gib <span class="font-mono font-bold text-rose-400">DELETE</span> ein, um {{ adminActionState.user.email }} unwiderruflich zu löschen.
             }
           </p>
           <input
@@ -1201,13 +521,13 @@
             [(ngModel)]="adminActionConfirmInput"
             (keyup.enter)="confirmAdminAction()"
             [placeholder]="adminActionState.action === 'ban' ? 'BAN' : 'DELETE'"
-            class="w-full px-4 py-2 bg-gray-950 border border-gray-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
+            class="w-full px-3.5 py-2 bg-gray-950 border border-gray-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-emerald-500"
           />
           <div class="flex gap-3 pt-2">
             <button
               type="button"
               (click)="cancelAdminAction()"
-              class="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition border border-gray-700"
+              class="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors border border-gray-700 cursor-pointer"
             >
               Abbrechen
             </button>
@@ -1216,7 +536,7 @@
               data-testid="superadmin-confirm-submit-btn"
               (click)="confirmAdminAction()"
               [disabled]="adminActionConfirmInput !== (adminActionState.action === 'ban' ? 'BAN' : 'DELETE')"
-              class="flex-1 py-2 bg-red-600 hover:bg-red-500 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold rounded-lg transition"
+              class="flex-1 py-2 bg-rose-600 hover:bg-rose-500 disabled:bg-gray-800 disabled:text-gray-500 text-white text-sm font-bold rounded-lg transition-colors cursor-pointer"
             >
               Bestätigen
             </button>

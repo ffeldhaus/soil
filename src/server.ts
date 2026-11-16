@@ -136,7 +136,7 @@ async function proxyToCloudFunction(
     const buffer = Buffer.from(await upstream.arrayBuffer());
     res.status(upstream.status).send(buffer);
   } catch (err) {
-    console.error(`Error proxying ${req.originalUrl} to ${functionName}:`, err);
+    console.error(`Error proxying ${req.path} to ${functionName}:`, err);
     const status = err instanceof Error && err.name === 'TimeoutError' ? 504 : 502;
     res.status(status).json({ error: 'Upstream service unavailable' });
   }
@@ -213,15 +213,15 @@ app.get(['/llms.txt', '/llms.txt/'], (_req, res) => {
     res.send(readFileSync(llmsFile, 'utf-8'));
     return;
   }
-  res.send(`# SOIL – Online-Planspiel & Interaktive Landwirtschaftssimulation für BNE, Biologie, Geographie & Wirtschaft
+  res.send(`# SOIL – Kostenloses Planspiel & Unterrichtsmaterial (OER) für Biologie, Erdkunde/Geografie, Wirtschaft & BNE
 
-> SOIL ist ein kostenloses, wissenschaftlich fundiertes und werbefreies Online-Planspiel und Simulationsspiel (Open Educational Resource, OER unter CC BY 4.0; Quellcode unter Apache 2.0) für Bildung für nachhaltige Entwicklung (BNE) über nachhaltige Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie. Lernende der Klassen 5 bis 13 (Sekundarstufe I/II in allen 16 Bundesländern), Studierende und Selbstlernende bewirtschaften über 5 bis 20 Runden (Standard: 10 Runden = 10 Jahre) direkt online im Browser einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital – allein gegen KI-Höfe oder DSGVO-konform ohne Schüler-Accounts per 4-stelliger Team-PIN im Klassenzimmer-Multiplayer.
+> SOIL ist kostenloses digitales Unterrichtsmaterial (Open Educational Resource, OER unter CC BY 4.0; Quellcode unter Apache 2.0) und ein wissenschaftlich fundiertes, werbefreies Online-Planspiel zu nachhaltiger Landwirtschaft, Bodenfruchtbarkeit, Fruchtfolge und Agrarökonomie für Biologie, Erdkunde / Geografie (Geographie), Wirtschaft und Bildung für nachhaltige Entwicklung (BNE). Lernende an weiterführenden Schulen in allen 16 Bundesländern, Berufsschulen und Hochschulen bewirtschaften über mehrere flexibel einstellbare Runden bzw. Wirtschaftsjahre direkt im Browser einen Betrieb mit 40 Ackerparzellen und 100.000 € Startkapital – allein gegen KI-Höfe oder DSGVO-konform ohne Schüler-Accounts per 4-stelliger Team-PIN im Klassenzimmer-Multiplayer.
 
 ## Hauptseiten & Dokumentation
 
 - [Startseite & Sofort-Spielstart](https://soil.app/): Direkt im Browser ohne Registrierung ein lokales Einzelspieler-Spiel starten oder den 1-minütigen Trailer ansehen.
-- [Spielhandbuch & Kulturdatenbank](https://soil.app/manual): Vollständige Anleitung zu Fruchtfolge, Bodenqualität (Humus), Nährstoffhaushalt, Witterungsrisiken, Schädlingen, EU-Bio-Siegel, Regionalverträgen sowie allen 12 Bewirtschaftungsoptionen (10 Ackerkulturen: Weizen, Gerste, Hafer, Roggen, Mais, Raps, Kartoffel, Zuckerrübe, Ackerbohne, Erbse; dazu Tiere/Weidehaltung und Brachland als Grünbrache/Blühstreifen).
-- [Didaktischer & wissenschaftlicher Hintergrund](https://soil.app/info): Einsatz im Unterricht (BNE, Biologie, Geographie, Wirtschaft), Lehrplanbezug für alle 16 Bundesländer, wissenschaftliche Quellen (\`sources.json\`) und Spielmechanik.
+- [Spielhandbuch & Begleitendes Unterrichtsmaterial](https://soil.app/manual): Vollständige Anleitung zu Fruchtfolge, Bodenfruchtbarkeit (Humus), Nährstoffhaushalt, Witterungsrisiken, Schädlingen, EU-Bio-Siegel, Regionalverträgen sowie allen 12 Bewirtschaftungsoptionen (10 Ackerkulturen: Weizen, Gerste, Hafer, Roggen, Mais, Raps, Kartoffel, Zuckerrübe, Ackerbohne, Erbse; dazu Tiere/Weidehaltung und Brachland als Grünbrache/Blühstreifen).
+- [Unterrichtsmaterial, Lehrplanbezug & Wissenschaftlicher Hintergrund](https://soil.app/info): Kostenloses OER-Unterrichtsmaterial für Biologie, Erdkunde / Geografie, Wirtschaft und BNE, Lehrplanbezug für alle 16 Bundesländer, FAQ zum Unterrichtseinsatz, wissenschaftliche Quellen (\`sources.json\`) und Spielmechanik.
 - [Offene Forschungsdaten, REST/CSV-API & MCP-Server](https://soil.app/research): Anonymisierte Spielverläufe abgeschlossener Partien unter CC BY 4.0 für Wissenschaft, Lehre und KI-Agenten (inklusive öffentlicher REST/CSV-Schnittstelle unter \`https://soil.app/api/research\` und Model Context Protocol Server unter \`https://soil.app/mcp\`).
 - [Spiele erstellen & verwalten (Lehrkräfte-Dashboard)](https://soil.app/admin): Lokale Spiele verwalten oder als Lehrkraft mehrteilige Klassenzimmer-Spiele mit PIN-Zugang und QR-Codes erstellen.
 `);
@@ -296,17 +296,17 @@ app.get('/sitemap.xml', (_req, res) => {
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
     <loc>https://soil.app/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://soil.app/trailer</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <priority>0.9</priority>
     <video:video>
       <video:thumbnail_loc>https://soil.app/SOIL-screenshot.png</video:thumbnail_loc>
       <video:title>SOIL – Das interaktive Planspiel zu Landwirtschaft, Bodenfruchtbarkeit &amp; Nachhaltigkeit</video:title>
-      <video:description>Vierzig Felder, 100.000 € Startkapital und zehn Jahre Zeit: Übernimm deinen eigenen Hof in der interaktiven Landwirtschaftssimulation SOIL für Unterricht (BNE, Biologie, Geographie, Wirtschaft), Studium und Selbstlernende.</video:description>
+      <video:description>Vierzig Felder, 100.000 € Startkapital und volle Entscheidungsfreiheit über mehrere Wirtschaftsjahre: Übernimm deinen eigenen Hof im kostenlosen Online-Planspiel und Unterrichtsmaterial SOIL für Biologie, Erdkunde / Geografie, Wirtschaft und BNE in Schule, Studium und Weiterbildung.</video:description>
       <video:content_loc>https://soil.app/assets/video/soil-trailer.mp4</video:content_loc>
       <video:duration>65</video:duration>
       <video:publication_date>2026-10-30T14:00:00+01:00</video:publication_date>
@@ -315,12 +315,12 @@ app.get('/sitemap.xml', (_req, res) => {
   </url>
   <url>
     <loc>https://soil.app/manual</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://soil.app/info</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-16</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
@@ -827,9 +827,6 @@ app.use('*path', async (req, res, next) => {
 
   const engine = await ensureAngularAppInitialized();
 
-  // biome-ignore lint/suspicious/noConsole: used for production logging
-  console.log(`Handling request: ${req.method} ${req.originalUrl}`);
-
   engine
     .handle(req)
     .then((response) => {
@@ -841,7 +838,7 @@ app.use('*path', async (req, res, next) => {
       }
     })
     .catch((err) => {
-      console.error(`Error handling request ${req.originalUrl}:`, err);
+      console.error(`Error handling request ${req.path}:`, err);
       next(err);
     });
 });

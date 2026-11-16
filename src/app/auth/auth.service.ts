@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Client authentication and session state service for SOIL.
+ *
+ * Key invariants:
+ * - Exposes `authStateReady$` alongside `user$` so protected admin routes wait for Firebase Auth cold-reload
+ *   hydration before redirecting unauthenticated sessions.
+ * - Preserves local guest (`soil_guest_uid`) and local-game (`local-*`) sessions without requiring Firebase Auth.
+ * - Routes native iOS Sign in with Apple through `SignInWithApplePlugin` and web through `OAuthProvider('apple.com')`.
+ */
+
 import { Injectable, inject, isDevMode, NgZone } from '@angular/core';
 import { registerPlugin } from '@capacitor/core';
 import {
@@ -37,6 +47,8 @@ export class AuthService {
   private ngZone = inject(NgZone);
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
+  private authReadySubject = new BehaviorSubject<boolean>(false);
+  authStateReady$ = this.authReadySubject.asObservable();
 
   // Lazy getters for Firebase Functions to avoid SSR issues with mock objects
   private get playerLoginFn() {
@@ -129,12 +141,20 @@ export class AuthService {
 
   constructor() {
     const isBrowser = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+    this.restoreInitialBrowserSession(isBrowser);
+    if (!isBrowser || !this.auth || this.isTestMode() || this.userSubject.value !== null) {
+      this.authReadySubject.next(true);
+    }
     if (this.auth) {
       onAuthStateChanged(this.auth, (u) => {
-        this.ngZone.run(() => this.handleAuthStateChange(u, isBrowser));
+        this.ngZone.run(() => {
+          this.handleAuthStateChange(u, isBrowser);
+          if (!this.authReadySubject.value) {
+            this.authReadySubject.next(true);
+          }
+        });
       });
     }
-    this.restoreInitialBrowserSession(isBrowser);
   }
 
   private loginLocalPlayer(gameId: string, pin: string, isBrowser: boolean): { user: User | null } {

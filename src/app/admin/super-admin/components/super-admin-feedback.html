@@ -1,0 +1,129 @@
+<section class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0">
+  <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
+    <div>
+      <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Feedback &amp; Vorschläge</h2>
+      <p class="text-xs text-gray-400 mt-0.5">Rückmeldungen aus Spielrunden und Lehrkräfte-Einsätzen</p>
+    </div>
+    <span class="text-xs font-mono tabular-nums text-gray-400">{{ feedback.length }} Einträge</span>
+  </div>
+
+  <div
+    tabindex="0"
+    role="region"
+    aria-label="Eingegangenes Feedback"
+    class="soil-table-region overflow-x-auto max-h-[42rem]"
+  >
+    <table class="w-full text-left border-separate border-spacing-0">
+      <thead class="sticky top-0 z-10 bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
+        <tr>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Absender &amp; Nachricht</th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Kategorie</th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Bewertung</th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Status</th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800 text-right">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-800 text-sm">
+        @for (item of feedback; track item.id) {
+          <tr class="hover:bg-gray-950 transition-colors">
+            <td class="p-4 max-w-xl">
+              <div class="font-semibold text-white">{{ item.userName || 'Anonym' }}</div>
+              @if (item.userEmail) {
+                <div class="text-xs text-gray-400 font-mono">{{ item.userEmail }}</div>
+              }
+              <div class="mt-2 text-gray-200 leading-relaxed">{{ item.comment }}</div>
+              @if (item.aiAnalysis) {
+                <div class="mt-2.5 p-3 bg-gray-950 rounded-lg text-xs border border-gray-800 space-y-1">
+                  <div class="text-emerald-400 font-semibold">KI-Zusammenfassung:</div>
+                  <div class="text-gray-300">{{ item.aiAnalysis.summary }}</div>
+                  @if (item.aiAnalysis.suggestedActions.length) {
+                    <div class="text-emerald-400 font-semibold pt-1">Empfohlene Maßnahmen:</div>
+                    <ul class="list-disc list-inside text-gray-400 space-y-0.5">
+                      @for (action of item.aiAnalysis.suggestedActions; track action) {
+                        <li>{{ action }}</li>
+                      }
+                    </ul>
+                  }
+                </div>
+              }
+            </td>
+            <td class="p-4 text-gray-300 whitespace-nowrap">
+              {{ formatCategory(item.category) }}
+            </td>
+            <td class="p-4 whitespace-nowrap">
+              <div class="flex gap-0.5" [attr.aria-label]="item.rating + ' von 5 Sternen'">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <svg
+                    class="w-4 h-4"
+                    [class.text-amber-400]="item.rating >= star"
+                    [class.text-gray-700]="item.rating < star"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                  </svg>
+                }
+              </div>
+            </td>
+            <td class="p-4 whitespace-nowrap">
+              <span
+                class="px-2 py-0.5 rounded text-xs font-medium border"
+                [ngClass]="{
+                  'bg-sky-950 text-sky-300 border-sky-800': item.status === 'new',
+                  'bg-amber-950 text-amber-300 border-amber-800': item.status === 'replied',
+                  'bg-emerald-950 text-emerald-300 border-emerald-800': item.status === 'resolved',
+                  'bg-rose-950 text-rose-300 border-rose-800': item.status === 'rejected'
+                }"
+              >
+                {{ formatStatus(item.status) }}
+              </span>
+            </td>
+            <td class="p-4 text-right whitespace-nowrap">
+              <div class="inline-flex items-center justify-end gap-1.5">
+                @if (item.userEmail) {
+                  <button
+                    type="button"
+                    (click)="manageFeedback.emit({ item, action: 'reply' })"
+                    class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                  >
+                    Antworten
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    (click)="manageFeedback.emit({ item, action: 'reply' })"
+                    class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                  >
+                    Antworten
+                  </button>
+                }
+                <button
+                  type="button"
+                  (click)="manageFeedback.emit({ item, action: 'resolve' })"
+                  class="px-2.5 py-1 bg-gray-800 hover:bg-emerald-950 hover:border-emerald-700 text-emerald-200 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                >
+                  Lösen
+                </button>
+                <button
+                  type="button"
+                  (click)="manageFeedback.emit({ item, action: 'reject' })"
+                  class="px-2.5 py-1 bg-gray-800 hover:bg-rose-950 hover:border-rose-700 text-rose-300 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                >
+                  Ablehnen
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+        @if (feedback.length === 0) {
+          <tr>
+            <td colspan="5" class="p-8 text-center text-gray-500">Kein Feedback gefunden.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

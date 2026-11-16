@@ -287,6 +287,16 @@ export interface Feedback {
   updatedAt: { seconds: number; nanoseconds: number };
 }
 
+export interface TelemetryDailyEntry {
+  date: string;
+  totalViews: number;
+  webViews: number;
+  pwaViews: number;
+  routes: Record<string, number>;
+  events: Record<string, number>;
+  referrers: Record<string, number>;
+}
+
 export interface TelemetryStats {
   viewsToday: number;
   viewsLast7d: number;
@@ -297,6 +307,8 @@ export interface TelemetryStats {
   routes: Record<string, number>;
   events: Record<string, number>;
   referrers: Record<string, number>;
+  dailySeries?: TelemetryDailyEntry[];
+  firstRecordedDate?: string | null;
 }
 
 export interface SystemStats {

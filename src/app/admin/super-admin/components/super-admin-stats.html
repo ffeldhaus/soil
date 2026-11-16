@@ -1,154 +1,445 @@
-<div class="space-y-8 animate-fade-in">
-  <!-- Primary Summary KPI Row -->
-  <div
-    class="grid grid-cols-1 md:grid-cols-3 gap-4 portrait:gap-0 portrait:divide-y portrait:divide-gray-800"
+<div class="super-admin-stats space-y-4">
+  <!-- GSC Time-Range & Interactive Access Chart Card -->
+  <section
+    data-testid="superadmin-telemetry-views"
+    class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0"
+    aria-labelledby="telemetry-chart-heading"
   >
-    <!-- Total Games -->
-    <div
-      class="bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-2xl relative overflow-hidden portrait:rounded-none portrait:border-x-0"
-    >
-      <div class="absolute top-0 right-0 p-4 opacity-10">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-24 w-24 text-blue-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <!-- Top Control Bar: Title + Range Presets + Custom Date Inputs -->
+    <div class="px-4 py-3 sm:px-5 border-b border-gray-800 space-y-2.5 bg-gray-950">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 id="telemetry-chart-heading" class="text-sm sm:text-base font-bold text-white tracking-tight">
+            Zugriffsverlauf &amp; Kanäle (Anonym, ohne Cookies)
+          </h2>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400 mt-0.5">
+            <span data-testid="telemetry-resolved-range" class="font-mono tabular-nums text-gray-300">
+              {{ formattedDateRange }}
+            </span>
+            @if (formattedFirstDateNote) {
+              <span class="text-gray-400">· Tagesreihe aktiv seit <span class="font-mono tabular-nums">{{ formattedFirstDateNote }}</span></span>
+            }
+          </div>
+        </div>
+
+        <!-- Preset Selector Buttons -->
+        <div
+          role="group"
+          aria-label="Zeitraum wählen"
+          class="inline-flex flex-wrap items-center gap-1 bg-gray-900 p-1 rounded-lg border border-gray-800"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-          />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+          @for (preset of rangePresets; track preset.id) {
+            <button
+              type="button"
+              [attr.data-testid]="'range-preset-' + preset.id"
+              [attr.aria-pressed]="selectedRange === preset.id"
+              (click)="selectRange(preset.id)"
+              class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer"
+              [class.bg-emerald-600]="selectedRange === preset.id"
+              [class.text-white]="selectedRange === preset.id"
+              [class.text-gray-300]="selectedRange !== preset.id"
+              [class.hover:bg-gray-800]="selectedRange !== preset.id"
+              [class.hover:text-white]="selectedRange !== preset.id"
+            >
+              {{ preset.label }}
+            </button>
+          }
+        </div>
       </div>
-      <h3 class="text-gray-300 text-sm font-bold uppercase tracking-wider mb-2">
-        {{ t('superadmin.stats.totalGames') }}
-      </h3>
-      <div class="flex items-end gap-2">
-        <span class="text-4xl font-bold text-white font-mono tabular-nums">{{ stats?.games?.total || 0 }}</span>
-        <span class="text-sm text-gray-300 mb-1">{{ t('superadmin.stats.created') }}</span>
-      </div>
-      <div class="mt-4 flex gap-4 text-xs font-mono tabular-nums">
-        <span class="text-emerald-400">{{ stats?.games?.active || 0 }} {{ t('superadmin.stats.active') }}</span>
-        <span class="text-red-400">{{ stats?.games?.deleted || 0 }} {{ t('superadmin.stats.trash') }}</span>
-      </div>
+
+      <!-- Custom Date Picker Row -->
+      @if (selectedRange === 'custom') {
+        <div
+          data-testid="telemetry-custom-date-bar"
+          class="pt-2 border-t border-gray-800 flex flex-wrap items-end gap-3"
+        >
+          <label class="flex flex-col gap-1 text-xs text-gray-300">
+            <span class="uppercase tracking-wider text-[11px] text-gray-400 font-medium">Von</span>
+            <input
+              type="date"
+              data-testid="custom-range-start"
+              [(ngModel)]="customStartDate"
+              (ngModelChange)="onCustomDateChange()"
+              [max]="customEndDate || todayKey"
+              class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-xs font-mono tabular-nums text-white focus:outline-none focus:border-emerald-500"
+            />
+          </label>
+          <label class="flex flex-col gap-1 text-xs text-gray-300">
+            <span class="uppercase tracking-wider text-[11px] text-gray-400 font-medium">Bis</span>
+            <input
+              type="date"
+              data-testid="custom-range-end"
+              [(ngModel)]="customEndDate"
+              (ngModelChange)="onCustomDateChange()"
+              [max]="todayKey"
+              class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-xs font-mono tabular-nums text-white focus:outline-none focus:border-emerald-500"
+            />
+          </label>
+          <span class="text-xs text-gray-400 pb-1.5 font-mono tabular-nums">
+            {{ chartDays.length }} {{ chartDays.length === 1 ? 'Kalendertag' : 'Kalendertage' }}
+          </span>
+        </div>
+      }
     </div>
 
-    <!-- Total Users -->
-    <div
-      class="bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-2xl relative overflow-hidden portrait:rounded-none portrait:border-x-0"
-    >
-      <div class="absolute top-0 right-0 p-4 opacity-10">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-24 w-24 text-purple-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <!-- 4 GSC Clickable Metric Toggle Tiles -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 divide-x divide-gray-800 border-b border-gray-800">
+      @for (tile of metricTiles; track tile.key) {
+        <button
+          type="button"
+          [attr.data-testid]="'metric-tile-' + tile.key"
+          [attr.aria-pressed]="tile.active"
+          [style.--metric-accent]="tile.color"
+          (click)="toggleSeries(tile.key)"
+          class="gsc-metric-tile text-left px-4 py-3 flex flex-col justify-between gap-1.5 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500"
+          [class.bg-gray-900]="tile.active"
+          [class.bg-gray-950]="!tile.active"
+          [class.hover:bg-gray-800]="!tile.active"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-          />
+          <div class="flex items-center justify-between gap-2 w-full">
+            <span class="flex items-center gap-2 min-w-0">
+              <span
+                aria-hidden="true"
+                class="w-4 h-4 rounded border inline-flex items-center justify-center shrink-0"
+                [style.background-color]="tile.active ? tile.color : 'transparent'"
+                [style.border-color]="tile.active ? tile.color : '#4b5563'"
+              >
+                @if (tile.active) {
+                  <svg class="w-3 h-3 text-gray-950" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.5 8.5l3 3 6-6.5" />
+                  </svg>
+                }
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-wider truncate" [class.text-white]="tile.active" [class.text-gray-400]="!tile.active">
+                {{ tile.label }}
+              </span>
+            </span>
+            @if (tile.dashed) {
+              <span aria-hidden="true" class="w-5 border-t-2 border-dashed shrink-0" [style.border-color]="tile.color"></span>
+            }
+          </div>
+
+          <div>
+            <div
+              class="text-2xl sm:text-3xl font-bold font-mono tabular-nums tracking-tight"
+              [class.text-white]="tile.active"
+              [class.text-gray-500]="!tile.active"
+            >
+              {{ tile.count }}
+            </div>
+            <div class="text-[11px] text-gray-400 truncate">{{ tile.subtitle }}</div>
+          </div>
+        </button>
+      }
+    </div>
+
+    <!-- Zero-Dependency Responsive SVG Time-Series Chart -->
+    <div class="px-4 py-3.5 sm:px-5 sm:py-4 bg-gray-900 relative" (mouseleave)="setHoveredDay(null)">
+      <!-- Quick Window Summary Strip (Heute / 7T / 30T / Gesamt) -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-2 text-xs font-mono tabular-nums text-gray-400">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span>Heute: <strong class="text-emerald-400">{{ stats?.telemetry?.viewsToday || 0 }}</strong></span>
+          <span>Letzte 7T: <strong class="text-gray-200">{{ stats?.telemetry?.viewsLast7d || 0 }}</strong></span>
+          <span>Letzte 30T: <strong class="text-gray-200">{{ stats?.telemetry?.viewsLast30d || 0 }}</strong></span>
+          <span>Gesamt-Zähler: <strong class="text-white">{{ stats?.telemetry?.viewsTotal || 0 }}</strong></span>
+        </div>
+        <span class="text-[11px] text-gray-400 hidden sm:inline">Tageswerte in UTC · Klick oder Fokus für Details</span>
+      </div>
+
+      <div class="relative w-full">
+        <svg
+          data-testid="telemetry-svg-chart"
+          [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight"
+          role="img"
+          [attr.aria-label]="'Zeitverlauf der Seitenzugriffe von ' + formattedDateRange"
+          class="w-full h-auto block select-none"
+        >
+          <defs>
+            <linearGradient id="soilTotalAreaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.14" />
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+
+          <!-- Horizontal Integer Y-Axis Gridlines -->
+          @for (tick of yTicks; track tick.label) {
+            <g>
+              <line
+                [attr.x1]="padLeft"
+                [attr.x2]="svgWidth - padRight"
+                [attr.y1]="tick.y"
+                [attr.y2]="tick.y"
+                stroke="#1f2937"
+                stroke-width="1"
+              />
+              <text
+                [attr.x]="padLeft - 10"
+                [attr.y]="(tick.y || 0) + 4"
+                text-anchor="end"
+                fill="#9ca3af"
+                font-size="11"
+                font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+              >
+                {{ tick.label }}
+              </text>
+            </g>
+          }
+
+          <!-- X-Axis Date Labels -->
+          @for (xt of xTicks; track xt.x) {
+            <text
+              [attr.x]="xt.x"
+              [attr.y]="svgHeight - 8"
+              [attr.text-anchor]="xt.anchor || 'middle'"
+              fill="#9ca3af"
+              font-size="11"
+              font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+            >
+              {{ xt.label }}
+            </text>
+          }
+
+          <!-- Hover Vertical Guide Line -->
+          @if (hoveredPoint; as hp) {
+            <line
+              [attr.x1]="hp.x"
+              [attr.x2]="hp.x"
+              [attr.y1]="padTop"
+              [attr.y2]="svgHeight - padBottom"
+              stroke="#4b5563"
+              stroke-width="1"
+              stroke-dasharray="3 3"
+            />
+          }
+
+          <!-- Area & Line: Aufrufe gesamt -->
+          @if (isSeriesActive('total') && chartDays.length > 0) {
+            <path [attr.d]="totalAreaPath" fill="url(#soilTotalAreaGrad)" />
+            <path
+              data-testid="series-line-total"
+              [attr.d]="buildLinePath('total')"
+              fill="none"
+              stroke="#10b981"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          }
+
+          <!-- Line: Web-Browser -->
+          @if (isSeriesActive('web') && chartDays.length > 0) {
+            <path
+              data-testid="series-line-web"
+              [attr.d]="buildLinePath('web')"
+              fill="none"
+              stroke="#38bdf8"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          }
+
+          <!-- Line: PWA / App -->
+          @if (isSeriesActive('pwa') && chartDays.length > 0) {
+            <path
+              data-testid="series-line-pwa"
+              [attr.d]="buildLinePath('pwa')"
+              fill="none"
+              stroke="#f59e0b"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          }
+
+          <!-- Line: Interaktionen (dashed for non-color differentiation) -->
+          @if (isSeriesActive('interactions') && chartDays.length > 0) {
+            <path
+              data-testid="series-line-interactions"
+              [attr.d]="buildLinePath('interactions')"
+              fill="none"
+              stroke="#fb7185"
+              stroke-width="2"
+              stroke-dasharray="4 3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          }
+
+          <!-- Data Point Dots when <= 45 days -->
+          @if (showPointDots) {
+            @for (pt of chartDays; track pt.date) {
+              @if (isSeriesActive('total')) {
+                <circle
+                  [attr.cx]="pt.x"
+                  [attr.cy]="pt.yTotal"
+                  [attr.r]="hoveredDayIndex === pt.index ? 4.5 : 2.75"
+                  fill="#10b981"
+                  stroke="#030712"
+                  stroke-width="1.25"
+                />
+              }
+              @if (isSeriesActive('web')) {
+                <circle
+                  [attr.cx]="pt.x"
+                  [attr.cy]="pt.yWeb"
+                  [attr.r]="hoveredDayIndex === pt.index ? 4 : 2.25"
+                  fill="#38bdf8"
+                  stroke="#030712"
+                  stroke-width="1"
+                />
+              }
+              @if (isSeriesActive('pwa') && (pt.pwa > 0 || hoveredDayIndex === pt.index)) {
+                <circle
+                  [attr.cx]="pt.x"
+                  [attr.cy]="pt.yPwa"
+                  [attr.r]="hoveredDayIndex === pt.index ? 4 : 2.25"
+                  fill="#f59e0b"
+                  stroke="#030712"
+                  stroke-width="1"
+                />
+              }
+              @if (isSeriesActive('interactions') && (pt.interactions > 0 || hoveredDayIndex === pt.index)) {
+                <circle
+                  [attr.cx]="pt.x"
+                  [attr.cy]="pt.yInteractions"
+                  [attr.r]="hoveredDayIndex === pt.index ? 4 : 2.25"
+                  fill="#fb7185"
+                  stroke="#030712"
+                  stroke-width="1"
+                />
+              }
+            }
+          } @else if (hoveredPoint; as hp) {
+            @if (isSeriesActive('total')) {
+              <circle [attr.cx]="hp.x" [attr.cy]="hp.yTotal" r="4.5" fill="#10b981" stroke="#030712" stroke-width="1.5" />
+            }
+            @if (isSeriesActive('web')) {
+              <circle [attr.cx]="hp.x" [attr.cy]="hp.yWeb" r="4" fill="#38bdf8" stroke="#030712" stroke-width="1.5" />
+            }
+            @if (isSeriesActive('pwa')) {
+              <circle [attr.cx]="hp.x" [attr.cy]="hp.yPwa" r="4" fill="#f59e0b" stroke="#030712" stroke-width="1.5" />
+            }
+            @if (isSeriesActive('interactions')) {
+              <circle [attr.cx]="hp.x" [attr.cy]="hp.yInteractions" r="4" fill="#fb7185" stroke="#030712" stroke-width="1.5" />
+            }
+          }
+
+          <!-- Interactive Hit Columns (Mouse + Keyboard Focus) -->
+          @for (pt of chartDays; track pt.date) {
+            <rect
+              data-testid="chart-day-hit"
+              [attr.data-date]="pt.date"
+              [attr.x]="pt.hitX"
+              [attr.y]="padTop"
+              [attr.width]="pt.hitWidth"
+              [attr.height]="svgHeight - padTop - padBottom"
+              fill="transparent"
+              tabindex="0"
+              role="button"
+              [attr.aria-label]="pt.fullLabel + ': ' + pt.total + ' Aufrufe gesamt'"
+              class="chart-hit-rect cursor-crosshair"
+              (mouseenter)="setHoveredDay(pt.index)"
+              (focus)="setHoveredDay(pt.index)"
+              (blur)="setHoveredDay(null)"
+              (click)="setHoveredDay(pt.index)"
+            />
+          }
         </svg>
-      </div>
-      <h3 class="text-gray-300 text-sm font-bold uppercase tracking-wider mb-2">
-        {{ t('superadmin.stats.totalUsers') }}
-      </h3>
-      <div class="flex items-end gap-2">
-        <span class="text-4xl font-bold text-white font-mono tabular-nums">{{ stats?.users?.total || 0 }}</span>
-        <span class="text-sm text-gray-300 mb-1">{{ t('superadmin.stats.registered') }}</span>
-      </div>
-      <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono tabular-nums">
-        <span class="text-purple-400">{{ stats?.users?.admins || 0 }} {{ t('superadmin.stats.teachers') }}</span>
-        @if (stats?.users?.banned) {
-          <span class="text-red-500">{{ stats?.users?.banned || 0 }} {{ t('superadmin.stats.banned') }}</span>
+
+        <!-- Crisp Opaque Dark Tooltip -->
+        @if (hoveredPoint; as hp) {
+          <div
+            data-testid="chart-tooltip"
+            class="pointer-events-none absolute top-2 z-20 bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2.5 shadow-xl min-w-[12.5rem]"
+            [style.left.%]="isTooltipRightAligned ? null : tooltipLeftPercent"
+            [style.right.%]="isTooltipRightAligned ? 100 - tooltipLeftPercent : null"
+            [style.transform]="isTooltipRightAligned ? 'translateX(-10px)' : 'translateX(10px)'"
+          >
+            <div class="text-xs font-bold font-mono tabular-nums text-white border-b border-gray-800 pb-1.5 mb-1.5">
+              {{ hp.fullLabel }}
+            </div>
+            <div class="space-y-1 text-xs">
+              @if (isSeriesActive('total')) {
+                <div class="flex items-center justify-between gap-4">
+                  <span class="flex items-center gap-1.5 text-gray-300">
+                    <span class="w-2.5 h-2.5 rounded-xs bg-[#10b981] inline-block"></span>
+                    Aufrufe gesamt
+                  </span>
+                  <span class="font-mono tabular-nums font-bold text-white">{{ hp.total }}</span>
+                </div>
+              }
+              @if (isSeriesActive('web')) {
+                <div class="flex items-center justify-between gap-4">
+                  <span class="flex items-center gap-1.5 text-gray-300">
+                    <span class="w-2.5 h-2.5 rounded-xs bg-[#38bdf8] inline-block"></span>
+                    Web-Browser
+                  </span>
+                  <span class="font-mono tabular-nums font-bold text-white">{{ hp.web }}</span>
+                </div>
+              }
+              @if (isSeriesActive('pwa')) {
+                <div class="flex items-center justify-between gap-4">
+                  <span class="flex items-center gap-1.5 text-gray-300">
+                    <span class="w-2.5 h-2.5 rounded-xs bg-[#f59e0b] inline-block"></span>
+                    PWA / App
+                  </span>
+                  <span class="font-mono tabular-nums font-bold text-white">{{ hp.pwa }}</span>
+                </div>
+              }
+              @if (isSeriesActive('interactions')) {
+                <div class="flex items-center justify-between gap-4">
+                  <span class="flex items-center gap-1.5 text-gray-300">
+                    <span class="w-3 border-t-2 border-dashed border-[#fb7185] inline-block"></span>
+                    Interaktionen
+                  </span>
+                  <span class="font-mono tabular-nums font-bold text-white">{{ hp.interactions }}</span>
+                </div>
+              }
+            </div>
+          </div>
         }
       </div>
     </div>
+  </section>
 
-    <!-- Anonymous Page Views (Zero-Cookie Telemetry) -->
-    <div
-      data-testid="superadmin-telemetry-views"
-      class="bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-2xl relative overflow-hidden portrait:rounded-none portrait:border-x-0"
-    >
-      <h3 class="text-gray-300 text-sm font-bold uppercase tracking-wider mb-2">
-        {{ t('superadmin.stats.telemetryViews') }}
-      </h3>
-      <div class="flex items-end gap-2">
-        <span class="text-4xl font-bold text-white font-mono tabular-nums">
-          {{ stats?.telemetry?.viewsTotal || 0 }}
-        </span>
-        <span class="text-sm text-gray-300 mb-1">{{ t('superadmin.stats.telemetryTotal') }}</span>
-      </div>
-      <div class="mt-4 grid grid-cols-3 gap-2 pt-3 border-t border-gray-800 text-xs font-mono tabular-nums">
-        <div>
-          <div class="text-gray-400">Heute</div>
-          <div class="text-emerald-400 font-bold">{{ stats?.telemetry?.viewsToday || 0 }}</div>
-        </div>
-        <div>
-          <div class="text-gray-400">7 Tage</div>
-          <div class="text-white font-bold">{{ stats?.telemetry?.viewsLast7d || 0 }}</div>
-        </div>
-        <div>
-          <div class="text-gray-400">30 Tage</div>
-          <div class="text-white font-bold">{{ stats?.telemetry?.viewsLast30d || 0 }}</div>
-        </div>
-      </div>
-      <div class="mt-3 flex justify-between text-xs font-mono tabular-nums text-gray-300">
-        <span>Web: {{ stats?.telemetry?.webViewsTotal || 0 }}</span>
-        <span>PWA: {{ stats?.telemetry?.pwaViewsTotal || 0 }}</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Full-Width Dedicated Container for Routes, Actions & Referrers Breakdown -->
+  <!-- Range-Synchronized Breakdown Tables (Routes, Events, Referrers) -->
   <section
     data-testid="superadmin-telemetry-breakdown"
-    class="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl overflow-hidden portrait:rounded-none portrait:border-x-0"
+    class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0"
+    aria-labelledby="telemetry-breakdown-heading"
   >
-    <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-gray-800 flex flex-wrap items-center justify-between gap-4">
-      <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-2">
-        <div class="p-2 bg-emerald-900/30 rounded-full">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
-        </div>
-        {{ t('superadmin.stats.telemetryBreakdown') }}
-      </h2>
+    <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
+      <div>
+        <h2 id="telemetry-breakdown-heading" class="text-base sm:text-lg font-bold text-white tracking-tight">
+          Seiten, Aktionen &amp; Herkunft
+        </h2>
+        <p data-testid="telemetry-breakdown-subtitle" class="text-xs text-gray-400 font-mono tabular-nums mt-0.5">
+          {{ breakdownSubtitle }}
+        </p>
+      </div>
       <span class="text-xs font-mono tabular-nums text-gray-400">
-        Web: {{ stats?.telemetry?.webViewsTotal || 0 }} · PWA: {{ stats?.telemetry?.pwaViewsTotal || 0 }}
+        Gesamt-Kanalanteil · Web: {{ stats?.telemetry?.webViewsTotal || 0 }} · PWA: {{ stats?.telemetry?.pwaViewsTotal || 0 }}
       </span>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-gray-800">
       <!-- Column 1: Seitenaufrufe nach Bereich -->
       <div class="flex flex-col">
-        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider p-4 font-medium flex justify-between items-center border-b border-gray-800">
+        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider px-4 py-3 font-medium flex justify-between items-center border-b border-gray-800">
           <span>Seitenaufrufe nach Bereich</span>
           <span>Aufrufe</span>
         </div>
         <div class="divide-y divide-gray-800 text-sm">
           @for (row of routeRows; track row.key) {
-            <div class="p-4 flex items-center justify-between gap-3 hover:bg-gray-950 transition">
-              <span class="text-gray-200 truncate">{{ row.label }}</span>
-              <span class="font-mono tabular-nums font-bold text-white">{{ row.count }}</span>
+            <div [attr.data-testid]="'route-row-' + row.key" class="px-4 py-3 space-y-1.5 hover:bg-gray-950 transition-colors">
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-gray-200 truncate">{{ row.label }}</span>
+                <span class="font-mono tabular-nums font-bold text-white">{{ row.count }}</span>
+              </div>
+              <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden" aria-hidden="true">
+                <div class="h-full bg-emerald-500/80 rounded-full" [style.width.%]="row.percent"></div>
+              </div>
             </div>
           }
         </div>
@@ -156,15 +447,20 @@
 
       <!-- Column 2: Ausgelöste Aktionen -->
       <div class="flex flex-col">
-        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider p-4 font-medium flex justify-between items-center border-b border-gray-800">
+        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider px-4 py-3 font-medium flex justify-between items-center border-b border-gray-800">
           <span>Ausgelöste Aktionen</span>
           <span>Anzahl</span>
         </div>
         <div class="divide-y divide-gray-800 text-sm">
           @for (ev of eventRows; track ev.key) {
-            <div class="p-4 flex items-center justify-between gap-3 hover:bg-gray-950 transition">
-              <span class="text-gray-200 truncate">{{ ev.label }}</span>
-              <span class="font-mono tabular-nums font-bold text-emerald-400">{{ ev.count }}</span>
+            <div [attr.data-testid]="'event-row-' + ev.key" class="px-4 py-3 space-y-1.5 hover:bg-gray-950 transition-colors">
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-gray-200 truncate">{{ ev.label }}</span>
+                <span class="font-mono tabular-nums font-bold text-emerald-400">{{ ev.count }}</span>
+              </div>
+              <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden" aria-hidden="true">
+                <div class="h-full bg-rose-400/80 rounded-full" [style.width.%]="ev.percent"></div>
+              </div>
             </div>
           }
         </div>
@@ -172,22 +468,27 @@
 
       <!-- Column 3: Herkunft / Referrer -->
       <div class="flex flex-col">
-        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider p-4 font-medium flex justify-between items-center border-b border-gray-800">
+        <div class="bg-gray-950 text-gray-400 text-xs uppercase tracking-wider px-4 py-3 font-medium flex justify-between items-center border-b border-gray-800">
           <span>Herkunft / Referrer</span>
           <span>Aufrufe</span>
         </div>
         @if (referrerRows.length > 0) {
           <div class="divide-y divide-gray-800 text-sm">
             @for (ref of referrerRows; track ref.key) {
-              <div class="p-4 flex items-center justify-between gap-3 hover:bg-gray-950 transition">
-                <span class="text-gray-200 truncate">{{ ref.label }}</span>
-                <span class="font-mono tabular-nums font-bold text-white">{{ ref.count }}</span>
+              <div [attr.data-testid]="'referrer-row-' + ref.key" class="px-4 py-3 space-y-1.5 hover:bg-gray-950 transition-colors">
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-gray-200 truncate font-mono text-xs">{{ ref.label }}</span>
+                  <span class="font-mono tabular-nums font-bold text-white">{{ ref.count }}</span>
+                </div>
+                <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden" aria-hidden="true">
+                  <div class="h-full bg-sky-400/80 rounded-full" [style.width.%]="ref.percent"></div>
+                </div>
               </div>
             }
           </div>
         } @else {
           <div class="p-8 text-center text-sm text-gray-500">
-            Noch keine Herkunftsdaten erfasst.
+            Keine Herkunftsdaten im gewählten Zeitraum erfasst.
           </div>
         }
       </div>

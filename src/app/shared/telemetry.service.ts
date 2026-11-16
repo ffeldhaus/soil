@@ -9,6 +9,7 @@ const ALLOWED_ROUTES = new Set<string>([
   '/manual',
   '/info',
   '/research',
+  '/trailer',
   '/game',
   '/game-login',
   '/admin',
@@ -138,6 +139,26 @@ export class TelemetryService {
     return /HeadlessChrome|Cypress|Playwright|Puppeteer|Lighthouse|bot|crawler|spider/i.test(ua);
   }
 
+  private recordInitialReferrer(): void {
+    if (this.initialReferrerRecorded) return;
+    const navEntry =
+      typeof performance !== 'undefined' && typeof performance.getEntriesByType === 'function'
+        ? (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)
+        : undefined;
+    if (navEntry && (navEntry.type === 'reload' || navEntry.type === 'back_forward')) {
+      this.initialReferrerRecorded = true;
+      return;
+    }
+
+    this.initialReferrerRecorded = true;
+
+    const mode = this.detectDisplayMode();
+    const refBucket = this.extractReferrerBucket(this.doc?.referrer || '', mode);
+    if (refBucket) {
+      this.pendingReferrers[refBucket] = Math.min(MAX_PENDING_PER_KEY, (this.pendingReferrers[refBucket] || 0) + 1);
+    }
+  }
+
   trackPageView(rawUrl: string): void {
     if (this.shouldSuppressTelemetry()) return;
 
@@ -147,15 +168,7 @@ export class TelemetryService {
     }
     this.lastTrackedRoute = route;
     this.pendingViews[route] = Math.min(MAX_PENDING_PER_KEY, (this.pendingViews[route] || 0) + 1);
-
-    if (!this.initialReferrerRecorded) {
-      this.initialReferrerRecorded = true;
-      const mode = this.detectDisplayMode();
-      const refBucket = this.extractReferrerBucket(this.doc?.referrer || '', mode);
-      if (refBucket) {
-        this.pendingReferrers[refBucket] = Math.min(MAX_PENDING_PER_KEY, (this.pendingReferrers[refBucket] || 0) + 1);
-      }
-    }
+    this.recordInitialReferrer();
 
     if (typeof navigator === 'undefined' || navigator.onLine !== false) {
       this.flush();

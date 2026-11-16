@@ -19,11 +19,12 @@
       >
         <div>
           <h1 class="text-2xl sm:text-4xl font-bold text-emerald-500 mb-1.5 tracking-tight">
-            Hintergrund &amp; Lehrplanbezug
+            Unterrichtsmaterial, Hintergrund &amp; Lehrplanbezug
           </h1>
           <p class="text-sm sm:text-base text-gray-200 max-w-3xl">
-            Die Simulation SOIL basiert auf fachdidaktischer Forschung zur Bildung für nachhaltige Entwicklung und ist
-            auf die Lehrpläne der Klassenstufen 5 bis 13 in allen 16 Bundesländern abgestimmt.
+            Kostenloses digitales Unterrichtsmaterial (OER) für Biologie, Erdkunde / Geografie, Wirtschaft und Bildung
+            für nachhaltige Entwicklung (BNE) – wissenschaftlich fundiert und abgestimmt auf die Lehrpläne aller 16
+            Bundesländer für weiterführende Schulen, Berufsschulen und Hochschulen.
           </p>
         </div>
         <div class="flex items-center gap-2 shrink-0 print:hidden">
@@ -292,22 +293,22 @@
             </div>
           </section>
 
-          <!-- Curriculum Mapping across Grade Levels and 16 German States -->
+          <!-- Curriculum Mapping across Learning Levels and 16 German States -->
           <section
             id="curriculum"
             class="p-4 sm:p-6 bg-gray-900 rounded-xl border border-gray-800 shadow-lg space-y-6 scroll-mt-16"
           >
             <div class="space-y-2">
               <h2 class="text-xl sm:text-2xl font-bold text-emerald-400 tracking-tight">
-                Lehrplanbezug nach Klassenstufen, Fächern &amp; Bundesländern
+                Unterrichtsmaterial &amp; Lehrplanbezug nach Fächern, Lernniveaus &amp; Bundesländern
               </h2>
               <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
                 Landwirtschaft im Spannungsfeld zwischen Ernährungssicherung, Ökonomie und Ökosystemschutz ist in allen
                 16 Bundesländern fest in den Lehrplänen für
-                <strong class="text-white">Bildung für nachhaltige Entwicklung</strong>,
                 <strong class="text-white">Biologie</strong>,
-                <strong class="text-white">Geographie / Erdkunde</strong> sowie
-                <strong class="text-white">Wirtschaft / Politik</strong> verankert.
+                <strong class="text-white">Erdkunde / Geografie (Geographie)</strong>,
+                <strong class="text-white">Wirtschaft / Politik</strong> sowie
+                <strong class="text-white">Bildung für nachhaltige Entwicklung (BNE)</strong> verankert.
               </p>
               <p class="text-xs sm:text-sm text-gray-300 bg-gray-950 p-3.5 rounded-lg border border-gray-800 leading-relaxed">
                 Dieses Bildungsmaterial berücksichtigt die Gütekriterien für digitale BNE-Materialien gemäß Beschluss
@@ -322,10 +323,10 @@
               </p>
             </div>
 
-            <!-- Part A: Einsatz nach Klassenstufen & Binnendifferenzierung -->
+            <!-- Part A: Binnendifferenzierung & Schwierigkeitsgrade -->
             <div class="space-y-3">
               <h3 class="text-base sm:text-lg font-bold text-emerald-300 tracking-tight">
-                Einsatz nach Klassenstufen &amp; Binnendifferenzierung
+                Binnendifferenzierung für weiterführende Schulen, Berufsschulen &amp; Hochschulen
               </h3>
               <div class="grid gap-3">
                 @for (level of curriculumLevels; track level.stage) {
@@ -349,7 +350,7 @@
               </div>
             </div>
 
-            <!-- Part B: Lehrplan-Anker nach Bundesland (Dropdown + SSR-rendered cards) -->
+            <!-- Part B: Lehrplan-Anker nach Bundesland (Dropdown + SSR-rendered searchable cards) -->
             <div class="space-y-4 pt-2 border-t border-gray-800">
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h3 class="text-base sm:text-lg font-bold text-emerald-300 tracking-tight">
@@ -366,35 +367,40 @@
                     (change)="onStateChange($event)"
                     class="bg-gray-950 text-white text-xs sm:text-sm rounded-lg border border-gray-700 hover:border-gray-600 focus:border-emerald-500 focus:outline-none px-3 py-1.5 cursor-pointer"
                   >
-                    @for (item of curriculumStates; track item.state) {
-                      <option [value]="item.state" [selected]="selectedState() === item.state">
-                        {{ item.state }}
+                    @for (state of curriculumStates; track state.id) {
+                      <option [value]="state.id" [selected]="selectedState() === state.id">
+                        {{ state.state }}
                       </option>
                     }
                   </select>
                 </div>
               </div>
 
-              @for (item of curriculumStates; track item.state) {
+              @for (state of curriculumStates; track state.id) {
                 <div
-                  [class.hidden]="selectedState() !== item.state"
-                  class="bg-gray-950 rounded-lg p-4 sm:p-5 border border-gray-800 space-y-3 text-xs sm:text-sm"
+                  [id]="'land-' + state.id"
+                  data-testid="curriculum-state-wrapper"
+                  [attr.data-state-id]="state.id"
+                  [attr.hidden]="selectedState() === state.id ? null : 'until-found'"
+                  (beforematch)="selectState(state.id)"
                 >
-                  <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-gray-800 pb-2.5">
-                    <h4 class="font-bold text-white text-base sm:text-lg">{{ item.state }}</h4>
-                    <span class="text-xs text-emerald-400 font-medium">{{ item.curriculum }}</span>
+                  <div class="bg-gray-950 rounded-lg p-4 sm:p-5 border border-gray-800 space-y-3 text-xs sm:text-sm">
+                    <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-gray-800 pb-2.5">
+                      <h4 class="font-bold text-white text-base sm:text-lg">{{ state.state }}</h4>
+                      <span class="text-xs text-emerald-400 font-medium">{{ state.curriculum }}</span>
+                    </div>
+                    <ul class="space-y-2 text-gray-300 leading-relaxed">
+                      <li>
+                        <strong class="text-emerald-300">Biologie &amp; BNE:</strong> {{ state.bneAndBio }}
+                      </li>
+                      <li>
+                        <strong class="text-emerald-300">Erdkunde / Geografie:</strong> {{ state.geo }}
+                      </li>
+                      <li>
+                        <strong class="text-emerald-300">Wirtschaft / Politik:</strong> {{ state.econ }}
+                      </li>
+                    </ul>
                   </div>
-                  <ul class="space-y-2 text-gray-300 leading-relaxed">
-                    <li>
-                      <strong class="text-emerald-300">BNE &amp; Biologie:</strong> {{ item.bneAndBio }}
-                    </li>
-                    <li>
-                      <strong class="text-emerald-300">Geographie / Erdkunde:</strong> {{ item.geo }}
-                    </li>
-                    <li>
-                      <strong class="text-emerald-300">Wirtschaft / Politik:</strong> {{ item.econ }}
-                    </li>
-                  </ul>
                 </div>
               }
             </div>

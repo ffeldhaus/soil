@@ -3,141 +3,43 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
+### Security
+- Cloud Logging in `soil-602ea` auf EU-Datenhaltung und strikte Datenminimierung gehärtet: `_Default`-Sink auf einen dedizierten `europe-west4`-Bucket (`eu-operational-logs`) mit `7` Tagen Aufbewahrungsfrist umgestellt, reguläre `2xx`/`3xx`-HTTP-Zugriffsprotokolle (`run.googleapis.com/requests`) per Exclusion-Filter vollständig von der Speicherung ausgeschlossen und die Vorhaltezeit des Alt-Buckets `global/_Default` auf das Minimum von `1` Tag reduziert.
+- Query-Strings (`req.originalUrl` -> `req.path`) sowie die Anfrageprotokollierung pro Seitenaufruf aus `src/server.ts` und personenbezogene Lehrkräfte-/Admin-E-Mail-Adressen aus Warn- und Fehlerprotokollen in `functions/src/index.ts` entfernt; Abschnitt `4. Hosting und Infrastruktur` in `/privacy` (`src/app/privacy/privacy.html`) entsprechend präzisiert.
+
+### Added
+- Konfigurierbare Zeitreihen-Analyse (analog zur Google Search Console) und modulare Tab-Oberfläche unter `/admin/super` ergänzt (`src/app/admin/super-admin/*`, `functions/src/telemetry.service.ts`, `src/app/types.ts`): 400-Tage-Zeitreihe (`dailySeries`) mit Schnellfiltern (`7 Tage`, `28 Tage`, `3 Monate`, `12 Monate`, `Gesamt`, `Benutzerdefiniert` via Von/Bis-Datumsauswahl), umschaltbaren Metrik-Reihen (`Aufrufe gesamt`, `Web-Browser`, `PWA / App`, `Interaktionen`), interaktivem Tages-Tooltip sowie zeitraumsynchronisierten Aufschlüsselungen für Seiten (inklusive `/trailer`), Aktionen und Referrer.
+
 ### Changed
+- SEO- und OER-Sichtbarkeit für deutschsprachige Fach-Suchanfragen ausgebaut (`src/app/app.routes.ts`, `src/index.html`, `public/site.webmanifest`, `src/app/landing/landing.html`, `src/app/info/*`, `src/app/manual/manual.ts`, `public/sitemap.xml`, `public/llms.txt`, `src/server.ts`): Titel, Meta-Descriptions, Überschriften und `LearningResource`/`FAQPage`-Strukturdaten gezielt um `Unterrichtsmaterial (OER)` für `Biologie`, `Erdkunde`, `Geografie` und `Wirtschaft` (BNE) ergänzt, `INFO_FAQ_ITEMS` als einzige FAQ-Quelle in `InfoComponent` verdrahtet und alle 16 Bundesländer-Lehrpläne über `hidden="until-found"` vollständig indexierbar und per Browser-Suche auffindbar gemacht.
 - Routen-, SSR- und SEO-Basis bereinigt (`src/app/app.routes.ts`, `src/app/app.routes.server.ts`, `src/app/app.config.server.ts`, `src/app/app.config.ts`): Gemeinsame `INFO_FAQ_ITEMS` ohne starre Rundenzahlen oder Jahrgangsschranken, vereinheitlichtes Schema.org-Markup (`WebSite`, `operatingSystem: 'Web, iOS, Android'`, `educationalLevel`), explizite Client-Routen für `auth/action`-Pfade sowie `null`-Stubs für Firebase-Client-Tokens im SSR-Kontext.
 - Service-Worker-Bootstrap in `src/main.ts` optimiert: `workbox-window` wird erst nach dem App-Bootstrap dynamisch nachgeladen, und automatische Update-Reloads werden zusätzlich bei `/auth/action`, offenen Dialogen und fokussierten Formularfeldern sicher zurückgehalten.
 - `@fileoverview`-Header-Konvention für zentrale Einstiegs-, Service- und Engine-Dateien in `AGENTS.md` dokumentiert.
 - Frontend-Abhängigkeiten innerhalb der Semver-Grenzen aktualisiert (`package-lock.json`).
 
 ### Fixed
+- Ladezustand, Cold-Reload-Authentifizierung und Lokalisierung unter `/admin/super` sowie Referrer-Telemetrie repariert (`src/app/auth/auth.service.ts`, `src/app/admin/super-admin/*`, `src/app/shared/telemetry.service.ts`): Schwarzes `bg-gray-950`-Vollflächen-Overlay und `32px`-Header-Sprung durch passgenaue Skeleton-Karten (`0px` CLS) ersetzt, vorzeitigen Login-Redirect beim Seiten-Reload über `authStateReady$` behoben, fehlenden Avatar-Fallback im HUD sowie englische Resttexte bereinigt und Doppelzählungen identischer Referrer bei Tab-Reloads und Zurück/Vor-Navigationen speicherfrei über `PerformanceNavigationTiming` (ohne `localStorage` oder `sessionStorage`) verhindert.
 - Express-Edge-Gateway in `src/server.ts` (inklusive Regressionstests in `src/server.spec.ts`) gehärtet: Basis-Security-Header (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, Deaktivierung von `x-powered-by`), `/__/auth/action`-Auslieferung, `405`-Abweisung für fremde Nicht-`GET`/`HEAD`-Requests ohne Starten der SSR-Engine, Proxy-Timeout (`15s`), UTF-8-Charset für `robots.txt`/`sitemap.xml`, verlängertes Cloud-CDN-SWR-Fenster sowie horizontale Safe-Areas und `:focus-visible` auf der 404-Seite.
 
-## [3.4.21] - 2026-11-12
-### Fixed
-- Video-SEO-Metadaten auf das lokal selbstgehostete Trailer-Video umgestellt (`src/app/app.routes.ts`, `public/sitemap.xml`, `src/server.ts`, `src/app/seo-consistency.spec.ts`): Externe YouTube-`embedUrl` bzw. `<video:player_loc>` entfernt, sodass Suchmaschinen ausschließlich die lokal ausgelieferte Datei `https://soil.app/assets/video/soil-trailer.mp4` (`contentUrl` / `<video:content_loc>`) zuordnen.
-
-## [3.4.20] - 2026-11-12
-### Added
-- Capacitor-iOS-Xcode-Projekt (`ios/App/App.xcodeproj`) in die Versionskontrolle aufgenommen sowie Xcode-Cloud-Build-Skript (`ios/App/ci_scripts/ci_post_clone.sh`) und automatische iOS-Versionssynchronisierung (`MARKETING_VERSION` und `CURRENT_PROJECT_VERSION`) in `scripts/deploy.js` ergänzt.
-- Release-Runbook für Google Play (`app.soil.twa`) und Apple App Store / Xcode Cloud (`app.soil`) in `.agents/skills/soil-release-deploy/` sowie native Capacitor-Invarianten in `AGENTS.md` dokumentiert.
-
-### Fixed
-- Google-Search-Console-Indexierung, HTTP-Statuscodes und Weiterleitungen bereinigt (`src/server.ts`, `src/server.spec.ts`, `src/app/app.routes.ts`, `src/app/app.ts`, `src/app/admin/dashboard/dashboard.html`): Direkte `HTTP-404`-Antworten ohne Weiterleitungs-Hops für `/en/`, `/en` und unbekannte Pfade (Behebung von Soft-404- und Redirect-Fehlern), einstufige kanonische `301`-Weiterleitungen für gültige `/de/*`-, Trailing-Slash- und `/index.html`-URLs, `X-Robots-Tag: noindex, nofollow` ohne Homepage-Canonical auf Utility-/CSR-/404-Routen, vorgerenderter SSR-Einführungsbereich inklusive Handreichung auf `/admin` sowie exklusive `VideoObject`-Auszeichnung auf der Video-Wiedergabeseite `/trailer`.
-
-## [3.4.19] - 2026-11-09
-### Added
-- Native Capacitor-8-App-Architektur für iOS/iPadOS (`app.soil`) und Android (`app.soil.twa`) ergänzt (`capacitor.config.ts`, `src/app/shared/capacitor-env.ts`), inklusive nativer iOS-Anmeldung via „Sign in with Apple“ (`SignInWithApplePlugin` über `AuthenticationServices` und `CryptoKit`) sowie Universal Links und Android App Links (`public/.well-known/apple-app-site-association`, `public/.well-known/assetlinks.json`, `src/server.ts`).
-- Maskierbare (`192×192`, `512×512`) und hochauflösende (`1024×1024`) PWA-Icons (`public/web-app-manifest-*.png`, `public/site.webmanifest`), automatisierte Multi-Device-QA-Suite für visuelle, geometrische und Performance-Prüfungen (`scripts/audit-multi-device.mjs`, `npm run test:devices`), automatische Android-Keystore-Wiederherstellung aus dem macOS-Schlüsselbund (`scripts/ensure-android-keystore.mjs`), Store-Asset-Generierung (`marketing/generate-store-assets.mjs`) sowie `src/app/seo-consistency.spec.ts` ergänzt.
-
-### Changed
-- Service Worker auf Workbox migriert (`src/sw.js`, `scripts/build-sw.js`, `src/main.ts`, Entfernung von `src/ngsw-config.json`) sowie ungenutztes `firebase/app-check` und `measurementId` in `src/app/app.config.ts` entfernt.
-- Responsive Safe-Area-Abstände (`env(safe-area-inset-*)`), zentrierte Darstellung auf Foldables, `cqw`-basierte Parzellen-Badges (`src/app/game/parcel/parcel.html`) und Footer-Sichtbarkeit über alle Routen und Modals hinweg verfeinert.
-
-### Fixed
-- Apple-OAuth-Admin-Onboarding (`apple.com`) in `src/app/auth/admin-register/*` und `src/app/auth/auth.service.ts` korrigiert (inklusive Unterstützung für `privaterelay.appleid.com`-Konten und direkter `/admin`-Weiterleitung nach dem Onboarding).
-- HTTP-Referrer-Einschränkungen der Firebase Authentication in nativen Capacitor-Apps in `src/app/app.config.ts` behoben.
-
-## [3.4.18] - 2026-11-05
-### Changed
-- Automatischen Betriebssystem-Vollbildaufruf (`requestFullscreen()`) beim Öffnen der `/trailer`-Seite (`src/app/trailer/trailer.ts`) entfernt, sodass das Video ruhig im vollen Browserfenster (`100vw × 100dvh`) startet, ohne dass der Browser kurz in den OS-Vollbildmodus und wieder zurück springt.
-
-## [3.4.17] - 2026-11-05
-### Added
-- Dedizierte, vorgerenderte Video-Wiedergabeseite `/trailer` (`src/app/trailer/*`, `src/app/app.routes.ts`, `src/app/app.routes.server.ts`, `public/sitemap.xml`, `public/robots.txt`, `src/server.ts`, `scripts/deploy.js`) mit direktem `<video>`-Element im initialen SSR-HTML und `VideoObject`-Metadaten für die Google-Video-Indexierung ergänzt.
-- Wissenschaftliche Zitations- und Software-Metadaten (`CITATION.cff` und `codemeta.json`) im Repository-Hauptverzeichnis ergänzt sowie automatische Versionsaktualisierung in `scripts/deploy.js` hinterlegt.
-
-## [3.4.16] - 2026-11-05
-### Changed
-- Telemetrie-Routen (`ALLOWED_ROUTES` in `src/app/shared/telemetry.service.ts` bzw. `ALLOWED_TELEMETRY_ROUTES` in `functions/src/telemetry.service.ts`) auf die 9 öffentlichen Hauptbereiche beschränkt (ohne `/admin/login` und `/admin/register`), sodass die Gesamtzahl der Seitenzugriffe exakt der Summe der Einzelbereiche im Super-Admin-Dashboard entspricht.
-
-## [3.4.15] - 2026-11-05
-### Fixed
-- Semantische `<h1>`-Hauptüberschriften für `/admin` (`src/app/admin/dashboard/dashboard.html`), `/game-login` (`src/app/auth/player-login/player-login.html`) und `/admin/super` (`src/app/admin/super-admin/super-admin.html`) ergänzt sowie unauthentifiziertes Prerendering in `src/app/admin/dashboard/components/dashboard-hud.html` bereinigt (kein leerer `/delete-account`-Link ohne eingeloggten Nutzer).
-
-## [3.4.14] - 2026-11-05
-### Fixed
-- Serialisierung des Registrierungsdatums in `getAllAdmins` (`functions/src/index.ts`, `src/app/admin/super-admin/super-admin.ts`, `src/app/admin/super-admin/super-admin.html`, `src/app/admin/super-admin/super-admin.spec.ts`) korrigiert (`_seconds`-Unterstützung, `DocumentSnapshot.createTime`-Fallback, ISO-8601-Ausgabe) sowie nicht-leeren `–`-Fallback in der Super-Admin-Tabelle ergänzt.
-- Abstände (`class="block"`, `space-y-8`) sowie Tabellen- und Header-Styling in `super-admin-stats.html` (`Seiten, Aktionen & Herkunft`) vereinheitlicht, Übersetzung für `SUPERADMIN.TABLE.PLAYERS` ergänzt und die Erkennung von Local- vs. Cloud-Spielen für `research_local-*` korrigiert.
-
-## [3.4.13] - 2026-11-05
-### Changed
-- Redesigned the Super-Admin console (`src/app/admin/super-admin/super-admin.html`, `src/app/admin/super-admin/super-admin.ts`, `src/app/admin/super-admin/components/super-admin-stats.*`, `src/app/types.ts`, `functions/src/index.ts`) by enclosing all section headers inside solid `bg-gray-900` containers, extracting `Seiten, Aktionen & Herkunft` into a dedicated full-width 3-column telemetry breakdown container, and adding a `Registriert` column (`createdAt`, with Firebase Auth creation-time backfill) sorted newest-first in the `Administratoren` table.
-
-## [3.4.12] - 2026-11-05
-### Changed
-- Added automatic `Do Not Track (DNT)` and `Global Privacy Control (GPC)` signal enforcement across client telemetry (`src/app/shared/telemetry.service.ts`), SSR proxy headers (`src/server.ts`), and `recordTelemetry` (`functions/src/telemetry.service.ts`), and documented it in `/privacy` (`src/app/privacy/privacy.html`).
-
-## [3.4.11] - 2026-11-05
-### Added
-- Added a GDPR/TDDDG-compliant, zero-cookie, zero-PII aggregated telemetry system (`functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/server.ts`, `firebase.json`, `src/app/shared/telemetry.service.ts`, `src/app/app.ts`, `src/app/landing/landing.ts`, `src/app/research/research.ts`, `src/app/admin/super-admin/components/super-admin-stats.*`, `src/app/privacy/privacy.html`) that counts daily and total route pageviews, key actions (`quick_game_started`, `trailer_opened`, `research_export`), web vs. standalone PWA usage, and sanitized external referrer domains in `europe-west4` with volatile in-memory offline buffering and bot filtering.
-
-## [3.4.10] - 2026-11-05
-### Fixed
-- Fixed per-game achievement (`Hof-Auszeichnungen`) state in `src/app/game/board/board.ts` (`syncCollectedStickers()`) so unlocked stickers are strictly scoped to the active game and player history (clearing legacy `soil_collected_stickers` `localStorage` entries) instead of carrying over across new games.
-- Fixed hard-reload `Host` header rejection on client-rendered routes (`/game`, `/admin/super`, `/auth/action`) in `src/server.ts` by serving `index.csr.html` directly for non-prerendered SPA GET/HEAD requests and adding `*.run.app` and `*.europe-west4.run.app` to `AngularNodeAppEngine` `allowedHosts`.
-
-## [3.4.9] - 2026-11-05
-### Changed
-- Refined the global footer (`src/app/app.html`) and mobile game menu footer (`src/app/game/board/board.html`) on compact and portrait viewports by restoring readable `text-xs font-mono` typography, hiding the version string in portrait/narrow mode, and displaying compact SVG icons (`title` + `aria-label`) for `Handbuch`, `Hintergrund`, and `Forschungsdaten` while keeping `Impressum` and `Datenschutz` written out in full text.
-- Marked all full-screen decorative background image wrappers (`aria-hidden="true"` and `alt=""`) across all 15 views (`src/app/landing/landing.html`, `src/app/manual/manual.html`, `src/app/info/info.html`, `src/app/research/research.html`, `src/app/impressum/impressum.html`, `src/app/privacy/privacy.html`, `src/app/admin/*`, `src/app/auth/*`, `src/app/game/board/board.html`, `src/app/not-found/not-found.ts`) and added `role="status" aria-live="polite"` to the global offline/sync banners (`src/app/app.html`) to satisfy the `region` accessibility landmark rule.
-
-## [3.4.8] - 2026-11-04
-### Changed
-- Added semantic HTML5 landmarks (`<header>`, `<main>`, `<nav>`, `<aside>`, `<footer>`) with descriptive `aria-label` attributes across all public, authentication, admin, super-admin, and game views (`src/app/app.html`, `src/app/landing/landing.html`, `src/app/manual/manual.html`, `src/app/info/info.html`, `src/app/research/research.html`, `src/app/impressum/impressum.html`, `src/app/privacy/privacy.html`, `src/app/auth/*`, `src/app/admin/*`, `src/app/game/board/*`, `src/app/not-found/not-found.ts`).
-- Enabled global footer visibility in portrait orientation across all non-`/game` routes (`[class.portrait:hidden]="isGameRoute()"` in `src/app/app.html`, `src/app/app.ts`), ensured scrollable viewport containers (`h-full overflow-y-auto custom-scrollbar`) with bottom footer clearance on compact screens (`375x667` portrait and `844x390` landscape), and added the `Datenschutz` link with a compact single-row legal link bar to the `/game` mobile side menu (`src/app/game/board/board.html`).
-
-## [3.4.7] - 2026-11-04
-### Changed
-- Self-hosted the `Noto Sans` variable font locally via `@fontsource-variable/noto-sans` (`src/styles.css`, `package.json`), removed all external Google Fonts and third-party `<link rel="preconnect">` tags from `src/index.html` and `src/sw.js`, documented local asset delivery in `/privacy` (`src/app/privacy/privacy.html`) and `AGENTS.md`, and unified `Brachland (Grünbrache / Blühstreifen)` / `Grünstreifen-Prämie` terminology across `public/llms.txt`, `src/server.ts`, `README.md`, `src/app/game/planting-modal/planting-modal.ts`, `src/app/manual/components/manual-crop-card.ts`, `src/app/game/finance/finance.html`, `src/app/info/info.html`, and `src/app/info/info.ts`.
-
-## [3.4.6] - 2026-11-04
-### Added
-- Added an OER license and TULLU attribution section (`CC BY 4.0` for educational content, media, and open research data; `Apache License 2.0` for source code; EU organic logo exception notice) to `/impressum` (`src/app/impressum/impressum.html`, `src/app/impressum/impressum.ts`, `src/app/impressum/impressum.spec.ts`), added `license` (`https://creativecommons.org/licenses/by/4.0/`) and `creator` (`Dr. Nina Wolf`, `Florian Feldhaus`) metadata to the Schema.org JSON-LD blocks across `src/app/app.routes.ts`, and updated `README.md` for the public GitHub repository.
-
-## [3.4.5] - 2026-11-04
-### Fixed
-- Resolved Bing Webmaster Tools SEO/GEO analyzer warnings across all routes (`src/index.html`, `src/app/app.routes.ts`) by tightening `<title>` lengths to `<= 57` characters and `<meta name="description">` lengths to `140–153` characters, adding `<link rel="icon" href="/favicon.ico" sizes="48x48" />` first in `src/index.html`, and replacing all 21 empty `alt=""` image attributes across 16 component templates with descriptive German `alt` text.
-
-## [3.4.4] - 2026-11-04
-### Added
-- Replaced `public/SOIL-screenshot.jpg` with a lossless `public/SOIL-screenshot.png` (`1920x1377` px, `v3.4.3`, enlarged UI and parcel label typography) across `public/site.webmanifest`, OpenGraph/Twitter meta tags (`src/index.html`), trailer poster (`src/app/landing/landing.html`), and video sitemap metadata (`src/app/app.routes.ts`, `src/server.ts`, `public/sitemap.xml`), hid the HUD logout button for unauthenticated local guest sessions (`src/app/game/board/components/board-hud.html`), and added print-ready DIN A4 biology classroom flyers (dark and light print-friendly variants at `2480x3508` px, 300 DPI) along with automated capture/rendering templates and scripts in `marketing/` (`marketing/flyer-dark.html`, `marketing/flyer-light.html`, `marketing/generate-flyer.mjs`, `marketing/capture-screenshot.mjs`, `marketing/SOIL-screenshot.jpg`).
-- Added the Nationale Plattform BNE digital quality criteria compliance notice (`Beschluss vom 9. Dezember 2022`, linking to `bne-portal.de`) to the landing page (`src/app/landing/landing.html`) and background/curriculum page (`src/app/info/info.html`).
-- Added IndexNow verification key serving (`public/7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c.txt`, `src/server.ts`) and automatic post-deployment IndexNow URL submission in `scripts/deploy.js`.
-
-### Changed
-- Aligned `<title>`, `<meta name="description">`, Schema.org JSON-LD (`SoftwareApplication` & `LearningResource` `alternateName`, `learningResourceType`, and `keywords`), `<h1>`/`<h2>` headings, and visible copy across `src/index.html`, `src/app/app.routes.ts`, `src/app/landing/landing.html`, `public/llms.txt`, and `src/server.ts` around educator search queries (`Planspiel BNE`, `Planspiel BNE online`, `Online-Planspiel`, and `Simulation` / `Landwirtschaftssimulation`).
-- Implemented a tiered `Cache-Control` strategy in `src/server.ts` (edge-cached crawler metadata for `/robots.txt`, `/sitemap.xml`, `/llms.txt`, `/.well-known/*`, and IndexNow; `max-age=0, s-maxage=300, stale-while-revalidate=3600, must-revalidate` for HTML documents; 1-year `immutable` for hashed bundles; 1-day/7-day CDN for non-hashed media; `no-store` for `/sw.js` and `.webmanifest`).
-
-## [3.4.3] - 2026-11-01
-### Fixed
-- Fixed mobile touch responsiveness across `Anbau-Auswahl` (`src/app/game/planting-modal/planting-modal.html`, `src/app/game/planting-modal/planting-modal.ts`), board touch selection (`src/app/game/board/board.html`, `src/app/game/board/board.ts`), and guided tour modal steps (`src/app/game/tour.service.ts`) by adding direct `touchend` tap handlers with synthetic-click deduplication and explicit `ChangeDetectorRef.detectChanges()`, replacing invalid nested `<button>` elements with accessible sibling controls, and removing duplicate `.game-grid` touch listeners.
-- Fixed mobile PWA / Service Worker cache invalidation (`src/server.ts`, `src/sw.js`, `src/main.ts`, `src/index.html`) so `/sw.js`, `.html`, and `.webmanifest` responses always carry `Cache-Control: no-cache, no-store, must-revalidate`, SPA navigations use network-first (`cache: 'no-store'`) with Workbox `matchPrecache('/index.csr.html')` offline fallback, and new deployments activate immediately via `skipWaiting()`, `clientsClaim()`, and `cleanupOutdatedCaches()`.
-
-## [3.4.2] - 2026-11-01
-### Fixed
-- Fixed mobile touch interactions inside the `Anbau-Auswahl` planting modal and board overlays (`src/app/game/board/board.html`, `src/app/game/board/board.ts`, `src/app/game/planting-modal/planting-modal.html`) by moving overlay modals outside `.board-container` and guarding `onTouchStart`/`onTouchMove`/`onTouchEnd`/`onMouseUp` with `isAnyOverlayModalOpen()` and `isInteractiveOrDialogTarget()` so `event.preventDefault()` on field drag-selection no longer suppresses tap/click events or re-opens the planting modal on iOS/Android.
-
-## [3.4.1] - 2026-11-01
-### Changed
-- Added horizon-adaptive weather grace period (`getGraceRoundsForLimit`: `1` round for `5–7`-round sprints, `2` rounds for `>= 8` rounds), earlier regional contract activation (`Round 2` for `5–7`-round sprints, `Round 3` for `>= 8` rounds), and progressive multi-year root-crop soil exhaustion (`consecutiveYears >= 2` adds `-1.5 * (consecutiveYears - 1)` extra soil loss per consecutive year for potato and sugar beet) across `src/app/game/engine/game-engine.ts`, `functions/src/game-engine.ts`, `src/app/game/board/board.ts`, `src/app/info/info.html`, `src/app/manual/manual.ts`, and the multi-horizon Monte Carlo suite (`functions/src/balance.test.ts`).
-
-## [3.4.0] - 2026-11-01
+## [3.4.0] to [3.4.21] - 2026-11-01 to 2026-11-12
 ### Security
 - Enforced strict caller authorization on `getGameState(targetUid)` and stripped other players' unsubmitted `pendingDecisions` from non-host responses (`functions/src/index.ts`) to prevent cross-team inspection during active rounds.
-- Added sliding-window IP/UID rate limiting (`checkRateLimit` in `functions/src/research.service.ts`) to `playerLogin`, `submitFeedback`, `uploadFinishedGame`, `sendVerificationEmail`, and `sendPasswordResetEmail`, lazy-initialized the Vertex AI `GoogleGenAI` client on cold starts, fixed Firestore batch re-instantiation past 500 operations in `deleteGames`/`undeleteGames`, and ensured `cascadeDeleteAdminUser` and `deleteAccount` clean up orphaned `player-*` Firebase Auth accounts.
+- Added sliding-window IP/UID rate limiting (`checkRateLimit` in `functions/src/research.service.ts`) to `playerLogin`, `submitFeedback`, `uploadFinishedGame`, `sendVerificationEmail`, and `sendPasswordResetEmail`, lazy-initialized the Vertex AI `GoogleGenAI` client, chunked Firestore batches past 500 operations in `deleteGames`/`undeleteGames`, and cleaned up orphaned `player-*` Firebase Auth accounts on account deletion.
+- Self-hosted the `Noto Sans` variable font locally via `@fontsource-variable/noto-sans`, removed all external Google Fonts and third-party `<link rel="preconnect">` tags (`src/index.html`, `src/sw.js`), and enforced automatic `Do Not Track (DNT)` and `Global Privacy Control (GPC)` opt-out across client telemetry, SSR proxy headers, and `recordTelemetry`.
 
 ### Added
-- Added per-parcel causal attribution (`ParcelRoundFactors` in `src/app/types.ts`, `src/app/game/engine/game-engine.ts`, and `functions/src/game-engine.ts`) recording yield multipliers (`baseYield`, `soilFactor`, `nutritionFactor`, `weatherFactor`, `pestFactor`, `machineBonus`, `organicFactor`) and additive soil/nutrition deltas (`soilDelta`, `nutritionDelta`) on every parcel snapshot, and preserved `factors` in anonymized `research_games` exports (`functions/src/research.service.ts`).
-- Added causal harvest & soil balance transparency cards to the round result modal (`src/app/game/round-result-modal/`) and parcel inspection strip (`src/app/game/planting-modal/`), an in-place crop manual detail overlay (`selectedInfoCropId`) and quantitative agronomy & cost badges across crop tiles and round settings (`src/app/game/round-settings-modal/`), and dynamic root-cause diagnosis in `AdvisorService` (`src/app/game/advisor/advisor.service.ts`).
-- Expanded the finance view (`src/app/game/finance/`) into a 4-metric **Analysen & Finanzbericht** trajectory chart supporting single-select metric tabs for `Finanzen` (`Kapital (€)`), `Nachhaltigkeit` (`Zukunftsfähiger Hof`), `Bodenqualität Ø (%)`, and `Nährstoffe Ø (%)` across all teams.
-- Added a host-only `forceAdvanceRound` callable Cloud Function (`functions/src/index.ts`, `src/app/game/game.service.ts`) and teacher dashboard controls (`src/app/admin/dashboard/components/dashboard-game-detail.ts`) with default continuation decisions for unsubmitted teams, masked team PIN toggles (`PINs anzeigen` / `PINs ausblenden`) for classroom projection safety, and 1-click lesson duration presets (`5 Runden · 45 Min.`, `8 Runden · 60 Min.`, `10 Runden · 90 Min.`) in the game creation form (`src/app/admin/dashboard/components/dashboard-create-game.html`).
-- Added custom vector SVG action icons and a responsive portrait mobile dropdown menu (`Menü`) in `BoardHudComponent` (`src/app/game/board/components/board-hud.html`, `src/app/game/board/components/board-hud.ts`) so HUD controls never overlap the round progress bar on narrow screens.
+- Added native Capacitor 8 apps for iOS/iPadOS (`app.soil`, including versioned `ios/App/App.xcodeproj`, Xcode Cloud `ci_post_clone.sh`, and automated `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` sync in `scripts/deploy.js`) and Android (`app.soil.twa`, macOS Keychain keystore restoration), complete with native Sign in with Apple (`SignInWithApplePlugin`), Universal Links & Android App Links (`public/.well-known/*`), maskable/high-res PWA icons, multi-device visual/geometrical QA (`npm run test:devices`), and store release documentation (`.agents/skills/soil-release-deploy/`).
+- Added a GDPR/TDDDG-compliant, zero-cookie, zero-PII aggregated telemetry system (`functions/src/telemetry.service.ts`, `/api/telemetry`, `src/app/shared/telemetry.service.ts`) counting daily and total pageviews across the 9 public views, key actions (`quick_game_started`, `trailer_opened`, `research_export`), Web vs. PWA usage, and sanitized external referrers in `europe-west4`, surfaced in a redesigned Super-Admin console (`/admin/super`) alongside administrator registration timestamps (`createdAt`).
+- Added a dedicated prerendered `/trailer` video watch page with SSR `<video>` markup and self-hosted `VideoObject` structured data, lossless `public/SOIL-screenshot.png` (`1920x1377`), print-ready DIN A4 classroom flyers (`marketing/`), the Nationale Plattform BNE digital quality criteria compliance notice, OER/TULLU licensing (`CC BY 4.0` / `Apache-2.0`) on `/impressum`, `CITATION.cff` & `codemeta.json` repository metadata, and automatic post-deployment IndexNow URL submission.
+- Added per-parcel causal attribution (`ParcelRoundFactors`), causal harvest & soil balance transparency cards (`round-result-modal`, `planting-modal`), an in-place crop manual detail overlay, a 4-metric **Analysen & Finanzbericht** trajectory chart (`Finanzen`, `Nachhaltigkeit`, `Bodenqualität Ø`, `Nährstoffe Ø`), host `forceAdvanceRound` controls, masked classroom PIN toggles, 1-click lesson duration presets (`5` / `8` / `10` rounds), and compact portrait `BoardHudComponent` SVG controls.
 
 ### Changed
-- Rebalanced short- and medium-horizon classroom sessions (`src/app/game-constants.ts`, `src/app/game/engine/game-engine.ts`, `functions/src/game-engine.ts`, `src/app/manual/manual.ts`): introduced horizon-scaled starting soil quality (`getStartingSoilForRoundLimit`: `-8 %` for 5–7 rounds, `-5 %` for 8–9 rounds), increased potato (`-5.5 %`) and sugar beet (`-4.5 %`) soil degradation to reflect intensive root-crop tillage, and raised the organic market price multiplier (`BIO_MARKET_MULTIPLIER: 1.45`) so regenerative crop rotations and organic conversion amortize within 8–10 rounds.
-- Lowered the minimum configurable game length from 10 to 5 rounds (`5–50` rounds) across `createGame` (`functions/src/index.ts`) and the teacher game creation form (`src/app/admin/dashboard/components/dashboard-create-game.html`) to support 45-minute single-lesson school sessions.
-- Replaced all 16 native browser `alert()` / `prompt()` dialogs across `board`, `dashboard`, `super-admin`, `admin-login`, `admin-register`, and `delete-account` with custom inline status banners and modal confirmation flows.
-- Externalized 7 inline Angular component templates >50 lines (`landing.html`, `admin-login.html`, `privacy.html`, `auth-action.html`, `feedback-modal.html`, `player-login.html`, `delete-account.html`), extracted weekly digest and feedback helpers (`functions/src/digest-feedback.helpers.ts`), added `takeUntilDestroyed()` subscription cleanup across `dashboard.ts`, `super-admin.ts`, `research.ts`, and `manual.ts`, added full keyboard accessibility (`tabindex="0"`, `role="button"`, `Enter`/`Space` activation) to farm parcels (`src/app/game/parcel/`), and removed decorative UI emojis, gradient text, neon glows, and `hover:scale-105` transforms in favor of crisp SVG icons and neutral surfaces.
+- Rebalanced short- and medium-horizon classroom sessions (`5–50` rounds) across both `GameEngine` implementations: horizon-scaled starting soil quality (`getStartingSoilForRoundLimit`), horizon-adaptive weather grace period (`getGraceRoundsForLimit`) and regional contract start round, intensive root-crop tillage soil loss (`-5.5 %` potato, `-4.5 %` sugar beet) with progressive multi-year exhaustion, and `BIO_MARKET_MULTIPLIER: 1.45`.
+- Migrated the Service Worker to Workbox (`src/sw.js`, `scripts/build-sw.js`), implemented tiered `Cache-Control` headers in `src/server.ts`, removed OS auto-fullscreen jumps on `/trailer`, aligned educator SEO metadata around `Planspiel BNE` and `Brachland (Grünbrache / Blühstreifen)`, externalized >50-line component templates, replaced all native `alert()`/`prompt()` dialogs with custom modals, and added semantic HTML5 landmarks, keyboard-accessible parcels, safe-area insets, and portrait global footer visibility across all routes.
+
+### Fixed
+- Resolved Google Search Console and Bing Webmaster Tools indexing and SEO diagnostics (`src/server.ts`, `src/app/app.routes.ts`, `src/app/seo-consistency.spec.ts`): direct HTTP `404` responses without redirect hops for `/en/*` and unknown paths, single-hop `301` canonical redirects, `X-Robots-Tag: noindex, nofollow` on utility/CSR/404 routes, self-hosted `contentUrl` video metadata (`https://soil.app/assets/video/soil-trailer.mp4` without external YouTube `embedUrl`), semantic `<h1>` headings on `/admin`, `/game-login`, and `/admin/super`, descriptive German `alt` attributes, and SSR host-header handling for CSR routes.
+- Fixed Apple OAuth (`apple.com` / `privaterelay.appleid.com`) educator onboarding and native Capacitor Firebase Auth API key routing (`src/app/app.config.ts`), `getAllAdmins` timestamp serialization, per-game `Hof-Auszeichnungen` scoping (`syncCollectedStickers()`), mobile touch tap responsiveness inside `Anbau-Auswahl` and board overlays, and immediate PWA Service Worker cache invalidation.
 
 ## [3.3.0] to [3.3.14] - 2026-10-29 to 2026-10-31
 ### Added

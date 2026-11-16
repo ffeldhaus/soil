@@ -1,0 +1,207 @@
+@reference "tailwindcss";
+
+@property --arc-start {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --arc-end {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --progress-dash-animation {
+  syntax: '*';
+  inherits: false;
+  initial-value: soil-progress-dash 3s ease-in-out infinite;
+}
+
+@property --fade-start {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.super-admin-shell {
+  color-scheme: dark;
+  accent-color: #10b981;
+}
+
+/* Indeterminate native <progress> loading spinner (modern-web-guidance: spinner) */
+progress.soil-spinner:indeterminate::-webkit-progress-bar {
+  display: none;
+  background: none;
+}
+
+progress.soil-spinner:indeterminate::-webkit-progress-value {
+  display: none;
+  background: none;
+}
+
+progress.soil-spinner:indeterminate::-moz-progress-bar {
+  display: none;
+  background: none;
+}
+
+progress.soil-spinner:indeterminate::slider-fill {
+  display: none;
+  background: none;
+}
+
+progress.soil-spinner:indeterminate {
+  --_from: calc(90deg + var(--arc-start, 0deg));
+  --_to: calc(90deg + var(--arc-end, 158deg));
+  --size: 28px;
+  --thickness: 3px;
+  --spinner-color: #10b981;
+  --track-color: #1f2937;
+  --spinner-duration: 1.4s;
+  --_used-spinner-duration: var(--spinner-duration);
+
+  display: inline-block;
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  appearance: none;
+  background: conic-gradient(
+      from var(--_from),
+      var(--spinner-color) calc(var(--_to) - var(--_from)),
+      transparent 0
+    )
+    var(--track-color);
+
+  @supports (background-clip: border-area) {
+    background-clip: border-area;
+    border: var(--thickness) solid transparent;
+    background-origin: border-box;
+  }
+
+  @supports not (background-clip: border-area) {
+    --clip-boundary: calc(100% - var(--thickness));
+    mask-image: radial-gradient(
+      farthest-side,
+      transparent var(--clip-boundary),
+      black var(--clip-boundary)
+    );
+    border: 0;
+  }
+
+  @media (forced-colors: active) {
+    forced-color-adjust: none;
+    --spinner-color: CanvasText;
+    --track-color: Canvas;
+  }
+
+  animation:
+    soil-progress-spin var(--_used-spinner-duration) linear infinite,
+    var(--progress-dash-animation, none);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  progress.soil-spinner:indeterminate {
+    --_used-spinner-duration: 6s;
+    --progress-dash-animation: none;
+    --arc-end: 158deg;
+  }
+}
+
+@keyframes soil-progress-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes soil-progress-dash {
+  from {
+    --arc-start: 0deg;
+    --arc-end: 105deg;
+  }
+  50% {
+    --arc-start: 120deg;
+    --arc-end: 330deg;
+  }
+  to {
+    --arc-start: 360deg;
+    --arc-end: 465deg;
+  }
+}
+
+/* Single-row accessible scrolling tablist (modern-web-guidance: tabs) */
+.super-admin-tablist {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: inline proximity;
+  scroll-padding-inline: 2.5rem;
+  scrollbar-color: #4b5563 #111827;
+  --fade-size: 2.5rem;
+  --fade-dir: right;
+  --fade-start-pos: 0;
+  --fade-end-pos: 100%;
+  mask:
+    linear-gradient(black, black) no-clip subtract,
+    linear-gradient(to var(--fade-dir), black, transparent) var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat
+      no-clip,
+    linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos) 0 / var(--fade-end) 100% no-repeat
+      no-clip;
+  animation:
+    soil-reveal-fade-start linear both,
+    soil-hide-fade-end linear both;
+  animation-timeline: scroll(self inline);
+  animation-range:
+    0 var(--fade-size),
+    calc(100% - var(--fade-size)) 100%;
+}
+
+@keyframes soil-reveal-fade-start {
+  to {
+    --fade-start: var(--fade-size);
+  }
+}
+
+@keyframes soil-hide-fade-end {
+  from {
+    --fade-end: var(--fade-size);
+  }
+}
+
+.super-admin-tablist [role='tab'] {
+  position: relative;
+  flex: none;
+  scroll-snap-align: start;
+  color: #9ca3af;
+  transition: color 140ms ease-out;
+}
+
+.super-admin-tablist [role='tab']:hover {
+  color: #f3f4f6;
+}
+
+.super-admin-tablist [role='tab'][aria-selected='true'] {
+  color: #ffffff;
+}
+
+.super-admin-tablist [role='tab'][aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  border-block-end: 3px solid #10b981;
+}
+
+/* Responsive keyboard-scrollable table region (modern-web-guidance: responsive-table + browser-ui-theming) */
+.soil-table-region {
+  scrollbar-color: #4b5563 #111827;
+}
+
+.soil-table-region:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: -2px;
+}

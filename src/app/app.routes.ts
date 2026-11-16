@@ -47,29 +47,29 @@ const SOIL_WEBSITE = {
 
 export const INFO_FAQ_ITEMS: readonly InfoFaqItem[] = [
   {
-    question: 'Für welche Fächer und Bildungsstufen eignet sich das Planspiel SOIL?',
+    question: 'Für welche Schulfächer eignet sich SOIL als Unterrichtsmaterial?',
     answer:
-      'SOIL eignet sich für weiterführende Schulen in allen 16 Bundesländern sowie für berufliche Schulen, die Hochschul- und Lehramtsausbildung und die außerschulische Bildungsarbeit. Das Planspiel passt besonders in den Fachunterricht in Geographie und Erdkunde, Biologie und Naturwissenschaften sowie Wirtschaft und Politik und lässt sich flexibel an Projekttagen zur Bildung für nachhaltige Entwicklung (BNE) einsetzen.',
+      'Als kostenloses digitales Unterrichtsmaterial (OER) deckt SOIL zentrale Lehrplanthemen mehrerer Fächer ab: In Biologie stehen Ökosystem Boden, Humusaufbau, Nährstoffkreisläufe, Stickstofffixierung durch Leguminosen, Biodiversität und integrierter Pflanzenschutz im Fokus. In Erdkunde, Geografie bzw. Geographie behandelt das Planspiel den landwirtschaftlichen Strukturwandel, konventionellen vs. ökologischen Landbau, Standortfaktoren, Klimafolgen und Bodendegradation. Im Fach Wirtschaft und Politik erleben Lernende Betriebswirtschaft, Marktpreise, Deckungsbeiträge, EU-Subventionen sowie ökonomisch-ökologische Zielkonflikte – und verknüpfen alle Perspektiven fächerübergreifend im Sinne der Bildung für nachhaltige Entwicklung (BNE).',
+  },
+  {
+    question: 'Für welche Schulformen und Bildungseinrichtungen ist SOIL konzipiert?',
+    answer:
+      'SOIL eignet sich für weiterführende Schulen in allen 16 Bundesländern sowie für Berufsschulen, die Hochschul- und Lehramtsausbildung und die außerschulische Bildungsarbeit. Über die frei wählbaren Schwierigkeitsgrade und Rundenzahlen lässt sich der Anspruch flexibel an Lerngruppe, Vorwissen und Unterrichtsziel anpassen.',
   },
   {
     question: 'Wie unterscheiden sich die drei Schwierigkeitsgrade Einsteiger, Standard und Profi?',
     answer:
-      'Die drei Stufen lassen sich unabhängig von der Jahrgangsstufe frei nach Vorwissen und Unterrichtsziel wählen: Die Stufe Einsteiger startet mit einheitlichen Bodenwerten von 100, verlässlicher Wettervorhersage und 0 % Überziehungszins. Die Stufe Standard ergänzt fünf unterschiedliche Boden-Zonen, saisonale Wettertrends, 6 % Überziehungszins und regionale Förderverträge. Die Stufe Profi fordert mit stark heterogenen Böden, zunehmendem Klimastress, 10 % Überziehungszins und einer Insolvenzgrenze ab -50.000 €.',
+      'Die drei Stufen lassen sich frei nach Vorwissen und Unterrichtsziel wählen: Die Stufe Einsteiger startet mit einheitlichen Bodenwerten von 100, verlässlicher Wettervorhersage und 0 % Überziehungszins. Die Stufe Standard ergänzt fünf unterschiedliche Boden-Zonen, saisonale Wettertrends, 6 % Überziehungszins und regionale Förderverträge. Die Stufe Profi fordert mit stark heterogenen Böden, zunehmendem Klimastress, 10 % Überziehungszins und einer Insolvenzgrenze ab -50.000 €.',
   },
   {
     question: 'Wie läuft eine Einzelstunde oder Doppelstunde im Unterricht praktisch ab?',
     answer:
-      'Nach einer kurzen Einführung über die integrierte Spieltour starten die Lernenden ohne Registrierung im Einzelspieler-Modus oder treten per vierstelliger Team-PIN einer gemeinsamen Klassenrunde bei. Anschließend bewirtschaften sie ihren Hof allein oder in Kleingruppen über eine flexibel einstellbare Rundenanzahl (5 bis 20 Wirtschaftsjahre, typischerweise 30 bis 50 Minuten) mit einer kurzen Zwischenbilanz zur Spielmitte. Zum Abschluss werden die Rangliste für den zukunftsfähigen Hof sowie die Boden- und Kapitalverläufe gemeinsam ausgewertet.',
-  },
-  {
-    question: 'Welche Themen aus BNE, Biologie, Geographie und Wirtschaft werden konkret simuliert?',
-    answer:
-      'Biologisch und ökologisch modelliert SOIL den Humusaufbau, den Nährstoffhaushalt, die Stickstofffixierung durch Leguminosen sowie die natürliche Regulierung von Schaderregern durch vielfältige Fruchtfolgen. Geographisch und wirtschaftlich stehen Standortfaktoren, Ertragsrisiken durch Extremwetter, reale Deckungsbeiträge nach KTBL sowie EU-Agrarförderungen und Öko-Regelungen im Mittelpunkt. So erleben die Lernenden unmittelbar, wie kurzfristige Gewinnmaximierung zur Bodendegradation führt und warum ökologische Pflege die Basis für dauerhaften wirtschaftlichen Erfolg bildet.',
+      'Nach einer kurzen Einführung über die integrierte Spieltour starten die Lernenden ohne Registrierung im Einzelspieler-Modus oder treten per vierstelliger Team-PIN einer gemeinsamen Klassenrunde bei. Anschließend bewirtschaften sie ihren Hof allein oder in Kleingruppen über mehrere Runden bzw. Wirtschaftsjahre (flexibel einstellbar, typischerweise 30 bis 50 Minuten) mit einer kurzen Zwischenbilanz zur Spielmitte. Zum Abschluss werden die Rangliste für den zukunftsfähigen Hof sowie die Boden- und Kapitalverläufe gemeinsam ausgewertet.',
   },
   {
     question: 'Ist SOIL kostenlos, werbefrei und DSGVO-konform ohne Schüler-Accounts nutzbar?',
     answer:
-      'Ja, SOIL ist als freie Bildungsressource dauerhaft kostenlos, werbefrei und direkt im Browser sowie als App auf Tablets, Laptops und interaktiven Tafeln spielbar. Schülerinnen und Schüler benötigen kein Benutzerkonto und geben weder Namen noch E-Mail-Adressen ein. Einzelspieler-Runden laufen lokal auf dem Endgerät, während Mehrspieler-Klassenrunden über anonyme vierstellige Team-PINs auf europäischen Servern abgewickelt werden.',
+      'Ja, SOIL ist als freie Bildungsressource (Open Educational Resource, CC BY 4.0) dauerhaft kostenlos, werbefrei und direkt im Browser sowie als App auf Tablets, Laptops und interaktiven Tafeln spielbar. Schülerinnen und Schüler benötigen kein Benutzerkonto und geben weder Namen noch E-Mail-Adressen ein. Einzelspieler-Runden laufen lokal auf dem Endgerät, während Mehrspieler-Klassenrunden über anonyme vierstellige Team-PINs auf europäischen Servern abgewickelt werden.',
   },
 ];
 
@@ -92,11 +92,11 @@ function createAuthActionRoute(path: string): Route {
 export const routes: Routes = [
   {
     path: '',
-    title: 'SOIL: Online-Planspiel & Simulation für BNE im Unterricht',
+    title: 'SOIL – Kostenloses Planspiel & Unterrichtsmaterial für Biologie, Erdkunde/Geografie & Wirtschaft (BNE)',
     data: {
       seo: {
         description:
-          'Kostenloses Online-Planspiel und interaktive Simulation für BNE, Biologie, Geographie und Wirtschaft (Klasse 5–13): Bewirtschafte online einen Bauernhof.',
+          'Kostenloses digitales Unterrichtsmaterial (OER) und interaktives Online-Planspiel zu Landwirtschaft, Bodenfruchtbarkeit und Nachhaltigkeit (BNE) für Biologie, Erdkunde / Geografie und Wirtschaft.',
         canonicalPath: '/',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -106,10 +106,10 @@ export const routes: Routes = [
               '@type': 'SoftwareApplication',
               name: 'SOIL',
               alternateName: [
+                'SOIL Unterrichtsmaterial',
                 'SOIL Planspiel BNE',
                 'SOIL Online-Planspiel Landwirtschaft',
                 'SOIL Landwirtschaftssimulation',
-                'SOIL Simulation BNE',
               ],
               url: 'https://soil.app/',
               inLanguage: 'de',
@@ -119,7 +119,7 @@ export const routes: Routes = [
               applicationCategory: ['EducationalApplication', 'GameApplication', 'Simulation'],
               operatingSystem: 'Web, iOS, Android',
               keywords:
-                'Planspiel BNE, Planspiel BNE online, Online-Planspiel, Simulation, Landwirtschaftssimulation, Bildung für nachhaltige Entwicklung, BNE, Biologie, Geographie, Wirtschaft, Unterricht, Fruchtfolge, Bodenqualität',
+                'Unterrichtsmaterial Biologie, Unterrichtsmaterial Erdkunde, Unterrichtsmaterial Geografie, Unterrichtsmaterial Geographie, Unterrichtsmaterial Wirtschaft, OER Unterrichtsmaterial, Planspiel BNE, Planspiel Landwirtschaft, Bodenfruchtbarkeit, Online-Planspiel, Landwirtschaftssimulation, Bildung für nachhaltige Entwicklung',
               offers: {
                 '@type': 'Offer',
                 price: '0',
@@ -128,27 +128,58 @@ export const routes: Routes = [
             },
             {
               '@type': 'LearningResource',
-              name: 'SOIL – Online-Planspiel & Interaktive Landwirtschaftssimulation für BNE',
+              name: 'SOIL – Kostenloses Planspiel & Unterrichtsmaterial für Biologie, Erdkunde/Geografie & Wirtschaft (BNE)',
               alternateName: [
+                'SOIL Unterrichtsmaterial Biologie, Erdkunde/Geografie & Wirtschaft',
                 'Planspiel BNE online',
                 'SOIL Planspiel Landwirtschaft',
-                'SOIL Simulation für den Unterricht',
+                'SOIL OER Unterrichtsmaterial',
               ],
               url: 'https://soil.app/',
               inLanguage: 'de',
               isAccessibleForFree: true,
               license: CC_BY_LICENSE,
               creator: SOIL_CREATORS,
-              learningResourceType: ['Planspiel', 'Simulation', 'Educational Game'],
-              educationalUse: ['Planspiel', 'Simulation', 'Unterricht', 'Projekttag BNE'],
-              educationalLevel: ['Sekundarstufe I', 'Sekundarstufe II', 'Berufliche Bildung', 'Hochschule'],
-              keywords:
-                'Planspiel BNE, Planspiel BNE online, Online-Planspiel, Simulation, Landwirtschaftssimulation, Bildung für nachhaltige Entwicklung, Biologie, Geographie, Erdkunde, Wirtschaft',
-              teaches: [
+              learningResourceType: [
+                'Simulation',
+                'Educational Game',
+                'Planspiel',
+                'Unterrichtsmaterial',
+                'Open Educational Resource (OER)',
+              ],
+              educationalUse: ['Unterricht', 'Gruppenarbeit', 'Einzelarbeit', 'Projekttag'],
+              educationalLevel: [
+                'Weiterführende Schulen',
+                'Sekundarstufe I',
+                'Sekundarstufe II',
+                'Berufliche Bildung',
+                'Hochschule',
+              ],
+              keywords: [
+                'Unterrichtsmaterial Biologie',
+                'Unterrichtsmaterial Erdkunde',
+                'Unterrichtsmaterial Geografie',
+                'Unterrichtsmaterial Geographie',
+                'Unterrichtsmaterial Wirtschaft',
+                'Planspiel BNE',
+                'Planspiel Landwirtschaft',
+                'Bodenfruchtbarkeit',
+                'OER Unterrichtsmaterial',
+              ],
+              about: [
+                'Biologie',
+                'Erdkunde',
+                'Geografie',
+                'Geographie',
+                'Wirtschaft',
+                'Politik und Wirtschaft',
                 'Bildung für nachhaltige Entwicklung (BNE)',
-                'Nachhaltige Landwirtschaft',
-                'Bodenqualität und Fruchtfolge',
-                'Agrarökonomie',
+              ],
+              teaches: [
+                'Ökosystem Boden, Humusaufbau und Nährstoffkreisläufe (Biologie)',
+                'Nachhaltige Landwirtschaft, Bodendegradation und Klimafolgen (Erdkunde / Geografie / Geographie)',
+                'Agrarökonomie, Marktpreise, Subventionen und Zielkonflikte (Wirtschaft / Politik und Wirtschaft)',
+                'Bildung für nachhaltige Entwicklung (BNE)',
               ],
             },
           ],
@@ -159,19 +190,19 @@ export const routes: Routes = [
   },
   {
     path: 'trailer',
-    title: 'Trailer – SOIL Online-Planspiel & Simulation für BNE',
+    title: 'Trailer – SOIL Online-Planspiel & Unterrichtsmaterial für BNE',
     data: {
       seo: {
         description:
-          'Einminütiger Video-Trailer zum kostenlosen Online-Planspiel und der interaktiven Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
+          'Einminütiger Video-Trailer zum kostenlosen Online-Planspiel und OER-Unterrichtsmaterial SOIL für Biologie, Erdkunde / Geografie, Wirtschaft und BNE.',
         canonicalPath: '/trailer',
         ogType: 'video.other',
         jsonLd: {
           '@context': 'https://schema.org',
           '@type': 'VideoObject',
-          name: 'SOIL – Online-Planspiel & Interaktive Simulation über Landwirtschaft, Ökonomie und Nachhaltigkeit (BNE)',
+          name: 'SOIL – Online-Planspiel & Unterrichtsmaterial zu Landwirtschaft, Ökonomie und Nachhaltigkeit (BNE)',
           description:
-            'Einminütiger Überblick über das kostenlose Online-Planspiel und die interaktive Landwirtschaftssimulation SOIL für BNE, Biologie, Geographie und Wirtschaft.',
+            'Einminütiger Überblick über das kostenlose Online-Planspiel und OER-Unterrichtsmaterial SOIL für Biologie, Erdkunde / Geografie, Wirtschaft und BNE.',
           url: 'https://soil.app/trailer',
           thumbnailUrl: 'https://soil.app/SOIL-screenshot.png',
           uploadDate: '2026-10-30T14:00:00+01:00',
@@ -296,12 +327,12 @@ export const routes: Routes = [
     data: {
       seo: {
         description:
-          'Spielanleitung zum Online-Planspiel SOIL: Kulturen, Fruchtfolge, Bodenqualität, Nährstoffe, Bio-Siegel, Regionalverträge und 3 Schwierigkeitsgrade.',
+          'Begleitendes Handbuch und Unterrichtsmaterial zum Online-Planspiel SOIL: Kulturen, Fruchtfolge, Bodenfruchtbarkeit, Nährstoffe, Bio-Siegel und Regionalverträge.',
         canonicalPath: '/manual',
         jsonLd: {
           '@context': 'https://schema.org',
           '@type': 'TechArticle',
-          name: 'SOIL Handbuch & Spielanleitung (Online-Planspiel & Simulation für BNE)',
+          name: 'SOIL Handbuch, Spielanleitung & Begleitendes Unterrichtsmaterial (Online-Planspiel für BNE)',
           url: 'https://soil.app/manual',
           inLanguage: 'de',
           isAccessibleForFree: true,
@@ -315,18 +346,18 @@ export const routes: Routes = [
   },
   {
     path: 'info',
-    title: 'SOIL: Planspiel BNE im Unterricht, Lehrplan & Didaktik',
+    title: 'Unterrichtsmaterial & Lehrplanbezug (Biologie, Erdkunde/Geografie, Wirtschaft, BNE) – SOIL',
     data: {
       seo: {
         description:
-          'Einsatz des Online-Planspiels SOIL im Unterricht (alle 16 Bundesländer) für BNE, Biologie, Geographie und Wirtschaft: Lehrplanbezug, Didaktik & FAQ.',
+          'Kostenloses OER-Unterrichtsmaterial zum Planspiel SOIL: Lehrplanbezug aller 16 Bundesländer für Biologie, Erdkunde / Geografie, Wirtschaft und BNE, Didaktik & FAQ.',
         canonicalPath: '/info',
         jsonLd: {
           '@context': 'https://schema.org',
           '@graph': [
             {
               '@type': 'AboutPage',
-              name: 'Planspiel BNE im Unterricht: Lehrplanbezug, Didaktik & Wissenschaftlicher Hintergrund – SOIL',
+              name: 'Unterrichtsmaterial & Lehrplanbezug (Biologie, Erdkunde/Geografie, Wirtschaft, BNE) – SOIL',
               url: 'https://soil.app/info',
               inLanguage: 'de',
               isAccessibleForFree: true,

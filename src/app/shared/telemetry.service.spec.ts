@@ -10,6 +10,8 @@ describe('TelemetryService', () => {
   let fetchSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
+    window.sessionStorage.clear();
+    window.localStorage.clear();
     mockDoc = { referrer: 'https://www.bpb.de/lernen/spiele?ref=1' };
     fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 204 });
     vi.stubGlobal('fetch', fetchSpy);
@@ -27,13 +29,15 @@ describe('TelemetryService', () => {
   });
 
   afterEach(() => {
+    window.sessionStorage.clear();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
-  it('normalizes canonical routes and rejects unknown paths', () => {
+  it('normalizes canonical routes including /trailer and rejects unknown paths', () => {
     expect(service.normalizeRoute('/')).toBe('/');
     expect(service.normalizeRoute('/manual/?topic=wheat#section')).toBe('/manual');
+    expect(service.normalizeRoute('/trailer?autoplay=1')).toBe('/trailer');
     expect(service.normalizeRoute('/game?gameId=local-123')).toBe('/game');
     expect(service.normalizeRoute('/admin/super')).toBeNull();
     expect(service.normalizeRoute('/unknown')).toBeNull();
@@ -48,24 +52,84 @@ describe('TelemetryService', () => {
     expect(service.extractReferrerBucket('https://soil--soil-602ea.europe-west4.hosted.app/', 'web')).toBeNull();
   });
 
-  it('flushes page views and initial referrer without touching localStorage or sessionStorage', async () => {
-    const localSetSpy = vi.spyOn(Storage.prototype, 'setItem');
+  it('flushes page views, deduplicates in-tab navigations, and never reads or writes localStorage or sessionStorage', async () => {
+    const localSetSpy = vi.spyOn(window.localStorage, 'setItem');
+    const localGetSpy = vi.spyOn(window.localStorage, 'getItem');
+    const sessionSetSpy = vi.spyOn(window.sessionStorage, 'setItem');
+    const sessionGetSpy = vi.spyOn(window.sessionStorage, 'getItem');
+    Object.defineProperty(performance, 'getEntriesByType', {
+      value: vi.fn().mockReturnValue([{ type: 'navigate' } as PerformanceNavigationTiming]),
+      configurable: true,
+      writable: true,
+    });
 
-    service.trackPageView('/manual?tab=crops');
+    service.trackPageView('/trailer?from=share');
     await Promise.resolve();
 
     expect(localSetSpy).not.toHaveBeenCalled();
+    expect(localGetSpy).not.toHaveBeenCalled();
+    expect(sessionSetSpy).not.toHaveBeenCalled();
+    expect(sessionGetSpy).not.toHaveBeenCalled();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const [url, options] = fetchSpy.mock.calls[0];
     expect(url).toBe('/api/telemetry');
     expect(options.method).toBe('POST');
     const body = JSON.parse(options.body);
-    expect(body.views).toEqual({ '/manual': 1 });
+    expect(body.views).toEqual({ '/trailer': 1 });
     expect(body.referrers).toEqual({ 'bpb.de': 1 });
 
     // Consecutive identical route with different query params is deduplicated
-    service.trackPageView('/manual?tab=soil');
+    service.trackPageView('/trailer?from=reload');
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+    // Navigating to a second route within the SPA does not re-record the initial referrer
+    service.trackPageView('/manual');
+    await Promise.resolve();
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    const secondBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
+    expect(secondBody.views).toEqual({ '/manual': 1 });
+    expect(secondBody.referrers).toBeUndefined();
+  });
+
+  it('skips duplicate referrer recording on reload and back_forward navigations via PerformanceNavigationTiming', async () => {
+    const sessionSetSpy = vi.spyOn(window.sessionStorage, 'setItem');
+    const localSetSpy = vi.spyOn(window.localStorage, 'setItem');
+
+    for (const navType of ['reload', 'back_forward'] as const) {
+      fetchSpy.mockClear();
+      Object.defineProperty(performance, 'getEntriesByType', {
+        value: vi.fn().mockReturnValue([{ type: navType } as PerformanceNavigationTiming]),
+        configurable: true,
+        writable: true,
+      });
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          TelemetryService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DOCUMENT, useValue: { referrer: 'https://m.facebook.com/' } },
+        ],
+      });
+      const reloadedService = TestBed.inject(TelemetryService);
+      reloadedService.enableInTests = true;
+      reloadedService.trackPageView('/');
+      await Promise.resolve();
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      const reloadBody = JSON.parse(fetchSpy.mock.calls[0][1].body);
+      expect(reloadBody.views).toEqual({ '/': 1 });
+      expect(reloadBody.referrers).toBeUndefined();
+    }
+
+    Object.defineProperty(performance, 'getEntriesByType', {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
+
+    expect(sessionSetSpy).not.toHaveBeenCalled();
+    expect(localSetSpy).not.toHaveBeenCalled();
   });
 
   it('buffers page views and events in RAM while offline and flushes when online', async () => {

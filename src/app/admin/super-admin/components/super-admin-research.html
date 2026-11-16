@@ -1,0 +1,139 @@
+<section class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0">
+  <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
+    <div>
+      <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">
+        Forschungsdaten (Cloud &amp; Lokale Spiele)
+      </h2>
+      <p class="text-xs text-gray-400 mt-0.5">Anonymisierte Spielverläufe zur wissenschaftlichen Auswertung</p>
+    </div>
+    <span class="text-xs font-mono tabular-nums text-gray-400">{{ researchGames.length }} Datensätze</span>
+  </div>
+
+  <div
+    tabindex="0"
+    role="region"
+    aria-label="Forschungsdaten abgeschlossener Spiele"
+    class="soil-table-region overflow-x-auto max-h-[42rem]"
+  >
+    <table class="w-full text-left border-separate border-spacing-0">
+      <thead class="sticky top-0 z-10 bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
+        <tr>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800 w-10"></th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Datensatz</th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Runden</th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Teams</th>
+          <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800 text-right">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-800 text-sm">
+        @for (game of researchGames; track game.id) {
+          <tr
+            (click)="toggleGameExpansion.emit(game.id)"
+            class="hover:bg-gray-950 transition-colors cursor-pointer group"
+          >
+            <td class="p-4 text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 text-gray-400 transition-transform duration-150"
+                [class.rotate-90]="expandedGames.has(game.id)"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </td>
+            <td class="p-4">
+              <div class="font-semibold text-white flex flex-wrap items-center gap-2">
+                <span>{{ game.name }}</span>
+                @if (isCloudResearchGame(game)) {
+                  <span class="px-1.5 py-0.5 bg-sky-950 text-sky-300 text-[10px] font-mono rounded border border-sky-800 uppercase">
+                    Cloud
+                  </span>
+                } @else {
+                  <span class="px-1.5 py-0.5 bg-emerald-950 text-emerald-300 text-[10px] font-mono rounded border border-emerald-800 uppercase">
+                    Lokal
+                  </span>
+                }
+              </div>
+              <div class="text-xs text-gray-500 font-mono tabular-nums mt-0.5">{{ game.id }}</div>
+              <div class="text-[11px] text-gray-400 font-mono tabular-nums mt-0.5">
+                Hochgeladen am {{ (formatDate(game.updatedAt) | date: 'dd.MM.yyyy HH:mm') || '–' }}
+              </div>
+            </td>
+            <td class="p-4 font-mono tabular-nums text-gray-200 whitespace-nowrap">
+              {{ game.currentRoundNumber }} / {{ game.settings.length || game.currentRoundNumber }}
+            </td>
+            <td class="p-4 font-mono tabular-nums text-gray-300 whitespace-nowrap">
+              {{ getPlayers(game).length }} {{ getPlayers(game).length === 1 ? 'Team' : 'Teams' }}
+            </td>
+            <td class="p-4 text-right whitespace-nowrap">
+              <button
+                type="button"
+                (click)="$event.stopPropagation(); toggleGameExpansion.emit(game.id)"
+                class="text-xs text-emerald-400 font-semibold hover:text-emerald-300 cursor-pointer"
+              >
+                {{ expandedGames.has(game.id) ? 'Einklappen' : 'Details' }}
+              </button>
+            </td>
+          </tr>
+
+          @if (expandedGames.has(game.id)) {
+            @for (player of getPlayers(game); track player.uid) {
+              <tr class="bg-gray-950 border-l-2 border-emerald-500">
+                <td></td>
+                <td class="p-4 pl-6">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="font-medium text-gray-200">{{ player.displayName }}</span>
+                  </div>
+                  <div class="text-[11px] text-gray-500 font-mono tabular-nums">{{ player.uid }}</div>
+                </td>
+                <td class="p-4 whitespace-nowrap">
+                  <div class="text-[10px] text-gray-500 uppercase font-semibold mb-1">Fortschritt</div>
+                  <span class="text-xs font-mono tabular-nums bg-gray-900 text-emerald-300 px-2 py-0.5 rounded border border-gray-800">
+                    Runde {{ player.submittedRound }} / {{ game.currentRoundNumber }}
+                  </span>
+                </td>
+                <td class="p-4">
+                  <div class="grid grid-cols-2 gap-4 min-w-[12rem]">
+                    <div>
+                      <div class="text-[10px] text-gray-500 uppercase font-semibold mb-1">Kapital</div>
+                      <div class="text-emerald-400 font-mono tabular-nums text-xs">
+                        {{ player.capital | number: '1.0-0' }} €
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-[10px] text-gray-500 uppercase font-semibold mb-1">Boden</div>
+                      <div class="flex items-center gap-2">
+                        <div class="w-12 bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                          <div class="bg-emerald-500 h-1.5 rounded-full" [style.width.%]="player.avgSoil"></div>
+                        </div>
+                        <span class="text-xs font-mono tabular-nums text-gray-300">{{ player.avgSoil }}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="p-4 text-right whitespace-nowrap">
+                  <button
+                    type="button"
+                    (click)="viewAsPlayer.emit({ gameId: game.id, playerUid: player.uid })"
+                    data-testid="view-research-game"
+                    class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs transition-colors font-bold cursor-pointer"
+                  >
+                    Ansehen
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        }
+        @if (researchGames.length === 0) {
+          <tr>
+            <td colspan="5" class="p-8 text-center text-gray-500">Keine Forschungsdaten gefunden.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

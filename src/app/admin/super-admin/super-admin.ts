@@ -1,20 +1,44 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, DestroyRef, inject, NgZone, type OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  NgZone,
+  type OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { combineLatest, of } from 'rxjs';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import type { Feedback, Game, PlayerState, SystemStats, UserStatus } from '../../types';
+import { SuperAdminFeedbackComponent } from './components/super-admin-feedback';
 import { SuperAdminHudComponent } from './components/super-admin-hud';
+import { SuperAdminResearchComponent } from './components/super-admin-research';
 import { SuperAdminStatsComponent } from './components/super-admin-stats';
+import { type AdminAccountRow, SuperAdminUsersComponent } from './components/super-admin-users';
+
+export type SuperAdminTab = 'analytics' | 'users' | 'research' | 'feedback';
 
 @Component({
   selector: 'app-super-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, SuperAdminHudComponent, SuperAdminStatsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SuperAdminHudComponent,
+    SuperAdminStatsComponent,
+    SuperAdminUsersComponent,
+    SuperAdminResearchComponent,
+    SuperAdminFeedbackComponent,
+  ],
   templateUrl: './super-admin.html',
+  styleUrl: './super-admin.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class SuperAdminComponent implements OnInit {
   gameService = inject(GameService);
@@ -24,159 +48,181 @@ export class SuperAdminComponent implements OnInit {
   private ngZone = inject(NgZone);
   private destroyRef = inject(DestroyRef);
 
+  readonly tabs: ReadonlyArray<{ id: SuperAdminTab; label: string }> = [
+    { id: 'analytics', label: 'Zugriffe & Reichweite' },
+    { id: 'users', label: 'Lehrkräfte & System' },
+    { id: 'research', label: 'Forschungsdaten' },
+    { id: 'feedback', label: 'Feedback' },
+  ];
+
+  activeTab: SuperAdminTab = 'analytics';
+
   t(key: string): string {
     const translations: Record<string, string> = {
       'superadmin.title': 'System-Administrator',
-      'user.photoURL': 'assets/images/gut.jpg',
       'superadmin.badge': 'System',
       'superadmin.logout': 'Abmelden',
-      'superadmin.loading': 'Daten werden geladen...',
+      'superadmin.loading': 'Systemdaten werden geladen …',
       'superadmin.dashboard.title': 'System-Konsole',
-      'superadmin.dashboard.subtitle': 'Systemweite Übersicht und Administrator-Verwaltung',
+      'superadmin.dashboard.subtitle': 'Reichweite, Lehrkräfte-Konten, Forschungsdatensätze und Rückmeldungen',
       'superadmin.dashboard.refresh': 'Aktualisieren',
-      'superadmin.stats.totalGames': 'Gesamt Spiele',
-      'superadmin.stats.created': 'erstellt',
-      'superadmin.stats.active': 'Aktiv',
-      'superadmin.stats.trash': 'Papierkorb',
-      'superadmin.stats.totalUsers': 'Gesamt Benutzer',
-      'superadmin.stats.registered': 'registriert',
-      'superadmin.stats.teachers': 'Administratoren',
-      'superadmin.stats.rejected': 'Abgelehnt',
-      'superadmin.stats.banned': 'Gesperrt',
-      'superadmin.admins.title': 'Administratoren',
-      'superadmin.table.user': 'Benutzer / E-Mail',
-      'superadmin.table.registered': 'Registriert',
-      'superadmin.table.role': 'Rolle',
-      'superadmin.table.status': 'Status',
-      'superadmin.table.quota': 'Limit',
-      'superadmin.table.games': 'Spiele',
-      'superadmin.table.actions': 'Aktionen',
-      'superadmin.actions.ban': 'Sperren',
-      'superadmin.actions.delete': 'Löschen',
-      'superadmin.actions.games': 'Spiele',
-      'superadmin.actions.quota': 'Limit',
-      'superadmin.games.title': 'Spiele von',
-      'superadmin.games.close': 'Schließen',
-      'superadmin.games.loading': 'Spiele werden geladen...',
-      'superadmin.games.none': 'Keine Spiele für diesen Administrator gefunden.',
-      'superadmin.games.status': 'Status',
-      'superadmin.games.round': 'Runde',
-      'superadmin.games.created': 'Erstellt',
       'superadmin.delete.game.title': 'Spiel löschen',
-      'superadmin.delete.game.confirm': 'Bist du sicher, dass du dieses Spiel löschen möchtest?',
+      'superadmin.delete.game.confirm': 'Möchtest du folgendes Spiel wirklich löschen:',
       'superadmin.delete.game.permanent': 'Dauerhaft löschen',
-      'superadmin.delete.game.soft': 'In den Papierkorb verschieben',
+      'superadmin.delete.game.soft': 'Das Spiel wird zunächst in den Papierkorb verschoben.',
       'superadmin.delete.game.warning':
-        ' Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden sofort zerstört.',
-      'superadmin.delete.game.typeConfirm': '',
-      'superadmin.quota.modal.title': 'Spiel-Limit setzen',
-      'superadmin.quota.modal.desc': '',
-      'superadmin.quota.modal.label': 'Limit',
+        'Diese Aktion kann nicht rückgängig gemacht werden. Alle Spieldaten werden unwiderruflich gelöscht.',
+      'superadmin.delete.game.typeConfirm': 'Bitte gib DELETE zur Bestätigung ein:',
+      'superadmin.quota.modal.title': 'Spiel-Limit anpassen',
+      'superadmin.quota.modal.desc': 'Maximale Anzahl gleichzeitiger Spiele für',
+      'superadmin.quota.modal.label': 'Spiel-Limit',
       'superadmin.quota.modal.save': 'Speichern',
       'superadmin.modal.cancel': 'Abbrechen',
-      'superadmin.evaluation.title': 'Strategie-Analyse',
-      'superadmin.evaluation.btn': 'KI-Analyse starten',
-      'superadmin.evaluation.evaluating': 'Analysiere...',
-      'superadmin.evaluation.playStyle': 'Spielstil',
-      'superadmin.evaluation.analysis': 'Analyse',
-      'superadmin.evaluation.improvements': 'Verbesserungsvorschläge (Mechanik)',
-      'superadmin.evaluation.date': 'Analysiert am',
-      'superadmin.research.title': 'Forschungsdaten (Cloud & Lokale Spiele)',
-      'superadmin.table.game': 'Spiel',
-      'superadmin.table.rounds': 'Runden',
-      'superadmin.table.players': 'Teams',
-      'superadmin.table.capital': 'Kapital',
-      'superadmin.table.soil': 'Boden',
-      'superadmin.actions.view': 'Ansehen',
-      'superadmin.feedback.title': 'Feedback & Vorschläge',
-      'superadmin.feedback.none': 'Kein Feedback gefunden.',
-      'superadmin.feedback.table.user': 'Benutzer',
-      'superadmin.feedback.table.category': 'Kategorie',
-      'superadmin.feedback.table.rating': 'Bewertung',
-      'superadmin.feedback.table.status': 'Status',
-      'superadmin.feedback.actions.reply': 'Antworten',
-      'superadmin.feedback.actions.resolve': 'Lösen',
-      'superadmin.feedback.actions.reject': 'Ablehnen',
-      'superadmin.feedback.modal.reply.title': 'Antwort an Benutzer',
+      'superadmin.feedback.modal.reply.title': 'Antwort auf Feedback senden',
       'superadmin.feedback.modal.reply.label': 'Deine Nachricht',
       'superadmin.feedback.modal.reply.send': 'Antwort senden',
-      'superadmin.feedback.modal.resolve.title': 'Feedback lösen',
-      'superadmin.feedback.modal.resolve.label': 'Externe Referenz (z.B. GitHub Link)',
+      'superadmin.feedback.modal.resolve.title': 'Feedback als gelöst markieren',
+      'superadmin.feedback.modal.resolve.label': 'Externe Referenz (z. B. GitHub-Link oder Notiz)',
       'superadmin.feedback.modal.resolve.confirm': 'Als gelöst markieren',
+      'superadmin.reject.modal.title': 'Feedback ablehnen',
+      'superadmin.reject.modal.desc': 'Möchtest du diesen Feedback-Eintrag wirklich als abgelehnt markieren?',
+      'superadmin.actions.reject': 'Ablehnen',
     };
     return translations[key] || key;
   }
 
-  admins: (UserStatus & { gameCount: number; quota: number })[] = [];
+  admins: AdminAccountRow[] = [];
   feedback: Feedback[] = [];
   researchGames: Game[] = [];
   isLoadingResearchGames = false;
   systemInsights: any[] = [];
   isAnalyzing = false;
 
-  selectedAdmin: (UserStatus & { gameCount: number; quota: number }) | null = null;
+  selectedAdmin: AdminAccountRow | null = null;
   adminGames: Game[] = [];
   isLoadingGames = false;
 
   showQuotaModal = false;
-
   isSavingQuota = false;
-
-  selectedUserForQuota: (UserStatus & { gameCount: number; quota: number }) | null = null;
-
+  selectedUserForQuota: AdminAccountRow | null = null;
   newQuotaValue = 0;
 
-  evaluatingPlayers = new Set<string>(); // gameId + uid
-  expandedGames = new Set<string>(); // gameIds
+  evaluatingPlayers = new Set<string>();
+  expandedGames = new Set<string>();
+
+  stats: SystemStats | null = null;
+  isLoadingData = typeof window !== 'undefined';
+  isRefreshing = false;
+
+  errorMessage: string | null = null;
+  adminActionState: { action: 'ban' | 'delete'; user: UserStatus } | null = null;
+  adminActionConfirmInput = '';
+
+  feedbackToManage: Feedback | null = null;
+  feedbackAction: 'reply' | 'resolve' | 'reject' | null = null;
+  feedbackValue = '';
+  isManagingFeedback = false;
+
+  gameToDelete: Game | null = null;
+  isDeleting = false;
+  deleteConfirmInput = '';
+
+  selectTab(tabId: SuperAdminTab, event?: Event): void {
+    this.activeTab = tabId;
+    const target = event?.currentTarget as HTMLElement | null;
+    if (target && typeof target.scrollIntoView === 'function') {
+      try {
+        target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      } catch {
+        // Ignore in JSDOM environments without layout scroll support
+      }
+    }
+    this.cdr.detectChanges();
+  }
+
+  onTabKeydown(event: KeyboardEvent, currentIndex: number): void {
+    let nextIndex: number | null = null;
+    if (event.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % this.tabs.length;
+    } else if (event.key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + this.tabs.length) % this.tabs.length;
+    } else if (event.key === 'Home') {
+      nextIndex = 0;
+    } else if (event.key === 'End') {
+      nextIndex = this.tabs.length - 1;
+    }
+
+    if (nextIndex === null) return;
+    event.preventDefault();
+    const nextTab = this.tabs[nextIndex];
+    this.activeTab = nextTab.id;
+    this.cdr.detectChanges();
+
+    if (typeof document !== 'undefined') {
+      const btn = document.getElementById(`superadmin-tab-${nextTab.id}`);
+      btn?.focus();
+      if (btn && typeof btn.scrollIntoView === 'function') {
+        try {
+          btn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        } catch {
+          // Ignore in test environments
+        }
+      }
+    }
+  }
+
+  tabCount(tabId: SuperAdminTab): number | null {
+    if (!this.stats) return null;
+    switch (tabId) {
+      case 'analytics':
+        return this.stats.telemetry?.viewsTotal ?? 0;
+      case 'users':
+        return this.admins.length;
+      case 'research':
+        return this.researchGames.length;
+      case 'feedback':
+        return this.feedback.length;
+    }
+  }
 
   async ngOnInit() {
-    this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
-      if (user) {
-        if (localStorage.getItem('soil_test_mode') === 'true') {
+    const authReady$ = this.authService.authStateReady$ ?? of(true);
+    combineLatest([this.authService.user$, authReady$])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([user, authReady]) => {
+        if (user) {
           this.loadData();
-
           return;
         }
 
-        // User is authenticated
+        if (!authReady) {
+          // Cold reload: wait for Firebase Auth state hydration before redirecting
+          return;
+        }
 
-        this.loadData();
-      } else {
-        // Wait a bit or check if we are truly logged out?
+        if (typeof window !== 'undefined' && window.localStorage?.getItem('soil_test_mode')) {
+          return;
+        }
 
-        // For now, we respect the original logic but adding a log.
-
-        if (window.console) console.warn('SuperAdmin: No user, possible redirect needed');
-
-        // We only redirect if we are sure. This logic was arguably aggressive
-
-        // (redirecting on initial null) but if it works for the user generally,
-
-        // I will leave the strict redirect for now, focused on the DATA LOADING issue.
-
-        // However, if the user IS logged in, this block shouldn't persist.
-
-        if (localStorage.getItem('soil_test_mode')) return; // Avoid redirect in test mode if applicable
-
+        this.isLoadingData = false;
         this.router.navigate(['/admin/login']);
-      }
-    });
+      });
   }
 
   async logout() {
     await this.authService.logout();
-
     this.router.navigate(['/']);
   }
 
-  stats: SystemStats | null = null;
-
-  isLoadingData = false;
-
   async loadData() {
-    this.isLoadingData = true;
-
-    if (window.console) console.warn('SuperAdmin: Loading data...');
+    if (this.stats) {
+      this.isRefreshing = true;
+      this.isLoadingData = false;
+    } else {
+      this.isLoadingData = true;
+      this.isRefreshing = false;
+    }
+    this.cdr.detectChanges();
 
     try {
       const [admins, stats, feedback, researchRes, insights] = await Promise.all([
@@ -195,26 +241,19 @@ export class SuperAdminComponent implements OnInit {
         this.feedback = feedback;
         this.researchGames = researchRes.games;
         this.systemInsights = insights;
-
-        if (window.console)
-          console.warn('SuperAdmin: Data loaded', {
-            admins: this.admins.length,
-
-            feedback: this.feedback.length,
-          });
-
         this.cdr.detectChanges();
       });
     } catch (err) {
-      if (window.console) console.error('SuperAdmin: Error loading data', err);
+      if (typeof window !== 'undefined' && window.console) {
+        console.error('SuperAdmin: Error loading data', err);
+      }
     } finally {
       this.isLoadingData = false;
-
+      this.isRefreshing = false;
       this.cdr.detectChanges();
     }
   }
 
-  // Evaluation Logic
   async evaluatePlayer(game: Game, player: PlayerState) {
     const key = `${game.id}-${player.uid}`;
     this.evaluatingPlayers.add(key);
@@ -230,7 +269,7 @@ export class SuperAdminComponent implements OnInit {
       });
     } catch (err: any) {
       this.evaluatingPlayers.delete(key);
-      this.errorMessage = `Evaluation failed: ${err.message}`;
+      this.errorMessage = `KI-Analyse fehlgeschlagen: ${err.message}`;
       this.cdr.detectChanges();
     }
   }
@@ -248,33 +287,17 @@ export class SuperAdminComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // Feedback Management
-
-  feedbackToManage: Feedback | null = null;
-
-  feedbackAction: 'reply' | 'resolve' | 'reject' | null = null;
-
-  feedbackValue = '';
-
-  isManagingFeedback = false;
-
   initiateFeedbackAction(item: Feedback, action: 'reply' | 'resolve' | 'reject') {
     this.feedbackToManage = item;
-
     this.feedbackAction = action;
-
     this.feedbackValue = '';
-
     this.isManagingFeedback = false;
   }
 
   cancelFeedbackAction() {
     this.feedbackToManage = null;
-
     this.feedbackAction = null;
-
     this.feedbackValue = '';
-
     this.isManagingFeedback = false;
   }
 
@@ -282,7 +305,6 @@ export class SuperAdminComponent implements OnInit {
     if (!this.feedbackToManage || !this.feedbackAction) return;
 
     this.isManagingFeedback = true;
-
     const value: { response?: string; externalReference?: string } = {};
 
     if (this.feedbackAction === 'reply') {
@@ -293,72 +315,47 @@ export class SuperAdminComponent implements OnInit {
 
     try {
       await this.gameService.manageFeedback(this.feedbackToManage.id, this.feedbackAction, value);
-
       this.isManagingFeedback = false;
-
       this.cancelFeedbackAction();
-
       this.loadData();
     } catch (e: unknown) {
       this.isManagingFeedback = false;
-
-      if (window.console) console.error(e);
-
+      if (typeof window !== 'undefined' && window.console) console.error(e);
       const error = e as Error;
-
-      this.errorMessage = `Failed to manage feedback: ${error.message}`;
+      this.errorMessage = `Feedback-Aktion fehlgeschlagen: ${error.message}`;
     }
   }
 
-  // Quota Management
-
   setQuota(user: UserStatus & { quota: number }) {
-    this.selectedUserForQuota = user as UserStatus & { gameCount: number; quota: number };
-
+    this.selectedUserForQuota = user as AdminAccountRow;
     this.newQuotaValue = user.quota;
-
     this.showQuotaModal = true;
-
     this.isSavingQuota = false;
   }
 
   closeQuotaModal() {
     this.showQuotaModal = false;
-
     this.selectedUserForQuota = null;
-
     this.isSavingQuota = false;
   }
 
   async saveQuota() {
     if (this.selectedUserForQuota && this.newQuotaValue >= 0) {
       this.isSavingQuota = true;
-
       try {
         await this.gameService.manageAdmin(this.selectedUserForQuota.uid, 'setQuota', this.newQuotaValue);
-
         this.isSavingQuota = false;
-
         this.showQuotaModal = false;
-
         this.loadData();
-
         this.selectedUserForQuota = null;
       } catch (e: unknown) {
         this.isSavingQuota = false;
-
-        if (window.console) console.error(e);
-
+        if (typeof window !== 'undefined' && window.console) console.error(e);
         const error = e as Error;
-
-        this.errorMessage = `Failed to save quota: ${error.message}`;
+        this.errorMessage = `Limit konnte nicht gespeichert werden: ${error.message}`;
       }
     }
   }
-
-  errorMessage: string | null = null;
-  adminActionState: { action: 'ban' | 'delete'; user: UserStatus } | null = null;
-  adminActionConfirmInput = '';
 
   banAdmin(user: UserStatus) {
     this.adminActionState = { action: 'ban', user };
@@ -393,29 +390,26 @@ export class SuperAdminComponent implements OnInit {
     }
   }
 
-  async viewGames(admin: UserStatus & { gameCount: number; quota: number }) {
+  async viewGames(admin: AdminAccountRow) {
     this.selectedAdmin = admin;
     this.isLoadingGames = true;
     this.adminGames = [];
     this.cdr.detectChanges();
 
     try {
-      // Force scroll to games
       setTimeout(() => document.getElementById('games-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
-
       const res = await this.gameService.getAdminGames(1, 100, false, admin.uid);
 
       this.ngZone.run(() => {
-        if (window.console) console.warn('SuperAdmin: Games loaded', res.games.length);
         this.adminGames = res.games;
         this.isLoadingGames = false;
         this.cdr.detectChanges();
       });
     } catch (e: unknown) {
       this.ngZone.run(() => {
-        if (window.console) console.error(e);
+        if (typeof window !== 'undefined' && window.console) console.error(e);
         this.isLoadingGames = false;
-        this.errorMessage = 'Failed to load games';
+        this.errorMessage = 'Spiele konnten nicht geladen werden.';
         this.cdr.detectChanges();
       });
     }
@@ -424,8 +418,8 @@ export class SuperAdminComponent implements OnInit {
   async viewAsPlayer(gameId: string, playerUid: string) {
     this.router.navigate(['/game'], {
       queryParams: {
-        gameId: gameId,
-        playerUid: playerUid,
+        gameId,
+        playerUid,
         viewOnly: 'true',
       },
     });
@@ -438,17 +432,12 @@ export class SuperAdminComponent implements OnInit {
       await this.gameService.analyzeSystemBalance();
       await this.loadData();
     } catch (err: any) {
-      this.errorMessage = `Analysis failed: ${err.message}`;
+      this.errorMessage = `System-Analyse fehlgeschlagen: ${err.message}`;
     } finally {
       this.isAnalyzing = false;
       this.cdr.detectChanges();
     }
   }
-
-  // Delete Logic
-  gameToDelete: Game | null = null;
-  isDeleting = false;
-  deleteConfirmInput = '';
 
   async deleteGame(game: Game) {
     this.gameToDelete = game;
@@ -466,24 +455,22 @@ export class SuperAdminComponent implements OnInit {
 
     this.isDeleting = true;
     try {
-      // Check if it's a hard delete (if already deleted)
       const isTrash = this.gameToDelete.status === 'deleted' || !!this.gameToDelete.deletedAt;
       const force = isTrash;
 
       if (force && this.deleteConfirmInput !== 'DELETE') {
-        throw new Error('Please type DELETE to confirm.');
+        throw new Error('Bitte gib DELETE zur Bestätigung ein.');
       }
 
       await this.gameService.deleteGames([this.gameToDelete.id], force);
 
-      // Refresh
       if (this.selectedAdmin) {
         this.viewGames(this.selectedAdmin);
       }
     } catch (e: unknown) {
       const error = e as Error;
-      if (window.console) console.error(error);
-      this.errorMessage = `Failed to delete: ${error.message}`;
+      if (typeof window !== 'undefined' && window.console) console.error(error);
+      this.errorMessage = `Löschen fehlgeschlagen: ${error.message}`;
     } finally {
       this.isDeleting = false;
       this.gameToDelete = null;

@@ -1,0 +1,397 @@
+<div class="space-y-6">
+  <!-- System Summary Cards (Games & Accounts) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-gray-900 p-5 rounded-xl border border-gray-800">
+      <div class="text-xs font-semibold uppercase tracking-wider text-gray-400">Spiele im System</div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-3xl font-bold font-mono tabular-nums text-white">{{ stats?.games?.total || 0 }}</span>
+        <span class="text-xs text-gray-400">erstellt</span>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-800 flex flex-wrap gap-x-5 gap-y-1 text-xs font-mono tabular-nums">
+        <span class="text-emerald-400">{{ stats?.games?.active || 0 }} aktiv</span>
+        <span class="text-rose-400">{{ stats?.games?.deleted || 0 }} im Papierkorb</span>
+      </div>
+    </div>
+
+    <div class="bg-gray-900 p-5 rounded-xl border border-gray-800">
+      <div class="text-xs font-semibold uppercase tracking-wider text-gray-400">Registrierte Konten</div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="text-3xl font-bold font-mono tabular-nums text-white">{{ stats?.users?.total || 0 }}</span>
+        <span class="text-xs text-gray-400">Konten gesamt</span>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-800 flex flex-wrap gap-x-5 gap-y-1 text-xs font-mono tabular-nums">
+        <span class="text-sky-300">{{ stats?.users?.admins || 0 }} Lehrkräfte / Admins</span>
+        <span class="text-rose-400">{{ stats?.users?.banned || 0 }} gesperrt</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admins / Teachers Table -->
+  <section class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0">
+    <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">Lehrkräfte &amp; Administratoren</h2>
+        <p class="text-xs text-gray-400 mt-0.5">Registrierte Konten, Spielkontingente und Moderationsaktionen</p>
+      </div>
+      <span class="text-xs font-mono tabular-nums text-gray-400">
+        {{ admins.length }} Konten · Neueste zuerst
+      </span>
+    </div>
+
+    <div
+      tabindex="0"
+      role="region"
+      aria-label="Registrierte Lehrkräfte und Administratoren"
+      class="soil-table-region overflow-x-auto max-h-[36rem]"
+    >
+      <table class="w-full text-left border-separate border-spacing-0">
+        <thead class="sticky top-0 z-10 bg-gray-950 text-gray-400 text-xs uppercase tracking-wider">
+          <tr>
+            <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Konto / E-Mail</th>
+            <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Registriert</th>
+            <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Rolle</th>
+            <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Status</th>
+            <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Kontingent</th>
+            <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800">Spiele</th>
+            <th scope="col" class="px-4 py-3 font-medium border-b border-gray-800 text-right">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800 text-sm">
+          @for (admin of admins; track admin.uid) {
+            <tr class="hover:bg-gray-950 transition-colors">
+              <td class="p-4">
+                <div class="font-semibold text-white">{{ admin.email }}</div>
+                @if (admin.displayName) {
+                  <div class="text-xs text-gray-300">{{ admin.displayName }}</div>
+                }
+                <div class="text-xs text-gray-500 font-mono tabular-nums">{{ admin.uid }}</div>
+              </td>
+              <td
+                class="p-4 font-mono tabular-nums text-xs text-gray-300 whitespace-nowrap"
+                data-testid="admin-registered-date"
+              >
+                {{ (formatDate(admin.createdAt) | date: 'dd.MM.yyyy HH:mm') || '–' }}
+              </td>
+              <td class="p-4 whitespace-nowrap">
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
+                  [ngClass]="{
+                    'bg-emerald-950 text-emerald-300 border-emerald-800': admin.role === 'superadmin',
+                    'bg-sky-950 text-sky-300 border-sky-800': admin.role === 'admin',
+                    'bg-rose-950 text-rose-300 border-rose-800': admin.role === 'banned',
+                    'bg-gray-800 text-gray-300 border-gray-700': admin.role !== 'superadmin' && admin.role !== 'admin' && admin.role !== 'banned'
+                  }"
+                >
+                  {{ formatRoleLabel(admin.role) }}
+                </span>
+              </td>
+              <td class="p-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="h-2 w-2 rounded-full"
+                    [class.bg-emerald-500]="admin.status === 'active'"
+                    [class.bg-gray-500]="admin.status !== 'active'"
+                  ></span>
+                  <span class="text-gray-300 text-xs">{{ formatStatusLabel(admin.status) }}</span>
+                </div>
+              </td>
+              <td class="p-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <div class="bg-gray-800 rounded-full h-1.5 w-16 overflow-hidden">
+                    <div class="bg-emerald-500 h-1.5 rounded-full" [style.width.%]="quotaPercent(admin)"></div>
+                  </div>
+                  <span class="text-xs font-mono tabular-nums text-gray-300">{{ admin.gameCount }}/{{ admin.quota }}</span>
+                </div>
+              </td>
+              <td class="p-4 font-mono tabular-nums text-gray-200">
+                {{ admin.gameCount }}
+              </td>
+              <td class="p-4 text-right whitespace-nowrap">
+                @if (admin.role !== 'superadmin') {
+                  <div class="inline-flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      (click)="viewGames.emit(admin)"
+                      class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                    >
+                      Spiele
+                    </button>
+                    <button
+                      type="button"
+                      (click)="setQuota.emit(admin)"
+                      class="px-2.5 py-1 bg-gray-800 hover:bg-emerald-950 hover:border-emerald-700 hover:text-emerald-200 text-gray-200 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                      title="Spiel-Limit anpassen"
+                    >
+                      Limit
+                    </button>
+                    <button
+                      type="button"
+                      (click)="banAdmin.emit(admin)"
+                      class="px-2.5 py-1 bg-gray-800 hover:bg-amber-950 hover:border-amber-700 text-amber-200 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                      title="Konto sperren"
+                    >
+                      Sperren
+                    </button>
+                    <button
+                      type="button"
+                      (click)="deleteAdmin.emit(admin)"
+                      class="px-2 py-1 bg-gray-800 hover:bg-rose-950 hover:border-rose-700 text-rose-300 rounded text-xs transition-colors border border-gray-700 cursor-pointer"
+                      title="Konto löschen"
+                      aria-label="Konto löschen"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                } @else {
+                  <span class="text-gray-500 text-xs px-2">Geschützt</span>
+                }
+              </td>
+            </tr>
+          }
+          @if (admins.length === 0) {
+            <tr>
+              <td colspan="7" class="p-8 text-center text-gray-500">Keine Konten gefunden.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Selected Admin Games Drilldown -->
+  @if (selectedAdmin) {
+    <section
+      id="games-section"
+      class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0"
+    >
+      <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
+        <h3 class="text-base sm:text-lg font-bold text-white">
+          Spiele von <span class="text-emerald-400 font-mono">{{ selectedAdmin.email }}</span>
+        </h3>
+        <button
+          type="button"
+          (click)="closeAdminGames.emit()"
+          class="text-gray-300 hover:text-white flex items-center gap-1.5 text-xs bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 transition-colors hover:bg-gray-700 cursor-pointer"
+        >
+          Schließen
+        </button>
+      </div>
+
+      <div class="p-5 sm:p-6">
+        @if (isLoadingGames) {
+          <div class="py-10 flex flex-col items-center justify-center gap-3 text-gray-400 text-sm">
+            <progress aria-label="Spiele werden geladen" class="soil-spinner"></progress>
+            <span>Spiele werden geladen …</span>
+          </div>
+        } @else if (adminGames.length === 0) {
+          <div class="p-8 bg-gray-950 rounded-xl text-center text-gray-400 border border-gray-800 text-sm">
+            Keine Spiele für dieses Konto gefunden.
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (game of adminGames; track game.id) {
+              <div class="bg-gray-950 rounded-xl p-5 border border-gray-800 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-start justify-between gap-2 mb-3">
+                    <h4 class="font-bold text-base text-white truncate" [title]="game.name">{{ game.name }}</h4>
+                    <button
+                      type="button"
+                      (click)="deleteGame.emit(game)"
+                      class="text-gray-400 hover:text-rose-300 p-1 rounded hover:bg-rose-950 transition-colors shrink-0 cursor-pointer"
+                      title="Spiel löschen"
+                      aria-label="Spiel löschen"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div class="text-xs text-gray-400 space-y-1.5 mb-4">
+                    <div class="flex justify-between">
+                      <span>Status</span>
+                      <span class="text-emerald-400 font-semibold">{{ formatGameStatus(game.status) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>Runde</span>
+                      <span class="text-white font-mono tabular-nums">{{ game.currentRoundNumber }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>Erstellt</span>
+                      <span class="text-gray-300 font-mono tabular-nums">
+                        {{ (formatDate(game.createdAt) | date: 'dd.MM.yyyy') || '–' }}
+                      </span>
+                    </div>
+                    <div class="text-[11px] text-gray-500 font-mono truncate pt-1">{{ game.id }}</div>
+                  </div>
+                </div>
+
+                <div class="pt-3 border-t border-gray-800 space-y-3">
+                  @for (player of getPlayers(game); track player.uid) {
+                    <div class="bg-gray-900 p-3 rounded-lg border border-gray-800 space-y-2">
+                      <div class="flex justify-between items-center gap-2">
+                        <span class="text-xs font-bold text-gray-200 truncate">{{ player.displayName }}</span>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            (click)="evaluatePlayer.emit({ game, player })"
+                            [disabled]="evaluatingPlayers.has(game.id + '-' + player.uid)"
+                            class="text-[11px] px-2 py-1 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-gray-200 rounded border border-gray-700 transition-colors cursor-pointer"
+                          >
+                            {{ evaluatingPlayers.has(game.id + '-' + player.uid) ? 'Analysiere …' : 'KI-Analyse' }}
+                          </button>
+                          <button
+                            type="button"
+                            (click)="viewAsPlayer.emit({ gameId: game.id, playerUid: player.uid })"
+                            class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[11px] font-bold transition-colors cursor-pointer"
+                          >
+                            Ansehen
+                          </button>
+                        </div>
+                      </div>
+
+                      @if (game.evaluations?.[player.uid]; as evalData) {
+                        <div class="pt-2 border-t border-gray-800 space-y-1.5 text-[11px]">
+                          <div class="text-emerald-400 font-semibold">{{ evalData.playStyle }}</div>
+                          <p class="text-gray-400 leading-relaxed">{{ evalData.analysis }}</p>
+                          @if (evalData.improvements.length) {
+                            <ul class="list-disc list-inside text-gray-400 space-y-0.5">
+                              @for (imp of evalData.improvements; track imp) {
+                                <li>{{ imp }}</li>
+                              }
+                            </ul>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- System-Insights & Balancing (KI) -->
+  <section class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0">
+    <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-white tracking-tight">System-Insights &amp; Balancing (KI)</h2>
+        <p class="text-xs text-gray-400 mt-0.5">Strategie-Cluster und Fruchtfolge-Auswertung über abgeschlossene Partien</p>
+      </div>
+      <button
+        type="button"
+        (click)="analyzeSystem.emit()"
+        [disabled]="isAnalyzing"
+        class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
+      >
+        {{ isAnalyzing ? 'Analysiere …' : 'Jetzt analysieren' }}
+      </button>
+    </div>
+
+    <div class="p-5 sm:p-6">
+      @if (systemInsights.length > 0) {
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <!-- Strategy Clusters -->
+          <div class="bg-gray-950 rounded-xl p-5 border border-gray-800 space-y-4">
+            <div class="border-b border-gray-800 pb-3 flex justify-between items-center">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-gray-200">Strategie-Cluster</h3>
+              @if (systemInsights[0].gameCount) {
+                <span class="text-xs font-mono tabular-nums text-gray-400">
+                  Basis: {{ systemInsights[0].gameCount }} Spiele
+                </span>
+              }
+            </div>
+            <div class="space-y-3">
+              @for (strat of systemInsights[0].strategies; track strat.name) {
+                <div class="bg-gray-900 p-4 rounded-lg border border-gray-800">
+                  <div class="flex flex-wrap justify-between items-start gap-2 mb-1.5">
+                    <h4 class="font-bold text-sm text-emerald-400">{{ strat.name }}</h4>
+                    @if (strat.typicalMetrics) {
+                      <div class="flex gap-2 font-mono tabular-nums text-[11px]">
+                        <span class="bg-gray-950 text-emerald-300 px-2 py-0.5 rounded border border-gray-800">
+                          {{ strat.typicalMetrics.soil }}% Boden
+                        </span>
+                        <span class="bg-gray-950 text-sky-300 px-2 py-0.5 rounded border border-gray-800">
+                          {{ strat.typicalMetrics.capital | number: '1.0-0' }} €
+                        </span>
+                      </div>
+                    }
+                  </div>
+                  <p class="text-xs text-gray-300 leading-relaxed">{{ strat.description }}</p>
+                  @if (strat.keyDecisions) {
+                    <div class="mt-2 text-[11px] text-gray-400">
+                      <span class="font-semibold text-gray-300">Kernentscheidungen:</span> {{ strat.keyDecisions }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Balancing Report -->
+          <div class="bg-gray-950 rounded-xl p-5 border border-gray-800 space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-200 border-b border-gray-800 pb-3">
+              Balancing &amp; Spielmechanik
+            </h3>
+
+            @if (systemInsights[0].balancingReport?.summary) {
+              <div class="bg-gray-900 p-4 rounded-lg border border-gray-800 text-xs text-gray-200 leading-relaxed">
+                {{ systemInsights[0].balancingReport.summary }}
+              </div>
+            }
+
+            @if (systemInsights[0].balancingReport?.issues?.length) {
+              <div class="space-y-2.5">
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Hinweise</h4>
+                @for (issue of systemInsights[0].balancingReport.issues; track issue.description) {
+                  <div class="p-3 rounded-lg bg-gray-900 border border-gray-800 space-y-1">
+                    <div class="text-xs font-bold text-white">{{ issue.description }}</div>
+                    <div class="text-xs text-gray-400">
+                      <span class="text-emerald-400 font-semibold">Empfehlung:</span> {{ issue.suggestion }}
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (systemInsights[0].balancingReport?.cropAnalysis?.length) {
+              <div class="space-y-2.5">
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Fruchtfolge-Check</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  @for (crop of systemInsights[0].balancingReport.cropAnalysis; track crop.crop) {
+                    <div class="p-2.5 rounded-lg bg-gray-900 border border-gray-800">
+                      <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-white">{{ crop.crop }}</span>
+                        <span class="text-[10px] font-mono text-gray-400 uppercase">{{ crop.usageFrequency }}</span>
+                      </div>
+                      <p class="text-[11px] text-gray-400 leading-snug">{{ crop.performanceAssessment }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="bg-gray-950 rounded-xl p-8 text-center border border-gray-800 text-sm text-gray-400">
+          Noch keine System-Analysen vorhanden. Starte eine Auswertung über „Jetzt analysieren“.
+        </div>
+      }
+    </div>
+  </section>
+</div>

@@ -1,13 +1,14 @@
 import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import { checkPublicRateLimit } from './research.service';
-import type { TelemetryStats } from './types';
+import type { TelemetryDailyEntry, TelemetryStats } from './types';
 
 export const ALLOWED_TELEMETRY_ROUTES = new Set<string>([
   '/',
   '/manual',
   '/info',
   '/research',
+  '/trailer',
   '/game',
   '/game-login',
   '/admin',
@@ -255,26 +256,54 @@ function toSafeNumberMap(raw: unknown, maxEntries?: number): Record<string, numb
   return Object.fromEntries(sliced);
 }
 
+function normalizeDailyEntry(
+  doc: { id: string; data: () => Record<string, unknown> | undefined },
+  cutoff400dKey: string,
+  todayKey: string,
+): TelemetryDailyEntry | null {
+  const data = doc.data() || {};
+  const rawDate = typeof data.date === 'string' && data.date.trim() ? data.date.trim() : doc.id;
+  const date = rawDate.slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  if (date < cutoff400dKey || date > todayKey) return null;
+
+  const totalViews = Math.max(0, Math.round(Number(data.totalViews) || 0));
+  const pwaViews = Math.max(0, Math.round(Number(data.pwaViews) || 0));
+  const webViews =
+    data.webViews !== undefined
+      ? Math.max(0, Math.round(Number(data.webViews) || 0))
+      : Math.max(0, totalViews - pwaViews);
+
+  return {
+    date,
+    totalViews,
+    webViews,
+    pwaViews,
+    routes: toSafeNumberMap(data.routes),
+    events: toSafeNumberMap(data.events),
+    referrers: toSafeNumberMap(data.referrers),
+  };
+}
+
 function sumDailyWindowViews(
-  docs: Array<{ id: string; data: () => Record<string, unknown> | undefined }>,
+  dailySeries: readonly TelemetryDailyEntry[],
   todayKey: string,
   cutoff7dKey: string,
   cutoff30dKey: string,
-): { viewsToday: number; viewsLast7d: number; viewsLast30d: number } {
+): { viewsToday: number; viewsLast7d: number; viewsLast30d: number; viewsWindowTotal: number } {
   let viewsToday = 0;
   let viewsLast7d = 0;
   let viewsLast30d = 0;
+  let viewsWindowTotal = 0;
 
-  for (const doc of docs) {
-    const data = doc.data() || {};
-    const docDate = typeof data.date === 'string' ? data.date : doc.id;
-    const count = Math.max(0, Math.round(Number(data.totalViews) || 0));
-    if (docDate >= cutoff30dKey && docDate <= todayKey) viewsLast30d += count;
-    if (docDate >= cutoff7dKey && docDate <= todayKey) viewsLast7d += count;
-    if (docDate === todayKey) viewsToday += count;
+  for (const entry of dailySeries) {
+    viewsWindowTotal += entry.totalViews;
+    if (entry.date >= cutoff30dKey && entry.date <= todayKey) viewsLast30d += entry.totalViews;
+    if (entry.date >= cutoff7dKey && entry.date <= todayKey) viewsLast7d += entry.totalViews;
+    if (entry.date === todayKey) viewsToday += entry.totalViews;
   }
 
-  return { viewsToday, viewsLast7d, viewsLast30d };
+  return { viewsToday, viewsLast7d, viewsLast30d, viewsWindowTotal };
 }
 
 export async function aggregateTelemetryStats(
@@ -284,26 +313,33 @@ export async function aggregateTelemetryStats(
   const todayKey = nowDate.toISOString().slice(0, 10);
   const cutoff7dKey = new Date(nowDate.getTime() - 6 * 86_400_000).toISOString().slice(0, 10);
   const cutoff30dKey = new Date(nowDate.getTime() - 29 * 86_400_000).toISOString().slice(0, 10);
+  const cutoff400dKey = new Date(nowDate.getTime() - 399 * 86_400_000).toISOString().slice(0, 10);
 
   const dailyColl = db.collection('telemetry_daily');
-  const dailyQuery = typeof dailyColl.where === 'function' ? dailyColl.where('date', '>=', cutoff30dKey) : dailyColl;
+  const dailyQuery = typeof dailyColl.where === 'function' ? dailyColl.where('date', '>=', cutoff400dKey) : dailyColl;
 
   const [totalsSnap, dailySnap] = await Promise.all([
     db.collection('telemetry_totals').doc('all').get(),
     dailyQuery.get(),
   ]);
 
-  const { viewsToday, viewsLast7d, viewsLast30d } = sumDailyWindowViews(
-    dailySnap.docs || [],
+  const dailySeries = (dailySnap.docs || [])
+    .map((doc) => normalizeDailyEntry(doc, cutoff400dKey, todayKey))
+    .filter((entry): entry is TelemetryDailyEntry => entry !== null)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const { viewsToday, viewsLast7d, viewsLast30d, viewsWindowTotal } = sumDailyWindowViews(
+    dailySeries,
     todayKey,
     cutoff7dKey,
     cutoff30dKey,
   );
 
   const totalsData = totalsSnap.exists ? totalsSnap.data() || {} : {};
-  const viewsTotal = Math.max(viewsLast30d, Math.round(Number(totalsData.totalViews) || 0));
+  const viewsTotal = Math.max(viewsWindowTotal, Math.round(Number(totalsData.totalViews) || 0));
   const pwaViewsTotal = Math.max(0, Math.round(Number(totalsData.pwaViews) || 0));
   const webViewsTotal = Math.max(0, Math.round(Number(totalsData.webViews) || Math.max(0, viewsTotal - pwaViewsTotal)));
+  const firstRecordedDate = dailySeries.length > 0 ? dailySeries[0].date : null;
 
   return {
     viewsToday,
@@ -315,5 +351,7 @@ export async function aggregateTelemetryStats(
     routes: toSafeNumberMap(totalsData.routes),
     events: toSafeNumberMap(totalsData.events),
     referrers: toSafeNumberMap(totalsData.referrers, 10),
+    dailySeries,
+    firstRecordedDate,
   };
 }

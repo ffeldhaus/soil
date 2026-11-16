@@ -1,6 +1,17 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { type AfterViewInit, Component, type ElementRef, inject, PLATFORM_ID, signal, viewChild } from '@angular/core';
+import {
+  type AfterViewInit,
+  Component,
+  DestroyRef,
+  type ElementRef,
+  inject,
+  PLATFORM_ID,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { INFO_FAQ_ITEMS } from '../app.routes';
 import { BackButtonComponent } from '../shared/back-button/back-button';
 
 @Component({
@@ -12,33 +23,45 @@ import { BackButtonComponent } from '../shared/back-button/back-button';
 export class InfoComponent implements AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
   year = new Date().getFullYear();
 
-  selectedState = signal<string>('Nordrhein-Westfalen');
+  selectedState = signal<string>('nordrhein-westfalen');
+  readonly faqItems = INFO_FAQ_ITEMS;
 
   scrollContainer = viewChild<ElementRef<HTMLElement>>('scrollContainer');
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.route.fragment.subscribe((fragment) => {
+      this.route.fragment.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((fragment) => {
         if (fragment) {
           this.scrollToFragment(fragment);
         } else {
-          this.scrollContainer()?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+          this.scrollContainer()?.nativeElement.scrollTo?.({ top: 0, behavior: 'smooth' });
         }
       });
+    }
+  }
+
+  selectState(stateIdOrName: string): void {
+    const match = this.curriculumStates.find((item) => item.id === stateIdOrName || item.state === stateIdOrName);
+    if (match) {
+      this.selectedState.set(match.id);
     }
   }
 
   onStateChange(event: Event): void {
     const select = event.target as HTMLSelectElement | null;
     if (select?.value) {
-      this.selectedState.set(select.value);
+      this.selectState(select.value);
     }
   }
 
   scrollToFragment(fragment: string) {
     if (!fragment) return;
+    if (fragment.startsWith('land-')) {
+      this.selectState(fragment.slice('land-'.length));
+    }
 
     const attemptScroll = () => {
       const element = document.getElementById(fragment);
@@ -50,7 +73,7 @@ export class InfoComponent implements AfterViewInit {
         const relativeTop = elementRect.top - containerRect.top;
         const targetScrollTop = container.scrollTop + relativeTop - 100;
 
-        container.scrollTo({
+        container.scrollTo?.({
           top: targetScrollTop,
           behavior: 'smooth',
         });
@@ -73,7 +96,7 @@ export class InfoComponent implements AfterViewInit {
 
   curriculumLevels = [
     {
-      stage: 'Unterstufe (Klasse 5–6)',
+      stage: 'Orientierungs- & Einstiegsniveau',
       preset: 'Einsteiger / Unterstufe',
       topics:
         'Herkunft von Lebensmitteln, natürliche Standortfaktoren wie Boden und Wetter, Vergleich von konventioneller und ökologischer Landwirtschaft sowie Grünland und Tierhaltung.',
@@ -81,7 +104,7 @@ export class InfoComponent implements AfterViewInit {
         'Alle 40 Parzellen starten mit einheitlicher Bodenqualität von 100 und Nährstoffen von 100, verlässlicher Wettervorhersage und 0% Überziehungszins.',
     },
     {
-      stage: 'Mittelstufe (Klasse 7–10)',
+      stage: 'Vertiefungsniveau (Sekundarstufe I & Berufsfachschule)',
       preset: 'Standard / Mittelstufe',
       topics:
         'Ökosystem Boden, Stickstoffkreislauf mit Leguminosen, Humusaufbau, integrierter Pflanzenschutz, Marktpreisbildung, EU-Agrarförderung und das Nachhaltigkeitsdreieck in der BNE.',
@@ -89,7 +112,7 @@ export class InfoComponent implements AfterViewInit {
         'Fünf Boden-Zonen von 88 bis 112, saisonaler Wettertrend, 6% Überziehungszins und rotierende Regionalverträge ab Runde 3.',
     },
     {
-      stage: 'Oberstufe (Klasse 11–13)',
+      stage: 'Systemisches Niveau (Sekundarstufe II, Berufsschule & Hochschule)',
       preset: 'Profi / Oberstufe',
       topics:
         'Dust-Bowl-Syndrom, Bodendegradation und Erosion im Klimawandel, Agrobusiness im Spannungsfeld der Welternährung sowie Umweltökonomie und externe Kosten.',
@@ -100,118 +123,133 @@ export class InfoComponent implements AfterViewInit {
 
   curriculumStates = [
     {
+      id: 'baden-wuerttemberg',
       state: 'Baden-Württemberg',
-      curriculum: 'Bildungsplan 2016 & Oberstufe',
+      curriculum: 'Bildungsplan Sekundarstufe I & Kursstufe',
       bneAndBio:
         'Verankert in der Leitperspektive BNE sowie in Biologie und BNT: Nutzpflanzen, Lebensraum Boden, Stickstoffkreislauf, Ökologie und Artenvielfalt auf Agrarflächen.',
-      geo: 'Klasse 5/6 Landwirtschaft in Deutschland, Klasse 7–10 globale Herausforderungen sowie in der Kursstufe Boden als physiogeographischer Baustein, Bodendegradation und nachhaltige Bodennutzung.',
-      econ: 'Im Fach Wirtschaft / Berufs- und Studienorientierung ab Klasse 7: Marktpreisbildung, staatliche Subventionen, Produktionskosten und nachhaltiges Wirtschaften.',
+      geo: 'Geographie / Erdkunde: Landwirtschaft in Deutschland und globale Herausforderungen in der Sekundarstufe I sowie in der Kursstufe Boden als physiogeographischer Baustein, Bodendegradation und nachhaltige Bodennutzung.',
+      econ: 'Wirtschaft / Berufs- und Studienorientierung: Marktpreisbildung, staatliche Subventionen, Produktionskosten und nachhaltiges Wirtschaften.',
     },
     {
+      id: 'bayern',
       state: 'Bayern',
-      curriculum: 'LehrplanPLUS',
+      curriculum: 'LehrplanPLUS Sekundarstufe I & Oberstufe',
       bneAndBio:
         'Natur und Technik sowie Biologie: Boden als Ökosystem, Stoffkreisläufe, Knöllchenbakterien bei Leguminosen, Biodiversität und Auswirkungen von Pflanzenschutzmitteln.',
-      geo: 'Jahrgangsstufe 5 und 6 ländliche Räume sowie konventioneller und ökologischer Landbau, Jahrgangsstufe 9 Landwirtschaft und Boden, Jahrgangsstufe 11/12 Ressource Boden, Erosion und nachhaltiges Ressourcenmanagement.',
+      geo: 'Geographie: ländliche Räume sowie konventioneller und ökologischer Landbau in der Unter- und Mittelstufe, Landwirtschaft und Boden sowie in der Oberstufe Ressource Boden, Erosion und nachhaltiges Ressourcenmanagement.',
       econ: 'Wirtschaft und Recht sowie W- und P-Seminare: unternehmerische Kalkulation, Marktmechanismen, Agrarpolitik und Zielkonflikte zwischen Ökonomie und Ökologie.',
     },
     {
+      id: 'berlin',
       state: 'Berlin',
-      curriculum: 'Rahmenlehrplan Jgst. 1–10 & Gymnasiale Oberstufe',
+      curriculum: 'Rahmenlehrplan Sekundarstufe I & Gymnasiale Oberstufe',
       bneAndBio:
-        'Übergreifendes Thema Nachhaltige Entwicklung sowie Naturwissenschaften und Biologie: Boden und Pflanzen in Jahrgangsstufe 5/6, Stoffkreisläufe und Ökosystemdynamik in Klasse 7–10 und in der Oberstufe.',
-      geo: 'Jahrgangsstufe 7–10 Umgang mit Ressourcen und Vergleich landwirtschaftlicher Betriebsweisen sowie in der Qualifikationsphase Q1–Q4 das Kursthema Geoökosysteme im Wandel mit Fokus auf Lithosphäre und Pedosphäre.',
+        'Übergreifendes Thema Nachhaltige Entwicklung sowie Naturwissenschaften und Biologie: Boden und Nutzpflanzen, Stoffkreisläufe und Ökosystemdynamik in Sekundarstufe I und Oberstufe.',
+      geo: 'Geografie: Umgang mit Ressourcen und Vergleich landwirtschaftlicher Betriebsweisen in der Sekundarstufe I sowie in der Qualifikationsphase das Kursthema Geoökosysteme im Wandel mit Fokus auf Lithosphäre und Pedosphäre.',
       econ: 'Wirtschaft-Arbeit-Technik und Politische Bildung: Betriebskosten, Einkommenssicherung in der Landwirtschaft und Steuerungswirkung europäischer Agrarsubventionen.',
     },
     {
+      id: 'brandenburg',
       state: 'Brandenburg',
-      curriculum: 'Rahmenlehrplan Jgst. 1–10 & Gymnasiale Oberstufe',
+      curriculum: 'Rahmenlehrplan Sekundarstufe I & Gymnasiale Oberstufe',
       bneAndBio:
-        'Übergreifendes Thema Nachhaltige Entwicklung sowie Naturwissenschaften und Biologie: Nutzpflanzen und Bodenfruchtbarkeit in Jahrgangsstufe 5/6, Nahrungsnetze, Stickstoffkreislauf und Agrarökosysteme in der Mittel- und Oberstufe.',
-      geo: 'Jahrgangsstufe 7–10 Ressourcenkonflikte und nachhaltige Landwirtschaft sowie in der Qualifikationsphase Q1–Q4 die Analyse der Pedosphäre, Bodenerosion und Klimafolgen in Agrarräumen.',
+        'Übergreifendes Thema Nachhaltige Entwicklung sowie Naturwissenschaften und Biologie: Nutzpflanzen und Bodenfruchtbarkeit sowie Nahrungsnetze, Stickstoffkreislauf und Agrarökosysteme in Mittel- und Oberstufe.',
+      geo: 'Geografie: Ressourcenkonflikte und nachhaltige Landwirtschaft in der Sekundarstufe I sowie in der Qualifikationsphase die Analyse der Pedosphäre, Bodenerosion und Klimafolgen in Agrarräumen.',
       econ: 'Wirtschaft-Arbeit-Technik und Politische Bildung: Marktpreise, Deckungsbeiträge, Strukturwandel im ländlichen Raum und Förderinstrumente der EU-Agrarpolitik.',
     },
     {
+      id: 'bremen',
       state: 'Bremen',
       curriculum: 'Rahmenpläne Sekundarstufe I & Gymnasiale Oberstufe',
       bneAndBio:
         'Biologie und Naturwissenschaften: Ökosysteme, Bodenorganismen, Stoffkreisläufe, Erhalt der Biodiversität und Prinzipien nachhaltiger Ressourcennutzung.',
-      geo: 'Welt-Umwelt-Kunde und Geographie: Versorgung durch die Landwirtschaft in Klasse 5/6, Bodenerosion und Klimawandel in Klasse 7–10 sowie Mensch-Umwelt-Systeme und Welternährung in der Oberstufe.',
+      geo: 'Welt-Umwelt-Kunde und Geographie: Versorgung durch die Landwirtschaft, Bodenerosion und Klimawandel in der Sekundarstufe I sowie Mensch-Umwelt-Systeme und Welternährung in der Oberstufe.',
       econ: 'Politik und Wirtschaft: Preisbildung auf Agrarmärkten, betriebswirtschaftliche Zielkonflikte und umweltökonomische Steuerung durch Prämien und Lieferverträge.',
     },
     {
+      id: 'hamburg',
       state: 'Hamburg',
       curriculum: 'Bildungspläne Sekundarstufe I & Studienstufe',
       bneAndBio:
         'Leitperspektive BNE und die 17 Nachhaltigkeitsziele sowie Biologie: Ökosysteme, Stoffkreisläufe, Nährstoffdynamik und der systematische Vergleich von ökologischer und konventioneller Landwirtschaft.',
-      geo: 'Sekundarstufe I Agrarräume im Wandel sowie in der Studienstufe der Oberstufe das verbindliche Modul Nachhaltigkeit als Herausforderung am Beispiel von Entwicklungen in der Landwirtschaft.',
+      geo: 'Geographie: Agrarräume im Wandel in der Sekundarstufe I sowie in der Studienstufe der Oberstufe das verbindliche Modul Nachhaltigkeit als Herausforderung am Beispiel von Entwicklungen in der Landwirtschaft.',
       econ: 'Politik-Gesellschaft-Wirtschaft: unternehmerische Entscheidungen unter Unsicherheit, externe Umweltkosten und staatliche Anreizsysteme in der Europäischen Union.',
     },
     {
+      id: 'hessen',
       state: 'Hessen',
       curriculum: 'Lehrpläne Sekundarstufe I & Kerncurricula Oberstufe',
       bneAndBio:
         'Biologie in Mittel- und Oberstufe: Ökologie und Stoffwechsel, Stickstoffbindung, Schädlingsregulierung durch Fruchtfolgen und Schutz der Artenvielfalt in der Kulturlandschaft.',
-      geo: 'Erdkunde Klasse 5/6 Landwirtschaft und Ernährung sowie in der gymnasialen Oberstufe die Erde als Mensch-Umwelt-System, Faktor Boden, Drei-Säulen-Modell der Nachhaltigkeit und Ressourcenschutz.',
+      geo: 'Erdkunde: Landwirtschaft und Ernährung in der Sekundarstufe I sowie in der gymnasialen Oberstufe die Erde als Mensch-Umwelt-System, Faktor Boden, Drei-Säulen-Modell der Nachhaltigkeit und Ressourcenschutz.',
       econ: 'Politik und Wirtschaft: Markt und Preisbildung, Subventionen in der europäischen Agrarpolitik, Verschuldungsrisiken und nachhaltige Unternehmensführung.',
     },
     {
+      id: 'mecklenburg-vorpommern',
       state: 'Mecklenburg-Vorpommern',
       curriculum: 'Rahmenpläne Sekundarstufe I & Gymnasiale Oberstufe',
       bneAndBio:
         'Biologie und BNE: Bodenlebewesen, Humusaufbau, mineralischer Nährstoffhaushalt, biologischer Pflanzenschutz und ökologische Tragfähigkeit landwirtschaftlicher Flächen.',
-      geo: 'Geografie Klasse 5–7 Landwirtschaft im norddeutschen Tiefland sowie in Klasse 8–10 und der Oberstufe Agrarstrukturen, Bodenschutz, Agrarökosysteme und nachhaltige Raumnutzung.',
+      geo: 'Geografie: Landwirtschaft im norddeutschen Tiefland in der Orientierungs- und Mittelstufe sowie in Sekundarstufe I und Oberstufe Agrarstrukturen, Bodenschutz, Agrarökosysteme und nachhaltige Raumnutzung.',
       econ: 'Arbeit-Wirtschaft-Technik und Sozialkunde: Kosten-Erlös-Rechnung im Agrarbetrieb, Mechanisierung, Direktzahlungen und regionale Wertschöpfungsketten.',
     },
     {
+      id: 'niedersachsen',
       state: 'Niedersachsen',
       curriculum: 'Kerncurricula Sekundarstufe I & Gymnasiale Oberstufe',
       bneAndBio:
         'Biologie und BNE: Ökosysteme, Stickstoffkreislauf, Symbiose bei Leguminosen, Auswirkungen intensiver Düngung und Förderung der Biodiversität durch Brachland (Grünbrache / Blühstreifen) und Grünland.',
-      geo: 'Erdkunde Klasse 5/6 Leben und Wirtschaften in ländlichen Räumen sowie in Klasse 7–10 und der Oberstufe agrarische Gunst- und Ungunsträume, Agrobusiness, nachhaltige Landwirtschaft und Konsumfolgen.',
+      geo: 'Erdkunde: Leben und Wirtschaften in ländlichen Räumen sowie agrarische Gunst- und Ungunsträume, Agrobusiness, nachhaltige Landwirtschaft und Konsumfolgen in Sekundarstufe I und Oberstufe.',
       econ: 'Politik-Wirtschaft: unternehmerisches Handeln zwischen Kosten, Marktpreisen und Zinsen sowie die Steuerungswirkung des europäischen Agrarmarktes und der Umweltpolitik.',
     },
     {
+      id: 'nordrhein-westfalen',
       state: 'Nordrhein-Westfalen',
       curriculum: 'Kernlehrpläne Sekundarstufe I & Sekundarstufe II',
       bneAndBio:
         'Biologie und Leitlinie BNE: Ökosystem Boden, Stoffkreisläufe, Liebigsches Minimumgesetz, Einfluss von Pestiziden auf Nahrungsnetze und Biodiversität in Agrarlandschaften.',
-      geo: 'Erdkunde und Gesellschaftslehre: in Klasse 5/6 Standortfaktoren Boden und Klima sowie ökologischer Landbau; in der Oberstufe Landwirtschaft im Spannungsfeld zwischen Ressourcengefährdung, Agrobusiness und dem Dreieck der Nachhaltigkeit.',
+      geo: 'Erdkunde und Gesellschaftslehre: Standortfaktoren Boden und Klima sowie ökologischer Landbau in der Sekundarstufe I; in der Sekundarstufe II Landwirtschaft im Spannungsfeld zwischen Ressourcengefährdung, Agrobusiness und dem Dreieck der Nachhaltigkeit.',
       econ: 'Wirtschaft-Politik und Sozialwissenschaften: Marktgleichgewicht, Fixkosten und Deckungsbeiträge, europäische Agrarsubventionen sowie das Dilemma zwischen kurzfristiger Rendite und langfristigem Kapitalerhalt.',
     },
     {
+      id: 'rheinland-pfalz',
       state: 'Rheinland-Pfalz',
       curriculum: 'Lehrpläne Orientierungsstufe, Sekundarstufe I & Oberstufe',
       bneAndBio:
-        'Naturwissenschaften und Biologie: Bodenbeschaffenheit und Pflanzenwachstum in Klasse 5/6 sowie Ökosysteme, Artenvielfalt, Stoffflüsse und biologische Schädlingsbekämpfung in der Mittel- und Oberstufe.',
-      geo: 'Erdkunde und Gesellschaftslehre: in der Orientierungsstufe das Thema Landwirte versorgen uns mit konventionellem und ökologischem Landbau; in Klasse 7–10 und der Oberstufe Boden als Ressource, Syndromkonzept und nachhaltige Entwicklung.',
+        'Naturwissenschaften und Biologie: Bodenbeschaffenheit und Pflanzenwachstum in der Orientierungsstufe sowie Ökosysteme, Artenvielfalt, Stoffflüsse und biologische Schädlingsbekämpfung in Mittel- und Oberstufe.',
+      geo: 'Erdkunde und Gesellschaftslehre: in der Orientierungsstufe das Thema Landwirte versorgen uns mit konventionellem und ökologischem Landbau; in Sekundarstufe I und Oberstufe Boden als Ressource, Syndromkonzept und nachhaltige Entwicklung.',
       econ: 'Sozialkunde und Wirtschaft: Preisbildung, Einkommensrisiken durch Ernteschwankungen, Vertragslandwirtschaft und staatliche Förderprogramme.',
     },
     {
+      id: 'saarland',
       state: 'Saarland',
       curriculum: 'Lehrpläne Sekundarstufe I & Gymnasiale Oberstufe',
       bneAndBio:
-        'Biologie und Naturwissenschaften: in Klasse 9/10 sowie in der Oberstufe das Themenfeld Mensch und Umwelt mit Fokus auf ökologischen Fußabdruck, Nachhaltigkeit, natürliche Ressourcen und Agrarökosysteme.',
-      geo: 'Gesellschaftswissenschaften und Erdkunde: Landwirtschaft und Versorgung in Klasse 5/6 sowie Mensch-Umwelt-Beziehungen, Bodenerosion, Klimawandel und nachhaltiger Bodenschutz in Sekundarstufe I und II.',
+        'Biologie und Naturwissenschaften: in Sekundarstufe I und Oberstufe das Themenfeld Mensch und Umwelt mit Fokus auf ökologischen Fußabdruck, Nachhaltigkeit, natürliche Ressourcen und Agrarökosysteme.',
+      geo: 'Gesellschaftswissenschaften und Erdkunde: Landwirtschaft und Versorgung sowie Mensch-Umwelt-Beziehungen, Bodenerosion, Klimawandel und nachhaltiger Bodenschutz in Sekundarstufe I und II.',
       econ: 'Politik und Wirtschaft: betriebliche Kostenstrukturen, Marktpreise für konventionelle und ökologische Erzeugnisse sowie gesellschaftliche Steuerung durch Agrarprämien.',
     },
     {
+      id: 'sachsen',
       state: 'Sachsen',
       curriculum: 'Lehrpläne Oberschule & Gymnasium',
       bneAndBio:
         'Übergreifendes Thema BNE und Biologie: Bodenbiologie, Nahrungsbeziehungen im Kulturland, Stickstoffkreislauf und ökologische Folgen intensiver Landnutzung.',
-      geo: 'Geographie Klasse 5/6 Landwirtschaft in Deutschland sowie in Klasse 7–10 und der Oberstufe Böden als Naturpotenzial, Bodenerosion, Strukturwandel in Agrarräumen und nachhaltiges Ressourcenmanagement.',
+      geo: 'Geographie: Landwirtschaft in Deutschland sowie Böden als Naturpotenzial, Bodenerosion, Strukturwandel in Agrarräumen und nachhaltiges Ressourcenmanagement in Sekundarstufe I und Oberstufe.',
       econ: 'Gemeinschaftskunde / Recht und Wirtschaft: unternehmerische Planungsentscheidungen, Kredit- und Zinsrisiken, EU-Förderkulissen und Umweltökonomie.',
     },
     {
+      id: 'sachsen-anhalt',
       state: 'Sachsen-Anhalt',
       curriculum: 'Fachlehrpläne Sekundarschule & Gymnasium',
       bneAndBio:
         'Biologie und BNE: Pflanzenbau, Nährstoffbedarf, Humuswirtschaft, Fruchtfolgegestaltung zur Vermeidung von Bodenmüdigkeit und Erhalt der Artenvielfalt.',
-      geo: 'Geographie Klasse 5/6 landwirtschaftliche Produktion sowie in Klasse 7/8 und der Oberstufe die Bewertung produktionssteigernder Maßnahmen aus ökologischer und ökonomischer Sicht am Beispiel des Schutzguts Boden.',
+      geo: 'Geographie: landwirtschaftliche Produktion sowie die Bewertung produktionssteigernder Maßnahmen aus ökologischer und ökonomischer Sicht am Beispiel des Schutzguts Boden in Sekundarstufe I und Oberstufe.',
       econ: 'Wirtschaft und Sozialkunde: Betriebsmittelpreise, Arbeits- und Maschinenkosten, Vermarktungswege sowie staatliche Ausgleichszahlungen für Umweltleistungen.',
     },
     {
+      id: 'schleswig-holstein',
       state: 'Schleswig-Holstein',
       curriculum: 'Fachanforderungen Sekundarstufe I & Oberstufe',
       bneAndBio:
@@ -220,40 +258,13 @@ export class InfoComponent implements AfterViewInit {
       econ: 'Wirtschaft/Politik: Marktpreisbildung, Kostenkalkulation im landwirtschaftlichen Betrieb, EU-Direktzahlungen und freiwillige Öko-Regelungen.',
     },
     {
+      id: 'thueringen',
       state: 'Thüringen',
       curriculum: 'Lehrpläne Regelschule, Gemeinschaftsschule & Gymnasium',
       bneAndBio:
-        'Mensch-Natur-Technik in Klasse 5/6 mit Schwerpunkt Boden und Nutzpflanzen sowie Biologie in Klasse 7–10 und der Oberstufe zu Ökosystem Boden, Humusabbau und Stoffkreisläufen.',
+        'Mensch-Natur-Technik mit Schwerpunkt Boden und Nutzpflanzen sowie Biologie in Mittel- und Oberstufe zu Ökosystem Boden, Humusabbau und Stoffkreisläufen.',
       geo: 'Geographie in Mittel- und Oberstufe: Bodendegradation, Erosionsschutz, klimatische Ertragsrisiken sowie der Vergleich von konventioneller und ökologischer Landwirtschaft.',
       econ: 'Wirtschaft und Recht sowie Seminarfach: betriebswirtschaftliche Kennzahlen, Investitions- und Zinsentscheidungen, Agrarförderung und nachhaltige Betriebsführung.',
-    },
-  ];
-
-  faqItems = [
-    {
-      question: 'Für welche Fächer und Klassenstufen eignet sich das Planspiel SOIL?',
-      answer:
-        'SOIL ist für die Klassenstufen 5 bis 13 in allen 16 Bundesländern konzipiert. Das Planspiel eignet sich besonders für den Fachunterricht in Geographie und Erdkunde, Biologie und Naturwissenschaften sowie Wirtschaft und Politik. Darüber hinaus lässt es sich flexibel an Projekttagen zur Bildung für nachhaltige Entwicklung einsetzen.',
-    },
-    {
-      question: 'Wie unterscheiden sich die drei Schwierigkeitsgrade für Unter-, Mittel- und Oberstufe?',
-      answer:
-        'Die Stufe Einsteiger für die Klassen 5 und 6 startet mit einheitlichen Bodenwerten von 100, verlässlicher Wettervorhersage und 0% Überziehungszins. Die Stufe Standard für die Klassen 7 bis 10 ergänzt fünf unterschiedliche Boden-Zonen, saisonale Wettertrends, 6% Überziehungszins und regionale Förderverträge. Die Stufe Profi für die Oberstufe fordert Lernende mit stark heterogenen Böden, zunehmendem Klimastress, 10% Überziehungszins und einer Insolvenzgrenze ab -50.000 €.',
-    },
-    {
-      question: 'Wie läuft eine Einzelstunde oder Doppelstunde im Unterricht praktisch ab?',
-      answer:
-        'Nach einer zehnminütigen Einführung über die integrierte Spieltour starten die Lernenden ohne Registrierung im Einzelspieler-Modus oder treten per vierstelliger PIN einer gemeinsamen Klassenrunde bei. Anschließend bewirtschaften sie ihren Hof allein oder in Kleingruppen über zehn Spielrunden von insgesamt 30 bis 50 Minuten mit einer kurzen Zwischenbilanz nach Runde 5. Zum Abschluss werden die Rangliste für den zukunftsfähigen Hof sowie die Boden- und Kapitalverläufe gemeinsam ausgewertet.',
-    },
-    {
-      question: 'Welche Themen aus BNE, Biologie, Geographie und Wirtschaft werden konkret simuliert?',
-      answer:
-        'Biologisch und ökologisch modelliert SOIL den Humusaufbau, den Nährstoffhaushalt, die Stickstofffixierung durch Leguminosen sowie die natürliche Regulierung von Schaderregern durch vielfältige Fruchtfolgen. Geographisch und wirtschaftlich stehen Standortfaktoren, Ertragsrisiken durch Extremwetter, reale Deckungsbeiträge nach KTBL sowie EU-Agrarförderungen und Öko-Regelungen im Mittelpunkt. So erleben die Lernenden unmittelbar, wie kurzfristige Gewinnmaximierung zur Bodendegradation führt und warum ökologische Pflege die Basis für dauerhaften wirtschaftlichen Erfolg bildet.',
-    },
-    {
-      question: 'Ist SOIL kostenlos, werbefrei und DSGVO-konform ohne Schüler-Accounts nutzbar?',
-      answer:
-        'Ja, SOIL ist als freie Bildungsressource dauerhaft kostenlos, werbefrei und direkt im Browser auf Tablets, Laptops und interaktiven Tafeln spielbar. Schülerinnen und Schüler benötigen kein Benutzerkonto und geben weder Namen noch E-Mail-Adressen ein. Einzelspieler-Runden laufen lokal auf dem Endgerät, während Mehrspieler-Klassenrunden über anonyme vierstellige Team-PINs auf europäischen Servern abgewickelt werden.',
     },
   ];
 

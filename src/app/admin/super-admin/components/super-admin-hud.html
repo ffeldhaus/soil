@@ -1,33 +1,56 @@
 <header
   aria-label="Systemverwaltungs-Kopfleiste"
-  class="fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-800 shadow-lg pt-[env(safe-area-inset-top,0px)] pl-[max(1.5rem,env(safe-area-inset-left,0px))] pr-[max(1.5rem,env(safe-area-inset-right,0px))] py-1 flex items-center justify-between h-[calc(2.5rem+env(safe-area-inset-top,0px))]"
+  class="fixed top-0 left-0 right-0 z-50 bg-gray-950 border-b border-gray-800 pt-[env(safe-area-inset-top,0px)] pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] flex items-center justify-between h-[calc(2.75rem+env(safe-area-inset-top,0px))]"
 >
-  <div class="flex items-center gap-4">
-    <a routerLink="/admin" class="text-xl font-bold text-purple-500 tracking-wider hover:text-purple-400 transition-colors cursor-pointer" title="Zum Dashboard">
-      ADMIN
+  <div class="flex items-center gap-3">
+    <a
+      routerLink="/admin"
+      class="text-sm font-bold text-emerald-400 tracking-wider hover:text-emerald-300 transition-colors cursor-pointer uppercase flex items-center gap-2"
+      title="Zur Lehrkräfte-Übersicht"
+    >
+      <span class="font-mono">SOIL</span>
+      <span class="text-gray-600">/</span>
+      <span>Admin</span>
     </a>
   </div>
 
   <div class="flex items-center gap-3">
     @if (user) {
-      <div class="flex items-center gap-3">
-        <img [src]="user.photoURL" alt="Profile" class="w-8 h-8 rounded-full border border-gray-700" />
-        <span class="text-sm font-medium text-gray-300 hidden md:block">{{ user.displayName || user.email }}</span>
+      <div class="flex items-center gap-2.5">
+        @if (user.photoURL) {
+          <img
+            [src]="user.photoURL"
+            alt=""
+            class="w-7 h-7 rounded-full border border-gray-700 object-cover bg-gray-800"
+          />
+        } @else {
+          <span
+            data-testid="hud-avatar-initials"
+            aria-hidden="true"
+            class="w-7 h-7 rounded-full bg-gray-800 border border-gray-700 text-[11px] font-mono font-bold text-gray-200 inline-flex items-center justify-center select-none"
+          >
+            {{ getInitials(user) }}
+          </span>
+        }
+        <span class="text-xs font-medium text-gray-300 hidden md:block truncate max-w-[14rem]">
+          {{ user.displayName || user.email }}
+        </span>
         <span
-          class="px-2 py-0.5 rounded text-[10px] bg-purple-900 text-purple-300 font-bold uppercase tracking-wider border border-purple-700"
-          >{{ t('superadmin.badge') }}</span
+          class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-300 font-mono font-bold uppercase tracking-wider border border-emerald-800"
         >
+          {{ t('superadmin.badge') }}
+        </span>
       </div>
     }
 
-
     <button
+      type="button"
       (click)="logout.emit()"
-      class="p-2 hover:bg-gray-800 rounded-lg text-red-400 hover:text-red-200 transition"
-      title="Logout"
+      class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-rose-300 transition-colors"
       [title]="t('superadmin.logout')"
+      [attr.aria-label]="t('superadmin.logout')"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"

@@ -1830,7 +1830,7 @@ function validateOnboardingInput(
     .trim()
     .slice(0, 100);
   if (!cleanFirst || !cleanLast) {
-    console.warn(`submitOnboarding: Missing fields for ${email}.`, rawData);
+    console.warn('submitOnboarding: Missing required onboarding fields.');
     throw new HttpsError('invalid-argument', 'Missing fields');
   }
   return { cleanFirst, cleanLast };
@@ -1854,7 +1854,7 @@ export const submitOnboarding = onCall(
 
     const bannedSnap = await db.collection('banned_emails').doc(email).get();
     if (bannedSnap.exists) {
-      console.warn(`submitOnboarding: Email ${email} is banned.`);
+      console.warn('submitOnboarding: Blocked banned account.');
       throw new HttpsError('permission-denied', 'This email is banned from registration.');
     }
 
@@ -2541,7 +2541,7 @@ async function notifySuperAdminsOfFeedback(
     try {
       await mailService.sendEmail({ to: adminEmail, subject, text, html });
     } catch (e) {
-      console.error(`Failed to notify super admin ${adminEmail}:`, e);
+      console.error('Failed to send super admin notification:', e);
     }
   }
 }
@@ -3068,7 +3068,7 @@ export async function sendWeeklyActivityDigest(): Promise<{
     try {
       await mailService.sendEmail({ to: adminEmail, subject, text, html });
     } catch (err) {
-      console.error(`Failed to send weekly activity digest to ${adminEmail}:`, err);
+      console.error('Failed to send weekly activity digest:', err);
     }
   }
 
