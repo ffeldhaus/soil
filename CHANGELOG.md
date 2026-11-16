@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.5.1] - 2026-11-16
 ### Added
 - Stundengenaue `24 Std.`-Zeitreihenansicht (analog zur Google Search Console) unter `/admin/super` ergänzt (`src/app/admin/super-admin/components/super-admin-stats.*`, `functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/app/types.ts`, `src/app/privacy/privacy.html`): Atomare Stunden-Aggregation in `telemetry_hourly` mit automatischer 72-Stunden-Bereinigung im täglichen Wartungslauf (`dailyGamePurge`), 24-Stunden-Verlaufsdiagramm in lokaler Uhrzeit inklusive Stunden-Tooltip sowie zeitraumsynchronisierten Metrik-Kacheln und Aufschlüsselungen für Seiten, Aktionen und Referrer.
 
