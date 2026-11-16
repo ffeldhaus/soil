@@ -297,8 +297,19 @@ export interface TelemetryDailyEntry {
   referrers: Record<string, number>;
 }
 
+export interface TelemetryHourlyEntry {
+  hour: string;
+  totalViews: number;
+  webViews: number;
+  pwaViews: number;
+  routes: Record<string, number>;
+  events: Record<string, number>;
+  referrers: Record<string, number>;
+}
+
 export interface TelemetryStats {
   viewsToday: number;
+  viewsLast24h?: number;
   viewsLast7d: number;
   viewsLast30d: number;
   viewsTotal: number;
@@ -309,6 +320,8 @@ export interface TelemetryStats {
   referrers: Record<string, number>;
   dailySeries?: TelemetryDailyEntry[];
   firstRecordedDate?: string | null;
+  hourlySeries?: TelemetryHourlyEntry[];
+  firstRecordedHour?: string | null;
 }
 
 export interface SystemStats {

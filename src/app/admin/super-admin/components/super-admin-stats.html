@@ -16,7 +16,9 @@
             <span data-testid="telemetry-resolved-range" class="font-mono tabular-nums text-gray-300">
               {{ formattedDateRange }}
             </span>
-            @if (formattedFirstDateNote) {
+            @if (formattedHourlyStatusNote) {
+              <span data-testid="telemetry-hourly-status-note" class="text-gray-400">· {{ formattedHourlyStatusNote }}</span>
+            } @else if (formattedFirstDateNote) {
               <span class="text-gray-400">· Tagesreihe aktiv seit <span class="font-mono tabular-nums">{{ formattedFirstDateNote }}</span></span>
             }
           </div>
@@ -135,15 +137,18 @@
 
     <!-- Zero-Dependency Responsive SVG Time-Series Chart -->
     <div class="px-4 py-3.5 sm:px-5 sm:py-4 bg-gray-900 relative" (mouseleave)="setHoveredDay(null)">
-      <!-- Quick Window Summary Strip (Heute / 7T / 30T / Gesamt) -->
+      <!-- Quick Window Summary Strip (Heute / 24h / 7T / 30T / Gesamt) -->
       <div class="flex flex-wrap items-center justify-between gap-3 mb-2 text-xs font-mono tabular-nums text-gray-400">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
           <span>Heute: <strong class="text-emerald-400">{{ stats?.telemetry?.viewsToday || 0 }}</strong></span>
+          <span data-testid="telemetry-kpi-24h">Letzte 24h: <strong class="text-gray-200">{{ viewsLast24h }}</strong></span>
           <span>Letzte 7T: <strong class="text-gray-200">{{ stats?.telemetry?.viewsLast7d || 0 }}</strong></span>
           <span>Letzte 30T: <strong class="text-gray-200">{{ stats?.telemetry?.viewsLast30d || 0 }}</strong></span>
           <span>Gesamt-Zähler: <strong class="text-white">{{ stats?.telemetry?.viewsTotal || 0 }}</strong></span>
         </div>
-        <span class="text-[11px] text-gray-400 hidden sm:inline">Tageswerte in UTC · Klick oder Fokus für Details</span>
+        <span data-testid="telemetry-resolution-caption" class="text-[11px] text-gray-400 hidden sm:inline">
+          {{ isHourlyRange ? 'Stundenwerte (lokale Uhrzeit) · Klick oder Fokus für Details' : 'Tageswerte in UTC · Klick oder Fokus für Details' }}
+        </span>
       </div>
 
       <div class="relative w-full">
@@ -356,7 +361,7 @@
             [style.right.%]="isTooltipRightAligned ? 100 - tooltipLeftPercent : null"
             [style.transform]="isTooltipRightAligned ? 'translateX(-10px)' : 'translateX(10px)'"
           >
-            <div class="text-xs font-bold font-mono tabular-nums text-white border-b border-gray-800 pb-1.5 mb-1.5">
+            <div class="text-xs font-bold font-mono tabular-nums text-white border-b border-gray-800 pb-1.5 mb-1.5 whitespace-nowrap">
               {{ hp.fullLabel }}
             </div>
             <div class="space-y-1 text-xs">

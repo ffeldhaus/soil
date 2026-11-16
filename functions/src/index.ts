@@ -25,7 +25,11 @@ import {
   handleResearchMcpHttpRequest,
   sanitizeResearchGameForPublic,
 } from './research.service';
-import { aggregateTelemetryStats, handleTelemetryHttpRequest } from './telemetry.service';
+import {
+  aggregateTelemetryStats,
+  cleanupExpiredHourlyTelemetry,
+  handleTelemetryHttpRequest,
+} from './telemetry.service';
 import type { CropType, Round, RoundDecision, WeatherType } from './types';
 import { generateRandomPassword } from './utils';
 
@@ -2416,6 +2420,11 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
   await softDeleteExpiredActiveGames(now, nowMillis, oneDayMs);
   await hardPurgeTrashGames(Timestamp.fromMillis(nowMillis - thirtyDaysMs));
   await purgeUnverifiedAdminUsers(nowMillis, oneDayMs);
+  try {
+    await cleanupExpiredHourlyTelemetry(db, new Date(nowMillis));
+  } catch (err) {
+    console.error('Failed to clean up expired hourly telemetry:', err);
+  }
 });
 
 export async function internalPlayerLogin(request: { data?: any; rawRequest?: any; auth?: any }) {

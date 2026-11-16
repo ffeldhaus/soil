@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, Input, inject, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import type { SystemStats, TelemetryDailyEntry } from '../../../types';
+import type { SystemStats, TelemetryDailyEntry, TelemetryHourlyEntry } from '../../../types';
 
-export type TelemetryRangePreset = '7d' | '28d' | '3m' | '12m' | 'all' | 'custom';
+export type TelemetryRangePreset = '24h' | '7d' | '28d' | '3m' | '12m' | 'all' | 'custom';
 export type TelemetrySeriesKey = 'total' | 'web' | 'pwa' | 'interactions';
 
 export interface TelemetryMetricRow {
@@ -49,7 +49,26 @@ export interface ChartAxisTick {
   anchor?: 'start' | 'middle' | 'end';
 }
 
-const UTC_WEEKDAYS_DE = ['So.', 'Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.'] as const;
+interface WindowBucketEntry {
+  key: string;
+  shortLabel: string;
+  fullLabel: string;
+  total: number;
+  web: number;
+  pwa: number;
+  interactions: number;
+  routes?: Record<string, number>;
+  events?: Record<string, number>;
+  referrers?: Record<string, number>;
+}
+
+const WEEKDAYS_DE = ['So.', 'Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.'] as const;
+
+const LOCAL_HOUR_FORMATTER = new Intl.DateTimeFormat('de-DE', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
 
 function parseUtcDateMs(dateKey: string): number {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
@@ -57,8 +76,18 @@ function parseUtcDateMs(dateKey: string): number {
   return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
 }
 
+function parseUtcHourMs(hourKey: string): number {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2})$/.exec(hourKey);
+  if (!match) return Number.NaN;
+  return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4]));
+}
+
 function formatUtcDateKey(ms: number): string {
   return new Date(ms).toISOString().slice(0, 10);
+}
+
+function formatUtcHourKey(ms: number): string {
+  return new Date(ms).toISOString().slice(0, 13);
 }
 
 function addUtcDays(dateKey: string, deltaDays: number): string {
@@ -82,8 +111,30 @@ function formatGermanShortDate(dateKey: string): string {
 function formatGermanFullLabel(dateKey: string): string {
   const ms = parseUtcDateMs(dateKey);
   if (Number.isNaN(ms)) return dateKey;
-  const weekday = UTC_WEEKDAYS_DE[new Date(ms).getUTCDay()];
+  const weekday = WEEKDAYS_DE[new Date(ms).getUTCDay()];
   return `${weekday}, ${formatGermanDate(dateKey)}`;
+}
+
+function formatLocalHourShortLabel(hourMs: number): string {
+  return LOCAL_HOUR_FORMATTER.format(new Date(hourMs));
+}
+
+function formatLocalDayMonthTime(ms: number): string {
+  const d = new Date(ms);
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}.${mm}., ${LOCAL_HOUR_FORMATTER.format(d)}`;
+}
+
+function formatLocalHourFullLabel(hourMs: number): string {
+  const start = new Date(hourMs);
+  const weekday = WEEKDAYS_DE[start.getDay()];
+  const dd = String(start.getDate()).padStart(2, '0');
+  const mm = String(start.getMonth() + 1).padStart(2, '0');
+  const yyyy = start.getFullYear();
+  const startClock = LOCAL_HOUR_FORMATTER.format(start);
+  const endClock = LOCAL_HOUR_FORMATTER.format(new Date(hourMs + 3_600_000));
+  return `${weekday}, ${dd}.${mm}.${yyyy} · ${startClock}–${endClock} Uhr`;
 }
 
 function computeNiceIntegerMax(rawMax: number): { yMax: number; step: number } {
@@ -116,6 +167,7 @@ export class SuperAdminStatsComponent {
 
   @Input() stats: SystemStats | null = null;
   @Input() referenceDate: string | null = null;
+  @Input() referenceHour: string | null = null;
 
   readonly svgWidth = 960;
   readonly svgHeight = 204;
@@ -125,6 +177,7 @@ export class SuperAdminStatsComponent {
   readonly padBottom = 26;
 
   readonly rangePresets: ReadonlyArray<{ id: TelemetryRangePreset; label: string }> = [
+    { id: '24h', label: '24 Std.' },
     { id: '7d', label: '7 Tage' },
     { id: '28d', label: '28 Tage' },
     { id: '3m', label: '3 Monate' },
@@ -166,12 +219,46 @@ export class SuperAdminStatsComponent {
     return new Date().toISOString().slice(0, 10);
   }
 
+  get currentHourKey(): string {
+    if (this.referenceHour && /^\d{4}-\d{2}-\d{2}T\d{2}$/.test(this.referenceHour)) {
+      return this.referenceHour;
+    }
+    return new Date().toISOString().slice(0, 13);
+  }
+
+  get isHourlyRange(): boolean {
+    return this.selectedRange === '24h';
+  }
+
   get hasDailySeries(): boolean {
     return (this.stats?.telemetry?.dailySeries?.length ?? 0) > 0;
   }
 
+  get hasHourlySeries(): boolean {
+    return (this.stats?.telemetry?.hourlySeries?.length ?? 0) > 0;
+  }
+
   get isRangeFiltered(): boolean {
+    if (this.isHourlyRange) return true;
     return this.selectedRange !== 'all' && this.hasDailySeries;
+  }
+
+  get viewsLast24h(): number {
+    const tel = this.stats?.telemetry;
+    if (!tel) return 0;
+    if (typeof tel.viewsLast24h === 'number') {
+      return tel.viewsLast24h;
+    }
+    if (tel.hourlySeries && tel.hourlySeries.length > 0) {
+      const endMs = parseUtcHourMs(this.currentHourKey);
+      if (Number.isNaN(endMs)) return 0;
+      const startKey = formatUtcHourKey(endMs - 23 * 3_600_000);
+      const endKey = this.currentHourKey;
+      return tel.hourlySeries
+        .filter((h) => h.hour >= startKey && h.hour <= endKey)
+        .reduce((sum, h) => sum + (h.totalViews || 0), 0);
+    }
+    return 0;
   }
 
   get firstRecordedDate(): string | null {
@@ -182,6 +269,18 @@ export class SuperAdminStatsComponent {
     const series = this.stats?.telemetry?.dailySeries;
     if (series && series.length > 0) {
       return series[0].date;
+    }
+    return null;
+  }
+
+  get firstRecordedHour(): string | null {
+    const explicit = this.stats?.telemetry?.firstRecordedHour;
+    if (explicit && /^\d{4}-\d{2}-\d{2}T\d{2}$/.test(explicit)) {
+      return explicit;
+    }
+    const series = this.stats?.telemetry?.hourlySeries;
+    if (series && series.length > 0) {
+      return series[0].hour;
     }
     return null;
   }
@@ -218,15 +317,43 @@ export class SuperAdminStatsComponent {
   }
 
   get formattedDateRange(): string {
+    if (this.isHourlyRange) {
+      const endHourMs = parseUtcHourMs(this.currentHourKey);
+      if (!Number.isNaN(endHourMs)) {
+        const startHourMs = endHourMs - 23 * 3_600_000;
+        const endMinuteMs = endHourMs + 59 * 60_000;
+        return `Letzte 24 Stunden (${formatLocalDayMonthTime(startHourMs)} – ${formatLocalDayMonthTime(endMinuteMs)} Uhr)`;
+      }
+      return 'Letzte 24 Stunden';
+    }
     const { startDate, endDate } = this.resolvedDateRange;
     return `${formatGermanDate(startDate)} – ${formatGermanDate(endDate)}`;
   }
 
   get formattedFirstDateNote(): string | null {
+    if (this.isHourlyRange) return null;
     const first = this.firstRecordedDate;
     if (!first) return null;
     const { startDate } = this.resolvedDateRange;
     return first > startDate ? formatGermanDate(first) : null;
+  }
+
+  get formattedHourlyStatusNote(): string | null {
+    if (!this.isHourlyRange) return null;
+    if (!this.hasHourlySeries) {
+      return 'Stundenreihe aktiv ab erstem Aufruf';
+    }
+    const first = this.firstRecordedHour;
+    const endHourMs = parseUtcHourMs(this.currentHourKey);
+    if (!first || Number.isNaN(endHourMs)) return null;
+    const startKey = formatUtcHourKey(endHourMs - 23 * 3_600_000);
+    if (first > startKey) {
+      const firstMs = parseUtcHourMs(first);
+      if (!Number.isNaN(firstMs)) {
+        return `Stundenreihe aktiv seit ${formatLocalDayMonthTime(firstMs)} Uhr`;
+      }
+    }
+    return null;
   }
 
   selectRange(preset: TelemetryRangePreset): void {
@@ -267,14 +394,46 @@ export class SuperAdminStatsComponent {
     return map;
   }
 
-  private get rawWindowEntries(): Array<{
-    date: string;
-    total: number;
-    web: number;
-    pwa: number;
-    interactions: number;
-    entry?: TelemetryDailyEntry;
-  }> {
+  private get hourlyMap(): Map<string, TelemetryHourlyEntry> {
+    const map = new Map<string, TelemetryHourlyEntry>();
+    for (const entry of this.stats?.telemetry?.hourlySeries || []) {
+      map.set(entry.hour, entry);
+    }
+    return map;
+  }
+
+  private get rawWindowEntries(): WindowBucketEntry[] {
+    if (this.isHourlyRange) {
+      const endHourMs = parseUtcHourMs(this.currentHourKey);
+      if (Number.isNaN(endHourMs)) return [];
+      const startHourMs = endHourMs - 23 * 3_600_000;
+      const byHour = this.hourlyMap;
+      const list: WindowBucketEntry[] = [];
+
+      for (let i = 0; i < 24; i++) {
+        const hourMs = startHourMs + i * 3_600_000;
+        const hourKey = formatUtcHourKey(hourMs);
+        const doc = byHour.get(hourKey);
+        const total = doc?.totalViews ?? 0;
+        const web = doc?.webViews ?? 0;
+        const pwa = doc?.pwaViews ?? 0;
+        const interactions = (doc?.events?.quick_game_started || 0) + (doc?.events?.trailer_opened || 0);
+        list.push({
+          key: hourKey,
+          shortLabel: formatLocalHourShortLabel(hourMs),
+          fullLabel: formatLocalHourFullLabel(hourMs),
+          total,
+          web,
+          pwa,
+          interactions,
+          routes: doc?.routes,
+          events: doc?.events,
+          referrers: doc?.referrers,
+        });
+      }
+      return list;
+    }
+
     const { startDate, endDate } = this.resolvedDateRange;
     const startMs = parseUtcDateMs(startDate);
     const endMs = parseUtcDateMs(endDate);
@@ -282,14 +441,7 @@ export class SuperAdminStatsComponent {
 
     const byDate = this.dailyMap;
     const dayCount = Math.min(400, Math.floor((endMs - startMs) / 86_400_000) + 1);
-    const list: Array<{
-      date: string;
-      total: number;
-      web: number;
-      pwa: number;
-      interactions: number;
-      entry?: TelemetryDailyEntry;
-    }> = [];
+    const list: WindowBucketEntry[] = [];
 
     for (let i = 0; i < dayCount; i++) {
       const date = formatUtcDateKey(startMs + i * 86_400_000);
@@ -298,7 +450,18 @@ export class SuperAdminStatsComponent {
       const web = doc?.webViews ?? 0;
       const pwa = doc?.pwaViews ?? 0;
       const interactions = (doc?.events?.quick_game_started || 0) + (doc?.events?.trailer_opened || 0);
-      list.push({ date, total, web, pwa, interactions, entry: doc });
+      list.push({
+        key: date,
+        shortLabel: formatGermanShortDate(date),
+        fullLabel: formatGermanFullLabel(date),
+        total,
+        web,
+        pwa,
+        interactions,
+        routes: doc?.routes,
+        events: doc?.events,
+        referrers: doc?.referrers,
+      });
     }
     return list;
   }
@@ -311,11 +474,11 @@ export class SuperAdminStatsComponent {
     let interactionsCount = 0;
 
     if (this.isRangeFiltered) {
-      for (const day of this.rawWindowEntries) {
-        totalCount += day.total;
-        webCount += day.web;
-        pwaCount += day.pwa;
-        interactionsCount += day.interactions;
+      for (const bucket of this.rawWindowEntries) {
+        totalCount += bucket.total;
+        webCount += bucket.web;
+        pwaCount += bucket.pwa;
+        interactionsCount += bucket.interactions;
       }
     } else if (tel) {
       if (this.selectedRange === '7d' && !this.hasDailySeries) {
@@ -372,11 +535,11 @@ export class SuperAdminStatsComponent {
 
   get chartScale(): { yMax: number; step: number } {
     let rawMax = 0;
-    for (const day of this.rawWindowEntries) {
-      if (this.activeSeries.has('total')) rawMax = Math.max(rawMax, day.total);
-      if (this.activeSeries.has('web')) rawMax = Math.max(rawMax, day.web);
-      if (this.activeSeries.has('pwa')) rawMax = Math.max(rawMax, day.pwa);
-      if (this.activeSeries.has('interactions')) rawMax = Math.max(rawMax, day.interactions);
+    for (const bucket of this.rawWindowEntries) {
+      if (this.activeSeries.has('total')) rawMax = Math.max(rawMax, bucket.total);
+      if (this.activeSeries.has('web')) rawMax = Math.max(rawMax, bucket.web);
+      if (this.activeSeries.has('pwa')) rawMax = Math.max(rawMax, bucket.pwa);
+      if (this.activeSeries.has('interactions')) rawMax = Math.max(rawMax, bucket.interactions);
     }
     return computeNiceIntegerMax(rawMax);
   }
@@ -412,9 +575,9 @@ export class SuperAdminStatsComponent {
 
       return {
         index: i,
-        date: item.date,
-        shortLabel: formatGermanShortDate(item.date),
-        fullLabel: formatGermanFullLabel(item.date),
+        date: item.key,
+        shortLabel: item.shortLabel,
+        fullLabel: item.fullLabel,
         total: item.total,
         web: item.web,
         pwa: item.pwa,
@@ -438,6 +601,14 @@ export class SuperAdminStatsComponent {
     const days = this.chartDays;
     const n = days.length;
     if (n === 0) return [];
+    if (this.isHourlyRange && n === 24) {
+      const hourlyTickIndices = [0, 4, 8, 12, 16, 20, 23];
+      return hourlyTickIndices.map((idx, pos) => ({
+        label: days[idx].shortLabel,
+        x: days[idx].x,
+        anchor: pos === 0 ? 'start' : pos === hourlyTickIndices.length - 1 ? 'end' : 'middle',
+      }));
+    }
     if (n <= 7) {
       return days.map((d, i) => ({
         label: d.shortLabel,
@@ -517,8 +688,8 @@ export class SuperAdminStatsComponent {
 
   private sumWindowMap(field: 'routes' | 'events' | 'referrers'): Record<string, number> {
     const result: Record<string, number> = {};
-    for (const day of this.rawWindowEntries) {
-      const source = day.entry?.[field];
+    for (const bucket of this.rawWindowEntries) {
+      const source = bucket[field];
       if (!source) continue;
       for (const [key, val] of Object.entries(source)) {
         const count = Number(val || 0);
@@ -579,6 +750,9 @@ export class SuperAdminStatsComponent {
   }
 
   get breakdownSubtitle(): string {
-    return this.isRangeFiltered ? `Im gewählten Zeitraum (${this.formattedDateRange})` : 'Gesamtzeitraum';
+    if (!this.isRangeFiltered) return 'Gesamtzeitraum';
+    return this.isHourlyRange
+      ? `Im gewählten Zeitraum · ${this.formattedDateRange}`
+      : `Im gewählten Zeitraum (${this.formattedDateRange})`;
   }
 }

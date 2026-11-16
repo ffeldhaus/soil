@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import { checkPublicRateLimit } from './research.service';
-import type { TelemetryDailyEntry, TelemetryStats } from './types';
+import type { TelemetryDailyEntry, TelemetryHourlyEntry, TelemetryStats } from './types';
 
 export const ALLOWED_TELEMETRY_ROUTES = new Set<string>([
   '/',
@@ -173,15 +173,15 @@ function mapToFieldIncrements(counts: Record<string, number>): Record<string, un
 
 function buildFirestoreIncrementRecord(
   sanitized: SanitizedTelemetryPayload,
-  dateKey?: string,
+  bucketField?: { key: 'date' | 'hour'; value: string },
 ): Record<string, unknown> {
   const inc = (n: number) => admin.firestore.FieldValue.increment(n);
   const payload: Record<string, unknown> = {
     updatedAt: Timestamp.now(),
   };
 
-  if (dateKey) {
-    payload.date = dateKey;
+  if (bucketField) {
+    payload[bucketField.key] = bucketField.value;
   }
 
   if (sanitized.totalViews > 0) {
@@ -233,12 +233,16 @@ export async function handleTelemetryHttpRequest(req: any, res: any, db: admin.f
     return;
   }
 
-  const dateKey = new Date().toISOString().slice(0, 10);
-  const dailyUpdate = buildFirestoreIncrementRecord(sanitized, dateKey);
+  const now = new Date();
+  const dateKey = now.toISOString().slice(0, 10);
+  const hourKey = now.toISOString().slice(0, 13);
+  const dailyUpdate = buildFirestoreIncrementRecord(sanitized, { key: 'date', value: dateKey });
+  const hourlyUpdate = buildFirestoreIncrementRecord(sanitized, { key: 'hour', value: hourKey });
   const totalsUpdate = buildFirestoreIncrementRecord(sanitized);
 
   await Promise.all([
     db.collection('telemetry_daily').doc(dateKey).set(dailyUpdate, { merge: true }),
+    db.collection('telemetry_hourly').doc(hourKey).set(hourlyUpdate, { merge: true }),
     db.collection('telemetry_totals').doc('all').set(totalsUpdate, { merge: true }),
   ]);
 
@@ -285,6 +289,35 @@ function normalizeDailyEntry(
   };
 }
 
+function normalizeHourlyEntry(
+  doc: { id: string; data: () => Record<string, unknown> | undefined },
+  cutoff24hHourKey: string,
+  currentHourKey: string,
+): TelemetryHourlyEntry | null {
+  const data = doc.data() || {};
+  const rawHour = typeof data.hour === 'string' && data.hour.trim() ? data.hour.trim() : doc.id;
+  const hour = rawHour.slice(0, 13);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}$/.test(hour)) return null;
+  if (hour < cutoff24hHourKey || hour > currentHourKey) return null;
+
+  const totalViews = Math.max(0, Math.round(Number(data.totalViews) || 0));
+  const pwaViews = Math.max(0, Math.round(Number(data.pwaViews) || 0));
+  const webViews =
+    data.webViews !== undefined
+      ? Math.max(0, Math.round(Number(data.webViews) || 0))
+      : Math.max(0, totalViews - pwaViews);
+
+  return {
+    hour,
+    totalViews,
+    webViews,
+    pwaViews,
+    routes: toSafeNumberMap(data.routes),
+    events: toSafeNumberMap(data.events),
+    referrers: toSafeNumberMap(data.referrers),
+  };
+}
+
 function sumDailyWindowViews(
   dailySeries: readonly TelemetryDailyEntry[],
   todayKey: string,
@@ -315,18 +348,47 @@ export async function aggregateTelemetryStats(
   const cutoff30dKey = new Date(nowDate.getTime() - 29 * 86_400_000).toISOString().slice(0, 10);
   const cutoff400dKey = new Date(nowDate.getTime() - 399 * 86_400_000).toISOString().slice(0, 10);
 
+  const currentHourMs = Date.UTC(
+    nowDate.getUTCFullYear(),
+    nowDate.getUTCMonth(),
+    nowDate.getUTCDate(),
+    nowDate.getUTCHours(),
+  );
+  const currentHourKey = new Date(currentHourMs).toISOString().slice(0, 13);
+  const cutoff24hHourKey = new Date(currentHourMs - 23 * 3_600_000).toISOString().slice(0, 13);
+
   const dailyColl = db.collection('telemetry_daily');
   const dailyQuery = typeof dailyColl.where === 'function' ? dailyColl.where('date', '>=', cutoff400dKey) : dailyColl;
 
-  const [totalsSnap, dailySnap] = await Promise.all([
+  const hourlyColl = db.collection('telemetry_hourly');
+  const hourlyQuery =
+    hourlyColl && typeof hourlyColl.where === 'function'
+      ? hourlyColl.where('hour', '>=', cutoff24hHourKey)
+      : hourlyColl;
+  const hourlyPromise =
+    hourlyQuery && typeof hourlyQuery.get === 'function' ? hourlyQuery.get() : Promise.resolve({ docs: [] });
+
+  const [totalsSnap, dailySnap, hourlySnap] = await Promise.all([
     db.collection('telemetry_totals').doc('all').get(),
     dailyQuery.get(),
+    hourlyPromise,
   ]);
 
   const dailySeries = (dailySnap.docs || [])
     .map((doc) => normalizeDailyEntry(doc, cutoff400dKey, todayKey))
     .filter((entry): entry is TelemetryDailyEntry => entry !== null)
     .sort((a, b) => a.date.localeCompare(b.date));
+
+  const hourlySeries = (hourlySnap.docs || [])
+    .map((doc: any) => normalizeHourlyEntry(doc, cutoff24hHourKey, currentHourKey))
+    .filter((entry): entry is TelemetryHourlyEntry => entry !== null)
+    .sort((a, b) => a.hour.localeCompare(b.hour));
+
+  let viewsLast24h = 0;
+  for (const entry of hourlySeries) {
+    viewsLast24h += entry.totalViews;
+  }
+  const firstRecordedHour = hourlySeries[0]?.hour ?? null;
 
   const { viewsToday, viewsLast7d, viewsLast30d, viewsWindowTotal } = sumDailyWindowViews(
     dailySeries,
@@ -343,6 +405,7 @@ export async function aggregateTelemetryStats(
 
   return {
     viewsToday,
+    viewsLast24h,
     viewsLast7d,
     viewsLast30d,
     viewsTotal,
@@ -353,5 +416,37 @@ export async function aggregateTelemetryStats(
     referrers: toSafeNumberMap(totalsData.referrers, 10),
     dailySeries,
     firstRecordedDate,
+    hourlySeries,
+    firstRecordedHour,
   };
+}
+
+export async function cleanupExpiredHourlyTelemetry(
+  db: admin.firestore.Firestore,
+  nowDate: Date = new Date(),
+): Promise<number> {
+  const currentHourMs = Date.UTC(
+    nowDate.getUTCFullYear(),
+    nowDate.getUTCMonth(),
+    nowDate.getUTCDate(),
+    nowDate.getUTCHours(),
+  );
+  const cutoff72hHourKey = new Date(currentHourMs - 72 * 3_600_000).toISOString().slice(0, 13);
+  let deletedCount = 0;
+
+  while (true) {
+    const snap = await db.collection('telemetry_hourly').where('hour', '<', cutoff72hHourKey).limit(200).get();
+    if (!snap.docs || snap.docs.length === 0) break;
+
+    const batch = db.batch();
+    for (const doc of snap.docs) {
+      batch.delete(doc.ref);
+    }
+    await batch.commit();
+    deletedCount += snap.docs.length;
+
+    if (snap.docs.length < 200) break;
+  }
+
+  return deletedCount;
 }

@@ -15,6 +15,7 @@ const SAMPLE_STATS_WITH_SERIES: SystemStats = {
   users: { total: 29, admins: 24, banned: 1 },
   telemetry: {
     viewsToday: 19,
+    viewsLast24h: 27,
     viewsLast7d: 94,
     viewsLast30d: 182,
     viewsTotal: 420,
@@ -24,6 +25,46 @@ const SAMPLE_STATS_WITH_SERIES: SystemStats = {
     events: { quick_game_started: 64, trailer_opened: 28, research_export: 7 },
     referrers: { direct: 240, 'bpb.de': 95, pwa_launch: 60, 'facebook.com': 25 },
     firstRecordedDate: '2026-11-05',
+    firstRecordedHour: '2026-11-15T14',
+    hourlySeries: [
+      {
+        // Outside 24h window when referenceHour = '2026-11-16T11' (start is '2026-11-15T12')
+        hour: '2026-11-15T10',
+        totalViews: 50,
+        webViews: 50,
+        pwaViews: 0,
+        routes: { '/': 50 },
+        events: { quick_game_started: 12 },
+        referrers: { direct: 50 },
+      },
+      {
+        hour: '2026-11-15T14',
+        totalViews: 11,
+        webViews: 9,
+        pwaViews: 2,
+        routes: { '/': 6, '/manual': 3, '/trailer': 2 },
+        events: { quick_game_started: 3, trailer_opened: 1 },
+        referrers: { 'bildungsserver.de': 5, direct: 6 },
+      },
+      {
+        hour: '2026-11-16T08',
+        totalViews: 10,
+        webViews: 8,
+        pwaViews: 2,
+        routes: { '/': 5, '/game': 4, '/research': 1 },
+        events: { quick_game_started: 2, research_export: 1 },
+        referrers: { 'bpb.de': 4, direct: 6 },
+      },
+      {
+        hour: '2026-11-16T11',
+        totalViews: 6,
+        webViews: 5,
+        pwaViews: 1,
+        routes: { '/': 3, '/trailer': 3 },
+        events: { trailer_opened: 2 },
+        referrers: { 'bpb.de': 3, pwa_launch: 1, direct: 2 },
+      },
+    ],
     dailySeries: [
       {
         date: '2026-11-05',
@@ -353,5 +394,89 @@ describe('SuperAdminComponent', () => {
     (fixture.nativeElement.querySelector('[data-testid="metric-tile-total"]') as HTMLButtonElement).click();
     fixture.detectChanges();
     expect(statsComp.isSeriesActive('total')).toBe(true);
+  });
+
+  it('renders 24-hour hourly chart points, 24h metric sums, breakdown tables, and empty-series note when selecting 24 Std.', async () => {
+    gameServiceMock.getSystemStats.mockResolvedValue(SAMPLE_STATS_WITH_SERIES);
+    await component.loadData();
+    fixture.detectChanges();
+
+    const statsDebug = fixture.debugElement.query(By.directive(SuperAdminStatsComponent));
+    const statsComp = statsDebug.componentInstance as SuperAdminStatsComponent;
+    statsComp.referenceDate = '2026-11-16';
+    statsComp.referenceHour = '2026-11-16T11';
+    fixture.detectChanges();
+
+    expect(statsComp.rangePresets[0]).toEqual({ id: '24h', label: '24 Std.' });
+    const kpi24h = fixture.nativeElement.querySelector('[data-testid="telemetry-kpi-24h"]') as HTMLElement;
+    expect(kpi24h.textContent).toContain('Letzte 24h: 27');
+
+    // Click '24h' preset button ("24 Std.")
+    const btn24h = fixture.nativeElement.querySelector('[data-testid="range-preset-24h"]') as HTMLButtonElement;
+    expect(btn24h.textContent?.trim()).toBe('24 Std.');
+    btn24h.click();
+    fixture.detectChanges();
+
+    expect(statsComp.selectedRange).toBe('24h');
+    expect(statsComp.chartDays.length).toBe(24);
+    expect(statsComp.chartDays[0].date).toBe('2026-11-15T12');
+    expect(statsComp.chartDays[23].date).toBe('2026-11-16T11');
+    // Missing hours are zero-filled
+    expect(statsComp.chartDays[0].total).toBe(0);
+    expect(statsComp.chartDays[2].total).toBe(11);
+    expect(statsComp.chartDays[20].total).toBe(10);
+    expect(statsComp.chartDays[23].total).toBe(6);
+
+    // X-axis ticks at 4-hour intervals + final hour, formatted as HH:00
+    expect(statsComp.xTicks.length).toBe(7);
+    expect(statsComp.xTicks.every((t) => /^\d{2}:\d{2}$/.test(t.label))).toBe(true);
+
+    // Metric tiles sum only the 24 hourly buckets in window (11 + 10 + 6 = 27; excludes 2026-11-15T10)
+    expect(statsComp.metricTiles.find((t) => t.key === 'total')?.count).toBe(27);
+    expect(statsComp.metricTiles.find((t) => t.key === 'web')?.count).toBe(22);
+    expect(statsComp.metricTiles.find((t) => t.key === 'pwa')?.count).toBe(5);
+    expect(statsComp.metricTiles.find((t) => t.key === 'interactions')?.count).toBe(8);
+
+    // Breakdown tables are synchronized to the 24h window
+    expect(statsComp.routeRows.find((r) => r.key === '/')?.count).toBe(14);
+    expect(statsComp.routeRows.find((r) => r.key === '/trailer')?.count).toBe(5);
+    expect(statsComp.eventRows.find((e) => e.key === 'quick_game_started')?.count).toBe(5);
+    expect(statsComp.eventRows.find((e) => e.key === 'research_export')?.count).toBe(1);
+    expect(statsComp.referrerRows.find((r) => r.key === 'bildungsserver.de')?.count).toBe(5);
+    expect(statsComp.referrerRows.find((r) => r.key === 'bpb.de')?.count).toBe(7);
+
+    // Subtitle & resolution caption reflect local hourly values
+    expect(statsComp.formattedDateRange).toContain('Letzte 24 Stunden');
+    const caption = fixture.nativeElement.querySelector('[data-testid="telemetry-resolution-caption"]') as HTMLElement;
+    expect(caption.textContent).toContain('Stundenwerte (lokale Uhrzeit)');
+
+    // Hover last hour column to verify hourly tooltip range label ("Uhr")
+    const hitRects = fixture.nativeElement.querySelectorAll('[data-testid="chart-day-hit"]');
+    expect(hitRects.length).toBe(24);
+    hitRects[23].dispatchEvent(new Event('mouseenter'));
+    fixture.detectChanges();
+    const tooltip = fixture.nativeElement.querySelector('[data-testid="chart-tooltip"]') as HTMLElement;
+    expect(tooltip).toBeTruthy();
+    expect(tooltip.textContent).toContain('Uhr');
+
+    // Graceful zero-state when hourlySeries has not recorded its first hour yet
+    gameServiceMock.getSystemStats.mockResolvedValue({
+      ...SAMPLE_STATS_WITH_SERIES,
+      telemetry: {
+        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
+        viewsLast24h: 0,
+        hourlySeries: [],
+        firstRecordedHour: null,
+      },
+    });
+    await component.loadData();
+    fixture.detectChanges();
+    expect(statsComp.chartDays.length).toBe(24);
+    expect(statsComp.metricTiles.find((t) => t.key === 'total')?.count).toBe(0);
+    expect(statsComp.referrerRows.length).toBe(0);
+    const statusNote = fixture.nativeElement.querySelector(
+      '[data-testid="telemetry-hourly-status-note"]',
+    ) as HTMLElement;
+    expect(statusNote?.textContent).toContain('Stundenreihe aktiv ab erstem Aufruf');
   });
 });
