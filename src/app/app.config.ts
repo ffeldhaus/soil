@@ -1,3 +1,14 @@
+/**
+ * @fileoverview Root Angular browser application configuration (`appConfig`).
+ *
+ * Key invariants:
+ * - Routes native Capacitor iOS/Android shells (`isNativeCapacitorApp()`) to the non-HTTP-referrer-restricted
+ *   Firebase API key while keeping the referrer-restricted key for web browsers.
+ * - Pins Firebase Cloud Functions to `europe-west4` (EU) and connects Auth/Functions emulators only on local
+ *   browser dev servers (`isLocalBrowserDevServer()`).
+ * - Configures German (`de-DE`) locale formatting, anchor/position scroll restoration, and incremental SSR hydration.
+ */
+
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import localeDe from '@angular/common/locales/de';

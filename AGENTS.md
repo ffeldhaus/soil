@@ -20,8 +20,9 @@ Core invariants for `soil` (Angular 21 + Tailwind CSS v4 + Capacitor 8 iOS/Andro
 - **Capacitor 8 Native Apps (`app.soil` / `app.soil.twa`) & Auth Parity**:
   - `src/app/app.config.ts` must route native Capacitor shells (`isNativeCapacitorApp()`) to the non-HTTP-referrer-restricted Firebase API key while keeping the referrer-restricted key for web builds.
   - Any teacher/admin authentication view offering Google Sign-In must also offer Sign in with Apple (`SignInWithApplePlugin` on native iOS in `ios/App/App/SceneDelegate.swift`, `OAuthProvider('apple.com')` on web) per App Store Guideline 4.8.
-- **Formatting & Linting (`biome.json`)**:
+- **Formatting, Linting & File Headers (`biome.json`)**:
   - Enforced via Biome (`npm run lint`, 2-space indent, `120` line width, single quotes, trailing commas). Comments should be sparse and explain *why*, not *what*.
+  - Include a concise `/** @fileoverview ... */` header on entry points (`main.ts`, `server.ts`, `sw.js`, `app.config.ts`, `app.routes.ts`), core services (`auth`, `game`, `sync`), shared engine/constants modules, and `functions/src/index.ts` to document non-obvious invariants; omit boilerplate headers on routine UI components.
 
 ## 2. Hybrid Game Engine, Shared Constants & Ground Truth (`sources.json`)
 - **Single Source of Truth & Backend Symlinks**:

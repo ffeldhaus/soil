@@ -156,5 +156,34 @@ describe('SSR & Canonical Express Server Routing (src/server.ts)', () => {
     const gameHtml = await gameRes.text();
     expect(gameHtml).toContain('content="noindex, nofollow"');
     expect(gameHtml).not.toContain('rel="canonical"');
+
+    const authActionRes = await fetch(`${baseUrl}/__/auth/action?mode=verifyEmail&oobCode=test`, {
+      redirect: 'manual',
+    });
+    expect(authActionRes.status).toBe(200);
+    expect(authActionRes.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+    const authActionHtml = await authActionRes.text();
+    expect(authActionHtml).toContain('content="noindex, nofollow"');
+    expect(authActionHtml).not.toContain('rel="canonical"');
+  });
+
+  it('enforces baseline security headers, hides X-Powered-By, and rejects non-GET/HEAD requests without booting SSR', async () => {
+    const robotsRes = await fetch(`${baseUrl}/robots.txt`);
+    expect(robotsRes.status).toBe(200);
+    expect(robotsRes.headers.get('x-powered-by')).toBeNull();
+    expect(robotsRes.headers.get('x-content-type-options')).toBe('nosniff');
+    expect(robotsRes.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin');
+    expect(robotsRes.headers.get('x-frame-options')).toBe('SAMEORIGIN');
+    expect(robotsRes.headers.get('permissions-policy')).toBe('camera=(), microphone=(), geolocation=()');
+    expect(robotsRes.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
+    expect(robotsRes.headers.get('content-type')).toContain('charset=utf-8');
+
+    const postPageRes = await fetch(`${baseUrl}/wp-login.php`, { method: 'POST' });
+    expect(postPageRes.status).toBe(405);
+    expect(postPageRes.headers.get('allow')).toBe('GET, HEAD');
+
+    const postResearchRes = await fetch(`${baseUrl}/api/research`, { method: 'POST' });
+    expect(postResearchRes.status).toBe(405);
+    expect(postResearchRes.headers.get('allow')).toBe('GET, HEAD, OPTIONS');
   });
 });

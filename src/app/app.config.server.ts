@@ -3,13 +3,14 @@ import { provideServerRendering, withRoutes } from '@angular/ssr';
 
 import { appConfig } from './app.config';
 import { serverRoutes } from './app.routes.server';
-import { FIREBASE_AUTH, FIREBASE_FUNCTIONS } from './firebase.config';
+import { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_FUNCTIONS } from './firebase.config';
 
 const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(withRoutes(serverRoutes)),
-    { provide: FIREBASE_AUTH, useValue: { onAuthStateChanged: () => {} } },
-    { provide: FIREBASE_FUNCTIONS, useValue: {} },
+    { provide: FIREBASE_APP, useValue: null },
+    { provide: FIREBASE_AUTH, useValue: null },
+    { provide: FIREBASE_FUNCTIONS, useValue: null },
   ],
 };
 

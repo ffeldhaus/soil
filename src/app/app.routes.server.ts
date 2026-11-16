@@ -1,62 +1,35 @@
 import { RenderMode, type ServerRoute } from '@angular/ssr';
 
+export const PRERENDERED_ROUTE_PATHS = [
+  '',
+  'trailer',
+  'manual',
+  'info',
+  'research',
+  'admin',
+  'admin/login',
+  'admin/register',
+  'game-login',
+  'delete-account',
+  'impressum',
+  'privacy',
+] as const;
+
+export const CSR_ROUTE_PATHS = ['game', 'admin/super', 'auth/action', '_/auth/action', '__/auth/action'] as const;
+
 export const serverRoutes: ServerRoute[] = [
-  {
-    path: '',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'trailer',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'manual',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'info',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'research',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'admin',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'admin/login',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'admin/register',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'game-login',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'delete-account',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'impressum',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'privacy',
-    renderMode: RenderMode.Prerender,
-  },
-  {
-    path: 'game',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'admin/super',
-    renderMode: RenderMode.Client,
-  },
+  ...PRERENDERED_ROUTE_PATHS.map(
+    (path): ServerRoute => ({
+      path,
+      renderMode: RenderMode.Prerender,
+    }),
+  ),
+  ...CSR_ROUTE_PATHS.map(
+    (path): ServerRoute => ({
+      path,
+      renderMode: RenderMode.Client,
+    }),
+  ),
   {
     path: '**',
     renderMode: RenderMode.Client,

@@ -1,4 +1,15 @@
-import type { Routes } from '@angular/router';
+/**
+ * @fileoverview Canonical client/SSR route table and single source of truth for per-route SEO metadata,
+ * `robots` directives, Schema.org JSON-LD graphs, and shared classroom FAQ copy (`INFO_FAQ_ITEMS`).
+ *
+ * Key invariants:
+ * - Root `title` and `description` must match `src/index.html` and `public/site.webmanifest` (enforced by
+ *   `seo-consistency.spec.ts`), and every indexable `canonicalPath` must appear in `sitemap.xml` and `robots.txt`.
+ * - `/admin` and `/game` intentionally omit `canActivate` guards to support account-free local guest single-player;
+ *   all multiplayer and super-admin operations are enforced server-side via Callable Cloud Functions.
+ */
+
+import type { Route, Routes } from '@angular/router';
 
 export interface RouteSeoData {
   description: string;
@@ -8,7 +19,77 @@ export interface RouteSeoData {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const baseRoutes: Routes = [
+export interface InfoFaqItem {
+  question: string;
+  answer: string;
+}
+
+const CC_BY_LICENSE = 'https://creativecommons.org/licenses/by/4.0/';
+
+const SOIL_CREATORS = [
+  {
+    '@type': 'Person',
+    name: 'Dr. Nina Wolf',
+  },
+  {
+    '@type': 'Person',
+    name: 'Florian Feldhaus',
+  },
+];
+
+const SOIL_WEBSITE = {
+  '@type': 'WebSite',
+  '@id': 'https://soil.app/#website',
+  name: 'SOIL',
+  url: 'https://soil.app/',
+  inLanguage: 'de',
+};
+
+export const INFO_FAQ_ITEMS: readonly InfoFaqItem[] = [
+  {
+    question: 'Für welche Fächer und Bildungsstufen eignet sich das Planspiel SOIL?',
+    answer:
+      'SOIL eignet sich für weiterführende Schulen in allen 16 Bundesländern sowie für berufliche Schulen, die Hochschul- und Lehramtsausbildung und die außerschulische Bildungsarbeit. Das Planspiel passt besonders in den Fachunterricht in Geographie und Erdkunde, Biologie und Naturwissenschaften sowie Wirtschaft und Politik und lässt sich flexibel an Projekttagen zur Bildung für nachhaltige Entwicklung (BNE) einsetzen.',
+  },
+  {
+    question: 'Wie unterscheiden sich die drei Schwierigkeitsgrade Einsteiger, Standard und Profi?',
+    answer:
+      'Die drei Stufen lassen sich unabhängig von der Jahrgangsstufe frei nach Vorwissen und Unterrichtsziel wählen: Die Stufe Einsteiger startet mit einheitlichen Bodenwerten von 100, verlässlicher Wettervorhersage und 0 % Überziehungszins. Die Stufe Standard ergänzt fünf unterschiedliche Boden-Zonen, saisonale Wettertrends, 6 % Überziehungszins und regionale Förderverträge. Die Stufe Profi fordert mit stark heterogenen Böden, zunehmendem Klimastress, 10 % Überziehungszins und einer Insolvenzgrenze ab -50.000 €.',
+  },
+  {
+    question: 'Wie läuft eine Einzelstunde oder Doppelstunde im Unterricht praktisch ab?',
+    answer:
+      'Nach einer kurzen Einführung über die integrierte Spieltour starten die Lernenden ohne Registrierung im Einzelspieler-Modus oder treten per vierstelliger Team-PIN einer gemeinsamen Klassenrunde bei. Anschließend bewirtschaften sie ihren Hof allein oder in Kleingruppen über eine flexibel einstellbare Rundenanzahl (5 bis 20 Wirtschaftsjahre, typischerweise 30 bis 50 Minuten) mit einer kurzen Zwischenbilanz zur Spielmitte. Zum Abschluss werden die Rangliste für den zukunftsfähigen Hof sowie die Boden- und Kapitalverläufe gemeinsam ausgewertet.',
+  },
+  {
+    question: 'Welche Themen aus BNE, Biologie, Geographie und Wirtschaft werden konkret simuliert?',
+    answer:
+      'Biologisch und ökologisch modelliert SOIL den Humusaufbau, den Nährstoffhaushalt, die Stickstofffixierung durch Leguminosen sowie die natürliche Regulierung von Schaderregern durch vielfältige Fruchtfolgen. Geographisch und wirtschaftlich stehen Standortfaktoren, Ertragsrisiken durch Extremwetter, reale Deckungsbeiträge nach KTBL sowie EU-Agrarförderungen und Öko-Regelungen im Mittelpunkt. So erleben die Lernenden unmittelbar, wie kurzfristige Gewinnmaximierung zur Bodendegradation führt und warum ökologische Pflege die Basis für dauerhaften wirtschaftlichen Erfolg bildet.',
+  },
+  {
+    question: 'Ist SOIL kostenlos, werbefrei und DSGVO-konform ohne Schüler-Accounts nutzbar?',
+    answer:
+      'Ja, SOIL ist als freie Bildungsressource dauerhaft kostenlos, werbefrei und direkt im Browser sowie als App auf Tablets, Laptops und interaktiven Tafeln spielbar. Schülerinnen und Schüler benötigen kein Benutzerkonto und geben weder Namen noch E-Mail-Adressen ein. Einzelspieler-Runden laufen lokal auf dem Endgerät, während Mehrspieler-Klassenrunden über anonyme vierstellige Team-PINs auf europäischen Servern abgewickelt werden.',
+  },
+];
+
+function createAuthActionRoute(path: string): Route {
+  return {
+    path,
+    title: 'Konto-Aktion bestätigen – SOIL Online-Planspiel',
+    data: {
+      seo: {
+        description:
+          'Bestätigung von E-Mail-Verifizierungen, Passwort-Zurücksetzungen und Konto-Aktionen für Lehrkräfte im Online-Planspiel SOIL (https://soil.app).',
+        canonicalPath: '/auth/action',
+        robots: 'noindex, nofollow',
+      } satisfies RouteSeoData,
+    },
+    loadComponent: () => import('./auth/auth-action/auth-action').then((m) => m.AuthActionComponent),
+  };
+}
+
+export const routes: Routes = [
   {
     path: '',
     title: 'SOIL: Online-Planspiel & Simulation für BNE im Unterricht',
@@ -20,6 +101,7 @@ const baseRoutes: Routes = [
         jsonLd: {
           '@context': 'https://schema.org',
           '@graph': [
+            SOIL_WEBSITE,
             {
               '@type': 'SoftwareApplication',
               name: 'SOIL',
@@ -32,19 +114,10 @@ const baseRoutes: Routes = [
               url: 'https://soil.app/',
               inLanguage: 'de',
               isAccessibleForFree: true,
-              license: 'https://creativecommons.org/licenses/by/4.0/',
-              creator: [
-                {
-                  '@type': 'Person',
-                  name: 'Dr. Nina Wolf',
-                },
-                {
-                  '@type': 'Person',
-                  name: 'Florian Feldhaus',
-                },
-              ],
+              license: CC_BY_LICENSE,
+              creator: SOIL_CREATORS,
               applicationCategory: ['EducationalApplication', 'GameApplication', 'Simulation'],
-              operatingSystem: 'Web',
+              operatingSystem: 'Web, iOS, Android',
               keywords:
                 'Planspiel BNE, Planspiel BNE online, Online-Planspiel, Simulation, Landwirtschaftssimulation, Bildung für nachhaltige Entwicklung, BNE, Biologie, Geographie, Wirtschaft, Unterricht, Fruchtfolge, Bodenqualität',
               offers: {
@@ -64,19 +137,11 @@ const baseRoutes: Routes = [
               url: 'https://soil.app/',
               inLanguage: 'de',
               isAccessibleForFree: true,
-              license: 'https://creativecommons.org/licenses/by/4.0/',
-              creator: [
-                {
-                  '@type': 'Person',
-                  name: 'Dr. Nina Wolf',
-                },
-                {
-                  '@type': 'Person',
-                  name: 'Florian Feldhaus',
-                },
-              ],
+              license: CC_BY_LICENSE,
+              creator: SOIL_CREATORS,
               learningResourceType: ['Planspiel', 'Simulation', 'Educational Game'],
               educationalUse: ['Planspiel', 'Simulation', 'Unterricht', 'Projekttag BNE'],
+              educationalLevel: ['Sekundarstufe I', 'Sekundarstufe II', 'Berufliche Bildung', 'Hochschule'],
               keywords:
                 'Planspiel BNE, Planspiel BNE online, Online-Planspiel, Simulation, Landwirtschaftssimulation, Bildung für nachhaltige Entwicklung, Biologie, Geographie, Erdkunde, Wirtschaft',
               teaches: [
@@ -112,8 +177,8 @@ const baseRoutes: Routes = [
           uploadDate: '2026-10-30T14:00:00+01:00',
           duration: 'PT1M5S',
           contentUrl: 'https://soil.app/assets/video/soil-trailer.mp4',
-          inLanguage: 'de-DE',
-          license: 'https://creativecommons.org/licenses/by/4.0/',
+          inLanguage: 'de',
+          license: CC_BY_LICENSE,
         },
       } satisfies RouteSeoData,
     },
@@ -183,45 +248,9 @@ const baseRoutes: Routes = [
     },
     loadComponent: () => import('./admin/dashboard/dashboard').then((m) => m.Dashboard),
   },
-  {
-    path: 'auth/action',
-    title: 'Konto-Aktion bestätigen – SOIL Online-Planspiel',
-    data: {
-      seo: {
-        description:
-          'Bestätigung von E-Mail-Verifizierungen, Passwort-Zurücksetzungen und Konto-Aktionen für Lehrkräfte im Online-Planspiel SOIL (https://soil.app).',
-        canonicalPath: '/auth/action',
-        robots: 'noindex, nofollow',
-      } satisfies RouteSeoData,
-    },
-    loadComponent: () => import('./auth/auth-action/auth-action').then((m) => m.AuthActionComponent),
-  },
-  {
-    path: '_/auth/action',
-    title: 'Konto-Aktion bestätigen – SOIL Online-Planspiel',
-    data: {
-      seo: {
-        description:
-          'Bestätigung von E-Mail-Verifizierungen, Passwort-Zurücksetzungen und Konto-Aktionen für Lehrkräfte im Online-Planspiel SOIL (https://soil.app).',
-        canonicalPath: '/auth/action',
-        robots: 'noindex, nofollow',
-      } satisfies RouteSeoData,
-    },
-    loadComponent: () => import('./auth/auth-action/auth-action').then((m) => m.AuthActionComponent),
-  },
-  {
-    path: '__/auth/action',
-    title: 'Konto-Aktion bestätigen – SOIL Online-Planspiel',
-    data: {
-      seo: {
-        description:
-          'Bestätigung von E-Mail-Verifizierungen, Passwort-Zurücksetzungen und Konto-Aktionen für Lehrkräfte im Online-Planspiel SOIL (https://soil.app).',
-        canonicalPath: '/auth/action',
-        robots: 'noindex, nofollow',
-      } satisfies RouteSeoData,
-    },
-    loadComponent: () => import('./auth/auth-action/auth-action').then((m) => m.AuthActionComponent),
-  },
+  createAuthActionRoute('auth/action'),
+  createAuthActionRoute('_/auth/action'),
+  createAuthActionRoute('__/auth/action'),
   {
     path: 'game-login',
     title: 'Spiel-Login mit Team-PIN – SOIL Online-Planspiel',
@@ -276,22 +305,9 @@ const baseRoutes: Routes = [
           url: 'https://soil.app/manual',
           inLanguage: 'de',
           isAccessibleForFree: true,
-          license: 'https://creativecommons.org/licenses/by/4.0/',
-          creator: [
-            {
-              '@type': 'Person',
-              name: 'Dr. Nina Wolf',
-            },
-            {
-              '@type': 'Person',
-              name: 'Florian Feldhaus',
-            },
-          ],
-          isPartOf: {
-            '@type': 'WebSite',
-            name: 'SOIL',
-            url: 'https://soil.app/',
-          },
+          license: CC_BY_LICENSE,
+          creator: SOIL_CREATORS,
+          isPartOf: SOIL_WEBSITE,
         },
       } satisfies RouteSeoData,
     },
@@ -303,7 +319,7 @@ const baseRoutes: Routes = [
     data: {
       seo: {
         description:
-          'Einsatz des Online-Planspiels SOIL im Unterricht (Klasse 5–13, alle 16 Bundesländer) für BNE, Biologie, Geographie und Wirtschaft sowie Didaktik & FAQ.',
+          'Einsatz des Online-Planspiels SOIL im Unterricht (alle 16 Bundesländer) für BNE, Biologie, Geographie und Wirtschaft: Lehrplanbezug, Didaktik & FAQ.',
         canonicalPath: '/info',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -314,64 +330,21 @@ const baseRoutes: Routes = [
               url: 'https://soil.app/info',
               inLanguage: 'de',
               isAccessibleForFree: true,
-              license: 'https://creativecommons.org/licenses/by/4.0/',
-              creator: [
-                {
-                  '@type': 'Person',
-                  name: 'Dr. Nina Wolf',
-                },
-                {
-                  '@type': 'Person',
-                  name: 'Florian Feldhaus',
-                },
-              ],
+              license: CC_BY_LICENSE,
+              creator: SOIL_CREATORS,
             },
             {
               '@type': 'FAQPage',
               url: 'https://soil.app/info#faq',
               inLanguage: 'de',
-              mainEntity: [
-                {
-                  '@type': 'Question',
-                  name: 'Für welche Fächer und Klassenstufen eignet sich das Planspiel SOIL?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'SOIL ist für die Klassenstufen 5 bis 13 in allen 16 Bundesländern konzipiert. Das Planspiel eignet sich besonders für den Fachunterricht in Geographie und Erdkunde, Biologie und Naturwissenschaften sowie Wirtschaft und Politik. Darüber hinaus lässt es sich flexibel an Projekttagen zur Bildung für nachhaltige Entwicklung einsetzen.',
-                  },
+              mainEntity: INFO_FAQ_ITEMS.map((item) => ({
+                '@type': 'Question',
+                name: item.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: item.answer,
                 },
-                {
-                  '@type': 'Question',
-                  name: 'Wie unterscheiden sich die drei Schwierigkeitsgrade für Unter-, Mittel- und Oberstufe?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'Die Stufe Einsteiger für die Klassen 5 und 6 startet mit einheitlichen Bodenwerten von 100, verlässlicher Wettervorhersage und 0% Überziehungszins. Die Stufe Standard für die Klassen 7 bis 10 ergänzt fünf unterschiedliche Boden-Zonen, saisonale Wettertrends, 6% Überziehungszins und regionale Förderverträge. Die Stufe Profi für die Oberstufe fordert Lernende mit stark heterogenen Böden, zunehmendem Klimastress, 10% Überziehungszins und einer Insolvenzgrenze ab -50.000 €.',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: 'Wie läuft eine Einzelstunde oder Doppelstunde im Unterricht praktisch ab?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'Nach einer zehnminütigen Einführung über die integrierte Spieltour starten die Lernenden ohne Registrierung im Einzelspieler-Modus oder treten per vierstelliger PIN einer gemeinsamen Klassenrunde bei. Anschließend bewirtschaften sie ihren Hof allein oder in Kleingruppen über zehn Spielrunden von insgesamt 30 bis 50 Minuten mit einer kurzen Zwischenbilanz nach Runde 5. Zum Abschluss werden die Rangliste für den zukunftsfähigen Hof sowie die Boden- und Kapitalverläufe gemeinsam ausgewertet.',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: 'Welche Themen aus BNE, Biologie, Geographie und Wirtschaft werden konkret simuliert?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'Biologisch und ökologisch modelliert SOIL den Humusaufbau, den Nährstoffhaushalt, die Stickstofffixierung durch Leguminosen sowie die natürliche Regulierung von Schaderregern durch vielfältige Fruchtfolgen. Geographisch und wirtschaftlich stehen Standortfaktoren, Ertragsrisiken durch Extremwetter, reale Deckungsbeiträge nach KTBL sowie EU-Agrarförderungen und Öko-Regelungen im Mittelpunkt. So erleben die Lernenden unmittelbar, wie kurzfristige Gewinnmaximierung zur Bodendegradation führt und warum ökologische Pflege die Basis für dauerhaften wirtschaftlichen Erfolg bildet.',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: 'Ist SOIL kostenlos, werbefrei und DSGVO-konform ohne Schüler-Accounts nutzbar?',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'Ja, SOIL ist als freie Bildungsressource dauerhaft kostenlos, werbefrei und direkt im Browser auf Tablets, Laptops und interaktiven Tafeln spielbar. Schülerinnen und Schüler benötigen kein Benutzerkonto und geben weder Namen noch E-Mail-Adressen ein. Einzelspieler-Runden laufen lokal auf dem Endgerät, während Mehrspieler-Klassenrunden über anonyme vierstellige Team-PINs auf europäischen Servern abgewickelt werden.',
-                  },
-                },
-              ],
+              })),
             },
           ],
         },
@@ -396,12 +369,8 @@ const baseRoutes: Routes = [
           url: 'https://soil.app/research',
           inLanguage: 'de',
           isAccessibleForFree: true,
-          license: 'https://creativecommons.org/licenses/by/4.0/',
-          creator: {
-            '@type': 'Organization',
-            name: 'SOIL Projekt – Dr. Nina Wolf & Florian Feldhaus',
-            url: 'https://soil.app/info',
-          },
+          license: CC_BY_LICENSE,
+          creator: SOIL_CREATORS,
           distribution: [
             {
               '@type': 'DataDownload',
@@ -445,5 +414,3 @@ const baseRoutes: Routes = [
     loadComponent: () => import('./not-found/not-found').then((m) => m.NotFoundComponent),
   },
 ];
-
-export const routes: Routes = baseRoutes;

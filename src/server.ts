@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Production Express edge/static gateway and Angular SSR fallback server for https://soil.app
+ * (Firebase App Hosting on Cloud Run in `europe-west4` behind Google Cloud CDN).
+ *
+ * Core responsibilities and invariants:
+ * 1. Serves build-time prerendered HTML routes and transformed CSR `noindex` shells (`index.csr.html` with
+ *    stripped canonical/og:url tags) directly from disk, returning 0-hop HTTP 404s for unknown or removed
+ *    (`/en/*`) paths to prevent Google Search Console Soft-404s and redirect chains.
+ * 2. Serves discovery and native deep-link metadata (`robots.txt`, `sitemap.xml`, `llms.txt`, `ard.json`,
+ *    Android `assetlinks.json`, iOS `apple-app-site-association`) with inline App Hosting fallbacks.
+ * 3. Reverse-proxies public Research REST/CSV (`/api/research`), MCP (`/mcp`), and anonymous telemetry
+ *    (`/api/telemetry`) under the same origin to `europe-west4` Cloud Functions.
+ * 4. Enforces tiered `Cache-Control` (`no-store` for `sw.js`/`.webmanifest`, browser revalidation + Cloud CDN
+ *    `stale-while-revalidate` for HTML, 1-year `immutable` for hashed bundles) and baseline security headers.
+ */
+
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -11,6 +27,8 @@ import {
 import compression from 'compression';
 import express from 'express';
 
+import { CSR_ROUTE_PATHS, PRERENDERED_ROUTE_PATHS } from './app/app.routes.server';
+
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const defaultBrowserDistFolder = resolve(serverDistFolder, '../browser');
 const vitestBrowserDistFolder = resolve(serverDistFolder, '../dist/soil/browser');
@@ -19,13 +37,9 @@ const browserDistFolder =
     ? vitestBrowserDistFolder
     : defaultBrowserDistFolder;
 
-const PRERENDERED_ROUTES = new Set([
-  '',
-  'trailer',
-  'manual',
-  'info',
-  'research',
-  'admin',
+const PRERENDERED_ROUTES: ReadonlySet<string> = new Set(PRERENDERED_ROUTE_PATHS);
+
+const NOINDEX_PRERENDERED_ROUTES: ReadonlySet<string> = new Set([
   'admin/login',
   'admin/register',
   'game-login',
@@ -34,18 +48,9 @@ const PRERENDERED_ROUTES = new Set([
   'privacy',
 ]);
 
-const NOINDEX_PRERENDERED_ROUTES = new Set([
-  'admin/login',
-  'admin/register',
-  'game-login',
-  'delete-account',
-  'impressum',
-  'privacy',
-]);
+const CSR_NOINDEX_ROUTES: ReadonlySet<string> = new Set(CSR_ROUTE_PATHS);
 
-const CSR_NOINDEX_ROUTES = new Set(['game', 'admin/super', 'auth/action', '_/auth/action', '__/auth/action']);
-
-const KNOWN_APP_ROUTES = new Set([...PRERENDERED_ROUTES, ...CSR_NOINDEX_ROUTES]);
+const KNOWN_APP_ROUTES: ReadonlySet<string> = new Set([...PRERENDERED_ROUTES, ...CSR_NOINDEX_ROUTES]);
 const UPSTREAM_ENDPOINTS = {
   researchApi: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchApi',
   researchMcp: 'https://europe-west4-soil-602ea.cloudfunctions.net/researchMcp',
@@ -124,6 +129,7 @@ async function proxyToCloudFunction(
       method: req.method,
       headers: buildProxyRequestHeaders(req),
       body: extractProxyRequestBody(req),
+      signal: AbortSignal.timeout(15_000),
     });
 
     copyUpstreamHeaders(upstream, res);
@@ -131,20 +137,36 @@ async function proxyToCloudFunction(
     res.status(upstream.status).send(buffer);
   } catch (err) {
     console.error(`Error proxying ${req.originalUrl} to ${functionName}:`, err);
-    res.status(502).json({ error: 'Upstream research service unavailable' });
+    const status = err instanceof Error && err.name === 'TimeoutError' ? 504 : 502;
+    res.status(status).json({ error: 'Upstream service unavailable' });
   }
 }
 
 const INDEXNOW_KEY = '7f4c9e2a1b8d4f6e9c3a5b7d2e1f8a4c';
 const CACHE_CONTROL_NO_STORE = 'no-cache, no-store, must-revalidate';
-const CACHE_CONTROL_HTML = 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600, must-revalidate';
+const CACHE_CONTROL_HTML = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, must-revalidate';
 const CACHE_CONTROL_METADATA = 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400';
 const CACHE_CONTROL_IMMUTABLE = 'public, max-age=31536000, immutable';
 const CACHE_CONTROL_STATIC_ASSET = 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400';
 const HASHED_ASSET_REGEX = /-[0-9a-zA-Z]{8}\.(?:js|mjs|css|woff2?)$/;
 
 const app = express();
+app.disable('x-powered-by');
 app.use(compression());
+
+/**
+ * Baseline HTTP security headers applied to every response (keeping Cross-Origin-Opener-Policy: unsafe-none
+ * so Firebase Auth Google/Apple Sign-In popups can communicate back to the opener window, and
+ * strict-origin-when-cross-origin so Firebase API key HTTP-referrer checks succeed without leaking query params).
+ */
+app.use((_req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
 
 /**
  * Explicitly serve robots.txt, sitemap.xml, IndexNow key and assetlinks.json to avoid Angular router redirects.
@@ -152,7 +174,7 @@ app.use(compression());
  */
 app.get('/robots.txt', (_req, res) => {
   res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
-  res.type('text/plain');
+  res.type('text/plain; charset=utf-8');
   const robotsFile = join(browserDistFolder, 'robots.txt');
   if (existsSync(robotsFile)) {
     res.send(readFileSync(robotsFile, 'utf-8'));
@@ -263,7 +285,7 @@ app.get(
 
 app.get('/sitemap.xml', (_req, res) => {
   res.setHeader('Cache-Control', CACHE_CONTROL_METADATA);
-  res.type('application/xml');
+  res.type('application/xml; charset=utf-8');
   const sitemapFile = join(browserDistFolder, 'sitemap.xml');
   if (existsSync(sitemapFile)) {
     res.send(readFileSync(sitemapFile, 'utf-8'));
@@ -384,6 +406,11 @@ app.get(
  * Reverse-proxy public read-only Research REST/CSV API and MCP Server under soil.app.
  */
 app.all(['/api/research', '/api/research/'], async (req, res) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
+    res.setHeader('Allow', 'GET, HEAD, OPTIONS');
+    res.status(405).json({ error: 'Method Not Allowed' });
+    return;
+  }
   await proxyToCloudFunction(req, res, 'researchApi');
 });
 
@@ -428,7 +455,7 @@ const NOT_FOUND_HTML = `<!doctype html>
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2rem 1rem 4rem;
+      padding: 2rem max(1rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)) 4rem;
       max-width: 34rem;
       margin: 0 auto;
     }
@@ -469,10 +496,16 @@ const NOT_FOUND_HTML = `<!doctype html>
       transition: background-color 150ms ease-out;
     }
     .cta:hover { background-color: #10b981; }
+    .cta:focus-visible, footer a:focus-visible {
+      outline: 2px solid #34d399;
+      outline-offset: 3px;
+      border-radius: 0.25rem;
+    }
+    .cta:focus-visible { border-radius: 0.875rem; }
     footer {
       background-color: rgba(3, 7, 18, 0.92);
       border-top: 1px solid #1f2937;
-      padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+      padding: 0.5rem max(1rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)) calc(0.5rem + env(safe-area-inset-bottom, 0px));
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.75rem;
     }
@@ -558,13 +591,13 @@ function transformCsrNoindexHtml(rawHtml: string): string {
     .replace(/<meta\s+property=["']og:url["']\s+content=["'][^"']*["']\s*\/?>\s*/gi, '');
 }
 
-/**
- * Security headers for Firebase Auth popups.
- */
-app.use((_req, res, next) => {
-  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
-  next();
-});
+function isFirebaseReservedBypassPath(req: express.Request): boolean {
+  if (!req.originalUrl.startsWith('/__/')) {
+    return false;
+  }
+  const cleanPath = getRequestPathname(req).replace(/^\/+|\/+$/g, '');
+  return cleanPath !== '__/auth/action';
+}
 
 /**
  * Handle legacy localized URLs:
@@ -572,7 +605,7 @@ app.use((_req, res, next) => {
  * - /de and /de/<known-route> single-hop 301-redirect to canonical root paths; unknown /de/* return HTTP 404 directly.
  */
 app.use((req, res, next) => {
-  if (req.originalUrl.startsWith('/__/')) {
+  if (isFirebaseReservedBypassPath(req)) {
     next();
     return;
   }
@@ -607,7 +640,7 @@ app.use((req, res, next) => {
  * Placed before express.static so /index.html and /<known-route>/index.html redirect cleanly instead of serving duplicate URLs.
  */
 app.use((req, res, next) => {
-  if (req.originalUrl.startsWith('/__/') || (req.method !== 'GET' && req.method !== 'HEAD')) {
+  if (isFirebaseReservedBypassPath(req) || (req.method !== 'GET' && req.method !== 'HEAD')) {
     next();
     return;
   }
@@ -767,15 +800,24 @@ function tryServeStaticAppRoute(req: express.Request, res: express.Response): bo
 }
 
 app.use('*path', async (req, res, next) => {
-  // Skip Firebase reserved paths
-  if (req.originalUrl.startsWith('/__/')) {
+  // Skip Firebase reserved paths except the Angular auth action route (/__/auth/action)
+  if (isFirebaseReservedBypassPath(req)) {
     next();
     return;
   }
 
   // Return 404 for unknown .well-known probes instead of redirecting to the Angular SPA root
   if (req.originalUrl.startsWith('/.well-known/')) {
-    res.status(404).type('text/plain').send('Not Found');
+    res.status(404).type('text/plain; charset=utf-8').send('Not Found');
+    return;
+  }
+
+  // Reject non-GET/HEAD requests on page/asset routes without booting AngularNodeAppEngine
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.setHeader('Allow', 'GET, HEAD');
+    res.setHeader('Cache-Control', CACHE_CONTROL_NO_STORE);
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    res.status(405).type('text/plain; charset=utf-8').send('Method Not Allowed');
     return;
   }
 
