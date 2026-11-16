@@ -107,6 +107,7 @@ describe('SuperAdminComponent', () => {
     getAllFeedback: any;
     getResearchGames?: any;
     getSystemInsights?: any;
+    checkBacklinkStatus?: any;
     manageAdmin?: any;
     deleteGames?: any;
     getAdminGames?: any;
@@ -478,5 +479,72 @@ describe('SuperAdminComponent', () => {
       '[data-testid="telemetry-hourly-status-note"]',
     ) as HTMLElement;
     expect(statusNote?.textContent).toContain('Stundenreihe aktiv ab erstem Aufruf');
+  });
+
+  it('renders known backlinks table, noreferrer hints, and live verification results via Live-Status prüfen', async () => {
+    gameServiceMock.getSystemStats.mockResolvedValue({
+      ...SAMPLE_STATS_WITH_SERIES,
+      telemetry: {
+        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
+        referrers: { direct: 240, 'hubbs.schule': 14, 'github.com': 8 },
+      },
+    });
+    gameServiceMock.checkBacklinkStatus = vi.fn().mockResolvedValue({
+      checkedAt: '2026-11-16T18:30:00.000Z',
+      results: [
+        { id: 'bpb', ok: true, httpStatus: 200, linksToSoil: true, checkedAt: '2026-11-16T18:30:00.000Z' },
+        { id: 'globaleslernen', ok: true, httpStatus: 200, linksToSoil: true, checkedAt: '2026-11-16T18:30:00.000Z' },
+        { id: 'hubbs', ok: true, httpStatus: 200, linksToSoil: true, checkedAt: '2026-11-16T18:30:00.000Z' },
+        { id: 'github', ok: false, httpStatus: 404, linksToSoil: false, checkedAt: '2026-11-16T18:30:00.000Z' },
+        { id: 'youtube', ok: false, httpStatus: 200, linksToSoil: false, checkedAt: '2026-11-16T18:30:00.000Z' },
+      ],
+    });
+
+    await component.loadData();
+    fixture.detectChanges();
+
+    const card = fixture.nativeElement.querySelector('[data-testid="superadmin-backlinks-card"]') as HTMLElement;
+    expect(card).toBeTruthy();
+    expect(card.textContent).toContain('Bekannte Verlinkungen & Bildungsportale');
+    expect(card.textContent).toContain('bpb.de');
+    expect(card.textContent).toContain('globaleslernen.de');
+    expect(card.textContent).toContain('hubbs.schule');
+    expect(card.textContent).toContain('bne-portal.de');
+    expect(card.textContent).toContain('Unterdrückt (noreferrer → Direktaufruf)');
+
+    const bpbCount = fixture.nativeElement.querySelector('[data-testid="backlink-referrer-count-bpb"]') as HTMLElement;
+    expect(bpbCount.textContent?.trim()).toBe('0 (via Direktaufruf)');
+
+    const hubbsCount = fixture.nativeElement.querySelector(
+      '[data-testid="backlink-referrer-count-hubbs"]',
+    ) as HTMLElement;
+    expect(hubbsCount.textContent?.trim()).toBe('14');
+
+    expect(
+      (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-bpb"]') as HTMLElement).textContent,
+    ).toContain('Live gelistet');
+    expect(
+      (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-bne-portal"]') as HTMLElement)
+        .textContent,
+    ).toContain('Redaktionsprüfung');
+
+    const checkBtn = fixture.nativeElement.querySelector('[data-testid="backlinks-check-btn"]') as HTMLButtonElement;
+    checkBtn.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(gameServiceMock.checkBacklinkStatus).toHaveBeenCalledTimes(1);
+    expect(
+      (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-bpb"]') as HTMLElement).textContent,
+    ).toContain('HTTP 200 · Link aktiv');
+    expect(
+      (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-youtube"]') as HTMLElement).textContent,
+    ).toContain('HTTP 200 · Link nicht im HTML');
+    expect(
+      (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-github"]') as HTMLElement).textContent,
+    ).toContain('Fehler / HTTP 404');
+    expect(
+      (fixture.nativeElement.querySelector('[data-testid="backlinks-checked-timestamp"]') as HTMLElement).textContent,
+    ).toContain('Geprüft:');
   });
 });

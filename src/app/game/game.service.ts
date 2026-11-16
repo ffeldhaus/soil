@@ -7,20 +7,22 @@ import { FIREBASE_FUNCTIONS } from '../firebase.config';
 import { GAME_CONSTANTS } from '../game-constants';
 import { isLocalBrowserDevServer } from '../shared/capacitor-env';
 import { OfflineService } from '../shared/offline.service';
-import type {
-  CropType,
-  Feedback,
-  Game,
-  GameEvaluation,
-  Parcel,
-  PlayerState,
-  PublicResearchDatasetResponse,
-  PublicResearchInsight,
-  PublicResearchSummary,
-  Round,
-  RoundDecision,
-  SystemStats,
-  UserStatus,
+import {
+  type BacklinkStatusResponse,
+  type CropType,
+  type Feedback,
+  type Game,
+  type GameEvaluation,
+  KNOWN_BACKLINKS,
+  type Parcel,
+  type PlayerState,
+  type PublicResearchDatasetResponse,
+  type PublicResearchInsight,
+  type PublicResearchSummary,
+  type Round,
+  type RoundDecision,
+  type SystemStats,
+  type UserStatus,
 } from '../types';
 import { LocalGameService } from './engine/local-game.service';
 
@@ -97,6 +99,10 @@ export class GameService {
   private get getSystemStatsFn() {
     if (!this.functions || typeof window === 'undefined') return null;
     return httpsCallable<void, SystemStats>(this.functions, 'getSystemStats');
+  }
+  private get checkBacklinkStatusFn() {
+    if (!this.functions || typeof window === 'undefined') return null;
+    return httpsCallable<void, BacklinkStatusResponse>(this.functions, 'checkBacklinkStatus');
   }
   private get submitOnboardingFn() {
     if (!this.functions || typeof window === 'undefined') return null;
@@ -658,6 +664,25 @@ export class GameService {
       };
     }
     const fn = this.getSystemStatsFn;
+    if (!fn) throw new Error('Functions not available');
+    return (await fn()).data;
+  }
+
+  async checkBacklinkStatus(): Promise<BacklinkStatusResponse> {
+    if (this.isTestMode()) {
+      const checkedAt = new Date().toISOString();
+      return {
+        checkedAt,
+        results: KNOWN_BACKLINKS.filter((entry) => entry.status === 'live').map((entry) => ({
+          id: entry.id,
+          ok: true,
+          httpStatus: 200,
+          linksToSoil: true,
+          checkedAt,
+        })),
+      };
+    }
+    const fn = this.checkBacklinkStatusFn;
     if (!fn) throw new Error('Functions not available');
     return (await fn()).data;
   }

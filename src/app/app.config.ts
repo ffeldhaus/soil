@@ -16,7 +16,15 @@ import { type ApplicationConfig, LOCALE_ID } from '@angular/core';
 import { provideClientHydration, withEventReplay, withIncrementalHydration } from '@angular/platform-browser';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { initializeApp } from 'firebase/app';
-import { connectAuthEmulator, getAuth } from 'firebase/auth';
+import {
+  type Auth,
+  browserLocalPersistence,
+  connectAuthEmulator,
+  getAuth,
+  indexedDBLocalPersistence,
+  initializeAuth,
+  inMemoryPersistence,
+} from 'firebase/auth';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 import { routes } from './app.routes';
@@ -61,7 +69,14 @@ export const appConfig: ApplicationConfig = {
     {
       provide: FIREBASE_AUTH,
       useFactory: () => {
-        const auth = getAuth(app);
+        let auth: Auth;
+        try {
+          auth = initializeAuth(app, {
+            persistence: isBrowser ? [indexedDBLocalPersistence, browserLocalPersistence] : inMemoryPersistence,
+          });
+        } catch {
+          auth = getAuth(app);
+        }
         if (isLocalhost) {
           connectAuthEmulator(auth, 'http://localhost:9099');
         }

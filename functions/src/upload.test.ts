@@ -225,6 +225,7 @@ describe('Upload Logic Security', () => {
 
   it('should aggregate 7-day metrics and send weekly digest email in sendWeeklyActivityDigest', async () => {
     const nowMs = Date.now();
+    const todayKey = new Date(nowMs).toISOString().slice(0, 10);
     const recentTs = { toMillis: () => nowMs - 2 * 24 * 60 * 60 * 1000 };
     const oldTs = { toMillis: () => nowMs - 14 * 24 * 60 * 60 * 1000 };
 
@@ -269,16 +270,61 @@ describe('Upload Logic Security', () => {
       })),
     } as any);
 
+    collectionStub.withArgs('telemetry_totals').returns({
+      doc: sandbox.stub().returns({
+        get: sandbox.stub().resolves({
+          exists: true,
+          data: () => ({
+            totalViews: 120,
+            webViews: 100,
+            pwaViews: 20,
+            events: { quick_game_started: 9, trailer_opened: 4, research_export: 2 },
+          }),
+        }),
+      }),
+    } as any);
+
+    collectionStub.withArgs('telemetry_daily').returns({
+      where: sandbox.stub().returns({
+        get: sandbox.stub().resolves({
+          docs: [
+            {
+              id: todayKey,
+              data: () => ({
+                date: todayKey,
+                totalViews: 42,
+                webViews: 35,
+                pwaViews: 7,
+                routes: { '/': 30, '/info': 12 },
+                events: { quick_game_started: 3, trailer_opened: 1 },
+                referrers: { direct: 25, 'bpb.de': 4 },
+              }),
+            },
+          ],
+        }),
+      }),
+    } as any);
+
+    collectionStub.withArgs('telemetry_hourly').returns({
+      where: sandbox.stub().returns({
+        get: sandbox.stub().resolves({ docs: [] }),
+      }),
+    } as any);
+
     const sendEmailStub = sandbox.stub(mailService, 'sendEmail').resolves();
 
     const summary = await sendWeeklyActivityDigest();
+    expect(summary.viewsLast7d).to.equal(42);
+    expect(summary.interactionsLast7d).to.equal(4);
     expect(summary.researchGamesLast7d).to.equal(1);
     expect(summary.gamesLast7d).to.equal(1);
     expect(summary.feedbackLast7d).to.equal(1);
     expect(sendEmailStub.calledOnce).to.be.true;
-    expect(sendEmailStub.firstCall.args[0].subject).to.contain(
-      '[SOIL] Wochenbericht: 1 abgeschlossene Spiele, 1 neues Feedback',
+    expect(sendEmailStub.firstCall.args[0].subject).to.equal(
+      '[SOIL] Wochenbericht: 42 Aufrufe, 4 Interaktionen, 1 Spiele, 1 Feedback',
     );
+    expect(sendEmailStub.firstCall.args[0].text).to.contain('Zugriffe & Interaktionen (Letzte 7 Tage)');
+    expect(sendEmailStub.firstCall.args[0].text).to.contain('Direktaufruf (25)');
     expect(sendEmailStub.firstCall.args[0].text).to.contain('lehrer@gymnasium.de');
   });
 

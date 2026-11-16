@@ -192,8 +192,9 @@
             [attr.hidden]="activeTab === 'analytics' ? null : 'until-found'"
             (beforematch)="selectTab('analytics')"
           >
-            <div>
+            <div class="space-y-4">
               <app-super-admin-stats class="block" [stats]="stats"></app-super-admin-stats>
+              <app-super-admin-backlinks class="block" [stats]="stats"></app-super-admin-backlinks>
             </div>
           </div>
 

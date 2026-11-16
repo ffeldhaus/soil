@@ -1,0 +1,51 @@
+@reference "tailwindcss";
+
+.backlinks-table-wrapper {
+  container-type: inline-size;
+}
+
+@container (width < 640px) {
+  .backlinks-table,
+  .backlinks-table thead,
+  .backlinks-table tbody,
+  .backlinks-table tr,
+  .backlinks-table th,
+  .backlinks-table td {
+    display: block;
+  }
+
+  .backlinks-table thead {
+    display: none;
+  }
+
+  .backlinks-table tbody tr {
+    border-block-end: 1px solid #1f2937;
+    padding-block: 0.5rem;
+  }
+
+  .backlinks-table tbody th[scope='row'] {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+    background-color: #030712;
+    border-block-end: 1px solid #1f2937;
+  }
+
+  .backlinks-table tbody td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-block: 0.5rem;
+  }
+
+  .backlinks-table tbody td::before {
+    content: attr(data-label) ': ';
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+}

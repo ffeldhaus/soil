@@ -1,5 +1,6 @@
 import { HttpsError } from 'firebase-functions/v2/https';
 import { mailService } from './mail.service';
+import type { TelemetryDailyEntry, TelemetryStats } from './types';
 import { escapeHtml } from './utils';
 
 export function buildFeedbackNotificationEmail(
@@ -193,14 +194,172 @@ export function summarizeWeeklyFeedback(docs: any[], cutoffMillis: number): Week
   };
 }
 
+export interface WeeklyTelemetryDigestStats {
+  viewsLast7d: number;
+  viewsPrev7d: number;
+  webViewsLast7d: number;
+  pwaViewsLast7d: number;
+  viewsTotal: number;
+  interactionsLast7d: number;
+  quickGamesLast7d: number;
+  quickGamesTotal: number;
+  trailerOpenedLast7d: number;
+  trailerOpenedTotal: number;
+  researchExportsLast7d: number;
+  researchExportsTotal: number;
+  topRoutesLast7d: Array<{ route: string; count: number }>;
+  topReferrersLast7d: Array<{ source: string; count: number }>;
+}
+
+function toSafeInt(value: unknown): number {
+  const num = Number(value);
+  return Number.isFinite(num) && num > 0 ? Math.round(num) : 0;
+}
+
+function mapDigestReferrerLabel(rawSource: string): string {
+  if (rawSource === 'direct') return 'Direktaufruf';
+  if (rawSource === 'pwa_launch') return 'PWA-App-Start';
+  return rawSource;
+}
+
+function formatTrendDelta(current: number, previous: number): string {
+  const diff = current - previous;
+  if (diff > 0) return `+${diff}`;
+  if (diff < 0) return `${diff}`;
+  return '±0';
+}
+
+function addMapCounts(
+  target: Map<string, number>,
+  source: Record<string, number> | undefined,
+  keyMapper?: (key: string) => string,
+): void {
+  if (!source) return;
+  for (const [rawKey, rawCount] of Object.entries(source)) {
+    const count = toSafeInt(rawCount);
+    if (count > 0) {
+      const key = keyMapper ? keyMapper(rawKey) : rawKey;
+      target.set(key, (target.get(key) || 0) + count);
+    }
+  }
+}
+
+interface WeeklyWindowAccumulator {
+  viewsLast7d: number;
+  viewsPrev7d: number;
+  webViewsLast7d: number;
+  pwaViewsLast7d: number;
+  quickGamesLast7d: number;
+  trailerOpenedLast7d: number;
+  researchExportsLast7d: number;
+  routeTotals: Map<string, number>;
+  referrerTotals: Map<string, number>;
+}
+
+function accumulateCurrentWeekEntry(acc: WeeklyWindowAccumulator, entry: TelemetryDailyEntry): void {
+  const entryTotal = toSafeInt(entry.totalViews);
+  const entryPwa = toSafeInt(entry.pwaViews);
+  const entryWeb = entry.webViews !== undefined ? toSafeInt(entry.webViews) : Math.max(0, entryTotal - entryPwa);
+
+  acc.viewsLast7d += entryTotal;
+  acc.webViewsLast7d += entryWeb;
+  acc.pwaViewsLast7d += entryPwa;
+  acc.quickGamesLast7d += toSafeInt(entry.events?.quick_game_started);
+  acc.trailerOpenedLast7d += toSafeInt(entry.events?.trailer_opened);
+  acc.researchExportsLast7d += toSafeInt(entry.events?.research_export);
+
+  addMapCounts(acc.routeTotals, entry.routes);
+  addMapCounts(acc.referrerTotals, entry.referrers, mapDigestReferrerLabel);
+}
+
+function collectDailySeriesWindows(
+  dailySeries: readonly TelemetryDailyEntry[],
+  cutoff7dKey: string,
+  todayKey: string,
+  prevStartKey: string,
+  prevEndKey: string,
+): WeeklyWindowAccumulator {
+  const acc: WeeklyWindowAccumulator = {
+    viewsLast7d: 0,
+    viewsPrev7d: 0,
+    webViewsLast7d: 0,
+    pwaViewsLast7d: 0,
+    quickGamesLast7d: 0,
+    trailerOpenedLast7d: 0,
+    researchExportsLast7d: 0,
+    routeTotals: new Map<string, number>(),
+    referrerTotals: new Map<string, number>(),
+  };
+
+  for (const entry of dailySeries) {
+    if (!entry?.date) continue;
+    if (entry.date >= cutoff7dKey && entry.date <= todayKey) {
+      accumulateCurrentWeekEntry(acc, entry);
+    } else if (entry.date >= prevStartKey && entry.date <= prevEndKey) {
+      acc.viewsPrev7d += toSafeInt(entry.totalViews);
+    }
+  }
+
+  return acc;
+}
+
+export function summarizeWeeklyTelemetry(
+  telemetry: TelemetryStats | null | undefined,
+  nowDate: Date = new Date(),
+): WeeklyTelemetryDigestStats {
+  const dayMs = 86_400_000;
+  const todayKey = nowDate.toISOString().slice(0, 10);
+  const cutoff7dKey = new Date(nowDate.getTime() - 6 * dayMs).toISOString().slice(0, 10);
+  const prevEndKey = new Date(nowDate.getTime() - 7 * dayMs).toISOString().slice(0, 10);
+  const prevStartKey = new Date(nowDate.getTime() - 13 * dayMs).toISOString().slice(0, 10);
+
+  const dailySeries = Array.isArray(telemetry?.dailySeries) ? telemetry.dailySeries : [];
+  const acc = collectDailySeriesWindows(dailySeries, cutoff7dKey, todayKey, prevStartKey, prevEndKey);
+  if (dailySeries.length === 0) {
+    acc.viewsLast7d = toSafeInt(telemetry?.viewsLast7d);
+  }
+
+  const interactionsLast7d = acc.quickGamesLast7d + acc.trailerOpenedLast7d + acc.researchExportsLast7d;
+
+  const topRoutesLast7d = Array.from(acc.routeTotals.entries())
+    .map(([route, count]) => ({ route, count }))
+    .sort((a, b) => b.count - a.count || a.route.localeCompare(b.route))
+    .slice(0, 5);
+
+  const topReferrersLast7d = Array.from(acc.referrerTotals.entries())
+    .map(([source, count]) => ({ source, count }))
+    .sort((a, b) => b.count - a.count || a.source.localeCompare(b.source))
+    .slice(0, 6);
+
+  return {
+    viewsLast7d: acc.viewsLast7d,
+    viewsPrev7d: acc.viewsPrev7d,
+    webViewsLast7d: acc.webViewsLast7d,
+    pwaViewsLast7d: acc.pwaViewsLast7d,
+    viewsTotal: toSafeInt(telemetry?.viewsTotal),
+    interactionsLast7d,
+    quickGamesLast7d: acc.quickGamesLast7d,
+    quickGamesTotal: toSafeInt(telemetry?.events?.quick_game_started),
+    trailerOpenedLast7d: acc.trailerOpenedLast7d,
+    trailerOpenedTotal: toSafeInt(telemetry?.events?.trailer_opened),
+    researchExportsLast7d: acc.researchExportsLast7d,
+    researchExportsTotal: toSafeInt(telemetry?.events?.research_export),
+    topRoutesLast7d,
+    topReferrersLast7d,
+  };
+}
+
 export function buildWeeklyDigestEmail(
   research: WeeklyResearchDigestStats,
   cloud: WeeklyCloudGamesDigestStats,
   feedback: WeeklyFeedbackDigestStats,
   pendingEducators: number,
+  telemetry?: WeeklyTelemetryDigestStats,
 ): { subject: string; text: string; html: string } {
   const feedbackLast7d = feedback.recentFeedback.length;
-  const subject = `[SOIL] Wochenbericht: ${research.researchGamesLast7d} abgeschlossene Spiele, ${feedbackLast7d} neues Feedback`;
+  const subject = telemetry
+    ? `[SOIL] Wochenbericht: ${telemetry.viewsLast7d} Aufrufe, ${telemetry.interactionsLast7d} Interaktionen, ${research.researchGamesLast7d} Spiele, ${feedbackLast7d} Feedback`
+    : `[SOIL] Wochenbericht: ${research.researchGamesLast7d} abgeschlossene Spiele, ${feedbackLast7d} neues Feedback`;
 
   const feedbackTextLines =
     feedbackLast7d > 0
@@ -209,9 +368,32 @@ export function buildWeeklyDigestEmail(
           .join('\n')
       : '- Kein neues Feedback in den letzten 7 Tagen.';
 
+  const viewsTrend = telemetry ? formatTrendDelta(telemetry.viewsLast7d, telemetry.viewsPrev7d) : '±0';
+  const topRoutesText =
+    telemetry && telemetry.topRoutesLast7d.length > 0
+      ? telemetry.topRoutesLast7d.map((r) => `${r.route} (${r.count})`).join(', ')
+      : 'Keine Daten';
+  const topReferrersText =
+    telemetry && telemetry.topReferrersLast7d.length > 0
+      ? telemetry.topReferrersLast7d.map((r) => `${r.source} (${r.count})`).join(', ')
+      : 'Keine Daten';
+
+  const telemetryTextLines = telemetry
+    ? [
+        'Zugriffe & Interaktionen (Letzte 7 Tage)',
+        '----------------------------------------',
+        `Seitenaufrufe (7 Tage): ${telemetry.viewsLast7d} (Vorwoche: ${telemetry.viewsPrev7d}, Trend ${viewsTrend}; Kanal: ${telemetry.webViewsLast7d} Web / ${telemetry.pwaViewsLast7d} PWA; Gesamt: ${telemetry.viewsTotal})`,
+        `Interaktionen (7 Tage): ${telemetry.interactionsLast7d} gesamt — Sofort-Spiele gestartet: ${telemetry.quickGamesLast7d} (Gesamt: ${telemetry.quickGamesTotal}), Trailer angesehen: ${telemetry.trailerOpenedLast7d} (Gesamt: ${telemetry.trailerOpenedTotal}), Forschungs-Exporte: ${telemetry.researchExportsLast7d} (Gesamt: ${telemetry.researchExportsTotal})`,
+        `Meistbesuchte Seiten (7 Tage): ${topRoutesText}`,
+        `Herkunft / Referrer (7 Tage): ${topReferrersText}`,
+        '',
+      ]
+    : [];
+
   const text = [
     'SOIL Wochenbericht (Letzte 7 Tage)',
     '===================================',
+    ...telemetryTextLines,
     `Abgeschlossene Spiele (Forschungsdatensatz, 7 Tage): ${research.researchGamesLast7d} (Gesamt: ${research.totalResearchGames})`,
     `  - Lokal vs. Cloud (7 Tage): ${research.sourceBreakdown.local} lokal / ${research.sourceBreakdown.cloud} Cloud`,
     `  - Schwierigkeitsgrad (7 Tage): Einfach ${research.difficultyBreakdown.easy}, Normal ${research.difficultyBreakdown.normal}, Schwer ${research.difficultyBreakdown.hard}`,
@@ -221,6 +403,8 @@ export function buildWeeklyDigestEmail(
     '',
     'Neues Feedback:',
     feedbackTextLines,
+    '',
+    'Details & Zeitreihen-Charts in der System-Konsole öffnen: https://soil.app/admin/super',
   ].join('\n');
 
   const feedbackHtmlItems =
@@ -233,9 +417,30 @@ export function buildWeeklyDigestEmail(
           .join('')
       : '<li>Kein neues Feedback in den letzten 7 Tagen.</li>';
 
+  const topRoutesHtml =
+    telemetry && telemetry.topRoutesLast7d.length > 0
+      ? telemetry.topRoutesLast7d.map((r) => `${escapeHtml(r.route)} (${r.count})`).join(', ')
+      : 'Keine Daten';
+  const topReferrersHtml =
+    telemetry && telemetry.topReferrersLast7d.length > 0
+      ? telemetry.topReferrersLast7d.map((r) => `${escapeHtml(r.source)} (${r.count})`).join(', ')
+      : 'Keine Daten';
+
+  const telemetryHtmlSection = telemetry
+    ? `
+      <h3 style="color: #047857;">Zugriffe &amp; Interaktionen (Letzte 7 Tage)</h3>
+      <ul>
+        <li><strong>Seitenaufrufe (7 Tage):</strong> ${telemetry.viewsLast7d} (Vorwoche: ${telemetry.viewsPrev7d}, Trend ${escapeHtml(viewsTrend)}; Kanal: ${telemetry.webViewsLast7d} Web / ${telemetry.pwaViewsLast7d} PWA; Gesamt: ${telemetry.viewsTotal})</li>
+        <li><strong>Interaktionen (7 Tage):</strong> ${telemetry.interactionsLast7d} gesamt — Sofort-Spiele gestartet: ${telemetry.quickGamesLast7d} (Gesamt: ${telemetry.quickGamesTotal}), Trailer angesehen: ${telemetry.trailerOpenedLast7d} (Gesamt: ${telemetry.trailerOpenedTotal}), Forschungs-Exporte: ${telemetry.researchExportsLast7d} (Gesamt: ${telemetry.researchExportsTotal})</li>
+        <li><strong>Meistbesuchte Seiten (7 Tage):</strong> ${topRoutesHtml}</li>
+        <li><strong>Herkunft / Referrer (7 Tage):</strong> ${topReferrersHtml}</li>
+      </ul>`
+    : '';
+
   const html = `
     <div style="font-family: Arial, sans-serif; color: #1f2937; max-width: 640px; margin: 0 auto;">
-      <h2 style="color: #059669;">SOIL Wochenbericht (Letzte 7 Tage)</h2>
+      <h2 style="color: #059669;">SOIL Wochenbericht (Letzte 7 Tage)</h2>${telemetryHtmlSection}
+      <h3 style="color: #047857;">Spielbetrieb &amp; Forschung (Letzte 7 Tage)</h3>
       <ul>
         <li><strong>Abgeschlossene Spiele (7 Tage):</strong> ${research.researchGamesLast7d} (Gesamt im Forschungsdatensatz: ${research.totalResearchGames})</li>
         <li><strong>Quelle (7 Tage):</strong> ${research.sourceBreakdown.local} Lokal / ${research.sourceBreakdown.cloud} Cloud</li>
@@ -246,6 +451,10 @@ export function buildWeeklyDigestEmail(
       </ul>
       <h3 style="color: #047857;">Neues Feedback der letzten 7 Tage</h3>
       <ul>${feedbackHtmlItems}</ul>
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0 12px;" />
+      <p style="font-size: 13px; color: #4b5563;">
+        <a href="https://soil.app/admin/super" style="color: #059669; text-decoration: underline;">Details &amp; Zeitreihen-Charts in der System-Konsole öffnen</a>
+      </p>
     </div>
   `;
 

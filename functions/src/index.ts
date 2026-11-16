@@ -6,6 +6,7 @@ import { HttpsError, onCall, onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import { AiAgent } from './ai-agent';
+import { verifyKnownBacklinks } from './backlinks.service';
 import { GAME_CONSTANTS, GEMINI_MODEL } from './constants';
 import {
   buildFeedbackNotificationEmail,
@@ -15,6 +16,7 @@ import {
   summarizeWeeklyCloudGames,
   summarizeWeeklyFeedback,
   summarizeWeeklyResearchGames,
+  summarizeWeeklyTelemetry,
 } from './digest-feedback.helpers';
 import { GameEngine } from './game-engine';
 import { mailService } from './mail.service';
@@ -2023,6 +2025,24 @@ export const getSystemStats = onCall(async (request) => {
   };
 });
 
+export const checkBacklinkStatus = onCall(
+  {
+    region: 'europe-west4',
+    cors:
+      process.env.FUNCTIONS_EMULATOR === 'true'
+        ? [...ALLOWED_ORIGINS, /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/]
+        : Array.from(ALLOWED_ORIGINS),
+  },
+  async (request) => {
+    if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+    if (!(await isCallerSuperAdmin(request.auth))) {
+      throw new HttpsError('permission-denied', 'System-Administratoren only');
+    }
+    enforceCallableRateLimit(request, 'checkBacklinkStatus', 10);
+    return await verifyKnownBacklinks();
+  },
+);
+
 function toTimestampMillis(val: any): number {
   if (!val) return 0;
   if (typeof val === 'number') return val;
@@ -3048,31 +3068,43 @@ export const deleteAccount = onCall(async (request) => {
 // --- Weekly Activity & Feedback Digest ---
 
 export async function sendWeeklyActivityDigest(): Promise<{
+  viewsLast7d: number;
+  interactionsLast7d: number;
   gamesLast7d: number;
   researchGamesLast7d: number;
   feedbackLast7d: number;
 }> {
-  const cutoffMillis = Timestamp.now().toMillis() - 7 * 24 * 60 * 60 * 1000;
+  const nowMillis = Timestamp.now().toMillis();
+  const nowDate = new Date(nowMillis);
+  const cutoffMillis = nowMillis - 7 * 24 * 60 * 60 * 1000;
 
-  const [researchSnap, gamesSnap, feedbackSnap, pendingUsersSnap, superAdminsSnap] = await Promise.all([
+  const [researchSnap, gamesSnap, feedbackSnap, pendingUsersSnap, superAdminsSnap, telemetryStats] = await Promise.all([
     db.collection('research_games').get(),
     db.collection('games').get(),
     db.collection('feedback').get(),
     db.collection('users').where('status', '==', 'pending').get(),
     db.collection('users').where('role', '==', 'superadmin').get(),
+    aggregateTelemetryStats(db, nowDate),
   ]);
 
   const researchStats = summarizeWeeklyResearchGames(researchSnap.docs, cutoffMillis);
   const cloudStats = summarizeWeeklyCloudGames(gamesSnap.docs, cutoffMillis);
   const feedbackStats = summarizeWeeklyFeedback(feedbackSnap.docs, cutoffMillis);
   const pendingEducators = pendingUsersSnap.docs.length;
+  const telemetryDigest = summarizeWeeklyTelemetry(telemetryStats, nowDate);
 
   const superAdminEmails = superAdminsSnap.docs.map((doc) => doc.data()?.email).filter((e): e is string => !!e);
   if (!superAdminEmails.includes('florian.feldhaus@gmail.com')) {
     superAdminEmails.push('florian.feldhaus@gmail.com');
   }
 
-  const { subject, text, html } = buildWeeklyDigestEmail(researchStats, cloudStats, feedbackStats, pendingEducators);
+  const { subject, text, html } = buildWeeklyDigestEmail(
+    researchStats,
+    cloudStats,
+    feedbackStats,
+    pendingEducators,
+    telemetryDigest,
+  );
   for (const adminEmail of superAdminEmails) {
     try {
       await mailService.sendEmail({ to: adminEmail, subject, text, html });
@@ -3082,6 +3114,8 @@ export async function sendWeeklyActivityDigest(): Promise<{
   }
 
   return {
+    viewsLast7d: telemetryDigest.viewsLast7d,
+    interactionsLast7d: telemetryDigest.interactionsLast7d,
     gamesLast7d: cloudStats.gamesLast7d,
     researchGamesLast7d: researchStats.researchGamesLast7d,
     feedbackLast7d: feedbackStats.recentFeedback.length,

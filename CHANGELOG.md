@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Kuratiertes Backlink- und OER-Verzeichnis (`marketing/verlinkungen.md`) sowie die Status-Übersicht **Bekannte Verlinkungen & Bildungsportale** (`SuperAdminBacklinksComponent` in `src/app/admin/super-admin/components/super-admin-backlinks.*`) inklusive serverseitiger On-Demand-Linkprüfung (`checkBacklinkStatus` in `functions/src/backlinks.service.ts` und `functions/src/index.ts`, `src/app/types.ts`, `src/app/game/game.service.ts`) unter `/admin/super` ergänzt: dokumentiert bestätigte Live-Verlinkungen (`bpb.de`, `globaleslernen.de`, `hubbs.schule`, `github.com`, `youtube.com`), laufende Prüfungen (`bne-portal.de`) und offene OER-Potenziale samt SEO-Wirkung, Referrer-Verhalten (`noreferrer` vs. sichtbarer Referrer) und direkter HTTP-/Zielverweis-Verifikation.
+
+### Changed
+- Firebase-Auth-Client (`FIREBASE_AUTH` in `src/app/app.config.ts` und `src/app/auth/auth.service.ts`) auf `initializeAuth` ohne vorab registrierten `popupRedirectResolver` umgestellt (`browserPopupRedirectResolver` wird erst bei explizitem Google-/Apple-Popup-Login übergeben), sodass das versteckte OAuth-Hilfs-Iframe (`firebaseapp.com/__/auth/iframe`) auf öffentlichen Seiten wie `/` und `/game` entfällt.
+- Wöchentlichen Super-Admin-Aktivitätsbericht (`weeklyActivityDigest` / `sendWeeklyActivityDigest` / `buildWeeklyDigestEmail`) in `functions/src/digest-feedback.helpers.ts` und `functions/src/index.ts` (inklusive Unit-Tests in `functions/src/digest-feedback.helpers.test.ts`) um **Zugriffe & Interaktionen (Letzte 7 Tage)** erweitert: 7-Tage-Seitenaufrufe inklusive Vorwochen-Vergleich (`Trend`), Kanal-Split (`Web` vs. `PWA`) und Gesamtzähler, ausgelöste Interaktionen (`Sofort-Spiele`, `Trailer`, `Forschungs-Exporte`), Top-5 meistbesuchte Seiten, Top-6 Referrer sowie direkter Konsolen-Link auf `/admin/super`.
+
 ## [3.5.1] - 2026-11-16
 ### Added
 - Stundengenaue `24 Std.`-Zeitreihenansicht (analog zur Google Search Console) unter `/admin/super` ergänzt (`src/app/admin/super-admin/components/super-admin-stats.*`, `functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/app/types.ts`, `src/app/privacy/privacy.html`): Atomare Stunden-Aggregation in `telemetry_hourly` mit automatischer 72-Stunden-Bereinigung im täglichen Wartungslauf (`dailyGamePurge`), 24-Stunden-Verlaufsdiagramm in lokaler Uhrzeit inklusive Stunden-Tooltip sowie zeitraumsynchronisierten Metrik-Kacheln und Aufschlüsselungen für Seiten, Aktionen und Referrer.

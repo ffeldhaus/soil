@@ -16,6 +16,7 @@ import { combineLatest, of } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import type { Feedback, Game, PlayerState, SystemStats, UserStatus } from '../../types';
+import { SuperAdminBacklinksComponent } from './components/super-admin-backlinks';
 import { SuperAdminFeedbackComponent } from './components/super-admin-feedback';
 import { SuperAdminHudComponent } from './components/super-admin-hud';
 import { SuperAdminResearchComponent } from './components/super-admin-research';
@@ -32,6 +33,7 @@ export type SuperAdminTab = 'analytics' | 'users' | 'research' | 'feedback';
     FormsModule,
     SuperAdminHudComponent,
     SuperAdminStatsComponent,
+    SuperAdminBacklinksComponent,
     SuperAdminUsersComponent,
     SuperAdminResearchComponent,
     SuperAdminFeedbackComponent,

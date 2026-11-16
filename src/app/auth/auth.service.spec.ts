@@ -1,5 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { signInWithCustomToken, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
+import {
+  browserPopupRedirectResolver,
+  GoogleAuthProvider,
+  signInWithCustomToken,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FIREBASE_AUTH, FIREBASE_FUNCTIONS } from '../firebase.config';
 import { AuthService } from './auth.service';
@@ -196,5 +204,13 @@ describe('AuthService', () => {
 
     await service.sendPasswordResetEmail('test@example.com');
     expect(sendPasswordResetEmailMock).toHaveBeenCalled();
+  });
+
+  it('should pass browserPopupRedirectResolver explicitly to signInWithPopup when not in test mode', async () => {
+    vi.mocked(signInWithPopup).mockResolvedValue({ user: { uid: 'google-uid' } } as any);
+
+    await service.loginWithGoogle();
+
+    expect(signInWithPopup).toHaveBeenCalledWith(authSpy, expect.any(GoogleAuthProvider), browserPopupRedirectResolver);
   });
 });

@@ -338,3 +338,113 @@ export interface SystemStats {
   };
   telemetry?: TelemetryStats;
 }
+
+export interface KnownBacklinkEntry {
+  id: string;
+  name: string;
+  organization: string;
+  domain: string;
+  listingUrl: string;
+  status: 'live' | 'pending';
+  submittedAt: string;
+  publishedAt?: string;
+  seoType: 'dofollow' | '302-dofollow' | 'nofollow' | 'pending';
+  referrerBehavior: 'transmitted' | 'suppressed_noreferrer' | 'pending';
+  note?: string;
+}
+
+export interface BacklinkCheckResult {
+  id: string;
+  ok: boolean;
+  httpStatus: number | null;
+  linksToSoil: boolean;
+  checkedAt: string;
+  error?: string;
+}
+
+export interface BacklinkStatusResponse {
+  results: BacklinkCheckResult[];
+  checkedAt: string;
+}
+
+export const KNOWN_BACKLINKS: readonly KnownBacklinkEntry[] = [
+  {
+    id: 'bpb',
+    name: 'Datenbank Planspiele',
+    organization: 'Bundeszentrale für politische Bildung (bpb)',
+    domain: 'bpb.de',
+    listingUrl:
+      'https://www.bpb.de/lernen/angebote/planspiele/datenbank-planspiele/583068/soil-online-planspiel-simulation-fuer-bne-und-nachhaltige-landwirtschaft/',
+    status: 'live',
+    submittedAt: '2026-11-04',
+    publishedAt: '2026-11-16',
+    seoType: 'dofollow',
+    referrerBehavior: 'suppressed_noreferrer',
+    note: 'Verlinkt /, /manual und /info; setzt rel="noopener noreferrer".',
+  },
+  {
+    id: 'globaleslernen',
+    name: 'Portal Globales Lernen',
+    organization: 'EWIK / Welthaus Bielefeld',
+    domain: 'globaleslernen.de',
+    listingUrl:
+      'https://www.globaleslernen.de/de/bildungsangebote/multimediales/soil-online-planspiel-simulation-zu-landwirtschaft-bodenfruchtbarkeit-und-nachhaltigkeit-bne',
+    status: 'live',
+    submittedAt: '2026-11-04',
+    publishedAt: '2026-11-05',
+    seoType: 'dofollow',
+    referrerBehavior: 'suppressed_noreferrer',
+    note: 'Inkl. November-Newsletter; Drupal extlink.js setzt rel="noopener noreferrer".',
+  },
+  {
+    id: 'hubbs',
+    name: 'HubbS – Landesbildungsserver (SODIX 30188)',
+    organization: 'FWU Institut für Film und Bild',
+    domain: 'hubbs.schule',
+    listingUrl: 'https://hubbs.schule/mediathek/online-planspiel-simulation-fuer-bne-und-nachhaltige-landwirtschaft',
+    status: 'live',
+    submittedAt: '2026-11-06',
+    publishedAt: '2026-11-12',
+    seoType: '302-dofollow',
+    referrerBehavior: 'transmitted',
+    note: 'Weiterleitung via /sodix/proxy-file/30188/0 (HTTP 302); Detail-<h1> startet aktuell ohne „SOIL“.',
+  },
+  {
+    id: 'github',
+    name: 'GitHub Repository (ffeldhaus/soil)',
+    organization: 'GitHub',
+    domain: 'github.com',
+    listingUrl: 'https://github.com/ffeldhaus/soil',
+    status: 'live',
+    submittedAt: '2026-10-20',
+    publishedAt: '2026-10-20',
+    seoType: 'nofollow',
+    referrerBehavior: 'transmitted',
+    note: 'Verlinkt /, /manual, /info, /research und /admin im Profil und README.',
+  },
+  {
+    id: 'youtube',
+    name: 'YouTube-Kanal & Trailer',
+    organization: 'YouTube',
+    domain: 'youtube.com',
+    listingUrl: 'https://www.youtube.com/watch?v=xCmZUGcyVLM',
+    status: 'live',
+    submittedAt: '2026-10-29',
+    publishedAt: '2026-10-29',
+    seoType: 'nofollow',
+    referrerBehavior: 'suppressed_noreferrer',
+    note: 'Videobeschreibung verlinkt /, /manual, /info, /research und /admin mit rel="nofollow noreferrer".',
+  },
+  {
+    id: 'bne-portal',
+    name: 'BNE-Portal – Bildungsmaterialien',
+    organization: 'DLR Projektträger / BMBF',
+    domain: 'bne-portal.de',
+    listingUrl: 'https://www.bne-portal.de/',
+    status: 'pending',
+    submittedAt: '2026-11-04',
+    seoType: 'pending',
+    referrerBehavior: 'pending',
+    note: 'Eingereicht inkl. Bildrechteformular an DLR-Koordinierungsstelle; in Redaktionsprüfung.',
+  },
+];

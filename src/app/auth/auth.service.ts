@@ -11,6 +11,7 @@
 import { Injectable, inject, isDevMode, NgZone } from '@angular/core';
 import { registerPlugin } from '@capacitor/core';
 import {
+  browserPopupRedirectResolver,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   OAuthProvider,
@@ -251,7 +252,7 @@ export class AuthService {
       return { user };
     }
     const provider = new GoogleAuthProvider();
-    return await signInWithPopup(this.auth!, provider);
+    return await signInWithPopup(this.auth!, provider, browserPopupRedirectResolver);
   }
 
   async loginWithApple() {
@@ -288,7 +289,7 @@ export class AuthService {
     const provider = new OAuthProvider('apple.com');
     provider.addScope('email');
     provider.addScope('name');
-    return await signInWithPopup(this.auth!, provider);
+    return await signInWithPopup(this.auth!, provider, browserPopupRedirectResolver);
   }
 
   async registerWithEmail(email: string, pass: string) {
