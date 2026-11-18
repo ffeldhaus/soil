@@ -84,8 +84,9 @@ export class ManualComponent implements AfterViewInit {
     const translations: Record<string, string> = {
       'manual.print': 'Drucken',
       'board.logout': 'Abmelden',
-      'manual.title': 'Handbuch',
-      'manual.subtitle': 'Begleitendes Handbuch und Unterrichtsmaterial für nachhaltige Landwirtschaft in SOIL',
+      'manual.title': 'Handbuch & Spielanleitung – SOIL',
+      'manual.subtitle':
+        'Begleitendes Unterrichtsmaterial zu Kulturen, Fruchtfolge, Bodenfruchtbarkeit und Betriebswirtschaft',
       'manual.intro.title': 'Einleitung',
       'manual.intro.goal.title': 'Das Ziel',
       'manual.intro.goal.text':

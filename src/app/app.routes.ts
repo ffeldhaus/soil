@@ -92,11 +92,11 @@ function createAuthActionRoute(path: string): Route {
 export const routes: Routes = [
   {
     path: '',
-    title: 'SOIL – Kostenloses Planspiel & Unterrichtsmaterial für Biologie, Erdkunde/Geografie & Wirtschaft (BNE)',
+    title: 'SOIL: Planspiel & Unterrichtsmaterial zu Landwirtschaft/BNE',
     data: {
       seo: {
         description:
-          'Kostenloses digitales Unterrichtsmaterial (OER) und interaktives Online-Planspiel zu Landwirtschaft, Bodenfruchtbarkeit und Nachhaltigkeit (BNE) für Biologie, Erdkunde / Geografie und Wirtschaft.',
+          'Kostenloses Unterrichtsmaterial (OER) & Online-Planspiel zu Landwirtschaft und Bodenfruchtbarkeit für Biologie, Erdkunde, Geografie, Wirtschaft & BNE.',
         canonicalPath: '/',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -190,7 +190,7 @@ export const routes: Routes = [
   },
   {
     path: 'trailer',
-    title: 'Trailer – SOIL Online-Planspiel & Unterrichtsmaterial für BNE',
+    title: 'Video-Trailer – Planspiel & Unterrichtsmaterial SOIL (BNE)',
     data: {
       seo: {
         description:
@@ -273,7 +273,7 @@ export const routes: Routes = [
     data: {
       seo: {
         description:
-          'Starte sofort ein Einzelspieler-Spiel gegen KI-Betriebe oder erstelle und verwalte Multiplayer-Runden von SOIL für Schulklassen und Seminare.',
+          'Starte im Browser sofort ein Einzelspieler-Spiel gegen KI-Betriebe oder erstelle und verwalte Multiplayer-Klassenrunden von SOIL für Unterricht & Seminare.',
         canonicalPath: '/admin',
       } satisfies RouteSeoData,
     },
@@ -327,7 +327,7 @@ export const routes: Routes = [
     data: {
       seo: {
         description:
-          'Begleitendes Handbuch und Unterrichtsmaterial zum Online-Planspiel SOIL: Kulturen, Fruchtfolge, Bodenfruchtbarkeit, Nährstoffe, Bio-Siegel und Regionalverträge.',
+          'Begleitendes Handbuch & Unterrichtsmaterial zum Planspiel SOIL: Kulturen, Fruchtfolge, Bodenfruchtbarkeit, Nährstoffe, Bio-Siegel und Regionalverträge.',
         canonicalPath: '/manual',
         jsonLd: {
           '@context': 'https://schema.org',
@@ -346,11 +346,11 @@ export const routes: Routes = [
   },
   {
     path: 'info',
-    title: 'Unterrichtsmaterial & Lehrplanbezug (Biologie, Erdkunde/Geografie, Wirtschaft, BNE) – SOIL',
+    title: 'Unterrichtsmaterial Biologie, Erdkunde & Wirtschaft – SOIL',
     data: {
       seo: {
         description:
-          'Kostenloses OER-Unterrichtsmaterial zum Planspiel SOIL: Lehrplanbezug aller 16 Bundesländer für Biologie, Erdkunde / Geografie, Wirtschaft und BNE, Didaktik & FAQ.',
+          'Kostenloses OER-Unterrichtsmaterial zum Planspiel SOIL: Lehrplanbezug aller 16 Bundesländer für Biologie, Erdkunde, Geografie, Wirtschaft, BNE und FAQ.',
         canonicalPath: '/info',
         jsonLd: {
           '@context': 'https://schema.org',

@@ -334,7 +334,7 @@ describe('SuperAdminComponent', () => {
     const statsDebug = fixture.debugElement.query(By.directive(SuperAdminStatsComponent));
     const statsComp = statsDebug.componentInstance as SuperAdminStatsComponent;
     statsComp.referenceDate = '2026-11-16';
-    fixture.detectChanges();
+    fixture.detectChanges(false);
 
     // Default 28d preset (20.10.2026 – 16.11.2026): sums all 3 daily docs (48 + 32 + 19 = 99)
     expect(statsComp.selectedRange).toBe('28d');
@@ -406,7 +406,7 @@ describe('SuperAdminComponent', () => {
     const statsComp = statsDebug.componentInstance as SuperAdminStatsComponent;
     statsComp.referenceDate = '2026-11-16';
     statsComp.referenceHour = '2026-11-16T11';
-    fixture.detectChanges();
+    fixture.detectChanges(false);
 
     expect(statsComp.rangePresets[0]).toEqual({ id: '24h', label: '24 Std.' });
     const kpi24h = fixture.nativeElement.querySelector('[data-testid="telemetry-kpi-24h"]') as HTMLElement;

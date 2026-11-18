@@ -1,8 +1,8 @@
 {
   "id": "soil-simulation-game",
-  "name": "SOIL – Kostenloses Planspiel & Unterrichtsmaterial für Biologie, Erdkunde/Geografie & Wirtschaft (BNE)",
+  "name": "SOIL: Planspiel & Unterrichtsmaterial zu Landwirtschaft/BNE",
   "short_name": "SOIL",
-  "description": "Kostenloses digitales Unterrichtsmaterial (OER) und interaktives Online-Planspiel zu Landwirtschaft, Bodenfruchtbarkeit und Nachhaltigkeit (BNE) für Biologie, Erdkunde / Geografie und Wirtschaft.",
+  "description": "Kostenloses Unterrichtsmaterial (OER) & Online-Planspiel zu Landwirtschaft und Bodenfruchtbarkeit für Biologie, Erdkunde, Geografie, Wirtschaft & BNE.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

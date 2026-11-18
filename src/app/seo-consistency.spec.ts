@@ -146,6 +146,74 @@ describe('Cross-File SEO, Manifest & Metadata Text Consistency', () => {
     }
   });
 
+  it('enforces Google & Bing title (30–60 chars) and meta description (145–160 chars) length budgets across all indexable routes', () => {
+    const expectedIndexablePaths = ['', 'trailer', 'manual', 'info', 'research', 'admin'];
+    const indexableRoutes = routes.filter((r) => isIndexableSeo(r.data?.seo as RouteSeoData | undefined));
+
+    expect(indexableRoutes.map((r) => r.path).sort()).toEqual([...expectedIndexablePaths].sort());
+
+    for (const routePath of expectedIndexablePaths) {
+      const route = routes.find((r) => r.path === routePath);
+      expect(route, `missing route for '${routePath}'`).toBeTruthy();
+
+      const title = (route?.title as string) ?? '';
+      const seo = route?.data?.seo as RouteSeoData;
+
+      expect(title.length, `title length for '${routePath}' (${title.length}): ${title}`).toBeGreaterThanOrEqual(30);
+      expect(title.length, `title length for '${routePath}' (${title.length}): ${title}`).toBeLessThanOrEqual(60);
+      expect(
+        seo.description.length,
+        `description length for '${routePath}' (${seo.description.length}): ${seo.description}`,
+      ).toBeGreaterThanOrEqual(145);
+      expect(
+        seo.description.length,
+        `description length for '${routePath}' (${seo.description.length}): ${seo.description}`,
+      ).toBeLessThanOrEqual(160);
+    }
+  });
+
+  it('keeps visible descriptive h1 headings (<= 140 chars, zero hidden-only h1) on /, /manual, /info, and /admin', () => {
+    const landingHtml = readRepoFile('src/app/landing/landing.html');
+    const manualHtml = readRepoFile('src/app/manual/manual.html');
+    const manualTs = readRepoFile('src/app/manual/manual.ts');
+    const infoHtml = readRepoFile('src/app/info/info.html');
+    const dashboardHtml = readRepoFile('src/app/admin/dashboard/dashboard.html');
+
+    const landingH1Match = landingHtml.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
+    expect(landingH1Match).toBeTruthy();
+    expect(landingH1Match?.[0]).not.toContain('sr-only');
+    const landingH1Text = decodeHtmlEntities((landingH1Match?.[1] ?? '').replace(/<[^>]+>/g, ' '))
+      .replace(/\s+/g, ' ')
+      .trim();
+    expect(landingH1Text).toContain('SOIL');
+    expect(landingH1Text).toContain('Unterrichtsmaterial');
+    expect(landingH1Text.length).toBeLessThanOrEqual(140);
+
+    expect(manualHtml).not.toMatch(/<h1[^>]*sr-only/);
+    const manualTitleMatch = manualTs.match(/'manual\.title':\s*'([^']+)'/);
+    expect(manualTitleMatch?.[1]).toContain('Handbuch');
+    expect((manualTitleMatch?.[1] ?? '').length).toBeGreaterThanOrEqual(15);
+    expect((manualTitleMatch?.[1] ?? '').length).toBeLessThanOrEqual(140);
+
+    const infoH1Match = infoHtml.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
+    const infoH1Text = decodeHtmlEntities((infoH1Match?.[1] ?? '').replace(/<[^>]+>/g, ' '))
+      .replace(/\s+/g, ' ')
+      .trim();
+    expect(infoH1Text).toContain('Hintergrund');
+    expect(infoH1Text.length).toBeLessThanOrEqual(140);
+
+    expect(dashboardHtml).not.toMatch(/<h1[^>]*sr-only/);
+    const dashboardH1Matches = [...dashboardHtml.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/g)];
+    expect(dashboardH1Matches).toHaveLength(2);
+    for (const match of dashboardH1Matches) {
+      const h1Text = decodeHtmlEntities(match[1].replace(/<[^>]+>/g, ' '))
+        .replace(/\s+/g, ' ')
+        .trim();
+      expect(h1Text.length).toBeGreaterThanOrEqual(20);
+      expect(h1Text.length).toBeLessThanOrEqual(140);
+    }
+  });
+
   it('targets Unterrichtsmaterial across Biologie, Erdkunde/Geografie, Wirtschaft & BNE in root, /info, and /manual metadata & JSON-LD', () => {
     const infoRoute = routes.find((r) => r.path === 'info');
     const manualRoute = routes.find((r) => r.path === 'manual');
@@ -156,10 +224,14 @@ describe('Cross-File SEO, Manifest & Metadata Text Consistency', () => {
     const infoSeo = infoRoute?.data?.seo as RouteSeoData;
     const manualSeo = manualRoute?.data?.seo as RouteSeoData;
 
-    for (const term of ['Unterrichtsmaterial', 'Biologie', 'Erdkunde', 'Geografie', 'Wirtschaft', 'BNE']) {
+    for (const term of ['SOIL', 'Planspiel', 'Unterrichtsmaterial', 'BNE']) {
       expect(rootTitle).toContain(term);
-      expect(rootSeo.description).toContain(term);
+    }
+    for (const term of ['Unterrichtsmaterial', 'Biologie', 'Erdkunde', 'Wirtschaft', 'SOIL']) {
       expect(infoTitle).toContain(term);
+    }
+    for (const term of ['Unterrichtsmaterial', 'Biologie', 'Erdkunde', 'Geografie', 'Wirtschaft', 'BNE']) {
+      expect(rootSeo.description).toContain(term);
       expect(infoSeo.description).toContain(term);
     }
 
