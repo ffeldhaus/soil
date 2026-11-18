@@ -296,12 +296,12 @@ app.get('/sitemap.xml', (_req, res) => {
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
     <loc>https://soil.app/</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://soil.app/trailer</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <priority>0.9</priority>
     <video:video>
       <video:thumbnail_loc>https://soil.app/SOIL-screenshot.png</video:thumbnail_loc>
@@ -315,22 +315,22 @@ app.get('/sitemap.xml', (_req, res) => {
   </url>
   <url>
     <loc>https://soil.app/manual</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://soil.app/info</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://soil.app/research</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://soil.app/admin</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <priority>0.8</priority>
   </url>
 </urlset>`);

@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.5.2] - 2026-11-18
 ### Added
 - Kuratiertes Backlink- und OER-Verzeichnis (`marketing/verlinkungen.md`) sowie die Status-Übersicht **Bekannte Verlinkungen & Bildungsportale** (`SuperAdminBacklinksComponent` in `src/app/admin/super-admin/components/super-admin-backlinks.*`) inklusive serverseitiger On-Demand-Linkprüfung (`checkBacklinkStatus` in `functions/src/backlinks.service.ts` und `functions/src/index.ts`, `src/app/types.ts`, `src/app/game/game.service.ts`) unter `/admin/super` ergänzt: dokumentiert bestätigte Live-Verlinkungen (`bpb.de`, `globaleslernen.de`, `hubbs.schule`, `github.com`, `youtube.com`), laufende Prüfungen (`bne-portal.de`) und offene OER-Potenziale samt SEO-Wirkung, Referrer-Verhalten (`noreferrer` vs. sichtbarer Referrer) und direkter HTTP-/Zielverweis-Verifikation.
 
