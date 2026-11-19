@@ -108,12 +108,14 @@ describe('Board', () => {
   });
 
   it('should toggle overlays', () => {
-    component.toggleNutrition();
     expect(component.showNutritionOverlay).toBe(true);
+    expect(component.showSoilOverlay).toBe(true);
+    component.toggleNutrition();
+    expect(component.showNutritionOverlay).toBe(false);
     component.toggleHarvest();
     expect(component.showHarvestOverlay).toBe(true);
     component.toggleSoil();
-    expect(component.showSoilOverlay).toBe(true);
+    expect(component.showSoilOverlay).toBe(false);
   });
 
   it('should handle round navigation', () => {
@@ -608,5 +610,93 @@ describe('Board', () => {
     await fixture.whenStable();
 
     expect(component.showPlantingModal).toBe(false);
+  });
+
+  it('should show empty-round confirmation modal when all parcels are Fallow', async () => {
+    component.parcels = Array.from({ length: 40 }, (_, index) => ({
+      index,
+      name: `Feld ${index + 1}`,
+      crop: 'Fallow',
+      soil: 100,
+      nutrition: 100,
+      harvest: 0,
+      history: [],
+    })) as any;
+
+    await component.nextRound();
+    expect(component.showEmptyRoundConfirmModal).toBe(true);
+    expect(component.showRoundSettingsModal).toBe(false);
+    expect(component.pendingNextRound).toBe(false);
+
+    component.cancelEmptyRoundConfirm();
+    expect(component.showEmptyRoundConfirmModal).toBe(false);
+    expect(component.showRoundSettingsModal).toBe(false);
+
+    await component.nextRound();
+    component.confirmEmptyRoundProceed();
+    expect(component.showEmptyRoundConfirmModal).toBe(false);
+    expect(component.showRoundSettingsModal).toBe(true);
+    expect(component.pendingNextRound).toBe(true);
+  });
+
+  it('should show and dismiss contextual snackbar hints in order', () => {
+    const store = new Map<string, string>();
+    vi.spyOn(window.localStorage, 'getItem').mockImplementation((key: string) => store.get(key) ?? null);
+    vi.spyOn(window.localStorage, 'setItem').mockImplementation((key: string, value: string) => {
+      store.set(key, value);
+    });
+
+    component.viewingRound = 0;
+    component.isReadOnly = false;
+    component.showWelcomeModal = true;
+    component.closeWelcomeModal();
+
+    expect(component.activeHint).toBe('plant');
+
+    component.selectedIndices.add(0);
+    component.onCropSelected('Wheat');
+
+    expect(store.get('soil_hint_plant_seen')).toBe('true');
+    expect(component.activeHint).toBe('overlays');
+
+    component.toggleSoil();
+
+    expect(store.get('soil_hint_overlays_seen')).toBe('true');
+    expect(component.activeHint).toBeNull();
+  });
+
+  it('should close round result modal and open finance analytics via openAnalyticsFromResult', () => {
+    component.showRoundResultModal = true;
+    component.showFinance = false;
+
+    component.openAnalyticsFromResult();
+
+    expect(component.showRoundResultModal).toBe(false);
+    expect(component.showFinance).toBe(true);
+  });
+
+  it('should pass advisorEnabled=false to result and settings modals on hard difficulty', async () => {
+    await fixture.whenStable();
+    vi.spyOn(component, 'gameDifficulty', 'get').mockReturnValue('hard');
+    component.roundResultRound = {
+      number: 1,
+      decision: { machines: 0, organic: false, fertilizer: false, pesticide: false, organisms: false, parcels: {} },
+      result: {
+        profit: 500,
+        capital: 100500,
+        bioSiegel: false,
+        events: { weather: 'Normal', vermin: [] },
+        harvestSummary: {} as any,
+        expenses: { seeds: 0, labor: 0, running: 0, investments: 0, total: 0 },
+        income: 500,
+        machineRealLevel: 0,
+      },
+      parcelsSnapshot: [{ index: 0, crop: 'Wheat', soil: 50, nutrition: 20, yield: 10 }],
+    };
+    component.showRoundResultModal = true;
+    fixture.changeDetectorRef.detectChanges();
+
+    const advisorEl = fixture.nativeElement.querySelector('app-round-result-modal app-game-advisor');
+    expect(advisorEl?.textContent?.trim()).toBe('');
   });
 });

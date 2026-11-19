@@ -48,47 +48,34 @@
       </div>
 
       <!-- Profit -->
-      <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
-        <span class="text-white font-medium">Rundengewinn</span>
-        <div class="text-right font-mono tabular-nums">
-          <span class="text-xl font-bold block" [class.text-emerald-400]="profit >= 0" [class.text-rose-400]="0 > profit">
-            {{ profit >= 0 ? '+' : '' }}{{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
-          </span>
-          @if (subsidies > 0) {
-            <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
-              Inkl. {{ subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }} Subventionen
+      <div class="border-b border-slate-700/80 pb-4 space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-white font-medium">Rundengewinn</span>
+          <div class="text-right font-mono tabular-nums">
+            <span class="text-xl font-bold block" [class.text-emerald-400]="profit >= 0" [class.text-rose-400]="0 > profit">
+              {{ profit >= 0 ? '+' : '' }}{{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
             </span>
-          }
+            @if (subsidies > 0) {
+              <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
+                Inkl. {{ subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }} Subventionen
+              </span>
+            }
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="button"
+            (click)="onOpenAnalytics()"
+            data-testid="open-analytics-from-result"
+            class="text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
+          >
+            Details in Analysen öffnen →
+          </button>
         </div>
       </div>
 
-      <!-- Financial Breakdown -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-        <div class="bg-gray-950 p-3 rounded-lg border border-gray-800 flex flex-col justify-between gap-1">
-          <div class="flex justify-between items-center">
-            <span class="text-slate-300 uppercase tracking-tight font-semibold">Einnahmen</span>
-            <span class="text-white font-mono tabular-nums font-bold">{{ income + subsidies | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
-          </div>
-          @if (contractBonus > 0) {
-            <div data-testid="contract-bonus-row" class="flex justify-between items-center text-[11px] text-emerald-300 pt-1 border-t border-gray-700/60 font-mono tabular-nums">
-              <span>▲ Regionalvertrag-Prämie</span>
-              <span>+{{ contractBonus | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
-            </div>
-          }
-        </div>
-        <div class="bg-gray-950 p-3 rounded-lg border border-gray-800 flex flex-col justify-between gap-1">
-          <div class="flex justify-between items-center">
-            <span class="text-slate-300 uppercase tracking-tight font-semibold">Ausgaben</span>
-            <span class="text-white font-mono tabular-nums font-bold">{{ expenses | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
-          </div>
-          @if (overdraftInterest > 0) {
-            <div data-testid="overdraft-interest-row" class="flex justify-between items-center text-[11px] text-rose-300 pt-1 border-t border-gray-700/60 font-mono tabular-nums">
-              <span>▼ Überziehungszinsen</span>
-              <span>-{{ overdraftInterest | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
-            </div>
-          }
-        </div>
-      </div>
+      <!-- Advisor (prominent at the top below financial summary) -->
+      <app-game-advisor [currentRound]="round" [previousRound]="previousRound" [enabled]="advisorEnabled" context="result"></app-game-advisor>
 
       <!-- Bio Siegel -->
       <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
@@ -135,31 +122,43 @@
       @if (causalFactors && difficulty !== 'hard') {
         <div data-testid="causal-breakdown-section" class="bg-gray-950 border border-gray-800 rounded-lg p-3.5 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="text-sm font-bold text-white tracking-tight">Ursachen-Analyse (Letzte Ernte)</h3>
-            @if (causalCrops.length > 1) {
-              <div class="flex flex-wrap gap-1">
-                @for (crop of causalCrops; track crop) {
-                  <button
-                    type="button"
-                    (click)="selectCausalCrop(crop)"
-                    class="px-2 py-0.5 rounded text-[11px] font-semibold border transition-colors"
-                    [class.bg-emerald-950]="activeCausalCrop === crop"
-                    [class.text-emerald-300]="activeCausalCrop === crop"
-                    [class.border-emerald-500]="activeCausalCrop === crop"
-                    [class.bg-gray-900]="activeCausalCrop !== crop"
-                    [class.text-slate-300]="activeCausalCrop !== crop"
-                    [class.border-gray-700]="activeCausalCrop !== crop"
-                  >
-                    {{ getCropName(crop) }}
-                  </button>
-                }
-              </div>
-            } @else if (activeCausalCrop) {
-              <span class="text-xs font-mono text-slate-300">{{ getCropName(activeCausalCrop) }}</span>
+            <button
+              type="button"
+              (click)="toggleCausalAnalysis()"
+              data-testid="toggle-causal-analysis"
+              [attr.aria-expanded]="isCausalAnalysisExpanded"
+              class="flex items-center gap-2 text-sm font-bold text-white tracking-tight hover:text-emerald-300 transition-colors cursor-pointer text-left"
+            >
+              <span class="font-mono text-xs text-slate-400">{{ isCausalAnalysisExpanded ? '▼' : '▶' }}</span>
+              <span>Ursachen-Analyse (Letzte Ernte)</span>
+            </button>
+            @if (isCausalAnalysisExpanded) {
+              @if (causalCrops.length > 1) {
+                <div class="flex flex-wrap gap-1">
+                  @for (crop of causalCrops; track crop) {
+                    <button
+                      type="button"
+                      (click)="selectCausalCrop(crop)"
+                      class="px-2 py-0.5 rounded text-[11px] font-semibold border transition-colors"
+                      [class.bg-emerald-950]="activeCausalCrop === crop"
+                      [class.text-emerald-300]="activeCausalCrop === crop"
+                      [class.border-emerald-500]="activeCausalCrop === crop"
+                      [class.bg-gray-900]="activeCausalCrop !== crop"
+                      [class.text-slate-300]="activeCausalCrop !== crop"
+                      [class.border-gray-700]="activeCausalCrop !== crop"
+                    >
+                      {{ getCropName(crop) }}
+                    </button>
+                  }
+                </div>
+              } @else if (activeCausalCrop) {
+                <span class="text-xs font-mono text-slate-300">{{ getCropName(activeCausalCrop) }}</span>
+              }
             }
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          @if (isCausalAnalysisExpanded) {
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <!-- Ertragsfaktoren -->
             <div class="bg-gray-900 border border-gray-800 rounded-lg p-2.5 space-y-1">
               <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Ertragsfaktoren</div>
@@ -243,8 +242,9 @@
                   {{ causalFactors.soilDelta.total > 0 ? '+' : '' }}{{ causalFactors.soilDelta.total | number: '1.1-1' }}
                 </span>
               </div>
+              </div>
             </div>
-          </div>
+          }
         </div>
       }
 
@@ -299,17 +299,17 @@
 
       <!-- Animated Round Leaderboard ("Hof-Rangliste: Zukunftsfähigkeit") -->
       @if (leaderboard.length > 0) {
-        <div data-testid="round-leaderboard" class="bg-gray-950 border border-gray-800 rounded-lg p-3.5">
-          <div class="flex items-center justify-between mb-3">
+        <div data-testid="round-leaderboard" class="bg-gray-950 border border-gray-800 rounded-lg p-3 sm:p-3.5">
+          <div class="flex items-center justify-between gap-2 mb-3">
             <h3 class="text-sm font-bold text-white tracking-tight">Hof-Rangliste: Zukunftsfähigkeit</h3>
-            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Kapital + Boden</span>
+            <span class="hidden sm:inline text-[10px] font-mono text-slate-400 uppercase tracking-wider shrink-0">Kapital + Boden</span>
           </div>
           <div class="space-y-1.5">
             @for (entry of leaderboard; track entry.uid) {
               @let scoreDelta = entry.score - entry.prevScore;
               <div
                 [attr.data-testid]="'leaderboard-row-' + entry.uid"
-                class="leaderboard-row flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-xs"
+                class="leaderboard-row flex items-center justify-between gap-2 px-2.5 sm:px-3 py-2 rounded-lg border text-xs"
                 [class.bg-emerald-950]="entry.isCurrentPlayer"
                 [class.border-emerald-500]="entry.isCurrentPlayer"
                 [class.bg-slate-900]="!entry.isCurrentPlayer"
@@ -317,11 +317,11 @@
                 [class.rank-up]="entry.rankDelta > 0"
                 [class.rank-down]="0 > entry.rankDelta"
               >
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="font-mono tabular-nums font-bold text-slate-200 w-6">#{{ entry.rank }}</span>
+                <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                  <span class="font-mono tabular-nums font-bold text-slate-200 w-5 sm:w-6 shrink-0">#{{ entry.rank }}</span>
                   <span
                     data-testid="rank-delta-badge"
-                    class="font-mono tabular-nums text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0"
+                    class="hidden sm:inline-flex font-mono tabular-nums text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0"
                     [class.bg-emerald-950]="entry.rankDelta > 0"
                     [class.text-emerald-300]="entry.rankDelta > 0"
                     [class.border-emerald-500]="entry.rankDelta > 0"
@@ -355,7 +355,7 @@
                     <span class="text-slate-600">|</span>
                     <span>Ø {{ entry.avgSoil | number: '1.0-0' }}%</span>
                   </div>
-                  <div class="text-right min-w-[78px]">
+                  <div class="text-right min-w-[64px] sm:min-w-[78px]">
                     <span class="font-bold text-white">{{ entry.score }} Pkt</span>
                     <span
                       class="block text-[10px]"
@@ -373,8 +373,6 @@
         </div>
       }
 
-      <!-- Advisor (at the bottom) -->
-      <app-game-advisor [currentRound]="round" [previousRound]="previousRound" [enabled]="advisorEnabled" context="result"></app-game-advisor>
     </div>
 
     <div class="mt-6 flex justify-center">

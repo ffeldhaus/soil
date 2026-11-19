@@ -7,6 +7,7 @@ import { combineLatest, type Subscription, take } from 'rxjs';
 import { FeedbackModal } from '../../admin/components/feedback-modal/feedback-modal';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS, STICKER_DEFINITIONS } from '../../game-constants';
+import { TelemetryService } from '../../shared/telemetry.service';
 import type {
   CollectibleSticker,
   CropType,
@@ -72,8 +73,10 @@ export class Board implements OnInit, OnDestroy {
   version = (import.meta as { env: { APP_VERSION?: string } }).env.APP_VERSION || 'dev';
 
   authService = inject(AuthService);
+  private telemetry = inject(TelemetryService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private quickGameFirstPlantTrackedGameId: string | null = null;
 
   parcels: ParcelType[] = []; // populated via subscription
   selectedIndices = new Set<number>(); // Selection
@@ -124,9 +127,9 @@ export class Board implements OnInit, OnDestroy {
   showRoundResultModal = false;
   roundResultRound: Round | null = null;
 
-  showNutritionOverlay = false;
+  showNutritionOverlay = true;
   showHarvestOverlay = false;
-  showSoilOverlay = false;
+  showSoilOverlay = true;
   showMobileMenu = false;
   playerLabel = 'Player';
   playerNumber: string | null = null;
@@ -147,6 +150,8 @@ export class Board implements OnInit, OnDestroy {
   allStickers: CollectibleSticker[] = STICKER_DEFINITIONS;
   showStickerAlbumModal = false;
   showWelcomeModal = false;
+  showEmptyRoundConfirmModal = false;
+  activeHint: 'plant' | 'overlays' | null = null;
   activeHudPopover: 'weather' | 'pests' | 'contract' | null = null;
   showContractPopover = false;
 
@@ -161,6 +166,46 @@ export class Board implements OnInit, OnDestroy {
     this.tourService.markTourAsSeen();
     if (typeof window !== 'undefined' && this.gameId) {
       localStorage.setItem(`soil_welcome_seen_${this.gameId}`, 'true');
+    }
+    this.syncActiveHint();
+  }
+
+  private readHintSeen(key: 'soil_hint_plant_seen' | 'soil_hint_overlays_seen'): boolean {
+    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return true;
+    return window.localStorage.getItem(key) === 'true';
+  }
+
+  private markHintSeen(key: 'soil_hint_plant_seen' | 'soil_hint_overlays_seen'): void {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      window.localStorage.setItem(key, 'true');
+    }
+  }
+
+  private syncActiveHint(): void {
+    if (this.isReadOnly || this.showWelcomeModal) {
+      this.activeHint = null;
+      return;
+    }
+    if (this.viewingRound === 0 && !this.readHintSeen('soil_hint_plant_seen')) {
+      this.activeHint = 'plant';
+      return;
+    }
+    if (this.readHintSeen('soil_hint_plant_seen') && !this.readHintSeen('soil_hint_overlays_seen')) {
+      this.activeHint = 'overlays';
+      return;
+    }
+    this.activeHint = null;
+  }
+
+  dismissActiveHint(): void {
+    if (this.activeHint === 'plant') {
+      this.markHintSeen('soil_hint_plant_seen');
+      this.activeHint = !this.readHintSeen('soil_hint_overlays_seen') ? 'overlays' : null;
+      return;
+    }
+    if (this.activeHint === 'overlays') {
+      this.markHintSeen('soil_hint_overlays_seen');
+      this.activeHint = null;
     }
   }
 
@@ -330,6 +375,9 @@ export class Board implements OnInit, OnDestroy {
   toggleNutrition() {
     if (this.showFinance) return;
     this.showNutritionOverlay = !this.showNutritionOverlay;
+    if (this.activeHint === 'overlays') {
+      this.dismissActiveHint();
+    }
   }
 
   toggleHarvest() {
@@ -340,6 +388,9 @@ export class Board implements OnInit, OnDestroy {
   toggleSoil() {
     if (this.showFinance) return;
     this.showSoilOverlay = !this.showSoilOverlay;
+    if (this.activeHint === 'overlays') {
+      this.dismissActiveHint();
+    }
   }
 
   toggleFinance() {
@@ -464,6 +515,7 @@ export class Board implements OnInit, OnDestroy {
       this.showWelcomeModal = true;
     }
 
+    this.syncActiveHint();
     this.cdr.detectChanges();
   }
 
@@ -688,6 +740,7 @@ export class Board implements OnInit, OnDestroy {
         this.showStickerAlbumModal ||
         this.showGameEndModal ||
         this.showWelcomeModal ||
+        this.showEmptyRoundConfirmModal ||
         this.showFeedbackModal ||
         this.showMobileMenu ||
         this.errorMessage,
@@ -858,9 +911,23 @@ export class Board implements OnInit, OnDestroy {
 
   onCropSelected(crop: CropType) {
     // Update planned decision in service
+    const plantedCount = this.selectedIndices.size;
     this.selectedIndices.forEach((index) => {
       this.gameService.updateParcelDecision(index, crop, this.gameId);
     });
+    if (
+      plantedCount > 0 &&
+      crop !== 'Fallow' &&
+      this.gameId.startsWith('local-') &&
+      this.viewingRound === 0 &&
+      this.quickGameFirstPlantTrackedGameId !== this.gameId
+    ) {
+      this.quickGameFirstPlantTrackedGameId = this.gameId;
+      this.telemetry.trackEvent('quick_game_first_plant');
+    }
+    if (plantedCount > 0 && crop !== 'Fallow' && this.activeHint === 'plant') {
+      this.dismissActiveHint();
+    }
     this.showPlantingModal = false;
     this.selectedIndices = new Set();
     this.cdr.detectChanges();
@@ -887,6 +954,20 @@ export class Board implements OnInit, OnDestroy {
   }
 
   async nextRound() {
+    if (this.parcels.length > 0 && this.parcels.every((p) => p.crop === 'Fallow')) {
+      this.showEmptyRoundConfirmModal = true;
+      return;
+    }
+    this.pendingNextRound = true;
+    this.showRoundSettingsModal = true;
+  }
+
+  cancelEmptyRoundConfirm() {
+    this.showEmptyRoundConfirmModal = false;
+  }
+
+  confirmEmptyRoundProceed() {
+    this.showEmptyRoundConfirmModal = false;
     this.pendingNextRound = true;
     this.showRoundSettingsModal = true;
   }
@@ -981,6 +1062,11 @@ export class Board implements OnInit, OnDestroy {
 
   closeRoundResultModal() {
     this.showRoundResultModal = false;
+  }
+
+  openAnalyticsFromResult() {
+    this.closeRoundResultModal();
+    this.showFinance = true;
   }
 
   getPreviousRound(roundNumber: number): Round | undefined {

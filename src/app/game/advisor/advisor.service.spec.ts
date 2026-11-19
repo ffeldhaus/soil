@@ -176,4 +176,129 @@ describe('AdvisorService', () => {
     expect(harvestInsight?.message).toContain('Schädlingsbefall war der Hauptgrund');
     expect(harvestInsight?.message).toContain('50 Prozent');
   });
+
+  it('should add positive feedback for crop diversity and balanced nutrition in result context', () => {
+    const parcels = [
+      createMockParcel({ index: 0, crop: 'Wheat', nutrition: 90 }),
+      createMockParcel({ index: 1, crop: 'Barley', nutrition: 95 }),
+      createMockParcel({ index: 2, crop: 'Fieldbean', nutrition: 100 }),
+    ];
+    const round = createMockRound(1, parcels, 2500);
+
+    const insights = service.getInsights(round, undefined, 'result');
+    const diversityInsight = insights.find((i) => i.title === 'Starke Artenvielfalt');
+    const nutritionInsight = insights.find((i) => i.title === 'Ausgewogene Nährstoffbilanz');
+
+    expect(diversityInsight).toBeTruthy();
+    expect(diversityInsight?.level).toBe('info');
+    expect(nutritionInsight).toBeTruthy();
+    expect(nutritionInsight?.level).toBe('info');
+
+    const nextRoundInsights = service.getInsights(round, undefined, 'next_round');
+    expect(nextRoundInsights.find((i) => i.title === 'Starke Artenvielfalt')).toBeUndefined();
+    expect(nextRoundInsights.find((i) => i.title === 'Ausgewogene Nährstoffbilanz')).toBeUndefined();
+  });
+
+  it('should consolidate multiple crops with the same weather yield limiter into one insight', () => {
+    const createFactors = (weatherFactor: number, pestFactor = 1.0) => ({
+      baseYield: 100,
+      soilFactor: 1.0,
+      nutritionFactor: 1.0,
+      weatherFactor,
+      pestFactor,
+      machineBonus: 0,
+      organicFactor: 1.0,
+      soilDelta: {
+        cropRotation: 0,
+        humusRecovery: 0,
+        machineCompaction: 0,
+        fertilizerImpact: 0,
+        pesticideImpact: 0,
+        organismsImpact: 0,
+        weatherErosion: 0,
+        total: 0,
+      },
+      nutritionDelta: {
+        cropUptake: 0,
+        fertilizerAdd: 0,
+        leaching: 0,
+        total: 0,
+      },
+    });
+
+    const parcels: Parcel[] = [
+      createMockParcel({ index: 0, crop: 'Potato', factors: createFactors(0.85 - 0.001) }), // ~15% loss
+      createMockParcel({ index: 1, crop: 'Wheat', factors: createFactors(0.85 - 0.001) }), // ~15% loss
+      createMockParcel({ index: 2, crop: 'Pea', factors: createFactors(0.75) }), // 25% loss
+    ];
+    const round = createMockRound(1, parcels);
+    if (round.result) {
+      round.result.harvestSummary = {
+        Potato: 200, // baseYield 250 -> 0.8 relativeYield
+        Wheat: 85, // baseYield 100 -> 0.85 relativeYield
+        Pea: 45, // baseYield 60 -> 0.75 relativeYield
+      } as any;
+    }
+
+    const insights = service.getInsights(round);
+    const harvestLossInsights = insights.filter((i) => i.type === 'harvest' && i.title !== 'Starke Artenvielfalt');
+    expect(harvestLossInsights.length).toBe(1);
+    expect(harvestLossInsights[0].level).toBe('warning');
+    expect(harvestLossInsights[0].title).toBe('Wetterbedingte Ertragsverluste');
+    expect(harvestLossInsights[0].message).toBe(
+      'Ungünstige Witterung hat den Ertrag bei Kartoffel (−15 %), Weizen (−15 %) und Erbse (−25 %) gemindert.',
+    );
+    expect(harvestLossInsights[0].hint).toContain('Humusgehalt');
+  });
+
+  it('should consolidate multiple crops with pest loss and escalate to danger if any crop has <50% relative yield', () => {
+    const createPestFactors = (pestFactor: number) => ({
+      baseYield: 100,
+      soilFactor: 1.0,
+      nutritionFactor: 1.0,
+      weatherFactor: 1.0,
+      pestFactor,
+      machineBonus: 0,
+      organicFactor: 1.0,
+      soilDelta: {
+        cropRotation: 0,
+        humusRecovery: 0,
+        machineCompaction: 0,
+        fertilizerImpact: 0,
+        pesticideImpact: 0,
+        organismsImpact: 0,
+        weatherErosion: 0,
+        total: 0,
+      },
+      nutritionDelta: {
+        cropUptake: 0,
+        fertilizerAdd: 0,
+        leaching: 0,
+        total: 0,
+      },
+    });
+
+    const parcels: Parcel[] = [
+      createMockParcel({ index: 0, crop: 'Potato', factors: createPestFactors(0.45) }),
+      createMockParcel({ index: 1, crop: 'Wheat', factors: createPestFactors(0.7) }),
+    ];
+    const round = createMockRound(1, parcels);
+    if (round.result) {
+      round.result.harvestSummary = {
+        Potato: 110, // baseYield 250 -> 0.44 (< 0.5)
+        Wheat: 70, // baseYield 100 -> 0.7
+      } as any;
+    }
+
+    const insights = service.getInsights(round);
+    const pestInsights = insights.filter(
+      (i) => i.type === 'harvest' && i.title === 'Ertragsverluste durch Schädlingsbefall',
+    );
+    expect(pestInsights.length).toBe(1);
+    expect(pestInsights[0].level).toBe('danger');
+    expect(pestInsights[0].message).toBe(
+      'Schädlingsbefall hat den Ertrag bei Kartoffel (−55 %) und Weizen (−30 %) gemindert.',
+    );
+    expect(pestInsights[0].hint).toContain('Nützlinge');
+  });
 });

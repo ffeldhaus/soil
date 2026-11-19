@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, take } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS } from '../../game-constants';
+import { getQuickGameRoundEventName, TelemetryService } from '../../shared/telemetry.service';
 import type { Game, PlayerState, Round, RoundDecision, WeatherType } from '../../types';
 import { AiAgent } from './ai-agent';
 import { GameEngine } from './game-engine';
@@ -24,6 +25,7 @@ export interface LocalCreateResponse {
 export class LocalGameService {
   private stateSubject = new BehaviorSubject<LocalGameState | null>(null);
   private auth = inject(AuthService);
+  private telemetry = inject(TelemetryService);
   state$ = this.stateSubject.asObservable();
 
   constructor() {
@@ -329,6 +331,16 @@ export class LocalGameService {
     state.game.updatedAt = new Date();
     state.playerState = state.game.players[state.playerState.uid];
     state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
+
+    if (state.game.id.startsWith('local-')) {
+      const roundEvent = getQuickGameRoundEventName(nextRoundNum);
+      if (roundEvent) {
+        this.telemetry.trackEvent(roundEvent);
+      }
+      if (state.game.status === 'finished') {
+        this.telemetry.trackEvent('quick_game_finished');
+      }
+    }
   }
 
   private saveToStorage(state: LocalGameState) {

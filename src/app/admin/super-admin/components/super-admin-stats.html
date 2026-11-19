@@ -499,4 +499,42 @@
       </div>
     </div>
   </section>
+
+  <!-- Quick Play Round Funnel -->
+  <section
+    data-testid="superadmin-quick-play-funnel"
+    class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0"
+    aria-labelledby="quick-play-funnel-heading"
+  >
+    <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
+      <div>
+        <h2 id="quick-play-funnel-heading" class="text-base sm:text-lg font-bold text-white tracking-tight">
+          Sofort-Spiel-Funnel
+        </h2>
+        <p class="text-xs text-gray-400 font-mono tabular-nums mt-0.5">
+          {{ breakdownSubtitle }} · Anteil bezogen auf gestartete Sofort-Spiele
+        </p>
+      </div>
+    </div>
+
+    <div class="divide-y divide-gray-800 text-sm">
+      @for (step of quickPlayFunnelRows; track step.key) {
+        <div
+          [attr.data-testid]="'funnel-row-' + step.key"
+          class="px-5 py-3 sm:px-6 space-y-1.5 hover:bg-gray-950 transition-colors"
+        >
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-gray-200">{{ step.label }}</span>
+            <div class="flex items-center gap-3 font-mono tabular-nums">
+              <span class="text-xs text-gray-400 w-12 text-right">{{ step.conversionPercent }}%</span>
+              <span class="font-bold text-white w-14 text-right">{{ step.count }}</span>
+            </div>
+          </div>
+          <div class="h-1 w-full bg-gray-800 rounded-full overflow-hidden" aria-hidden="true">
+            <div class="h-full bg-emerald-500/80 rounded-full" [style.width.%]="step.barPercent"></div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
 </div>

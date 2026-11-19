@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- Anonymen, UUID-freien Sofort-Spiel-Funnel (`quick_game_first_plant`, `quick_game_round_1` bis `quick_game_round_20`, `quick_game_finished`) in `TelemetryService` (`src/app/shared/telemetry.service.ts`, `functions/src/telemetry.service.ts`), `BoardComponent`, `LocalGameService` und `/privacy` (`src/app/privacy/privacy.html`) sowie eine eigene Funnel-Auswertung im Super-Admin-Dashboard (`src/app/admin/super-admin/components/super-admin-stats.*`) ergänzt.
+- Positives Berater-Feedback (`Starke Artenvielfalt`, `Ausgewogene Nährstoffbilanz`) sowie eine Sicherheitsabfrage bei komplett unbepflanztem Acker (*„Noch nichts angebaut“*) ergänzt.
+
+### Changed
+- Einstieg und Spielfeld-Bedienung im Sofort-Spiel überarbeitet (`src/app/game/board/*`, `src/app/game/planting-modal/planting-modal.html`): Bodenqualität und Nährstoffe direkt eingeblendet, kontextuelle `localStorage`-Snackbars für Erstschritte ergänzt, Runde 0 als `Ausgangslage` (und Folgerunden als `Jahr X von Y`) benannt, mobilen `Weiter`-Button und 360px-Kopfleiste (Galaxy A-Series) ohne Überlauf angepasst sowie Crop-Namen im Pflanzen-Modal auf schmalen Smartphones lesbar gehalten.
+- Rundenergebnis-Modal (`src/app/game/round-result-modal/*`) entschlackt: **Landwirtschaftlichen Berater** nach oben gezogen, gleichartige Ertragsverlust-Meldungen im `AdvisorService` (`src/app/game/advisor/advisor.service.ts`) zu jeweils einer kompakten Karte gebündelt, Berater auf `hard` deaktiviert, Einnahmen/Ausgaben durch direkten Link **Details in Analysen öffnen →** ersetzt, *Ursachen-Analyse* auf `normal` eingeklappt und mobiles Leaderboard ohne `+1`/`-1`-Badges formatiert.
+
 ## [3.5.2] - 2026-11-18
 ### Added
 - Kuratiertes Backlink- und OER-Verzeichnis (`marketing/verlinkungen.md`) sowie die Status-Übersicht **Bekannte Verlinkungen & Bildungsportale** (`SuperAdminBacklinksComponent` in `src/app/admin/super-admin/components/super-admin-backlinks.*`) inklusive serverseitiger On-Demand-Linkprüfung (`checkBacklinkStatus` in `functions/src/backlinks.service.ts` und `functions/src/index.ts`, `src/app/types.ts`, `src/app/game/game.service.ts`) unter `/admin/super` ergänzt: dokumentiert bestätigte Live-Verlinkungen (`bpb.de`, `globaleslernen.de`, `hubbs.schule`, `github.com`, `youtube.com`), laufende Prüfungen (`bne-portal.de`) und offene OER-Potenziale samt SEO-Wirkung, Referrer-Verhalten (`noreferrer` vs. sichtbarer Referrer) und direkter HTTP-/Zielverweis-Verifikation.

@@ -547,4 +547,52 @@ describe('SuperAdminComponent', () => {
       (fixture.nativeElement.querySelector('[data-testid="backlinks-checked-timestamp"]') as HTMLElement).textContent,
     ).toContain('Geprüft:');
   });
+
+  it('renders the Sofort-Spiel-Funnel with conversion percentages and keeps eventRows clean', async () => {
+    gameServiceMock.getSystemStats.mockResolvedValue({
+      ...SAMPLE_STATS_WITH_SERIES,
+      telemetry: {
+        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
+        events: {
+          quick_game_started: 100,
+          quick_game_first_plant: 80,
+          quick_game_round_1: 65,
+          quick_game_round_5: 40,
+          quick_game_round_10: 25,
+          quick_game_round_15: 12,
+          quick_game_round_20: 0,
+          quick_game_finished: 10,
+          trailer_opened: 28,
+          research_export: 7,
+        },
+      },
+    });
+
+    const fixture = TestBed.createComponent(SuperAdminComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const statsDebug = fixture.debugElement.query(By.directive(SuperAdminStatsComponent));
+    const statsComp = statsDebug.componentInstance as SuperAdminStatsComponent;
+    statsComp.selectRange('all');
+    fixture.detectChanges();
+
+    expect(statsComp.eventRows.map((e) => e.key)).toEqual(['quick_game_started', 'trailer_opened', 'research_export']);
+
+    const funnel = statsComp.quickPlayFunnelRows;
+    expect(funnel.find((r) => r.key === 'quick_game_started')?.conversionPercent).toBe(100);
+    expect(funnel.find((r) => r.key === 'quick_game_first_plant')?.conversionPercent).toBe(80);
+    expect(funnel.find((r) => r.key === 'quick_game_round_1')?.conversionPercent).toBe(65);
+    expect(funnel.find((r) => r.key === 'quick_game_round_10')?.conversionPercent).toBe(25);
+    expect(funnel.find((r) => r.key === 'quick_game_round_15')?.count).toBe(12);
+    expect(funnel.find((r) => r.key === 'quick_game_round_20')).toBeUndefined();
+    expect(funnel.find((r) => r.key === 'quick_game_finished')?.conversionPercent).toBe(10);
+
+    const funnelEl = fixture.nativeElement.querySelector('[data-testid="superadmin-quick-play-funnel"]') as HTMLElement;
+    expect(funnelEl).toBeTruthy();
+    expect(funnelEl.textContent).toContain('Sofort-Spiel-Funnel');
+    expect(funnelEl.textContent).toContain('Erste Aussaat');
+    expect(funnelEl.textContent).toContain('Abgeschlossen');
+  });
 });

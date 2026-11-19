@@ -33,9 +33,22 @@ export class RoundResultModal {
   @Input() leaderboard: LeaderboardEntry[] = [];
   @Input() difficulty: 'easy' | 'normal' | 'hard' = 'normal';
   @Output() resultClosed = new EventEmitter<void>();
+  @Output() openAnalytics = new EventEmitter<void>();
 
   selectedCausalCrop: CropType | null = null;
+  causalAnalysisExpanded: boolean | null = null;
   readonly Math = Math;
+
+  get isCausalAnalysisExpanded(): boolean {
+    if (this.causalAnalysisExpanded !== null) {
+      return this.causalAnalysisExpanded;
+    }
+    return this.difficulty === 'easy';
+  }
+
+  toggleCausalAnalysis() {
+    this.causalAnalysisExpanded = !this.isCausalAnalysisExpanded;
+  }
 
   getCausalCrops(): CropType[] {
     const parcels = (this.round?.parcelsSnapshot || []).filter((p) => p.factors !== undefined);
@@ -189,5 +202,9 @@ export class RoundResultModal {
 
   onClose() {
     this.resultClosed.emit();
+  }
+
+  onOpenAnalytics() {
+    this.openAnalytics.emit();
   }
 }

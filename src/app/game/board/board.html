@@ -326,7 +326,7 @@
     @if (showRoundSettingsModal) {
     <app-round-settings-modal [settings]="currentRoundSettings" [config]="(gameState$ | async)?.game?.config"
       [plantedCrops]="getPlantedCrops()" [parcels]="parcels" [currentRound]="history[history.length - 1]" [previousRound]="getPreviousRound(history.length - 1)" 
-      [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false"
+      [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false && gameDifficulty !== 'hard'"
       [difficulty]="gameDifficulty"
       (save)="onRoundSettingsSaved($event)"
       (settingsCancelled)="cancelRoundSettings()">
@@ -342,10 +342,11 @@
 
     @if (showRoundResultModal && roundResultRound) {
     <app-round-result-modal [round]="roundResultRound!" [previousRound]="getPreviousRound(roundResultRound!.number)" 
-      [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false"
+      [advisorEnabled]="(gameState$ | async)?.game?.config?.advisorEnabled !== false && gameDifficulty !== 'hard'"
       [leaderboard]="getRoundLeaderboard(roundResultRound!.number)"
       [difficulty]="gameDifficulty"
-      (resultClosed)="closeRoundResultModal()">
+      (resultClosed)="closeRoundResultModal()"
+      (openAnalytics)="openAnalyticsFromResult()">
     </app-round-result-modal>
     }
 
@@ -407,7 +408,11 @@
               <span class="text-xs sm:text-sm font-mono font-semibold tabular-nums px-1 sm:px-2 min-w-[84px] sm:min-w-[104px] text-center transition-colors"
                 [class.text-emerald-400]="viewingRound === maxRoundNumber"
                 [class.text-white]="viewingRound < maxRoundNumber">
-                <ng-container>Runde</ng-container> {{ viewingRound }} von {{ totalRounds }}
+                @if (viewingRound === 0) {
+                  Ausgangslage
+                } @else {
+                  Jahr {{ viewingRound }} von {{ totalRounds }}
+                }
               </span>
               <button (click)="goToRound(viewingRound + 1)" [disabled]="viewingRound >= maxRoundNumber"
                 class="text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none">
@@ -584,6 +589,41 @@
         </div>
         }
       </div>
+
+      <!-- Contextual Dismissible Snackbar Hints (fixed above footer so grid never shrinks and footer remains clickable) -->
+      @if (activeHint && !showFinance && !showWelcomeModal && !isReadOnly) {
+        <div
+          data-testid="board-hint-snackbar"
+          class="pointer-events-none fixed inset-x-0 bottom-[calc(2.6rem+env(safe-area-inset-bottom,0px))] z-40 flex justify-center px-3"
+          (mousedown)="$event.stopPropagation()"
+          (touchstart)="$event.stopPropagation()"
+        >
+          <div
+            role="status"
+            aria-live="polite"
+            class="pointer-events-auto flex items-center gap-2 max-w-md w-fit bg-gray-900 border border-emerald-700/70 text-gray-100 rounded-xl px-3.5 py-2 shadow-xl text-[11px] sm:text-xs leading-snug"
+          >
+            <span class="flex-1 text-left">
+              @if (activeHint === 'plant') {
+                Tippe auf ein Feld oder ziehe über mehrere Parzellen, um etwas anzubauen.
+              } @else {
+                Tipp: Über die Symbole oben kannst du Bodenqualität &amp; Nährstoffe ein- oder ausblenden.
+              }
+            </span>
+            <button
+              type="button"
+              data-testid="dismiss-hint-snackbar-btn"
+              (click)="dismissActiveHint()"
+              aria-label="Hinweis schließen"
+              class="shrink-0 p-1 -mr-1 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
 
       <!-- Grid or Finance (Flex Grow) -->
       @if (!showFinance) {
@@ -1254,6 +1294,51 @@
           </div>
         </div>
       }
+
+      <!-- Empty-Round Confirmation Modal -->
+      @if (showEmptyRoundConfirmModal) {
+        <div
+          data-testid="empty-round-confirm-modal"
+          class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/75"
+          (click)="cancelEmptyRoundConfirm()"
+          (mousedown)="$event.stopPropagation()"
+          (touchstart)="$event.stopPropagation()"
+        >
+          <div
+            class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-6 max-w-md w-full text-left"
+            (click)="$event.stopPropagation()"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="empty-round-confirm-title"
+          >
+            <h2 id="empty-round-confirm-title" class="text-lg font-bold text-white tracking-tight">
+              Noch nichts angebaut
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              Alle Felder sind aktuell noch Brachland. Möchtest du das Jahr trotzdem beenden?
+            </p>
+            <div class="flex items-center justify-end gap-2.5 mt-5">
+              <button
+                type="button"
+                data-testid="empty-round-cancel-btn"
+                (click)="cancelEmptyRoundConfirm()"
+                class="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-slate-200 text-xs font-bold rounded-lg border border-gray-700 transition-colors cursor-pointer"
+              >
+                Zurück zum Acker
+              </button>
+              <button
+                type="button"
+                data-testid="empty-round-proceed-btn"
+                (click)="confirmEmptyRoundProceed()"
+                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg border border-emerald-500 transition-colors cursor-pointer"
+              >
+                Trotzdem beenden
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
     </div>
   }
 </div>

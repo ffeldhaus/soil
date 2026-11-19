@@ -1,16 +1,16 @@
 <header
   aria-label="Spiel-Kopfleiste"
-  class="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-md pt-[env(safe-area-inset-top,0px)] px-[max(0.5rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] sm:px-[max(1.5rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] py-1 flex items-center justify-between gap-2 h-[calc(2.5rem+env(safe-area-inset-top,0px))]"
+  class="fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 shadow-md pt-[env(safe-area-inset-top,0px)] px-[max(0.25rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] sm:px-[max(1.5rem,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))] py-1 flex items-center justify-between gap-0.5 sm:gap-2 h-[calc(2.5rem+env(safe-area-inset-top,0px))]"
 >
   <!-- Left Section: Logo & Stats -->
   <div class="shrink-0 flex items-center gap-2 sm:gap-3">
     <button
       (click)="toggleMobileMenu.emit()"
       data-testid="mobile-menu-toggle"
-      class="lg:hidden p-1 hover:bg-gray-800 rounded-lg text-white shrink-0"
+      class="lg:hidden p-0.5 sm:p-1 hover:bg-gray-800 rounded-lg text-white shrink-0"
       aria-label="Open menu"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>
@@ -34,7 +34,7 @@
       <button
         (click)="toggleLabels.emit()"
         [disabled]="showFinance"
-        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        class="w-6 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
         [class.bg-gray-300]="showLabels"
         [class.text-gray-900]="showLabels"
         [class.border-gray-400]="showLabels"
@@ -50,7 +50,7 @@
       <button
         (click)="toggleSoil.emit()"
         [disabled]="showFinance"
-        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        class="w-6 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
         [class.bg-amber-900]="showSoilOverlay"
         [class.text-white]="showSoilOverlay"
         [class.border-amber-700]="showSoilOverlay"
@@ -71,7 +71,7 @@
       <button
         (click)="toggleNutrition.emit()"
         [disabled]="showFinance"
-        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        class="w-6 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
         [class.bg-blue-600]="showNutritionOverlay"
         [class.text-white]="showNutritionOverlay"
         [class.border-blue-400]="showNutritionOverlay"
@@ -94,7 +94,7 @@
       <button
         (click)="toggleHarvest.emit()"
         [disabled]="showFinance"
-        class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
+        class="w-6 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border transition disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed"
         [class.bg-yellow-500]="showHarvestOverlay"
         [class.text-gray-950]="showHarvestOverlay"
         [class.border-yellow-300]="showHarvestOverlay"
@@ -116,11 +116,11 @@
         </svg>
       </button>
 
-      <div class="w-px h-5 sm:h-6 bg-gray-700 mx-0.5 sm:mx-1"></div>
+      <div class="w-px h-5 sm:h-6 bg-gray-700 mx-0 sm:mx-1"></div>
 
       <button
         (click)="toggleFinance.emit()"
-        class="px-2 sm:px-2.5 h-7 sm:h-8 flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg border transition cursor-pointer"
+        class="px-1 sm:px-2.5 h-7 sm:h-8 flex items-center justify-center gap-0.5 sm:gap-1.5 rounded-lg border transition cursor-pointer"
         [class.bg-gray-200]="showFinance"
         [class.text-gray-950]="showFinance"
         [class.border-gray-300]="showFinance"
@@ -131,34 +131,32 @@
         title="Analysen öffnen"
         aria-label="Analysen öffnen"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
         @if (gameState) {
           <span
-            class="font-mono tabular-nums text-[11px] sm:text-xs font-bold whitespace-nowrap"
+            class="font-mono tabular-nums text-[10px] sm:text-xs font-bold whitespace-nowrap"
             [class.text-gray-950]="showFinance"
             [class.text-amber-400]="!showFinance"
           >{{ getDisplayCapital() | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
         }
       </button>
 
-      <div class="w-px h-5 sm:h-6 bg-gray-700 mx-0.5 sm:mx-1"></div>
+      <div class="w-px h-5 sm:h-6 bg-gray-700 mx-0 sm:mx-1"></div>
 
       @if (gameState?.game?.status !== 'finished') {
         <button (click)="nextRound.emit()" 
           data-tour="next-round"
           [disabled]="isReadOnly || isSubmitted || viewingRound < maxRoundNumber || pendingNextRound" 
-          class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 border border-emerald-500 rounded-lg text-white disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500 shadow-sm"
+          class="px-1.5 sm:px-2.5 h-7 sm:h-8 flex items-center justify-center bg-emerald-600 hover:bg-emerald-500 border border-emerald-500 rounded-lg text-white text-[11px] sm:text-xs font-bold whitespace-nowrap disabled:bg-gray-700 disabled:border-gray-600 disabled:text-gray-500 shadow-sm cursor-pointer disabled:cursor-default"
           [title]="isSubmitted ? 'Warten auf andere...' : 'Nächste Runde'">
           @if (isSubmitted || pendingNextRound) {
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           } @else {
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-            </svg>
+            <span>Weiter</span>
           }
         </button>
       }
@@ -387,7 +385,7 @@
     <button
       (click)="openFeedback.emit()"
       data-testid="hud-feedback-button"
-      class="p-1 sm:p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
+      class="p-0.5 sm:p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-6 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
       title="Feedback geben"
       aria-label="Feedback geben"
     >
@@ -400,7 +398,7 @@
     <button
       (click)="startTour()"
       data-testid="tour-button"
-      class="p-1 sm:p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
+      class="p-0.5 sm:p-1.5 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition w-6 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
       title="Geführte Tour starten"
       aria-label="Geführte Tour starten"
     >
@@ -412,7 +410,7 @@
       <button
         (click)="logout.emit()"
         data-testid="logout-button"
-        class="p-1 sm:p-1.5 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
+        class="p-0.5 sm:p-1.5 hover:bg-red-900/30 rounded-lg text-red-400 hover:text-red-300 transition w-6 h-7 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 cursor-pointer"
         [title]="t('board.logout.title')"
         [attr.aria-label]="t('board.logout.title')"
       >

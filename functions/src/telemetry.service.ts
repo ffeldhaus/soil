@@ -16,7 +16,16 @@ export const ALLOWED_TELEMETRY_ROUTES = new Set<string>([
   '/privacy',
 ]);
 
-export const ALLOWED_TELEMETRY_EVENTS = new Set<string>(['quick_game_started', 'trailer_opened', 'research_export']);
+const QUICK_GAME_ROUND_EVENTS = Array.from({ length: 20 }, (_, i) => `quick_game_round_${i + 1}`);
+
+export const ALLOWED_TELEMETRY_EVENTS = new Set<string>([
+  'quick_game_started',
+  'quick_game_first_plant',
+  ...QUICK_GAME_ROUND_EVENTS,
+  'quick_game_finished',
+  'trailer_opened',
+  'research_export',
+]);
 
 const BOT_UA_REGEX =
   /bot|crawler|spider|slurp|bingpreview|headless|lighthouse|cypress|playwright|puppeteer|facebookexternalhit|whatsapp|twitterbot|linkedinbot|embedly|quora|pinterest|slackbot|discordbot|telegrambot|applebot|yandex|baiduspider|duckduckbot|ia_archiver|semrush|ahrefs|mj12bot|dotbot|petalbot|bytespider|gptbot|claudebot|perplexitybot|ccbot|oai-searchbot/i;

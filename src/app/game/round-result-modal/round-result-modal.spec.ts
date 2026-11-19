@@ -112,9 +112,74 @@ describe('RoundResultModal', () => {
 
     const el = f.nativeElement as HTMLElement;
     expect(el.querySelector('[data-testid="insolvency-banner"]')).toBeTruthy();
-    expect(el.querySelector('[data-testid="contract-bonus-row"]')).toBeTruthy();
-    expect(el.querySelector('[data-testid="overdraft-interest-row"]')).toBeTruthy();
+    expect(el.querySelector('[data-testid="open-analytics-from-result"]')).toBeTruthy();
     expect(el.querySelector('[data-testid="unlocked-stickers-section"]')).toBeTruthy();
     expect(el.querySelector('[data-testid="round-leaderboard"]')).toBeTruthy();
+  });
+
+  it('should emit openAnalytics when analytics link is clicked', () => {
+    const spy = vi.spyOn(component.openAnalytics, 'emit');
+    const btn = fixture.nativeElement.querySelector('[data-testid="open-analytics-from-result"]') as HTMLButtonElement;
+    expect(btn).toBeTruthy();
+    btn.click();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should expand causal analysis by default on easy, collapse on normal, and hide on hard', () => {
+    const mockFactors = {
+      baseYield: 100,
+      soilFactor: 1,
+      nutritionFactor: 1,
+      weatherFactor: 1,
+      pestFactor: 1,
+      machineBonus: 0,
+      organicFactor: 1,
+      soilDelta: {
+        cropRotation: 0,
+        humusRecovery: 0,
+        machineCompaction: 0,
+        fertilizerImpact: 0,
+        pesticideImpact: 0,
+        organismsImpact: 0,
+        weatherErosion: 0,
+        total: 0,
+      },
+      nutritionDelta: {
+        cropUptake: 0,
+        fertilizerAdd: 0,
+        leaching: 0,
+        total: 0,
+      },
+    };
+    const roundWithFactors: Round = {
+      ...mockRound,
+      parcelsSnapshot: [{ index: 0, crop: 'Wheat', soil: 100, nutrition: 100, yield: 100, factors: mockFactors }],
+    };
+
+    const easyFixture = TestBed.createComponent(RoundResultModal);
+    easyFixture.componentInstance.round = roundWithFactors;
+    easyFixture.componentInstance.difficulty = 'easy';
+    easyFixture.detectChanges();
+    expect(easyFixture.nativeElement.querySelector('[data-testid="toggle-causal-analysis"]')).toBeTruthy();
+    expect(easyFixture.nativeElement.textContent).toContain('Ertragsfaktoren');
+
+    const normalFixture = TestBed.createComponent(RoundResultModal);
+    normalFixture.componentInstance.round = roundWithFactors;
+    normalFixture.componentInstance.difficulty = 'normal';
+    normalFixture.detectChanges();
+    const toggleBtn = normalFixture.nativeElement.querySelector(
+      '[data-testid="toggle-causal-analysis"]',
+    ) as HTMLButtonElement;
+    expect(toggleBtn).toBeTruthy();
+    expect(normalFixture.nativeElement.textContent).not.toContain('Ertragsfaktoren');
+    toggleBtn.click();
+    normalFixture.detectChanges();
+    expect(normalFixture.nativeElement.textContent).toContain('Ertragsfaktoren');
+
+    const hardFixture = TestBed.createComponent(RoundResultModal);
+    hardFixture.componentInstance.round = roundWithFactors;
+    hardFixture.componentInstance.difficulty = 'hard';
+    hardFixture.detectChanges();
+    expect(hardFixture.nativeElement.querySelector('[data-testid="causal-breakdown-section"]')).toBeNull();
   });
 });

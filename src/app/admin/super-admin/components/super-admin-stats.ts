@@ -13,6 +13,14 @@ export interface TelemetryMetricRow {
   percent: number;
 }
 
+export interface QuickPlayFunnelRow {
+  key: string;
+  label: string;
+  count: number;
+  conversionPercent: number;
+  barPercent: number;
+}
+
 export interface TelemetryMetricTile {
   key: TelemetrySeriesKey;
   label: string;
@@ -728,6 +736,44 @@ export class SuperAdminStatsComponent {
       ...row,
       percent: max > 0 ? Math.round((row.count / max) * 100) : 0,
     }));
+  }
+
+  get quickPlayFunnelRows(): QuickPlayFunnelRow[] {
+    const events = this.isRangeFiltered ? this.sumWindowMap('events') : this.stats?.telemetry?.events || {};
+    const started = Number(events.quick_game_started || 0);
+
+    const steps: Array<{ key: string; label: string; count: number }> = [
+      { key: 'quick_game_started', label: 'Gestartet', count: started },
+      { key: 'quick_game_first_plant', label: 'Erste Aussaat', count: Number(events.quick_game_first_plant || 0) },
+      ...Array.from({ length: 10 }, (_, i) => {
+        const round = i + 1;
+        const key = `quick_game_round_${round}`;
+        return { key, label: `Runde ${round}`, count: Number(events[key] || 0) };
+      }),
+    ];
+
+    for (const milestone of [15, 20]) {
+      const key = `quick_game_round_${milestone}`;
+      const count = Number(events[key] || 0);
+      if (count > 0) {
+        steps.push({ key, label: `Runde ${milestone}`, count });
+      }
+    }
+
+    steps.push({
+      key: 'quick_game_finished',
+      label: 'Abgeschlossen',
+      count: Number(events.quick_game_finished || 0),
+    });
+
+    return steps.map((step) => {
+      const conversionPercent = started > 0 ? Math.round((step.count / started) * 100) : 0;
+      return {
+        ...step,
+        conversionPercent,
+        barPercent: Math.min(100, Math.max(0, conversionPercent)),
+      };
+    });
   }
 
   get referrerRows(): TelemetryMetricRow[] {

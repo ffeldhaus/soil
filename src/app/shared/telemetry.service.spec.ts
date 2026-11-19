@@ -179,4 +179,27 @@ describe('TelemetryService', () => {
 
     Object.defineProperty(navigator, 'globalPrivacyControl', { value: false, configurable: true });
   });
+
+  it('tracks anonymous quick play funnel events and rejects unknown or out-of-range round events', async () => {
+    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+
+    service.trackEvent('quick_game_first_plant');
+    service.trackEvent('quick_game_round_1');
+    service.trackEvent('quick_game_round_20');
+    service.trackEvent('quick_game_finished');
+    service.trackEvent('quick_game_round_21' as any);
+    service.trackEvent('unknown_event' as any);
+
+    Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+    await service.flush();
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
+    expect(body.events).toEqual({
+      quick_game_first_plant: 1,
+      quick_game_round_1: 1,
+      quick_game_round_20: 1,
+      quick_game_finished: 1,
+    });
+  });
 });

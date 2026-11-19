@@ -12,6 +12,68 @@ export interface AdvisorInsight {
 
 export type AdvisorContext = 'result' | 'next_round';
 
+type HarvestLimiterKey = 'pest' | 'weather' | 'nutrition' | 'soil' | 'organic' | 'other';
+
+interface CropHarvestLoss {
+  key: HarvestLimiterKey;
+  crop: CropType;
+  cropName: string;
+  lossPct: number;
+  relativeYield: number;
+  singleTitle: string;
+  singleMessage: string;
+  singleLevel: 'warning' | 'danger';
+  hint: string;
+}
+
+const LIMITER_COPY: Record<
+  Exclude<HarvestLimiterKey, 'other'>,
+  {
+    consolidatedTitle: string;
+    consolidatedMessage: (cropList: string) => string;
+    singleMessage: (cropName: string, lossPct: number) => string;
+    hint: string;
+  }
+> = {
+  pest: {
+    consolidatedTitle: 'Ertragsverluste durch Schädlingsbefall',
+    consolidatedMessage: (cropList) => `Schädlingsbefall hat den Ertrag bei ${cropList} gemindert.`,
+    singleMessage: (cropName, lossPct) =>
+      `Schädlingsbefall war der Hauptgrund für den Ertragsverlust bei ${cropName} und hat den Ertrag um ${lossPct} Prozent reduziert.`,
+    hint: 'Nützlinge, angepasster Pflanzenschutz oder eine vielfältige Fruchtfolge schützen gefährdete Kulturen.',
+  },
+  weather: {
+    consolidatedTitle: 'Wetterbedingte Ertragsverluste',
+    consolidatedMessage: (cropList) => `Ungünstige Witterung hat den Ertrag bei ${cropList} gemindert.`,
+    singleMessage: (cropName, lossPct) =>
+      `Ungünstige Witterung war der Hauptfaktor bei ${cropName} und hat den Ertrag um ${lossPct} Prozent gemindert.`,
+    hint: 'Ein hoher Humusgehalt puffert Wetterextreme ab und stabilisiert die Erträge.',
+  },
+  nutrition: {
+    consolidatedTitle: 'Nährstoffbedingte Ertragsverluste',
+    consolidatedMessage: (cropList) =>
+      `Unzureichende oder unausgewogene Nährstoffversorgung hat den Ertrag bei ${cropList} gedrückt.`,
+    singleMessage: (cropName, lossPct) =>
+      `Unzureichende oder unausgewogene Nährstoffversorgung hat den Ertrag bei ${cropName} um ${lossPct} Prozent gedrückt.`,
+    hint: 'Passe die Düngung und den Anbau von Leguminosen gezielt an den Nährstoffbedarf der Kultur an.',
+  },
+  soil: {
+    consolidatedTitle: 'Bodenbedingte Ertragsverluste',
+    consolidatedMessage: (cropList) => `Geschwächte Bodenfruchtbarkeit hat den Ertrag bei ${cropList} verringert.`,
+    singleMessage: (cropName, lossPct) =>
+      `Geschwächte Bodenfruchtbarkeit hat den Ertrag bei ${cropName} um ${lossPct} Prozent verringert.`,
+    hint: 'Reduziere schwere Maschinen und baue bodenaufbauende Kulturen wie Ackerbohnen, Erbsen oder Weidegras an.',
+  },
+  organic: {
+    consolidatedTitle: 'Umstellungsbedingte Ertragsverluste',
+    consolidatedMessage: (cropList) =>
+      `Die laufende Umstellung auf ökologischen Landbau mindert den vermarktbaren Ertrag bei ${cropList}.`,
+    singleMessage: (cropName, lossPct) =>
+      `Die laufende Umstellung auf ökologischen Landbau mindert den vermarktbaren Ertrag bei ${cropName} um ${lossPct} Prozent.`,
+    hint: 'Nach Abschluss der Umstellungsphase erhältst du das Bio-Siegel und höhere Verkaufspreise.',
+  },
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -25,6 +87,7 @@ export class AdvisorService {
     this.addSoilInsights(insights, currentRound, previousRound, context);
     this.addNutritionInsights(insights, currentRound, previousRound, context);
     this.addFinancialInsights(insights, currentRound, context);
+    this.addPositiveInsights(insights, currentRound, context);
 
     return insights;
   }
@@ -50,95 +113,131 @@ export class AdvisorService {
       return;
     }
 
-    // Check for low yields relative to base yield or dominant causal limiters from parcel.factors
+    // Collect crop losses and group by primary limiter to avoid near-duplicate cards
+    const groupedLosses = new Map<HarvestLimiterKey, CropHarvestLoss[]>();
     for (const [crop, amount] of crops) {
-      this.appendCropHarvestInsight(insights, round, crop as CropType, amount);
+      const loss = this.collectCropHarvestLoss(round, crop as CropType, amount);
+      if (!loss) continue;
+      const existing = groupedLosses.get(loss.key);
+      if (existing) {
+        existing.push(loss);
+      } else {
+        groupedLosses.set(loss.key, [loss]);
+      }
+    }
+
+    for (const [key, group] of groupedLosses) {
+      insights.push(this.buildHarvestLossInsight(key, group));
     }
   }
 
-  private appendCropHarvestInsight(insights: AdvisorInsight[], round: Round, crop: CropType, amount: number) {
+  private buildHarvestLossInsight(key: HarvestLimiterKey, group: CropHarvestLoss[]): AdvisorInsight {
+    if (group.length === 1) {
+      const single = group[0];
+      return {
+        type: 'harvest',
+        level: single.singleLevel,
+        title: single.singleTitle,
+        message: single.singleMessage,
+        hint: single.hint,
+      };
+    }
+
+    const level = group.some((item) => item.relativeYield < 0.5) ? 'danger' : 'warning';
+    const cropList = this.formatCropLossList(group);
+    if (key === 'other') {
+      return {
+        type: 'harvest',
+        level,
+        title: 'Geringe Erträge bei mehreren Kulturen',
+        message: `Der Ertrag lag bei ${cropList} deutlich unter dem Basisertrag.`,
+        hint: group[0].hint,
+      };
+    }
+
+    const copy = LIMITER_COPY[key];
+    return {
+      type: 'harvest',
+      level,
+      title: copy.consolidatedTitle,
+      message: copy.consolidatedMessage(cropList),
+      hint: copy.hint,
+    };
+  }
+
+  private collectCropHarvestLoss(round: Round, crop: CropType, amount: number): CropHarvestLoss | null {
     const config = GAME_CONSTANTS.CROPS[crop];
-    if (!config) return;
+    if (!config) return null;
 
     const cropParcels = round.parcelsSnapshot.filter((p) => p.crop === crop);
-    if (cropParcels.length === 0) return;
+    if (cropParcels.length === 0) return null;
 
     const relativeYield = amount / cropParcels.length / config.baseYield;
-    const causalDiagnosis = this.diagnoseCropYieldLimiter(crop, cropParcels);
-    if (causalDiagnosis) {
-      insights.push({
-        type: 'harvest',
-        level: relativeYield < 0.5 ? 'danger' : 'warning',
-        title: `Ertragsverlust bei ${this.getCropName(crop)}`,
-        message: causalDiagnosis.message,
-        hint: causalDiagnosis.hint,
-      });
-    } else if (relativeYield < 0.4 && !round.result?.bioSiegel) {
-      insights.push({
-        type: 'harvest',
-        level: 'warning',
-        title: `Geringer Ertrag: ${this.getCropName(crop)}`,
-        message: `Der Ertrag bei ${this.getCropName(crop)} lag nur bei ${Math.round(relativeYield * 100)} Prozent des Basisertrags.`,
-        hint: 'Prüfe die Bodenqualität, die Nährstoffversorgung und mögliche Schädlinge auf diesen Parzellen.',
-      });
+    const cropName = this.getCropName(crop);
+    const worst = this.findWorstYieldLimiter(cropParcels);
+
+    if (worst) {
+      const lossPct = Math.round((1 - worst.value) * 100);
+      const copy = LIMITER_COPY[worst.key];
+      return {
+        key: worst.key,
+        crop,
+        cropName,
+        lossPct,
+        relativeYield,
+        singleTitle: `Ertragsverlust bei ${cropName}`,
+        singleMessage: copy.singleMessage(cropName, lossPct),
+        singleLevel: relativeYield < 0.5 ? 'danger' : 'warning',
+        hint: copy.hint,
+      };
     }
+
+    if (relativeYield < 0.4 && !round.result?.bioSiegel) {
+      const yieldPct = Math.round(relativeYield * 100);
+      return {
+        key: 'other',
+        crop,
+        cropName,
+        lossPct: Math.round((1 - relativeYield) * 100),
+        relativeYield,
+        singleTitle: `Geringer Ertrag: ${cropName}`,
+        singleMessage: `Der Ertrag bei ${cropName} lag nur bei ${yieldPct} Prozent des Basisertrags.`,
+        singleLevel: 'warning',
+        hint: 'Prüfe die Bodenqualität, die Nährstoffversorgung und mögliche Schädlinge auf diesen Parzellen.',
+      };
+    }
+
+    return null;
   }
 
-  private diagnoseCropYieldLimiter(crop: CropType, cropParcels: Parcel[]): { message: string; hint: string } | null {
+  private findWorstYieldLimiter(
+    cropParcels: Parcel[],
+  ): { key: Exclude<HarvestLimiterKey, 'other'>; value: number } | null {
     const withFactors = cropParcels.filter((p) => p.factors !== undefined);
     if (withFactors.length === 0) return null;
 
     const avgFactor = (selector: (p: Parcel) => number) =>
       withFactors.reduce((sum, p) => sum + selector(p), 0) / withFactors.length;
 
-    const avgPest = avgFactor((p) => p.factors!.pestFactor);
-    const avgWeather = avgFactor((p) => p.factors!.weatherFactor);
-    const avgNutrition = avgFactor((p) => p.factors!.nutritionFactor);
-    const avgSoil = avgFactor((p) => p.factors!.soilFactor);
-    const avgOrganic = avgFactor((p) => p.factors!.organicFactor);
-
-    const limiters: Array<{ key: 'pest' | 'weather' | 'nutrition' | 'soil' | 'organic'; value: number }> = [
-      { key: 'pest', value: avgPest },
-      { key: 'weather', value: avgWeather },
-      { key: 'nutrition', value: avgNutrition },
-      { key: 'soil', value: avgSoil },
-      { key: 'organic', value: avgOrganic },
+    const limiters: Array<{ key: Exclude<HarvestLimiterKey, 'other'>; value: number }> = [
+      { key: 'pest', value: avgFactor((p) => p.factors!.pestFactor) },
+      { key: 'weather', value: avgFactor((p) => p.factors!.weatherFactor) },
+      { key: 'nutrition', value: avgFactor((p) => p.factors!.nutritionFactor) },
+      { key: 'soil', value: avgFactor((p) => p.factors!.soilFactor) },
+      { key: 'organic', value: avgFactor((p) => p.factors!.organicFactor) },
     ];
 
     limiters.sort((a, b) => a.value - b.value);
     const worst = limiters[0];
     if (!worst || worst.value >= 0.85) return null;
+    return worst;
+  }
 
-    const lossPct = Math.round((1 - worst.value) * 100);
-    const cropName = this.getCropName(crop);
-
-    switch (worst.key) {
-      case 'pest':
-        return {
-          message: `Schädlingsbefall war der Hauptgrund für den Ertragsverlust bei ${cropName} und hat den Ertrag um ${lossPct} Prozent reduziert.`,
-          hint: 'Nützlinge, angepasster Pflanzenschutz oder eine vielfältige Fruchtfolge schützen gefährdete Kulturen.',
-        };
-      case 'weather':
-        return {
-          message: `Ungünstige Witterung war der Hauptfaktor bei ${cropName} und hat den Ertrag um ${lossPct} Prozent gemindert.`,
-          hint: 'Ein hoher Humusgehalt puffert Wetterextreme ab und stabilisiert die Erträge.',
-        };
-      case 'nutrition':
-        return {
-          message: `Unzureichende oder unausgewogene Nährstoffversorgung hat den Ertrag bei ${cropName} um ${lossPct} Prozent gedrückt.`,
-          hint: 'Passe die Düngung und den Anbau von Leguminosen gezielt an den Nährstoffbedarf der Kultur an.',
-        };
-      case 'soil':
-        return {
-          message: `Geschwächte Bodenfruchtbarkeit hat den Ertrag bei ${cropName} um ${lossPct} Prozent verringert.`,
-          hint: 'Reduziere schwere Maschinen und baue bodenaufbauende Kulturen wie Ackerbohnen, Erbsen oder Weidegras an.',
-        };
-      case 'organic':
-        return {
-          message: `Die laufende Umstellung auf ökologischen Landbau mindert den vermarktbaren Ertrag bei ${cropName} um ${lossPct} Prozent.`,
-          hint: 'Nach Abschluss der Umstellungsphase erhältst du das Bio-Siegel und höhere Verkaufspreise.',
-        };
-    }
+  private formatCropLossList(items: CropHarvestLoss[]): string {
+    const formatted = items.map((item) => `${item.cropName} (−${item.lossPct} %)`);
+    if (formatted.length <= 1) return formatted[0] ?? '';
+    if (formatted.length === 2) return `${formatted[0]} und ${formatted[1]}`;
+    return `${formatted.slice(0, -1).join(', ')} und ${formatted[formatted.length - 1]}`;
   }
 
   private addSoilInsights(
@@ -253,6 +352,40 @@ export class AdvisorService {
         title: 'Hoher Verlust',
         message: 'Du hast in dieser Runde ein massives finanzielles Minus gemacht.',
         hint: 'Hohe Investitionskosten standen in keinem gesunden Verhältnis zu den erzielten Erlösen.',
+      });
+    }
+  }
+
+  private addPositiveInsights(insights: AdvisorInsight[], round: Round, context: AdvisorContext) {
+    if (context !== 'result' || !round.result) return;
+
+    const distinctNonFallowCrops = new Set(round.parcelsSnapshot.filter((p) => p.crop !== 'Fallow').map((p) => p.crop));
+    const parcelsWithFactors = round.parcelsSnapshot.filter((p) => p.factors !== undefined);
+    const noPestDamage =
+      round.result.events?.vermin?.length === 0 ||
+      (parcelsWithFactors.length > 0 && parcelsWithFactors.every((p) => p.factors!.pestFactor >= 0.99));
+
+    if (distinctNonFallowCrops.size >= 3 && noPestDamage) {
+      insights.push({
+        type: 'harvest',
+        level: 'info',
+        title: 'Starke Artenvielfalt',
+        message: 'Deine vielfältige Fruchtfolge hat Schädlingsbefall in diesem Jahr wirksam vorgebeugt.',
+      });
+    }
+
+    const avgNutrition = this.calculateAvgNutrition(round.parcelsSnapshot);
+    if (
+      round.result.profit > 0 &&
+      !Number.isNaN(avgNutrition) &&
+      avgNutrition >= GAME_CONSTANTS.NUTRITION.START * 0.7 &&
+      avgNutrition <= GAME_CONSTANTS.SOIL.NUTRITION_OVER_PENALTY_START
+    ) {
+      insights.push({
+        type: 'nutrition',
+        level: 'info',
+        title: 'Ausgewogene Nährstoffbilanz',
+        message: 'Guter Ertrag bei stabiler Nährstoffversorgung ohne Überdüngung.',
       });
     }
   }

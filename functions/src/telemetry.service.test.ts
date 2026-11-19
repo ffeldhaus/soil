@@ -46,14 +46,28 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
     const sanitized = sanitizeTelemetryPayload({
       mode: 'pwa',
       views: { '/': 2, '/manual': 99, '/trailer': 4, '/invalid': 5 },
-      events: { quick_game_started: 3, unknown_event: 2 },
+      events: {
+        quick_game_started: 3,
+        quick_game_first_plant: 2,
+        quick_game_round_1: 2,
+        quick_game_round_20: 1,
+        quick_game_finished: 1,
+        quick_game_round_21: 4,
+        unknown_event: 2,
+      },
       referrers: { 'https://www.bildungsserver.de/': 1, 'https://soil.app/': 4 },
     });
 
     expect(sanitized).to.deep.equal({
       mode: 'pwa',
       views: { '/': 2, '/manual': 20, '/trailer': 4 },
-      events: { quick_game_started: 3 },
+      events: {
+        quick_game_started: 3,
+        quick_game_first_plant: 2,
+        quick_game_round_1: 2,
+        quick_game_round_20: 1,
+        quick_game_finished: 1,
+      },
       referrers: { 'bildungsserver.de': 1 },
       totalViews: 26,
     });

@@ -2,7 +2,56 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { CANONICAL_WEB_ORIGIN, isLocalBrowserDevServer, isNativeCapacitorApp } from './capacitor-env';
 
-export type TelemetryEventName = 'quick_game_started' | 'trailer_opened' | 'research_export';
+export type QuickGameRoundEventName =
+  | 'quick_game_round_1'
+  | 'quick_game_round_2'
+  | 'quick_game_round_3'
+  | 'quick_game_round_4'
+  | 'quick_game_round_5'
+  | 'quick_game_round_6'
+  | 'quick_game_round_7'
+  | 'quick_game_round_8'
+  | 'quick_game_round_9'
+  | 'quick_game_round_10'
+  | 'quick_game_round_11'
+  | 'quick_game_round_12'
+  | 'quick_game_round_13'
+  | 'quick_game_round_14'
+  | 'quick_game_round_15'
+  | 'quick_game_round_16'
+  | 'quick_game_round_17'
+  | 'quick_game_round_18'
+  | 'quick_game_round_19'
+  | 'quick_game_round_20';
+
+export type TelemetryEventName =
+  | 'quick_game_started'
+  | 'quick_game_first_plant'
+  | QuickGameRoundEventName
+  | 'quick_game_finished'
+  | 'trailer_opened'
+  | 'research_export';
+
+export const QUICK_GAME_ROUND_EVENTS: readonly QuickGameRoundEventName[] = Array.from(
+  { length: 20 },
+  (_, i) => `quick_game_round_${i + 1}` as QuickGameRoundEventName,
+);
+
+const ALLOWED_EVENTS = new Set<string>([
+  'quick_game_started',
+  'quick_game_first_plant',
+  ...QUICK_GAME_ROUND_EVENTS,
+  'quick_game_finished',
+  'trailer_opened',
+  'research_export',
+]);
+
+export function getQuickGameRoundEventName(roundNumber: number): QuickGameRoundEventName | null {
+  if (!Number.isInteger(roundNumber) || roundNumber < 1 || roundNumber > 20) {
+    return null;
+  }
+  return `quick_game_round_${roundNumber}` as QuickGameRoundEventName;
+}
 
 const ALLOWED_ROUTES = new Set<string>([
   '/',
@@ -176,7 +225,7 @@ export class TelemetryService {
   }
 
   trackEvent(eventName: TelemetryEventName): void {
-    if (this.shouldSuppressTelemetry()) return;
+    if (this.shouldSuppressTelemetry() || !ALLOWED_EVENTS.has(eventName)) return;
 
     this.pendingEvents[eventName] = Math.min(MAX_PENDING_PER_KEY, (this.pendingEvents[eventName] || 0) + 1);
 
