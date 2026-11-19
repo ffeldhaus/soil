@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.5.4] - 2026-11-19
 ### Changed
 - **Sofort-Spiel-Funnel** unter `/admin/super` (`src/app/admin/super-admin/components/super-admin-stats.*`) von der 13-zeiligen Liste auf ein kompaktes vertikales Säulendiagramm mit `Erste Aussaat`-/Abschlussrate, Hover-Details und `Unbekannt`-Anzeige für historische Zeiträume ohne Runden-Tracking (vor `v3.5.3`) umgestellt.
 
