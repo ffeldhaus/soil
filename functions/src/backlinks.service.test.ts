@@ -30,22 +30,27 @@ describe('backlinks.service', () => {
     const calledUrls: string[] = [];
     const capturedHeaders: Record<string, string>[] = [];
 
+    const mockBodiesBySubstring: ReadonlyArray<readonly [string, number, string]> = [
+      ['bpb.de', 200, '<a href="https://soil.app/" rel="noopener noreferrer">SOIL</a>'],
+      ['globaleslernen.de', 200, '<html><body>Kein Link gerendert</body></html>'],
+      ['hubbs.schule', 200, '<a href="/sodix/proxy-file/30188/0">Starten</a>'],
+      [
+        'https://mundo.schule/api/source/6aeddd2caf9d24e43514425d',
+        200,
+        '{"name":"SOIL","website":"https://soil.app/","imprint":"https://soil.app/impressum"}',
+      ],
+      ['github.com', 404, 'Not Found'],
+    ];
+
     const fetchMock: FetchLike = vi.fn(async (input, init) => {
       const url = String(input);
       calledUrls.push(url);
-      capturedHeaders.push((init?.headers as Record<string, string>) || {});
+      capturedHeaders.push((init?.headers as Record<string, string>) ?? {});
 
-      if (url.includes('bpb.de')) {
-        return mockResponse(200, '<a href="https://soil.app/" rel="noopener noreferrer">SOIL</a>');
-      }
-      if (url.includes('globaleslernen.de')) {
-        return mockResponse(200, '<html><body>Kein Link gerendert</body></html>');
-      }
-      if (url.includes('hubbs.schule')) {
-        return mockResponse(200, '<a href="/sodix/proxy-file/30188/0">Starten</a>');
-      }
-      if (url.includes('github.com')) {
-        return mockResponse(404, 'Not Found');
+      for (const [pattern, status, body] of mockBodiesBySubstring) {
+        if (url.includes(pattern)) {
+          return mockResponse(status, body);
+        }
       }
       const timeoutErr = new Error('The operation was aborted due to timeout');
       timeoutErr.name = 'TimeoutError';
@@ -57,7 +62,9 @@ describe('backlinks.service', () => {
     const expectedLiveIds = KNOWN_BACKLINKS.filter((b) => b.status === 'live').map((b) => b.id);
     expect(response.results.map((r) => r.id)).toEqual(expectedLiveIds);
     expect(response.results.some((r) => r.id === 'bne-portal')).toBe(false);
-    expect(calledUrls.length).toBe(5);
+    expect(calledUrls.length).toBe(6);
+    expect(calledUrls).toContain('https://mundo.schule/api/source/6aeddd2caf9d24e43514425d');
+    expect(calledUrls).not.toContain('https://mundo.schule/details/SODIX-0001172770');
     expect(capturedHeaders[0]['User-Agent']).toBe(BACKLINK_CHECKER_USER_AGENT);
 
     const bpb = response.results.find((r) => r.id === 'bpb');
@@ -68,6 +75,9 @@ describe('backlinks.service', () => {
 
     const hubbs = response.results.find((r) => r.id === 'hubbs');
     expect(hubbs).toMatchObject({ ok: true, httpStatus: 200, linksToSoil: true });
+
+    const mundo = response.results.find((r) => r.id === 'mundo');
+    expect(mundo).toMatchObject({ ok: true, httpStatus: 200, linksToSoil: true });
 
     const github = response.results.find((r) => r.id === 'github');
     expect(github).toMatchObject({ ok: false, httpStatus: 404, linksToSoil: false });

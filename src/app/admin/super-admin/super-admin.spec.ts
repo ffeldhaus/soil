@@ -495,6 +495,7 @@ describe('SuperAdminComponent', () => {
         { id: 'bpb', ok: true, httpStatus: 200, linksToSoil: true, checkedAt: '2026-11-16T18:30:00.000Z' },
         { id: 'globaleslernen', ok: true, httpStatus: 200, linksToSoil: true, checkedAt: '2026-11-16T18:30:00.000Z' },
         { id: 'hubbs', ok: true, httpStatus: 200, linksToSoil: true, checkedAt: '2026-11-16T18:30:00.000Z' },
+        { id: 'mundo', ok: true, httpStatus: 200, linksToSoil: true, checkedAt: '2026-11-16T18:30:00.000Z' },
         { id: 'github', ok: false, httpStatus: 404, linksToSoil: false, checkedAt: '2026-11-16T18:30:00.000Z' },
         { id: 'youtube', ok: false, httpStatus: 200, linksToSoil: false, checkedAt: '2026-11-16T18:30:00.000Z' },
       ],
@@ -509,6 +510,7 @@ describe('SuperAdminComponent', () => {
     expect(card.textContent).toContain('bpb.de');
     expect(card.textContent).toContain('globaleslernen.de');
     expect(card.textContent).toContain('hubbs.schule');
+    expect(card.textContent).toContain('mundo.schule');
     expect(card.textContent).toContain('bne-portal.de');
     expect(card.textContent).toContain('Unterdrückt (noreferrer → Direktaufruf)');
 
@@ -536,6 +538,9 @@ describe('SuperAdminComponent', () => {
     expect(gameServiceMock.checkBacklinkStatus).toHaveBeenCalledTimes(1);
     expect(
       (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-bpb"]') as HTMLElement).textContent,
+    ).toContain('HTTP 200 · Link aktiv');
+    expect(
+      (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-mundo"]') as HTMLElement).textContent,
     ).toContain('HTTP 200 · Link aktiv');
     expect(
       (fixture.nativeElement.querySelector('[data-testid="backlink-live-status-youtube"]') as HTMLElement).textContent,

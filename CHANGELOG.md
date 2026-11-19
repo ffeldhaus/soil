@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- **MUNDO – Bildungsmediathek der Länder** (`mundo.schule`, SODIX-ID `SODIX-0001172770`) als bestätigte Live-Verlinkung in `marketing/verlinkungen.md` und `KNOWN_BACKLINKS` (`src/app/types.ts`) unter `/admin/super` aufgenommen sowie `checkBacklinkStatus` (`functions/src/backlinks.service.ts`) um optionale `verificationUrl`-Prüfung für öffentliche JSON-Quell-Endpunkte von SPA-Mediatheken erweitert.
+
 ## [3.5.4] - 2026-11-19
 ### Changed
 - **Sofort-Spiel-Funnel** unter `/admin/super` (`src/app/admin/super-admin/components/super-admin-stats.*`) von der 13-zeiligen Liste auf ein kompaktes vertikales Säulendiagramm mit `Erste Aussaat`-/Abschlussrate, Hover-Details und `Unbekannt`-Anzeige für historische Zeiträume ohne Runden-Tracking (vor `v3.5.3`) umgestellt.

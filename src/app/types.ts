@@ -345,6 +345,7 @@ export interface KnownBacklinkEntry {
   organization: string;
   domain: string;
   listingUrl: string;
+  verificationUrl?: string;
   status: 'live' | 'pending';
   submittedAt: string;
   publishedAt?: string;
@@ -408,6 +409,20 @@ export const KNOWN_BACKLINKS: readonly KnownBacklinkEntry[] = [
     seoType: '302-dofollow',
     referrerBehavior: 'transmitted',
     note: 'Weiterleitung via /sodix/proxy-file/30188/0 (HTTP 302); Detail-<h1> startet aktuell ohne „SOIL“.',
+  },
+  {
+    id: 'mundo',
+    name: 'MUNDO – Bildungsmediathek der Länder (SODIX-0001172770)',
+    organization: 'FWU Institut für Film und Bild / Länder',
+    domain: 'mundo.schule',
+    listingUrl: 'https://mundo.schule/details/SODIX-0001172770',
+    verificationUrl: 'https://mundo.schule/api/source/6aeddd2caf9d24e43514425d',
+    status: 'live',
+    submittedAt: '2026-11-04',
+    publishedAt: '2026-11-19',
+    seoType: 'dofollow',
+    referrerBehavior: 'suppressed_noreferrer',
+    note: 'Vue-SPA verlinkt / und /impressum; Server sendet Referrer-Policy: no-referrer.',
   },
   {
     id: 'github',

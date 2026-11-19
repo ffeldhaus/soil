@@ -39,14 +39,15 @@ async function checkSingleBacklink(
   fetchImpl: FetchLike,
   checkedAt: string,
 ): Promise<BacklinkCheckResult> {
+  const targetUrl = entry.verificationUrl ?? entry.listingUrl;
   try {
-    const response = await fetchImpl(entry.listingUrl, {
+    const response = await fetchImpl(targetUrl, {
       method: 'GET',
       redirect: 'follow',
       signal: AbortSignal.timeout(BACKLINK_CHECK_TIMEOUT_MS),
       headers: {
         'User-Agent': BACKLINK_CHECKER_USER_AGENT,
-        Accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8',
       },
     });
 
