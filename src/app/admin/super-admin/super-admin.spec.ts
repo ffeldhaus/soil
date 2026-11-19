@@ -582,17 +582,111 @@ describe('SuperAdminComponent', () => {
 
     const funnel = statsComp.quickPlayFunnelRows;
     expect(funnel.find((r) => r.key === 'quick_game_started')?.conversionPercent).toBe(100);
+    expect(funnel.find((r) => r.key === 'quick_game_started')?.shortLabel).toBe('Start');
     expect(funnel.find((r) => r.key === 'quick_game_first_plant')?.conversionPercent).toBe(80);
+    expect(funnel.find((r) => r.key === 'quick_game_first_plant')?.shortLabel).toBe('Aussaat');
+    expect(funnel.find((r) => r.key === 'quick_game_first_plant')?.dropOffPercent).toBe(20);
     expect(funnel.find((r) => r.key === 'quick_game_round_1')?.conversionPercent).toBe(65);
+    expect(funnel.find((r) => r.key === 'quick_game_round_1')?.shortLabel).toBe('R1');
     expect(funnel.find((r) => r.key === 'quick_game_round_10')?.conversionPercent).toBe(25);
     expect(funnel.find((r) => r.key === 'quick_game_round_15')?.count).toBe(12);
     expect(funnel.find((r) => r.key === 'quick_game_round_20')).toBeUndefined();
     expect(funnel.find((r) => r.key === 'quick_game_finished')?.conversionPercent).toBe(10);
+    expect(funnel.find((r) => r.key === 'quick_game_finished')?.shortLabel).toBe('Fertig');
+    expect(statsComp.quickPlayFirstPlantRate).toBe(80);
+    expect(statsComp.quickPlayCompletionRate).toBe(10);
 
     const funnelEl = fixture.nativeElement.querySelector('[data-testid="superadmin-quick-play-funnel"]') as HTMLElement;
     expect(funnelEl).toBeTruthy();
     expect(funnelEl.textContent).toContain('Sofort-Spiel-Funnel');
-    expect(funnelEl.textContent).toContain('Erste Aussaat');
+    expect(funnelEl.textContent).toContain('Erste Aussaat: 80%');
+    expect(funnelEl.textContent).toContain('Abschlussrate: 10%');
     expect(funnelEl.textContent).toContain('Abgeschlossen');
+    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_started"]')?.textContent).toContain('Start');
+    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_finished"]')?.textContent).toContain('Fertig');
+
+    statsComp.setHoveredFunnelStep(1);
+    fixture.detectChanges();
+    expect(funnelEl.textContent).toContain('−20% zum Vorschritt');
+  });
+
+  it('shows Unbekannt instead of 0% for historical periods with quick_game_started > 0 and no post-start funnel events', async () => {
+    gameServiceMock.getSystemStats.mockResolvedValue({
+      ...SAMPLE_STATS_WITH_SERIES,
+      telemetry: {
+        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
+        events: {
+          quick_game_started: 17,
+          trailer_opened: 4,
+        },
+      },
+    });
+
+    const fixture = TestBed.createComponent(SuperAdminComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const statsDebug = fixture.debugElement.query(By.directive(SuperAdminStatsComponent));
+    const statsComp = statsDebug.componentInstance as SuperAdminStatsComponent;
+    statsComp.selectRange('all');
+    fixture.detectChanges();
+
+    expect(statsComp.hasQuickPlayFunnelData).toBe(false);
+    expect(statsComp.quickPlayFirstPlantRate).toBeNull();
+    expect(statsComp.quickPlayCompletionRate).toBeNull();
+
+    const funnel = statsComp.quickPlayFunnelRows;
+    expect(funnel.find((r) => r.key === 'quick_game_started')?.isUnknown).toBe(false);
+    expect(funnel.find((r) => r.key === 'quick_game_first_plant')?.isUnknown).toBe(true);
+    expect(funnel.find((r) => r.key === 'quick_game_first_plant')?.dropOffPercent).toBeNull();
+    expect(funnel.find((r) => r.key === 'quick_game_round_1')?.isUnknown).toBe(true);
+    expect(funnel.find((r) => r.key === 'quick_game_finished')?.isUnknown).toBe(true);
+
+    const funnelEl = fixture.nativeElement.querySelector('[data-testid="superadmin-quick-play-funnel"]') as HTMLElement;
+    expect(funnelEl.textContent).toContain('Erste Aussaat:');
+    expect(funnelEl.textContent).toContain('Unbekannt');
+    expect(funnelEl.textContent).toContain('Fortschritt für ältere Zeiträume unbekannt (Runden-Funnel ab v3.5.3).');
+    expect(funnelEl.textContent).not.toContain('Erste Aussaat: 0%');
+    expect(funnelEl.textContent).not.toContain('Abschlussrate: 0%');
+    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_started"]')?.textContent).toContain('17');
+    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_started"]')?.textContent).toContain('100%');
+    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_first_plant"]')?.textContent).toContain('—');
+    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_finished"]')?.textContent).toContain('—');
+  });
+
+  it('shows active funnel rates normally when post-start events are present', async () => {
+    gameServiceMock.getSystemStats.mockResolvedValue({
+      ...SAMPLE_STATS_WITH_SERIES,
+      telemetry: {
+        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
+        events: {
+          quick_game_started: 10,
+          quick_game_first_plant: 7,
+          quick_game_round_1: 5,
+          quick_game_finished: 2,
+        },
+      },
+    });
+
+    const fixture = TestBed.createComponent(SuperAdminComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const statsDebug = fixture.debugElement.query(By.directive(SuperAdminStatsComponent));
+    const statsComp = statsDebug.componentInstance as SuperAdminStatsComponent;
+    statsComp.selectRange('all');
+    fixture.detectChanges();
+
+    expect(statsComp.hasQuickPlayFunnelData).toBe(true);
+    expect(statsComp.quickPlayFirstPlantRate).toBe(70);
+    expect(statsComp.quickPlayCompletionRate).toBe(20);
+    expect(statsComp.quickPlayFunnelRows.every((r) => !r.isUnknown)).toBe(true);
+
+    const funnelEl = fixture.nativeElement.querySelector('[data-testid="superadmin-quick-play-funnel"]') as HTMLElement;
+    expect(funnelEl.textContent).toContain('Erste Aussaat: 70%');
+    expect(funnelEl.textContent).toContain('Abschlussrate: 20%');
+    expect(funnelEl.textContent).not.toContain('Fortschritt für ältere Zeiträume unbekannt');
   });
 });

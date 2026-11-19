@@ -16,9 +16,12 @@ export interface TelemetryMetricRow {
 export interface QuickPlayFunnelRow {
   key: string;
   label: string;
+  shortLabel: string;
   count: number;
   conversionPercent: number;
   barPercent: number;
+  dropOffPercent: number | null;
+  isUnknown: boolean;
 }
 
 export interface TelemetryMetricTile {
@@ -198,6 +201,7 @@ export class SuperAdminStatsComponent {
   customStartDate = '';
   customEndDate = '';
   hoveredDayIndex: number | null = null;
+  hoveredFunnelIndex: number | null = null;
 
   private activeSeries = new Set<TelemetrySeriesKey>(['total', 'web', 'pwa', 'interactions']);
 
@@ -372,11 +376,13 @@ export class SuperAdminStatsComponent {
     }
     this.selectedRange = preset;
     this.hoveredDayIndex = null;
+    this.hoveredFunnelIndex = null;
     this.cdr.markForCheck();
   }
 
   onCustomDateChange(): void {
     this.hoveredDayIndex = null;
+    this.hoveredFunnelIndex = null;
     this.cdr.markForCheck();
   }
 
@@ -738,17 +744,44 @@ export class SuperAdminStatsComponent {
     }));
   }
 
-  get quickPlayFunnelRows(): QuickPlayFunnelRow[] {
-    const events = this.isRangeFiltered ? this.sumWindowMap('events') : this.stats?.telemetry?.events || {};
-    const started = Number(events.quick_game_started || 0);
+  private get currentTelemetryEvents(): Record<string, number> {
+    return this.isRangeFiltered ? this.sumWindowMap('events') : this.stats?.telemetry?.events || {};
+  }
 
-    const steps: Array<{ key: string; label: string; count: number }> = [
-      { key: 'quick_game_started', label: 'Gestartet', count: started },
-      { key: 'quick_game_first_plant', label: 'Erste Aussaat', count: Number(events.quick_game_first_plant || 0) },
+  get quickPlayStartedCount(): number {
+    return Number(this.currentTelemetryEvents.quick_game_started || 0);
+  }
+
+  get hasQuickPlayFunnelData(): boolean {
+    const events = this.currentTelemetryEvents;
+    if (Number(events.quick_game_first_plant || 0) > 0 || Number(events.quick_game_finished || 0) > 0) {
+      return true;
+    }
+    for (let round = 1; round <= 20; round++) {
+      if (Number(events[`quick_game_round_${round}`] || 0) > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  get quickPlayFunnelRows(): QuickPlayFunnelRow[] {
+    const events = this.currentTelemetryEvents;
+    const started = Number(events.quick_game_started || 0);
+    const isPostStartUnknown = !this.hasQuickPlayFunnelData && started > 0;
+
+    const steps: Array<{ key: string; label: string; shortLabel: string; count: number }> = [
+      { key: 'quick_game_started', label: 'Gestartet', shortLabel: 'Start', count: started },
+      {
+        key: 'quick_game_first_plant',
+        label: 'Erste Aussaat',
+        shortLabel: 'Aussaat',
+        count: Number(events.quick_game_first_plant || 0),
+      },
       ...Array.from({ length: 10 }, (_, i) => {
         const round = i + 1;
         const key = `quick_game_round_${round}`;
-        return { key, label: `Runde ${round}`, count: Number(events[key] || 0) };
+        return { key, label: `Runde ${round}`, shortLabel: `R${round}`, count: Number(events[key] || 0) };
       }),
     ];
 
@@ -756,24 +789,53 @@ export class SuperAdminStatsComponent {
       const key = `quick_game_round_${milestone}`;
       const count = Number(events[key] || 0);
       if (count > 0) {
-        steps.push({ key, label: `Runde ${milestone}`, count });
+        steps.push({ key, label: `Runde ${milestone}`, shortLabel: `R${milestone}`, count });
       }
     }
 
     steps.push({
       key: 'quick_game_finished',
       label: 'Abgeschlossen',
+      shortLabel: 'Fertig',
       count: Number(events.quick_game_finished || 0),
     });
 
-    return steps.map((step) => {
+    return steps.map((step, index) => {
+      const isUnknown = isPostStartUnknown && step.key !== 'quick_game_started';
       const conversionPercent = started > 0 ? Math.round((step.count / started) * 100) : 0;
+      const prevCount = index > 0 ? steps[index - 1].count : 0;
+      const dropOffPercent =
+        !isUnknown && index > 0 && prevCount > 0
+          ? Math.max(0, Math.round(((prevCount - step.count) / prevCount) * 100))
+          : null;
       return {
         ...step,
         conversionPercent,
         barPercent: Math.min(100, Math.max(0, conversionPercent)),
+        dropOffPercent,
+        isUnknown,
       };
     });
+  }
+
+  get quickPlayCompletionRate(): number | null {
+    if (!this.hasQuickPlayFunnelData && this.quickPlayStartedCount > 0) return null;
+    return this.quickPlayFunnelRows.find((r) => r.key === 'quick_game_finished')?.conversionPercent ?? 0;
+  }
+
+  get quickPlayFirstPlantRate(): number | null {
+    if (!this.hasQuickPlayFunnelData && this.quickPlayStartedCount > 0) return null;
+    return this.quickPlayFunnelRows.find((r) => r.key === 'quick_game_first_plant')?.conversionPercent ?? 0;
+  }
+
+  get hoveredFunnelStep(): QuickPlayFunnelRow | null {
+    if (this.hoveredFunnelIndex === null) return null;
+    return this.quickPlayFunnelRows[this.hoveredFunnelIndex] ?? null;
+  }
+
+  setHoveredFunnelStep(index: number | null): void {
+    this.hoveredFunnelIndex = index;
+    this.cdr.markForCheck();
   }
 
   get referrerRows(): TelemetryMetricRow[] {
