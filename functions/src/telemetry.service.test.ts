@@ -4,6 +4,7 @@ import { resetRateLimitStore } from './research.service';
 import {
   aggregateTelemetryStats,
   cleanupExpiredHourlyTelemetry,
+  computeLocalGameStats,
   handleTelemetryHttpRequest,
   isBotUserAgent,
   normalizeTelemetryRoute,
@@ -52,6 +53,7 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
         quick_game_round_1: 2,
         quick_game_round_20: 1,
         quick_game_finished: 1,
+        quick_game_deleted: 1,
         quick_game_round_21: 4,
         unknown_event: 2,
       },
@@ -67,6 +69,7 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
         quick_game_round_1: 2,
         quick_game_round_20: 1,
         quick_game_finished: 1,
+        quick_game_deleted: 1,
       },
       referrers: { 'bildungsserver.de': 1 },
       totalViews: 26,
@@ -351,5 +354,64 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
     expect(deleted).to.equal(2);
     expect(batchDeleteStub.callCount).to.equal(2);
     expect(batchCommitStub.calledOnce).to.equal(true);
+  });
+
+  it('computes 30-day active Human-vs-AI games (round_1 - finished - deleted) and all-time local totals', () => {
+    const localStats = computeLocalGameStats(
+      {
+        viewsToday: 10,
+        viewsLast24h: 10,
+        viewsLast7d: 50,
+        viewsLast30d: 120,
+        viewsTotal: 500,
+        pwaViewsTotal: 50,
+        webViewsTotal: 450,
+        routes: {},
+        events: {
+          quick_game_round_1: 35,
+          quick_game_finished: 14,
+          quick_game_deleted: 4,
+        },
+        referrers: {},
+        dailySeries: [
+          {
+            // Older than 30-day window [2026-10-21 .. 2026-11-19] -> aged out of localActive
+            date: '2026-10-10',
+            totalViews: 40,
+            webViews: 40,
+            pwaViews: 0,
+            routes: {},
+            events: { quick_game_round_1: 15, quick_game_finished: 5, quick_game_deleted: 1 },
+            referrers: {},
+          },
+          {
+            date: '2026-10-25',
+            totalViews: 30,
+            webViews: 25,
+            pwaViews: 5,
+            routes: {},
+            events: { quick_game_round_1: 12, quick_game_finished: 5, quick_game_deleted: 2 },
+            referrers: {},
+          },
+          {
+            date: '2026-11-19',
+            totalViews: 10,
+            webViews: 10,
+            pwaViews: 0,
+            routes: {},
+            events: { quick_game_round_1: 8, quick_game_finished: 4, quick_game_deleted: 1 },
+            referrers: {},
+          },
+        ],
+      },
+      '2026-11-19',
+    );
+
+    // 30d window: round1 = 12 + 8 = 20, finished = 5 + 4 = 9, deleted = 2 + 1 = 3 -> localActive = 20 - 9 - 3 = 8
+    expect(localStats).to.deep.equal({
+      localActive: 8,
+      localPlayedTotal: 35,
+      localFinishedTotal: 14,
+    });
   });
 });

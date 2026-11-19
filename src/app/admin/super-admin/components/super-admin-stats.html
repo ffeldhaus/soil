@@ -512,7 +512,7 @@
           Sofort-Spiel-Funnel
         </h2>
         <p class="text-xs text-gray-400 font-mono tabular-nums mt-0.5">
-          {{ breakdownSubtitle }} · Anteil bezogen auf gestartete Sofort-Spiele
+          {{ breakdownSubtitle }} · Verlauf ab mindestens 1 gespielter Runde (R1 = 100%)
         </p>
         @if (!hasQuickPlayFunnelData && quickPlayStartedCount > 0) {
           <p class="text-xs text-gray-500 mt-1">
@@ -520,17 +520,27 @@
           </p>
         }
       </div>
-      <div class="flex items-center gap-4 text-xs font-mono tabular-nums">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono tabular-nums">
         <span class="text-gray-400">
-          Erste Aussaat:
+          Gestartet:
+          <span class="text-gray-100 font-semibold">{{ quickPlayStartedCount }}</span>
+        </span>
+        @if (hasQuickPlayFunnelData || quickPlayStartedCount === 0) {
+          <span class="text-gray-400">
+            1. Aussaat:
+            <span class="text-gray-100 font-semibold">{{ quickPlayFirstPlantCount }}</span>
+          </span>
+        }
+        <span class="text-gray-400">
+          Mind. 1 Runde:
           @if (!hasQuickPlayFunnelData && quickPlayStartedCount > 0) {
-            <span class="text-gray-400 font-semibold">Unbekannt</span>
+            <span class="text-gray-400 font-semibold">—</span>
           } @else {
-            <span class="text-gray-100 font-semibold">{{ quickPlayFirstPlantRate }}%</span>
+            <span class="text-gray-100 font-semibold">{{ quickPlayRound1Count }}</span>
           }
         </span>
         <span class="text-gray-400">
-          Abschlussrate:
+          Abschluss (ab R1):
           @if (!hasQuickPlayFunnelData && quickPlayStartedCount > 0) {
             <span class="text-gray-400 font-semibold">Unbekannt</span>
           } @else {
@@ -553,7 +563,7 @@
               <span class="text-gray-400">Unbekannt (Runden-Funnel ab v3.5.3)</span>
             } @else {
               <span class="text-emerald-400 font-semibold">{{ activeStep.count }} Spiele</span>
-              <span class="text-gray-300">{{ activeStep.conversionPercent }}% vom Start</span>
+              <span class="text-gray-300">{{ activeStep.conversionPercent }}% ab Runde 1</span>
               @if (activeStep.dropOffPercent !== null) {
                 <span class="text-gray-400">−{{ activeStep.dropOffPercent }}% zum Vorschritt</span>
               }

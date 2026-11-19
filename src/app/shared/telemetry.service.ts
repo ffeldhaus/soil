@@ -29,6 +29,7 @@ export type TelemetryEventName =
   | 'quick_game_first_plant'
   | QuickGameRoundEventName
   | 'quick_game_finished'
+  | 'quick_game_deleted'
   | 'trailer_opened'
   | 'research_export';
 
@@ -42,6 +43,7 @@ const ALLOWED_EVENTS = new Set<string>([
   'quick_game_first_plant',
   ...QUICK_GAME_ROUND_EVENTS,
   'quick_game_finished',
+  'quick_game_deleted',
   'trailer_opened',
   'research_export',
 ]);

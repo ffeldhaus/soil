@@ -329,6 +329,9 @@ export interface SystemStats {
     total: number;
     active: number;
     deleted: number;
+    localActive?: number;
+    localPlayedTotal?: number;
+    localFinishedTotal?: number;
   };
   users: {
     total: number;

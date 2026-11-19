@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { GameService } from '../game/game.service';
-import { TelemetryService } from '../shared/telemetry.service';
 
 @Component({
   selector: 'app-landing',
@@ -14,7 +13,6 @@ import { TelemetryService } from '../shared/telemetry.service';
 export class Landing {
   private auth = inject(AuthService);
   private gameService = inject(GameService);
-  private telemetry = inject(TelemetryService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
@@ -56,7 +54,6 @@ export class Landing {
   async startQuickGame() {
     if (this.isStartingGame) return;
     this.isStartingGame = true;
-    this.telemetry.trackEvent('quick_game_started');
     try {
       const result = await this.gameService.createGame(`Hof ${new Date().toLocaleDateString('de-DE')}`, {
         numPlayers: 4,

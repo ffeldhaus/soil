@@ -220,6 +220,7 @@ export class SuperAdminStatsComponent {
 
   private readonly eventDefinitions: ReadonlyArray<{ key: string; label: string }> = [
     { key: 'quick_game_started', label: 'Sofort-Spiele gestartet' },
+    { key: 'quick_game_round_1', label: 'Einzelspieler (≥ 1 Runde)' },
     { key: 'trailer_opened', label: 'Trailer angesehen' },
     { key: 'research_export', label: 'Forschungs-Exporte' },
   ];
@@ -752,6 +753,14 @@ export class SuperAdminStatsComponent {
     return Number(this.currentTelemetryEvents.quick_game_started || 0);
   }
 
+  get quickPlayFirstPlantCount(): number {
+    return Number(this.currentTelemetryEvents.quick_game_first_plant || 0);
+  }
+
+  get quickPlayRound1Count(): number {
+    return Number(this.currentTelemetryEvents.quick_game_round_1 || 0);
+  }
+
   get hasQuickPlayFunnelData(): boolean {
     const events = this.currentTelemetryEvents;
     if (Number(events.quick_game_first_plant || 0) > 0 || Number(events.quick_game_finished || 0) > 0) {
@@ -768,22 +777,17 @@ export class SuperAdminStatsComponent {
   get quickPlayFunnelRows(): QuickPlayFunnelRow[] {
     const events = this.currentTelemetryEvents;
     const started = Number(events.quick_game_started || 0);
-    const isPostStartUnknown = !this.hasQuickPlayFunnelData && started > 0;
+    const round1 = Number(events.quick_game_round_1 || 0);
+    const isUnknown = !this.hasQuickPlayFunnelData && started > 0;
 
-    const steps: Array<{ key: string; label: string; shortLabel: string; count: number }> = [
-      { key: 'quick_game_started', label: 'Gestartet', shortLabel: 'Start', count: started },
-      {
-        key: 'quick_game_first_plant',
-        label: 'Erste Aussaat',
-        shortLabel: 'Aussaat',
-        count: Number(events.quick_game_first_plant || 0),
-      },
-      ...Array.from({ length: 10 }, (_, i) => {
+    const steps: Array<{ key: string; label: string; shortLabel: string; count: number }> = Array.from(
+      { length: 10 },
+      (_, i) => {
         const round = i + 1;
         const key = `quick_game_round_${round}`;
         return { key, label: `Runde ${round}`, shortLabel: `R${round}`, count: Number(events[key] || 0) };
-      }),
-    ];
+      },
+    );
 
     for (const milestone of [15, 20]) {
       const key = `quick_game_round_${milestone}`;
@@ -801,8 +805,7 @@ export class SuperAdminStatsComponent {
     });
 
     return steps.map((step, index) => {
-      const isUnknown = isPostStartUnknown && step.key !== 'quick_game_started';
-      const conversionPercent = started > 0 ? Math.round((step.count / started) * 100) : 0;
+      const conversionPercent = round1 > 0 ? Math.min(100, Math.round((step.count / round1) * 100)) : 0;
       const prevCount = index > 0 ? steps[index - 1].count : 0;
       const dropOffPercent =
         !isUnknown && index > 0 && prevCount > 0
@@ -820,12 +823,10 @@ export class SuperAdminStatsComponent {
 
   get quickPlayCompletionRate(): number | null {
     if (!this.hasQuickPlayFunnelData && this.quickPlayStartedCount > 0) return null;
-    return this.quickPlayFunnelRows.find((r) => r.key === 'quick_game_finished')?.conversionPercent ?? 0;
-  }
-
-  get quickPlayFirstPlantRate(): number | null {
-    if (!this.hasQuickPlayFunnelData && this.quickPlayStartedCount > 0) return null;
-    return this.quickPlayFunnelRows.find((r) => r.key === 'quick_game_first_plant')?.conversionPercent ?? 0;
+    const events = this.currentTelemetryEvents;
+    const round1 = Number(events.quick_game_round_1 || 0);
+    const finished = Number(events.quick_game_finished || 0);
+    return round1 > 0 ? Math.min(100, Math.round((finished / round1) * 100)) : 0;
   }
 
   get hoveredFunnelStep(): QuickPlayFunnelRow | null {

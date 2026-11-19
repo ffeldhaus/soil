@@ -147,6 +147,7 @@ export class LocalGameService {
 
     this.saveToStorage(state);
     this.stateSubject.next(state);
+    this.telemetry.trackEvent('quick_game_started');
     return { gameId, password: playerSecrets['1'].password };
   }
 
@@ -368,19 +369,21 @@ export class LocalGameService {
   }
 
   async deleteGame(gameId: string, force = false): Promise<void> {
+    const data = localStorage.getItem(`soil_game_${gameId}`);
+    const existingState: LocalGameState | null = data ? JSON.parse(data) : null;
+    if (existingState?.game.status === 'in_progress' && (existingState.game.currentRoundNumber || 0) >= 1) {
+      this.telemetry.trackEvent('quick_game_deleted');
+    }
+
     if (force) {
       localStorage.removeItem(`soil_game_${gameId}`);
       const listData = localStorage.getItem('soil_local_games') || '[]';
       const list = JSON.parse(listData).filter((id: string) => id !== gameId);
       localStorage.setItem('soil_local_games', JSON.stringify(list));
-    } else {
-      const data = localStorage.getItem(`soil_game_${gameId}`);
-      if (data) {
-        const state: LocalGameState = JSON.parse(data);
-        state.game.status = 'deleted';
-        state.game.deletedAt = new Date();
-        this.saveToStorage(state);
-      }
+    } else if (existingState) {
+      existingState.game.status = 'deleted';
+      existingState.game.deletedAt = new Date();
+      this.saveToStorage(existingState);
     }
   }
 

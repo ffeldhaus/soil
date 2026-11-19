@@ -30,6 +30,7 @@ import {
 import {
   aggregateTelemetryStats,
   cleanupExpiredHourlyTelemetry,
+  computeLocalGameStats,
   handleTelemetryHttpRequest,
 } from './telemetry.service';
 import type { CropType, Round, RoundDecision, WeatherType } from './types';
@@ -2008,12 +2009,14 @@ export const getSystemStats = onCall(async (request) => {
   const rejectedUsersSnap = await usersColl.where('role', '==', 'rejected').count().get();
   const bannedUsersSnap = await usersColl.where('role', '==', 'banned').count().get();
   const telemetry = await aggregateTelemetryStats(db);
+  const localGameStats = computeLocalGameStats(telemetry);
 
   return {
     games: {
       total: totalGamesSnap.data().count,
       deleted: deletedGamesSnap.data().count,
       active: totalGamesSnap.data().count - deletedGamesSnap.data().count,
+      ...localGameStats,
     },
     users: {
       total: totalUsersSnap.data().count,

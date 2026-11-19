@@ -1,29 +1,63 @@
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TelemetryService } from '../../shared/telemetry.service';
 import { LocalGameService } from './local-game.service';
 
 describe('LocalGameService', () => {
   let service: LocalGameService;
+  let telemetry: TelemetryService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [LocalGameService],
     });
     service = TestBed.inject(LocalGameService);
+    telemetry = TestBed.inject(TelemetryService);
     localStorage.clear();
   });
 
-  it('should create a local game', async () => {
+  it('should create a local game and emit quick_game_started once', async () => {
+    const trackSpy = vi.spyOn(telemetry, 'trackEvent');
     const config = { numPlayers: 1, numAi: 0, numRounds: 20, playerLabel: 'Farmer' };
     const response = await service.createGame('Test Local', config);
     const gameId = response.gameId;
 
     expect(gameId).toContain('local-');
     expect(response.password).toBeDefined();
+    expect(trackSpy).toHaveBeenCalledTimes(1);
+    expect(trackSpy).toHaveBeenCalledWith('quick_game_started');
     const state = await service.loadGame(gameId);
     expect(state).toBeDefined();
     expect(state?.game.name).toBe('Test Local');
     expect(state?.playerState.capital).toBe(100000);
+  });
+
+  it('should emit quick_game_deleted only once when deleting an in-progress game with >= 1 completed round', async () => {
+    const trackSpy = vi.spyOn(telemetry, 'trackEvent');
+
+    // R0 delete -> should NOT emit quick_game_deleted
+    const r0 = await service.createGame('R0 Game', { numPlayers: 1, numRounds: 5 });
+    trackSpy.mockClear();
+    await service.deleteGame(r0.gameId);
+    expect(trackSpy).not.toHaveBeenCalledWith('quick_game_deleted');
+
+    // In-progress R1 soft delete followed by hard delete -> emits quick_game_deleted exactly once
+    const r1 = await service.createGame('R1 Game', { numPlayers: 1, numRounds: 5 });
+    await service.submitDecision(r1.gameId, { parcels: {} } as any);
+    trackSpy.mockClear();
+    await service.deleteGame(r1.gameId, false);
+    expect(trackSpy).toHaveBeenCalledTimes(1);
+    expect(trackSpy).toHaveBeenCalledWith('quick_game_deleted');
+
+    await service.deleteGame(r1.gameId, true);
+    expect(trackSpy).toHaveBeenCalledTimes(1);
+
+    // Finished game delete -> should NOT emit quick_game_deleted
+    const fin = await service.createGame('Finished Game', { numPlayers: 1, numRounds: 1 });
+    await service.submitDecision(fin.gameId, { parcels: {} } as any);
+    trackSpy.mockClear();
+    await service.deleteGame(fin.gameId, true);
+    expect(trackSpy).not.toHaveBeenCalledWith('quick_game_deleted');
   });
 
   it('should submit a decision and calculate next round in single player', async () => {

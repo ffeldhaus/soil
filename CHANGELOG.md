@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unpublished]
 ### Added
 - **MUNDO – Bildungsmediathek der Länder** (`mundo.schule`, SODIX-ID `SODIX-0001172770`) als bestätigte Live-Verlinkung in `marketing/verlinkungen.md` und `KNOWN_BACKLINKS` (`src/app/types.ts`) unter `/admin/super` aufgenommen sowie `checkBacklinkStatus` (`functions/src/backlinks.service.ts`) um optionale `verificationUrl`-Prüfung für öffentliche JSON-Quell-Endpunkte von SPA-Mediatheken erweitert.
+- **Aktive Einzelspieler-gegen-KI-Spiele (`≥ 1 Runde`)** unter `/admin/super` (`src/app/shared/telemetry.service.ts`, `src/app/game/engine/local-game.service.ts`, `src/app/landing/landing.ts`, `functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/app/admin/super-admin/*`): Rein numerische, PII-freie 30-Tage-Aktivitätsberechnung (`quick_game_round_1 - quick_game_finished - quick_game_deleted`), einheitliches `quick_game_started`-Tracking direkt in `LocalGameService.createGame()` sowie kombinierte `Cloud · KI`-Ausweisung im Live-Status-Streifen und unter *Lehrkräfte & System*.
+
+### Changed
+- **Sofort-Spiel-Funnel ab Runde 1 (`R1 = 100%`)** unter `/admin/super` (`src/app/admin/super-admin/components/super-admin-stats.*`): `Start`- und `Aussaat`-Balken aus dem Säulendiagramm herausgelöst, Vorrunden-Zähler (`Gestartet`, `1. Aussaat`, `Mind. 1 Runde`, `Abschluss (ab R1)`) als kompakte Kopfmetriken dargestellt, Diagramm ab `R1` bis `Fertig` verankert und `Einzelspieler (≥ 1 Runde)` in die Tabelle *Ausgelöste Aktionen* aufgenommen.
 
 ## [3.5.4] - 2026-11-19
 ### Changed

@@ -23,6 +23,7 @@ export const ALLOWED_TELEMETRY_EVENTS = new Set<string>([
   'quick_game_first_plant',
   ...QUICK_GAME_ROUND_EVENTS,
   'quick_game_finished',
+  'quick_game_deleted',
   'trailer_opened',
   'research_export',
 ]);
@@ -428,6 +429,41 @@ export async function aggregateTelemetryStats(
     hourlySeries,
     firstRecordedHour,
   };
+}
+
+export function computeLocalGameStats(
+  telemetry: TelemetryStats,
+  todayKey?: string,
+): { localActive: number; localPlayedTotal: number; localFinishedTotal: number } {
+  const effectiveTodayKey =
+    todayKey && /^\d{4}-\d{2}-\d{2}$/.test(todayKey) ? todayKey : new Date().toISOString().slice(0, 10);
+  const cutoff30dKey = new Date(Date.parse(`${effectiveTodayKey}T00:00:00.000Z`) - 29 * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+
+  let round1Last30d = 0;
+  let finishedLast30d = 0;
+  let deletedLast30d = 0;
+
+  for (const entry of telemetry.dailySeries || []) {
+    if (entry.date >= cutoff30dKey && entry.date <= effectiveTodayKey) {
+      round1Last30d += Math.max(0, Math.round(Number(entry.events?.quick_game_round_1 || 0)));
+      finishedLast30d += Math.max(0, Math.round(Number(entry.events?.quick_game_finished || 0)));
+      deletedLast30d += Math.max(0, Math.round(Number(entry.events?.quick_game_deleted || 0)));
+    }
+  }
+
+  const localActive = Math.max(0, round1Last30d - finishedLast30d - deletedLast30d);
+  const localPlayedTotal = Math.max(
+    round1Last30d,
+    Math.max(0, Math.round(Number(telemetry.events?.quick_game_round_1 || 0))),
+  );
+  const localFinishedTotal = Math.max(
+    finishedLast30d,
+    Math.max(0, Math.round(Number(telemetry.events?.quick_game_finished || 0))),
+  );
+
+  return { localActive, localPlayedTotal, localFinishedTotal };
 }
 
 export async function cleanupExpiredHourlyTelemetry(

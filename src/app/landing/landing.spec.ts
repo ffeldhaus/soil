@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import { AuthService } from '../auth/auth.service';
 import { FIREBASE_AUTH, FIREBASE_FUNCTIONS } from '../firebase.config';
 import { GameService } from '../game/game.service';
+import { TelemetryService } from '../shared/telemetry.service';
 import { Landing } from './landing';
 
 describe('Landing', () => {
@@ -50,12 +51,15 @@ describe('Landing', () => {
     expect(trailerLink?.getAttribute('href')).toBe('/trailer');
   });
 
-  it('should start a quick local game and navigate to /game', async () => {
+  it('should start a quick local game and navigate to /game without duplicating quick_game_started telemetry', async () => {
     const router = TestBed.inject(Router);
+    const telemetry = TestBed.inject(TelemetryService);
+    const trackSpy = vi.spyOn(telemetry, 'trackEvent');
     const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     await component.startQuickGame();
 
+    expect(trackSpy).not.toHaveBeenCalled();
     expect(gameServiceMock.createGame).toHaveBeenCalledWith(
       expect.stringContaining('Hof '),
       expect.objectContaining({
