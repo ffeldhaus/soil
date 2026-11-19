@@ -34,8 +34,8 @@ keywords:
   - Crop Rotation
   - Open Science
 license: Apache-2.0
-version: "3.5.2"
-date-released: "2026-11-18"
+version: "3.5.3"
+date-released: "2026-11-19"
 references:
   - type: thesis
     title: "Konzeption und Evaluation eines computergestützten Planspiels zur Förderung von Bewertungskompetenz im Kontext einer Bildung für nachhaltige Entwicklung (BNE) am Beispiel Landwirtschaft"
