@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
   - Kontextuelle Snackbar-Hinweise mit automatischem Ausblenden, maximal 1 Hinweis pro Runde und dauerhaftem Ausblenden nach Nutzung der jeweiligen Aktion; EU-Bio-Siegel im Rundenergebnis nur noch bei erfüllten Kriterien anzeigen.
   - Neugestaltetes **Spiel beendet!**-Modal mit gemaltem Bauernhof-Banner, persönlicher Hof-Bilanz (**Deine Leistung** inkl. Kapital-Delta, Ø-Bodenqualitäts-Balken und freigeschalteten Hof-Stickern), kompaktem 3er-Podium, hervorgehobener eigener Ranglisten-Zeile und einklappbarem Feedback-Formular.
 - **Sofort-Spiel-Funnel ab Runde 1 (`R1 = 100%`)** unter `/admin/super` (`src/app/admin/super-admin/components/super-admin-stats.*`): `Start`- und `Aussaat`-Balken aus dem Säulendiagramm herausgelöst, Vorrunden-Zähler (`Gestartet`, `1. Aussaat`, `Mind. 1 Runde`, `Abschluss (ab R1)`) als kompakte Kopfmetriken dargestellt, Diagramm ab `R1` bis `Fertig` verankert und `Einzelspieler (≥ 1 Runde)` in die Tabelle *Ausgelöste Aktionen* aufgenommen.
+- Frontend-Abhängigkeiten (`autoprefixer`, `firebase-tools`) innerhalb der Semver-Grenzen aktualisiert (`package-lock.json`).
 
 ## [3.5.4] - 2026-11-19
 ### Changed
