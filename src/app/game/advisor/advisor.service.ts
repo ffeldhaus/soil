@@ -31,45 +31,45 @@ const LIMITER_COPY: Record<
   {
     consolidatedTitle: string;
     consolidatedMessage: (cropList: string) => string;
-    singleMessage: (cropName: string, lossPct: number) => string;
+    singleMessage: (cropName: string, severity: string) => string;
     hint: string;
   }
 > = {
   pest: {
     consolidatedTitle: 'Ertragsverluste durch Schädlingsbefall',
     consolidatedMessage: (cropList) => `Schädlingsbefall hat den Ertrag bei ${cropList} gemindert.`,
-    singleMessage: (cropName, lossPct) =>
-      `Schädlingsbefall war der Hauptgrund für den Ertragsverlust bei ${cropName} und hat den Ertrag um ${lossPct} Prozent reduziert.`,
+    singleMessage: (cropName, severity) =>
+      `Schädlingsbefall war der Hauptgrund für den Ertragsverlust bei ${cropName} und hat den Ertrag ${severity} reduziert.`,
     hint: 'Nützlinge, angepasster Pflanzenschutz oder eine vielfältige Fruchtfolge schützen gefährdete Kulturen.',
   },
   weather: {
     consolidatedTitle: 'Wetterbedingte Ertragsverluste',
     consolidatedMessage: (cropList) => `Ungünstige Witterung hat den Ertrag bei ${cropList} gemindert.`,
-    singleMessage: (cropName, lossPct) =>
-      `Ungünstige Witterung war der Hauptfaktor bei ${cropName} und hat den Ertrag um ${lossPct} Prozent gemindert.`,
+    singleMessage: (cropName, severity) =>
+      `Ungünstige Witterung war der Hauptfaktor bei ${cropName} und hat den Ertrag ${severity} gemindert.`,
     hint: 'Ein hoher Humusgehalt puffert Wetterextreme ab und stabilisiert die Erträge.',
   },
   nutrition: {
     consolidatedTitle: 'Nährstoffbedingte Ertragsverluste',
     consolidatedMessage: (cropList) =>
       `Unzureichende oder unausgewogene Nährstoffversorgung hat den Ertrag bei ${cropList} gedrückt.`,
-    singleMessage: (cropName, lossPct) =>
-      `Unzureichende oder unausgewogene Nährstoffversorgung hat den Ertrag bei ${cropName} um ${lossPct} Prozent gedrückt.`,
+    singleMessage: (cropName, severity) =>
+      `Unzureichende oder unausgewogene Nährstoffversorgung hat den Ertrag bei ${cropName} ${severity} gedrückt.`,
     hint: 'Passe die Düngung und den Anbau von Leguminosen gezielt an den Nährstoffbedarf der Kultur an.',
   },
   soil: {
     consolidatedTitle: 'Bodenbedingte Ertragsverluste',
     consolidatedMessage: (cropList) => `Geschwächte Bodenfruchtbarkeit hat den Ertrag bei ${cropList} verringert.`,
-    singleMessage: (cropName, lossPct) =>
-      `Geschwächte Bodenfruchtbarkeit hat den Ertrag bei ${cropName} um ${lossPct} Prozent verringert.`,
+    singleMessage: (cropName, severity) =>
+      `Geschwächte Bodenfruchtbarkeit hat den Ertrag bei ${cropName} ${severity} verringert.`,
     hint: 'Reduziere schwere Maschinen und baue bodenaufbauende Kulturen wie Ackerbohnen, Erbsen oder Weidegras an.',
   },
   organic: {
     consolidatedTitle: 'Umstellungsbedingte Ertragsverluste',
     consolidatedMessage: (cropList) =>
       `Die laufende Umstellung auf ökologischen Landbau mindert den vermarktbaren Ertrag bei ${cropList}.`,
-    singleMessage: (cropName, lossPct) =>
-      `Die laufende Umstellung auf ökologischen Landbau mindert den vermarktbaren Ertrag bei ${cropName} um ${lossPct} Prozent.`,
+    singleMessage: (cropName, severity) =>
+      `Die laufende Umstellung auf ökologischen Landbau mindert den vermarktbaren Ertrag bei ${cropName} ${severity}.`,
     hint: 'Nach Abschluss der Umstellungsphase erhältst du das Bio-Siegel und höhere Verkaufspreise.',
   },
 };
@@ -178,6 +178,7 @@ export class AdvisorService {
 
     if (worst) {
       const lossPct = Math.round((1 - worst.value) * 100);
+      const severity = this.getSeverityLabel(lossPct);
       const copy = LIMITER_COPY[worst.key];
       return {
         key: worst.key,
@@ -186,14 +187,13 @@ export class AdvisorService {
         lossPct,
         relativeYield,
         singleTitle: `Ertragsverlust bei ${cropName}`,
-        singleMessage: copy.singleMessage(cropName, lossPct),
+        singleMessage: copy.singleMessage(cropName, severity),
         singleLevel: relativeYield < 0.5 ? 'danger' : 'warning',
         hint: copy.hint,
       };
     }
 
     if (relativeYield < 0.4 && !round.result?.bioSiegel) {
-      const yieldPct = Math.round(relativeYield * 100);
       return {
         key: 'other',
         crop,
@@ -201,7 +201,7 @@ export class AdvisorService {
         lossPct: Math.round((1 - relativeYield) * 100),
         relativeYield,
         singleTitle: `Geringer Ertrag: ${cropName}`,
-        singleMessage: `Der Ertrag bei ${cropName} lag nur bei ${yieldPct} Prozent des Basisertrags.`,
+        singleMessage: `Der Ertrag bei ${cropName} fiel deutlich unter den Basisertrag.`,
         singleLevel: 'warning',
         hint: 'Prüfe die Bodenqualität, die Nährstoffversorgung und mögliche Schädlinge auf diesen Parzellen.',
       };
@@ -233,8 +233,14 @@ export class AdvisorService {
     return worst;
   }
 
+  private getSeverityLabel(lossPct: number): 'gering' | 'mäßig' | 'stark' {
+    if (lossPct >= 30) return 'stark';
+    if (lossPct >= 15) return 'mäßig';
+    return 'gering';
+  }
+
   private formatCropLossList(items: CropHarvestLoss[]): string {
-    const formatted = items.map((item) => `${item.cropName} (−${item.lossPct} %)`);
+    const formatted = items.map((item) => `${item.cropName} (${this.getSeverityLabel(item.lossPct)})`);
     if (formatted.length <= 1) return formatted[0] ?? '';
     if (formatted.length === 2) return `${formatted[0]} und ${formatted[1]}`;
     return `${formatted.slice(0, -1).join(', ')} und ${formatted[formatted.length - 1]}`;

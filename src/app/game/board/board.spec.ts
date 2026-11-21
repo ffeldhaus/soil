@@ -639,30 +639,105 @@ describe('Board', () => {
     expect(component.pendingNextRound).toBe(true);
   });
 
-  it('should show and dismiss contextual snackbar hints in order', () => {
+  it('should stagger contextual snackbar hints (max 1 per round) and dismiss permanently on action', () => {
     const store = new Map<string, string>();
     vi.spyOn(window.localStorage, 'getItem').mockImplementation((key: string) => store.get(key) ?? null);
     vi.spyOn(window.localStorage, 'setItem').mockImplementation((key: string, value: string) => {
       store.set(key, value);
     });
 
+    // Round 0: plant hint shown
     component.viewingRound = 0;
     component.isReadOnly = false;
     component.showWelcomeModal = true;
     component.closeWelcomeModal();
 
     expect(component.activeHint).toBe('plant');
+    expect(store.get('soil_hint_plant_count')).toBe('1');
 
+    // Planting non-fallow permanently dismisses 'plant' and does NOT show 'overlays' in the same round
     component.selectedIndices.add(0);
     component.onCropSelected('Wheat');
-
     expect(store.get('soil_hint_plant_seen')).toBe('true');
+    expect(component.activeHint).toBeNull();
+
+    // Round 1: overlays hint shown after closing round result modal
+    component.viewingRound = 1;
+    component.showRoundResultModal = true;
+    component.closeRoundResultModal();
+
     expect(component.activeHint).toBe('overlays');
+    expect(store.get('soil_hint_overlays_count')).toBe('1');
 
     component.toggleSoil();
-
     expect(store.get('soil_hint_overlays_seen')).toBe('true');
     expect(component.activeHint).toBeNull();
+
+    // Round 2: analytics hint shown after closing round result modal
+    component.viewingRound = 2;
+    component.showRoundResultModal = true;
+    component.closeRoundResultModal();
+
+    expect(component.activeHint).toBe('analytics');
+    expect(store.get('soil_hint_analytics_count')).toBe('1');
+
+    component.toggleHarvest();
+    expect(store.get('soil_hint_analytics_seen')).toBe('true');
+    expect(component.activeHint).toBeNull();
+  });
+
+  it('should auto-hide hints after timeout without marking seen and cap impressions at 2', () => {
+    vi.useFakeTimers();
+    try {
+      const store = new Map<string, string>();
+      vi.spyOn(window.localStorage, 'getItem').mockImplementation((key: string) => store.get(key) ?? null);
+      vi.spyOn(window.localStorage, 'setItem').mockImplementation((key: string, value: string) => {
+        store.set(key, value);
+      });
+
+      // Round 0: plant hint auto-hides after 10_000ms
+      component.viewingRound = 0;
+      component.isReadOnly = false;
+      component.showWelcomeModal = true;
+      component.closeWelcomeModal();
+
+      expect(component.activeHint).toBe('plant');
+      expect(store.get('soil_hint_plant_count')).toBe('1');
+
+      vi.advanceTimersByTime(9_999);
+      expect(component.activeHint).toBe('plant');
+
+      vi.advanceTimersByTime(1);
+      expect(component.activeHint).toBeNull();
+      expect(store.get('soil_hint_plant_seen')).toBeUndefined();
+
+      // Round 1: overlays hint auto-hides after 7_000ms
+      component.viewingRound = 1;
+      component.closeRoundResultModal();
+      expect(component.activeHint).toBe('overlays');
+      expect(store.get('soil_hint_overlays_count')).toBe('1');
+
+      vi.advanceTimersByTime(7_000);
+      expect(component.activeHint).toBeNull();
+      expect(store.get('soil_hint_overlays_seen')).toBeUndefined();
+
+      // Round 2: overlays was shown once (count=1 < 2), so overlays shows a 2nd time before analytics
+      component.viewingRound = 2;
+      component.closeRoundResultModal();
+      expect(component.activeHint).toBe('overlays');
+      expect(store.get('soil_hint_overlays_count')).toBe('2');
+
+      vi.advanceTimersByTime(7_000);
+      expect(component.activeHint).toBeNull();
+
+      // Round 3: overlays hit 2-impression cap, so analytics is now shown
+      component.viewingRound = 3;
+      component.closeRoundResultModal();
+      expect(component.activeHint).toBe('analytics');
+      expect(store.get('soil_hint_analytics_count')).toBe('1');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should close round result modal and open finance analytics via openAnalyticsFromResult', () => {

@@ -48,10 +48,21 @@
       </div>
 
       <!-- Profit -->
-      <div class="border-b border-slate-700/80 pb-4 space-y-2">
-        <div class="flex justify-between items-center">
-          <span class="text-white font-medium">Rundengewinn</span>
-          <div class="text-right font-mono tabular-nums">
+      <div class="border-b border-slate-700/80 pb-4">
+        <div class="flex justify-between items-start gap-3">
+          <div class="flex flex-col items-start gap-1.5">
+            <span class="text-white font-medium">Rundengewinn</span>
+            <button
+              type="button"
+              (click)="onOpenAnalytics()"
+              data-testid="open-analytics-from-result"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600/80 text-xs font-medium text-emerald-300 hover:text-emerald-200 transition-colors cursor-pointer"
+            >
+              Details in Analysen öffnen
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <div class="text-right font-mono tabular-nums shrink-0">
             <span class="text-xl font-bold block" [class.text-emerald-400]="profit >= 0" [class.text-rose-400]="0 > profit">
               {{ profit >= 0 ? '+' : '' }}{{ profit | currency: 'EUR' : 'symbol' : '1.0-0' }}
             </span>
@@ -62,35 +73,20 @@
             }
           </div>
         </div>
-        <div class="flex justify-end">
-          <button
-            type="button"
-            (click)="onOpenAnalytics()"
-            data-testid="open-analytics-from-result"
-            class="text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
-          >
-            Details in Analysen öffnen →
-          </button>
-        </div>
       </div>
 
       <!-- Advisor (prominent at the top below financial summary) -->
       <app-game-advisor [currentRound]="round" [previousRound]="previousRound" [enabled]="advisorEnabled" context="result"></app-game-advisor>
 
       <!-- Bio Siegel -->
-      <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
-        <div class="flex flex-col">
-          <span class="text-white font-medium">EU-Bio-Siegel</span>
-          @if (!bioSiegel) {
-            <span class="text-xs text-slate-300">Kriterien nicht erfüllt</span>
-          }
-          @if (bioSiegel) {
+      @if (bioSiegel) {
+        <div class="flex justify-between items-center border-b border-slate-700/80 pb-4">
+          <div class="flex flex-col">
+            <span class="text-white font-medium">EU-Bio-Siegel</span>
             <span class="text-xs text-emerald-400">Kriterien erfüllt!</span>
-          }
-        </div>
+          </div>
 
-        <div [class.bg-emerald-600]="bioSiegel" [class.bg-slate-700]="!bioSiegel" class="p-2 rounded-full">
-          @if (bioSiegel) {
+          <div class="bg-emerald-600 p-2 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5 text-white"
@@ -100,20 +96,9 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
-          }
-          @if (!bioSiegel) {
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-slate-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          }
+          </div>
         </div>
-      </div>
+      }
 
       <!-- Ursachen-Analyse (Letzte Ernte) -->
       @let causalCrops = getCausalCrops();

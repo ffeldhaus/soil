@@ -174,7 +174,8 @@ describe('AdvisorService', () => {
     const harvestInsight = insights.find((i) => i.type === 'harvest');
     expect(harvestInsight).toBeTruthy();
     expect(harvestInsight?.message).toContain('Schädlingsbefall war der Hauptgrund');
-    expect(harvestInsight?.message).toContain('50 Prozent');
+    expect(harvestInsight?.message).toContain('stark');
+    expect(harvestInsight?.message).not.toMatch(/%|Prozent/);
   });
 
   it('should add positive feedback for crop diversity and balanced nutrition in result context', () => {
@@ -246,7 +247,7 @@ describe('AdvisorService', () => {
     expect(harvestLossInsights[0].level).toBe('warning');
     expect(harvestLossInsights[0].title).toBe('Wetterbedingte Ertragsverluste');
     expect(harvestLossInsights[0].message).toBe(
-      'Ungünstige Witterung hat den Ertrag bei Kartoffel (−15 %), Weizen (−15 %) und Erbse (−25 %) gemindert.',
+      'Ungünstige Witterung hat den Ertrag bei Kartoffel (mäßig), Weizen (mäßig) und Erbse (mäßig) gemindert.',
     );
     expect(harvestLossInsights[0].hint).toContain('Humusgehalt');
   });
@@ -297,7 +298,7 @@ describe('AdvisorService', () => {
     expect(pestInsights.length).toBe(1);
     expect(pestInsights[0].level).toBe('danger');
     expect(pestInsights[0].message).toBe(
-      'Schädlingsbefall hat den Ertrag bei Kartoffel (−55 %) und Weizen (−30 %) gemindert.',
+      'Schädlingsbefall hat den Ertrag bei Kartoffel (stark) und Weizen (stark) gemindert.',
     );
     expect(pestInsights[0].hint).toContain('Nützlinge');
   });

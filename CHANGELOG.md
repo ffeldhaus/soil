@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unpublished]
 ### Added
+- **7 individuelle Schädlings-Illustrationen** (`oat-rust.jpg`, `nematode.jpg`, `aphid-cereal.jpg`, `pea-moth.jpg`, `corn-borer.jpg`, `pollen-beetle.jpg`, `swine-fever.jpg` in `public/assets/images/pests/` und `src/app/game/board/board.ts`), sodass alle 9 Schädlinge eindeutige Einzelbilder besitzen.
 - **MUNDO – Bildungsmediathek der Länder** (`mundo.schule`, SODIX-ID `SODIX-0001172770`) als bestätigte Live-Verlinkung in `marketing/verlinkungen.md` und `KNOWN_BACKLINKS` (`src/app/types.ts`) unter `/admin/super` aufgenommen sowie `checkBacklinkStatus` (`functions/src/backlinks.service.ts`) um optionale `verificationUrl`-Prüfung für öffentliche JSON-Quell-Endpunkte von SPA-Mediatheken erweitert.
 - **Aktive Einzelspieler-gegen-KI-Spiele (`≥ 1 Runde`)** unter `/admin/super` (`src/app/shared/telemetry.service.ts`, `src/app/game/engine/local-game.service.ts`, `src/app/landing/landing.ts`, `functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/app/admin/super-admin/*`): Rein numerische, PII-freie 30-Tage-Aktivitätsberechnung (`quick_game_round_1 - quick_game_finished - quick_game_deleted`), einheitliches `quick_game_started`-Tracking direkt in `LocalGameService.createGame()` sowie kombinierte `Cloud · KI`-Ausweisung im Live-Status-Streifen und unter *Lehrkräfte & System*.
 
 ### Changed
+- **Spielfeld-, Berater- & Abschluss-UX über alle Gerätekategorien** (`src/app/game/parcel/parcel.html`, `src/app/game/board/*`, `src/app/game/advisor/*`, `src/app/game/round-result-modal/round-result-modal.html`):
+  - Qualitative Ertragsverlust-Stufen (`gering`, `mäßig`, `stark`) im **Landwirtschaftlichen Berater** statt Prozentwerten sowie einheitliche Buttons für **Details in Analysen öffnen →** und **Details im Handbuch lesen**.
+  - Skalierende Container-Query-Schriftgrößen auf Parzellen (`Fruchtfolge ▼`, Boden/Nährstoffe mit größerem Abstand) und Side-Cards, einheitliche Kategorie-Kopfzeilen (`Wetter`, `Aktive Schädlinge`, `Regionale Aktion`), kompakte `2:1`-Popover-Bilder im Portrait-Modus sowie optimierte Side-Cards auf sehr niedrigen Querformaten (z. B. Samsung Z Fold 8 Cover).
+  - Kontextuelle Snackbar-Hinweise mit automatischem Ausblenden, maximal 1 Hinweis pro Runde und dauerhaftem Ausblenden nach Nutzung der jeweiligen Aktion; EU-Bio-Siegel im Rundenergebnis nur noch bei erfüllten Kriterien anzeigen.
+  - Neugestaltetes **Spiel beendet!**-Modal mit gemaltem Bauernhof-Banner, persönlicher Hof-Bilanz (**Deine Leistung** inkl. Kapital-Delta, Ø-Bodenqualitäts-Balken und freigeschalteten Hof-Stickern), kompaktem 3er-Podium, hervorgehobener eigener Ranglisten-Zeile und einklappbarem Feedback-Formular.
 - **Sofort-Spiel-Funnel ab Runde 1 (`R1 = 100%`)** unter `/admin/super` (`src/app/admin/super-admin/components/super-admin-stats.*`): `Start`- und `Aussaat`-Balken aus dem Säulendiagramm herausgelöst, Vorrunden-Zähler (`Gestartet`, `1. Aussaat`, `Mind. 1 Runde`, `Abschluss (ab R1)`) als kompakte Kopfmetriken dargestellt, Diagramm ab `R1` bis `Fertig` verankert und `Einzelspieler (≥ 1 Runde)` in die Tabelle *Ausgelöste Aktionen* aufgenommen.
 
 ## [3.5.4] - 2026-11-19

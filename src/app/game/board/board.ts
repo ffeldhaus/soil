@@ -151,7 +151,9 @@ export class Board implements OnInit, OnDestroy {
   showStickerAlbumModal = false;
   showWelcomeModal = false;
   showEmptyRoundConfirmModal = false;
-  activeHint: 'plant' | 'overlays' | null = null;
+  activeHint: 'plant' | 'overlays' | 'analytics' | null = null;
+  private lastHintRound: number | null = null;
+  private hintTimeout: ReturnType<typeof setTimeout> | null = null;
   activeHudPopover: 'weather' | 'pests' | 'contract' | null = null;
   showContractPopover = false;
 
@@ -170,41 +172,86 @@ export class Board implements OnInit, OnDestroy {
     this.syncActiveHint();
   }
 
-  private readHintSeen(key: 'soil_hint_plant_seen' | 'soil_hint_overlays_seen'): boolean {
-    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return true;
-    return window.localStorage.getItem(key) === 'true';
+  private clearHintTimeout(): void {
+    if (this.hintTimeout !== null) {
+      clearTimeout(this.hintTimeout);
+      this.hintTimeout = null;
+    }
   }
 
-  private markHintSeen(key: 'soil_hint_plant_seen' | 'soil_hint_overlays_seen'): void {
+  private readHintSeen(id: 'plant' | 'overlays' | 'analytics'): boolean {
+    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return true;
+    return window.localStorage.getItem(`soil_hint_${id}_seen`) === 'true';
+  }
+
+  private readHintCount(id: 'plant' | 'overlays' | 'analytics'): number {
+    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return 0;
+    const raw = window.localStorage.getItem(`soil_hint_${id}_count`);
+    const parsed = raw ? Number.parseInt(raw, 10) : 0;
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  private isHintDone(id: 'plant' | 'overlays' | 'analytics'): boolean {
+    return this.readHintSeen(id) || this.readHintCount(id) >= 2;
+  }
+
+  private markHintDone(id: 'plant' | 'overlays' | 'analytics'): void {
     if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
-      window.localStorage.setItem(key, 'true');
+      window.localStorage.setItem(`soil_hint_${id}_seen`, 'true');
     }
+  }
+
+  private incrementHintCount(id: 'plant' | 'overlays' | 'analytics'): void {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      const next = this.readHintCount(id) + 1;
+      window.localStorage.setItem(`soil_hint_${id}_count`, String(next));
+    }
+  }
+
+  private showHint(id: 'plant' | 'overlays' | 'analytics'): void {
+    this.clearHintTimeout();
+    this.activeHint = id;
+    this.lastHintRound = this.viewingRound;
+    this.incrementHintCount(id);
+    const durationMs = id === 'plant' ? 10_000 : 7_000;
+    this.hintTimeout = setTimeout(() => {
+      this.hintTimeout = null;
+      this.activeHint = null;
+      this.cdr.markForCheck();
+    }, durationMs);
   }
 
   private syncActiveHint(): void {
-    if (this.isReadOnly || this.showWelcomeModal) {
+    if (this.isReadOnly || this.showWelcomeModal || this.showRoundResultModal) {
+      this.clearHintTimeout();
       this.activeHint = null;
       return;
     }
-    if (this.viewingRound === 0 && !this.readHintSeen('soil_hint_plant_seen')) {
-      this.activeHint = 'plant';
+    if (this.activeHint !== null || this.lastHintRound === this.viewingRound) {
       return;
     }
-    if (this.readHintSeen('soil_hint_plant_seen') && !this.readHintSeen('soil_hint_overlays_seen')) {
-      this.activeHint = 'overlays';
+    if (this.viewingRound === 0 && !this.isHintDone('plant')) {
+      this.showHint('plant');
       return;
     }
-    this.activeHint = null;
+    if ((this.viewingRound >= 1 || this.isHintDone('plant')) && !this.isHintDone('overlays')) {
+      this.showHint('overlays');
+      return;
+    }
+    if (
+      this.viewingRound >= 2 &&
+      (this.isHintDone('overlays') || this.readHintCount('overlays') > 0) &&
+      !this.isHintDone('analytics')
+    ) {
+      this.showHint('analytics');
+      return;
+    }
   }
 
   dismissActiveHint(): void {
-    if (this.activeHint === 'plant') {
-      this.markHintSeen('soil_hint_plant_seen');
-      this.activeHint = !this.readHintSeen('soil_hint_overlays_seen') ? 'overlays' : null;
-      return;
-    }
-    if (this.activeHint === 'overlays') {
-      this.markHintSeen('soil_hint_overlays_seen');
+    this.clearHintTimeout();
+    if (this.activeHint) {
+      this.markHintDone(this.activeHint);
       this.activeHint = null;
     }
   }
@@ -377,12 +424,19 @@ export class Board implements OnInit, OnDestroy {
     this.showNutritionOverlay = !this.showNutritionOverlay;
     if (this.activeHint === 'overlays') {
       this.dismissActiveHint();
+    } else {
+      this.markHintDone('overlays');
     }
   }
 
   toggleHarvest() {
     if (this.showFinance) return;
     this.showHarvestOverlay = !this.showHarvestOverlay;
+    if (this.activeHint === 'analytics') {
+      this.dismissActiveHint();
+    } else {
+      this.markHintDone('analytics');
+    }
   }
 
   toggleSoil() {
@@ -390,11 +444,18 @@ export class Board implements OnInit, OnDestroy {
     this.showSoilOverlay = !this.showSoilOverlay;
     if (this.activeHint === 'overlays') {
       this.dismissActiveHint();
+    } else {
+      this.markHintDone('overlays');
     }
   }
 
   toggleFinance() {
     this.showFinance = !this.showFinance;
+    if (this.activeHint === 'analytics') {
+      this.dismissActiveHint();
+    } else {
+      this.markHintDone('analytics');
+    }
   }
 
   async logout() {
@@ -442,6 +503,7 @@ export class Board implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.clearHintTimeout();
     if (this.timerInterval) clearInterval(this.timerInterval);
     if (this.routeSub) this.routeSub.unsubscribe();
     if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
@@ -925,8 +987,12 @@ export class Board implements OnInit, OnDestroy {
       this.quickGameFirstPlantTrackedGameId = this.gameId;
       this.telemetry.trackEvent('quick_game_first_plant');
     }
-    if (plantedCount > 0 && crop !== 'Fallow' && this.activeHint === 'plant') {
-      this.dismissActiveHint();
+    if (plantedCount > 0 && crop !== 'Fallow') {
+      if (this.activeHint === 'plant') {
+        this.dismissActiveHint();
+      } else {
+        this.markHintDone('plant');
+      }
     }
     this.showPlantingModal = false;
     this.selectedIndices = new Set();
@@ -1062,6 +1128,7 @@ export class Board implements OnInit, OnDestroy {
 
   closeRoundResultModal() {
     this.showRoundResultModal = false;
+    this.syncActiveHint();
   }
 
   openAnalyticsFromResult() {
@@ -1138,14 +1205,14 @@ export class Board implements OnInit, OnDestroy {
 
     const imageMap: Record<string, string> = {
       'potato-beetle': 'assets/images/pests/potato-beetle.jpg',
-      'corn-borer': 'assets/images/pests/caterpillar-beetle.jpg',
+      'corn-borer': 'assets/images/pests/corn-borer.jpg',
       'aphid-black': 'assets/images/pests/aphid.jpg',
-      'aphid-cereal': 'assets/images/pests/aphid.jpg',
-      'pollen-beetle': 'assets/images/pests/caterpillar-beetle.jpg',
-      nematode: 'assets/images/pests/soil-fungus.jpg',
-      'pea-moth': 'assets/images/pests/caterpillar-beetle.jpg',
-      'oat-rust': 'assets/images/pests/soil-fungus.jpg',
-      'swine-fever': 'assets/images/hausschwein.webp',
+      'aphid-cereal': 'assets/images/pests/aphid-cereal.jpg',
+      'pollen-beetle': 'assets/images/pests/pollen-beetle.jpg',
+      nematode: 'assets/images/pests/nematode.jpg',
+      'pea-moth': 'assets/images/pests/pea-moth.jpg',
+      'oat-rust': 'assets/images/pests/oat-rust.jpg',
+      'swine-fever': 'assets/images/pests/swine-fever.jpg',
     };
 
     const targetMap: Record<string, string> = {
@@ -1253,6 +1320,54 @@ export class Board implements OnInit, OnDestroy {
   }
 
   scorecardCopied = false;
+  showGameEndFeedbackForm = false;
+
+  get myPlayerUid(): string {
+    return this.gameService.state?.playerState?.uid || '';
+  }
+
+  get myFinalRank(): number {
+    const uid = this.myPlayerUid;
+    return this.finalStandings.find((entry) => entry.uid === uid)?.rank ?? 1;
+  }
+
+  get myFinalPlayerName(): string {
+    const uid = this.myPlayerUid;
+    return (
+      this.gameService.state?.playerState?.displayName ||
+      this.finalStandings.find((entry) => entry.uid === uid)?.name ||
+      'Dein Hof'
+    );
+  }
+
+  get myCapitalDelta(): number {
+    const startRound = this.history.find((r) => r.number === 0) ?? this.history[0];
+    const startCapital = startRound?.result?.capital ?? 300000;
+    return this.myFinalCapital - Math.round(startCapital);
+  }
+
+  get unlockedStickers(): CollectibleSticker[] {
+    return this.allStickers.filter((s) => this.collectedStickerIds.includes(s.id));
+  }
+
+  get myPersonalHighlights(): string[] {
+    const highlights: string[] = [];
+    if (this.myFinalRank === 1 && this.finalStandings.length > 1) {
+      highlights.push('Gesamtsieg geholt');
+    }
+    if (this.myFinalAvgSoil >= 95) {
+      highlights.push('Hervorragende Bodengesundheit');
+    } else if (this.myFinalAvgSoil >= 85) {
+      highlights.push('Boden stabil erhalten');
+    }
+    if (this.myCapitalDelta > 0) {
+      highlights.push('Kapital erfolgreich vermehrt');
+    }
+    if (this.unlockedStickers.length > 0) {
+      highlights.push(`${this.unlockedStickers.length} Hof-Sticker erspielt`);
+    }
+    return highlights.slice(0, 3);
+  }
 
   get myFinalScore(): number {
     const ps = this.gameService.state?.playerState;

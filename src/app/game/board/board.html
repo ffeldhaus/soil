@@ -458,11 +458,14 @@
                   (click)="$event.stopPropagation()"
                   class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-[calc(5.5rem+env(safe-area-inset-top,0px))] max-sm:w-auto sm:absolute sm:left-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
                 >
-                  <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-950">
+                  <div class="px-3.5 py-2 bg-gray-950 border-b border-gray-700/80 text-[11px] font-bold uppercase tracking-wider text-sky-300">
+                    Wetter
+                  </div>
+                  <div class="relative aspect-[2/1] sm:aspect-[16/9] w-full overflow-hidden bg-slate-950">
                     <img
                       [src]="selectedRoundWeatherData.image"
                       [alt]="selectedRoundWeatherData.name"
-                      class="w-full h-full object-cover"
+                      class="absolute inset-0 w-full h-full object-cover"
                     />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
                     <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
@@ -514,12 +517,15 @@
                   (click)="$event.stopPropagation()"
                   class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-[calc(5.5rem+env(safe-area-inset-top,0px))] max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden text-left"
                 >
+                  <div class="px-3.5 py-2 bg-gray-950 border-b border-gray-700/80 text-[11px] font-bold uppercase tracking-wider text-rose-300">
+                    {{ selectedRoundPestsData.length === 1 ? 'Aktiver Schädling' : 'Aktive Schädlinge' }}
+                  </div>
                   @for (pest of selectedRoundPestsData; track $index; let first = $first) {
                     <div
-                      class="relative aspect-square w-full overflow-hidden bg-slate-950 border-gray-700/80"
+                      class="relative aspect-[2/1] sm:aspect-[16/9] w-full overflow-hidden bg-slate-950 border-gray-700/80"
                       [class.border-t]="!first"
                     >
-                      <img [src]="pest.image" [alt]="pest.name" class="w-full h-full object-cover" />
+                      <img [src]="pest.image" [alt]="pest.name" class="absolute inset-0 w-full h-full object-cover" />
                       <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
                       <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
                         {{ pest.name }}
@@ -554,8 +560,11 @@
                 (click)="$event.stopPropagation()"
                 class="max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-[calc(5.5rem+env(safe-area-inset-top,0px))] max-sm:w-auto sm:absolute sm:right-0 sm:top-full sm:mt-1.5 z-50 sm:w-80 bg-gray-900 border border-amber-500/50 rounded-xl shadow-2xl overflow-hidden text-left"
               >
-                <div class="relative aspect-square w-full overflow-hidden bg-slate-950 border-b border-amber-500/40">
-                  <img [src]="getContractImage(contract.id)" [alt]="contract.name" class="w-full h-full object-cover" />
+                <div class="px-3.5 py-2 bg-gray-950 border-b border-amber-500/40 text-[11px] font-bold uppercase tracking-wider text-amber-300">
+                  Regionale Aktion
+                </div>
+                <div class="relative aspect-[2/1] sm:aspect-[16/9] w-full overflow-hidden bg-slate-950 border-b border-amber-500/40">
+                  <img [src]="getContractImage(contract.id)" [alt]="contract.name" class="absolute inset-0 w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
                 </div>
                 <div class="p-3.5 bg-gray-950">
@@ -632,25 +641,28 @@
           <aside class="board-side-column" aria-label="Wetter und Schädlinge">
             <div
               data-testid="side-card-weather"
-              class="board-side-card bg-gray-900 border-[3px] border-slate-600 rounded-xl overflow-hidden text-left flex flex-col"
+              class="board-side-card bg-gray-900 border border-slate-700 rounded-xl overflow-hidden text-left flex flex-col"
             >
-              <div class="relative aspect-[16/9] w-full overflow-hidden bg-slate-950">
+              <div class="board-side-card-header px-2.5 sm:px-3 py-1.5 bg-gray-950 border-b border-slate-700/80 text-[11px] font-bold uppercase tracking-wider text-sky-300">
+                Wetter
+              </div>
+              <div class="board-side-card-media relative aspect-[16/9] w-full overflow-hidden bg-slate-950">
                 <img
                   [src]="selectedRoundWeatherData.image"
                   [alt]="selectedRoundWeatherData.name"
                   class="w-full h-full object-cover"
                 />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
-                <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
+                <span class="board-side-card-title absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
                   {{ selectedRoundWeatherData.name === 'Normal' ? 'Ruhige Wetterlage' : selectedRoundWeatherData.name.replace('/', '/\u200B') }}
                 </span>
               </div>
               @if (currentWeatherForecast; as forecast) {
-                <div class="p-2.5 sm:p-3 bg-gray-950 border-t border-slate-600/80">
-                  <div class="text-xs font-bold text-white mb-0.5 leading-snug">
+                <div class="p-2.5 sm:p-3 bg-gray-950 border-t border-slate-700/80">
+                  <div class="board-side-card-title text-xs font-bold text-white mb-0.5 leading-snug">
                     Prognose
                   </div>
-                  <p class="text-[11px] text-slate-300 leading-snug break-words">
+                  <p class="board-side-card-body text-[11px] text-slate-300 leading-snug break-words">
                     {{ getFormattedWeatherForecastText(forecast.hintText) }}
                   </p>
                 </div>
@@ -660,20 +672,23 @@
             @if (selectedRoundPestsData.length > 0) {
               <div
                 data-testid="side-card-pests"
-                class="board-side-card bg-gray-900 border-[3px] border-slate-600 rounded-xl overflow-hidden text-left flex flex-col"
+                class="board-side-card bg-gray-900 border border-slate-700 rounded-xl overflow-hidden text-left flex flex-col"
               >
+                <div class="board-side-card-header px-2.5 sm:px-3 py-1.5 bg-gray-950 border-b border-slate-700/80 text-[11px] font-bold uppercase tracking-wider text-rose-300">
+                  {{ selectedRoundPestsData.length === 1 ? 'Aktiver Schädling' : 'Aktive Schädlinge' }}
+                </div>
                 @for (pest of selectedRoundPestsData; track $index; let first = $first) {
                   <div
-                    class="relative aspect-square w-full overflow-hidden bg-slate-950 border-gray-700/80"
+                    class="board-pest-item board-side-card-media relative aspect-square w-full overflow-hidden bg-slate-950 border-gray-700/80"
                     [class.border-t]="!first"
                   >
                     <img
                       [src]="pest.image"
                       [alt]="pest.name"
-                      class="w-full h-full object-cover"
+                      class="board-pest-thumb w-full h-full object-cover"
                     />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
-                    <span class="absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
+                    <div class="board-pest-gradient absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
+                    <span class="board-pest-label board-side-card-title absolute bottom-2 left-2.5 right-2.5 text-xs font-bold text-white leading-tight break-words">
                       {{ pest.name }}
                     </span>
                   </div>
@@ -704,24 +719,27 @@
             @if (currentActiveContract; as contract) {
               <div
                 data-testid="side-card-contract"
-                class="board-side-card bg-gray-900 border-[3px] border-slate-600 rounded-xl overflow-hidden text-left flex flex-col"
+                class="board-side-card bg-gray-900 border border-slate-700 rounded-xl overflow-hidden text-left flex flex-col"
               >
-                <div class="relative aspect-square w-full overflow-hidden bg-slate-950 border-b border-slate-600/80">
+                <div class="board-side-card-header px-2.5 sm:px-3 py-1.5 bg-gray-950 border-b border-slate-700/80 text-[11px] font-bold uppercase tracking-wider text-amber-300">
+                  Regionale Aktion
+                </div>
+                <div class="board-side-card-media relative aspect-[16/9] w-full overflow-hidden bg-slate-950 border-b border-slate-700/80 shrink-0">
                   <img
                     [src]="getContractImage(contract.id)"
                     [alt]="contract.name"
-                    class="w-full h-full object-cover"
+                    class="absolute inset-0 w-full h-full object-cover"
                   />
                   <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
                 </div>
                 <div class="p-2.5 sm:p-3 bg-gray-950">
-                  <h3 class="text-xs font-bold text-white mb-1 leading-snug break-words">
+                  <h3 class="board-side-card-title text-xs font-bold text-white mb-1 leading-snug break-words">
                     {{ contract.name }}
                   </h3>
-                  <p class="text-[11px] text-slate-300 leading-snug break-words">
+                  <p class="board-side-card-body text-[11px] text-slate-300 leading-snug break-words">
                     {{ contract.description }}
                   </p>
-                  <div class="mt-1.5 text-xs font-mono tabular-nums font-bold text-emerald-400">
+                  <div class="board-side-card-title mt-1.5 text-xs font-mono tabular-nums font-bold text-emerald-400">
                     Bonus: +{{ contract.reward | currency: 'EUR' : 'symbol' : '1.0-0' }}
                   </div>
                 </div>
@@ -751,91 +769,195 @@
       </div>
 
       <div
-        class="relative bg-gray-900 border border-gray-700 shadow-2xl rounded-xl max-w-2xl w-full p-4 sm:p-5 text-center transform transition-all animate-modal-entrance max-h-[92vh] overflow-y-auto custom-scrollbar">
-        <div class="mb-5">
-          <h2
-            class="text-3xl sm:text-4xl font-black text-white mb-1 tracking-tight">
-            Spiel beendet!
-          </h2>
-          <p
-            class="text-slate-300 text-sm sm:text-base">
-            Abschlussbilanz für nachhaltige Hofbewirtschaftung
-          </p>
+        class="relative bg-gray-900 border border-gray-700 shadow-2xl rounded-xl max-w-2xl w-full overflow-hidden text-center transform transition-all animate-modal-entrance max-h-[92vh] overflow-y-auto custom-scrollbar">
+        <!-- 46d: Painted Farm Header Banner -->
+        <div class="board-game-end-banner relative h-28 sm:h-36 w-full overflow-hidden bg-slate-950 border-b border-gray-700/80">
+          <img
+            src="assets/images/bauernhof-landscape-hd.webp"
+            alt="Bauernhof Abschlussbilanz"
+            class="absolute inset-0 w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/65 to-gray-950/35"></div>
+          <div class="relative z-10 h-full flex flex-col items-center justify-end pb-3 px-4">
+            <div class="inline-flex items-center gap-2 text-emerald-300 text-[11px] font-mono font-bold uppercase tracking-widest mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8m-4-4v4m-5-9a5 5 0 0010 0V4H7v8zm-2-6H3v2a3 3 0 003 3h1m12-5h2v2a3 3 0 01-3 3h-1" />
+              </svg>
+              <span>Abschlussbilanz</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-none">
+              Spiel beendet!
+            </h2>
+          </div>
         </div>
 
-        <!-- Primary Winner: Gesamtsieger (Zukunftsfähiger Hof) -->
-        @if (overallWinner) {
+        <div class="p-4 sm:p-5">
+          <!-- Compact title fallback on ultra-short landscape screens -->
+          <div class="board-game-end-compact-title hidden mb-3">
+            <h2 class="text-xl font-black text-white tracking-tight">Spiel beendet!</h2>
+            <p class="text-xs text-slate-300">Abschlussbilanz für nachhaltige Hofbewirtschaftung</p>
+          </div>
+
+          <!-- 46a + 46e + 46f: Personal Farm Summary Card -->
           <div
-            data-testid="overall-winner-card"
-            class="p-4 mb-4 rounded-lg bg-emerald-950 border border-emerald-500/60 text-center"
+            data-testid="personal-summary-card"
+            class="p-3.5 sm:p-4 mb-4 rounded-xl bg-gray-950 border border-emerald-500/50 text-left"
           >
-            <div class="text-[11px] font-mono font-bold text-emerald-300 uppercase tracking-widest mb-1">
-              Gesamtsieger: Zukunftsfähiger Hof
-            </div>
-            <div class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
-              {{ overallWinner.name }}
-            </div>
-            <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-mono tabular-nums text-slate-200">
-              <span class="px-2.5 py-1 rounded bg-slate-900/90 border border-emerald-500/40 text-emerald-300 font-bold">
-                {{ overallWinner.score }} Zukunfts-Punkte
-              </span>
-              <span>Kapital: {{ overallWinner.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
-              <span>Ø Boden: {{ overallWinner.avgSoil | number: '1.0-1' }}%</span>
-            </div>
-          </div>
-        }
-
-        <!-- Secondary Categories: Finanz-Sieger & Boden-Wächter -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
-          <div class="flex flex-col items-center p-3.5 bg-gray-950 rounded-lg border border-gray-800">
-            <div class="text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-1">Finanz-Sieger</div>
-            <div class="text-base font-bold text-white mb-0.5">{{ financialWinner?.name }}</div>
-            <div class="text-slate-300 text-xs font-mono tabular-nums">
-              {{ financialWinner?.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}
-            </div>
-          </div>
-
-          <div class="flex flex-col items-center p-3.5 bg-gray-950 rounded-lg border border-gray-800">
-            <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Boden-Wächter</div>
-            <div class="text-base font-bold text-white mb-0.5">{{ soilWinner?.name }}</div>
-            <div class="text-slate-300 text-xs font-mono tabular-nums">
-              Ø {{ soilWinner?.avgSoil | number: '1.0-1' }}% Bodenqualität
-            </div>
-          </div>
-        </div>
-
-        <!-- Final Leaderboard -->
-        @if (finalStandings.length > 0) {
-          <div data-testid="final-leaderboard" class="my-4 bg-gray-950 border border-gray-800 rounded-lg p-3.5 text-left">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-white uppercase tracking-wider">Abschluss-Rangliste</span>
-              <button
-                type="button"
-                (click)="showStickerAlbumModal = true"
-                class="text-xs font-mono text-amber-300 hover:text-amber-200 underline"
-              >
-                Hof-Sticker-Album ({{ collectedStickerIds.length }}/{{ allStickers.length }})
-              </button>
-            </div>
-            <div class="space-y-1.5">
-              @for (entry of finalStandings; track entry.uid) {
-                <div
-                  class="flex items-center justify-between px-3 py-1.5 rounded bg-slate-900/80 border border-slate-700/60 text-xs font-mono tabular-nums"
-                >
-                  <div class="flex items-center gap-2 min-w-0">
-                    <span class="font-bold text-slate-300 w-6">#{{ entry.rank }}</span>
-                    <span class="font-sans font-semibold text-white truncate">{{ entry.name }}</span>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div>
+                <div class="text-[11px] font-mono font-bold text-emerald-300 uppercase tracking-wider">
+                  Deine Leistung · {{ myFinalPlayerName }}
+                </div>
+                @if (finalStandings.length > 1) {
+                  <div class="text-xs text-slate-300 mt-0.5">
+                    Platz <strong class="text-white font-mono tabular-nums">{{ myFinalRank }}</strong> von {{ finalStandings.length }} Höfen
                   </div>
-                  <div class="flex items-center gap-3 shrink-0">
-                    <span class="text-slate-400 hidden sm:inline">{{ entry.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
-                    <span class="text-slate-400 hidden sm:inline">Ø {{ entry.avgSoil }}%</span>
-                    <span class="text-emerald-400 font-bold">{{ entry.score }} Pkt</span>
-                  </div>
+                }
+              </div>
+              @if (myPersonalHighlights.length > 0) {
+                <div class="flex flex-wrap gap-1.5">
+                  @for (highlight of myPersonalHighlights; track highlight) {
+                    <span class="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700/70 text-[11px] font-medium text-emerald-200">
+                      {{ highlight }}
+                    </span>
+                  }
                 </div>
               }
             </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <!-- Zukunfts-Punkte -->
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-700/70">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Zukunfts-Punkte</div>
+                <div class="text-lg font-black font-mono tabular-nums text-emerald-400 mt-0.5">
+                  {{ myFinalScore }} Pkt
+                </div>
+              </div>
+
+              <!-- Endkapital + Delta -->
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-700/70">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Endkapital</div>
+                <div class="flex items-baseline gap-2 mt-0.5 flex-wrap">
+                  <span class="text-lg font-black font-mono tabular-nums text-white">
+                    {{ myFinalCapital | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </span>
+                  <span
+                    class="text-[11px] font-mono tabular-nums font-bold"
+                    [class.text-emerald-400]="myCapitalDelta >= 0"
+                    [class.text-rose-400]="0 > myCapitalDelta"
+                  >
+                    {{ myCapitalDelta >= 0 ? '+' : '' }}{{ myCapitalDelta | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Ø Bodenqualität + Visual Bar -->
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-700/70">
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <span>Ø Bodenqualität</span>
+                  <span class="font-mono tabular-nums text-white text-xs">{{ myFinalAvgSoil }}%</span>
+                </div>
+                <div class="mt-2 h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+                  <div
+                    class="h-full rounded-full transition-all"
+                    [class.bg-emerald-500]="myFinalAvgSoil >= 85"
+                    [class.bg-amber-500]="myFinalAvgSoil >= 65 && 85 > myFinalAvgSoil"
+                    [class.bg-rose-500]="65 > myFinalAvgSoil"
+                    [style.width.%]="myFinalAvgSoil > 100 ? 100 : myFinalAvgSoil"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 46e: Unlocked Stickers Visual Strip -->
+            @if (unlockedStickers.length > 0) {
+              <div class="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-2 flex-wrap">
+                  @for (sticker of unlockedStickers; track sticker.id) {
+                    <button
+                      type="button"
+                      (click)="showStickerAlbumModal = true"
+                      class="flex items-center gap-2 pr-2.5 pl-1 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-amber-500/40 transition-colors cursor-pointer"
+                    >
+                      <img
+                        [src]="sticker.image"
+                        [alt]="sticker.title"
+                        class="w-7 h-7 rounded object-cover shrink-0"
+                      />
+                      <span class="text-xs font-semibold text-amber-200">{{ sticker.title }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
           </div>
-        }
+
+          <!-- 46b: Compact Podium (Gesamtsieger, Finanz-Sieger, Boden-Wächter) -->
+          @if (overallWinner) {
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 my-3">
+              <div
+                data-testid="overall-winner-card"
+                class="flex flex-col items-center justify-center p-3 bg-emerald-950 rounded-lg border border-emerald-500/50"
+              >
+                <div class="text-[10px] font-bold text-emerald-300 uppercase tracking-wider mb-0.5">Gesamtsieger</div>
+                <div class="text-sm sm:text-base font-bold text-white">{{ overallWinner.name }}</div>
+                <div class="text-emerald-300 text-xs font-mono tabular-nums">
+                  {{ overallWinner.score }} Pkt · Ø {{ overallWinner.avgSoil | number: '1.0-1' }}%
+                </div>
+              </div>
+
+              <div class="flex flex-col items-center justify-center p-3 bg-gray-950 rounded-lg border border-gray-800">
+                <div class="text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-0.5">Finanz-Sieger</div>
+                <div class="text-sm sm:text-base font-bold text-white">{{ financialWinner?.name }}</div>
+                <div class="text-slate-300 text-xs font-mono tabular-nums">
+                  {{ financialWinner?.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+              </div>
+
+              <div class="flex flex-col items-center justify-center p-3 bg-gray-950 rounded-lg border border-gray-800">
+                <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-0.5">Boden-Wächter</div>
+                <div class="text-sm sm:text-base font-bold text-white">{{ soilWinner?.name }}</div>
+                <div class="text-slate-300 text-xs font-mono tabular-nums">
+                  Ø {{ soilWinner?.avgSoil | number: '1.0-1' }}% Bodenqualität
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Final Leaderboard (with own farm highlighted & mobile capital/soil visible) -->
+          @if (finalStandings.length > 0) {
+            <div data-testid="final-leaderboard" class="my-3 bg-gray-950 border border-gray-800 rounded-lg p-3 text-left">
+              <div class="text-xs font-bold text-white uppercase tracking-wider mb-2">Abschluss-Rangliste</div>
+              <div class="space-y-1.5">
+                @for (entry of finalStandings; track entry.uid) {
+                  <div
+                    class="flex items-center justify-between gap-2 px-3 py-1.5 rounded text-xs font-mono tabular-nums border"
+                    [class.bg-emerald-950]="entry.uid === myPlayerUid"
+                    [class.border-emerald-500]="entry.uid === myPlayerUid"
+                    [class.bg-slate-900]="entry.uid !== myPlayerUid"
+                    [class.border-slate-700]="entry.uid !== myPlayerUid"
+                  >
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-300 w-5 shrink-0">#{{ entry.rank }}</span>
+                        <span class="font-sans font-semibold text-white truncate">
+                          {{ entry.name }}{{ entry.uid === myPlayerUid ? ' (Du)' : '' }}
+                        </span>
+                      </div>
+                      <div class="sm:hidden text-[11px] text-slate-400 pl-7 mt-0.5">
+                        {{ entry.capital | currency: 'EUR' : 'symbol' : '1.0-0' }} · Ø {{ entry.avgSoil }}%
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <span class="text-slate-400 hidden sm:inline">{{ entry.capital | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+                      <span class="text-slate-400 hidden sm:inline">Ø {{ entry.avgSoil }}%</span>
+                      <span class="text-emerald-400 font-bold">{{ entry.score }} Pkt</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
 
         @if (game?.config?.challengeTargetScore !== undefined) {
           <div
@@ -889,106 +1011,112 @@
           </button>
         </div>
 
-        <!-- Integrated Feedback Form -->
-        <div class="mt-8 pt-8 border-t border-gray-800 text-left">
+        <!-- 46c: Collapsible Integrated Feedback Form -->
+        <div class="mt-4 pt-4 border-t border-gray-800 text-left">
           @if (!feedbackSubmitted) {
-            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <span>Feedback & Vorschläge</span>
-              <span class="text-xs font-normal text-gray-500 uppercase tracking-widest bg-gray-800 px-2 py-0.5 rounded">Optional</span>
-            </h3>
-            
-            <form (submit)="onFeedbackSubmit()" #feedbackForm="ngForm" class="space-y-4">
-              <!-- Rating -->
-              <div class="flex items-center justify-between">
-                <span class="text-sm font-medium text-white">Wie hat dir das Spiel gefallen?</span>
-                <div class="flex gap-1">
-                  @for (star of [1, 2, 3, 4, 5]; track star) {
-                    <button type="button" (click)="feedback.rating = star" class="transition-transform active:scale-90">
-                      <svg
-                        class="w-6 h-6"
-                        [class.text-yellow-500]="feedback.rating >= star"
-                        [class.text-gray-600]="feedback.rating < star"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                        />
-                      </svg>
-                    </button>
-                  }
+            <button
+              type="button"
+              (click)="showGameEndFeedbackForm = !showGameEndFeedbackForm"
+              class="w-full flex items-center justify-between px-3.5 py-2 rounded-lg bg-gray-950 hover:bg-slate-900 border border-gray-800 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
+            >
+              <span>Feedback & Vorschläge <span class="text-slate-400 font-normal">(Optional)</span></span>
+              <span class="text-slate-400 font-mono">{{ showGameEndFeedbackForm ? '−' : '+' }}</span>
+            </button>
+
+            @if (showGameEndFeedbackForm) {
+              <form (submit)="onFeedbackSubmit()" #feedbackForm="ngForm" class="space-y-3 mt-3 p-3.5 rounded-lg bg-gray-950 border border-gray-800">
+                <!-- Rating -->
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-white">Wie hat dir das Spiel gefallen?</span>
+                  <div class="flex gap-1">
+                    @for (star of [1, 2, 3, 4, 5]; track star) {
+                      <button type="button" (click)="feedback.rating = star" class="transition-transform active:scale-90">
+                        <svg
+                          class="w-6 h-6"
+                          [class.text-yellow-500]="feedback.rating >= star"
+                          [class.text-gray-600]="feedback.rating < star"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                          />
+                        </svg>
+                      </button>
+                    }
+                  </div>
                 </div>
-              </div>
 
-              <!-- Comment -->
-              <div class="relative">
-                <label for="comment" class="sr-only">Dein Feedback (optional)</label>
-                <textarea
-                  id="comment"
-                  [(ngModel)]="feedback.comment"
-                  name="comment"
-                  rows="3"
-                  placeholder="Was hat dir gefallen oder was können wir verbessern? (Optional)"
-                  class="w-full bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none text-sm"
-                ></textarea>
-              </div>
+                <!-- Comment -->
+                <div class="relative">
+                  <label for="comment" class="sr-only">Dein Feedback (optional)</label>
+                  <textarea
+                    id="comment"
+                    [(ngModel)]="feedback.comment"
+                    name="comment"
+                    rows="3"
+                    placeholder="Was hat dir gefallen oder was können wir verbessern? (Optional)"
+                    class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none text-sm"
+                  ></textarea>
+                </div>
 
-              <!-- Contact Email (Optional) -->
-              @if (currentUser && !currentUser.isAnonymous && currentUser.email) {
-                <div class="flex items-start gap-3 bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2.5">
-                  <input
-                    type="checkbox"
-                    id="board-feedback-include-email"
-                    name="includeEmail"
-                    [(ngModel)]="includeFeedbackEmail"
-                    class="mt-0.5 h-4 w-4 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
-                  />
-                  <label
-                    for="board-feedback-include-email"
-                    class="text-xs sm:text-sm text-gray-300 cursor-pointer select-none leading-snug"
+                <!-- Contact Email (Optional) -->
+                @if (currentUser && !currentUser.isAnonymous && currentUser.email) {
+                  <div class="flex items-start gap-3 bg-gray-900 border border-gray-700 rounded-lg px-3.5 py-2.5">
+                    <input
+                      type="checkbox"
+                      id="board-feedback-include-email"
+                      name="includeEmail"
+                      [(ngModel)]="includeFeedbackEmail"
+                      class="mt-0.5 h-4 w-4 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
+                    />
+                    <label
+                      for="board-feedback-include-email"
+                      class="text-xs sm:text-sm text-gray-300 cursor-pointer select-none leading-snug"
+                    >
+                      Meine E-Mail-Adresse (<span class="font-mono text-emerald-400">{{ currentUser.email }}</span
+                      >) für eine Antwort mitsenden
+                    </label>
+                  </div>
+                } @else {
+                  <div>
+                    <label for="board-feedback-email" class="block text-xs font-medium text-gray-400 mb-1.5">
+                      E-Mail-Adresse für eine Antwort (optional)
+                    </label>
+                    <input
+                      type="email"
+                      id="board-feedback-email"
+                      name="contactEmail"
+                      [(ngModel)]="feedback.email"
+                      autocomplete="email"
+                      autocorrect="off"
+                      autocapitalize="off"
+                      spellcheck="false"
+                      placeholder="name@schule.de"
+                      class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3.5 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
+                    />
+                  </div>
+                }
+
+                <div class="flex justify-end">
+                  <button
+                    type="submit"
+                    [disabled]="!feedback.rating || isSubmittingFeedback"
+                    class="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white px-5 py-2 rounded-xl font-bold transition-all flex items-center gap-2 text-sm"
                   >
-                    Meine E-Mail-Adresse (<span class="font-mono text-emerald-400">{{ currentUser.email }}</span
-                    >) für eine Antwort mitsenden
-                  </label>
+                    @if (!isSubmittingFeedback) {
+                      <span>Feedback senden</span>
+                    } @else {
+                      <span>Wird gesendet...</span>
+                      <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    }
+                  </button>
                 </div>
-              } @else {
-                <div>
-                  <label for="board-feedback-email" class="block text-xs font-medium text-gray-400 mb-1.5">
-                    E-Mail-Adresse für eine Antwort (optional)
-                  </label>
-                  <input
-                    type="email"
-                    id="board-feedback-email"
-                    name="contactEmail"
-                    [(ngModel)]="feedback.email"
-                    autocomplete="email"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                    placeholder="name@schule.de"
-                    class="w-full bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
-                  />
-                </div>
-              }
-
-              <div class="flex justify-end">
-                <button
-                  type="submit"
-                  [disabled]="!feedback.rating || isSubmittingFeedback"
-                  class="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white px-6 py-2 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2 text-sm"
-                >
-                  @if (!isSubmittingFeedback) {
-                    <span>Feedback senden</span>
-                  } @else {
-                    <span>Wird gesendet...</span>
-                    <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  }
-                </button>
-              </div>
-            </form>
+              </form>
+            }
           } @else {
             <div class="bg-emerald-950 border border-emerald-700 rounded-lg p-3.5 text-center animate-fade-in">
               <span class="text-emerald-400 font-bold">Vielen Dank für dein Feedback!</span>
@@ -996,26 +1124,27 @@
           }
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mt-5">
           <button (click)="closeGameEndModal()"
-            class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition border border-slate-600">
+            class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition border border-slate-600 cursor-pointer">
             Ergebnisse ansehen
           </button>
           <button type="button" (click)="showStickerAlbumModal = true"
-            class="px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition border border-amber-500">
+            class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition border border-amber-500 cursor-pointer">
             Hof-Sticker ({{ collectedStickerIds.length }}/{{ allStickers.length }})
           </button>
           @if (isResearchReplay) {
             <a routerLink="/research"
-              class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500">
+              class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500">
               Zurück zu Forschungsdaten
             </a>
           } @else {
             <button routerLink="/admin"
-              class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500">
+              class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition border border-emerald-500 cursor-pointer">
               Zur Admin-Konsole
             </button>
           }
+        </div>
         </div>
       </div>
     </div>

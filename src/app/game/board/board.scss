@@ -1,8 +1,8 @@
 @use 'sass:math';
 
 .board-container {
-  @media (orientation: portrait) {
-  }
+  @media (orientation: portrait) {}
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -23,10 +23,71 @@
   flex: 1 1 0;
   min-width: 145px;
   max-width: 220px;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+@media (max-height: 460px) {
+  .board-side-column {
+    gap: 0.375rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .board-side-card {
+    flex-shrink: 0;
+  }
+
+  .board-side-card-header {
+    padding: 0.25rem 0.625rem;
+    font-size: 10px;
+  }
+
+  [data-testid='side-card-weather'] .board-side-card-media,
+  [data-testid='side-card-contract'] .board-side-card-media {
+    display: none;
+  }
+
+  [data-testid='side-card-pests'] .board-pest-item {
+    aspect-ratio: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  [data-testid='side-card-pests'] .board-pest-thumb {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  [data-testid='side-card-pests'] .board-pest-gradient {
+    display: none;
+  }
+
+  [data-testid='side-card-pests'] .board-pest-label {
+    position: static;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .board-game-end-banner {
+    display: none;
+  }
+
+  .board-game-end-compact-title {
+    display: block;
+  }
 }
 
 .show-side-cards .board-side-column {
   display: flex;
+  margin-top: -2.75rem;
+  max-height: calc(100% + 2.75rem);
+  padding-top: 0.25rem;
 }
 
 .board-compact-hud {
@@ -38,9 +99,20 @@
 }
 
 .board-side-card {
-  box-shadow:
-    0 20px 44px -8px rgba(0, 0, 0, 0.9),
-    0 8px 20px -4px rgba(0, 0, 0, 0.78);
+  container-type: inline-size;
+  box-shadow: 0 8px 18px -4px rgba(0, 0, 0, 0.45);
+}
+
+.board-side-card-header {
+  font-size: clamp(10px, 6.2cqw, 13px);
+}
+
+.board-side-card-title {
+  font-size: clamp(12px, 7.2cqw, 16px);
+}
+
+.board-side-card-body {
+  font-size: clamp(11px, 6.6cqw, 15px);
 }
 
 .game-grid {
@@ -53,24 +125,14 @@
   --grid-overhead: calc(124px + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   --grid-avail-h: calc(100dvh - var(--grid-overhead));
 
-  width: min(
-    100%,
-    calc(
-      (var(--grid-avail-h) - 2 * var(--grid-pad) - (var(--rows) - 1) * var(--grid-gap)) * (var(--cols) / var(--rows))
-      + (var(--cols) - 1) * var(--grid-gap)
-      + 2 * var(--grid-pad)
-    )
-  );
+  width: min(100%,
+      calc((var(--grid-avail-h) - 2 * var(--grid-pad) - (var(--rows) - 1) * var(--grid-gap)) * (var(--cols) / var(--rows)) + (var(--cols) - 1) * var(--grid-gap) + 2 * var(--grid-pad)));
+
   @supports (height: 100cqh) {
-    width: min(
-      100%,
-      calc(
-        (100cqh - 2 * var(--grid-pad) - (var(--rows) - 1) * var(--grid-gap)) * (var(--cols) / var(--rows))
-        + (var(--cols) - 1) * var(--grid-gap)
-        + 2 * var(--grid-pad)
-      )
-    );
+    width: min(100%,
+        calc((100cqh - 2 * var(--grid-pad) - (var(--rows) - 1) * var(--grid-gap)) * (var(--cols) / var(--rows)) + (var(--cols) - 1) * var(--grid-gap) + 2 * var(--grid-pad)));
   }
+
   max-width: none;
   height: auto;
 
@@ -78,15 +140,13 @@
   padding: var(--grid-pad);
   border-radius: 0.75rem;
   border: none;
-  background-image:
-    linear-gradient(to bottom, rgba(20, 13, 7, 0.55), rgba(14, 9, 4, 0.68)),
-    url('/assets/images/acker.webp');
+  background-image: linear-gradient(to bottom, rgba(20, 13, 7, 0.55), rgba(14, 9, 4, 0.68)),
+  url('/assets/images/acker.webp');
   background-size: cover;
   background-position: center;
-  box-shadow:
-    0 22px 48px -10px rgba(0, 0, 0, 0.92),
-    0 8px 20px -4px rgba(0, 0, 0, 0.78),
-    inset 0 0 16px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 22px 48px -10px rgba(0, 0, 0, 0.92),
+  0 8px 20px -4px rgba(0, 0, 0, 0.78),
+  inset 0 0 16px rgba(0, 0, 0, 0.55);
 }
 
 @keyframes modal-entrance {
@@ -120,69 +180,78 @@
   @for $i from 1 through 40 {
     $color: hsl(math.random(360), 100%, 60%);
     $peak: -30vh - (math.random(50) * 1vh);
-    $drift: (math.random(200) - 100) * 1px;
-    $launch-x: (math.random(80) - 40) * 1vw;
+    $drift: (
+      math.random(200) - 100) * 1px;
+    $launch-x: (
+      math.random(80) - 40) * 1vw;
 
     &:nth-child(#{$i}) {
       left: 50%;
       background-color: $color;
-      box-shadow: 0 0 10px $color, 0 0 20px $color;
+      box-shadow: 0 0 10px $color,
+        0 0 20px $color;
       animation: firework-#{ $i } 4s infinite;
-      animation-delay: calc(#{math.random(4000)}ms);
+      animation-delay: calc(#{math.random(4000)}ms
+    );
+  }
+
+  @keyframes firework-#{$i} {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0;
+      width: 4px;
+      height: 4px;
     }
 
-    @keyframes firework-#{$i} {
-      0% {
-        transform: translateY(0) translateX(0);
-        opacity: 0;
-        width: 4px;
-        height: 4px;
-      }
-      5% {
-        opacity: 1;
-      }
-      30% {
-        transform: translateY($peak) translateX($launch-x);
-        opacity: 1;
-        width: 4px;
-        height: 4px;
-        box-shadow: 0 0 10px white, 0 0 20px white;
-      }
-      31% {
-        transform: translateY($peak) translateX($launch-x) scale(1.5);
-        opacity: 1;
-        width: 4px;
-        height: 4px;
-        box-shadow: 
-          0 0 5px $color,
-          20px 20px 5px $color,
-          -20px -20px 5px $color,
-          20px -20px 5px $color,
-          -20px 20px 5px $color,
-          0 40px 5px $color,
-          0 -40px 5px $color,
-          40px 0 5px $color,
-          -40px 0 5px $color;
-      }
-      45% {
-        transform: translateY(calc($peak + 40px)) translateX(calc($launch-x + $drift)) scale(1);
-        opacity: 0;
-        width: 2px;
-        height: 2px;
-        box-shadow: 
-          0 0 2px $color,
-          120px 120px 2px $color,
-          -120px -120px 2px $color,
-          120px -120px 2px $color,
-          -120px 120px 2px $color,
-          60px 0px 2px $color,
-          -60px 0px 2px $color,
-          0px 60px 2px $color,
-          0px -60px 2px $color;
-      }
-      100% {
-        opacity: 0;
-      }
+    5% {
+      opacity: 1;
+    }
+
+    30% {
+      transform: translateY($peak) translateX($launch-x);
+      opacity: 1;
+      width: 4px;
+      height: 4px;
+      box-shadow: 0 0 10px white, 0 0 20px white;
+    }
+
+    31% {
+      transform: translateY($peak) translateX($launch-x) scale(1.5);
+      opacity: 1;
+      width: 4px;
+      height: 4px;
+      box-shadow:
+        0 0 5px $color,
+        20px 20px 5px $color,
+        -20px -20px 5px $color,
+        20px -20px 5px $color,
+        -20px 20px 5px $color,
+        0 40px 5px $color,
+        0 -40px 5px $color,
+        40px 0 5px $color,
+        -40px 0 5px $color;
+    }
+
+    45% {
+      transform: translateY(calc($peak + 40px)) translateX(calc($launch-x + $drift)) scale(1);
+      opacity: 0;
+      width: 2px;
+      height: 2px;
+      box-shadow:
+        0 0 2px $color,
+        120px 120px 2px $color,
+        -120px -120px 2px $color,
+        120px -120px 2px $color,
+        -120px 120px 2px $color,
+        60px 0px 2px $color,
+        -60px 0px 2px $color,
+        0px 60px 2px $color,
+        0px -60px 2px $color;
+    }
+
+    100% {
+      opacity: 0;
     }
   }
+}
 }
