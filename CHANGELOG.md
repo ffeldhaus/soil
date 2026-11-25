@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.5.8] - 2026-11-25
 ### Added
 - **Globales Feedback-Modal, mobiles Spielmenü & Feedback-Telemetrie** (`src/app/app.*`, `src/app/game/board/board.*`, `src/app/types.ts`, `src/app/shared/telemetry.service.ts`, `functions/src/telemetry.service.ts`, `src/app/admin/super-admin/components/super-admin-stats.ts`, `src/app/privacy/privacy.html`): Neuer `Feedback`-Einstieg in der globalen Fußzeile sowie `Feedback geben` im mobilen Spielmenü; anonyme Zähler `feedback_opened` und `feedback_submitted` im Super-Admin-Dashboard ergänzt.
 
