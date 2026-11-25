@@ -324,6 +324,35 @@ export interface TelemetryStats {
   firstRecordedHour?: string | null;
 }
 
+export interface TelemetryLocalSessionUpdate {
+  slot: string;
+  currentRound: number;
+  roundLimit: number;
+  status: 'in_progress' | 'finished' | 'deleted';
+}
+
+export interface ActiveGameRoundBucket {
+  round: number;
+  remaining: number;
+  roundLimit: number;
+  count: number;
+  source: 'local' | 'cloud';
+}
+
+export interface FinishedGameLengthSummary {
+  roundLimit: number;
+  count: number;
+}
+
+export interface ActiveRoundDistribution {
+  buckets: ActiveGameRoundBucket[];
+  localActiveSessions: number;
+  cloudActiveInProgress: number;
+  hasLocalSessionDocs: boolean;
+  localFinished30dByLength: FinishedGameLengthSummary[];
+  cloudFinishedByLength: FinishedGameLengthSummary[];
+}
+
 export interface SystemStats {
   games: {
     total: number;
@@ -332,6 +361,7 @@ export interface SystemStats {
     localActive?: number;
     localPlayedTotal?: number;
     localFinishedTotal?: number;
+    roundDistribution?: ActiveRoundDistribution;
   };
   users: {
     total: number;

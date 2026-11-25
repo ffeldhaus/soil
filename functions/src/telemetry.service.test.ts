@@ -1,9 +1,12 @@
 import { expect } from 'chai';
+import { Timestamp } from 'firebase-admin/firestore';
 import * as sinon from 'sinon';
 import { resetRateLimitStore } from './research.service';
 import {
+  aggregateActiveRoundDistribution,
   aggregateTelemetryStats,
   cleanupExpiredHourlyTelemetry,
+  cleanupExpiredLocalSessions,
   computeLocalGameStats,
   handleTelemetryHttpRequest,
   isBotUserAgent,
@@ -72,6 +75,7 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
         quick_game_deleted: 1,
       },
       referrers: { 'bildungsserver.de': 1 },
+      sessions: [],
       totalViews: 26,
     });
   });
@@ -465,5 +469,249 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
       mockDb,
     );
     expect(throttledRes.statusCode).to.equal(429);
+  });
+
+  it('sanitizes session-only payloads, caps at 10 unique slots, and writes idempotent telemetry_local_sessions docs', async () => {
+    const validSlots = Array.from({ length: 12 }, (_, i) => ({
+      slot: `abcdef01234567${String(i).padStart(2, '0')}`,
+      currentRound: 2,
+      roundLimit: 10,
+      status: 'in_progress',
+    }));
+    // Duplicate first slot with newer round should overwrite earlier entry
+    validSlots.push({
+      slot: 'abcdef0123456700',
+      currentRound: 4,
+      roundLimit: 10,
+      status: 'in_progress',
+    });
+    // Invalid entries must be filtered out
+    const sanitized = sanitizeTelemetryPayload({
+      mode: 'web',
+      sessions: [
+        ...validSlots,
+        { slot: 'bad-slot', currentRound: 1, roundLimit: 10, status: 'in_progress' },
+        { slot: '1234567890abcdef', currentRound: 0, roundLimit: 10, status: 'in_progress' },
+        { slot: '1234567890abcdee', currentRound: 2, roundLimit: 2, status: 'in_progress' },
+        { slot: '1234567890abcded', currentRound: 11, roundLimit: 10, status: 'in_progress' },
+        { slot: '1234567890abcdec', currentRound: 3, roundLimit: 10, status: 'bogus' },
+      ],
+    });
+
+    expect(sanitized).to.not.equal(null);
+    expect(sanitized?.sessions.length).to.equal(10);
+    expect(sanitized?.sessions[0]).to.deep.equal({
+      slot: 'abcdef0123456700',
+      currentRound: 4,
+      roundLimit: 10,
+      status: 'in_progress',
+    });
+
+    const dailySetStub = sinon.stub().resolves();
+    const sessionWrites = new Map<string, any>();
+    const mockDb: any = {
+      collection: (name: string) => ({
+        doc: (id: string) => ({
+          set:
+            name === 'telemetry_local_sessions'
+              ? async (data: any, opts: any) => {
+                  sessionWrites.set(id, { data, opts });
+                }
+              : dailySetStub,
+        }),
+      }),
+    };
+
+    const res: any = {
+      statusCode: 200,
+      setHeader: sinon.stub(),
+      status(code: number) {
+        this.statusCode = code;
+        return this;
+      },
+      send() {
+        return this;
+      },
+    };
+
+    await handleTelemetryHttpRequest(
+      {
+        method: 'POST',
+        headers: { 'user-agent': 'Mozilla/5.0 Chrome/128.0.0.0' },
+        body: {
+          mode: 'web',
+          sessions: [{ slot: 'aabbccddeeff0011', currentRound: 4, roundLimit: 20, status: 'in_progress' }],
+        },
+      },
+      res,
+      mockDb,
+    );
+
+    expect(res.statusCode).to.equal(204);
+    expect(dailySetStub.called).to.equal(false);
+    expect(sessionWrites.has('aabbccddeeff0011')).to.equal(true);
+    const written = sessionWrites.get('aabbccddeeff0011');
+    expect(written.opts).to.deep.equal({ merge: true });
+    expect(written.data.currentRound).to.equal(4);
+    expect(written.data.roundLimit).to.equal(20);
+    expect(written.data.status).to.equal('in_progress');
+    expect(written.data.updatedAt).to.be.an.instanceOf(Timestamp);
+  });
+
+  it('cleans up telemetry_local_sessions older than 30 days in batches of 200', async () => {
+    const now = new Date('2026-11-25T12:00:00.000Z');
+    let cutoffUsed: Timestamp | null = null;
+    const batchDeleteStub = sinon.stub();
+    const batchCommitStub = sinon.stub().resolves();
+    const expiredRefs = [{ id: 'slot-old-1' }, { id: 'slot-old-2' }];
+
+    const mockDb: any = {
+      collection: (name: string) => {
+        expect(name).to.equal('telemetry_local_sessions');
+        return {
+          where: (field: string, op: string, val: Timestamp) => {
+            expect(field).to.equal('updatedAt');
+            expect(op).to.equal('<');
+            cutoffUsed = val;
+            return {
+              limit: (lim: number) => {
+                expect(lim).to.equal(200);
+                return {
+                  get: async () => ({ docs: expiredRefs.map((ref) => ({ ref })) }),
+                };
+              },
+            };
+          },
+        };
+      },
+      batch: () => ({
+        delete: batchDeleteStub,
+        commit: batchCommitStub,
+      }),
+    };
+
+    const deleted = await cleanupExpiredLocalSessions(mockDb, now);
+    expect(deleted).to.equal(2);
+    expect(cutoffUsed?.toMillis()).to.equal(now.getTime() - 30 * 86_400_000);
+    expect(batchDeleteStub.callCount).to.equal(2);
+    expect(batchCommitStub.calledOnce).to.equal(true);
+  });
+
+  it('aggregates active round distribution across local sessions and cloud games with finished length summaries', async () => {
+    const now = new Date('2026-11-25T12:00:00.000Z');
+    const recentTs = Timestamp.fromMillis(now.getTime() - 2 * 86_400_000);
+    const expiredTs = Timestamp.fromMillis(now.getTime() - 35 * 86_400_000);
+
+    const mockDb: any = {
+      collection: (name: string) => {
+        if (name === 'telemetry_local_sessions') {
+          return {
+            where: () => ({
+              get: async () => ({
+                docs: [
+                  {
+                    id: 's1',
+                    data: () => ({ currentRound: 4, roundLimit: 10, status: 'in_progress', updatedAt: recentTs }),
+                  },
+                  {
+                    id: 's2',
+                    data: () => ({ currentRound: 4, roundLimit: 10, status: 'in_progress', updatedAt: recentTs }),
+                  },
+                  {
+                    id: 's3',
+                    data: () => ({ currentRound: 4, roundLimit: 20, status: 'in_progress', updatedAt: recentTs }),
+                  },
+                  {
+                    id: 's4',
+                    data: () => ({ currentRound: 10, roundLimit: 10, status: 'finished', updatedAt: recentTs }),
+                  },
+                  {
+                    id: 's5',
+                    data: () => ({ currentRound: 6, roundLimit: 6, status: 'finished', updatedAt: recentTs }),
+                  },
+                  {
+                    id: 's6',
+                    data: () => ({ currentRound: 3, roundLimit: 10, status: 'deleted', updatedAt: recentTs }),
+                  },
+                  {
+                    id: 's7',
+                    data: () => ({ currentRound: 2, roundLimit: 10, status: 'in_progress', updatedAt: expiredTs }),
+                  },
+                ],
+              }),
+            }),
+          };
+        }
+        return {
+          get: async () => ({
+            docs: [
+              {
+                id: 'g1',
+                data: () => ({
+                  status: 'in_progress',
+                  currentRoundNumber: 4,
+                  settings: { length: 10 },
+                  deletedAt: null,
+                }),
+              },
+              {
+                id: 'g2',
+                data: () => ({
+                  status: 'in_progress',
+                  currentRoundNumber: 4,
+                  settings: { length: 20 },
+                  deletedAt: null,
+                }),
+              },
+              {
+                id: 'g3',
+                data: () => ({
+                  status: 'in_progress',
+                  currentRoundNumber: 0,
+                  settings: { length: 10 },
+                  deletedAt: null,
+                }),
+              },
+              {
+                id: 'g4',
+                data: () => ({
+                  status: 'in_progress',
+                  currentRoundNumber: 3,
+                  settings: { length: 10 },
+                  deletedAt: recentTs,
+                }),
+              },
+              {
+                id: 'g5',
+                data: () => ({ status: 'finished', currentRoundNumber: 20, settings: { length: 20 }, deletedAt: null }),
+              },
+              {
+                id: 'g6',
+                data: () => ({ status: 'finished', currentRoundNumber: 6, config: { numRounds: 6 }, deletedAt: null }),
+              },
+            ],
+          }),
+        };
+      },
+    };
+
+    const dist = await aggregateActiveRoundDistribution(mockDb, now);
+    expect(dist.hasLocalSessionDocs).to.equal(true);
+    expect(dist.localActiveSessions).to.equal(3);
+    expect(dist.cloudActiveInProgress).to.equal(2);
+    expect(dist.buckets).to.deep.equal([
+      { round: 4, remaining: 6, roundLimit: 10, count: 1, source: 'cloud' },
+      { round: 4, remaining: 6, roundLimit: 10, count: 2, source: 'local' },
+      { round: 4, remaining: 16, roundLimit: 20, count: 1, source: 'cloud' },
+      { round: 4, remaining: 16, roundLimit: 20, count: 1, source: 'local' },
+    ]);
+    expect(dist.localFinished30dByLength).to.deep.equal([
+      { roundLimit: 6, count: 1 },
+      { roundLimit: 10, count: 1 },
+    ]);
+    expect(dist.cloudFinishedByLength).to.deep.equal([
+      { roundLimit: 6, count: 1 },
+      { roundLimit: 20, count: 1 },
+    ]);
   });
 });

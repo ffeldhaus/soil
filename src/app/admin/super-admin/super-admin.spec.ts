@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import type { SystemStats } from '../../types';
+import { SuperAdminRoundDistributionComponent } from './components/super-admin-round-distribution';
 import { SuperAdminStatsComponent } from './components/super-admin-stats';
 import { SuperAdminComponent } from './super-admin';
 
@@ -553,7 +554,7 @@ describe('SuperAdminComponent', () => {
     ).toContain('Geprüft:');
   });
 
-  it('renders the R1-anchored Einzelspieler-Funnel, pre-round header counters, R12 milestone, horizon note, and Cloud + KI active game counts', async () => {
+  it('renders Cloud + KI active game counts and the stacked active round distribution with Round 4 remaining-rounds breakdown and source filter', async () => {
     gameServiceMock.getSystemStats.mockResolvedValue({
       ...SAMPLE_STATS_WITH_SERIES,
       games: {
@@ -562,22 +563,38 @@ describe('SuperAdminComponent', () => {
         deleted: 4,
         localActive: 7,
         localPlayedTotal: 65,
-        localFinishedTotal: 13,
+        localFinishedTotal: 25,
+        roundDistribution: {
+          buckets: [
+            { round: 1, remaining: 5, roundLimit: 6, count: 2, source: 'local' },
+            { round: 4, remaining: 6, roundLimit: 10, count: 2, source: 'local' },
+            { round: 4, remaining: 6, roundLimit: 10, count: 1, source: 'cloud' },
+            { round: 4, remaining: 16, roundLimit: 20, count: 1, source: 'local' },
+            { round: 4, remaining: 16, roundLimit: 20, count: 1, source: 'cloud' },
+            { round: 8, remaining: 2, roundLimit: 10, count: 2, source: 'local' },
+            { round: 12, remaining: 8, roundLimit: 20, count: 1, source: 'cloud' },
+          ],
+          localActiveSessions: 7,
+          cloudActiveInProgress: 3,
+          hasLocalSessionDocs: true,
+          localFinished30dByLength: [
+            { roundLimit: 6, count: 10 },
+            { roundLimit: 10, count: 6 },
+            { roundLimit: 20, count: 9 },
+          ],
+          cloudFinishedByLength: [
+            { roundLimit: 6, count: 8 },
+            { roundLimit: 10, count: 4 },
+            { roundLimit: 20, count: 8 },
+          ],
+        },
       },
       telemetry: {
         ...SAMPLE_STATS_WITH_SERIES.telemetry!,
         events: {
           quick_game_started: 100,
-          quick_game_first_plant: 80,
           quick_game_round_1: 65,
-          quick_game_round_2: 52,
-          quick_game_round_5: 39,
-          quick_game_round_10: 26,
-          quick_game_round_12: 20,
-          quick_game_round_15: 13,
-          quick_game_round_20: 0,
-          quick_game_finished: 13,
-          quick_game_deleted: 4,
+          quick_game_finished: 25,
           trailer_opened: 28,
           research_export: 7,
         },
@@ -594,7 +611,6 @@ describe('SuperAdminComponent', () => {
       '[data-testid="superadmin-kpi-active-games"]',
     ) as HTMLElement;
     expect(activeKpi).toBeTruthy();
-    expect(activeKpi.getAttribute('title')).toContain('30-Tage-Fenster: R1 − beendet − gelöscht');
     expect(activeKpi.textContent).toContain('25');
     expect(activeKpi.textContent).toContain('18 Cloud · 7 KI');
 
@@ -605,14 +621,8 @@ describe('SuperAdminComponent', () => {
     ) as HTMLElement;
     expect(usersGamesCard).toBeTruthy();
     expect(usersGamesCard.textContent).toContain('25');
-    expect(usersGamesCard.textContent).toContain('Cloud-Mehrspieler');
     expect(usersGamesCard.textContent).toContain('18 aktiv');
-    expect(usersGamesCard.textContent).toContain('4 Papierkorb');
-    expect(usersGamesCard.textContent).toContain('42 erstellt');
-    expect(usersGamesCard.textContent).toContain('Einzelspieler gegen KI (≥ 1 Runde)');
     expect(usersGamesCard.textContent).toContain('7 aktiv (30T)');
-    expect(usersGamesCard.textContent).toContain('13 beendet');
-    expect(usersGamesCard.textContent).toContain('65 gespielt ≥ 1 Rd.');
 
     localComp.selectTab('analytics');
     localFixture.detectChanges();
@@ -629,202 +639,111 @@ describe('SuperAdminComponent', () => {
       'research_export',
     ]);
 
-    const funnel = statsComp.quickPlayFunnelRows;
-    expect(funnel.find((r) => r.key === 'quick_game_started')).toBeUndefined();
-    expect(funnel.find((r) => r.key === 'quick_game_first_plant')).toBeUndefined();
-    expect(funnel[0].key).toBe('quick_game_round_1');
-    expect(funnel[0].shortLabel).toBe('R1');
-    expect(funnel[0].conversionPercent).toBe(100);
-    expect(funnel[0].dropOffPercent).toBeNull();
-    expect(funnel.find((r) => r.key === 'quick_game_round_2')?.conversionPercent).toBe(80);
-    expect(funnel.find((r) => r.key === 'quick_game_round_2')?.dropOffPercent).toBe(20);
-    expect(funnel.find((r) => r.key === 'quick_game_round_10')?.conversionPercent).toBe(40);
-    expect(funnel.find((r) => r.key === 'quick_game_round_12')?.count).toBe(20);
-    expect(funnel.find((r) => r.key === 'quick_game_round_15')?.count).toBe(13);
-    expect(funnel.find((r) => r.key === 'quick_game_round_20')).toBeUndefined();
-    expect(funnel.find((r) => r.key === 'quick_game_finished')?.conversionPercent).toBe(20);
-    expect(funnel.find((r) => r.key === 'quick_game_finished')?.shortLabel).toBe('Fertig');
-    expect(statsComp.quickPlayStartedCount).toBe(100);
-    expect(statsComp.quickPlayFirstPlantCount).toBe(80);
-    expect(statsComp.quickPlayRound1Count).toBe(65);
-    expect(statsComp.quickPlayDeletedCount).toBe(4);
-    expect(statsComp.hasQuickPlayDataQualityAnomaly).toBe(false);
-    expect(statsComp.quickPlayCompletionRate).toBe(20);
-
-    const funnelEl = localFixture.nativeElement.querySelector(
-      '[data-testid="superadmin-quick-play-funnel"]',
+    const distDebug = localFixture.debugElement.query(By.directive(SuperAdminRoundDistributionComponent));
+    const distComp = distDebug.componentInstance as SuperAdminRoundDistributionComponent;
+    const distEl = localFixture.nativeElement.querySelector(
+      '[data-testid="superadmin-round-distribution"]',
     ) as HTMLElement;
-    expect(funnelEl).toBeTruthy();
-    expect(funnelEl.textContent).toContain('Einzelspieler-Funnel (Mensch gegen KI)');
-    expect(funnelEl.textContent).toContain('Alle lokalen KI-Spiele (Startseite & /admin) ab Runde 1 (R1 = 100%)');
-    expect(funnelEl.textContent).toContain('Gestartet (Gesamt):');
-    expect(funnelEl.textContent).toContain('100');
-    expect(funnelEl.textContent).toContain('1. Aussaat:');
-    expect(funnelEl.textContent).toContain('80');
-    expect(funnelEl.textContent).toContain('Mind. 1 Runde:');
-    expect(funnelEl.textContent).toContain('65');
-    expect(funnelEl.querySelector('[data-testid="funnel-deleted-count"]')?.textContent).toContain('4');
-    expect(funnelEl.querySelector('[data-testid="funnel-data-quality-warning"]')).toBeNull();
-    expect(funnelEl.querySelector('[data-testid="funnel-horizon-note"]')?.textContent).toContain(
-      'Klassenrunden nutzen teils 5–6 oder 10–20 Runden',
+    expect(distEl).toBeTruthy();
+
+    // Continuous columns R1..R12 (never skipping empty rounds like R2, R3, R11)
+    expect(distComp.columns.length).toBe(12);
+    expect(distComp.columns.map((c) => c.shortLabel)).toEqual([
+      'R1',
+      'R2',
+      'R3',
+      'R4',
+      'R5',
+      'R6',
+      'R7',
+      'R8',
+      'R9',
+      'R10',
+      'R11',
+      'R12',
+    ]);
+    expect(distComp.totalActive).toBe(10);
+    expect(distComp.totalFinished).toBe(45);
+    expect(distEl.querySelector('[data-testid="round-dist-started"]')?.textContent).toContain('Gestartet (Gesamt):');
+    expect(distEl.querySelector('[data-testid="round-dist-started"]')?.textContent).toContain('100');
+    expect(distEl.querySelector('[data-testid="round-dist-active"]')?.textContent).toContain('10');
+    expect(distEl.querySelector('[data-testid="round-dist-finished"]')?.textContent).toContain(
+      '18× 6 Rd. · 10× 10 Rd. · 17× 20 Rd.',
     );
-    expect(funnelEl.textContent).toContain('Abschluss (ab R1):');
-    expect(funnelEl.textContent).toContain('20%');
-    expect(funnelEl.textContent).toContain('Abgeschlossen');
-    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_started"]')).toBeNull();
-    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_first_plant"]')).toBeNull();
-    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_round_1"]')?.textContent).toContain('R1');
-    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_round_12"]')?.textContent).toContain('R12');
-    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_finished"]')?.textContent).toContain('Fertig');
 
-    statsComp.setHoveredFunnelStep(1);
+    // Florian's exact Round 4 example: 5 active games (3× 6 remaining [10er] + 2× 16 remaining [20er])
+    const col4 = distComp.columns[3];
+    expect(col4.round).toBe(4);
+    expect(col4.total).toBe(5);
+    expect(col4.localCount).toBe(3);
+    expect(col4.cloudCount).toBe(2);
+    expect(col4.segments.map((s) => ({ band: s.band, count: s.count }))).toEqual([
+      { band: 'medium', count: 3 },
+      { band: 'extended', count: 2 },
+    ]);
+
+    const col4El = distEl.querySelector('[data-testid="round-dist-col-4"]') as HTMLElement;
+    expect(col4El.querySelector('[data-testid="round-dist-seg-medium"]')).toBeTruthy();
+    expect(col4El.querySelector('[data-testid="round-dist-seg-extended"]')).toBeTruthy();
+    col4El.dispatchEvent(new Event('mouseenter'));
     localFixture.detectChanges();
-    expect(funnelEl.textContent).toContain('80% ab Runde 1');
-    expect(funnelEl.textContent).toContain('−20% zum Vorschritt');
+
+    const detailStrip = distEl.querySelector('[data-testid="round-dist-detail-strip"]') as HTMLElement;
+    expect(detailStrip.textContent).toContain('Runde 4');
+    expect(detailStrip.textContent).toContain('5 aktive Spiele');
+    expect(detailStrip.textContent).toContain('3× noch 6 Runden (10er) · 2× noch 16 Runden (20er)');
+    expect(detailStrip.textContent).toContain('3 KI · 2 Cloud');
+
+    // Switch source filter to 'local' (Mensch vs. KI): R12 cloud disappears -> columns contract to R1..R10
+    (distEl.querySelector('[data-testid="round-dist-source-local"]') as HTMLButtonElement).click();
+    localFixture.detectChanges();
+    expect(distComp.selectedSource).toBe('local');
+    expect(distComp.columns.length).toBe(10);
+    expect(distComp.totalActive).toBe(7);
+    expect(distComp.columns[3].total).toBe(3);
+    expect(distComp.columns[3].details).toEqual([
+      { remaining: 6, roundLimit: 10, count: 2, band: 'medium' },
+      { remaining: 16, roundLimit: 20, count: 1, band: 'extended' },
+    ]);
+
+    // Switch source filter to 'cloud': only Cloud active games remain (R4: 2, R12: 1)
+    (distEl.querySelector('[data-testid="round-dist-source-cloud"]') as HTMLButtonElement).click();
+    localFixture.detectChanges();
+    expect(distComp.selectedSource).toBe('cloud');
+    expect(distComp.columns.length).toBe(12);
+    expect(distComp.totalActive).toBe(3);
+    expect(distComp.columns[3].total).toBe(2);
+    expect(distComp.columns[11].total).toBe(1);
+    expect(distComp.columns[11].segments[0].band).toBe('long');
   });
 
-  it('shows amber data-quality diagnostic banner when deleted or finished count exceeds round 1 count', async () => {
+  it('shows clean empty state and v3.5.7 local tracking note when no active round distribution buckets exist', async () => {
     gameServiceMock.getSystemStats.mockResolvedValue({
       ...SAMPLE_STATS_WITH_SERIES,
-      telemetry: {
-        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
-        events: {
-          quick_game_started: 20,
-          quick_game_first_plant: 15,
-          quick_game_round_1: 10,
-          quick_game_deleted: 14,
-          quick_game_finished: 4,
+      games: {
+        total: 10,
+        active: 0,
+        deleted: 1,
+        localActive: 0,
+        roundDistribution: {
+          buckets: [],
+          localActiveSessions: 0,
+          cloudActiveInProgress: 0,
+          hasLocalSessionDocs: false,
+          localFinished30dByLength: [],
+          cloudFinishedByLength: [],
         },
       },
     });
 
-    const anomalyFixture = TestBed.createComponent(SuperAdminComponent);
-    anomalyFixture.detectChanges();
-    await anomalyFixture.whenStable();
-    anomalyFixture.detectChanges();
+    const emptyFixture = TestBed.createComponent(SuperAdminComponent);
+    emptyFixture.detectChanges();
+    await emptyFixture.whenStable();
+    emptyFixture.detectChanges();
 
-    const statsComp = anomalyFixture.debugElement.query(By.directive(SuperAdminStatsComponent))
-      .componentInstance as SuperAdminStatsComponent;
-    statsComp.selectRange('all');
-    anomalyFixture.detectChanges();
-
-    expect(statsComp.hasQuickPlayDataQualityAnomaly).toBe(true);
-    const warning = anomalyFixture.nativeElement.querySelector(
-      '[data-testid="funnel-data-quality-warning"]',
-    ) as HTMLElement;
-    expect(warning).toBeTruthy();
-    expect(warning.textContent).toContain('Unplausible Zählerdifferenz erkannt');
-  });
-
-  it('shows Unbekannt instead of 0% for historical periods with quick_game_started > 0 and no post-start funnel events', async () => {
-    gameServiceMock.getSystemStats.mockResolvedValue({
-      ...SAMPLE_STATS_WITH_SERIES,
-      telemetry: {
-        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
-        events: {
-          quick_game_started: 17,
-          trailer_opened: 4,
-        },
-      },
-    });
-
-    const localFixture = TestBed.createComponent(SuperAdminComponent);
-    localFixture.detectChanges();
-    await localFixture.whenStable();
-    localFixture.detectChanges();
-
-    const statsDebug = localFixture.debugElement.query(By.directive(SuperAdminStatsComponent));
-    const statsComp = statsDebug.componentInstance as SuperAdminStatsComponent;
-    statsComp.selectRange('all');
-    localFixture.detectChanges();
-
-    expect(statsComp.hasQuickPlayFunnelData).toBe(false);
-    expect(statsComp.quickPlayCompletionRate).toBeNull();
-
-    const funnel = statsComp.quickPlayFunnelRows;
-    expect(funnel.every((r) => r.isUnknown)).toBe(true);
-    expect(funnel.find((r) => r.key === 'quick_game_round_1')?.dropOffPercent).toBeNull();
-
-    const funnelEl = localFixture.nativeElement.querySelector(
-      '[data-testid="superadmin-quick-play-funnel"]',
-    ) as HTMLElement;
-    expect(funnelEl.textContent).toContain('Gestartet (Gesamt):');
-    expect(funnelEl.textContent).toContain('17');
-    expect(funnelEl.textContent).not.toContain('1. Aussaat:');
-    expect(funnelEl.textContent).toContain('Unbekannt');
-    expect(funnelEl.textContent).toContain('Fortschritt für ältere Zeiträume unbekannt (Runden-Funnel ab v3.5.3).');
-    expect(funnelEl.textContent).not.toContain('Abschluss (ab R1): 0%');
-    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_round_1"]')?.textContent).toContain('—');
-    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_finished"]')?.textContent).toContain('—');
-  });
-
-  it('shows 0 rounds played when first_plant > 0 with round_1 = 0, and R1-anchored completion rate when round_1 > 0', async () => {
-    gameServiceMock.getSystemStats.mockResolvedValue({
-      ...SAMPLE_STATS_WITH_SERIES,
-      telemetry: {
-        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
-        events: {
-          quick_game_started: 6,
-          quick_game_first_plant: 3,
-          quick_game_round_1: 0,
-          quick_game_finished: 0,
-        },
-      },
-    });
-
-    const preR1Fixture = TestBed.createComponent(SuperAdminComponent);
-    preR1Fixture.detectChanges();
-    await preR1Fixture.whenStable();
-    preR1Fixture.detectChanges();
-
-    const preR1Stats = preR1Fixture.debugElement.query(By.directive(SuperAdminStatsComponent))
-      .componentInstance as SuperAdminStatsComponent;
-    preR1Stats.selectRange('all');
-    preR1Fixture.detectChanges();
-
-    expect(preR1Stats.hasQuickPlayFunnelData).toBe(true);
-    expect(preR1Stats.quickPlayCompletionRate).toBe(0);
-    expect(preR1Stats.quickPlayFunnelRows.every((r) => !r.isUnknown && r.count === 0)).toBe(true);
-    const preR1El = preR1Fixture.nativeElement.querySelector(
-      '[data-testid="superadmin-quick-play-funnel"]',
-    ) as HTMLElement;
-    expect(preR1El.textContent).not.toContain('Unbekannt');
-    expect(preR1El.textContent).toContain('1. Aussaat:');
-    expect(preR1El.textContent).toContain('Mind. 1 Runde:');
-    expect(preR1El.textContent).toContain('0%');
-
-    gameServiceMock.getSystemStats.mockResolvedValue({
-      ...SAMPLE_STATS_WITH_SERIES,
-      telemetry: {
-        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
-        events: {
-          quick_game_started: 10,
-          quick_game_first_plant: 7,
-          quick_game_round_1: 5,
-          quick_game_finished: 2,
-        },
-      },
-    });
-
-    const activeFixture = TestBed.createComponent(SuperAdminComponent);
-    activeFixture.detectChanges();
-    await activeFixture.whenStable();
-    activeFixture.detectChanges();
-
-    const statsComp = activeFixture.debugElement.query(By.directive(SuperAdminStatsComponent))
-      .componentInstance as SuperAdminStatsComponent;
-    statsComp.selectRange('all');
-    activeFixture.detectChanges();
-
-    expect(statsComp.hasQuickPlayFunnelData).toBe(true);
-    expect(statsComp.quickPlayCompletionRate).toBe(40);
-    expect(statsComp.quickPlayFunnelRows.every((r) => !r.isUnknown)).toBe(true);
-
-    const funnelEl = activeFixture.nativeElement.querySelector(
-      '[data-testid="superadmin-quick-play-funnel"]',
-    ) as HTMLElement;
-    expect(funnelEl.textContent).toContain('Abschluss (ab R1):');
-    expect(funnelEl.textContent).toContain('40%');
-    expect(funnelEl.textContent).not.toContain('Fortschritt für ältere Zeiträume unbekannt');
+    const emptyState = emptyFixture.nativeElement.querySelector('[data-testid="round-dist-empty"]') as HTMLElement;
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.textContent).toContain('Aktuell keine laufenden Spiele');
+    expect(emptyState.textContent).toContain('ab v3.5.7');
   });
 });

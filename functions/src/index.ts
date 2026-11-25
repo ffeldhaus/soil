@@ -28,8 +28,10 @@ import {
   sanitizeResearchGameForPublic,
 } from './research.service';
 import {
+  aggregateActiveRoundDistribution,
   aggregateTelemetryStats,
   cleanupExpiredHourlyTelemetry,
+  cleanupExpiredLocalSessions,
   computeLocalGameStats,
   handleTelemetryHttpRequest,
 } from './telemetry.service';
@@ -2033,7 +2035,10 @@ export const getSystemStats = onCall(async (request) => {
   const adminUsersSnap = await usersColl.where('role', 'in', ['admin', 'superadmin']).count().get();
   const rejectedUsersSnap = await usersColl.where('role', '==', 'rejected').count().get();
   const bannedUsersSnap = await usersColl.where('role', '==', 'banned').count().get();
-  const telemetry = await aggregateTelemetryStats(db);
+  const [telemetry, roundDistribution] = await Promise.all([
+    aggregateTelemetryStats(db),
+    aggregateActiveRoundDistribution(db),
+  ]);
   const localGameStats = computeLocalGameStats(telemetry);
 
   return {
@@ -2042,6 +2047,10 @@ export const getSystemStats = onCall(async (request) => {
       deleted: deletedGamesSnap.data().count,
       active: totalGamesSnap.data().count - deletedGamesSnap.data().count,
       ...localGameStats,
+      localActive: roundDistribution.hasLocalSessionDocs
+        ? roundDistribution.localActiveSessions
+        : localGameStats.localActive,
+      roundDistribution,
     },
     users: {
       total: totalUsersSnap.data().count,
@@ -2472,6 +2481,11 @@ export const dailyGamePurge = onSchedule({ schedule: 'every 24 hours', region: '
     await cleanupExpiredHourlyTelemetry(db, new Date(nowMillis));
   } catch (err) {
     console.error('Failed to clean up expired hourly telemetry:', err);
+  }
+  try {
+    await cleanupExpiredLocalSessions(db, new Date(nowMillis));
+  } catch (err) {
+    console.error('Failed to clean up expired local telemetry sessions:', err);
   }
 });
 

@@ -196,4 +196,69 @@ describe('LocalGameService', () => {
     expect(state?.game.players[state.playerState.uid].pendingDecisions).toEqual(draftDecision);
     expect(state?.playerState.pendingDecisions).toEqual(draftDecision);
   });
+
+  it('should persist telemetrySlot and emit idempotent session updates across rounds, finish, soft-delete, and migration', async () => {
+    const sessionSpy = vi.spyOn(telemetry, 'trackLocalSession');
+
+    // 1. Play 3-round game to completion -> generates telemetrySlot on R1 and reuses it through finish
+    const { gameId } = await service.createGame('Slot Progression', { numPlayers: 1, numRounds: 3 });
+    expect(sessionSpy).not.toHaveBeenCalled();
+
+    await service.submitDecision(gameId, { parcels: {} } as any);
+    const stateR1 = await service.loadGame(gameId);
+    expect(stateR1?.telemetrySlot).toMatch(/^[a-f0-9]{16}$/);
+    const slot = stateR1!.telemetrySlot!;
+    expect(sessionSpy).toHaveBeenLastCalledWith({
+      slot,
+      currentRound: 1,
+      roundLimit: 3,
+      status: 'in_progress',
+    });
+
+    await service.submitDecision(gameId, { parcels: {} } as any);
+    expect(sessionSpy).toHaveBeenLastCalledWith({
+      slot,
+      currentRound: 2,
+      roundLimit: 3,
+      status: 'in_progress',
+    });
+
+    await service.submitDecision(gameId, { parcels: {} } as any);
+    expect(sessionSpy).toHaveBeenLastCalledWith({
+      slot,
+      currentRound: 3,
+      roundLimit: 3,
+      status: 'finished',
+    });
+
+    // 2. Soft-delete in-progress local game emits deleted session update
+    const soft = await service.createGame('Soft Delete Slot', { numPlayers: 1, numRounds: 6 });
+    await service.submitDecision(soft.gameId, { parcels: {} } as any);
+    const softSlot = (await service.loadGame(soft.gameId))!.telemetrySlot!;
+    sessionSpy.mockClear();
+
+    await service.deleteGame(soft.gameId, false);
+    expect(sessionSpy).toHaveBeenCalledTimes(1);
+    expect(sessionSpy).toHaveBeenCalledWith({
+      slot: softSlot,
+      currentRound: 1,
+      roundLimit: 6,
+      status: 'deleted',
+    });
+
+    // 3. Forced migration delete (emitTelemetry: false) STILL emits deleted session update to prevent cloud double-count
+    const migrated = await service.createGame('Migrated Slot', { numPlayers: 1, numRounds: 10 });
+    await service.submitDecision(migrated.gameId, { parcels: {} } as any);
+    const migratedSlot = (await service.loadGame(migrated.gameId))!.telemetrySlot!;
+    sessionSpy.mockClear();
+
+    await service.deleteGame(migrated.gameId, true, { emitTelemetry: false });
+    expect(sessionSpy).toHaveBeenCalledTimes(1);
+    expect(sessionSpy).toHaveBeenCalledWith({
+      slot: migratedSlot,
+      currentRound: 1,
+      roundLimit: 10,
+      status: 'deleted',
+    });
+  });
 });

@@ -1,0 +1,213 @@
+<section
+  data-testid="superadmin-round-distribution"
+  class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden portrait:rounded-none portrait:border-x-0"
+  aria-labelledby="round-distribution-heading"
+>
+  <!-- Header: Title, Source Filter & Context Strip -->
+  <div class="px-5 py-4 sm:px-6 border-b border-gray-800 bg-gray-950 space-y-2.5">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h2 id="round-distribution-heading" class="text-base sm:text-lg font-bold text-white tracking-tight">
+          Rundenverteilung aktiver Spiele
+        </h2>
+        <p class="text-xs text-gray-400 mt-0.5">
+          Aktueller Spielstand laufender Partien (≥ 1 Runde) · gestapelt nach offenen Restrunden
+        </p>
+      </div>
+
+      <!-- Source Filter Toggle -->
+      <div
+        role="group"
+        aria-label="Spielquelle filtern"
+        class="inline-flex items-center gap-1 bg-gray-900 p-1 rounded-lg border border-gray-800"
+      >
+        @for (opt of sourceOptions; track opt.id) {
+          <button
+            type="button"
+            [attr.data-testid]="'round-dist-source-' + opt.id"
+            [attr.aria-pressed]="selectedSource === opt.id"
+            (click)="selectSource(opt.id)"
+            class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer"
+            [class.bg-emerald-600]="selectedSource === opt.id"
+            [class.text-white]="selectedSource === opt.id"
+            [class.text-gray-300]="selectedSource !== opt.id"
+            [class.hover:bg-gray-800]="selectedSource !== opt.id"
+            [class.hover:text-white]="selectedSource !== opt.id"
+          >
+            {{ opt.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Context Strip: Gestartet / Aktiv / Abgeschlossen + Length Breakdown -->
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono tabular-nums pt-1 border-t border-gray-800/80">
+      <span data-testid="round-dist-started" class="text-gray-400">
+        Gestartet ({{ rangeLabel }}):
+        <strong class="text-gray-100 font-semibold">{{ startedCount }}</strong>
+      </span>
+      <span data-testid="round-dist-active" class="text-gray-400">
+        Aktiv (≥ 1 Rd.):
+        <strong class="text-emerald-400 font-semibold">{{ totalActive }}</strong>
+      </span>
+      <span data-testid="round-dist-finished" class="text-gray-400">
+        Abgeschlossen:
+        <strong class="text-gray-100 font-semibold">{{ totalFinished }}</strong>
+        @if (formattedFinishedBreakdown) {
+          <span class="text-gray-400"> ({{ formattedFinishedBreakdown }})</span>
+        }
+      </span>
+    </div>
+  </div>
+
+  <div class="px-5 py-4 sm:px-6 space-y-3">
+    <!-- Legend & Interactive Hover/Focus Detail Strip -->
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-gray-800/80 pb-2.5 text-xs">
+      <div
+        data-testid="round-dist-detail-strip"
+        class="min-h-5 flex flex-wrap items-center gap-x-2 gap-y-1"
+        aria-live="polite"
+      >
+        @if (hoveredColumn; as col) {
+          @if (col.total > 0) {
+            <span class="font-semibold text-white">
+              {{ col.label }} · <span class="font-mono tabular-nums">{{ col.total }}</span>
+              {{ col.total === 1 ? 'aktives Spiel' : 'aktive Spiele' }}
+            </span>
+            <span class="text-gray-500" aria-hidden="true">—</span>
+            <span class="font-mono tabular-nums text-gray-200">{{ formatDetailSummary(col) }}</span>
+            @if (formatSourceSplit(col); as split) {
+              <span class="font-mono tabular-nums text-gray-400">({{ split }})</span>
+            }
+          } @else {
+            <span class="font-semibold text-white">{{ col.label }}</span>
+            <span class="font-mono tabular-nums text-gray-400">· 0 aktive Spiele</span>
+          }
+        } @else {
+          <span class="text-gray-400">Spalte berühren oder fokussieren für Runden- und Restdauer-Details</span>
+        }
+      </div>
+
+      <!-- Remaining-Rounds Band Legend -->
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono tabular-nums text-gray-300">
+        @for (band of remainingBands; track band.key) {
+          <span class="inline-flex items-center gap-1.5">
+            <span aria-hidden="true" class="w-2.5 h-2.5 rounded-xs shrink-0" [class]="band.colorClass"></span>
+            <span>{{ band.label }}</span>
+          </span>
+        }
+      </div>
+    </div>
+
+    @if (totalActive > 0) {
+      <!-- Stacked Column Chart (Continuous R1 .. Rmax) -->
+      <div class="flex items-stretch gap-2 sm:gap-3 overflow-x-auto pb-1">
+        <!-- Integer Y-Axis Labels -->
+        <div
+          class="flex flex-col justify-between text-[10px] font-mono tabular-nums leading-none text-gray-500 pt-6 pb-7 select-none shrink-0 text-right w-7"
+          aria-hidden="true"
+        >
+          @for (tick of yTicks; track tick) {
+            <span>{{ tick }}</span>
+          }
+        </div>
+
+        <!-- Plot Area -->
+        <div class="relative flex-1 min-w-[420px]">
+          <div
+            class="pointer-events-none absolute inset-x-0 top-6 bottom-7 flex flex-col justify-between"
+            aria-hidden="true"
+          >
+            <div class="border-t border-gray-800/80 w-full"></div>
+            <div class="border-t border-dashed border-gray-800/70 w-full"></div>
+            <div class="border-t border-gray-800 w-full"></div>
+          </div>
+
+          <div class="relative flex items-end gap-1.5 sm:gap-2.5 h-44 sm:h-48 pt-6 pb-7">
+            @for (col of columns; track col.round) {
+              <div
+                [attr.data-testid]="'round-dist-col-' + col.round"
+                tabindex="0"
+                (mouseenter)="setHoveredRound(col.round)"
+                (mouseleave)="setHoveredRound(null)"
+                (focus)="setHoveredRound(col.round)"
+                (blur)="setHoveredRound(null)"
+                class="group relative flex-1 min-w-0 h-full flex items-end justify-center outline-none cursor-default rounded focus-visible:ring-1 focus-visible:ring-emerald-400"
+              >
+                <span class="sr-only">
+                  {{ col.label }}: {{ col.total }} {{ col.total === 1 ? 'aktives Spiel' : 'aktive Spiele' }}
+                  @if (col.total > 0) {
+                    ({{ formatDetailSummary(col) }})
+                  }
+                </span>
+
+                <!-- Column Count Label -->
+                <span
+                  class="absolute -top-5 text-[10px] sm:text-xs font-mono tabular-nums leading-none transition-colors"
+                  [class.text-white]="hoveredRound === col.round && col.total > 0"
+                  [class.text-gray-300]="hoveredRound !== col.round && col.total > 0"
+                  [class.text-gray-600]="col.total === 0"
+                >
+                  {{ col.total }}
+                </span>
+
+                <!-- Stacked Bar Track -->
+                @if (col.total > 0) {
+                  <div
+                    class="w-full max-w-8 rounded-t overflow-hidden flex flex-col-reverse min-h-[3px] transition-opacity"
+                    [class.ring-1]="hoveredRound === col.round"
+                    [class.ring-gray-300]="hoveredRound === col.round"
+                    [style.height.%]="col.barHeightPercent"
+                  >
+                    @for (seg of col.segments; track seg.band) {
+                      <div
+                        [attr.data-testid]="'round-dist-seg-' + seg.band"
+                        class="w-full border-t border-gray-950/35 first:border-t-0"
+                        [class]="seg.colorClass"
+                        [style.height.%]="seg.sharePercent"
+                      ></div>
+                    }
+                  </div>
+                } @else {
+                  <div class="w-full max-w-8 h-[2px] bg-gray-800 rounded-t"></div>
+                }
+
+                <!-- Round X-Axis Label -->
+                <span
+                  class="absolute -bottom-6 text-[10px] sm:text-xs font-mono tabular-nums leading-none transition-colors"
+                  [class.text-white]="hoveredRound === col.round"
+                  [class.text-gray-400]="hoveredRound !== col.round"
+                >
+                  {{ col.shortLabel }}
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Clean Empty State -->
+      <div
+        data-testid="round-dist-empty"
+        class="rounded-lg border border-gray-800 bg-gray-950 px-4 py-6 text-center space-y-1.5"
+      >
+        <p class="text-sm font-medium text-gray-200">
+          Aktuell keine laufenden Spiele (≥ 1 Runde) im gewählten Filter erfasst.
+        </p>
+        @if (showLocalV357Hint) {
+          <p class="text-xs text-gray-400">
+            Die anonyme Live-Rundenverteilung für Mensch-vs.-KI-Spiele füllt sich ab v3.5.7 automatisch mit jeder
+            gespielten Runde.
+          </p>
+        }
+      </div>
+    }
+
+    @if (totalActive > 0 && showLocalV357Hint) {
+      <p class="text-xs text-gray-400">
+        Hinweis: Die anonyme Live-Rundenverteilung für Mensch-vs.-KI-Spiele füllt sich ab v3.5.7 mit jeder neu
+        gespielten Runde.
+      </p>
+    }
+  </div>
+</section>

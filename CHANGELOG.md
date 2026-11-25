@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- **Anonymer idempotenter Spielrunden-Status (`local` & `cloud`)** (`src/app/types.ts`, `src/app/shared/telemetry.service.ts`, `src/app/game/engine/local-game.service.ts`, `functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/app/privacy/privacy.html`): Laufende lokale Spiele senden ab Runde 1 ihren aktuellen Rundenstand (`currentRound`, `roundLimit`, `status`) unter einem zufälligen Spiel-Token (`telemetrySlot`) gebündelt und idempotent in `telemetry_local_sessions` (`europe-west4`, automatische 30-Tage-Bereinigung im täglichen Wartungslauf `dailyGamePurge`; sofortige `deleted`-Markierung bei Löschung oder Cloud-Migration gegen Doppelzählung) und aggregieren die Live-Verteilung zusammen mit laufenden Cloud-Spielen.
+
+### Changed
+- **Rundenverteilung aktiver Spiele unter `/admin/super`** (`src/app/admin/super-admin/components/super-admin-round-distribution.*`, `src/app/admin/super-admin/components/super-admin-stats.*`): Ersetzt den kumulativen Einzelspieler-Funnel durch ein gestapeltes Säulendiagramm über alle lückenlosen Runden `R1..Rmax`, farbcodiert nach offenen Restrunden (`1–3`, `4–6`, `7–10`, `> 10 Rd. offen`), mit Quellen-Umschalter (`Alle`, `Mensch vs. KI`, `Cloud`), Abschluss-Aufschlüsselung nach Spielrundenlänge und interaktivem Hover-/Fokus-Detailstreifen.
+
 ## [3.5.6] - 2026-11-25
 ### Added
 - **7 individuelle Schädlings-Illustrationen** (`oat-rust.jpg`, `nematode.jpg`, `aphid-cereal.jpg`, `pea-moth.jpg`, `corn-borer.jpg`, `pollen-beetle.jpg`, `swine-fever.jpg` in `public/assets/images/pests/` und `src/app/game/board/board.ts`), sodass alle 9 Schädlinge eindeutige Einzelbilder besitzen.

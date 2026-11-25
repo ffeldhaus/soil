@@ -111,7 +111,10 @@
             Herunterladen des Forschungsdatensatzes) sowie den anonymen Rundenfortschritt in lokalen Sofort-Spielen, den
             Anzeigemodus (Browser oder installierte PWA) und die verweisende externe Domain (Referrer) in rein
             numerischen Stunden- und Tageszählern auf unseren EU-Servern (<code>europe-west4</code>); die stündlichen
-            Zähler werden nach wenigen Tagen automatisch bereinigt.
+            Zähler werden nach wenigen Tagen automatisch bereinigt. Für laufende lokale Spiele wird ab Runde 1 zusätzlich
+            ein anonymer Fortschrittsstatus (aktuelle Runde und eingestellte Rundenanzahl unter einem zufälligen
+            Spiel-Token ohne IP-Adresse, Konto-Bezug oder Spielinhalte) in <code>europe-west4</code> gespeichert und
+            nach 30 Tagen automatisch gelöscht.
           </p>
           <p>
             Dabei setzen wir <strong class="text-white">keine Cookies</strong> ein, speichern für die Statistik

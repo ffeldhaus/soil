@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Input, inject, ViewEncapsulation } from '
 import { FormsModule } from '@angular/forms';
 
 import type { SystemStats, TelemetryDailyEntry, TelemetryHourlyEntry } from '../../../types';
+import { SuperAdminRoundDistributionComponent } from './super-admin-round-distribution';
 
 export type TelemetryRangePreset = '24h' | '7d' | '28d' | '3m' | '12m' | 'all' | 'custom';
 export type TelemetrySeriesKey = 'total' | 'web' | 'pwa' | 'interactions';
@@ -11,17 +12,6 @@ export interface TelemetryMetricRow {
   label: string;
   count: number;
   percent: number;
-}
-
-export interface QuickPlayFunnelRow {
-  key: string;
-  label: string;
-  shortLabel: string;
-  count: number;
-  conversionPercent: number;
-  barPercent: number;
-  dropOffPercent: number | null;
-  isUnknown: boolean;
 }
 
 export interface TelemetryMetricTile {
@@ -168,7 +158,7 @@ function computeNiceIntegerMax(rawMax: number): { yMax: number; step: number } {
 @Component({
   selector: 'app-super-admin-stats',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, SuperAdminRoundDistributionComponent],
   templateUrl: './super-admin-stats.html',
   styleUrl: './super-admin-stats.scss',
   encapsulation: ViewEncapsulation.None,
@@ -201,7 +191,6 @@ export class SuperAdminStatsComponent {
   customStartDate = '';
   customEndDate = '';
   hoveredDayIndex: number | null = null;
-  hoveredFunnelIndex: number | null = null;
 
   private activeSeries = new Set<TelemetrySeriesKey>(['total', 'web', 'pwa', 'interactions']);
 
@@ -377,13 +366,11 @@ export class SuperAdminStatsComponent {
     }
     this.selectedRange = preset;
     this.hoveredDayIndex = null;
-    this.hoveredFunnelIndex = null;
     this.cdr.markForCheck();
   }
 
   onCustomDateChange(): void {
     this.hoveredDayIndex = null;
-    this.hoveredFunnelIndex = null;
     this.cdr.markForCheck();
   }
 
@@ -764,107 +751,6 @@ export class SuperAdminStatsComponent {
 
   get quickPlayStartedCount(): number {
     return Number(this.currentTelemetryEvents.quick_game_started || 0);
-  }
-
-  get quickPlayFirstPlantCount(): number {
-    return Number(this.currentTelemetryEvents.quick_game_first_plant || 0);
-  }
-
-  get quickPlayRound1Count(): number {
-    return Number(this.currentTelemetryEvents.quick_game_round_1 || 0);
-  }
-
-  get quickPlayDeletedCount(): number {
-    return Number(this.currentTelemetryEvents.quick_game_deleted || 0);
-  }
-
-  get quickPlayFinishedCount(): number {
-    return Number(this.currentTelemetryEvents.quick_game_finished || 0);
-  }
-
-  get hasQuickPlayDataQualityAnomaly(): boolean {
-    if (!this.hasQuickPlayFunnelData) return false;
-    return (
-      this.quickPlayDeletedCount > this.quickPlayRound1Count || this.quickPlayFinishedCount > this.quickPlayRound1Count
-    );
-  }
-
-  get hasQuickPlayFunnelData(): boolean {
-    const events = this.currentTelemetryEvents;
-    if (Number(events.quick_game_first_plant || 0) > 0 || Number(events.quick_game_finished || 0) > 0) {
-      return true;
-    }
-    for (let round = 1; round <= 20; round++) {
-      if (Number(events[`quick_game_round_${round}`] || 0) > 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  get quickPlayFunnelRows(): QuickPlayFunnelRow[] {
-    const events = this.currentTelemetryEvents;
-    const started = Number(events.quick_game_started || 0);
-    const round1 = Number(events.quick_game_round_1 || 0);
-    const isUnknown = !this.hasQuickPlayFunnelData && started > 0;
-
-    const steps: Array<{ key: string; label: string; shortLabel: string; count: number }> = Array.from(
-      { length: 10 },
-      (_, i) => {
-        const round = i + 1;
-        const key = `quick_game_round_${round}`;
-        return { key, label: `Runde ${round}`, shortLabel: `R${round}`, count: Number(events[key] || 0) };
-      },
-    );
-
-    for (const milestone of [12, 15, 20]) {
-      const key = `quick_game_round_${milestone}`;
-      const count = Number(events[key] || 0);
-      if (count > 0) {
-        steps.push({ key, label: `Runde ${milestone}`, shortLabel: `R${milestone}`, count });
-      }
-    }
-
-    steps.push({
-      key: 'quick_game_finished',
-      label: 'Abgeschlossen',
-      shortLabel: 'Fertig',
-      count: Number(events.quick_game_finished || 0),
-    });
-
-    return steps.map((step, index) => {
-      const conversionPercent = round1 > 0 ? Math.min(100, Math.round((step.count / round1) * 100)) : 0;
-      const prevCount = index > 0 ? steps[index - 1].count : 0;
-      const dropOffPercent =
-        !isUnknown && index > 0 && prevCount > 0
-          ? Math.max(0, Math.round(((prevCount - step.count) / prevCount) * 100))
-          : null;
-      return {
-        ...step,
-        conversionPercent,
-        barPercent: Math.min(100, Math.max(0, conversionPercent)),
-        dropOffPercent,
-        isUnknown,
-      };
-    });
-  }
-
-  get quickPlayCompletionRate(): number | null {
-    if (!this.hasQuickPlayFunnelData && this.quickPlayStartedCount > 0) return null;
-    const events = this.currentTelemetryEvents;
-    const round1 = Number(events.quick_game_round_1 || 0);
-    const finished = Number(events.quick_game_finished || 0);
-    return round1 > 0 ? Math.min(100, Math.round((finished / round1) * 100)) : 0;
-  }
-
-  get hoveredFunnelStep(): QuickPlayFunnelRow | null {
-    if (this.hoveredFunnelIndex === null) return null;
-    return this.quickPlayFunnelRows[this.hoveredFunnelIndex] ?? null;
-  }
-
-  setHoveredFunnelStep(index: number | null): void {
-    this.hoveredFunnelIndex = index;
-    this.cdr.markForCheck();
   }
 
   get referrerRows(): TelemetryMetricRow[] {

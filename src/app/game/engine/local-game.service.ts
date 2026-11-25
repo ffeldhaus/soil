@@ -13,6 +13,7 @@ export interface LocalGameState {
   lastRound?: Round;
   allRounds: Record<string, Round[]>; // playerUid -> Round[]
   deleteTelemetrySent?: boolean;
+  telemetrySlot?: string;
 }
 
 export interface LocalCreateResponse {
@@ -339,14 +340,58 @@ export class LocalGameService {
     state.lastRound = state.allRounds[state.playerState.uid][nextRoundNum];
 
     if (state.game.id.startsWith('local-')) {
-      const roundEvent = getQuickGameRoundEventName(nextRoundNum);
-      if (roundEvent) {
-        this.telemetry.trackEvent(roundEvent);
-      }
-      if (state.game.status === 'finished') {
-        this.telemetry.trackEvent('quick_game_finished');
+      this.emitLocalRoundTelemetry(state, nextRoundNum, roundLimit);
+    }
+  }
+
+  private emitLocalRoundTelemetry(state: LocalGameState, nextRoundNum: number, roundLimit: number): void {
+    const roundEvent = getQuickGameRoundEventName(nextRoundNum);
+    if (roundEvent) {
+      this.telemetry.trackEvent(roundEvent);
+    }
+    if (state.game.status === 'finished') {
+      this.telemetry.trackEvent('quick_game_finished');
+    }
+    if (nextRoundNum >= 1) {
+      this.telemetry.trackLocalSession({
+        slot: this.ensureTelemetrySlot(state),
+        currentRound: Math.min(nextRoundNum, roundLimit),
+        roundLimit,
+        status: state.game.status === 'finished' ? 'finished' : 'in_progress',
+      });
+    }
+  }
+
+  private emitLocalDeletedSessionTelemetry(gameId: string, state: LocalGameState | null, force: boolean): void {
+    if (!gameId.startsWith('local-') || !state?.telemetrySlot) return;
+    if ((state.game.currentRoundNumber || 0) < 1) return;
+    if (!force && state.game.status !== 'in_progress') return;
+
+    const roundLimit = state.game.settings?.length || state.game.config?.numRounds || GAME_CONSTANTS.DEFAULT_ROUNDS;
+    this.telemetry.trackLocalSession({
+      slot: state.telemetrySlot,
+      currentRound: Math.min(state.game.currentRoundNumber, roundLimit),
+      roundLimit,
+      status: 'deleted',
+    });
+  }
+
+  private ensureTelemetrySlot(state: LocalGameState): string {
+    if (state.telemetrySlot && /^[a-f0-9]{12,32}$/.test(state.telemetrySlot)) {
+      return state.telemetrySlot;
+    }
+    let slot = '';
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      const bytes = new Uint8Array(8);
+      crypto.getRandomValues(bytes);
+      slot = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      for (let i = 0; i < 16; i++) {
+        slot += Math.floor(Math.random() * 16).toString(16);
       }
     }
+    state.telemetrySlot = slot;
+    return slot;
   }
 
   private saveToStorage(state: LocalGameState) {
@@ -386,6 +431,7 @@ export class LocalGameService {
     if (emittedDeleteTelemetry) {
       this.telemetry.trackEvent('quick_game_deleted');
     }
+    this.emitLocalDeletedSessionTelemetry(gameId, existingState, force);
 
     if (force) {
       localStorage.removeItem(`soil_game_${gameId}`);

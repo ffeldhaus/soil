@@ -1,7 +1,15 @@
 import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import { checkPublicRateLimit } from './research.service';
-import type { TelemetryDailyEntry, TelemetryHourlyEntry, TelemetryStats } from './types';
+import type {
+  ActiveGameRoundBucket,
+  ActiveRoundDistribution,
+  FinishedGameLengthSummary,
+  TelemetryDailyEntry,
+  TelemetryHourlyEntry,
+  TelemetryLocalSessionUpdate,
+  TelemetryStats,
+} from './types';
 
 export const ALLOWED_TELEMETRY_ROUTES = new Set<string>([
   '/',
@@ -35,6 +43,9 @@ const SELF_REFERRER_HOSTS = new Set<string>(['soil.app', 'www.soil.app', 'localh
 
 const MAX_KEYS_PER_MAP = 15;
 const MAX_COUNT_PER_KEY = 20;
+const MAX_SESSIONS_PER_REQUEST = 10;
+const SESSION_SLOT_REGEX = /^[a-f0-9]{12,32}$/;
+const ALLOWED_SESSION_STATUSES = new Set<TelemetryLocalSessionUpdate['status']>(['in_progress', 'finished', 'deleted']);
 
 export function isBotUserAgent(ua?: unknown): boolean {
   if (typeof ua !== 'string' || !ua.trim()) return false;
@@ -107,6 +118,7 @@ export interface SanitizedTelemetryPayload {
   views: Record<string, number>;
   events: Record<string, number>;
   referrers: Record<string, number>;
+  sessions: TelemetryLocalSessionUpdate[];
   totalViews: number;
 }
 
@@ -130,6 +142,42 @@ function collectSanitizedCounts(rawMap: unknown, keyMapper: (rawKey: string) => 
   return result;
 }
 
+function parseSanitizedSessionEntry(rawEntry: unknown): TelemetryLocalSessionUpdate | null {
+  if (!rawEntry || typeof rawEntry !== 'object') return null;
+  const entry = rawEntry as Record<string, unknown>;
+  const slot = typeof entry.slot === 'string' ? entry.slot.trim().toLowerCase() : '';
+  if (!SESSION_SLOT_REGEX.test(slot)) return null;
+
+  const roundLimit = Math.round(Number(entry.roundLimit));
+  const currentRound = Math.round(Number(entry.currentRound));
+  const validRounds =
+    Number.isFinite(roundLimit) &&
+    roundLimit >= 3 &&
+    roundLimit <= 100 &&
+    Number.isFinite(currentRound) &&
+    currentRound >= 1 &&
+    currentRound <= roundLimit;
+  if (!validRounds) return null;
+
+  const status =
+    typeof entry.status === 'string' ? (entry.status.trim() as TelemetryLocalSessionUpdate['status']) : null;
+  if (!status || !ALLOWED_SESSION_STATUSES.has(status)) return null;
+
+  return { slot, currentRound, roundLimit, status };
+}
+
+function collectSanitizedSessions(rawSessions: unknown): TelemetryLocalSessionUpdate[] {
+  if (!Array.isArray(rawSessions)) return [];
+  const bySlot = new Map<string, TelemetryLocalSessionUpdate>();
+  for (const rawEntry of rawSessions) {
+    const parsed = parseSanitizedSessionEntry(rawEntry);
+    if (!parsed) continue;
+    if (!bySlot.has(parsed.slot) && bySlot.size >= MAX_SESSIONS_PER_REQUEST) continue;
+    bySlot.set(parsed.slot, parsed);
+  }
+  return Array.from(bySlot.values());
+}
+
 export function sanitizeTelemetryPayload(rawBody: unknown): SanitizedTelemetryPayload | null {
   if (!rawBody || typeof rawBody !== 'object') return null;
   const body = rawBody as Record<string, unknown>;
@@ -141,17 +189,23 @@ export function sanitizeTelemetryPayload(rawBody: unknown): SanitizedTelemetryPa
     return ALLOWED_TELEMETRY_EVENTS.has(trimmed) ? trimmed : null;
   });
   const referrers = collectSanitizedCounts(body.referrers, (k) => sanitizeTelemetryReferrer(k, mode));
+  const sessions = collectSanitizedSessions(body.sessions);
 
   let totalViews = 0;
   for (const count of Object.values(views)) {
     totalViews += count;
   }
 
-  if (totalViews === 0 && Object.keys(events).length === 0 && Object.keys(referrers).length === 0) {
+  if (
+    totalViews === 0 &&
+    Object.keys(events).length === 0 &&
+    Object.keys(referrers).length === 0 &&
+    sessions.length === 0
+  ) {
     return null;
   }
 
-  return { mode, views, events, referrers, totalViews };
+  return { mode, views, events, referrers, sessions, totalViews };
 }
 
 function parseRequestBody(req: any): unknown {
@@ -244,18 +298,40 @@ export async function handleTelemetryHttpRequest(req: any, res: any, db: admin.f
     return;
   }
 
-  const now = new Date();
-  const dateKey = now.toISOString().slice(0, 10);
-  const hourKey = now.toISOString().slice(0, 13);
-  const dailyUpdate = buildFirestoreIncrementRecord(sanitized, { key: 'date', value: dateKey });
-  const hourlyUpdate = buildFirestoreIncrementRecord(sanitized, { key: 'hour', value: hourKey });
-  const totalsUpdate = buildFirestoreIncrementRecord(sanitized);
+  const writes: Promise<unknown>[] = [];
+  const hasAggregateCounts =
+    sanitized.totalViews > 0 || Object.keys(sanitized.events).length > 0 || Object.keys(sanitized.referrers).length > 0;
 
-  await Promise.all([
-    db.collection('telemetry_daily').doc(dateKey).set(dailyUpdate, { merge: true }),
-    db.collection('telemetry_hourly').doc(hourKey).set(hourlyUpdate, { merge: true }),
-    db.collection('telemetry_totals').doc('all').set(totalsUpdate, { merge: true }),
-  ]);
+  if (hasAggregateCounts) {
+    const now = new Date();
+    const dateKey = now.toISOString().slice(0, 10);
+    const hourKey = now.toISOString().slice(0, 13);
+    const dailyUpdate = buildFirestoreIncrementRecord(sanitized, { key: 'date', value: dateKey });
+    const hourlyUpdate = buildFirestoreIncrementRecord(sanitized, { key: 'hour', value: hourKey });
+    const totalsUpdate = buildFirestoreIncrementRecord(sanitized);
+
+    writes.push(
+      db.collection('telemetry_daily').doc(dateKey).set(dailyUpdate, { merge: true }),
+      db.collection('telemetry_hourly').doc(hourKey).set(hourlyUpdate, { merge: true }),
+      db.collection('telemetry_totals').doc('all').set(totalsUpdate, { merge: true }),
+    );
+  }
+
+  for (const session of sanitized.sessions) {
+    writes.push(
+      db.collection('telemetry_local_sessions').doc(session.slot).set(
+        {
+          currentRound: session.currentRound,
+          roundLimit: session.roundLimit,
+          status: session.status,
+          updatedAt: Timestamp.now(),
+        },
+        { merge: true },
+      ),
+    );
+  }
+
+  await Promise.all(writes);
 
   res.status(204).send('');
 }
@@ -495,4 +571,185 @@ export async function cleanupExpiredHourlyTelemetry(
   }
 
   return deletedCount;
+}
+
+export async function cleanupExpiredLocalSessions(
+  db: admin.firestore.Firestore,
+  nowDate: Date = new Date(),
+): Promise<number> {
+  const cutoffTimestamp = Timestamp.fromMillis(nowDate.getTime() - 30 * 86_400_000);
+  let deletedCount = 0;
+
+  while (true) {
+    const snap = await db
+      .collection('telemetry_local_sessions')
+      .where('updatedAt', '<', cutoffTimestamp)
+      .limit(200)
+      .get();
+    if (!snap.docs || snap.docs.length === 0) break;
+
+    const batch = db.batch();
+    for (const doc of snap.docs) {
+      batch.delete(doc.ref);
+    }
+    await batch.commit();
+    deletedCount += snap.docs.length;
+
+    if (snap.docs.length < 200) break;
+  }
+
+  return deletedCount;
+}
+
+function toTimestampMillisOrNull(val: unknown): number | null {
+  if (!val) return null;
+  if (typeof val === 'number') return Number.isFinite(val) ? val : null;
+  if (val instanceof Date) return val.getTime();
+  if (typeof val === 'string') {
+    const parsed = Date.parse(val);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  if (typeof val === 'object') {
+    const obj = val as Record<string, unknown>;
+    if (typeof obj.toMillis === 'function') return (obj.toMillis as () => number)();
+    if (typeof obj.seconds === 'number') return obj.seconds * 1000;
+    if (typeof obj._seconds === 'number') return obj._seconds * 1000;
+  }
+  return null;
+}
+
+function mapFinishedCountsToSortedList(counts: Map<number, number>): FinishedGameLengthSummary[] {
+  return Array.from(counts.entries())
+    .map(([roundLimit, count]) => ({ roundLimit, count }))
+    .sort((a, b) => a.roundLimit - b.roundLimit);
+}
+
+function incrementRoundBucket(
+  bucketMap: Map<string, ActiveGameRoundBucket>,
+  source: 'local' | 'cloud',
+  round: number,
+  roundLimit: number,
+): void {
+  const remaining = roundLimit - round;
+  const key = `${source}:${round}:${roundLimit}`;
+  const existing = bucketMap.get(key);
+  if (existing) {
+    existing.count += 1;
+  } else {
+    bucketMap.set(key, { round, remaining, roundLimit, count: 1, source });
+  }
+}
+
+function recordLocalSessionDoc(
+  data: Record<string, unknown>,
+  bucketMap: Map<string, ActiveGameRoundBucket>,
+  finishedMap: Map<number, number>,
+): number {
+  const roundLimit = Math.round(Number(data.roundLimit) || 0);
+  if (roundLimit < 3) return 0;
+
+  const currentRound = Math.round(Number(data.currentRound) || 0);
+  const status = typeof data.status === 'string' ? data.status : '';
+  if (status === 'in_progress' && currentRound >= 1 && currentRound < roundLimit) {
+    incrementRoundBucket(bucketMap, 'local', currentRound, roundLimit);
+    return 1;
+  }
+  if (status === 'finished') {
+    finishedMap.set(roundLimit, (finishedMap.get(roundLimit) || 0) + 1);
+  }
+  return 0;
+}
+
+function collectLocalSessionBuckets(
+  docs: readonly any[],
+  cutoffMs: number,
+  bucketMap: Map<string, ActiveGameRoundBucket>,
+  finishedMap: Map<number, number>,
+): { localActiveSessions: number; hasLocalSessionDocs: boolean } {
+  let localActiveSessions = 0;
+  let hasLocalSessionDocs = false;
+
+  for (const doc of docs) {
+    const data = (doc.data?.() || {}) as Record<string, unknown>;
+    const updatedMs = toTimestampMillisOrNull(data.updatedAt);
+    if (updatedMs !== null && updatedMs < cutoffMs) continue;
+
+    hasLocalSessionDocs = true;
+    localActiveSessions += recordLocalSessionDoc(data, bucketMap, finishedMap);
+  }
+
+  return { localActiveSessions, hasLocalSessionDocs };
+}
+
+function collectCloudGameBuckets(
+  docs: readonly any[],
+  bucketMap: Map<string, ActiveGameRoundBucket>,
+  finishedMap: Map<number, number>,
+): number {
+  let cloudActiveInProgress = 0;
+
+  for (const doc of docs) {
+    const data = (doc.data?.() || {}) as Record<string, any>;
+    if (data.deletedAt) continue;
+
+    const roundLimit = Math.max(3, Math.round(Number(data.settings?.length || data.config?.numRounds) || 10));
+    const currentRound = Math.max(0, Math.round(Number(data.currentRoundNumber) || 0));
+    const status = typeof data.status === 'string' ? data.status : '';
+
+    if (status === 'in_progress' && currentRound >= 1 && currentRound < roundLimit) {
+      incrementRoundBucket(bucketMap, 'cloud', currentRound, roundLimit);
+      cloudActiveInProgress += 1;
+    } else if (status === 'finished') {
+      finishedMap.set(roundLimit, (finishedMap.get(roundLimit) || 0) + 1);
+    }
+  }
+
+  return cloudActiveInProgress;
+}
+
+export async function aggregateActiveRoundDistribution(
+  db: admin.firestore.Firestore,
+  nowDate: Date = new Date(),
+): Promise<ActiveRoundDistribution> {
+  const cutoffMs = nowDate.getTime() - 30 * 86_400_000;
+  const cutoffTimestamp = Timestamp.fromMillis(cutoffMs);
+
+  const localColl = db.collection('telemetry_local_sessions') as any;
+  const localQuery =
+    localColl && typeof localColl.where === 'function'
+      ? localColl.where('updatedAt', '>=', cutoffTimestamp)
+      : localColl;
+  const localPromise =
+    localQuery && typeof localQuery.get === 'function' ? localQuery.get() : Promise.resolve({ docs: [] });
+
+  const gamesColl = db.collection('games') as any;
+  const gamesPromise =
+    gamesColl && typeof gamesColl.get === 'function' ? gamesColl.get() : Promise.resolve({ docs: [] });
+
+  const [localSnap, gamesSnap] = await Promise.all([localPromise, gamesPromise]);
+
+  const bucketMap = new Map<string, ActiveGameRoundBucket>();
+  const localFinishedMap = new Map<number, number>();
+  const cloudFinishedMap = new Map<number, number>();
+
+  const { localActiveSessions, hasLocalSessionDocs } = collectLocalSessionBuckets(
+    localSnap?.docs || [],
+    cutoffMs,
+    bucketMap,
+    localFinishedMap,
+  );
+  const cloudActiveInProgress = collectCloudGameBuckets(gamesSnap?.docs || [], bucketMap, cloudFinishedMap);
+
+  const buckets = Array.from(bucketMap.values()).sort(
+    (a, b) => a.round - b.round || a.remaining - b.remaining || a.source.localeCompare(b.source),
+  );
+
+  return {
+    buckets,
+    localActiveSessions,
+    cloudActiveInProgress,
+    hasLocalSessionDocs,
+    localFinished30dByLength: mapFinishedCountsToSortedList(localFinishedMap),
+    cloudFinishedByLength: mapFinishedCountsToSortedList(cloudFinishedMap),
+  };
 }

@@ -274,4 +274,43 @@ describe('TelemetryService', () => {
       quick_game_deleted: 1,
     });
   });
+
+  it('coalesces rapid local session updates per slot within debounce window, sends session-only payloads, and restores on 429 retry', async () => {
+    vi.useFakeTimers();
+
+    // Invalid updates must be ignored
+    service.trackLocalSession({ slot: 'invalid', currentRound: 1, roundLimit: 10, status: 'in_progress' });
+    service.trackLocalSession({ slot: 'abcdef0123456789', currentRound: 0, roundLimit: 10, status: 'in_progress' });
+    service.trackLocalSession({ slot: 'abcdef0123456789', currentRound: 1, roundLimit: 2, status: 'in_progress' });
+    await service.flush();
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    // Multiple rounds for same slot coalesce to latest state in one debounced POST
+    service.trackLocalSession({ slot: 'abcdef0123456789', currentRound: 1, roundLimit: 10, status: 'in_progress' });
+    service.trackLocalSession({ slot: 'abcdef0123456789', currentRound: 2, roundLimit: 10, status: 'in_progress' });
+    service.trackLocalSession({ slot: 'abcdef0123456789', currentRound: 3, roundLimit: 10, status: 'in_progress' });
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(2550);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
+    expect(body.views).toBeUndefined();
+    expect(body.events).toBeUndefined();
+    expect(body.sessions).toEqual([
+      { slot: 'abcdef0123456789', currentRound: 3, roundLimit: 10, status: 'in_progress' },
+    ]);
+
+    // 429 restores pending sessions and retries with backoff
+    fetchSpy.mockResolvedValueOnce({ ok: false, status: 429 }).mockResolvedValueOnce({ ok: true, status: 204 });
+    service.trackLocalSession({ slot: 'fedcba9876543210', currentRound: 4, roundLimit: 20, status: 'in_progress' });
+    await service.flush();
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+    await vi.advanceTimersByTimeAsync(3100);
+    expect(fetchSpy).toHaveBeenCalledTimes(3);
+    const retryBody = JSON.parse(fetchSpy.mock.calls[2][1].body);
+    expect(retryBody.sessions).toEqual([
+      { slot: 'fedcba9876543210', currentRound: 4, roundLimit: 20, status: 'in_progress' },
+    ]);
+  });
 });

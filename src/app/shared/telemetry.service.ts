@@ -1,5 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import type { TelemetryLocalSessionUpdate } from '../types';
 import { CANONICAL_WEB_ORIGIN, isLocalBrowserDevServer, isNativeCapacitorApp } from './capacitor-env';
 
 export type QuickGameRoundEventName =
@@ -70,6 +71,9 @@ const ALLOWED_ROUTES = new Set<string>([
 
 const SELF_REFERRER_HOSTS = new Set<string>(['soil.app', 'www.soil.app', 'localhost', '127.0.0.1']);
 const MAX_PENDING_PER_KEY = 20;
+const MAX_PENDING_SESSIONS = 10;
+const SESSION_SLOT_REGEX = /^[a-f0-9]{12,32}$/;
+const ALLOWED_SESSION_STATUSES = new Set<TelemetryLocalSessionUpdate['status']>(['in_progress', 'finished', 'deleted']);
 const FLUSH_DEBOUNCE_MS = 2_500;
 const RETRY_BASE_DELAY_MS = 3_000;
 const MAX_RETRY_DELAY_MS = 30_000;
@@ -85,6 +89,7 @@ export class TelemetryService {
   private pendingViews: Record<string, number> = {};
   private pendingEvents: Record<string, number> = {};
   private pendingReferrers: Record<string, number> = {};
+  private pendingSessions = new Map<string, TelemetryLocalSessionUpdate>();
   private initialReferrerRecorded = false;
   private lastTrackedRoute: string | null = null;
   private isFlushing = false;
@@ -237,7 +242,8 @@ export class TelemetryService {
     return (
       Object.keys(this.pendingViews).length > 0 ||
       Object.keys(this.pendingEvents).length > 0 ||
-      Object.keys(this.pendingReferrers).length > 0
+      Object.keys(this.pendingReferrers).length > 0 ||
+      this.pendingSessions.size > 0
     );
   }
 
@@ -308,6 +314,42 @@ export class TelemetryService {
     this.scheduleFlush();
   }
 
+  trackLocalSession(update: TelemetryLocalSessionUpdate): void {
+    if (this.shouldSuppressTelemetry() || !update || typeof update !== 'object') return;
+    const slot = typeof update.slot === 'string' ? update.slot.trim().toLowerCase() : '';
+    if (!SESSION_SLOT_REGEX.test(slot)) return;
+
+    const roundLimit = Math.round(Number(update.roundLimit));
+    const currentRound = Math.round(Number(update.currentRound));
+    if (
+      !Number.isFinite(roundLimit) ||
+      roundLimit < 3 ||
+      roundLimit > 100 ||
+      !Number.isFinite(currentRound) ||
+      currentRound < 1 ||
+      currentRound > roundLimit
+    ) {
+      return;
+    }
+    if (!ALLOWED_SESSION_STATUSES.has(update.status)) return;
+
+    if (!this.pendingSessions.has(slot) && this.pendingSessions.size >= MAX_PENDING_SESSIONS) {
+      const oldestKey = this.pendingSessions.keys().next().value;
+      if (oldestKey !== undefined) {
+        this.pendingSessions.delete(oldestKey);
+      }
+    }
+
+    this.pendingSessions.set(slot, {
+      slot,
+      currentRound,
+      roundLimit,
+      status: update.status,
+    });
+
+    this.scheduleFlush();
+  }
+
   flushOnPageHide(): void {
     this.clearTimers();
     this.flush();
@@ -317,29 +359,34 @@ export class TelemetryService {
     views: Record<string, number>;
     events: Record<string, number>;
     referrers: Record<string, number>;
+    sessions: TelemetryLocalSessionUpdate[];
     payload: Record<string, unknown>;
   } | null {
     const hasViews = Object.keys(this.pendingViews).length > 0;
     const hasEvents = Object.keys(this.pendingEvents).length > 0;
     const hasReferrers = Object.keys(this.pendingReferrers).length > 0;
-    if (!hasViews && !hasEvents && !hasReferrers) {
+    const hasSessions = this.pendingSessions.size > 0;
+    if (!hasViews && !hasEvents && !hasReferrers && !hasSessions) {
       return null;
     }
 
     const views = { ...this.pendingViews };
     const events = { ...this.pendingEvents };
     const referrers = { ...this.pendingReferrers };
+    const sessions = Array.from(this.pendingSessions.values());
 
     this.pendingViews = {};
     this.pendingEvents = {};
     this.pendingReferrers = {};
+    this.pendingSessions.clear();
 
     const payload: Record<string, unknown> = { mode: this.detectDisplayMode() };
     if (hasViews) payload.views = views;
     if (hasEvents) payload.events = events;
     if (hasReferrers) payload.referrers = referrers;
+    if (hasSessions) payload.sessions = sessions;
 
-    return { views, events, referrers, payload };
+    return { views, events, referrers, sessions, payload };
   }
 
   private async postTelemetryPayload(payload: Record<string, unknown>): Promise<'ok' | 'retry' | 'drop'> {
@@ -371,7 +418,7 @@ export class TelemetryService {
     try {
       outcome = await this.postTelemetryPayload(snapshot.payload);
       if (outcome === 'retry') {
-        this.restoreSnapshot(snapshot.views, snapshot.events, snapshot.referrers);
+        this.restoreSnapshot(snapshot.views, snapshot.events, snapshot.referrers, snapshot.sessions);
       } else {
         this.retryCount = 0;
       }
@@ -390,6 +437,7 @@ export class TelemetryService {
     views: Record<string, number>,
     events: Record<string, number>,
     referrers: Record<string, number>,
+    sessions: TelemetryLocalSessionUpdate[],
   ): void {
     for (const [k, v] of Object.entries(views)) {
       this.pendingViews[k] = Math.min(MAX_PENDING_PER_KEY, (this.pendingViews[k] || 0) + v);
@@ -399,6 +447,11 @@ export class TelemetryService {
     }
     for (const [k, v] of Object.entries(referrers)) {
       this.pendingReferrers[k] = Math.min(MAX_PENDING_PER_KEY, (this.pendingReferrers[k] || 0) + v);
+    }
+    for (const session of sessions) {
+      if (!this.pendingSessions.has(session.slot)) {
+        this.pendingSessions.set(session.slot, session);
+      }
     }
   }
 }
