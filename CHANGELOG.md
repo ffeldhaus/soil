@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.5.7] - 2026-11-25
 ### Added
 - **Anonymer idempotenter Spielrunden-Status (`local` & `cloud`)** (`src/app/types.ts`, `src/app/shared/telemetry.service.ts`, `src/app/game/engine/local-game.service.ts`, `functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/app/privacy/privacy.html`): Laufende lokale Spiele senden ab Runde 1 ihren aktuellen Rundenstand (`currentRound`, `roundLimit`, `status`) unter einem zufälligen Spiel-Token (`telemetrySlot`) gebündelt und idempotent in `telemetry_local_sessions` (`europe-west4`, automatische 30-Tage-Bereinigung im täglichen Wartungslauf `dailyGamePurge`; sofortige `deleted`-Markierung bei Löschung oder Cloud-Migration gegen Doppelzählung) und aggregieren die Live-Verteilung zusammen mit laufenden Cloud-Spielen.
 
