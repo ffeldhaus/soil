@@ -231,7 +231,8 @@ export async function handleTelemetryHttpRequest(req: any, res: any, db: admin.f
 
   const forwarded = req.headers?.['x-forwarded-for'];
   const clientIp = (typeof forwarded === 'string' ? forwarded.split(',')[0] : req.ip || 'anon').trim();
-  const rate = checkPublicRateLimit(`telemetry:${clientIp}`, 60, 60_000);
+  // Classroom NAT IP headroom: allow 30–40 students behind one school IP to batch events without 429s.
+  const rate = checkPublicRateLimit(`telemetry:${clientIp}`, 300, 60_000);
   if (!rate.allowed) {
     res.status(429).json({ error: 'Rate limit exceeded' });
     return;

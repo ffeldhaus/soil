@@ -30,6 +30,8 @@ describe('TelemetryService', () => {
 
   afterEach(() => {
     window.sessionStorage.clear();
+    vi.clearAllTimers();
+    vi.useRealTimers();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -64,7 +66,7 @@ describe('TelemetryService', () => {
     });
 
     service.trackPageView('/trailer?from=share');
-    await Promise.resolve();
+    await service.flush();
 
     expect(localSetSpy).not.toHaveBeenCalled();
     expect(localGetSpy).not.toHaveBeenCalled();
@@ -80,15 +82,83 @@ describe('TelemetryService', () => {
 
     // Consecutive identical route with different query params is deduplicated
     service.trackPageView('/trailer?from=reload');
+    await service.flush();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
 
     // Navigating to a second route within the SPA does not re-record the initial referrer
     service.trackPageView('/manual');
-    await Promise.resolve();
+    await service.flush();
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     const secondBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
     expect(secondBody.views).toEqual({ '/manual': 1 });
     expect(secondBody.referrers).toBeUndefined();
+  });
+
+  it('coalesces rapid pageView and event bursts into a single debounced POST and supports immediate flushOnPageHide', async () => {
+    vi.useFakeTimers();
+
+    service.trackPageView('/');
+    service.trackEvent('quick_game_started');
+    service.trackEvent('quick_game_first_plant');
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(2400);
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(150);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
+    expect(body.views).toEqual({ '/': 1 });
+    expect(body.events).toEqual({ quick_game_started: 1, quick_game_first_plant: 1 });
+
+    // pagehide flushes immediately without waiting for debounce window
+    service.trackEvent('quick_game_finished');
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    service.flushOnPageHide();
+    await Promise.resolve();
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    const hideBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
+    expect(hideBody.events).toEqual({ quick_game_finished: 1 });
+  });
+
+  it('restores snapshot and retries with exponential backoff on HTTP 429 without losing events', async () => {
+    vi.useFakeTimers();
+    fetchSpy
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: true, status: 204 });
+
+    service.trackEvent('quick_game_finished');
+    await service.flush();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+    // First retry fires after 3000ms
+    await vi.advanceTimersByTimeAsync(2900);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(150);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+    // Second retry fires after 6000ms and succeeds with the preserved event
+    await vi.advanceTimersByTimeAsync(5900);
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    await vi.advanceTimersByTimeAsync(150);
+    expect(fetchSpy).toHaveBeenCalledTimes(3);
+    const body = JSON.parse(fetchSpy.mock.calls[2][1].body);
+    expect(body.events).toEqual({ quick_game_finished: 1 });
+  });
+
+  it('caps consecutive retry attempts at 4 on sustained 429 responses', async () => {
+    vi.useFakeTimers();
+    fetchSpy.mockResolvedValue({ ok: false, status: 429 });
+
+    service.trackEvent('quick_game_round_1');
+    await service.flush();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+    // Advance through all 4 exponential backoff delays (3s + 6s + 12s + 24s = 45s) + extra buffer
+    await vi.advanceTimersByTimeAsync(120_000);
+    // 1 initial attempt + 4 retries = 5 total calls
+    expect(fetchSpy).toHaveBeenCalledTimes(5);
   });
 
   it('skips duplicate referrer recording on reload and back_forward navigations via PerformanceNavigationTiming', async () => {
@@ -114,7 +184,7 @@ describe('TelemetryService', () => {
       const reloadedService = TestBed.inject(TelemetryService);
       reloadedService.enableInTests = true;
       reloadedService.trackPageView('/');
-      await Promise.resolve();
+      await reloadedService.flush();
 
       expect(fetchSpy).toHaveBeenCalledTimes(1);
       const reloadBody = JSON.parse(fetchSpy.mock.calls[0][1].body);
@@ -154,7 +224,7 @@ describe('TelemetryService', () => {
     fetchSpy.mockRejectedValueOnce(new Error('Network offline'));
 
     service.trackEvent('trailer_opened');
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await service.flush();
 
     fetchSpy.mockResolvedValueOnce({ ok: true, status: 204 });
     await service.flush();
@@ -168,13 +238,13 @@ describe('TelemetryService', () => {
     Object.defineProperty(navigator, 'doNotTrack', { value: '1', configurable: true });
     service.trackPageView('/');
     service.trackEvent('quick_game_started');
-    await Promise.resolve();
+    await service.flush();
     expect(fetchSpy).not.toHaveBeenCalled();
 
     Object.defineProperty(navigator, 'doNotTrack', { value: null, configurable: true });
     Object.defineProperty(navigator, 'globalPrivacyControl', { value: true, configurable: true });
     service.trackPageView('/manual');
-    await Promise.resolve();
+    await service.flush();
     expect(fetchSpy).not.toHaveBeenCalled();
 
     Object.defineProperty(navigator, 'globalPrivacyControl', { value: false, configurable: true });

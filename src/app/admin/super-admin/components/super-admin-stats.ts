@@ -749,6 +749,19 @@ export class SuperAdminStatsComponent {
     return this.isRangeFiltered ? this.sumWindowMap('events') : this.stats?.telemetry?.events || {};
   }
 
+  get selectedRangeShortLabel(): string {
+    const labels: Record<TelemetryRangePreset, string> = {
+      '24h': '24 Std.',
+      '7d': '7T',
+      '28d': '28T',
+      '3m': '3M',
+      '12m': '12M',
+      all: 'Gesamt',
+      custom: 'Auswahl',
+    };
+    return labels[this.selectedRange];
+  }
+
   get quickPlayStartedCount(): number {
     return Number(this.currentTelemetryEvents.quick_game_started || 0);
   }
@@ -759,6 +772,21 @@ export class SuperAdminStatsComponent {
 
   get quickPlayRound1Count(): number {
     return Number(this.currentTelemetryEvents.quick_game_round_1 || 0);
+  }
+
+  get quickPlayDeletedCount(): number {
+    return Number(this.currentTelemetryEvents.quick_game_deleted || 0);
+  }
+
+  get quickPlayFinishedCount(): number {
+    return Number(this.currentTelemetryEvents.quick_game_finished || 0);
+  }
+
+  get hasQuickPlayDataQualityAnomaly(): boolean {
+    if (!this.hasQuickPlayFunnelData) return false;
+    return (
+      this.quickPlayDeletedCount > this.quickPlayRound1Count || this.quickPlayFinishedCount > this.quickPlayRound1Count
+    );
   }
 
   get hasQuickPlayFunnelData(): boolean {
@@ -789,7 +817,7 @@ export class SuperAdminStatsComponent {
       },
     );
 
-    for (const milestone of [15, 20]) {
+    for (const milestone of [12, 15, 20]) {
       const key = `quick_game_round_${milestone}`;
       const count = Number(events[key] || 0);
       if (count > 0) {

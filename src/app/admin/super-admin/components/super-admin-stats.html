@@ -509,20 +509,29 @@
     <div class="px-5 py-4 sm:px-6 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 bg-gray-950">
       <div>
         <h2 id="quick-play-funnel-heading" class="text-base sm:text-lg font-bold text-white tracking-tight">
-          Sofort-Spiel-Funnel
+          Einzelspieler-Funnel (Mensch gegen KI)
         </h2>
         <p class="text-xs text-gray-400 font-mono tabular-nums mt-0.5">
-          {{ breakdownSubtitle }} · Verlauf ab mindestens 1 gespielter Runde (R1 = 100%)
+          {{ breakdownSubtitle }} · Alle lokalen KI-Spiele (Startseite &amp; /admin) ab Runde 1 (R1 = 100%)
         </p>
         @if (!hasQuickPlayFunnelData && quickPlayStartedCount > 0) {
           <p class="text-xs text-gray-500 mt-1">
             Fortschritt für ältere Zeiträume unbekannt (Runden-Funnel ab v3.5.3).
           </p>
         }
+        @if (hasQuickPlayDataQualityAnomaly) {
+          <p
+            data-testid="funnel-data-quality-warning"
+            role="status"
+            class="mt-2 px-2.5 py-1.5 rounded-md border border-amber-500/40 bg-amber-950/60 text-xs text-amber-200"
+          >
+            Hinweis: Unplausible Zählerdifferenz erkannt (z. B. durch Rate-Limit oder Migration) – Werte mit Vorsicht interpretieren.
+          </p>
+        }
       </div>
       <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono tabular-nums">
         <span class="text-gray-400">
-          Gestartet:
+          Gestartet ({{ selectedRangeShortLabel }}):
           <span class="text-gray-100 font-semibold">{{ quickPlayStartedCount }}</span>
         </span>
         @if (hasQuickPlayFunnelData || quickPlayStartedCount === 0) {
@@ -539,6 +548,12 @@
             <span class="text-gray-100 font-semibold">{{ quickPlayRound1Count }}</span>
           }
         </span>
+        @if (quickPlayDeletedCount > 0) {
+          <span data-testid="funnel-deleted-count" class="text-gray-400">
+            Gelöscht:
+            <span class="text-gray-100 font-semibold">{{ quickPlayDeletedCount }}</span>
+          </span>
+        }
         <span class="text-gray-400">
           Abschluss (ab R1):
           @if (!hasQuickPlayFunnelData && quickPlayStartedCount > 0) {
@@ -650,6 +665,10 @@
           </div>
         </div>
       </div>
+
+      <p data-testid="funnel-horizon-note" class="text-xs text-gray-400 pt-1">
+        Hinweis: Klassenrunden nutzen teils 5–6 oder 10–20 Runden; Rückgänge nach R5/R6 enthalten daher auch reguläre Spielabschlüsse.
+      </p>
     </div>
   </section>
 </div>

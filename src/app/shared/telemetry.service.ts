@@ -70,6 +70,10 @@ const ALLOWED_ROUTES = new Set<string>([
 
 const SELF_REFERRER_HOSTS = new Set<string>(['soil.app', 'www.soil.app', 'localhost', '127.0.0.1']);
 const MAX_PENDING_PER_KEY = 20;
+const FLUSH_DEBOUNCE_MS = 2_500;
+const RETRY_BASE_DELAY_MS = 3_000;
+const MAX_RETRY_DELAY_MS = 30_000;
+const MAX_CONSECUTIVE_RETRIES = 4;
 
 @Injectable({
   providedIn: 'root',
@@ -84,17 +88,36 @@ export class TelemetryService {
   private initialReferrerRecorded = false;
   private lastTrackedRoute: string | null = null;
   private isFlushing = false;
+  private flushTimer: ReturnType<typeof setTimeout> | null = null;
+  private retryTimer: ReturnType<typeof setTimeout> | null = null;
+  private retryCount = 0;
 
   /**
    * Used only by unit tests to bypass localhost / headless browser suppression.
    */
   enableInTests = false;
 
+  /**
+   * Debounce window (ms) for coalescing rapid pageView/event bursts into one POST.
+   */
+  flushDebounceMs = FLUSH_DEBOUNCE_MS;
+
   constructor() {
     if (isPlatformBrowser(this.platformId) && typeof window !== 'undefined') {
       window.addEventListener('online', () => {
+        this.retryCount = 0;
         this.flush();
       });
+      window.addEventListener('pagehide', () => {
+        this.flushOnPageHide();
+      });
+      if (this.doc && typeof this.doc.addEventListener === 'function') {
+        this.doc.addEventListener('visibilitychange', () => {
+          if (this.doc.visibilityState === 'hidden') {
+            this.flushOnPageHide();
+          }
+        });
+      }
     }
   }
 
@@ -210,6 +233,59 @@ export class TelemetryService {
     }
   }
 
+  private hasPendingData(): boolean {
+    return (
+      Object.keys(this.pendingViews).length > 0 ||
+      Object.keys(this.pendingEvents).length > 0 ||
+      Object.keys(this.pendingReferrers).length > 0
+    );
+  }
+
+  private clearTimers(): void {
+    if (this.flushTimer !== null) {
+      clearTimeout(this.flushTimer);
+      this.flushTimer = null;
+    }
+    if (this.retryTimer !== null) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = null;
+    }
+  }
+
+  private scheduleFlush(): void {
+    if (this.shouldSuppressTelemetry()) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (!this.hasPendingData()) return;
+    if (this.retryTimer !== null) return;
+
+    if (this.flushTimer !== null) {
+      clearTimeout(this.flushTimer);
+      this.flushTimer = null;
+    }
+
+    if (this.flushDebounceMs <= 0) {
+      this.flush();
+      return;
+    }
+
+    this.flushTimer = setTimeout(() => {
+      this.flushTimer = null;
+      this.flush();
+    }, this.flushDebounceMs);
+  }
+
+  private scheduleRetry(): void {
+    if (this.retryCount >= MAX_CONSECUTIVE_RETRIES) {
+      return;
+    }
+    this.retryCount += 1;
+    const delayMs = Math.min(MAX_RETRY_DELAY_MS, RETRY_BASE_DELAY_MS * 2 ** (this.retryCount - 1));
+    this.retryTimer = setTimeout(() => {
+      this.retryTimer = null;
+      this.flush();
+    }, delayMs);
+  }
+
   trackPageView(rawUrl: string): void {
     if (this.shouldSuppressTelemetry()) return;
 
@@ -221,9 +297,7 @@ export class TelemetryService {
     this.pendingViews[route] = Math.min(MAX_PENDING_PER_KEY, (this.pendingViews[route] || 0) + 1);
     this.recordInitialReferrer();
 
-    if (typeof navigator === 'undefined' || navigator.onLine !== false) {
-      this.flush();
-    }
+    this.scheduleFlush();
   }
 
   trackEvent(eventName: TelemetryEventName): void {
@@ -231,38 +305,44 @@ export class TelemetryService {
 
     this.pendingEvents[eventName] = Math.min(MAX_PENDING_PER_KEY, (this.pendingEvents[eventName] || 0) + 1);
 
-    if (typeof navigator === 'undefined' || navigator.onLine !== false) {
-      this.flush();
-    }
+    this.scheduleFlush();
   }
 
-  async flush(): Promise<void> {
-    if (this.shouldSuppressTelemetry() || this.isFlushing) return;
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+  flushOnPageHide(): void {
+    this.clearTimers();
+    this.flush();
+  }
 
+  private takePendingSnapshot(): {
+    views: Record<string, number>;
+    events: Record<string, number>;
+    referrers: Record<string, number>;
+    payload: Record<string, unknown>;
+  } | null {
     const hasViews = Object.keys(this.pendingViews).length > 0;
     const hasEvents = Object.keys(this.pendingEvents).length > 0;
     const hasReferrers = Object.keys(this.pendingReferrers).length > 0;
     if (!hasViews && !hasEvents && !hasReferrers) {
-      return;
+      return null;
     }
 
-    const viewsSnapshot = { ...this.pendingViews };
-    const eventsSnapshot = { ...this.pendingEvents };
-    const referrersSnapshot = { ...this.pendingReferrers };
+    const views = { ...this.pendingViews };
+    const events = { ...this.pendingEvents };
+    const referrers = { ...this.pendingReferrers };
 
     this.pendingViews = {};
     this.pendingEvents = {};
     this.pendingReferrers = {};
-    this.isFlushing = true;
 
-    const payload: Record<string, unknown> = {
-      mode: this.detectDisplayMode(),
-    };
-    if (hasViews) payload.views = viewsSnapshot;
-    if (hasEvents) payload.events = eventsSnapshot;
-    if (hasReferrers) payload.referrers = referrersSnapshot;
+    const payload: Record<string, unknown> = { mode: this.detectDisplayMode() };
+    if (hasViews) payload.views = views;
+    if (hasEvents) payload.events = events;
+    if (hasReferrers) payload.referrers = referrers;
 
+    return { views, events, referrers, payload };
+  }
+
+  private async postTelemetryPayload(payload: Record<string, unknown>): Promise<'ok' | 'retry' | 'drop'> {
     const telemetryEndpoint = isNativeCapacitorApp() ? `${CANONICAL_WEB_ORIGIN}/api/telemetry` : '/api/telemetry';
     try {
       const response = await fetch(telemetryEndpoint, {
@@ -271,13 +351,38 @@ export class TelemetryService {
         body: JSON.stringify(payload),
         keepalive: true,
       });
-      if (!response.ok && response.status >= 500) {
-        this.restoreSnapshot(viewsSnapshot, eventsSnapshot, referrersSnapshot);
-      }
+      if (response.ok) return 'ok';
+      return response.status === 429 || response.status >= 500 ? 'retry' : 'drop';
     } catch {
-      this.restoreSnapshot(viewsSnapshot, eventsSnapshot, referrersSnapshot);
+      return 'retry';
+    }
+  }
+
+  async flush(): Promise<void> {
+    if (this.shouldSuppressTelemetry() || this.isFlushing) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+
+    this.clearTimers();
+    const snapshot = this.takePendingSnapshot();
+    if (!snapshot) return;
+
+    this.isFlushing = true;
+    let outcome: 'ok' | 'retry' | 'drop' = 'retry';
+    try {
+      outcome = await this.postTelemetryPayload(snapshot.payload);
+      if (outcome === 'retry') {
+        this.restoreSnapshot(snapshot.views, snapshot.events, snapshot.referrers);
+      } else {
+        this.retryCount = 0;
+      }
     } finally {
       this.isFlushing = false;
+    }
+
+    if (outcome === 'retry') {
+      this.scheduleRetry();
+    } else if (this.hasPendingData() && this.flushTimer === null) {
+      this.scheduleFlush();
     }
   }
 

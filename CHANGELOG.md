@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.5.5] - 2026-11-21
+## [Unpublished]
 ### Added
 - **7 individuelle Schädlings-Illustrationen** (`oat-rust.jpg`, `nematode.jpg`, `aphid-cereal.jpg`, `pea-moth.jpg`, `corn-borer.jpg`, `pollen-beetle.jpg`, `swine-fever.jpg` in `public/assets/images/pests/` und `src/app/game/board/board.ts`), sodass alle 9 Schädlinge eindeutige Einzelbilder besitzen.
 - **MUNDO – Bildungsmediathek der Länder** (`mundo.schule`, SODIX-ID `SODIX-0001172770`) als bestätigte Live-Verlinkung in `marketing/verlinkungen.md` und `KNOWN_BACKLINKS` (`src/app/types.ts`) unter `/admin/super` aufgenommen sowie `checkBacklinkStatus` (`functions/src/backlinks.service.ts`) um optionale `verificationUrl`-Prüfung für öffentliche JSON-Quell-Endpunkte von SPA-Mediatheken erweitert.
@@ -14,8 +14,12 @@ All notable changes to this project will be documented in this file.
   - Skalierende Container-Query-Schriftgrößen auf Parzellen (`Fruchtfolge ▼`, Boden/Nährstoffe mit größerem Abstand) und Side-Cards, einheitliche Kategorie-Kopfzeilen (`Wetter`, `Aktive Schädlinge`, `Regionale Aktion`), kompakte `2:1`-Popover-Bilder im Portrait-Modus sowie optimierte Side-Cards auf sehr niedrigen Querformaten (z. B. Samsung Z Fold 8 Cover).
   - Kontextuelle Snackbar-Hinweise mit automatischem Ausblenden, maximal 1 Hinweis pro Runde und dauerhaftem Ausblenden nach Nutzung der jeweiligen Aktion; EU-Bio-Siegel im Rundenergebnis nur noch bei erfüllten Kriterien anzeigen.
   - Neugestaltetes **Spiel beendet!**-Modal mit gemaltem Bauernhof-Banner, persönlicher Hof-Bilanz (**Deine Leistung** inkl. Kapital-Delta, Ø-Bodenqualitäts-Balken und freigeschalteten Hof-Stickern), kompaktem 3er-Podium, hervorgehobener eigener Ranglisten-Zeile und einklappbarem Feedback-Formular.
-- **Sofort-Spiel-Funnel ab Runde 1 (`R1 = 100%`)** unter `/admin/super` (`src/app/admin/super-admin/components/super-admin-stats.*`): `Start`- und `Aussaat`-Balken aus dem Säulendiagramm herausgelöst, Vorrunden-Zähler (`Gestartet`, `1. Aussaat`, `Mind. 1 Runde`, `Abschluss (ab R1)`) als kompakte Kopfmetriken dargestellt, Diagramm ab `R1` bis `Fertig` verankert und `Einzelspieler (≥ 1 Runde)` in die Tabelle *Ausgelöste Aktionen* aufgenommen.
+- **Einzelspieler-Funnel (Mensch gegen KI) & Super-Admin-Übersicht** unter `/admin/super` (`src/app/admin/super-admin/components/super-admin-stats.*`, `super-admin-users.html`, `super-admin.html`): Funnel ab `R1 = 100%` inkl. `[12, 15, 20]`-Meilensteinen, aktivem Zeitraum-Label neben `Gestartet`, `Gelöscht`-Anzeige, 1-zeiligem Hinweis auf variable Klassenrundenlängen (`5–6` / `10–20`), Datenqualitäts-Warnbanner bei unplausibler Zählerdifferenz sowie `30-Tage-Fenster`-Tooltip auf den aktiven Spielen.
 - Frontend-Abhängigkeiten (`autoprefixer`, `firebase-tools`) innerhalb der Semver-Grenzen aktualisiert (`package-lock.json`).
+
+### Fixed
+- **Lokale Spiel-Migration & `migrateLocalGame`-Stabilität** (`src/app/game/sync.service.ts`, `src/app/game/engine/local-game.service.ts`, `functions/src/index.ts`): Aktiv gespielte `in_progress`-Lokalspiele werden bei `saveDraft`/Runden-Updates nicht mehr vorzeitig migriert oder gelöscht; Migrations-Löschungen unterdrücken `quick_game_deleted`-Telemetrie, setzen den aktiven `LocalGameService`-State bei Hard-Delete auf `null` (verhindert Wiederherstellung in `localStorage`) und `migrateLocalGame` läuft nun mit `512MiB` Speicher sowie deterministischen Dokument-IDs + Transaktions-Idempotenz gegen parallele Doppel-Aufrufe.
+- **Klassenzimmer-taugliche Telemetrie-Bündelung & `429`-Retry** (`src/app/shared/telemetry.service.ts`, `functions/src/telemetry.service.ts`): Client-Events werden über ein `2,5s`-Debounce-Fenster (mit Sofort-Flush bei `pagehide`/`visibilitychange`) zu einzelnen POSTs gebündelt, bei `HTTP 429`/`5xx`/Netzwerkfehler in RAM wiederhergestellt und mit begrenztem exponentiellem Backoff wiederholt; das serverseitige IP-Limit für `/api/telemetry` wurde für geteilte Schul-NAT-IPs von `60` auf `300` Anfragen/Minute erhöht.
 
 ## [3.5.4] - 2026-11-19
 ### Changed

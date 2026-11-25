@@ -21,9 +21,9 @@
         <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
           <span class="text-gray-300 font-medium">Einzelspieler gegen KI (≥ 1 Runde)</span>
           <span class="font-mono tabular-nums text-gray-400">
-            <span class="text-emerald-400">{{ stats?.games?.localActive || 0 }} aktiv (30T)</span> ·
+            <span class="text-emerald-400" title="30-Tage-Fenster: R1 − beendet − gelöscht">{{ stats?.games?.localActive || 0 }} aktiv (30T)</span> ·
             <span class="text-gray-200">{{ stats?.games?.localFinishedTotal || 0 }} beendet</span> ·
-            <span class="text-gray-300">{{ stats?.games?.localPlayedTotal || 0 }} gespielt</span>
+            <span class="text-gray-300">{{ stats?.games?.localPlayedTotal || 0 }} gespielt ≥ 1 Rd.</span>
           </span>
         </div>
       </div>

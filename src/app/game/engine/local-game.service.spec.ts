@@ -60,6 +60,39 @@ describe('LocalGameService', () => {
     expect(trackSpy).not.toHaveBeenCalledWith('quick_game_deleted');
   });
 
+  it('should suppress quick_game_deleted when emitTelemetry is false, prevent duplicate emission after undelete, and clear active state on hard delete', async () => {
+    const trackSpy = vi.spyOn(telemetry, 'trackEvent');
+
+    // 1. Soft-delete at R1 -> sets deleteTelemetrySent, so undelete + delete again does not double-emit
+    const softGame = await service.createGame('Soft Delete Once', { numPlayers: 1, numRounds: 5 });
+    await service.submitDecision(softGame.gameId, { parcels: {} } as any);
+    trackSpy.mockClear();
+    await service.deleteGame(softGame.gameId, false);
+    expect(trackSpy).toHaveBeenCalledTimes(1);
+    expect(trackSpy).toHaveBeenCalledWith('quick_game_deleted');
+    const softState = await service.loadGame(softGame.gameId);
+    expect(softState?.deleteTelemetrySent).toBe(true);
+
+    await service.undeleteGame(softGame.gameId);
+    await service.deleteGame(softGame.gameId, true);
+    expect(trackSpy).toHaveBeenCalledTimes(1);
+
+    // 2. Hard-delete with emitTelemetry: false clears activeGameId so saveDraft cannot resurrect the game
+    const migrated = await service.createGame('Migrated Game', { numPlayers: 1, numRounds: 5 });
+    await service.submitDecision(migrated.gameId, { parcels: {} } as any);
+    expect(service.activeGameId).toBe(migrated.gameId);
+    trackSpy.mockClear();
+
+    await service.deleteGame(migrated.gameId, true, { emitTelemetry: false });
+    expect(trackSpy).not.toHaveBeenCalledWith('quick_game_deleted');
+    expect(service.activeGameId).toBeNull();
+    expect(localStorage.getItem(`soil_game_${migrated.gameId}`)).toBeNull();
+
+    // Subsequent saveDraft must be a no-op and must not resurrect the hard-deleted game
+    await service.saveDraft(migrated.gameId, { parcels: { 0: 'Wheat' as any } } as any);
+    expect(localStorage.getItem(`soil_game_${migrated.gameId}`)).toBeNull();
+  });
+
   it('should submit a decision and calculate next round in single player', async () => {
     const config = { numPlayers: 1, numAi: 0, numRounds: 20, playerLabel: 'Farmer' };
     const response = await service.createGame('Test Local', config);

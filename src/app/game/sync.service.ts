@@ -23,6 +23,7 @@ export class SyncService {
     : null;
 
   private isSyncing = false;
+  private migratingGameIds = new Set<string>();
   private uploadingGameIds = new Set<string>();
 
   constructor() {
@@ -30,26 +31,28 @@ export class SyncService {
   }
 
   private initSyncListener() {
-    // Sync on login
+    // Sync dormant or finished local games on login
     this.authService.user$.pipe(filter((user) => !!user && !user.isAnonymous)).subscribe(() => {
       this.syncLocalGames();
     });
 
-    // Sync on local state changes
+    // Only migrate or upload once a local game finishes; never migrate an actively played in_progress game on saveDraft/round updates
     this.localGameService.state$.pipe(filter((state) => !!state)).subscribe((state) => {
+      if (state?.game.status !== 'finished') {
+        return;
+      }
       const user = this.authService.currentUser;
       if (user && !user.isAnonymous) {
-        // If logged in, migrate
-        this.syncLocalGames();
-      } else if (state?.game.status === 'finished') {
-        // If guest and finished, upload for research
+        this.migrateSingleLocalGame(state.game);
+      } else {
         this.uploadFinishedGameForResearch(state.game.id);
       }
     });
   }
 
   private async migrateSingleLocalGame(game: any): Promise<void> {
-    if (!this.migrateLocalGameFn) return;
+    if (!this.migrateLocalGameFn || !game?.id || this.migratingGameIds.has(game.id)) return;
+    this.migratingGameIds.add(game.id);
     try {
       const fullState = await this.localGameService.loadGame(game.id);
       if (!fullState) return;
@@ -57,10 +60,12 @@ export class SyncService {
         await this.uploadFinishedGameForResearch(game.id);
       }
       await this.migrateLocalGameFn({ gameData: fullState });
-      await this.localGameService.deleteGame(game.id, true);
+      await this.localGameService.deleteGame(game.id, true, { emitTelemetry: false });
       if (window.console) console.warn(`Successfully migrated game ${game.id} to cloud`);
     } catch (error) {
       if (window.console) console.error(`Failed to migrate game ${game.id}:`, error);
+    } finally {
+      this.migratingGameIds.delete(game.id);
     }
   }
 
@@ -70,7 +75,10 @@ export class SyncService {
     this.isSyncing = true;
     try {
       const allLocalGames = await this.localGameService.getLocalGames();
-      const localGames = allLocalGames.filter((g) => g.status !== 'deleted');
+      const activeGameId = this.localGameService.activeGameId;
+      const localGames = allLocalGames.filter(
+        (g) => g.status !== 'deleted' && !(g.id === activeGameId && g.status !== 'finished'),
+      );
       for (const game of localGames) {
         await this.migrateSingleLocalGame(game);
       }

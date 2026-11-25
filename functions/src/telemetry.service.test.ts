@@ -414,4 +414,56 @@ describe('Telemetry Service (Zero-Cookie / Zero-PII Aggregate Counters)', () => 
       localFinishedTotal: 14,
     });
   });
+
+  it('allows up to 300 telemetry requests per minute from a shared school NAT IP before returning 429', async () => {
+    const setStub = sinon.stub().resolves();
+    const mockDb: any = {
+      collection: () => ({
+        doc: () => ({ set: setStub }),
+      }),
+    };
+    const createRes = () => ({
+      statusCode: 200,
+      body: null as any,
+      setHeader: sinon.stub(),
+      status(code: number) {
+        this.statusCode = code;
+        return this;
+      },
+      send(payload: any) {
+        this.body = payload;
+        return this;
+      },
+      json(payload: any) {
+        this.body = payload;
+        return this;
+      },
+    });
+
+    for (let i = 0; i < 300; i++) {
+      const res = createRes();
+      await handleTelemetryHttpRequest(
+        {
+          method: 'POST',
+          headers: { 'user-agent': 'Mozilla/5.0 Chrome/126.0.0.0', 'x-forwarded-for': '203.0.113.42' },
+          body: { views: { '/': 1 } },
+        },
+        res,
+        mockDb,
+      );
+      expect(res.statusCode).to.equal(204);
+    }
+
+    const throttledRes = createRes();
+    await handleTelemetryHttpRequest(
+      {
+        method: 'POST',
+        headers: { 'user-agent': 'Mozilla/5.0 Chrome/126.0.0.0', 'x-forwarded-for': '203.0.113.42' },
+        body: { views: { '/': 1 } },
+      },
+      throttledRes,
+      mockDb,
+    );
+    expect(throttledRes.statusCode).to.equal(429);
+  });
 });

@@ -1,6 +1,11 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { db, internalAnonymizeAndUploadForResearch } from './index';
+import {
+  buildDeterministicMigratedGameId,
+  db,
+  executeMigrateLocalGame,
+  internalAnonymizeAndUploadForResearch,
+} from './index';
 
 describe('Sync and Research Upload', () => {
   let sandbox: sinon.SinonSandbox;
@@ -309,5 +314,100 @@ describe('Sync and Research Upload', () => {
     // Verify anonymized round data in transaction
     const roundData = setStub.secondCall.args[1];
     expect(roundData.playerData['player-target-game-id-1']).to.exist;
+  });
+
+  it('should generate deterministic Firestore IDs and prevent duplicate cloud games on concurrent migrateLocalGame calls', async () => {
+    const uid = 'teacherUid1234567890';
+    const localId = 'local-abc123xyz';
+    const expectedDocId = buildDeterministicMigratedGameId(uid, localId);
+    expect(expectedDocId).to.equal('migrated_teacherUid12_local-abc123xyz');
+
+    const storedDocs = new Map<string, any>();
+    const storedRounds = new Map<string, any>();
+
+    const collectionStub = sandbox.stub(db, 'collection');
+    collectionStub.withArgs('games').returns({
+      where: sandbox.stub().returns({
+        where: sandbox.stub().returns({
+          limit: sandbox.stub().returns({
+            get: sandbox.stub().resolves({ empty: true, docs: [] }),
+          }),
+        }),
+      }),
+      doc: (id: string) => ({
+        id,
+        collection: (sub: string) => ({
+          doc: (roundId: string) => ({ id: `${id}/${sub}/${roundId}` }),
+        }),
+      }),
+    } as any);
+
+    sandbox.stub(db, 'runTransaction').callsFake(async (callback) => {
+      const tx = {
+        get: async (ref: any) => {
+          const existing = storedDocs.get(ref.id);
+          return { exists: !!existing, data: () => existing };
+        },
+        set: (ref: any, data: any) => {
+          if (ref.id.includes('/rounds/')) {
+            storedRounds.set(ref.id, data);
+          } else {
+            storedDocs.set(ref.id, { ...(storedDocs.get(ref.id) || {}), ...data });
+          }
+        },
+      };
+      return await callback(tx as any);
+    });
+
+    const gameData = {
+      game: {
+        id: localId,
+        name: 'Classroom Local Game',
+        status: 'finished',
+        currentRoundNumber: 2,
+        players: {
+          [`player-${localId}-1`]: {
+            uid: `player-${localId}-1`,
+            playerNumber: 1,
+            displayName: 'Team 1',
+            history: [{ number: 0 }, { number: 1 }, { number: 2 }],
+          },
+        },
+      },
+      allRounds: {
+        [`player-${localId}-1`]: [
+          { number: 0, result: { events: { weather: 'Normal', vermin: [] } } },
+          { number: 1, result: { events: { weather: 'Normal', vermin: [] } } },
+          { number: 2, result: { events: { weather: 'Drought', vermin: [] } } },
+        ],
+      },
+    };
+
+    // First call creates the deterministic doc
+    const first = await executeMigrateLocalGame(uid, gameData);
+    expect(first).to.deep.equal({ success: true, gameId: expectedDocId, status: 'created' });
+    expect(storedDocs.size).to.equal(1);
+    expect(storedRounds.size).to.equal(3);
+
+    // Second concurrent/duplicate call sees existing doc inside transaction -> already_synced, still 1 doc!
+    const duplicate = await executeMigrateLocalGame(uid, gameData);
+    expect(duplicate).to.deep.equal({ success: true, gameId: expectedDocId, status: 'already_synced' });
+    expect(storedDocs.size).to.equal(1);
+
+    // Advancing to round 3 updates the same doc and only writes round_3
+    const updatedData = {
+      ...gameData,
+      game: { ...gameData.game, currentRoundNumber: 3 },
+      allRounds: {
+        [`player-${localId}-1`]: [
+          ...gameData.allRounds[`player-${localId}-1`],
+          { number: 3, result: { events: { weather: 'Rain', vermin: [] } } },
+        ],
+      },
+    };
+    const updated = await executeMigrateLocalGame(uid, updatedData);
+    expect(updated).to.deep.equal({ success: true, gameId: expectedDocId, status: 'updated' });
+    expect(storedDocs.size).to.equal(1);
+    expect(storedRounds.size).to.equal(4);
   });
 });

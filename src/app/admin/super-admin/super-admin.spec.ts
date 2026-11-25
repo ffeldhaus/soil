@@ -553,7 +553,7 @@ describe('SuperAdminComponent', () => {
     ).toContain('Geprüft:');
   });
 
-  it('renders the R1-anchored Sofort-Spiel-Funnel, pre-round header counters, and Cloud + KI active game counts', async () => {
+  it('renders the R1-anchored Einzelspieler-Funnel, pre-round header counters, R12 milestone, horizon note, and Cloud + KI active game counts', async () => {
     gameServiceMock.getSystemStats.mockResolvedValue({
       ...SAMPLE_STATS_WITH_SERIES,
       games: {
@@ -573,9 +573,11 @@ describe('SuperAdminComponent', () => {
           quick_game_round_2: 52,
           quick_game_round_5: 39,
           quick_game_round_10: 26,
+          quick_game_round_12: 20,
           quick_game_round_15: 13,
           quick_game_round_20: 0,
           quick_game_finished: 13,
+          quick_game_deleted: 4,
           trailer_opened: 28,
           research_export: 7,
         },
@@ -592,6 +594,7 @@ describe('SuperAdminComponent', () => {
       '[data-testid="superadmin-kpi-active-games"]',
     ) as HTMLElement;
     expect(activeKpi).toBeTruthy();
+    expect(activeKpi.getAttribute('title')).toContain('30-Tage-Fenster: R1 − beendet − gelöscht');
     expect(activeKpi.textContent).toContain('25');
     expect(activeKpi.textContent).toContain('18 Cloud · 7 KI');
 
@@ -609,7 +612,7 @@ describe('SuperAdminComponent', () => {
     expect(usersGamesCard.textContent).toContain('Einzelspieler gegen KI (≥ 1 Runde)');
     expect(usersGamesCard.textContent).toContain('7 aktiv (30T)');
     expect(usersGamesCard.textContent).toContain('13 beendet');
-    expect(usersGamesCard.textContent).toContain('65 gespielt');
+    expect(usersGamesCard.textContent).toContain('65 gespielt ≥ 1 Rd.');
 
     localComp.selectTab('analytics');
     localFixture.detectChanges();
@@ -636,6 +639,7 @@ describe('SuperAdminComponent', () => {
     expect(funnel.find((r) => r.key === 'quick_game_round_2')?.conversionPercent).toBe(80);
     expect(funnel.find((r) => r.key === 'quick_game_round_2')?.dropOffPercent).toBe(20);
     expect(funnel.find((r) => r.key === 'quick_game_round_10')?.conversionPercent).toBe(40);
+    expect(funnel.find((r) => r.key === 'quick_game_round_12')?.count).toBe(20);
     expect(funnel.find((r) => r.key === 'quick_game_round_15')?.count).toBe(13);
     expect(funnel.find((r) => r.key === 'quick_game_round_20')).toBeUndefined();
     expect(funnel.find((r) => r.key === 'quick_game_finished')?.conversionPercent).toBe(20);
@@ -643,32 +647,73 @@ describe('SuperAdminComponent', () => {
     expect(statsComp.quickPlayStartedCount).toBe(100);
     expect(statsComp.quickPlayFirstPlantCount).toBe(80);
     expect(statsComp.quickPlayRound1Count).toBe(65);
+    expect(statsComp.quickPlayDeletedCount).toBe(4);
+    expect(statsComp.hasQuickPlayDataQualityAnomaly).toBe(false);
     expect(statsComp.quickPlayCompletionRate).toBe(20);
 
     const funnelEl = localFixture.nativeElement.querySelector(
       '[data-testid="superadmin-quick-play-funnel"]',
     ) as HTMLElement;
     expect(funnelEl).toBeTruthy();
-    expect(funnelEl.textContent).toContain('Sofort-Spiel-Funnel');
-    expect(funnelEl.textContent).toContain('Verlauf ab mindestens 1 gespielter Runde (R1 = 100%)');
-    expect(funnelEl.textContent).toContain('Gestartet:');
+    expect(funnelEl.textContent).toContain('Einzelspieler-Funnel (Mensch gegen KI)');
+    expect(funnelEl.textContent).toContain('Alle lokalen KI-Spiele (Startseite & /admin) ab Runde 1 (R1 = 100%)');
+    expect(funnelEl.textContent).toContain('Gestartet (Gesamt):');
     expect(funnelEl.textContent).toContain('100');
     expect(funnelEl.textContent).toContain('1. Aussaat:');
     expect(funnelEl.textContent).toContain('80');
     expect(funnelEl.textContent).toContain('Mind. 1 Runde:');
     expect(funnelEl.textContent).toContain('65');
+    expect(funnelEl.querySelector('[data-testid="funnel-deleted-count"]')?.textContent).toContain('4');
+    expect(funnelEl.querySelector('[data-testid="funnel-data-quality-warning"]')).toBeNull();
+    expect(funnelEl.querySelector('[data-testid="funnel-horizon-note"]')?.textContent).toContain(
+      'Klassenrunden nutzen teils 5–6 oder 10–20 Runden',
+    );
     expect(funnelEl.textContent).toContain('Abschluss (ab R1):');
     expect(funnelEl.textContent).toContain('20%');
     expect(funnelEl.textContent).toContain('Abgeschlossen');
     expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_started"]')).toBeNull();
     expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_first_plant"]')).toBeNull();
     expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_round_1"]')?.textContent).toContain('R1');
+    expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_round_12"]')?.textContent).toContain('R12');
     expect(funnelEl.querySelector('[data-testid="funnel-row-quick_game_finished"]')?.textContent).toContain('Fertig');
 
     statsComp.setHoveredFunnelStep(1);
     localFixture.detectChanges();
     expect(funnelEl.textContent).toContain('80% ab Runde 1');
     expect(funnelEl.textContent).toContain('−20% zum Vorschritt');
+  });
+
+  it('shows amber data-quality diagnostic banner when deleted or finished count exceeds round 1 count', async () => {
+    gameServiceMock.getSystemStats.mockResolvedValue({
+      ...SAMPLE_STATS_WITH_SERIES,
+      telemetry: {
+        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
+        events: {
+          quick_game_started: 20,
+          quick_game_first_plant: 15,
+          quick_game_round_1: 10,
+          quick_game_deleted: 14,
+          quick_game_finished: 4,
+        },
+      },
+    });
+
+    const anomalyFixture = TestBed.createComponent(SuperAdminComponent);
+    anomalyFixture.detectChanges();
+    await anomalyFixture.whenStable();
+    anomalyFixture.detectChanges();
+
+    const statsComp = anomalyFixture.debugElement.query(By.directive(SuperAdminStatsComponent))
+      .componentInstance as SuperAdminStatsComponent;
+    statsComp.selectRange('all');
+    anomalyFixture.detectChanges();
+
+    expect(statsComp.hasQuickPlayDataQualityAnomaly).toBe(true);
+    const warning = anomalyFixture.nativeElement.querySelector(
+      '[data-testid="funnel-data-quality-warning"]',
+    ) as HTMLElement;
+    expect(warning).toBeTruthy();
+    expect(warning.textContent).toContain('Unplausible Zählerdifferenz erkannt');
   });
 
   it('shows Unbekannt instead of 0% for historical periods with quick_game_started > 0 and no post-start funnel events', async () => {
@@ -703,7 +748,7 @@ describe('SuperAdminComponent', () => {
     const funnelEl = localFixture.nativeElement.querySelector(
       '[data-testid="superadmin-quick-play-funnel"]',
     ) as HTMLElement;
-    expect(funnelEl.textContent).toContain('Gestartet:');
+    expect(funnelEl.textContent).toContain('Gestartet (Gesamt):');
     expect(funnelEl.textContent).toContain('17');
     expect(funnelEl.textContent).not.toContain('1. Aussaat:');
     expect(funnelEl.textContent).toContain('Unbekannt');

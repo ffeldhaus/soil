@@ -50,6 +50,7 @@ describe('SyncService', () => {
     };
     localStateSubject = new BehaviorSubject(null);
     localGameService = {
+      activeGameId: null as string | null,
       getLocalGames: vi.fn().mockResolvedValue([]),
       loadGame: vi.fn(),
       deleteGame: vi.fn().mockResolvedValue(undefined),
@@ -74,7 +75,7 @@ describe('SyncService', () => {
     expect(httpsCallable).toHaveBeenCalledWith(expect.anything(), 'uploadFinishedGame');
   });
 
-  it('should sync local games when a non-anonymous user logs in', async () => {
+  it('should sync dormant local games when a non-anonymous user logs in and suppress delete telemetry', async () => {
     const mockGame = { id: 'local-123', name: 'Test Game', status: 'in_progress' };
     const mockFullState = { game: mockGame, allRounds: {} };
     localGameService.getLocalGames.mockResolvedValue([mockGame]);
@@ -89,7 +90,68 @@ describe('SyncService', () => {
     expect(localGameService.getLocalGames).toHaveBeenCalled();
     expect(localGameService.loadGame).toHaveBeenCalledWith('local-123');
     expect(mockMigrateFn).toHaveBeenCalledWith({ gameData: mockFullState });
-    expect(localGameService.deleteGame).toHaveBeenCalledWith('local-123', true);
+    expect(localGameService.deleteGame).toHaveBeenCalledWith('local-123', true, { emitTelemetry: false });
+  });
+
+  it('should NOT migrate an actively played in_progress local game on state$ emissions or login', async () => {
+    const activeGame = { id: 'local-active', name: 'Active Game', status: 'in_progress' };
+    const dormantGame = { id: 'local-dormant', name: 'Dormant Game', status: 'in_progress' };
+    const activeState = { game: activeGame, allRounds: {} };
+    const dormantState = { game: dormantGame, allRounds: {} };
+
+    localGameService.activeGameId = 'local-active';
+    localGameService.getLocalGames.mockResolvedValue([activeGame, dormantGame]);
+    localGameService.loadGame.mockImplementation((id: string) =>
+      Promise.resolve(id === 'local-dormant' ? dormantState : activeState),
+    );
+
+    // Login: only dormantGame is migrated, activeGame is untouched
+    userSubject.next({ uid: 'user-123', isAnonymous: false });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(mockMigrateFn).toHaveBeenCalledTimes(1);
+    expect(mockMigrateFn).toHaveBeenCalledWith({ gameData: dormantState });
+    expect(localGameService.deleteGame).toHaveBeenCalledWith('local-dormant', true, { emitTelemetry: false });
+
+    mockMigrateFn.mockClear();
+    localGameService.deleteGame.mockClear();
+
+    // Repeated saveDraft / round updates on active in_progress game must NOT trigger migration
+    localStateSubject.next(activeState);
+    localStateSubject.next({ ...activeState });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(mockMigrateFn).not.toHaveBeenCalled();
+    expect(localGameService.deleteGame).not.toHaveBeenCalled();
+  });
+
+  it('should migrate finished local game once on state$ emission with concurrency guard', async () => {
+    const finishedGame = { id: 'local-done', name: 'Done Game', status: 'finished' };
+    const finishedState = { game: finishedGame, allRounds: {} };
+    localGameService.loadGame.mockResolvedValue(finishedState);
+
+    let resolveMigrate!: () => void;
+    mockMigrateFn.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveMigrate = () => resolve({ data: { success: true } });
+        }),
+    );
+
+    userSubject.next({ uid: 'user-123', isAnonymous: false });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    // Emit duplicate finished states concurrently
+    localStateSubject.next(finishedState);
+    localStateSubject.next({ ...finishedState });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(mockMigrateFn).toHaveBeenCalledTimes(1);
+    resolveMigrate();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(localGameService.deleteGame).toHaveBeenCalledTimes(1);
+    expect(localGameService.deleteGame).toHaveBeenCalledWith('local-done', true, { emitTelemetry: false });
   });
 
   it('should upload finished local game for research even if anonymous', async () => {

@@ -222,19 +222,42 @@ function writeMigratedRoundsToTransaction(
   }
 }
 
-export const migrateLocalGame = onCall(async (request) => {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+export function buildDeterministicMigratedGameId(uid: string, oldGameId: string): string {
+  const uidPrefix = String(uid || '')
+    .replace(/[^a-zA-Z0-9_-]/g, '')
+    .slice(0, 12);
+  const sanitizedLocalId = String(oldGameId || '')
+    .replace(/[^a-zA-Z0-9_-]/g, '_')
+    .slice(0, 64);
+  return `migrated_${uidPrefix}_${sanitizedLocalId}`;
+}
 
-  const { gameData } = request.data;
-  if (!gameData || !gameData.game || !gameData.allRounds) {
+function resolveMigratedStartRound(
+  existingData: admin.firestore.DocumentData | undefined,
+  uid: string,
+  incomingRound: number,
+): number | null {
+  if (!existingData) return 0;
+  if (existingData.hostUid && existingData.hostUid !== uid) {
+    throw new HttpsError('permission-denied', 'Cannot overwrite another user game');
+  }
+  const existingRound = Number(existingData.currentRoundNumber || 0);
+  return incomingRound <= existingRound ? null : existingRound + 1;
+}
+
+export async function executeMigrateLocalGame(
+  uid: string,
+  gameData: any,
+): Promise<{ success: boolean; gameId: string; status: 'created' | 'updated' | 'already_synced' }> {
+  if (!gameData?.game?.id || !gameData.allRounds) {
     throw new HttpsError('invalid-argument', 'Missing gameData');
   }
 
   const { game, allRounds } = gameData;
-  const uid = request.auth.uid;
-  const oldGameId = game.id;
+  const oldGameId = String(game.id);
+  const incomingRound = Number(game.currentRoundNumber || 0);
 
-  // 1. Check for existing migration
+  // Reuse an existing legacy migrated doc if present; otherwise pin to a deterministic ID so concurrent calls collide on one doc.
   const existingMigratedSnap = await db
     .collection('games')
     .where('migratedFrom', '==', oldGameId)
@@ -242,45 +265,47 @@ export const migrateLocalGame = onCall(async (request) => {
     .limit(1)
     .get();
 
-  let targetGameId: string;
-  let startRound = 0;
+  const targetGameId = !existingMigratedSnap.empty
+    ? existingMigratedSnap.docs[0].id
+    : buildDeterministicMigratedGameId(uid, oldGameId);
 
-  if (!existingMigratedSnap.empty) {
-    const existingGame = existingMigratedSnap.docs[0].data();
-    if (game.currentRoundNumber <= (existingGame.currentRoundNumber || 0)) {
-      return { success: true, gameId: existingMigratedSnap.docs[0].id, status: 'already_synced' };
+  const gameRef = db.collection('games').doc(targetGameId);
+
+  return db.runTransaction(async (t) => {
+    const existingSnap = await t.get(gameRef);
+    const existingData = existingSnap.exists ? existingSnap.data() : undefined;
+    const startRound = resolveMigratedStartRound(existingData, uid, incomingRound);
+    if (startRound === null) {
+      return { success: true, gameId: targetGameId, status: 'already_synced' as const };
     }
-    targetGameId = existingMigratedSnap.docs[0].id;
-    startRound = (existingGame.currentRoundNumber || 0) + 1;
-  } else {
-    targetGameId = db.collection('games').doc().id;
-  }
 
-  // 2. Map UIDs & Prepare Game Document
-  const uidMap = buildMigratedUidMap(game, uid, targetGameId);
-  const newPlayers = buildMigratedPlayers(game, uidMap, uid);
+    const uidMap = buildMigratedUidMap(game, uid, targetGameId);
+    const newPlayers = buildMigratedPlayers(game, uidMap, uid);
+    const gameUpdate: any = {
+      ...game,
+      id: targetGameId,
+      hostUid: uid,
+      players: newPlayers,
+      updatedAt: Timestamp.now(),
+      migratedFrom: oldGameId,
+      status: game.status || 'in_progress',
+      ...(!existingData ? { createdAt: Timestamp.now() } : {}),
+    };
 
-  const gameUpdate: any = {
-    ...game,
-    id: targetGameId,
-    hostUid: uid,
-    players: newPlayers,
-    updatedAt: Timestamp.now(),
-    migratedFrom: oldGameId,
-    status: game.status || 'in_progress',
-  };
+    t.set(gameRef, gameUpdate, { merge: true });
+    writeMigratedRoundsToTransaction(t, targetGameId, startRound, incomingRound, allRounds, uidMap);
 
-  if (startRound === 0) {
-    gameUpdate.createdAt = Timestamp.now();
-  }
-
-  // 4. Write in transaction
-  await db.runTransaction(async (t) => {
-    t.set(db.collection('games').doc(targetGameId), gameUpdate, { merge: true });
-    writeMigratedRoundsToTransaction(t, targetGameId, startRound, game.currentRoundNumber || 0, allRounds, uidMap);
+    return {
+      success: true,
+      gameId: targetGameId,
+      status: existingData ? ('updated' as const) : ('created' as const),
+    };
   });
+}
 
-  return { success: true, gameId: targetGameId, status: startRound === 0 ? 'created' : 'updated' };
+export const migrateLocalGame = onCall({ memory: '512MiB' }, async (request) => {
+  if (!request.auth) throw new HttpsError('unauthenticated', 'Must be logged in');
+  return executeMigrateLocalGame(request.auth.uid, request.data?.gameData);
 });
 
 // --- System Analysis and Balancing ---

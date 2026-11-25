@@ -12,6 +12,7 @@ export interface LocalGameState {
   playerState: PlayerState;
   lastRound?: Round;
   allRounds: Record<string, Round[]>; // playerUid -> Round[]
+  deleteTelemetrySent?: boolean;
 }
 
 export interface LocalCreateResponse {
@@ -27,6 +28,10 @@ export class LocalGameService {
   private auth = inject(AuthService);
   private telemetry = inject(TelemetryService);
   state$ = this.stateSubject.asObservable();
+
+  get activeGameId(): string | null {
+    return this.stateSubject.value?.game?.id ?? null;
+  }
 
   constructor() {
     // biome-ignore lint/suspicious/noConsole: Debug mode
@@ -368,10 +373,17 @@ export class LocalGameService {
     return games;
   }
 
-  async deleteGame(gameId: string, force = false): Promise<void> {
+  async deleteGame(gameId: string, force = false, options?: { emitTelemetry?: boolean }): Promise<void> {
+    const shouldEmitTelemetry = options?.emitTelemetry !== false;
     const data = localStorage.getItem(`soil_game_${gameId}`);
     const existingState: LocalGameState | null = data ? JSON.parse(data) : null;
-    if (existingState?.game.status === 'in_progress' && (existingState.game.currentRoundNumber || 0) >= 1) {
+    const emittedDeleteTelemetry =
+      shouldEmitTelemetry &&
+      existingState?.game.status === 'in_progress' &&
+      (existingState.game.currentRoundNumber || 0) >= 1 &&
+      !existingState.deleteTelemetrySent;
+
+    if (emittedDeleteTelemetry) {
       this.telemetry.trackEvent('quick_game_deleted');
     }
 
@@ -380,9 +392,15 @@ export class LocalGameService {
       const listData = localStorage.getItem('soil_local_games') || '[]';
       const list = JSON.parse(listData).filter((id: string) => id !== gameId);
       localStorage.setItem('soil_local_games', JSON.stringify(list));
+      if (this.stateSubject.value?.game?.id === gameId) {
+        this.stateSubject.next(null);
+      }
     } else if (existingState) {
       existingState.game.status = 'deleted';
       existingState.game.deletedAt = new Date();
+      if (emittedDeleteTelemetry) {
+        existingState.deleteTelemetrySent = true;
+      }
       this.saveToStorage(existingState);
     }
   }
