@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
+import { TelemetryService } from '../../shared/telemetry.service';
 import { Dashboard } from './dashboard';
 
 describe('Dashboard Component', () => {
@@ -189,14 +190,34 @@ describe('Dashboard Component', () => {
     expect(authServiceMock.loginWithGoogle).toHaveBeenCalled();
   });
 
-  it('should handle feedback submission', async () => {
-    const feedback = { category: 'other' as any, rating: 5, comment: 'Test' };
+  it('should handle feedback modal open, inline error reset, and submission telemetry', async () => {
+    const telemetry = TestBed.inject(TelemetryService);
+    const trackSpy = vi.spyOn(telemetry, 'trackEvent');
+    vi.spyOn(console, 'error').mockImplementation(() => {});
 
+    component.openFeedbackModal();
+    expect(component.showFeedbackModal).toBe(true);
+    expect(component.feedbackErrorMessage).toBeNull();
+    expect(trackSpy).toHaveBeenCalledWith('feedback_opened');
+
+    const feedback = { category: 'suggestions' as const, rating: 5, comment: 'Test' };
+    gameServiceMock.submitFeedback.mockRejectedValueOnce(new Error('Network error'));
     await component.onFeedbackSubmit(feedback);
 
-    expect(gameServiceMock.submitFeedback).toHaveBeenCalledWith(feedback);
+    expect(component.isSubmittingFeedback).toBe(false);
+    expect(component.showFeedbackModal).toBe(true);
+    expect(component.feedbackErrorMessage).toContain('konnte nicht gesendet werden');
+    expect(trackSpy).not.toHaveBeenCalledWith('feedback_submitted');
+
+    gameServiceMock.submitFeedback.mockResolvedValueOnce({ success: true });
+    await component.onFeedbackSubmit(feedback);
+
+    expect(gameServiceMock.submitFeedback).toHaveBeenLastCalledWith(feedback);
+    expect(component.isSubmittingFeedback).toBe(false);
     expect(component.showFeedbackModal).toBe(false);
+    expect(component.feedbackErrorMessage).toBeNull();
     expect(component.statusMessage).toBe('Vielen Dank für dein Feedback!');
+    expect(trackSpy).toHaveBeenCalledWith('feedback_submitted');
   });
 
   it('should print all QR codes', async () => {

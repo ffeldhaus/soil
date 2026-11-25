@@ -34,6 +34,8 @@ export const ALLOWED_TELEMETRY_EVENTS = new Set<string>([
   'quick_game_deleted',
   'trailer_opened',
   'research_export',
+  'feedback_opened',
+  'feedback_submitted',
 ]);
 
 const BOT_UA_REGEX =

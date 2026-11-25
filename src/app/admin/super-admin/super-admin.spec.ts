@@ -637,6 +637,8 @@ describe('SuperAdminComponent', () => {
       'quick_game_round_1',
       'trailer_opened',
       'research_export',
+      'feedback_opened',
+      'feedback_submitted',
     ]);
 
     const distDebug = localFixture.debugElement.query(By.directive(SuperAdminRoundDistributionComponent));
@@ -745,5 +747,33 @@ describe('SuperAdminComponent', () => {
     expect(emptyState).toBeTruthy();
     expect(emptyState.textContent).toContain('Aktuell keine laufenden Spiele');
     expect(emptyState.textContent).toContain('ab v3.5.7');
+  });
+
+  it('displays German labels for feedback_opened and feedback_submitted telemetry events', () => {
+    const statsFixture = TestBed.createComponent(SuperAdminStatsComponent);
+    const statsComp = statsFixture.componentInstance;
+    statsComp.stats = {
+      ...SAMPLE_STATS_WITH_SERIES,
+      telemetry: {
+        ...SAMPLE_STATS_WITH_SERIES.telemetry!,
+        events: {
+          ...SAMPLE_STATS_WITH_SERIES.telemetry!.events,
+          feedback_opened: 14,
+          feedback_submitted: 6,
+        },
+        dailySeries: undefined,
+      },
+    };
+    statsFixture.detectChanges();
+
+    const rows = statsComp.eventRows;
+    expect(rows.find((r) => r.key === 'feedback_opened')).toMatchObject({
+      label: 'Feedback geöffnet',
+      count: 14,
+    });
+    expect(rows.find((r) => r.key === 'feedback_submitted')).toMatchObject({
+      label: 'Feedback abgesendet',
+      count: 6,
+    });
   });
 });

@@ -267,12 +267,37 @@ export interface UserStatus {
   };
 }
 
+export type FeedbackCategory =
+  | 'other'
+  | 'suggestions'
+  | 'mechanics'
+  | 'interface'
+  | 'bug'
+  | 'improvements'
+  | 'documentation';
+
+export interface FeedbackSubmission {
+  category: FeedbackCategory;
+  rating: number;
+  comment: string;
+  email?: string;
+}
+
+export const FEEDBACK_CATEGORY_OPTIONS: ReadonlyArray<{ value: FeedbackCategory; label: string }> = [
+  { value: 'other', label: 'Allgemein' },
+  { value: 'suggestions', label: 'Idee / Vorschlag' },
+  { value: 'mechanics', label: 'Spielmechanik' },
+  { value: 'interface', label: 'Bedienung & Oberfläche' },
+  { value: 'bug', label: 'Fehler melden' },
+  { value: 'documentation', label: 'Handbuch & Unterricht' },
+];
+
 export interface Feedback {
   id: string;
   userId?: string;
   userEmail?: string;
   userName?: string;
-  category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+  category: FeedbackCategory;
   rating: number; // 0-5
   comment: string;
   aiAnalysis?: {
@@ -286,6 +311,39 @@ export interface Feedback {
   createdAt: { seconds: number; nanoseconds: number };
   updatedAt: { seconds: number; nanoseconds: number };
 }
+
+export type QuickGameRoundEventName =
+  | 'quick_game_round_1'
+  | 'quick_game_round_2'
+  | 'quick_game_round_3'
+  | 'quick_game_round_4'
+  | 'quick_game_round_5'
+  | 'quick_game_round_6'
+  | 'quick_game_round_7'
+  | 'quick_game_round_8'
+  | 'quick_game_round_9'
+  | 'quick_game_round_10'
+  | 'quick_game_round_11'
+  | 'quick_game_round_12'
+  | 'quick_game_round_13'
+  | 'quick_game_round_14'
+  | 'quick_game_round_15'
+  | 'quick_game_round_16'
+  | 'quick_game_round_17'
+  | 'quick_game_round_18'
+  | 'quick_game_round_19'
+  | 'quick_game_round_20';
+
+export type TelemetryEventName =
+  | 'quick_game_started'
+  | 'quick_game_first_plant'
+  | QuickGameRoundEventName
+  | 'quick_game_finished'
+  | 'quick_game_deleted'
+  | 'trailer_opened'
+  | 'research_export'
+  | 'feedback_opened'
+  | 'feedback_submitted';
 
 export interface TelemetryDailyEntry {
   date: string;

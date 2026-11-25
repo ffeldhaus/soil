@@ -212,6 +212,8 @@ export class SuperAdminStatsComponent {
     { key: 'quick_game_round_1', label: 'Einzelspieler (≥ 1 Runde)' },
     { key: 'trailer_opened', label: 'Trailer angesehen' },
     { key: 'research_export', label: 'Forschungs-Exporte' },
+    { key: 'feedback_opened', label: 'Feedback geöffnet' },
+    { key: 'feedback_submitted', label: 'Feedback abgesendet' },
   ];
 
   get todayKey(): string {

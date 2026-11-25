@@ -18,14 +18,7 @@
       (openTeamModal)="openTeamAndAchievementsModal()" (toggleLabels)="toggleLabels()"
       (toggleNutrition)="toggleNutrition()" (toggleHarvest)="toggleHarvest()" (toggleSoil)="toggleSoil()"
       (toggleFinance)="toggleFinance()" (nextRound)="nextRound()"
-      (showGameEnd)="showGameEndModal = true" (openFeedback)="showFeedbackModal = true"></app-board-hud>
-
-    @if (showFeedbackModal) {
-      <app-feedback-modal
-        (closeModal)="showFeedbackModal = false"
-        (feedbackSubmit)="onModalFeedbackSubmit($event)"
-      ></app-feedback-modal>
-    }
+      (showGameEnd)="showGameEndModal = true" (openFeedback)="openFeedbackModal()"></app-board-hud>
 
     <!-- Mobile Side Menu Overlay -->
     @if (showMobileMenu) {
@@ -203,6 +196,18 @@
                 </svg>
                 <span>Geführte Tour starten</span>
               </button>
+
+              <button
+                type="button"
+                data-testid="mobile-drawer-feedback-btn"
+                (click)="toggleMobileMenu(); openFeedbackModal()"
+                class="w-full px-3 py-2 text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white font-bold rounded-lg border border-gray-700 transition flex items-center gap-2.5 cursor-pointer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8m-8 4h5m8-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Feedback geben</span>
+              </button>
             </div>
           </div>
         </div>
@@ -302,7 +307,7 @@
 
     <!-- Error Modal -->
     @if (errorMessage) {
-    <div class="fixed inset-0 z-[80] bg-black/75 flex items-center justify-center p-4"
+    <div class="fixed inset-0 z-[120] bg-black/75 flex items-center justify-center p-4"
       (click)="errorMessage = ''">
       <div class="bg-red-950 border border-red-500 p-5 rounded-xl shadow-2xl max-w-sm w-full text-center"
         (click)="$event.stopPropagation()">
@@ -1011,32 +1016,32 @@
           </button>
         </div>
 
-        <!-- 46c: Collapsible Integrated Feedback Form -->
+        <!-- Always-visible 1-click 5-star Game-End Feedback -->
         <div class="mt-4 pt-4 border-t border-gray-800 text-left">
           @if (!feedbackSubmitted) {
-            <button
-              type="button"
-              (click)="showGameEndFeedbackForm = !showGameEndFeedbackForm"
-              class="w-full flex items-center justify-between px-3.5 py-2 rounded-lg bg-gray-950 hover:bg-slate-900 border border-gray-800 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
-            >
-              <span>Feedback & Vorschläge <span class="text-slate-400 font-normal">(Optional)</span></span>
-              <span class="text-slate-400 font-mono">{{ showGameEndFeedbackForm ? '−' : '+' }}</span>
-            </button>
-
-            @if (showGameEndFeedbackForm) {
-              <form (submit)="onFeedbackSubmit()" #feedbackForm="ngForm" class="space-y-3 mt-3 p-3.5 rounded-lg bg-gray-950 border border-gray-800">
-                <!-- Rating -->
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-white">Wie hat dir das Spiel gefallen?</span>
-                  <div class="flex gap-1">
+            <div class="p-3.5 rounded-lg bg-gray-950 border border-gray-800 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <span class="text-sm font-semibold text-white">Wie hat dir diese Partie gefallen?</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-1" role="group" aria-label="Bewertung von 1 bis 5 Sternen">
                     @for (star of [1, 2, 3, 4, 5]; track star) {
-                      <button type="button" (click)="feedback.rating = star" class="transition-transform active:scale-90">
+                      <button
+                        type="button"
+                        [attr.data-testid]="'game-end-star-' + star"
+                        [attr.aria-label]="star + ' von 5 Sternen'"
+                        [attr.aria-pressed]="feedback.rating === star"
+                        (click)="selectGameEndRating(star)"
+                        class="p-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
+                      >
                         <svg
                           class="w-6 h-6"
-                          [class.text-yellow-500]="feedback.rating >= star"
+                          [class.text-yellow-400]="feedback.rating >= star"
                           [class.text-gray-600]="feedback.rating < star"
                           fill="currentColor"
                           viewBox="0 0 20 20"
+                          aria-hidden="true"
                         >
                           <path
                             d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
@@ -1045,81 +1050,143 @@
                       </button>
                     }
                   </div>
-                </div>
-
-                <!-- Comment -->
-                <div class="relative">
-                  <label for="comment" class="sr-only">Dein Feedback (optional)</label>
-                  <textarea
-                    id="comment"
-                    [(ngModel)]="feedback.comment"
-                    name="comment"
-                    rows="3"
-                    placeholder="Was hat dir gefallen oder was können wir verbessern? (Optional)"
-                    class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition resize-none text-sm"
-                  ></textarea>
-                </div>
-
-                <!-- Contact Email (Optional) -->
-                @if (currentUser && !currentUser.isAnonymous && currentUser.email) {
-                  <div class="flex items-start gap-3 bg-gray-900 border border-gray-700 rounded-lg px-3.5 py-2.5">
-                    <input
-                      type="checkbox"
-                      id="board-feedback-include-email"
-                      name="includeEmail"
-                      [(ngModel)]="includeFeedbackEmail"
-                      class="mt-0.5 h-4 w-4 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
-                    />
-                    <label
-                      for="board-feedback-include-email"
-                      class="text-xs sm:text-sm text-gray-300 cursor-pointer select-none leading-snug"
+                  @if (!showGameEndFeedbackForm) {
+                    <button
+                      type="button"
+                      data-testid="game-end-comment-toggle"
+                      (click)="openGameEndFeedbackForm()"
+                      class="text-xs text-slate-300 hover:text-white underline underline-offset-2 transition-colors cursor-pointer"
                     >
-                      Meine E-Mail-Adresse (<span class="font-mono text-emerald-400">{{ currentUser.email }}</span
-                      >) für eine Antwort mitsenden
-                    </label>
-                  </div>
-                } @else {
-                  <div>
-                    <label for="board-feedback-email" class="block text-xs font-medium text-gray-400 mb-1.5">
-                      E-Mail-Adresse für eine Antwort (optional)
-                    </label>
-                    <input
-                      type="email"
-                      id="board-feedback-email"
-                      name="contactEmail"
-                      [(ngModel)]="feedback.email"
-                      autocomplete="email"
-                      autocorrect="off"
-                      autocapitalize="off"
-                      spellcheck="false"
-                      placeholder="name@schule.de"
-                      class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3.5 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition"
-                    />
-                  </div>
-                }
-
-                <div class="flex justify-end">
-                  <button
-                    type="submit"
-                    [disabled]="!feedback.rating || isSubmittingFeedback"
-                    class="bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white px-5 py-2 rounded-xl font-bold transition-all flex items-center gap-2 text-sm"
-                  >
-                    @if (!isSubmittingFeedback) {
-                      <span>Feedback senden</span>
-                    } @else {
-                      <span>Wird gesendet...</span>
-                      <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    }
-                  </button>
+                      Kommentar schreiben
+                    </button>
+                  }
                 </div>
-              </form>
-            }
+              </div>
+
+              @if (showGameEndFeedbackForm) {
+                <form
+                  (ngSubmit)="onFeedbackSubmit()"
+                  #feedbackForm="ngForm"
+                  data-testid="game-end-feedback-form"
+                  class="space-y-3 pt-3 border-t border-gray-800"
+                >
+                  @if (gameEndFeedbackError) {
+                    <div
+                      role="alert"
+                      data-testid="game-end-feedback-error"
+                      class="bg-red-950 border border-red-700 text-red-100 rounded-lg px-3.5 py-2.5 text-xs sm:text-sm leading-snug"
+                    >
+                      {{ gameEndFeedbackError }}
+                    </div>
+                  }
+
+                  <!-- Category -->
+                  <div>
+                    <label for="game-end-feedback-category" class="block text-xs font-medium text-gray-400 mb-1.5">
+                      Kategorie
+                    </label>
+                    <select
+                      id="game-end-feedback-category"
+                      data-testid="game-end-feedback-category"
+                      name="category"
+                      [(ngModel)]="feedback.category"
+                      class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors"
+                    >
+                      @for (cat of feedbackCategories; track cat.value) {
+                        <option [value]="cat.value">{{ cat.label }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <!-- Comment -->
+                  <div>
+                    <label for="game-end-feedback-comment" class="block text-xs font-medium text-gray-400 mb-1.5">
+                      Dein Kommentar (optional)
+                    </label>
+                    <textarea
+                      id="game-end-feedback-comment"
+                      data-testid="game-end-feedback-comment"
+                      [(ngModel)]="feedback.comment"
+                      name="comment"
+                      rows="3"
+                      placeholder="Was hat dir gefallen oder was können wir verbessern?"
+                      class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3.5 py-2.5 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors resize-none text-sm"
+                    ></textarea>
+                  </div>
+
+                  <!-- Contact Email (Optional) -->
+                  @if (currentUser && !currentUser.isAnonymous && currentUser.email) {
+                    <div class="flex items-start gap-3 bg-gray-900 border border-gray-700 rounded-lg px-3.5 py-2.5">
+                      <input
+                        type="checkbox"
+                        id="board-feedback-include-email"
+                        name="includeEmail"
+                        [(ngModel)]="includeFeedbackEmail"
+                        class="mt-0.5 h-4 w-4 rounded border-gray-600 bg-gray-900 text-emerald-500 focus:ring-emerald-500 cursor-pointer"
+                      />
+                      <label
+                        for="board-feedback-include-email"
+                        class="text-xs sm:text-sm text-gray-300 cursor-pointer select-none leading-snug"
+                      >
+                        Meine E-Mail-Adresse (<span class="font-mono text-emerald-400">{{ currentUser.email }}</span
+                        >) für eine Antwort mitsenden
+                      </label>
+                    </div>
+                  } @else {
+                    <div>
+                      <label for="board-feedback-email" class="block text-xs font-medium text-gray-400 mb-1.5">
+                        E-Mail-Adresse für eine Antwort (optional)
+                      </label>
+                      <input
+                        type="email"
+                        id="board-feedback-email"
+                        name="contactEmail"
+                        [(ngModel)]="feedback.email"
+                        autocomplete="email"
+                        autocorrect="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        placeholder="name@schule.de"
+                        class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3.5 py-2 text-sm text-white placeholder:text-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors"
+                      />
+                    </div>
+                  }
+
+                  <div class="flex items-center justify-between gap-3">
+                    @if (!feedback.rating) {
+                      <span class="text-xs text-amber-300">Bitte wähle oben 1 bis 5 Sterne.</span>
+                    } @else {
+                      <span class="text-xs text-gray-400">
+                        Ohne E-Mail-Adresse bleibt dein Feedback vollständig anonym.
+                      </span>
+                    }
+                    <button
+                      type="submit"
+                      data-testid="game-end-feedback-submit"
+                      [disabled]="!feedback.rating || isSubmittingFeedback"
+                      class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed text-white px-5 py-2 rounded-lg font-bold transition-colors border border-emerald-500 disabled:border-gray-600 flex items-center gap-2 text-sm shrink-0 cursor-pointer"
+                    >
+                      @if (!isSubmittingFeedback) {
+                        <span>Feedback absenden</span>
+                      } @else {
+                        <span>Wird gesendet...</span>
+                        <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      }
+                    </button>
+                  </div>
+                </form>
+              }
+            </div>
           } @else {
-            <div class="bg-emerald-950 border border-emerald-700 rounded-lg p-3.5 text-center animate-fade-in">
-              <span class="text-emerald-400 font-bold">Vielen Dank für dein Feedback!</span>
+            <div
+              data-testid="game-end-feedback-thanks"
+              role="status"
+              class="bg-emerald-950 border border-emerald-700 rounded-lg p-3.5 text-center animate-fade-in"
+            >
+              <span class="text-emerald-300 font-bold text-sm">Vielen Dank für dein Feedback!</span>
             </div>
           }
         </div>
@@ -1465,6 +1532,34 @@
               </button>
             </div>
           </div>
+        </div>
+      }
+
+      @if (showFeedbackModal) {
+        <app-feedback-modal
+          [isSubmitting]="isSubmittingFeedback"
+          [errorMessage]="feedbackErrorMessage"
+          (closeModal)="closeFeedbackModal()"
+          (feedbackSubmit)="onModalFeedbackSubmit($event)"
+        ></app-feedback-modal>
+      }
+
+      @if (feedbackSuccessToast) {
+        <div
+          data-testid="board-feedback-toast"
+          role="status"
+          aria-live="polite"
+          class="fixed top-[calc(3rem+env(safe-area-inset-top,0px))] left-1/2 -translate-x-1/2 z-[125] max-w-md w-[calc(100%-2rem)] bg-emerald-950 border border-emerald-600 text-emerald-100 rounded-xl px-4 py-3 shadow-2xl flex items-center justify-between gap-3 text-sm"
+        >
+          <span>{{ feedbackSuccessToast }}</span>
+          <button
+            type="button"
+            (click)="dismissFeedbackSuccessToast()"
+            aria-label="Hinweis schließen"
+            class="text-emerald-300 hover:text-white font-bold px-1.5 cursor-pointer"
+          >
+            &times;
+          </button>
         </div>
       }
 

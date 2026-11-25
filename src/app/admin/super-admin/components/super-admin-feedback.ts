@@ -18,7 +18,7 @@ export class SuperAdminFeedbackComponent {
     switch ((cat || '').toLowerCase()) {
       case 'interface':
       case 'ui':
-        return 'Oberfläche';
+        return 'Bedienung & Oberfläche';
       case 'gameplay':
       case 'mechanics':
         return 'Spielmechanik';
@@ -26,7 +26,14 @@ export class SuperAdminFeedbackComponent {
         return 'Fehlerbericht';
       case 'feature':
       case 'suggestion':
-        return 'Vorschlag';
+      case 'suggestions':
+        return 'Idee / Vorschlag';
+      case 'improvements':
+        return 'Verbesserung';
+      case 'documentation':
+        return 'Handbuch & Unterricht';
+      case 'other':
+        return 'Allgemein';
       default:
         return cat || 'Allgemein';
     }

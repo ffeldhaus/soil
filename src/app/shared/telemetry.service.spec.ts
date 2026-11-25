@@ -258,6 +258,8 @@ describe('TelemetryService', () => {
     service.trackEvent('quick_game_round_20');
     service.trackEvent('quick_game_finished');
     service.trackEvent('quick_game_deleted');
+    service.trackEvent('feedback_opened');
+    service.trackEvent('feedback_submitted');
     service.trackEvent('quick_game_round_21' as any);
     service.trackEvent('unknown_event' as any);
 
@@ -272,6 +274,8 @@ describe('TelemetryService', () => {
       quick_game_round_20: 1,
       quick_game_finished: 1,
       quick_game_deleted: 1,
+      feedback_opened: 1,
+      feedback_submitted: 1,
     });
   });
 

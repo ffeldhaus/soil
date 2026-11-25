@@ -1,6 +1,7 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, Input, inject, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../auth/auth.service';
+import { FEEDBACK_CATEGORY_OPTIONS, type FeedbackCategory, type FeedbackSubmission } from '../../../types';
 
 @Component({
   selector: 'app-feedback-modal',
@@ -11,16 +12,16 @@ import { AuthService } from '../../../auth/auth.service';
 export class FeedbackModal {
   private authService = inject(AuthService, { optional: true });
 
+  @Input() isSubmitting = false;
+  @Input() errorMessage: string | null = null;
+
   @Output() closeModal = new EventEmitter<void>();
-  @Output() feedbackSubmit = new EventEmitter<{
-    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
-    rating: number;
-    comment: string;
-    email?: string;
-  }>();
+  @Output() feedbackSubmit = new EventEmitter<FeedbackSubmission>();
+
+  readonly categories = FEEDBACK_CATEGORY_OPTIONS;
 
   feedback: {
-    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+    category: FeedbackCategory;
     rating: number;
     comment: string;
   } = {
@@ -31,7 +32,6 @@ export class FeedbackModal {
 
   includeUserEmail = true;
   guestEmail = '';
-  isSubmitting = false;
 
   get loggedInEmail(): string | null {
     const user = this.authService?.currentUser;
@@ -41,15 +41,19 @@ export class FeedbackModal {
     return null;
   }
 
-  submitFeedback() {
-    this.isSubmitting = true;
+  submitFeedback(): void {
+    if (this.isSubmitting || !this.feedback.rating) {
+      return;
+    }
     const contactEmail = this.loggedInEmail
       ? this.includeUserEmail
         ? this.loggedInEmail
         : undefined
       : this.guestEmail.trim() || undefined;
     this.feedbackSubmit.emit({
-      ...this.feedback,
+      category: this.feedback.category,
+      rating: this.feedback.rating,
+      comment: this.feedback.comment,
       ...(contactEmail ? { email: contactEmail } : {}),
     });
   }

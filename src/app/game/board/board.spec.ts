@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 
 import { AuthService } from '../../auth/auth.service';
 import { FIREBASE_FUNCTIONS } from '../../firebase.config';
+import { TelemetryService } from '../../shared/telemetry.service';
 import { GameService } from '../game.service';
 import { Board } from './board';
 
@@ -79,6 +80,7 @@ describe('Board', () => {
           game: { currentRoundNumber: 0 },
           playerState: { history: [], submittedRound: -1 },
         }),
+      submitFeedback: vi.fn().mockResolvedValue(undefined),
     };
     const functionsSpy = { httpsCallable: () => () => Promise.resolve({ data: {} }) };
     const routerSpy = { navigate: () => Promise.resolve(true) };
@@ -773,5 +775,87 @@ describe('Board', () => {
 
     const advisorEl = fixture.nativeElement.querySelector('app-round-result-modal app-game-advisor');
     expect(advisorEl?.textContent?.trim()).toBe('');
+  });
+
+  it('should expand Game-End feedback form on 1-click star, track telemetry, handle inline error, and submit category cleanly', async () => {
+    const gameService = TestBed.inject(GameService);
+    const telemetry = TestBed.inject(TelemetryService);
+    const trackSpy = vi.spyOn(telemetry, 'trackEvent');
+    const submitSpy = vi.spyOn(gameService, 'submitFeedback').mockRejectedValueOnce(new Error('Offline'));
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    component.showGameEndModal = true;
+    fixture.changeDetectorRef.detectChanges();
+
+    expect(component.showGameEndFeedbackForm).toBe(false);
+    const star4 = fixture.nativeElement.querySelector('[data-testid="game-end-star-4"]') as HTMLButtonElement;
+    expect(star4).toBeTruthy();
+    star4.click();
+    fixture.changeDetectorRef.detectChanges();
+
+    expect(component.feedback.rating).toBe(4);
+    expect(component.showGameEndFeedbackForm).toBe(true);
+    expect(trackSpy).toHaveBeenCalledWith('feedback_opened');
+
+    // Subsequent star clicks do not double-emit feedback_opened
+    component.selectGameEndRating(5);
+    expect(trackSpy.mock.calls.filter(([ev]) => ev === 'feedback_opened')).toHaveLength(1);
+
+    component.feedback.category = 'mechanics';
+    component.feedback.comment = 'Tolle Fruchtfolge-Mechanik!';
+    component.onFeedbackSubmit();
+    await Promise.resolve();
+    await Promise.resolve();
+    fixture.changeDetectorRef.detectChanges();
+
+    expect(component.isSubmittingFeedback).toBe(false);
+    expect(component.feedbackSubmitted).toBe(false);
+    expect(component.gameEndFeedbackError).toContain('konnte nicht gesendet werden');
+    expect(component.feedback.comment).toBe('Tolle Fruchtfolge-Mechanik!');
+
+    submitSpy.mockResolvedValueOnce(undefined);
+    component.onFeedbackSubmit();
+    await Promise.resolve();
+    await Promise.resolve();
+    fixture.changeDetectorRef.detectChanges();
+
+    expect(submitSpy).toHaveBeenLastCalledWith({
+      category: 'mechanics',
+      rating: 5,
+      comment: 'Tolle Fruchtfolge-Mechanik!',
+    });
+    expect(component.feedbackSubmitted).toBe(true);
+    expect(component.gameEndFeedbackError).toBeNull();
+    expect(trackSpy).toHaveBeenCalledWith('feedback_submitted');
+  });
+
+  it('should handle HUD/drawer modal feedback error inline and show success toast on submit', async () => {
+    const gameService = TestBed.inject(GameService);
+    const telemetry = TestBed.inject(TelemetryService);
+    const trackSpy = vi.spyOn(telemetry, 'trackEvent');
+    const submitSpy = vi.spyOn(gameService, 'submitFeedback').mockRejectedValueOnce(new Error('Server error'));
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    component.openFeedbackModal();
+    expect(component.showFeedbackModal).toBe(true);
+    expect(trackSpy).toHaveBeenCalledWith('feedback_opened');
+
+    component.onModalFeedbackSubmit({ category: 'bug', rating: 3, comment: 'Kleiner Darstellungsfehler' });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(component.isSubmittingFeedback).toBe(false);
+    expect(component.showFeedbackModal).toBe(true);
+    expect(component.feedbackErrorMessage).toContain('konnte nicht gesendet werden');
+
+    submitSpy.mockResolvedValueOnce(undefined);
+    component.onModalFeedbackSubmit({ category: 'bug', rating: 3, comment: 'Kleiner Darstellungsfehler' });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(component.isSubmittingFeedback).toBe(false);
+    expect(component.showFeedbackModal).toBe(false);
+    expect(component.feedbackSuccessToast).toBe('Vielen Dank für dein Feedback!');
+    expect(trackSpy).toHaveBeenCalledWith('feedback_submitted');
   });
 });

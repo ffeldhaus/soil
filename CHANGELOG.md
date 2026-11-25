@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unpublished]
+### Added
+- **Globales Feedback-Modal, mobiles Spielmenü & Feedback-Telemetrie** (`src/app/app.*`, `src/app/game/board/board.*`, `src/app/types.ts`, `src/app/shared/telemetry.service.ts`, `functions/src/telemetry.service.ts`, `src/app/admin/super-admin/components/super-admin-stats.ts`, `src/app/privacy/privacy.html`): Neuer `Feedback`-Einstieg in der globalen Fußzeile sowie `Feedback geben` im mobilen Spielmenü; anonyme Zähler `feedback_opened` und `feedback_submitted` im Super-Admin-Dashboard ergänzt.
+
+### Changed
+- **1-Klick-5-Sterne-Bewertung im Spielende-Modal & Kategorie-Auswahl** (`src/app/game/board/board.*`, `src/app/admin/components/feedback-modal/feedback-modal.*`, `src/app/admin/dashboard/dashboard.*`, `src/app/admin/super-admin/components/super-admin-feedback.ts`): Das bisher eingeklappte Feedback-Akkordeon am Spielende durch eine stets sichtbare 5-Sterne-Bewertungsleiste ersetzt, die beim Klick auf einen Stern direkt Kategorie, optionalen Kommentar und E-Mail-Option öffnet; Kategorie-Auswahl im Feedback-Modal ergänzt und Bestätigungs-Toasts vereinheitlicht.
+
+### Fixed
+- **Feedback-Modal Fehler-/Ladezustand & Fehler-Modal-Z-Index** (`src/app/admin/components/feedback-modal/feedback-modal.*`, `src/app/game/board/board.*`, `src/app/admin/dashboard/dashboard.*`): Elterngesteuertes `isSubmitting` und Inline-Fehlermeldungen verhindern einen dauerhaft blockierten Absenden-Button bei Netzwerkfehlern (Eingaben bleiben erhalten); das Spielfeld-Fehlermodal liegt nun mit `z-[120]` oberhalb des Spielende-Modals (`z-[100]`).
+
 ## [3.5.7] - 2026-11-25
 ### Added
 - **Anonymer idempotenter Spielrunden-Status (`local` & `cloud`)** (`src/app/types.ts`, `src/app/shared/telemetry.service.ts`, `src/app/game/engine/local-game.service.ts`, `functions/src/telemetry.service.ts`, `functions/src/index.ts`, `src/app/privacy/privacy.html`): Laufende lokale Spiele senden ab Runde 1 ihren aktuellen Rundenstand (`currentRound`, `roundLimit`, `status`) unter einem zufälligen Spiel-Token (`telemetrySlot`) gebündelt und idempotent in `telemetry_local_sessions` (`europe-west4`, automatische 30-Tage-Bereinigung im täglichen Wartungslauf `dailyGamePurge`; sofortige `deleted`-Markierung bei Löschung oder Cloud-Migration gegen Doppelzählung) und aggregieren die Live-Verteilung zusammen mit laufenden Cloud-Spielen.

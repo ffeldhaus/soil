@@ -17,7 +17,8 @@ import type { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { GameService } from '../../game/game.service';
 import { getShareableWebOrigin } from '../../shared/capacitor-env';
-import type { Game, PlayerState, UserStatus } from '../../types';
+import { TelemetryService } from '../../shared/telemetry.service';
+import type { FeedbackSubmission, Game, PlayerState, UserStatus } from '../../types';
 import { FeedbackModal } from '../components/feedback-modal/feedback-modal';
 import { DashboardCreateGameComponent } from './components/dashboard-create-game';
 import { DashboardDeleteModalComponent } from './components/dashboard-delete-modal';
@@ -174,6 +175,7 @@ export class Dashboard implements OnInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private authService = inject(AuthService);
   private gameService = inject(GameService);
+  private telemetry = inject(TelemetryService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
@@ -186,28 +188,39 @@ export class Dashboard implements OnInit, OnDestroy {
 
   isLoading = true; // Initial loading state for auth check
   showFeedbackModal = false;
+  isSubmittingFeedback = false;
+  feedbackErrorMessage: string | null = null;
   statusMessage: string | null = null;
   inviteModalState: { type: 'game' | 'player'; game: Game; playerNumber?: number } | null = null;
   inviteEmailInput = '';
 
-  onFeedbackClose() {
-    this.showFeedbackModal = false;
+  openFeedbackModal() {
+    this.feedbackErrorMessage = null;
+    this.showFeedbackModal = true;
+    this.telemetry.trackEvent('feedback_opened');
   }
 
-  async onFeedbackSubmit(feedback: {
-    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
-    rating: number;
-    comment: string;
-    email?: string;
-  }) {
+  onFeedbackClose() {
+    this.showFeedbackModal = false;
+    this.feedbackErrorMessage = null;
+    this.isSubmittingFeedback = false;
+  }
+
+  async onFeedbackSubmit(feedback: FeedbackSubmission) {
+    this.isSubmittingFeedback = true;
+    this.feedbackErrorMessage = null;
     try {
       await this.gameService.submitFeedback(feedback);
+      this.isSubmittingFeedback = false;
       this.showFeedbackModal = false;
       this.statusMessage = 'Vielen Dank für dein Feedback!';
+      this.telemetry.trackEvent('feedback_submitted');
     } catch (e: unknown) {
-      const error = e as Error;
-      this.errorMessage = `Failed to submit feedback: ${error.message}`;
+      this.isSubmittingFeedback = false;
+      console.error('Failed to submit feedback:', e);
+      this.feedbackErrorMessage = 'Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.';
     }
+    this.cdr.markForCheck();
   }
 
   login() {

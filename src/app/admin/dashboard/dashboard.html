@@ -107,8 +107,9 @@
                   </h2>
                 </div>
                 <button
-                  (click)="showFeedbackModal = true"
-                  class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-xl border border-gray-600 transition shadow-lg"
+                  type="button"
+                  (click)="openFeedbackModal()"
+                  class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-xl border border-gray-600 transition shadow-lg cursor-pointer"
                 >
                   <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
                     <path
@@ -283,14 +284,6 @@
       (closeModal)="closeFinance()"
     ></app-dashboard-finance-modal>
 
-    <!-- Feedback Modal -->
-    @if (showFeedbackModal) {
-      <app-feedback-modal
-        (closeModal)="onFeedbackClose()"
-        (feedbackSubmit)="onFeedbackSubmit($event)"
-      ></app-feedback-modal>
-    }
-
     <!-- Invite Email Modal -->
     @if (inviteModalState) {
       <div
@@ -345,6 +338,16 @@
       </div>
     }
   </div>
+
+  <!-- Feedback Modal (outside z-10 stacking context so it always renders above the global footer) -->
+  @if (showFeedbackModal) {
+    <app-feedback-modal
+      [isSubmitting]="isSubmittingFeedback"
+      [errorMessage]="feedbackErrorMessage"
+      (closeModal)="onFeedbackClose()"
+      (feedbackSubmit)="onFeedbackSubmit($event)"
+    ></app-feedback-modal>
+  }
 </div>
 
 <!-- Print Only: All QR Codes Grid -->

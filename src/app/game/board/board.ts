@@ -8,16 +8,19 @@ import { FeedbackModal } from '../../admin/components/feedback-modal/feedback-mo
 import { AuthService } from '../../auth/auth.service';
 import { GAME_CONSTANTS, STICKER_DEFINITIONS } from '../../game-constants';
 import { TelemetryService } from '../../shared/telemetry.service';
-import type {
-  CollectibleSticker,
-  CropType,
-  Game,
-  Parcel as ParcelType,
-  PlayerState,
-  RegionalContract,
-  Round,
-  RoundDecision,
-  WeatherForecast,
+import {
+  type CollectibleSticker,
+  type CropType,
+  FEEDBACK_CATEGORY_OPTIONS,
+  type FeedbackCategory,
+  type FeedbackSubmission,
+  type Game,
+  type Parcel as ParcelType,
+  type PlayerState,
+  type RegionalContract,
+  type Round,
+  type RoundDecision,
+  type WeatherForecast,
 } from '../../types';
 import { GameEngine } from '../engine/game-engine';
 import { Finance } from '../finance/finance';
@@ -264,14 +267,15 @@ export class Board implements OnInit, OnDestroy {
   }
 
   // Feedback Logic
+  readonly feedbackCategories = FEEDBACK_CATEGORY_OPTIONS;
   feedback: {
-    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
+    category: FeedbackCategory;
     rating: number;
     comment: string;
     email?: string;
   } = {
     category: 'other',
-    rating: 5,
+    rating: 0,
     comment: '',
     email: '',
   };
@@ -279,24 +283,87 @@ export class Board implements OnInit, OnDestroy {
   isSubmittingFeedback = false;
   feedbackSubmitted = false;
   showFeedbackModal = false;
+  feedbackErrorMessage: string | null = null;
+  gameEndFeedbackError: string | null = null;
+  feedbackSuccessToast: string | null = null;
+  private feedbackToastTimeout: ReturnType<typeof setTimeout> | null = null;
+  private gameEndFeedbackOpenedTracked = false;
 
-  onModalFeedbackSubmit(payload: {
-    category: 'interface' | 'mechanics' | 'improvements' | 'suggestions' | 'documentation' | 'other';
-    rating: number;
-    comment: string;
-    email?: string;
-  }) {
+  openFeedbackModal(): void {
+    this.feedbackErrorMessage = null;
+    this.showFeedbackModal = true;
+    this.telemetry.trackEvent('feedback_opened');
+  }
+
+  closeFeedbackModal(): void {
+    this.showFeedbackModal = false;
+    this.feedbackErrorMessage = null;
+    this.isSubmittingFeedback = false;
+  }
+
+  selectGameEndRating(star: number): void {
+    this.feedback.rating = star;
+    this.gameEndFeedbackError = null;
+    if (!this.showGameEndFeedbackForm) {
+      this.showGameEndFeedbackForm = true;
+    }
+    if (!this.gameEndFeedbackOpenedTracked) {
+      this.gameEndFeedbackOpenedTracked = true;
+      this.telemetry.trackEvent('feedback_opened');
+    }
+  }
+
+  openGameEndFeedbackForm(): void {
+    this.gameEndFeedbackError = null;
+    this.showGameEndFeedbackForm = true;
+    if (!this.gameEndFeedbackOpenedTracked) {
+      this.gameEndFeedbackOpenedTracked = true;
+      this.telemetry.trackEvent('feedback_opened');
+    }
+  }
+
+  dismissFeedbackSuccessToast(): void {
+    this.clearFeedbackToastTimeout();
+    this.feedbackSuccessToast = null;
+  }
+
+  private showFeedbackToast(message: string): void {
+    this.clearFeedbackToastTimeout();
+    this.feedbackSuccessToast = message;
+    if (typeof window !== 'undefined') {
+      this.feedbackToastTimeout = setTimeout(() => {
+        this.feedbackToastTimeout = null;
+        this.feedbackSuccessToast = null;
+        this.cdr.detectChanges();
+      }, 4500);
+    }
+  }
+
+  private clearFeedbackToastTimeout(): void {
+    if (this.feedbackToastTimeout !== null) {
+      clearTimeout(this.feedbackToastTimeout);
+      this.feedbackToastTimeout = null;
+    }
+  }
+
+  onModalFeedbackSubmit(payload: FeedbackSubmission): void {
     this.isSubmittingFeedback = true;
+    this.feedbackErrorMessage = null;
     this.gameService
       .submitFeedback(payload)
       .then(() => {
         this.isSubmittingFeedback = false;
         this.feedbackSubmitted = true;
         this.showFeedbackModal = false;
+        this.telemetry.trackEvent('feedback_submitted');
+        this.showFeedbackToast('Vielen Dank für dein Feedback!');
+        this.cdr.detectChanges();
       })
       .catch((error) => {
         this.isSubmittingFeedback = false;
         console.error('Failed to submit feedback:', error);
+        this.feedbackErrorMessage = 'Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.';
+        this.cdr.detectChanges();
       });
   }
 
@@ -387,8 +454,12 @@ export class Board implements OnInit, OnDestroy {
     }
   }
 
-  onFeedbackSubmit() {
+  onFeedbackSubmit(): void {
+    if (this.isSubmittingFeedback || !this.feedback.rating) {
+      return;
+    }
     this.isSubmittingFeedback = true;
+    this.gameEndFeedbackError = null;
     const user = this.authService.currentUser;
     const loggedInEmail = user && !user.isAnonymous && user.email ? user.email : null;
     const contactEmail = loggedInEmail
@@ -406,11 +477,16 @@ export class Board implements OnInit, OnDestroy {
       .then(() => {
         this.isSubmittingFeedback = false;
         this.feedbackSubmitted = true;
+        this.showGameEndFeedbackForm = false;
+        this.gameEndFeedbackError = null;
+        this.telemetry.trackEvent('feedback_submitted');
+        this.cdr.detectChanges();
       })
       .catch((error) => {
         this.isSubmittingFeedback = false;
         console.error('Failed to submit feedback:', error);
-        this.errorMessage = 'Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.';
+        this.gameEndFeedbackError = 'Feedback konnte nicht gesendet werden. Bitte versuche es später erneut.';
+        this.cdr.detectChanges();
       });
   }
 
@@ -504,6 +580,7 @@ export class Board implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.clearHintTimeout();
+    this.clearFeedbackToastTimeout();
     if (this.timerInterval) clearInterval(this.timerInterval);
     if (this.routeSub) this.routeSub.unsubscribe();
     if (this.gameStatusSub) this.gameStatusSub.unsubscribe();
