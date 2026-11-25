@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unpublished]
+## [3.5.6] - 2026-11-25
 ### Added
 - **7 individuelle Schädlings-Illustrationen** (`oat-rust.jpg`, `nematode.jpg`, `aphid-cereal.jpg`, `pea-moth.jpg`, `corn-borer.jpg`, `pollen-beetle.jpg`, `swine-fever.jpg` in `public/assets/images/pests/` und `src/app/game/board/board.ts`), sodass alle 9 Schädlinge eindeutige Einzelbilder besitzen.
 - **MUNDO – Bildungsmediathek der Länder** (`mundo.schule`, SODIX-ID `SODIX-0001172770`) als bestätigte Live-Verlinkung in `marketing/verlinkungen.md` und `KNOWN_BACKLINKS` (`src/app/types.ts`) unter `/admin/super` aufgenommen sowie `checkBacklinkStatus` (`functions/src/backlinks.service.ts`) um optionale `verificationUrl`-Prüfung für öffentliche JSON-Quell-Endpunkte von SPA-Mediatheken erweitert.
